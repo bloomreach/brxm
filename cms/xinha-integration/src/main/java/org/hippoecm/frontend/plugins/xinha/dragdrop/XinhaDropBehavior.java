@@ -68,11 +68,14 @@ public abstract class XinhaDropBehavior extends DropBehavior {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
 
             Type type = getType(nodeModel);
-            if (type == null)
+            if (type == null) {
                 return;
+            }
 
-            if (type == Type.Image) //images are dragged with the nt_resource node, use parent instead.
+            if (type == Type.Image) {
+                // images are dragged with the nt_resource node, use parent instead.
                 nodeModel = nodeModel.getParentModel();
+            }
 
             String activeElement = parameters.containsKey("activeElement") ? parameters.get("activeElement")[0] : "";
             boolean emptySelection = parameters.containsKey("emptySelection") ? Boolean.parseBoolean(parameters

@@ -169,8 +169,9 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         HippoRepository repository = main.getRepository();
         if (credentials != null) {
             return repository.getRepository().login(credentials.getJcrCredentials());
-        } else
+        } else {
             return null;
+        }
     }
 
     private void logLogin(Session session) throws RepositoryException, RemoteException {

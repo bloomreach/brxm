@@ -108,8 +108,9 @@ public class CheckPlugin extends RenderPlugin {
         }
         if (node instanceof HippoNode) {
             Node canonical = ((HippoNode)node).getCanonicalNode();
-            if (canonical == null || !canonical.isSame(node))
+            if (canonical == null || !canonical.isSame(node)) {
                 return;
+            }
         }
         if (node.getPath().equals("/jcr:system")) {
             return;

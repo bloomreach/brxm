@@ -150,8 +150,9 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                                     Value[] newValues = new Value[oldValues.length - 1];
                                     int j = 0;
                                     for (int i = 0; i < oldValues.length; i++) {
-                                        if (i == index)
+                                        if (i == index) {
                                             continue;
+                                        }
                                         newValues[j++] = oldValues[i];
                                     }
                                     property.setValue(newValues);

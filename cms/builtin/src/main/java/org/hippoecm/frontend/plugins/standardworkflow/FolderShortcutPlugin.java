@@ -28,7 +28,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -114,8 +113,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 while (defaultDropLocation.startsWith("/")) {
                     defaultDropLocation = defaultDropLocation.substring(1);
                 }
-                if (!jcrSession.getRootNode().hasNode(defaultDropLocation))
+                if (!jcrSession.getRootNode().hasNode(defaultDropLocation)) {
                     defaultDropLocation = null;
+                }
             } catch (PathNotFoundException ex) {
                 log.warn("No default drop location present");
                 defaultDropLocation = null; // force adding empty panel
@@ -248,10 +248,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
 
-            if (config.containsKey("option.first"))
+            if (config.containsKey("option.first")) {
                 optionSelectFirst = config.getBoolean("option.first");
-            if (config.containsKey("option.only"))
+            }
+            if (config.containsKey("option.only")) {
                 optionSelectOnly = config.getString("option.only");
+            }
 
             browseServiceRef = context.getReference(context.getService(config.getString(IBrowseService.BROWSER_ID),
                     IBrowseService.class));
@@ -281,8 +283,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 if (optionSelectFirst) {
                     if (optionSelectOnly != null) {
                         Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
-                        if (templates.containsKey(optionSelectOnly))
+                        if (templates.containsKey(optionSelectOnly)) {
                             newTemplates.put(optionSelectOnly, templates.get(optionSelectOnly));
+                        }
                         templates = newTemplates;
                     } else {
                         Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();

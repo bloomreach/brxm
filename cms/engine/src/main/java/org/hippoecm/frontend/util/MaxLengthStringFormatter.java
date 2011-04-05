@@ -55,9 +55,9 @@ public class MaxLengthStringFormatter implements IClusterable {
     }
 
     public String parse(String input, int indent) {
-        if (maxLength == -1 || !isTooLong(input, indent))
+        if (maxLength == -1 || !isTooLong(input, indent)) {
             return input;
-
+        }
         int max = getMax(indent);
         if (max < 1) {
             return input;

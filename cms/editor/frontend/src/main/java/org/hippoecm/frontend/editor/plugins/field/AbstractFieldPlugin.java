@@ -331,8 +331,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canRemoveItem() {
         IFieldDescriptor field = helper.getField();
-        if (IEditor.Mode.EDIT != mode || (field == null))
+        if (IEditor.Mode.EDIT != mode || (field == null)) {
             return false;
+        }
         if (!field.isMultiple()) {
             return false;
         }

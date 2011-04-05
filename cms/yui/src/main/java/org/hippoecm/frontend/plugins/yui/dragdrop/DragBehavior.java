@@ -44,8 +44,9 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
             return;
         }
         final IModel draggedModel = getDragModel();
-        if (draggedModel == null)
+        if (draggedModel == null) {
             return;
+        }
 
         final String targetId = getComponent().getRequest().getParameter("targetId");
         final Map<String, String[]> parameters = getComponent().getRequest().getParameterMap();

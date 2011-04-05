@@ -55,8 +55,9 @@ public class GIFEncoder {
         this.interlace = interlace;
 
         // make sure it's index colors:
-        if (bi.getType() != BufferedImage.TYPE_BYTE_INDEXED)
+        if (bi.getType() != BufferedImage.TYPE_BYTE_INDEXED) {
             bi = ColorQuantizer.quantizeImage(bi, 256, false, true);
+        }
 
         raster = bi.getRaster();
 
@@ -71,15 +72,15 @@ public class GIFEncoder {
 
         // Figure out how many bits to use.
         int bitsPerPixel;
-        if (numColors <= 2)
+        if (numColors <= 2) {
             bitsPerPixel = 1;
-        else if (numColors <= 4)
+        } else if (numColors <= 4) {
             bitsPerPixel = 2;
-        else if (numColors <= 16)
+        } else if (numColors <= 16) {
             bitsPerPixel = 4;
-        else
+        } else {
             bitsPerPixel = 8;
-
+        }
         int initCodeSize;
 
         // Calculate number of bits we are expecting
@@ -89,10 +90,11 @@ public class GIFEncoder {
         pass = 0;
 
         // The initial code size
-        if (bitsPerPixel <= 1)
+        if (bitsPerPixel <= 1) {
             initCodeSize = 2;
-        else
+        } else {
             initCodeSize = bitsPerPixel;
+        }
 
         // Set up the current x and y position
         curx = 0;
@@ -163,10 +165,11 @@ public class GIFEncoder {
         writeWord(height);
 
         // Write out whether or not the image is interlaced
-        if (interlace)
+        if (interlace) {
             out.write((byte) 0x40);
-        else
+        } else {
             out.write((byte) 0x00);
+        }
 
         // Write out the initial code size
         out.write((byte) initCodeSize);
@@ -192,13 +195,14 @@ public class GIFEncoder {
 
     // Return the next pixel from the image
     int getNextPixel() throws IOException {
-        if (countdown == 0)
+        if (countdown == 0) {
             return -1;
-
+        }
         --countdown;
 
-        if (curx == 0)
+        if (curx == 0) {
             row = raster.getSamples(0, cury, width, 1, 0, row);
+        }
         int index = row[curx];
 
         // Bump the current X position
@@ -333,8 +337,9 @@ public class GIFEncoder {
         int ent = getNextPixel();
 
         int hashShift = 0;
-        for (int fcode = HASH_SIZE; fcode < 65536; fcode *= 2)
+        for (int fcode = HASH_SIZE; fcode < 65536; fcode *= 2) {
             ++hashShift;
+        }
         hashShift = 8 - hashShift; // set hash code range bound
 
         clearHash(); // clear hash table
@@ -354,8 +359,9 @@ public class GIFEncoder {
                 if (i == 0)
                     disp = 1;
                 do {
-                    if ((i -= disp) < 0)
+                    if ((i -= disp) < 0) {
                         i += HASH_SIZE;
+                    }
 
                     if (hashTable[i] == fcode) {
                         ent = codeTable[i];
@@ -368,8 +374,9 @@ public class GIFEncoder {
             if (freeEntry < maxMaxCode) {
                 codeTable[i] = freeEntry++; // code -> hashtable
                 hashTable[i] = fcode;
-            } else
+            } else {
                 clearBlock();
+            }
         }
         // Put out the final code.
         output(ent);
@@ -401,10 +408,11 @@ public class GIFEncoder {
     void output(int code) throws IOException {
         curAccum &= masks[curBits];
 
-        if (curBits > 0)
+        if (curBits > 0) {
             curAccum |= (code << curBits);
-        else
+        } else {
             curAccum = code;
+        }
 
         curBits += numBits;
 
@@ -422,10 +430,11 @@ public class GIFEncoder {
                 clearFlag = false;
             } else {
                 ++numBits;
-                if (numBits == maxBits)
+                if (numBits == maxBits) {
                     maxCode = maxMaxCode;
-                else
+                } else {
                     maxCode = getMaxCode(numBits);
+                }
             }
         }
 
@@ -454,8 +463,9 @@ public class GIFEncoder {
 
     // reset code table
     void clearHash() {
-        for (int i = 0; i < HASH_SIZE; ++i)
+        for (int i = 0; i < HASH_SIZE; ++i) {
             hashTable[i] = -1;
+        }
     }
 
     // GIF Specific routines
@@ -475,8 +485,9 @@ public class GIFEncoder {
     // characters, flush the packet to disk.
     void charOut(byte c) throws IOException {
         accum[a_count++] = c;
-        if (a_count >= 254)
+        if (a_count >= 254) {
             charFlush();
+        }
     }
 
     // Flush the packet to disk, and reset the accumulator

@@ -43,8 +43,9 @@ public class NamesFactory {
             while (true) {
                 // read name entry
                 line = fin.readLine();
-                if (line == null)
+                if (line == null) {
                     break;
+                }
                 StringTokenizer st = new StringTokenizer(line);
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken().toLowerCase();
@@ -59,11 +60,12 @@ public class NamesFactory {
                             break;
                         }
                     }
-                    if (!valid)
+                    if (!valid) {
                         continue;
-                    if (log.isDebugEnabled())
+                    }
+                    if (log.isDebugEnabled()) {
                         log.debug("Parsed name: " + token);
-
+                    }
                     names.add(token);
                 }
             }

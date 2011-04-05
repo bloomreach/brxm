@@ -124,8 +124,9 @@ public class JsonParser {
         for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
             val += "    ";
             val += serialize2JS(iter.next());
-            if (iter.hasNext())
+            if (iter.hasNext()) {
                 val += ",";
+            }
             val += "\n";
         }
         val += "  ]";
@@ -142,8 +143,9 @@ public class JsonParser {
         for (Iterator<? extends BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
             val += "    ";
             val += serialize2JS(iter.next().getName());
-            if (iter.hasNext())
+            if (iter.hasNext()) {
                 val += ",";
+            }
             val += "\n";
         }
         val += "  ]";
@@ -155,15 +157,15 @@ public class JsonParser {
      * numbers will be serialized as Javascript numbers and String will be escaped by two single quotes. 
      */
     public static String serialize2JS(String value) {
-        if (value == null)
+        if (value == null) {
             return "null";
-        else if (value.equalsIgnoreCase("true"))
+        } else if (value.equalsIgnoreCase("true")) {
             return "true";
-        else if (value.equalsIgnoreCase("false"))
+        } else if (value.equalsIgnoreCase("false")) {
             return "false";
-        else if (NUMBER_PATTERN.matcher(value).matches())
+        } else if (NUMBER_PATTERN.matcher(value).matches()) {
             return value;
-
+        }
         return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
     }    
     

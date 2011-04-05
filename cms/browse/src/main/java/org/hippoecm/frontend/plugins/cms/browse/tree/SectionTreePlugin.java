@@ -116,8 +116,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         String[] behaviours = config.getStringArray("behaviours");
         if (behaviours != null) {
             for (int i = 0; i < behaviours.length; i++) {
-                if ("toggle".equals(behaviours[i]))
+                if ("toggle".equals(behaviours[i])) {
                     toggleBehaviour = true;
+                }
             }
         }
 
@@ -160,8 +161,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 item.add(link);
 
                 String label = section.extension;
-                if (sections.indexOf(section) < headers.size())
+                if (sections.indexOf(section) < headers.size()) {
                     label = headers.get(sections.indexOf(section));
+                }
                 link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
 
                 if (section.extPt.getChildren().size() > 0) {

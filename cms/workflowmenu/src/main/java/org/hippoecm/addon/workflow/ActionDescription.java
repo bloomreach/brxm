@@ -64,10 +64,11 @@ public abstract class ActionDescription extends Panel {
     }
 
     public Component getFragment(String id) {
-        if (actions.containsKey(id))
+        if (actions.containsKey(id)) {
             return actions.get(id);
-        else
+        } else {
             return super.get(id);
+        }
     }
 
     public void run() {

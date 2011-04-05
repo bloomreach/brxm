@@ -58,21 +58,24 @@ public class DocumentListFilter implements IClusterable {
         }
 
         boolean match(String currentState, Node node) throws RepositoryException {
-            if (!currentState.equals("") && !state.equals("") && !currentState.equals(state))
+            if (!currentState.equals("") && !state.equals("") && !currentState.equals(state)) {
                 return false;
+            }
             if (!path.equals("")) {
                 if (path.startsWith("/")) {
-                    if (!path.equals(node.getPath()))
+                    if (!path.equals(node.getPath())) {
                         return false;
-                } else {
-                    if (!path.equals(node.getName()))
-                        return false;
+                    }
+                } else if (!path.equals(node.getName())) {
+                    return false;
                 }
             }
-            if (!parent.equals("") && (node.getDepth() == 0 || !node.getParent().isNodeType(parent)))
+            if (!parent.equals("") && (node.getDepth() == 0 || !node.getParent().isNodeType(parent))) {
                 return false;
-            if (!child.equals("") && !node.isNodeType(child))
+            }
+            if (!child.equals("") && !node.isNodeType(child)) {
                 return false;
+            }
             return true;
         }
     }
@@ -121,13 +124,15 @@ public class DocumentListFilter implements IClusterable {
                         for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
                             FilterDefinition def = iter.next();
                             if (def.match(currentState, candidate)) {
-                                if (!def.targetDisplay)
+                                if (!def.targetDisplay) {
                                     candidate = null;
+                                }
                                 break;
                             }
                         }
-                        if (candidate != null)
+                        if (candidate != null) {
                             nextNode = candidate;
+                        }
                     }
                 } catch (RepositoryException ex) {
                     // delibate ignore
@@ -137,8 +142,9 @@ public class DocumentListFilter implements IClusterable {
             public Node nextNode() {
                 if (nextNode == null) {
                     fillNextNode();
-                    if (nextNode == null)
+                    if (nextNode == null) {
                         throw new NoSuchElementException();
+                    }
                 }
                 Node rtValue = nextNode;
                 nextNode = null;
@@ -154,8 +160,9 @@ public class DocumentListFilter implements IClusterable {
             }
 
             public void skip(long count) {
-                while (count-- > 0)
+                while (count-- > 0) {
                     nextNode();
+                }
             }
 
             public void remove() {
@@ -169,8 +176,9 @@ public class DocumentListFilter implements IClusterable {
             public boolean hasNext() {
                 if (nextNode == null) {
                     fillNextNode();
-                    if (nextNode == null)
+                    if (nextNode == null) {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -182,8 +190,9 @@ public class DocumentListFilter implements IClusterable {
         for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
             FilterDefinition def = iter.next();
             if (def.match(currentState, node)) {
-                if (!def.targetName.equals(""))
+                if (!def.targetName.equals("")) {
                     displayName = def.targetName;
+                }
                 break;
             }
         }

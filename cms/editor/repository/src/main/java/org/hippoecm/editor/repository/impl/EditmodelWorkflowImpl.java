@@ -364,9 +364,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     }
 
     public String edit() throws WorkflowException, MappingException, RepositoryException {
-        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             throw new MappingException("invalid node type for EditmodelWorkflow");
-
+        }
         NodeTypeState state = new NodeTypeState();
         if (state.draft != null) {
             return subject.getPath();
@@ -387,15 +387,16 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     }
 
     public void save() throws WorkflowException, MappingException, RepositoryException {
-        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             throw new MappingException("invalid node type for EditmodelWorkflow");
-
+        }
         subject.save();
     }
 
     public String copy(String name) throws WorkflowException, MappingException, RepositoryException {
-        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE))
+        if (!subject.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             throw new MappingException("invalid node type for EditmodelWorkflow");
+        }
 
         try {
             NamespaceValidator.checkName(name);

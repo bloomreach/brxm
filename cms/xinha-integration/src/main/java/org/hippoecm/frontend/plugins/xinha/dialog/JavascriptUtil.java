@@ -28,17 +28,17 @@ public class JavascriptUtil {
     //private static Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)");
 
     public static String serialize2JS(String value) {
-        if (value == null)
+        if (value == null) {
             return "null";
-        else if(value.equals(""))
+        } else if(value.equals("")) {
             return SINGLE_QUOTE + SINGLE_QUOTE;
-        else if (value.equalsIgnoreCase("true"))
+        } else if (value.equalsIgnoreCase("true")) {
             return "true";
-        else if (value.equalsIgnoreCase("false"))
+        } else if (value.equalsIgnoreCase("false")) {
             return "false";
-        else if (numbers.matcher(value).matches()) // || functions.matcher(value).find())
+        } else if (numbers.matcher(value).matches()) { // || functions.matcher(value).find())
             return value;
-
+        }
         return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
     }
 

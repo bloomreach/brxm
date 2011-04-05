@@ -68,10 +68,11 @@ public class TemplateConverter implements UpdaterModule {
     }
 
     String rename(String newVersion, String oldName) {
-        if (oldName.startsWith(prefix + ":"))
+        if (oldName.startsWith(prefix + ":")) {
             return prefix + "_" + newVersion.replaceAll("\\.", "_") + ":" + oldName.substring(oldName.indexOf(":") + 1);
-        else
+        } else {
             return oldName;
+        }
     }
 
     public void register(final UpdaterContext context) {
@@ -97,8 +98,9 @@ public class TemplateConverter implements UpdaterModule {
                                     if (candidate.isNodeType(HippoNodeType.NT_REMODEL)) {
                                         if (candidate.getProperty(HippoNodeType.HIPPO_URI).getString().equals(oldUri)) {
                                             current = candidate;
-                                            if (draft == null)
+                                            if (draft == null) {
                                                 draft = candidate;
+                                            }
                                         }
                                     } else {
                                         draft = candidate;

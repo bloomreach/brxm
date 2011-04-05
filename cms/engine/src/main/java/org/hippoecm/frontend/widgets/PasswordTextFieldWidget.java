@@ -51,8 +51,9 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
             protected void onValidate(IValidatable<String> validatable) {
                 String modelValue = myModel.getObject() != null ? myModel.getObject() : "";
                 String formValue = validatable.getValue() != null ? (String) validatable.getValue() : "";
-                if (modelValue.length() == 0 && formValue.length() == 0)
+                if (modelValue.length() == 0 && formValue.length() == 0) {
                     PasswordTextFieldWidget.this.error("Password is required");
+                }
             }
 
             @Override
@@ -78,8 +79,9 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
         }
 
         public void setChainedModel(IModel<?> model) {
-            if (model instanceof JcrPropertyValueModel)
+            if (model instanceof JcrPropertyValueModel) {
                 this.model = (JcrPropertyValueModel) model;
+            }
         }
 
         public void detach() {
@@ -106,9 +108,9 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget<String> {
          * @see org.apache.wicket.model.IModel#setObject(java.lang.Object)
          */
         public void setObject(String object) {
-            if (object == null)
+            if (object == null) {
                 return;
-
+            }
             String value = (String) object;
             if (value.length() > 0) {
                 try {

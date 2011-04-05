@@ -238,30 +238,41 @@ public class ColorQuantizer {
 
         void pruneLevel() {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         children[id].pruneLevel();
-            if (level == cube.depth)
+                    }
+                }
+            }
+            if (level == cube.depth) {
                 prune();
+            }
         }
 
         void pruneToCubeDepth() {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         children[id].pruneToCubeDepth();
-            if (level > cube.depth)
+                    }
+                }
+            }
+            if (level > cube.depth) {
                 prune();
+            }
         }
 
         void prune() {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         children[id].prune();
+                    }
+                }
+            }
             // Merge color statistics into parent.
             parent.uniqueCount += uniqueCount;
             parent.totalRed += totalRed;
@@ -275,27 +286,35 @@ public class ColorQuantizer {
 
         void reduce(long pruningThreshold) {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         children[id].reduce(pruningThreshold);
-            if (quantizeError <= pruningThreshold)
+                    }
+                }
+            }
+            if (quantizeError <= pruningThreshold) {
                 prune();
-            else {
+            } else {
                 // Find minimum pruning threshold.
-                if (uniqueCount > 0)
+                if (uniqueCount > 0) {
                     cube.numColors++;
-                if (quantizeError < cube.nextThreshold)
+                }
+                if (quantizeError < cube.nextThreshold) {
                     cube.nextThreshold = quantizeError;
+                }
             }
         }
 
         void findClosestColor(int red, int green, int blue, int alpha, ClosestColor closest) {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         children[id].findClosestColor(red, green, blue, alpha, closest);
+                    }
+                }
+            }
             if (uniqueCount != 0) {
                 // Determine if this color is "closest".
                 int dr = (cube.colorMap[0][colorIndex] & 0xff) - red;
@@ -307,15 +326,18 @@ public class ColorQuantizer {
                     closest.distance = distance;
                     closest.colorIndex = colorIndex;
                 }
-             }
+            }
         }
 
         int fillColorMap(byte colorMap[][], int index) {
             // Traverse any children.
-            if (numChildren > 0)
-                for (int id = 0; id < MAX_CHILDREN; id++)
-                    if (children[id] != null)
+            if (numChildren > 0) {
+                for (int id = 0; id < MAX_CHILDREN; id++) {
+                    if (children[id] != null) {
                         index = children[id].fillColorMap(colorMap, index);
+                    }
+                }
+            }
             if (uniqueCount != 0) {
                 // Colormap entry is defined by the mean color in this cube.
                 colorMap[0][index] = (byte) (totalRed / uniqueCount + 0.5);
@@ -351,12 +373,15 @@ public class ColorQuantizer {
         int getDepth(int numColors) {
             // Depth of color tree is: Log4(colormap size)+2.
             int depth;
-            for (depth = 1; numColors != 0; depth++)
+            for (depth = 1; numColors != 0; depth++) {
                 numColors >>= 2;
-            if (depth > MAX_TREE_DEPTH)
+            }
+            if (depth > MAX_TREE_DEPTH) {
                 depth = MAX_TREE_DEPTH;
-            if (depth < 2)
+            }
+            if (depth < 2) {
                 depth = 2;
+            }
             return depth;
         }
 
@@ -399,14 +424,17 @@ public class ColorQuantizer {
                     green = (pixel >> 8) & 0xff;
                     blue = (pixel >> 0) & 0xff;
                     alpha = (pixel >> 24) & 0xff;
-                    if (alphaToBitmask)
+                    if (alphaToBitmask) {
                         alpha = alpha < 0x80 ? 0 : 0xff;
+                    }
 
                     // skip same pixels, but count them
                     px = x;
-                    for (++x; x < width; x++)
-                        if (pixels[x] != pixel)
+                    for (++x; x < width; x++) {
+                        if (pixels[x] != pixel) {
                             break;
+                        }
+                    }
                     count = x - px;
 
                     // Start at the root and descend the color cube tree.
@@ -504,9 +532,9 @@ public class ColorQuantizer {
             BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, icm);
 
             boolean firstOut = true;
-            if (dither)
+            if (dither) {
                 new DiffusionFilterOp().filter(image, dest);
-            else {
+            } else {
                 ClosestColor closest = new ClosestColor();
                 // convert to indexed color
                 byte[] dst = ((DataBufferByte) dest.getRaster().getDataBuffer()).getData();
@@ -537,8 +565,9 @@ public class ColorQuantizer {
                         blue = (pixel >> 0) & 0xff;
                         alpha = (pixel >> 24) & 0xff;
 
-                        if (alphaToBitmask)
+                        if (alphaToBitmask) {
                             alpha = alpha < 128 ? 0 : 0xff;
+                        }
 
                         byte col;
                         if (alpha == 0 && addTransparency) {
@@ -552,8 +581,9 @@ public class ColorQuantizer {
                                       ((green >> i) & 0x01) << 2 |
                                       ((blue >> i) & 0x01) << 1 |
                                       ((alpha >> i) & 0x01));
-                                if (node.children[id] == null)
+                                if (node.children[id] == null) {
                                     break;
+                                }
                                 node = node.children[id];
                             }
 
@@ -568,8 +598,9 @@ public class ColorQuantizer {
 
                         // next colors the same?
                         for (++x; x < width; x++) {
-                            if (pixels[x] != pixel)
+                            if (pixels[x] != pixel) {
                                 break;
+                            }
                             dst[pos++] = col;
                         }
                     }

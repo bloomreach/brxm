@@ -92,7 +92,9 @@ public class TextSearchBuilder implements IClusterable {
         }
 
         StringBuilder querySb = getQueryStringBuilder();
-        if (querySb == null) return null;
+        if (querySb == null) {
+            return null;
+        }
         
         final String query = querySb.toString();
         IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
@@ -162,8 +164,9 @@ public class TextSearchBuilder implements IClusterable {
             for (String exclude : excludedPrimaryTypes) {
                 if (haveTypeRestriction) {
                     sb.append(" or ");
-                } else
+                } else {
                     haveTypeRestriction = true;
+                }
                 sb.append("@jcr:primaryType='").append(exclude).append('\'');
             }
             sb.append(")");

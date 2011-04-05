@@ -100,8 +100,9 @@ public class Names implements IClusterable {
         String[] names = new String[num];
         for (int n = 0; n < num; n++) {
             String name = generate();
-            if (name == null)
+            if (name == null) {
                 break;
+            }
             names[n] = name;
         }
         return names;
@@ -113,8 +114,9 @@ public class Names implements IClusterable {
         StringBuffer sb = new StringBuffer();
         for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
             sb.setLength(0);
-            for (int i = 0; i < width - 1; i++)
+            for (int i = 0; i < width - 1; i++) {
                 sb.append(MARKER);
+            }
             boolean success = false;
             while (sb.length() < maxLen + width) {
                 // tuple for N-1 letters
@@ -137,8 +139,9 @@ public class Names implements IClusterable {
                 while (c <= 'z') {
                     c++;
                     ci -= counts[getIndex(tuple + c)];
-                    if (ci < 0)
+                    if (ci < 0) {
                         break;
+                    }
                 }
                 if (c > 'z') {
                     // successfully reached a terminating tuple
@@ -186,14 +189,16 @@ public class Names implements IClusterable {
 
         // rebuild counts and sums structures
         int size = 1;
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i < width; i++) {
             size *= 27;
+        }
         counts = new int[size];
         sums = new int[size / 27];
 
         String prefix = "";
-        for (int i = 0; i < width - 1; i++)
+        for (int i = 0; i < width - 1; i++) {
             prefix += MARKER;
+        }
 
         Iterator<String> iter = names.iterator();
         while (iter.hasNext()) {

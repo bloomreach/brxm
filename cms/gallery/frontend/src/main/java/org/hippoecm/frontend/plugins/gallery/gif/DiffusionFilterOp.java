@@ -65,8 +65,9 @@ public class DiffusionFilterOp implements BufferedImageOp {
     public void setMatrix(int[] matrix) {
         this.matrix = matrix;
         sum = 0;
-        for (int i = 0; i < matrix.length; i++)
+        for (int i = 0; i < matrix.length; i++) {
             sum += matrix[i];
+        }
     }
 
     public int[] getMatrix() {
@@ -82,12 +83,10 @@ public class DiffusionFilterOp implements BufferedImageOp {
      */
     public BufferedImage filter(BufferedImage src, BufferedImage dst) {
 
-        // If there's no dest. create one
-        if (dst == null)
+        // If there's no dest. create one, otherwise check that the provided dest is an indexed image
+        if (dst == null) {
             dst = createCompatibleDestImage(src, null);
-
-        // Otherwise check that the provided dest is an indexed image
-        else if (dst.getType() != BufferedImage.TYPE_BYTE_INDEXED) {
+        } else if (dst.getType() != BufferedImage.TYPE_BYTE_INDEXED) {
             throw new IllegalArgumentException("Wrong Destination Buffer type");
         }
 
@@ -160,10 +159,11 @@ public class DiffusionFilterOp implements BufferedImageOp {
                             int jx = j + x;
                             if (0 <= jx && jx < width) {
                                 int w;
-                                if (reverse)
+                                if (reverse) {
                                     w = matrix[(i + 1) * 3 - j + 1];
-                                else
+                                } else {
                                     w = matrix[(i + 1) * 3 + j + 1];
+                                }
                                 if (w != 0) {
                                     int k = reverse ? index - j : index + j;
                                     rgb1 = pixels[k];
@@ -189,10 +189,12 @@ public class DiffusionFilterOp implements BufferedImageOp {
     }
 
     private static int clamp(int c) {
-        if (c < 0)
+        if (c < 0) {
             return 0;
-        if (c > 255)
+        }
+        if (c > 255) {
             return 255;
+        }
         return c;
     }
 
@@ -228,8 +230,9 @@ public class DiffusionFilterOp implements BufferedImageOp {
 
     // No transformation, so return the source point
     public Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
-        if (dstPt == null)
+        if (dstPt == null) {
             dstPt = new Point2D.Float();
+        }
         dstPt.setLocation(srcPt.getX(), srcPt.getY());
         return dstPt;
     }

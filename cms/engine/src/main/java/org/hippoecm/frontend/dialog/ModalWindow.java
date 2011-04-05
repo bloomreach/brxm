@@ -959,10 +959,11 @@ public class ModalWindow extends Panel
 		buffer.append("settings.className=\"" + getCssClassName() + "\";\n");
 		buffer.append("settings.width=\"" + getInitialWidth() + "\";\n");
 
-		if (isUseInitialHeight() == true || isCustomComponent() == false)
+		if (isUseInitialHeight() == true || isCustomComponent() == false) {
 			buffer.append("settings.height=\"" + getInitialHeight() + "\";\n");
-		else
+        } else {
 			buffer.append("settings.height=null;\n");
+        }
 
 		buffer.append("settings.resizable=" + Boolean.toString(isResizable()) + ";\n");
 

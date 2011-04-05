@@ -38,24 +38,26 @@ public class GIFImageWriter extends ImageWriter {
 
     public void write(IIOMetadata streamMetadata, IIOImage image,
         ImageWriteParam param) throws IOException {
-        if (image == null)
+        if (image == null) {
             throw new IllegalArgumentException("image == null");
-
-        if (image.hasRaster())
+        }
+        if (image.hasRaster()) {
             throw new UnsupportedOperationException("Cannot write rasters");
-
+        }
         Object output = getOutput();
-        if (output == null)
+        if (output == null) {
             throw new IllegalStateException("output was not set");
-
-        if (param == null)
+        }
+        if (param == null) {
             param = getDefaultWriteParam();
-
+        }
         RenderedImage ri = image.getRenderedImage();
-        if (!(ri instanceof BufferedImage))
+        if (!(ri instanceof BufferedImage)) {
             throw new IOException("RenderedImage is not a BufferedImage");
-        if (!(output instanceof DataOutput))
+        }
+        if (!(output instanceof DataOutput)) {
             throw new IOException("output is not a DataOutput");
+        }
         encoder.encode((BufferedImage) ri, (DataOutput) output,
             param.getProgressiveMode() != ImageWriteParam.MODE_DISABLED, null);
     }

@@ -67,8 +67,9 @@ public class StringSetting extends Setting<String> {
 
     static String escapeString(String value) {
         //TODO: backslash should be escaped as well
-        if (value != null)
+        if (value != null) {
             value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
+        }
         return value;
     }
 }

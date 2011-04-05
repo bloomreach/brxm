@@ -32,8 +32,9 @@ public class OptionsUtil {
     public static void addKeyValuePairsToMap(Map<String, String> map, String... pairs) {
         for(String option : pairs) {
             int delimIndex = option.indexOf(KEY_VALUE_DELIM);
-            if( delimIndex == -1 )
+            if( delimIndex == -1 ) {
                 throw new IllegalArgumentException("No delimiter[" + KEY_VALUE_DELIM + "] found in option [" + option + "]");
+            }
             map.put(option.substring(0, delimIndex), option.substring(delimIndex+1));
         }
     }

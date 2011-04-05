@@ -193,8 +193,9 @@ public class ContentBuilder implements IClusterable {
 
                 public void decorate(Node node) {
                     try {
-                        if(node.isNodeType("hippostd:taggable"))
-                        node.setProperty("hippostd:tags", getTags(settings));
+                        if(node.isNodeType("hippostd:taggable")) {
+                            node.setProperty("hippostd:tags", getTags(settings));
+                        }
                     } catch (RepositoryException e) {
                         log.error("Error setting tag property", e);
                     }

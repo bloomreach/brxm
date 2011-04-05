@@ -90,10 +90,11 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
     }
 
     public IModel model(Object object) {
-        if (object instanceof JcrNodeModel)
+        if (object instanceof JcrNodeModel) {
             return (JcrNodeModel) object;
-        else
+        } else {
             return new JcrNodeModel((Node)object);
+        }
     }
 
     public int size() {

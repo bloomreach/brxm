@@ -50,8 +50,9 @@ public class CachedYuiDependencyResolver {
             }
 
             Set<YuiDependency> dependencies = dependencyResolver.resolveDependencies(ns, module);
-            if (cacheEnabled)
+            if (cacheEnabled) {
                 modulesLoaded.put(module, dependencies);
+            }
             return dependencies;
         }
     }

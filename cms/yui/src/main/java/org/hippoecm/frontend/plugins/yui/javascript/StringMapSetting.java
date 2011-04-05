@@ -68,8 +68,9 @@ public class StringMapSetting extends Setting<Map<String, Object>> {
         for (Entry<String, Object> e : value.entrySet()) {
             //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks
             //the js-object and shouldn't be present. We could just try and ignore it by wrapping the js-object key's with quotes as well.
-            if (e.getKey().startsWith("jcr:"))
+            if (e.getKey().startsWith("jcr:")) {
                 continue;
+            }
             if (first) {
                 first = false;
             } else {
