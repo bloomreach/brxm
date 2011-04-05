@@ -297,8 +297,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     }
                 } else if (optionSelectOnly != null) {
                     Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
-                    if (templates.containsKey(optionSelectOnly))
+                    if (templates.containsKey(optionSelectOnly)) {
                         newTemplates.put(optionSelectOnly, templates.get(optionSelectOnly));
+                    }
                     templates = newTemplates;
                 }
             } catch (MappingException ex) {

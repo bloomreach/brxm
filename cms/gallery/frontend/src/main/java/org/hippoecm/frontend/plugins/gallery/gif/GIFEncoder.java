@@ -356,8 +356,9 @@ public class GIFEncoder {
                 continue;
             } else if (hashTable[i] >= 0) { // non-empty slot
                 int disp = HASH_SIZE - i; // secondary hash (after G. Knott)
-                if (i == 0)
+                if (i == 0) {
                     disp = 1;
+                }
                 do {
                     if ((i -= disp) < 0) {
                         i += HASH_SIZE;
