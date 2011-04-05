@@ -260,7 +260,7 @@ public class UpdateModelBuilder {
         int minorPos = last.lastIndexOf('.');
         if (minorPos > pos) {
             int minor = Integer.parseInt(last.substring(minorPos + 1));
-            namespace = last.substring(0, minorPos + 1) + new Integer(minor + 1).toString();
+            namespace = last.substring(0, minorPos + 1) + Integer.toString(minor + 1);
             getSerializer().remap(prefix, namespace);
         } else {
             log.warn("namespace for " + prefix + " does not conform to versionable format");

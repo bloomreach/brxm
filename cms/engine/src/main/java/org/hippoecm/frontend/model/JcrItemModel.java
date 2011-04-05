@@ -246,7 +246,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                 while (node != null && !node.isNodeType("mix:referenceable")) {
                     if (node.getIndex() > 1) {
                         spb.prepend(']');
-                        spb.prepend(new Integer(node.getIndex()).toString());
+                        spb.prepend(Integer.toString(node.getIndex()));
                         spb.prepend('[');
                     }
                     spb.prepend(node.getName());
