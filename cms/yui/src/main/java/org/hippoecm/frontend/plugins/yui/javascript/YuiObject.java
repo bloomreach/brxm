@@ -89,7 +89,9 @@ public class YuiObject implements IClusterable {
                 } else {
                     sb.append(',');
                 }
-                sb.append(setting.getKey() + ": " + setting.getScriptValue(value));
+                sb.append(setting.getKey());
+                sb.append(": ");
+                sb.append(setting.getScriptValue(value));
             }
         }
         sb.append('}');

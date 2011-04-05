@@ -161,7 +161,8 @@ public final class CndSerializer {
         }
 
         if (field.getPath() != null) {
-            output.append(" " + encode(field.getPath()));
+            output.append(' ');
+            output.append(encode(field.getPath()));
         } else {
             output.append(" *");
         }
@@ -170,7 +171,9 @@ public final class CndSerializer {
         if (type.indexOf(':') == -1) {
             type = type.toLowerCase();
         }
-        output.append(" (" + type + ")");
+        output.append(" (");
+        output.append(type);
+        output.append(')');
         if (field.isMultiple()) {
             output.append(" multiple");
         }
