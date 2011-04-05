@@ -30,7 +30,6 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.util.HttpUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -151,7 +150,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         
         url.setCharacterEncoding(characterEncoding);
 
-        Map<String, String []> paramMap = HttpUtils.parseQueryString(request);
+        Map<String, String []> paramMap = HstRequestUtils.parseQueryString(request);
         url.setParameters(paramMap);
         
         url.setResolvedMountPath(resolvedMount.getResolvedMountPath());

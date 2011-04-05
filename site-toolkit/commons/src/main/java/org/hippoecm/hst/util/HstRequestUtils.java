@@ -17,10 +17,14 @@ package org.hippoecm.hst.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -279,6 +283,34 @@ public class HstRequestUtils {
         return getRemoteAddrs(request)[0];
     }
 
-   
+    public static Map<String, String []> parseQueryString(HttpServletRequest request) {
+        Map<String, String []> queryParamMap = null;
+
+        String queryString = request.getQueryString();
+
+        if (queryString == null) {
+            queryParamMap = Collections.emptyMap();
+        } else {
+            // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
+            queryParamMap = new LinkedHashMap<String, String []>();
+            String[] paramPairs = StringUtils.split(queryString, '&');
+            String paramName = null;
+            
+            for (String paramPair : paramPairs) {
+                String[] paramNameAndValue = StringUtils.split(paramPair, '=');
+                
+                if (paramNameAndValue.length > 0) {
+                    paramName = paramNameAndValue[0];
+                    queryParamMap.put(paramName, null);
+                }
+            }
+            
+            for (Map.Entry<String, String []> entry : queryParamMap.entrySet()) {
+                entry.setValue(request.getParameterValues(entry.getKey()));
+            }
+        }
+
+        return queryParamMap;
+    }
     
 }
