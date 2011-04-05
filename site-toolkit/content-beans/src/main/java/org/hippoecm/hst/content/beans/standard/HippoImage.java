@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Bean mapping class for the 'hippogallery:exampleImageSet' document type
- * @deprecated since 7.5 : Use XXX instead if all your types are hippogallery:imageset instead of 'hippogallery:exampleImageSet'
+ * @deprecated since 7.5 : Use {@link HippoGalleryImageSet} instead if all your imageset types are hippogallery:imageset instead of 'hippogallery:exampleImageSet'
  */
 @Deprecated
 
