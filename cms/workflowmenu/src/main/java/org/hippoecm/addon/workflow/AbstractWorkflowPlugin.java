@@ -73,8 +73,9 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
             if (log.isDebugEnabled()) {
                 StringBuffer sb = new StringBuffer();
                 sb.append("workflow showing categories");
-                for (String category : categories)
+                for (String category : categories) {
                     sb.append(" " + category);
+                }
                 log.debug(new String(sb));
             }
         } else {
