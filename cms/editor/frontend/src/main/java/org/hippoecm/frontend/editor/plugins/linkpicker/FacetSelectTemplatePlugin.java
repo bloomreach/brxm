@@ -134,7 +134,7 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
 
                         public Integer next() {
                             if (hasNext()) {
-                                return new Integer(current++);
+                                return Integer.valueOf(current++);
                             } else {
                                 throw new NoSuchElementException();
                             }

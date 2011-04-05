@@ -32,7 +32,7 @@ public class IntSetting extends Setting<Integer> {
     }
 
     public Integer newValue() {
-        return new Integer(defaultValue != null ? defaultValue : 0);
+        return Integer.valueOf(defaultValue != null ? defaultValue : 0);
     }
 
     @Override

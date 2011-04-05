@@ -32,7 +32,6 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -45,7 +44,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -88,21 +86,21 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private String derefBehavior = "Throw error when not found";
 
     private final void InitMaps() {
-        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
-        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
-        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW), "Throw error on uuid collision");
-        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW), "Create new uuids on import");
+        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
+        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
+        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW), "Throw error on uuid collision");
+        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW), "Create new uuids on import");
 
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_DISABLE), "Disable merging");
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE), "Try to add, else overwrite same name nodes");
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP), "Try to add, else skip same name nodes");
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE), "Overwrite same name nodes");
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_SKIP), "Skip same name nodes");
-        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_THROW), "Throw error on naming conflict");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_DISABLE), "Disable merging");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE), "Try to add, else overwrite same name nodes");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP), "Try to add, else skip same name nodes");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE), "Overwrite same name nodes");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_SKIP), "Skip same name nodes");
+        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_THROW), "Throw error on naming conflict");
 
-        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
-        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
-        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT), "Add reference to root node when not found");
+        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
+        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
+        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT), "Add reference to root node when not found");
 
     }
 

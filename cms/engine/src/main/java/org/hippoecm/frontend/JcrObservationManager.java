@@ -302,7 +302,7 @@ public class JcrObservationManager implements ObservationManager {
         public int compareTo(final JcrListener other) {
             int result = path.compareTo(other.path);
             if (result == 0) {
-                return new Integer(hashCode()).compareTo(other.hashCode());
+                return Integer.valueOf(hashCode()).compareTo(other.hashCode());
             }
             return result;
         }
@@ -997,7 +997,7 @@ public class JcrObservationManager implements ObservationManager {
                 public int compare(JcrListener o1, JcrListener o2) {
                     int result = o1.path.compareTo(o2.path);
                     if (result == 0) {
-                        return new Integer(o1.hashCode()).compareTo(o2.hashCode());
+                        return Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
                     }
                     return result;
                 }

@@ -134,7 +134,7 @@ public class PluginManager implements IClusterable {
 
         Map.Entry<Integer, RefCount> entry = internalGetReference(service);
         if (entry == null) {
-            Integer id = new Integer(nextReferenceId++);
+            Integer id = Integer.valueOf(nextReferenceId++);
             referenced.put(id, new RefCount(service));
             lookupMap.put(service, id);
             if (log.isDebugEnabled()) {

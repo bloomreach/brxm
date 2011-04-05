@@ -379,7 +379,7 @@ public class UserSession extends WebSession {
             componentNum = pluginComponentCounters.get(markupId).intValue();
         }
         ++componentNum;
-        pluginComponentCounters.put(markupId, new Integer(componentNum));
+        pluginComponentCounters.put(markupId, Integer.valueOf(componentNum));
         return markupId + "_" + componentNum;
     }
 
