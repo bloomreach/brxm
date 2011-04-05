@@ -167,9 +167,6 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
             return false;
         }
         JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        if (selectedModel == null) {
-            return false;
-        }
         Node node = selectedModel.getObject();
         if (node == null) {
             return false;

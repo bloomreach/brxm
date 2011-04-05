@@ -386,7 +386,7 @@ public class UserSession extends WebSession {
     public String getApplicationName() {
         String applicationName;
         Session session = getJcrSession();
-        String userID = (session != null ? session.getUserID() : null);
+        String userID = session.getUserID();
         if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {

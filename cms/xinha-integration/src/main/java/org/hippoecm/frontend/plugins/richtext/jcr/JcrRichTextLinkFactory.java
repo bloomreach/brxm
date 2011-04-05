@@ -110,9 +110,6 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
             return false;
         }
         JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        if (selectedModel == null) {
-            return false;
-        }
         Node node = selectedModel.getObject();
         if (node == null) {
             return false;

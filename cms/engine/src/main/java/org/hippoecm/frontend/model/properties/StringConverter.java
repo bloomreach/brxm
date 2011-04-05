@@ -55,7 +55,7 @@ public class StringConverter implements IModel<String> {
         try {
             Value value;
             if (object != null) {
-                String string = object == null ? "" : object.toString();
+                String string = object.toString();
                 int type = decorated.getType();
                 ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
                 value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));

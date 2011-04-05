@@ -304,9 +304,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 if (nodeModel.getNode() != null
                         && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode()
                                 .isNodeType(HippoNodeType.NT_HANDLE))) {
-                    if (browser != null) {
-                        browser.browse(nodeModel);
-                    }
+                    browser.browse(nodeModel);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);

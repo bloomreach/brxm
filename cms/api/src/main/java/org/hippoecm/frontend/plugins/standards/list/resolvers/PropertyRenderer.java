@@ -37,7 +37,7 @@ public class PropertyRenderer extends AbstractNodeRenderer {
     @Override
     protected Component getViewer(String id, Node node) throws RepositoryException {
         String value = getValue(node);
-        return value != null ? new Label(id, value) : new Label(id);
+        return new Label(id, value);
     }
 
     private String getValue(Node node) throws RepositoryException {
