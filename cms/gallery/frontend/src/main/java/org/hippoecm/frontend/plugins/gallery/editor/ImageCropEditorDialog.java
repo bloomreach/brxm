@@ -29,6 +29,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -88,7 +89,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
         imagePreviewContainer.setOutputMarkupId(true);
 
         boolean isPreviewVisible = false;
-        String thumbnailDimensionsLabel = new String();
+        String thumbnailDimensionsLabel = StringUtils.EMPTY;
 
         try{
             thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);

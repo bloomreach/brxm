@@ -140,31 +140,31 @@ public class EventModel implements IComponentAssignedModel<String> {
         oneMinuteAgoCal.add(Calendar.MINUTE, -1);
 
         if (nodeCal.after(oneMinuteAgoCal)) {
-            return new String("one-minute");
+            return "one-minute";
         }
         if (nodeCal.after(fiveMinutesAgoCal)) {
-            return new String("five-minutes");
+            return "five-minutes";
         }
         if (nodeCal.after(tenMinutesAgoCal)) {
-            return new String("ten-minutes");
+            return "ten-minutes";
         }
         if (nodeCal.after(halfHourAgoCal)) {
-            return new String("half-hour");
+            return "half-hour";
         }
         if (nodeCal.after(hourAgoCal)) {
-            return new String("hour");
+            return "hour";
         }
         if (nodeCal.before(thisMorningCal) && nodeCal.after(todayCal)) {
-            return new String("morning");
+            return "morning";
         }
         if (nodeCal.before(thisAfternoonCal) && nodeCal.after(todayCal)) {
-            return new String("afternoon");
+            return "afternoon";
         }
         if (nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) {
-            return new String("evening");
+            return "evening";
         }
         if (nodeCal.after(yesterdayCal)) {
-            return new String("yesterday");
+            return "yesterday";
         }
         return df.format(nodeCal);
     }

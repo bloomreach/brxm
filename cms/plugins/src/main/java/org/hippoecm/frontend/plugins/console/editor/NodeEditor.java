@@ -90,11 +90,7 @@ class NodeEditor extends Form {
                 propertiesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
-                mixinTypes = new String();
-                for (NodeType type : nodeTypes) {
-                    mixinTypes += type.getName() + ", ";
-                }
-                mixinTypes = StringUtils.substringBeforeLast(mixinTypes, ",");
+                mixinTypes = joinNames(nodeTypes);
 
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
@@ -103,6 +99,19 @@ class NodeEditor extends Form {
             typesEditor.setVisible(false);
             propertiesEditor.setVisible(false);
         }
+    }
+
+    private String joinNames(NodeType[] nodeTypes) {
+        final StringBuffer result = new StringBuffer();
+        String concat = StringUtils.EMPTY;
+
+        for (NodeType type: nodeTypes) {
+            result.append(concat);
+            result.append(type.getName());
+            concat = ", ";
+        }
+
+        return result.toString();
     }
 
     private static class PropertyProvider implements IDataProvider {
