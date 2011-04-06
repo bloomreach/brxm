@@ -86,7 +86,7 @@ public class HstSitePipeline implements Pipeline
         } else {
             newValves =  new Valve[valves.length +1];
             System.arraycopy(valves, 0, newValves, 0, valves.length);
-            newValves[invokingValves.length] = valve;
+            newValves[newValves.length -1] = valve;
         }
         return newValves;
     }
