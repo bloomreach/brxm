@@ -43,7 +43,7 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem{
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragment.get(0));
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            this.children.put(pathFragment.get(0), child);
+            this.children.put(pathFragment.get(0).intern(), child);
             child.setParentItem(this);
             if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
                 child.setIsWildCard(true);

@@ -172,7 +172,7 @@ public class LocationMapTreeImpl implements LocationMapTree{
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getTreeItem(pathFragment.get(0));
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            this.children.put(pathFragment.get(0), child);
+            this.children.put(pathFragment.get(0).intern(), child);
         }
         pathFragment.remove(0);
         child.addSiteMapItem(pathFragment , hstSiteMapItem);

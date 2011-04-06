@@ -174,20 +174,20 @@ public class MountService implements Mount {
         this.virtualHost = virtualHost;
         this.parent = parent;
         this.port = port;
-        this.name = mount.getValueProvider().getName();
+        this.name = mount.getValueProvider().getName().intern();
 
         // default for when there is no alias property
         
         this.allProperties = mount.getValueProvider().getProperties();
       
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
-            this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase();
+            this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase().intern();
         }
         
         if(parent == null) {
             mountPath = "";
         } else {
-            mountPath = parent.getMountPath() + "/" + name;
+            mountPath = (parent.getMountPath() + "/" + name).intern();
         }
        
         // is the context path visible in the url
@@ -237,6 +237,8 @@ public class MountService implements Mount {
             this.scheme = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_SCHEME);
             if(this.scheme == null || "".equals(this.scheme)) {
                 this.scheme = VirtualHostsService.DEFAULT_SCHEME;
+            } else {
+                this.scheme.intern();
             }
         } else {
            // try to get the one from the parent
@@ -249,6 +251,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+            if(homepage != null) {
+                homepage.intern();
+            }
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -260,6 +265,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+            if(locale != null) {
+                locale.intern();
+            }
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -271,6 +279,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+            if(pageNotFound != null) {
+                pageNotFound.intern();
+            }
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -294,6 +305,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
+            if(type != null) {
+                type.intern();
+            }
         } else if(parent != null) {
             this.type = parent.getType();
         }
@@ -320,6 +334,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE);
+            if(namedPipeline != null) {
+                namedPipeline.intern();
+            }
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
         }
@@ -333,6 +350,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             this.mountPoint = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT);
+            if(mountPoint != null) {
+                mountPoint.intern();
+            }
             // now, we need to create the HstSite object
             if(mountPoint == null || "".equals(mountPoint)){
                 mountPoint = null;

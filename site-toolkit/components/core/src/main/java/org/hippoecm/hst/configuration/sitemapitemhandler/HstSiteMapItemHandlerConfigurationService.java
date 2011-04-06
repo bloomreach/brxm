@@ -32,12 +32,13 @@ public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItem
     private Map<String, Object> properties;
      
     public HstSiteMapItemHandlerConfigurationService(HstNode handleNode) throws ServiceException {
-        id = handleNode.getValueProvider().getName();
-        name = handleNode.getValueProvider().getName();
+        id = handleNode.getValueProvider().getName().intern();
+        name = handleNode.getValueProvider().getName().intern();
         sitemapItemHandlerClassName = handleNode.getValueProvider().getString(HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME);
         if(sitemapItemHandlerClassName == null || "".equals(sitemapItemHandlerClassName)) {
             throw new ServiceException("Invalid sitemap item handler because property '"+HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME+"' is missing or empty ");
         }
+        sitemapItemHandlerClassName = sitemapItemHandlerClassName.intern();
         
         properties = handleNode.getValueProvider().getProperties();
         

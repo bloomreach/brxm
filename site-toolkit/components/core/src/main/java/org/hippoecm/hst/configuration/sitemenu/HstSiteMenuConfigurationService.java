@@ -34,7 +34,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
 
     public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) throws ServiceException{
        this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
-       this.name = siteMenu.getValueProvider().getName();
+       this.name = siteMenu.getValueProvider().getName().intern();
         for(HstNode siteMenuItem : siteMenu.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMENUITEM.equals(siteMenuItem.getNodeTypeName())) {
                 try {

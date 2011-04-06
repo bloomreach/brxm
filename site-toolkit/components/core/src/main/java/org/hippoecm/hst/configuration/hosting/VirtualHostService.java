@@ -79,7 +79,7 @@ public class VirtualHostService implements VirtualHost {
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
-        this.hostGroupName = hostGroupName;
+        this.hostGroupName = intern(hostGroupName);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
@@ -116,6 +116,7 @@ public class VirtualHostService implements VirtualHost {
                 this.scheme = virtualHosts.getScheme();
             }
         }
+        scheme = intern(scheme);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
@@ -127,6 +128,7 @@ public class VirtualHostService implements VirtualHost {
                 this.locale = virtualHosts.getLocale();
             }
         }
+        locale = intern(locale);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
@@ -138,6 +140,8 @@ public class VirtualHostService implements VirtualHost {
                 this.homepage = virtualHosts.getHomePage();
             }
         }
+
+        homepage = intern(homepage);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
@@ -149,6 +153,8 @@ public class VirtualHostService implements VirtualHost {
                 this.pageNotFound = virtualHosts.getPageNotFound();
             }
         }
+
+        pageNotFound = intern(pageNotFound);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
@@ -181,7 +187,7 @@ public class VirtualHostService implements VirtualHost {
             
             // if the fullName is for example 127.0.0.1, then this items name is '1', its child is 0 which has a child 0, which has
             // the last child is '127'
-            this.name = nameSegments[nameSegments.length - 1];
+            this.name = intern(nameSegments[nameSegments.length - 1]);
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
@@ -200,7 +206,7 @@ public class VirtualHostService implements VirtualHost {
             this.name = virtualHostNode.getValueProvider().getName();
         }
         
-        hostName = buildHostName();
+        hostName = intern(buildHostName());
         
         HstNode mountRoot = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mountRoot != null) {
@@ -350,5 +356,14 @@ public class VirtualHostService implements VirtualHost {
         return builder.toString();
     }
 
-    
+    /*
+     * because there can be many similar HstComponentConfigurationService instances we intern most strings to avoid many duplicate String
+     * in the java heap
+     */
+    protected String intern(String string) {
+        if(string == null) {
+            return null;
+        }
+        return string.intern();
+    }
 }

@@ -58,7 +58,7 @@ public class HstSiteMapService implements HstSiteMap {
     
     public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
-        this.siteMapRootNodePath = siteMapNode.getValueProvider().getPath();
+        this.siteMapRootNodePath = siteMapNode.getValueProvider().getPath().intern();
        
         if(!HstNodeTypes.NODETYPE_HST_SITEMAP.equals(siteMapNode.getNodeTypeName())) {
             throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getNodeTypeName()+"'");

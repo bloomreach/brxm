@@ -148,7 +148,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             while (usedReferenceNames.contains(autoRefName)) {
                 autoRefName = "r" + (++autocreatedCounter);
             }
-            ((HstComponentConfigurationService) componentConfiguration).setReferenceName(autoRefName);
+            ((HstComponentConfigurationService) componentConfiguration).setReferenceName(autoRefName.intern());
         }
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
@@ -174,7 +174,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             {
                 if(child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                  // add to the used referencenames set 
-                    usedReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
+                    usedReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME).intern());
                 }
                 try {
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
