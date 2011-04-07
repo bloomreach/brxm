@@ -16,12 +16,15 @@
 package org.hippoecm.repository.impl;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
@@ -45,16 +48,18 @@ class WorkflowPostAction implements WorkflowPostActions {
     boolean isDocumentResult;
     Node wfSubject;
     Node wfNode;
-    String info;
     Set<String> preconditionSet;
+    String workflowCategory;
+    String workflowMethod;
 
-    WorkflowPostAction(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String info) throws RepositoryException {
+    WorkflowPostAction(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
         this.workflowManager = workflowManager;
         this.sourceIdentity = wfSubject.getIdentifier();
         this.wfSubject = wfSubject;
         this.isDocumentResult = isDocumentResult;
         this.wfNode = wfNode;
-        this.info = info;
+	this.workflowCategory = workflowCategory;
+	this.workflowMethod = workflowMethod;
         if (wfNode.hasNode("hipposys:triggerdocument")) {
             // TODO
         } else if (wfNode.hasProperty("hipposys:triggerdocument")) {
@@ -71,12 +76,17 @@ class WorkflowPostAction implements WorkflowPostActions {
     private Set<String> evaluateQuery(Query query, String resultIdentity) throws RepositoryException {
         Set<String> result = new HashSet<String>();
         ValueFactory valueFactory = workflowManager.rootSession.getValueFactory();
-        query.bindValue("subject", valueFactory.createValue(sourceIdentity));
+	Map<String,Value> bindValues = new HashMap<String,Value>();
+        bindValues.put("subject", valueFactory.createValue(sourceIdentity));
         if (isDocumentResult && resultIdentity != null) {
-            try {
-            query.bindValue("result", valueFactory.createValue(resultIdentity));
-            } catch(java.lang.IllegalArgumentException ex) {
-            }
+            bindValues.put("result", valueFactory.createValue(resultIdentity));
+        }
+        bindValues.put("workflowCategory", valueFactory.createValue(workflowCategory));
+        bindValues.put("workflowMethod", valueFactory.createValue(workflowMethod));
+        for (String bindVariableName : query.getBindVariableNames()) {
+            if(bindValues.containsKey(bindVariableName)) {
+                query.bindValue(bindVariableName, bindValues.get(bindVariableName));
+	    }
         }
         QueryResult queryResult = query.execute();
         String selectorName = null;

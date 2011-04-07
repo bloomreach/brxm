@@ -35,12 +35,12 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
     }
 
     static WorkflowPostActions createPostActions(WorkflowManagerImpl workflowManager, String workflowCategory, Method workflowMethod, String sourceIdentity) {
-        if (workflowMethod.getName().equals("hints") || workflowCategory.startsWith("triggers")) {
+        if (workflowMethod.getName().equals("hints") || workflowCategory.startsWith("triggers") || workflowCategory.equals("internal")) {
             return null;
         }
         List<WorkflowPostActions> actions = new LinkedList<WorkflowPostActions>();
         try {
-            for (NodeIterator categories = workflowManager.rootSession.getNodeByUUID(workflowManager.configuration).getNodes(); categories.hasNext();) {
+            for (NodeIterator categories = workflowManager.rootSession.getNodeByIdentifier(workflowManager.configuration).getNodes(); categories.hasNext();) {
                 Node category = categories.nextNode();
                 if (category.getName().startsWith("triggers")) {
                     Node wfSubject = workflowManager.rootSession.getNodeByIdentifier(sourceIdentity);
@@ -49,7 +49,7 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
                         if (wfNode != null) {
                             WorkflowPostActions action = new WorkflowPostAction(workflowManager, wfSubject,
                                     Document.class.isAssignableFrom(workflowMethod.getReturnType()), wfNode,
-                                    workflowCategory + ":" + workflowMethod.getName());
+                                    workflowCategory, workflowMethod.getName());
                             actions.add(action);
                         }
                     } catch (RepositoryException ex) {

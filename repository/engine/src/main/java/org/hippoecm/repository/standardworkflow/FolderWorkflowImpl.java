@@ -916,7 +916,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             folder.checkout();
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination.getUUID()))).moveTo(new Document(userSubject.getUUID()), offspring, targetName, arguments);
+            ((EmbedWorkflow)workflowContext.getWorkflow("internal", new Document(destination.getUUID()))).moveTo(new Document(userSubject.getUUID()), offspring, targetName, arguments);
         }
         return null;
     }
