@@ -54,14 +54,14 @@ public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         final String popupServiceId = config.getString(CONFIG_POPUP_SERVICE_ID, IPopupService.DEFAULT_SERVICE_ID);
         popupService = context.getService(popupServiceId, IPopupService.class);
         if (popupService == null) {
-            throw new RuntimeException("No popup service configured for the website actions plugin. "
+            throw new IllegalStateException("No popup service configured for the website actions plugin. "
                     + "Please set the configuration property " + CONFIG_POPUP_SERVICE_ID);
         }
 
         final String previewSiteDocumentUrlServiceId = config.getString(CONFIG_PREVIEW_DOCUMENT_URL_SERVICE_ID, IDocumentUrlService.DEFAULT_SERVICE_ID);
         previewDocumentUrlService = context.getService(previewSiteDocumentUrlServiceId, IDocumentUrlService.class);
         if (previewDocumentUrlService == null) {
-            throw new RuntimeException("No preview document url service configured for the website actions plugin. "
+            throw new IllegalStateException("No preview document url service configured for the website actions plugin. "
                     + "Please set the configuration property " + CONFIG_PREVIEW_DOCUMENT_URL_SERVICE_ID);
         }
 
