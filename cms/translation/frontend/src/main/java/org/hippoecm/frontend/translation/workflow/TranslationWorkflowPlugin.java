@@ -664,7 +664,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 } else if (fieldType.getName().equals("Html")) {
                     richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
                 } else if (fieldType.isNode()) {
-                    System.out.println("Collecting field " + fieldDescriptor.getName() + ", path: " + fieldDescriptor.getPath() + ", type: " + fieldType.getName());
                     collectFields(session, (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(), fieldType.getType(), plainTextFields, richTextFields);
                 }
             }
