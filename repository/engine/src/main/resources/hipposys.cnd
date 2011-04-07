@@ -64,14 +64,14 @@
 + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
 + hipposys:config (nt:unstructured) = nt:unstructured
 
-[hipposys:workflowtrigger] > hipposys:workflow
+[hipposys:workflowevent] > hipposys:workflow
 
-[hipposys:workflowsimplequerytrigger] > hipposys:workflowtrigger
-- hipposys:triggerconditionoperator (string) mandatory
-- hipposys:triggerdocument (path)
-+ hipposys:triggerprecondition (nt:query)
-+ hipposys:triggerpostcondition (nt:query)
-+ hipposys:triggerdocument (nt:query)
+[hipposys:workflowsimplequeryevent] > hipposys:workflowevent
+- hipposys:eventconditionoperator (string) mandatory
+- hipposys:eventdocument (path)
++ hipposys:eventprecondition (nt:query)
++ hipposys:eventpostcondition (nt:query)
++ hipposys:eventdocument (nt:query)
 
 [hipposys:workflowcategory] > nt:base orderable
 + * (hipposys:workflow) = hipposys:workflow

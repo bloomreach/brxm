@@ -35,7 +35,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.TriggerWorkflow;
+import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,13 +60,13 @@ class WorkflowPostAction implements WorkflowPostActions {
         this.wfNode = wfNode;
 	this.workflowCategory = workflowCategory;
 	this.workflowMethod = workflowMethod;
-        if (wfNode.hasNode("hipposys:triggerdocument")) {
+        if (wfNode.hasNode("hipposys:eventdocument")) {
             // TODO
-        } else if (wfNode.hasProperty("hipposys:triggerdocument")) {
-            this.wfSubject = wfNode.getProperty("hipposys:triggerdocument").getNode();
+        } else if (wfNode.hasProperty("hipposys:eventdocument")) {
+            this.wfSubject = wfNode.getProperty("hipposys:eventdocument").getNode();
         }
-        if (wfNode.hasNode("hipposys:triggerprecondition")) {
-            Query preQuery = workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerprecondition"));
+        if (wfNode.hasNode("hipposys:eventprecondition")) {
+            Query preQuery = workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:eventprecondition"));
             preconditionSet = evaluateQuery(preQuery, null);
         } else {
             preconditionSet = new HashSet<String>();
@@ -118,13 +118,13 @@ class WorkflowPostAction implements WorkflowPostActions {
             }
         }
         try {
-            Query postQuery = (wfNode.hasNode("hipposys:triggerpostcondition") ? workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:triggerpostcondition")) : null);
+            Query postQuery = (wfNode.hasNode("hipposys:eventpostcondition") ? workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:eventpostcondition")) : null);
             Set<String> postconditionSet = null;
             if (postQuery != null) {
                 postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
                 String conditionOperator = "post\\pre";
-                if (wfNode.hasProperty("hipposys:triggerconditionoperator")) {
-                    conditionOperator = wfNode.getProperty("hipposys:triggerconditionoperator").getString();
+                if (wfNode.hasProperty("hipposys:eventconditionoperator")) {
+                    conditionOperator = wfNode.getProperty("hipposys:eventconditionoperator").getString();
                 }
                 if (conditionOperator.equals("post\\pre")) {
                     postconditionSet.removeAll(preconditionSet);
@@ -132,16 +132,16 @@ class WorkflowPostAction implements WorkflowPostActions {
                         return;
                     }
                 } else {
-                    log.warn("trigger operator " + conditionOperator + " unrecognized");
+                    log.warn("workflow event operator " + conditionOperator + " unrecognized");
                 }
             }
             Workflow workflow = workflowManager.getWorkflowInternal(wfNode, wfSubject);
-            if (workflow instanceof TriggerWorkflow) {
-                TriggerWorkflow trigger = (TriggerWorkflow)workflow;
+            if (workflow instanceof WorkflowEventWorkflow) {
+                WorkflowEventWorkflow event = (WorkflowEventWorkflow)workflow;
                 try {
                     if (postconditionSet != null) {
                         final Iterator<String> postconditionSetIterator = postconditionSet.iterator();
-                        trigger.fire(new Iterator<Document>() {
+                        event.fire(new Iterator<Document>() {
                             public boolean hasNext() {
                                 return postconditionSetIterator.hasNext();
                             }
@@ -165,9 +165,9 @@ class WorkflowPostAction implements WorkflowPostActions {
                         });
                     } else {
                         if (isDocumentResult) {
-                            trigger.fire((Document)returnObject);
+                            event.fire((Document)returnObject);
                         } else {
-                            trigger.fire();
+                            event.fire();
                         }
                     }
                 } catch (WorkflowException ex) {

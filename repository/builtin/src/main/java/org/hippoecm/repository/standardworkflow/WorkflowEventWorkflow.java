@@ -23,7 +23,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
-public interface TriggerWorkflow extends Workflow {
+public interface WorkflowEventWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
     public void fire() throws WorkflowException, MappingException, RepositoryException, RemoteException;

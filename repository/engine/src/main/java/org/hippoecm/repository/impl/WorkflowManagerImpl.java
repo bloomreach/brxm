@@ -59,7 +59,6 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.version.VersionException;
 
 import javax.jdo.JDOException;
-import org.hippoecm.repository.standardworkflow.TriggerWorkflow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +79,7 @@ import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 import org.hippoecm.repository.quartz.SchedulerWorkflowModule;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
+import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
 public class WorkflowManagerImpl implements WorkflowManager {
     @SuppressWarnings("unused")

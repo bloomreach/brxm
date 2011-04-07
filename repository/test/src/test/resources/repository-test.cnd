@@ -76,8 +76,8 @@
 + hippo:child (nt:unstructured) = nt:unstructured autocreated mandatory
 - * (string)
 
-[hippo:triggerdocument] > hippo:document
-- hippo:triggercounter (long)
+[hippo:wfeventdocument] > hippo:document
+- hippo:counter (long)
 
-[hippo:triggercounter] > hippo:document, mix:lockable
-- hippo:triggercounter (long)
+[hippo:wfeventcounter] > hippo:document, mix:lockable
+- hippo:counter (long)

@@ -23,15 +23,15 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.standardworkflow.TriggerWorkflow;
+import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
-public class TriggerWorkflowImpl extends WorkflowImpl implements TriggerWorkflow {
+public class WorkflowEventWorkflowImpl extends WorkflowImpl implements WorkflowEventWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private long counter;
 
-    public TriggerWorkflowImpl() throws RemoteException {
+    public WorkflowEventWorkflowImpl() throws RemoteException {
     }
 
     public void fire() throws WorkflowException, MappingException {
@@ -53,7 +53,6 @@ public class TriggerWorkflowImpl extends WorkflowImpl implements TriggerWorkflow
             } catch(RepositoryException ex) {
                 System.err.println(ex.getClass().getName()+": "+ex.getMessage());
                 ex.printStackTrace(System.err);
-                // FIXME log some error
             }
         }
     }

@@ -31,7 +31,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TriggerWorkflowTest extends TestCase {
+public class WorkflowEventTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,9 +41,9 @@ public class TriggerWorkflowTest extends TestCase {
     private String[] content = {
         "/test/counter",                  "hippo:handle",
         "jcr:mixinTypes",                 "hippo:hardhandle",
-        "/test/counter/counter",          "hippo:triggercounter",
+        "/test/counter/counter",          "hippo:wfeventcounter",
         "jcr:mixinTypes",                 "hippo:harddocument",
-        "hippo:triggercounter",           "1",
+        "hippo:counter",                  "1",
 
         "/test/folder",                   "hippostd:folder",
         "jcr:mixinTypes",                 "hippo:harddocument",
@@ -65,28 +65,28 @@ public class TriggerWorkflowTest extends TestCase {
         "/hippo:configuration/hippo:queries/hippo:templates/test/hippostd:templates", "hippostd:templates",
         "/hippo:configuration/hippo:queries/hippo:templates/test/hippostd:templates/prototype", "hippo:handle",
         "jcr:mixinTypes",                 "hippo:hardhandle",
-        "/hippo:configuration/hippo:queries/hippo:templates/test/hippostd:templates/prototype/prototype", "hippo:triggerdocument",
+        "/hippo:configuration/hippo:queries/hippo:templates/test/hippostd:templates/prototype/prototype", "hippo:wfeventdocument",
         "jcr:mixinTypes",                 "hippo:harddocument",
-	"hippo:triggercounter",           "0",
+	"hippo:counter",                  "0",
 
         "/hippo:configuration/hippo:workflows/postprocess", "hipposys:workflowcategory",
         "/hippo:configuration/hippo:workflows/postprocess/create", "hipposys:workflow",
-        "hipposys:nodetype", "hippo:triggerdocument",
-        "hipposys:display", "triggerdocument",
+        "hipposys:nodetype", "hippo:wfeventdocument",
+        "hipposys:display", "workflow events document",
         "hipposys:classname", "org.hippoecm.repository.test.PostProcessWorkflowImpl",
 
-        "/hippo:configuration/hippo:workflows/triggers", "hipposys:workflowcategory",
-        "/hippo:configuration/hippo:workflows/triggers/test", "hipposys:workflowsimplequerytrigger",
+        "/hippo:configuration/hippo:workflows/events", "hipposys:workflowcategory",
+        "/hippo:configuration/hippo:workflows/events/test", "hipposys:workflowsimplequeryevent",
         "hipposys:nodetype", "hippostd:folder",
-        "hipposys:display", "triggertest",
-        "hipposys:classname", "org.hippoecm.repository.test.TriggerWorkflowImpl",
-        "hipposys:triggerconditionoperator", "post\\pre",
-        "hipposys:triggerdocument", "/test/counter/counter",
-        "/hippo:configuration/hippo:workflows/triggers/test/hipposys:triggerprecondition", "nt:query",
+        "hipposys:display", "workflow events test",
+        "hipposys:classname", "org.hippoecm.repository.test.WorkflowEventWorkflowImpl",
+        "hipposys:eventconditionoperator", "post\\pre",
+        "hipposys:eventdocument", "/test/counter/counter",
+        "/hippo:configuration/hippo:workflows/events/test/hipposys:eventprecondition", "nt:query",
         "jcr:mixinTypes",                 "mix:referenceable",
         "jcr:language", "JCR-SQL2",
         "jcr:statement", "SELECT child.[jcr:uuid] AS id FROM [hippo:hardhandle] AS child INNER JOIN [hippo:document] AS parent ON ISCHILDNODE(child,parent) WHERE parent.[jcr:uuid] = $subject",
-        "/hippo:configuration/hippo:workflows/triggers/test/hipposys:triggerpostcondition", "nt:query",
+        "/hippo:configuration/hippo:workflows/events/test/hipposys:eventpostcondition", "nt:query",
         "jcr:mixinTypes",                 "mix:referenceable",
         "jcr:language", "JCR-SQL2",
         "jcr:statement", "SELECT child.[jcr:uuid] AS id FROM [hippo:hardhandle] AS child INNER JOIN [hippo:document] AS parent ON ISCHILDNODE(child,parent) WHERE parent.[jcr:uuid] = $subject"
@@ -121,8 +121,8 @@ public class TriggerWorkflowTest extends TestCase {
         if (session.getRootNode().hasNode("hippo:configuration/hippo:queries/hippo:templates/test")) {
             session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/test").remove();
         }
-        if (session.getRootNode().hasNode("hippo:configuration/hippo:workflows/triggers")) {
-            session.getRootNode().getNode("hippo:configuration/hippo:workflows/triggers").remove();
+        if (session.getRootNode().hasNode("hippo:configuration/hippo:workflows/events")) {
+            session.getRootNode().getNode("hippo:configuration/hippo:workflows/events").remove();
         }
         if (session.getRootNode().hasNode("hippo:configuration/hippo:workflows/postprocess")) {
             session.getRootNode().getNode("hippo:configuration/hippo:workflows/postprocess").remove();
@@ -132,26 +132,26 @@ public class TriggerWorkflowTest extends TestCase {
     }
 
     @Test
-    public void testTriggerFire() throws RepositoryException, WorkflowException, RemoteException {
+    public void testEventFire() throws RepositoryException, WorkflowException, RemoteException {
         Node folder = root.getNode("folder");
-        assertEquals(1L, root.getProperty("counter/counter/hippo:triggercounter").getLong());
+        assertEquals(1L, root.getProperty("counter/counter/hippo:counter").getLong());
         {
-            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("internal", folder);
-            assertEquals(1L, root.getProperty("counter/counter/hippo:triggercounter").getLong());
+            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("threepane", folder);
+            assertEquals(1L, root.getProperty("counter/counter/hippo:counter").getLong());
             String path = workflow.add("test", "prototype", "new");
             Node node = session.getRootNode().getNode(path.substring(1));
             node = node.getNode(node.getName());
-            assertTrue(node.hasProperty("hippo:triggercounter"));
-            assertEquals(1L, node.getProperty("hippo:triggercounter").getLong());
+            assertTrue(node.hasProperty("hippo:counter"));
+            assertEquals(1L, node.getProperty("hippo:counter").getLong());
         } {
-            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("internal", folder);
-            assertEquals(2L, root.getProperty("counter/counter/hippo:triggercounter").getLong());
+            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("threepane", folder);
+            assertEquals(2L, root.getProperty("counter/counter/hippo:counter").getLong());
             String path = workflow.add("test", "prototype", "new");
             Node node = session.getRootNode().getNode(path.substring(1));
             node = node.getNode(node.getName());
-            assertTrue(node.hasProperty("hippo:triggercounter"));
-            assertEquals(2L, node.getProperty("hippo:triggercounter").getLong());
+            assertTrue(node.hasProperty("hippo:counter"));
+            assertEquals(2L, node.getProperty("hippo:counter").getLong());
         }
-        assertEquals(3L, root.getProperty("counter/counter/hippo:triggercounter").getLong());
+        assertEquals(3L, root.getProperty("counter/counter/hippo:counter").getLong());
     }
 }

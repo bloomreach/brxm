@@ -29,11 +29,11 @@
       <inheritance strategy="subclass-table"/>
       <field name="self" column="."/>
     </class>
-    <class name="TriggerWorkflowImpl" detachable="false" identity-type="datastore">
-     <field name="counter" column="hippo:triggercounter"/>
+    <class name="WorkflowEventWorkflowImpl" detachable="false" identity-type="datastore">
+     <field name="counter" column="hippo:counter"/>
     </class>
     <class name="PostProcessWorkflowImpl" detachable="false" identity-type="datastore">
-      <field name="identifier" column="hippo:triggercounter"/>
+      <field name="identifier" column="hippo:counter"/>
     </class>
   </package>
 </jdo>
