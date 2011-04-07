@@ -16,7 +16,8 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Enumeration;
@@ -28,7 +29,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
 public class WebCredentials implements Credentials, CallbackHandler {
     @SuppressWarnings("unused")
@@ -70,8 +70,18 @@ public class WebCredentials implements Credentials, CallbackHandler {
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
-            if (callback instanceof CredentialsCallback) {
-                ((CredentialsCallback)callback).setCredentials(this);
+            if (callback != null && callback.getClass().getName().equals("org.apache.jackrabbit.core.security.authentication.CredentialsCallback")) {
+                try {
+                    Method method = callback.getClass().getMethod("setCredentials", new Class[] {javax.jcr.Credentials.class});
+                    method.invoke(callback, new Object[] {this});
+                } catch (IllegalAccessException ex) {
+                    throw new IOException(ex);
+                } catch (InvocationTargetException ex) {
+                    // setCredentials has no declared Exception, so no need to rethrow them
+                    throw new IOException(ex); // cannot happen because of setCredentials declaration
+                } catch (NoSuchMethodException ex) {
+                    throw new IOException(ex);
+                }
             } else if (callback instanceof NameCallback) {
                 NameCallback nameCallback = (NameCallback)callback;
                 if (username != null) {
