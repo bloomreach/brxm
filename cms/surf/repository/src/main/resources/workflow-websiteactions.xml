@@ -29,7 +29,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Website acties</sv:value>
+      <sv:value>Bekijk</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -40,7 +40,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Website actions</sv:value>
+      <sv:value>View</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -51,7 +51,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Actions site web</sv:value>
+      <sv:value>Afficher</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -62,7 +62,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Website azione</sv:value>
+      <sv:value>Mostra</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="button">
