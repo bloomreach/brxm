@@ -82,4 +82,19 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="popupSocialMediaService">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.social.PopupSocialMediaService</sv:value>
+    </sv:property>
+    <sv:property sv:name="service.id" sv:type="String">
+      <sv:value>popup.social.media.service</sv:value>
+    </sv:property>
+    <sv:property sv:name="popup.service.id" sv:type="String">
+      <sv:value>ajax.popup.service</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>

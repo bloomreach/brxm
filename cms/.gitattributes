@@ -1780,6 +1780,8 @@ skin/src/main/webapp/screen_ie.css -text svneol=unset#text/plain
 skin/src/main/webapp/xinhaInternal.css svneol=native#text/css
 sso/src/test/java/org/onehippo/sso/CredentialCipherTest.java -text
 surf/frontend/pom.xml -text
+surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.html -text
+surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.java -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.html -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.java -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/websiteactions/WebsiteActionsPlugin.properties -text
@@ -1796,10 +1798,18 @@ surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService
 surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_it.properties -text
 surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/AjaxPopupService_nl.properties -text
 surf/frontend/src/main/java/org/hippoecm/frontend/service/popup/IPopupService.java -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/ISocialMediaService.java -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/ISocialMedium.java -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/PopupSocialMediaService.java -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/PopupSocialMedium.java -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/facebook-icon-16.png -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/linkedin-icon-16.png -text
+surf/frontend/src/main/java/org/hippoecm/frontend/service/social/twitter-icon-16.png -text
 surf/pom.xml -text
 surf/repository/pom.xml -text
 surf/repository/src/main/resources/cms-services-surf.xml -text
 surf/repository/src/main/resources/hippoecm-extension.xml -text
+surf/repository/src/main/resources/workflow-socialsharing.xml -text
 surf/repository/src/main/resources/workflow-websiteactions.xml -text
 test/src/main/resources/jta.properties svneol=native#text/plain
 test/src/main/resources/log4j.dtd svneol=native#text/plain
