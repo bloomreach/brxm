@@ -37,11 +37,13 @@ public abstract class LookupDialog extends AbstractDialog<Node> {
 
     private LookupTargetTreeView tree;
     private IJcrTreeModel treeModel;
+    private JcrNodeModel originalModel;
 
-    protected LookupDialog(JcrTreeNode rootNode) {
+    protected LookupDialog(JcrTreeNode rootNode, JcrNodeModel nodeModel) {
         treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
+        originalModel = nodeModel;
         add(tree);
     }
 
@@ -61,6 +63,10 @@ public abstract class LookupDialog extends AbstractDialog<Node> {
     }
 
     protected void onSelect(IModel<Node> nodeModel) {
+    }
+
+    protected JcrNodeModel getOriginalModel() {
+      return originalModel;
     }
 
     @Override

@@ -42,19 +42,15 @@ public class MoveDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
-    private MenuPlugin plugin;
     private String name;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
 
-    public MoveDialog(MenuPlugin plugin) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null));
-
-        this.plugin = plugin;
-
-        JcrNodeModel model = (JcrNodeModel) plugin.getDefaultModel();
+    public MoveDialog(JcrNodeModel model) {
+        super(new JcrTreeNode(new JcrNodeModel("/"), null), model);
         setSelectedNode(model);
+
         try {
             if (model.getParentModel() != null) {
                 add(new Label("source", model.getNode().getPath()));
@@ -111,7 +107,7 @@ public class MoveDialog extends LookupDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+            JcrNodeModel nodeModel = getOriginalModel();
 
             IModel<Node> selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
@@ -130,7 +126,7 @@ public class MoveDialog extends LookupDialog {
 
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
-                plugin.setDefaultModel(new JcrNodeModel(targetNode));
+                setDefaultModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());

@@ -163,17 +163,35 @@ body.hippo-root div.yui-log-container {
   -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
 }
 .hippo-console-contextmenu li {
-  padding: 1px;
+  position: relative;
+  height: 20px;
 }
-.hippo-console-contextmenu li:hover {
-  background-color: #ABD5FF;
+.hippo-console-contextmenu li.separator {
+  border-bottom: 1px solid #999999;
 }
 .hippo-console-contextmenu img {
-  padding-left: 4px;
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  z-index: 2;
 }
 .hippo-console-contextmenu .menu-item {
-  padding-left: 4px;
+  position: absolute;
 }
 .hippo-console-contextmenu .menu-item a {
   color: #000000;
+  width: 148px;
+  height: 20px;
+  display: block;
+  position: absolute;
+  left: 1px;
+  z-index: 1;
+}
+.hippo-console-contextmenu .menu-item a:hover {
+  background-color: #ABD5FF;
+}
+.hippo-console-contextmenu .menu-item a span {
+  position: absolute;
+  left: 25px;
+  top: 3px;
 }

@@ -39,15 +39,12 @@ public class DeleteDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
 
-    private MenuPlugin plugin;
-
-    public DeleteDialog(MenuPlugin plugin) {
-        this.plugin = plugin;
+    public DeleteDialog(JcrNodeModel model) {
+        setModel(model);
 
         String path;
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-            path = nodeModel.getNode().getPath();
+            path = model.getNode().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
@@ -59,14 +56,14 @@ public class DeleteDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
             JcrNodeModel parentModel = nodeModel.getParentModel();
             
             //The actual JCR remove
             nodeModel.getNode().remove();
 
             //set the parent model as current model
-            plugin.setDefaultModel(parentModel);
+            this.setDefaultModel(parentModel);
         } catch (RepositoryException ex) {
             log.error("Error while deleting document", ex);
             error("Error while deleting document " + ex.getMessage());

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.browser;
 
+import javax.jcr.Node;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -28,6 +29,7 @@ import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -40,6 +42,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
+import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
+import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
+import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
+import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
+import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -122,7 +129,7 @@ public class BrowserPlugin extends RenderPlugin {
             super.populateTreeItem(item, level);
 
             IJcrTreeNode treeNode = (IJcrTreeNode) item.getDefaultModelObject();
-            final WebMarkupContainer menu = createContextMenu("contextMenu", 1, (JcrNodeModel) treeNode.getNodeModel());
+            final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel());
             item.add(menu);
             item.add(new RightClickBehavior(menu, item) {
                 @Override
@@ -149,10 +156,106 @@ public class BrowserPlugin extends RenderPlugin {
             }
         }
 
-        private WebMarkupContainer createContextMenu(String contextMenu, final int index, final JcrNodeModel model) {
+        private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model) {
             WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
             menuContainer.setOutputMarkupId(true);
             menuContainer.setVisible(false);
+
+            // add node
+            IDialogFactory dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Node> createDialog() {
+                    return new NodeDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("add-node", new Model("Add node"), dialogFactory, getDialogService()));
+            // add node icon
+            Image iconAddNode = new Image("icon-add-node") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "add-node.gif");
+                }
+            };
+            iconAddNode.setOutputMarkupId(true);
+            menuContainer.add(iconAddNode);
+
+            // delete node
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Node> createDialog() {
+                    return new DeleteDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("delete-node", new Model("Delete node"), dialogFactory, getDialogService()));
+            // delete node icon
+            Image iconDeleteNode = new Image("icon-delete-node") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "delete-node.gif");
+                }
+            };
+            iconDeleteNode.setOutputMarkupId(true);
+            menuContainer.add(iconDeleteNode);
+
+            // copy node
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Node> createDialog() {
+                    return new CopyDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("copy-node", new Model("Copy node"), dialogFactory, getDialogService()));
+            // copy node icon
+            Image iconCopyNode = new Image("icon-copy-node") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "copy-node.gif");
+                }
+            };
+            iconCopyNode.setOutputMarkupId(true);
+            menuContainer.add(iconCopyNode);
+
+            // move node
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Node> createDialog() {
+                    return new MoveDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("move-node", new Model("Move node"), dialogFactory, getDialogService()));
+            // copy node icon
+            Image iconMoveNode = new Image("icon-move-node") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "move-node.gif");
+                }
+            };
+            iconMoveNode.setOutputMarkupId(true);
+            menuContainer.add(iconMoveNode);
+
+            // rename node
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                public AbstractDialog<Node> createDialog() {
+                    return new RenameDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("rename-node", new Model("Rename node"), dialogFactory, getDialogService()));
+            // copy node icon
+            Image iconRenameNode = new Image("icon-rename-node") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "rename-node.gif");
+                }
+            };
+            iconRenameNode.setOutputMarkupId(true);
+            menuContainer.add(iconRenameNode);
+
             // xml export
             IDialogFactory factory1 = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
@@ -179,7 +282,7 @@ public class BrowserPlugin extends RenderPlugin {
                 }
             };
             menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), factory2, getDialogService()));
-            // xml export icon
+            // xml import icon
             Image iconXmlImport = new Image("icon-xml-import") {
                 private static final long serialVersionUID = 1L;
                 @Override

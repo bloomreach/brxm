@@ -51,17 +51,16 @@ public class NodeDialog extends AbstractDialog<Node> {
     
     static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
     
-    private MenuPlugin plugin;
     private String name;
     private String type = "nt:unstructured";
 
     private final Map<String,String> choices = new HashMap<String, String>();
 
-    public NodeDialog(MenuPlugin plugin) {
-        this.plugin = plugin;
+    public NodeDialog(final JcrNodeModel nodeModel) {
+        setModel(nodeModel);
         
         // list defined child node names and types for automatic completion
-        Node node = ((JcrNodeModel)plugin.getDefaultModel()).getNode();
+        Node node = nodeModel.getNode();
         try {
             NodeType pnt = node.getPrimaryNodeType();
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
@@ -155,10 +154,10 @@ public class NodeDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
             Node node = nodeModel.getNode().addNode(getName(), getType());
 
-            plugin.setDefaultModel(new JcrNodeModel(node));
+            this.setDefaultModel(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
             error(ex.toString());
         }

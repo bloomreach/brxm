@@ -29,7 +29,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
@@ -42,18 +41,15 @@ public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
-    private MenuPlugin plugin;
     private String name;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
 
-    public CopyDialog(MenuPlugin plugin) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null));
-
-        this.plugin = plugin;
-        JcrNodeModel model = (JcrNodeModel) plugin.getDefaultModel();
+    public CopyDialog(JcrNodeModel model) {
+        super(new JcrTreeNode(new JcrNodeModel("/"), null), model);
         setSelectedNode(model);
+
         try {
             if (model.getParentModel() != null) {
                 setSelectedNode(model.getParentModel());
@@ -112,7 +108,7 @@ public class CopyDialog extends LookupDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+            JcrNodeModel nodeModel = getOriginalModel();
 
             IModel<Node> selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
@@ -130,7 +126,7 @@ public class CopyDialog extends LookupDialog {
 
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
-                plugin.setDefaultModel(new JcrNodeModel(targetNode));
+                this.setDefaultModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
