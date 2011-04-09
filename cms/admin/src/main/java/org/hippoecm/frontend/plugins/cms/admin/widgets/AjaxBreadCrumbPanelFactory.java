@@ -28,11 +28,11 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    /** Class to construct. */
     private Class panelClass;
+    private final IPluginContext context;
 
     public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
-        return create(componentId, null, breadCrumbModel);
+        return create(componentId, context, breadCrumbModel);
     }
 
     /**
@@ -43,7 +43,8 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
      *            and must have constructor
      *            {@link BreadCrumbPanel#BreadCrumbPanel(String, IBreadCrumbModel)}
      */
-    public AjaxBreadCrumbPanelFactory(final Class panelClass) {
+    public AjaxBreadCrumbPanelFactory(IPluginContext context, final Class panelClass) {
+        this.context = context;
         if (panelClass == null) {
             throw new IllegalArgumentException("argument panelClass must be not null");
         }
@@ -54,39 +55,13 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
         }
 
         this.panelClass = panelClass;
-
-        // check whether it has the proper constructor
-        getConstructor();
-    }
-    /**
-     * Construct.
-     * 
-     * @param panelClass
-     *            The class to use for creating instances. Must be of type {@link BreadCrumbPanel},
-     *            and must have constructor
-     *            {@link BreadCrumbPanel#BreadCrumbPanel(String, IBreadCrumbModel)}
-     */
-    public AjaxBreadCrumbPanelFactory(final Class panelClass, IModel model) {
-        if (panelClass == null) {
-            throw new IllegalArgumentException("argument panelClass must be not null");
-        }
-
-        if (!BreadCrumbPanel.class.isAssignableFrom(panelClass)) {
-            throw new IllegalArgumentException("argument panelClass (" + panelClass + ") must extend class "
-                    + BreadCrumbPanel.class.getName());
-        }
-
-        this.panelClass = panelClass;
-
-        // check whether it has the proper constructor
-        getModelConstructor();
     }
 
     /**
      * @see org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory#create(java.lang.String,
      *      org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel)
      */
-    public BreadCrumbPanel create(String componentId, IPluginContext context, IBreadCrumbModel breadCrumbModel) {
+    private BreadCrumbPanel create(String componentId, IPluginContext context, IBreadCrumbModel breadCrumbModel) {
         Constructor ctor = getConstructor();
         try {
             return (BreadCrumbPanel) ctor.newInstance(new Object[] { componentId, context, breadCrumbModel });
@@ -99,7 +74,7 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
      * @see org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory#create(java.lang.String,
      *      org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel)
      */
-    public BreadCrumbPanel create(String componentId, IPluginContext context, IBreadCrumbModel breadCrumbModel, IModel model) {
+    public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel, IModel model) {
         Constructor ctor = getModelConstructor();
         try {
             return (BreadCrumbPanel) ctor.newInstance(new Object[] { componentId, context, breadCrumbModel, model });

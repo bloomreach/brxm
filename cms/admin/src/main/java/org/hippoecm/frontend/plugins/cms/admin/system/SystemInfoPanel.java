@@ -25,7 +25,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.PropertyPopul
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 
@@ -76,7 +76,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
     }
 
     public IModel getTitle(Component component) {
-        return new StringResourceModel("admin-system-info-title", component, null);
+        return new ResourceModel("admin-system-info-title");
     }
 
 }

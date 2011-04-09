@@ -16,26 +16,7 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <ul class="hippo-controlpanel-navigation">
-      <li class="icon-48"><a class="users-48" href="#" wicket:id="users"><wicket:message key="admin-users-title"/>
-        <span><wicket:message key="admin-users-title-help"/></span>
-      </a>
-      </li>
-      <li  class="icon-48"><a class="groups-48" href="#" wicket:id="groups"><wicket:message key="admin-groups-title"/>
-        <span><wicket:message key="admin-groups-title-help"/></span>
-      </a>
-      </li>
-      <li class="icon-48"><a class="permissions-48" href="#" wicket:id="permissions"><wicket:message key="admin-permissions-title"/>
-        <span><wicket:message key="admin-permissions-title-help"/></span>
-      </a>
-      </li>
-      <li  class="icon-48"><a class="system-info-48" href="#" wicket:id="system-info"><wicket:message key="admin-system-info-title"/>
-        <span><wicket:message key="admin-system-info-title-help"/></span>
-      </a>
-      </li>
-      <li  class="icon-48"><a class="system-properties-48" href="#" wicket:id="system-properties"><wicket:message key="admin-system-properties-title"/>
-        <span><wicket:message key="admin-system-properties-title-help"/></span>
-      </a>
-      </li>
+      <li wicket:id="panels" class="icon-48"><a href="#" wicket:id="link"><img wicket:id="img" /><div><span wicket:id="title" /><span wicket:id="help" /></div></a></li>
     </ul>
   </wicket:extend>
 </html>

@@ -4,19 +4,38 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/configs/ListConfigsPanel.html -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/configs/ListConfigsPanel.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbBar$BreadCrumbComponent.html -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbBar.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/AdminBreadCrumbPanel.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/crumbs/IAdminParticipant.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-back.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-breacrumbs-arrow.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-48.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_fr.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_it.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-128.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-16.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-32.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-48.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-128.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-16.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-48.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
@@ -1521,10 +1540,6 @@ skin/src/main/webapp/images/icons/arrow-sort-down-16.png -text
 skin/src/main/webapp/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/arrow-sort-up-16.png -text
-skin/src/main/webapp/images/icons/commandline-128.png -text
-skin/src/main/webapp/images/icons/commandline-16.png -text
-skin/src/main/webapp/images/icons/commandline-32.png -text
-skin/src/main/webapp/images/icons/commandline-48.png -text
 skin/src/main/webapp/images/icons/copy-16.png -text
 skin/src/main/webapp/images/icons/delete-inline-128.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/delete-inline-16.png -text svneol=unset#image/png
@@ -1613,10 +1628,6 @@ skin/src/main/webapp/images/icons/go-up-16.png -text
 skin/src/main/webapp/images/icons/go-up-32.png -text
 skin/src/main/webapp/images/icons/go-up-48.png -text
 skin/src/main/webapp/images/icons/go-up-disabled-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/groups-128.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/groups-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/groups-32.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/groups-48.png -text svneol=unset#image/png
 skin/src/main/webapp/images/icons/image-add-128.png -text
 skin/src/main/webapp/images/icons/image-add-16.png -text
 skin/src/main/webapp/images/icons/image-add-32.png -text
@@ -1652,10 +1663,6 @@ skin/src/main/webapp/images/icons/panel-toggle-version-128.png -text
 skin/src/main/webapp/images/icons/panel-toggle-version-16.png -text
 skin/src/main/webapp/images/icons/panel-toggle-version-32.png -text
 skin/src/main/webapp/images/icons/panel-toggle-version-48.png -text
-skin/src/main/webapp/images/icons/permissions-128.png -text
-skin/src/main/webapp/images/icons/permissions-16.png -text
-skin/src/main/webapp/images/icons/permissions-32.png -text
-skin/src/main/webapp/images/icons/permissions-48.png -text
 skin/src/main/webapp/images/icons/publish-128.png -text
 skin/src/main/webapp/images/icons/publish-16.png -text
 skin/src/main/webapp/images/icons/publish-32.png -text
@@ -1690,15 +1697,6 @@ skin/src/main/webapp/images/icons/support-128.png -text
 skin/src/main/webapp/images/icons/support-16.png -text
 skin/src/main/webapp/images/icons/support-32.png -text
 skin/src/main/webapp/images/icons/support-48.png -text
-skin/src/main/webapp/images/icons/system-info-128.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-info-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-info-32.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-info-48.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-properties-128.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-properties-16.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-properties-24.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-properties-32.png -text svneol=unset#image/png
-skin/src/main/webapp/images/icons/system-properties-48.png -text
 skin/src/main/webapp/images/icons/tested-128.png -text
 skin/src/main/webapp/images/icons/tested-16.png -text
 skin/src/main/webapp/images/icons/tested-32.png -text
@@ -1712,10 +1710,6 @@ skin/src/main/webapp/images/icons/unzip-128.png -text
 skin/src/main/webapp/images/icons/unzip-16.png -text
 skin/src/main/webapp/images/icons/unzip-32.png -text
 skin/src/main/webapp/images/icons/unzip-48.png -text
-skin/src/main/webapp/images/icons/user-128.png -text
-skin/src/main/webapp/images/icons/user-16.png -text
-skin/src/main/webapp/images/icons/user-32.png -text
-skin/src/main/webapp/images/icons/user-48.png -text
 skin/src/main/webapp/images/icons/version-128.png -text
 skin/src/main/webapp/images/icons/version-16.png -text
 skin/src/main/webapp/images/icons/version-32.png -text

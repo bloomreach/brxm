@@ -20,9 +20,7 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
@@ -45,8 +43,7 @@ public class SystemPropertiesPanel extends AdminBreadCrumbPanel {
     }
 
     public IModel getTitle(Component component) {
-        return new StringResourceModel("admin-system-properties-title", component, null);
+        return new ResourceModel("admin-system-properties-title");
     }
 
-    
 }

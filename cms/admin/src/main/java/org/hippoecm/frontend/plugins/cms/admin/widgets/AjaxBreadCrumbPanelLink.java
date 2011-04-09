@@ -32,49 +32,16 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
     private final AjaxBreadCrumbPanelFactory breadCrumbPanelFactory;
 
     /** the plugin context */
-    private final IPluginContext context;
-
-    /** the plugin context */
     private final IModel model;
 
-    /**
-     * Construct.
-     * 
-     * @param id
-     *            The component id
-     * @param caller
-     *            The calling panel which will be used to get the
-     *            {@link IBreadCrumbModel bread crumb model} from.
-     * @param panelClass
-     *            The class to use for creating instances. Must be of type {@link BreadCrumbPanel},
-     *            and must have constructor
-     *            {@link BreadCrumbPanel#BreadCrumbPanel(String, IBreadCrumbModel)}
-     */
     public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final BreadCrumbPanel caller,
             final Class panelClass) {
-        this(id, context, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(panelClass));
+        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, panelClass));
     }
 
     public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final BreadCrumbPanel caller,
             final Class panelClass, IModel model) {
-        this(id, context, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(panelClass, model), model);
-    }
-
-    /**
-     * Construct.
-     * 
-     * @param id
-     *            The component id
-     * @param breadCrumbModel
-     *            The bread crumb model
-     * @param panelClass
-     *            The class to use for creating instances. Must be of type {@link BreadCrumbPanel},
-     *            and must have constructor
-     *            {@link BreadCrumbPanel#BreadCrumbPanel(String, IBreadCrumbModel)}
-     */
-    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context,
-            final IBreadCrumbModel breadCrumbModel, final Class panelClass) {
-        this(id, context, breadCrumbModel, new AjaxBreadCrumbPanelFactory(panelClass));
+        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, panelClass), model);
     }
 
     /**
@@ -87,8 +54,8 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
      * @param breadCrumbPanelFactory
      *            The factory to create bread crumb panels
      */
-    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context,
-            final IBreadCrumbModel breadCrumbModel, final AjaxBreadCrumbPanelFactory breadCrumbPanelFactory) {
+    public AjaxBreadCrumbPanelLink(final String id, final IBreadCrumbModel breadCrumbModel,
+            final AjaxBreadCrumbPanelFactory breadCrumbPanelFactory) {
         super(id, breadCrumbModel);
 
         if (breadCrumbModel == null) {
@@ -99,13 +66,12 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
         }
 
         this.model = null;
-        this.context = context;
         this.breadCrumbModel = breadCrumbModel;
         this.breadCrumbPanelFactory = breadCrumbPanelFactory;
     }
 
-    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context,
-            final IBreadCrumbModel breadCrumbModel, final AjaxBreadCrumbPanelFactory breadCrumbPanelFactory, IModel model) {
+    public AjaxBreadCrumbPanelLink(final String id, final IBreadCrumbModel breadCrumbModel,
+            final AjaxBreadCrumbPanelFactory breadCrumbPanelFactory, IModel model) {
         super(id, breadCrumbModel);
 
         if (breadCrumbModel == null) {
@@ -118,7 +84,6 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
             throw new IllegalArgumentException("argument breadCrumbPanelFactory must be not null");
         }
         this.model = model;
-        this.context = context;
         this.breadCrumbModel = breadCrumbModel;
         this.breadCrumbPanelFactory = breadCrumbPanelFactory;
     }
@@ -130,9 +95,9 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
      */
     protected final IBreadCrumbParticipant getParticipant(String componentId) {
         if (model != null) {
-            return breadCrumbPanelFactory.create(componentId, context, breadCrumbModel, model);
+            return breadCrumbPanelFactory.create(componentId, breadCrumbModel, model);
         }
-        return breadCrumbPanelFactory.create(componentId, context, breadCrumbModel);
+        return breadCrumbPanelFactory.create(componentId, breadCrumbModel);
     }
 
 }

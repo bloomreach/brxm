@@ -210,15 +210,24 @@ table.hippo-controlpanel-body {
 
 .hippo-controlpanel-navigation li a {
   color: #666666;
-  width: 150px;
+  width: 230px;
   border: 1px solid #f2f2f2;
   height: 47px;
   padding: 10px;
   float: left;
   margin: 10px;
-  padding-left: 80px;
+  padding-left: 10px;
   font-size: 12px;
   font-weight: bold
+}
+
+.hippo-controlpanel-navigation li a div {
+  width: 150px;
+  float: right;
+}
+
+.hippo-controlpanel-navigation li a img {
+  float: left;
 }
 
 .hippo-controlpanel-navigation li a:hover {
@@ -311,3 +320,5 @@ div.hippo-controlpanel-actions-top {
   background-position: bottom center;
   margin-bottom: 15px;
 }
+
+

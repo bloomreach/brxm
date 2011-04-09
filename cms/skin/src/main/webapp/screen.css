@@ -1805,41 +1805,8 @@ div.wicket-modal div.wicket-tree {
   background-image: url("images/icons/document-48.png")
 }
 
-/* control panel */
-.users-48 {
-  background-image: url("images/icons/user-48.png")
-}
-
-.groups-48 {
-  background-image: url("images/icons/groups-48.png")
-}
-
-.groups-16 {
-  background-image: url("images/icons/groups-16.png")
-}
-
 .documents-32 {
   background-image: url(images/icons/emblem-documents-32.png)
-}
-
-.permissions-48 {
-  background-image: url("images/icons/permissions-48.png")
-}
-
-.controlpanel-48 {
-  background-image: url("images/icons/controlpanel-48.png")
-}
-
-.commandline-48 {
-  background-image: url("images/icons/commandline-48.png")
-}
-
-.system-properties-48 {
-  background-image: url("images/icons/system-properties-48.png")
-}
-
-.system-info-48 {
-  background-image: url("images/icons/system-info-48.png")
 }
 
 .state-review-16 {
