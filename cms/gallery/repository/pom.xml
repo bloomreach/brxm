@@ -70,7 +70,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
