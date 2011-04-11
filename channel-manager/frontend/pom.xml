@@ -22,42 +22,42 @@
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-engine</artifactId>
-            <version>${cms.version}</version>
+            <version>${hippo.cms.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-api</artifactId>
-            <version>${cms.version}</version>
+            <version>${hippo.cms.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-connector</artifactId>
-            <version>${repository.version}</version>
+            <version>${hippo.repository.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-editor-frontend</artifactId>
-            <version>${cms.version}</version>
+            <version>${hippo.cms.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-gallery-frontend</artifactId>
-            <version>${cms.version}</version>
+            <version>${hippo.cms.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-cms-browse</artifactId>
-            <version>${cms.version}</version>
+            <version>${hippo.cms.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.onehippo.cms7</groupId>
             <artifactId>hippo-repository-api</artifactId>
-            <version>${repository.version}</version>
+            <version>${hippo.repository.version}</version>
             <scope>provided</scope>
         </dependency>
 
