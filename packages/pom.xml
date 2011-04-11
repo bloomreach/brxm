@@ -36,11 +36,12 @@
   </scm>
 
   <properties>
-    <repository.version>2.19.02</repository.version>
-    <cms.version>2.19.02</cms.version>
-    <publication-workflow.version>2.19.02</publication-workflow.version>
-    <faceteddate.version>2.18.01</faceteddate.version>
-    <defaultcontent.version>2.19.02</defaultcontent.version>
+    <hippo.repository.version>2.19.02</hippo.repository.version>
+    <hippo.cms.version>2.19.02</hippo.cms.version>
+    <hippo.addon-publication-workflow.version>2.19.02</hippo.addon-publication-workflow.version>
+    <hippo.addon-faceteddate.version>2.18.01</hippo.addon-faceteddate.version>
+    <hippo.addon-defaultcontent.version>2.19.02</hippo.addon-defaultcontent.version>
+
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.servlet.version>2.4</javax.servlet.version>
     <commons-lang.version>2.4</commons-lang.version>

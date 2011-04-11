@@ -32,13 +32,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-resources</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-resources</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <type>war</type>
     </dependency>
   </dependencies>

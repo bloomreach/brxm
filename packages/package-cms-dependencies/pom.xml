@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-dependencies</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
       <type>pom</type>
     </dependency>
 
@@ -40,19 +40,19 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-frontend</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
 
@@ -60,13 +60,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-repository</artifactId>
-      <version>${faceteddate.version}</version>
+      <version>${hippo.addon-faceteddate.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-frontend</artifactId>
-      <version>${faceteddate.version}</version>
+      <version>${hippo.addon-faceteddate.version}</version>
       <type>jar</type>
     </dependency>
 
@@ -82,18 +82,18 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-dependencies</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-upgrade</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-servlets</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
 
     <dependency>

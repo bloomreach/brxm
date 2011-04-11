@@ -46,19 +46,19 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-frontend</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <type>jar</type>
     </dependency>
 
@@ -66,13 +66,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-repository</artifactId>
-      <version>${faceteddate.version}</version>
+      <version>${hippo.addon-faceteddate.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-faceteddate-frontend</artifactId>
-      <version>${faceteddate.version}</version>
+      <version>${hippo.addon-faceteddate.version}</version>
       <type>jar</type>
     </dependency>
 
