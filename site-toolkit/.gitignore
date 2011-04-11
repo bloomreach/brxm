@@ -11,6 +11,8 @@ api/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepositoryAware.class
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/SessionDecorator.class
 api/target
 /build.properties
+client-modules/.project
+client-modules/.settings
 client-modules/page-composer/.classpath
 client-modules/page-composer/.project
 client-modules/page-composer/.settings
@@ -83,9 +85,19 @@ demosuite/site/bin
 demosuite/site/build.properties
 demosuite/site/target
 demosuite/target
+dependencies/.project
+dependencies/.settings
+dependencies/client-dependencies/.project
+dependencies/client-dependencies/.settings
 dependencies/client-dependencies/target
+dependencies/server-dependencies/.project
+dependencies/server-dependencies/.settings
 dependencies/server-dependencies/target
+dependencies/shared-dependencies/.project
+dependencies/shared-dependencies/.settings
 dependencies/shared-dependencies/target
+dependencies/spring-dependencies/.project
+dependencies/spring-dependencies/.settings
 dependencies/spring-dependencies/target
 dependencies/target
 mock/.classpath
@@ -93,6 +105,8 @@ mock/.project
 mock/.settings
 mock/target
 /repository
+sandbox/.project
+sandbox/.settings
 sandbox/ocm/.classpath
 sandbox/ocm/.project
 sandbox/ocm/.settings
@@ -107,6 +121,8 @@ test/.classpath
 test/.project
 test/.settings
 test/target
+toolkit-resources/.project
+toolkit-resources/.settings
 toolkit-resources/addon/.classpath
 toolkit-resources/addon/.project
 toolkit-resources/addon/.settings
@@ -116,6 +132,8 @@ toolkit-resources/addon/repository/.settings
 toolkit-resources/addon/repository/bin
 toolkit-resources/addon/repository/target
 toolkit-resources/addon/target
+toolkit-resources/addon/toolkit-cnd/.project
+toolkit-resources/addon/toolkit-cnd/.settings
 toolkit-resources/addon/toolkit-cnd/cnd/.classpath
 toolkit-resources/addon/toolkit-cnd/cnd/.project
 toolkit-resources/addon/toolkit-cnd/cnd/.settings
