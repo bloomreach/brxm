@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   Copyright 2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -44,7 +43,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>English</sv:value>
       </sv:property>
-    </sv:node>  
+    </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -80,7 +79,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>French</sv:value>
       </sv:property>
-    </sv:node>  
+    </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -116,7 +115,7 @@
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>Dutch</sv:value>
       </sv:property>
-    </sv:node>  
+    </sv:node>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -134,10 +133,10 @@
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
     <sv:property sv:name="language" sv:type="String">
-      <sv:value>nl</sv:value>
+      <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="country" sv:type="String">
-      <sv:value>nl</sv:value>
+      <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
