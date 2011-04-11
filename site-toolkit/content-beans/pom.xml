@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.repository.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.onehippo.cms7</groupId>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.onehippo.cms7</groupId>

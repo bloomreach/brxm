@@ -98,11 +98,11 @@
     <jackrabbit.version>2.2.5</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <cms.version>2.19.02</cms.version>
-    <repository.version>2.19.02</repository.version>
-    <hippo-packages.version>2.19.02</hippo-packages.version>
-    <publication-workflow.version>2.19.02</publication-workflow.version>
-    <configeditor.version>1.05.01</configeditor.version>
+    <hippo.cms.version>2.19.02</hippo.cms.version>
+    <hippo.repository.version>2.19.02</hippo.repository.version>
+    <hippo.packages.version>2.19.02</hippo.packages.version>
+    <hippo.addon-publication-workflow.version>2.19.02</hippo.addon-publication-workflow.version>
+    <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
   
    
     <jdo.version>2.3-eb</jdo.version>
@@ -213,7 +213,7 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
-        <version>${repository.version}</version>
+        <version>${hippo.repository.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -547,7 +547,7 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-connector</artifactId>
-        <version>${repository.version}</version>
+        <version>${hippo.repository.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.slf4j</groupId>
@@ -564,21 +564,21 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
-        <version>${repository.version}</version>
+        <version>${hippo.repository.version}</version>
          <scope>provided</scope>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-publication-workflow-common</artifactId>
-        <version>${publication-workflow.version}</version>
+        <version>${hippo.addon-publication-workflow.version}</version>
         <scope>provided</scope>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-package-cms-war</artifactId>
-        <version>${hippo-packages.version}</version>
+        <version>${hippo.packages.version}</version>
         <type>war</type>
       </dependency>
       

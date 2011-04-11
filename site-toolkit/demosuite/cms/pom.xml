@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
-      <version>${hippo-packages.version}</version>
+      <version>${hippo.packages.version}</version>
       <type>pom</type>
       <exclusions>
         <!-- TODO: jta transitive dependency pulled in through repository-engine/quartz-scheduler
@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-resources</artifactId>
-      <version>${hippo-packages.version}</version>
+      <version>${hippo.packages.version}</version>
       <type>war</type>
     </dependency>
     

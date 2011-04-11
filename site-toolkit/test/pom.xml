@@ -46,13 +46,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <classifier>tests</classifier>
     </dependency>
     <!-- end  repository engine -->
@@ -60,73 +60,73 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-upgrade</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-xinha-integration</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-plugins</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-config</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-config</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gotolink</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-      <version>${publication-workflow.version}</version>
+      <version>${hippo.addon-publication-workflow.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-repository</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-repository</artifactId>
-      <version>${cms.version}</version>
+      <version>${hippo.cms.version}</version>
     </dependency>
    
 
