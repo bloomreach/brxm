@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -51,13 +51,13 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
-      <version>${repository.version}</version>
+      <version>${hippo.repository.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

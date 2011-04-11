@@ -51,6 +51,8 @@ dashboard/.classpath
 dashboard/.project
 dashboard/.settings
 dashboard/target
+dependencies/.project
+dependencies/.settings
 dependencies/target
 edit/.classpath
 edit/.project
@@ -240,6 +242,7 @@ skin/.classpath
 skin/.project
 skin/.settings
 skin/target
+sso/target
 surf/*.iml
 surf/frontend/*.iml
 surf/frontend/target
@@ -262,6 +265,8 @@ test/tmlog.lck
 test/version
 test/wdbp-error-log.txt
 test/workspaces
+tools/.project
+tools/.settings
 tools/development-content/.classpath
 tools/development-content/.project
 tools/development-content/.settings
@@ -271,6 +276,9 @@ tools/eclipse/.project
 tools/eclipse/.settings
 tools/eclipse/target
 tools/target
+tools/translation-runner/.classpath
+tools/translation-runner/.project
+tools/translation-runner/.settings
 tools/translation-runner/target
 tools/upgrade/*.tmp
 tools/upgrade/.classpath
@@ -287,7 +295,12 @@ tools/upgrade/tm.out.1
 tools/upgrade/tm.out.lck
 tools/upgrade/tmlog.lck
 tools/upgrade/wdbp-error-log.txt
+translate/.classpath
+translate/.project
+translate/.settings
 translate/target
+translation/.project
+translation/.settings
 translation/common/*.tmp
 translation/common/.classpath
 translation/common/.pom.xml.swp
@@ -349,6 +362,9 @@ translation/test/tm.out.1
 translation/test/tm.out.lck
 translation/test/tmlog.lck
 translation/test/wdbp-error-log.txt
+upgrade/.classpath
+upgrade/.project
+upgrade/.settings
 upgrade/target
 versioning/.classpath
 versioning/.project
