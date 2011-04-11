@@ -1645,6 +1645,7 @@ content-beans/src/test/java/org/hippoecm/hst/service/jcr/TextPage.java svneol=na
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/TextPageImpl.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/util/TestObjectConverterUtils.java -text
 content-beans/src/test/resources/org/hippoecm/hst/util/TestObjectConverterUtils-beans-annotated-classes.xml -text
+demosuite/README.txt -text svneol=unset#text/plain
 demosuite/cms/pom.xml -text
 demosuite/cms/src/main/resources/log4j.xml svneol=native#text/plain
 demosuite/cms/src/main/webapp/WEB-INF/web.xml -text

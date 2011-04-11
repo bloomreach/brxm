@@ -31,9 +31,7 @@
 
   <properties>
 
-    <jdo2.api.version>2.3-eb</jdo2.api.version>
-
-    <!-- following properties should be moved to cms7-project -->
+   <!-- following properties should be moved to cms7-project -->
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
     <cargo.version>1.1.0-SNAPSHOT</cargo.version>
     <!-- default empty javaagent, see also "jrebel" profile below -->
@@ -45,51 +43,7 @@
     <dependencies>
 
       <!-- required shared servlet, jta, jcr, jdo (workflow) and repository api dependencies -->
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${geronimo-jta_1.1_spec.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.jdo</groupId>
-        <artifactId>jdo2-api</artifactId>
-        <version>${jdo2.api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-api</artifactId>
-        <version>${repository.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      <!--  shared builtin and workflow common dependencies -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-builtin</artifactId>
-        <version>${repository.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-common</artifactId>
-        <version>${publication-workflow.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      
+
       <!-- shared hst dependencies -->
       <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>

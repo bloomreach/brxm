@@ -207,12 +207,14 @@
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>
         <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
         <version>${repository.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <!-- Java Mail dependencies for site example -->
@@ -563,12 +565,14 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${repository.version}</version>
+         <scope>provided</scope>
       </dependency>
       
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-publication-workflow-common</artifactId>
         <version>${publication-workflow.version}</version>
+        <scope>provided</scope>
       </dependency>
       
       <dependency>
@@ -583,6 +587,7 @@
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
         <version>${jdo.version}</version>
+        <scope>provided</scope>
         <exclusions>
           <exclusion>
             <groupId>geronimo-spec</groupId>
