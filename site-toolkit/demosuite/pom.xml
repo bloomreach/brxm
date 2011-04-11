@@ -14,23 +14,398 @@
   See the License for the specific language governing permissions and
   limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    
-    <modelVersion>4.0.0</modelVersion>
+   
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>demosuite</artifactId>
-    <name>Hippo Site Toolkit Demo Suite</name>
-    <description>Hippo Site Toolkit Demo Suite</description>
-    <parent>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst</artifactId>
-      <version>2.21.01-SNAPSHOT</version>
-    </parent>
-    <packaging>pom</packaging>
+    <artifactId>hst</artifactId>
+    <version>2.21.01-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>org.onehippo.cms7.hst</groupId>
+  <artifactId>demosuite</artifactId>
+  <name>Hippo Site Toolkit Demo Suite</name>
+  <description>Hippo Site Toolkit Demo Suite</description>
+  <packaging>pom</packaging>
 
-    <modules>
-      <module>cms</module>
-      <module>site</module>
-      <module>content</module>
-    </modules>
+  <properties>
 
+    <jdo2.api.version>2.3-eb</jdo2.api.version>
+
+    <!-- following properties should be moved to cms7-project -->
+    <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
+    <cargo.version>1.1.0-SNAPSHOT</cargo.version>
+    <!-- default empty javaagent, see also "jrebel" profile below -->
+    <javaagent></javaagent>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- required shared servlet, jta, jcr, jdo (workflow) and repository api dependencies -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${geronimo-jta_1.1_spec.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jdo</groupId>
+        <artifactId>jdo2-api</artifactId>
+        <version>${jdo2.api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      
+      <!--  shared builtin and workflow common dependencies -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-publication-workflow-common</artifactId>
+        <version>${publication-workflow.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      
+      <!-- shared hst dependencies -->
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+        <artifactId>hst-shared-dependencies</artifactId>
+        <version>${project.version}</version>
+        <scope>provided</scope>
+        <type>pom</type>
+      </dependency>
+
+      <!-- We use jcl-over-slf4j, but a large number of mvn projects declare commons-logging as a dependency
+           so we exclude commons-logging by adding it as a provided dependency (not deployed) -->
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- other predefined compile scope versioned dependencies -->
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>org.springframework.js</artifactId>
+        <version>${spring.js.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <!-- other predefined runtime scope versioned dependencies -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>${taglibs.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>${xml-apis.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>${xercesImpl.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>${xalan.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+
+    <!-- all shared runtime dependencies -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+
+    <!-- all shared provided dependencies -->
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-publication-workflow-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-shared-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <!-- to be moved to cms7-project -->
+        <plugin>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>${cargo.version}</version>
+          <configuration>
+            <configuration>
+              <properties>
+                <cargo.remote.username>admin</cargo.remote.username>
+                <cargo.remote.password></cargo.remote.password>
+              </properties>
+            </configuration>
+            <container>
+              <containerId>tomcat6x</containerId>
+            </container>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>jrebel</name>
+        </property>
+      </activation>
+      <modules>
+        <module>cms</module>
+        <module>site</module>
+        <module>content</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>run</id>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>cargo-start</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <wait>true</wait>
+              <configuration>
+                <home>${project.build.directory}/tomcat6x</home>
+                <properties>
+                  <cargo.jvmargs>
+                <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -noverify ${javaagent}]]>
+                  </cargo.jvmargs>
+                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
+                </properties>
+                <deployables>
+                  <deployable>
+                    <type>war</type>
+                    <properties>
+                      <context>/cms</context>
+                    </properties>
+                    <location>${project.basedir}/cms/target/cms.war</location>
+                  </deployable>
+                  <deployable>
+                    <location>${project.basedir}/site/target/site.war</location>
+                    <type>war</type>
+                    <properties>
+                      <context>/site</context>
+                    </properties>
+                  </deployable>
+                </deployables>
+              </configuration>
+              <container>
+                <systemProperties>
+                  <repo.path>${project.build.directory}/storage</repo.path>
+                  <hippoecm.export.dir>${project.basedir}/content/src/main/resources</hippoecm.export.dir>
+                </systemProperties>
+                <zipUrlInstaller>
+                  <url>http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.tar.gz</url>
+                </zipUrlInstaller>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jdo</groupId>
+                    <artifactId>jdo2-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-repository-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-repository-builtin</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-addon-publication-workflow-common</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-commons</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- TODO: move to cms7-project -->
+      <id>jrebel</id>
+      <activation>                                               
+        <property>                                               
+          <name>jrebel</name>                          
+        </property>                                              
+      </activation>                                              
+      <properties>
+        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>jrebel-maven-plugin</artifactId>
+            <version>${jrebel.plugin.version}</version>
+            <executions>
+              <execution>
+                <id>generate-rebel-xml</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>       
+    </profile>
+  </profiles>
 </project>

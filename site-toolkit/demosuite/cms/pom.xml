@@ -27,11 +27,6 @@
   <groupId>org.onehippo.cms7.hst.demosuite</groupId>
   <artifactId>hst-demosuite-cms</artifactId>
   <packaging>war</packaging>
-  
-  <properties>
-    <jetty.port>8080</jetty.port>
-    <jetty.stopPort>9966</jetty.stopPort>
-  </properties>
 
   <dependencies>
   
@@ -48,13 +43,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>runtime</scope>
     </dependency>
     
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -62,6 +55,14 @@
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <version>${hippo-packages.version}</version>
       <type>pom</type>
+      <exclusions>
+        <!-- TODO: jta transitive dependency pulled in through repository-engine/quartz-scheduler
+                   needs to be excluded there as we use/deploy generonimo-jta_1.1_spec instead! -->
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
@@ -91,11 +92,11 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
-       
+    
     <!--  Gallery picker dependency -->
     <dependency>
-        <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-        <artifactId>gallerypicker</artifactId>
+      <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
+      <artifactId>gallerypicker</artifactId>
     </dependency>
     
     <!-- HST Configuration Editor Dependencies for testing purpose. By default, these should be commented out. -->
@@ -121,9 +122,20 @@
     <finalName>cms</finalName>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.cargo</groupId>
+        <artifactId>cargo-maven2-plugin</artifactId>
+        <configuration>
+          <configuration>
+            <type>runtime</type>
+          </configuration>
+          <container>
+            <type>remote</type>
+          </container>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-alpha-2</version>
         <configuration>
           <manifest>
             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -140,57 +152,6 @@
             </overlay>
           </overlays>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>${jetty.version}</version>
-        <configuration>
-          <stopPort>${jetty.stopPort}</stopPort>
-          <stopKey>stopCmsJetty</stopKey>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>${jetty.port}</port>
-            </connector>
-          </connectors>
-          <contextPath>/cms</contextPath>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <scope>runtime</scope>
-            <version>${javax.jcr.version}</version>
-            <!--version>2.0</version-->
-          </dependency>
-          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-api</artifactId>
-            <version>${atomikos.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jta</artifactId>
-            <version>${atomikos.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions</artifactId>
-            <version>${atomikos.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>atomikos-util</artifactId>
-            <version>${atomikos.version}</version>
-            <scope>runtime</scope>
-          </dependency>
-          
-        </dependencies>
       </plugin>
     </plugins>
   </build>
