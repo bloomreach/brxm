@@ -20,6 +20,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,6 +61,28 @@ public class TestHstRequestUtils {
         requestPath = HstRequestUtils.getRequestPath(request);
         
         assertEquals(pathInfo, requestPath);
+    }
+    
+    @Test
+    public void testParseQueryString() throws Exception {
+        String queryString = "foo=bar&lux=bar&foo=foo";
+        String[] fooValues = {"bar", "foo"};
+        String[] luxValues = {"bar"};
+        
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getQueryString()).andReturn(queryString).anyTimes();
+        expect(request.getParameterValues("foo")).andReturn(fooValues).anyTimes();
+        expect(request.getParameterValues("lux")).andReturn(luxValues).anyTimes();
+        
+        replay(request);
+       
+        
+        Map<String, String[] > parsedQueryStringMap =  HstRequestUtils.parseQueryString(request);
+
+        assertTrue("parsedQueryStringMap must contain foo.", parsedQueryStringMap.containsKey("foo"));
+        assertTrue("parsedQueryStringMap must have 2 values for foo.", parsedQueryStringMap.get("foo").length == 2);
+        assertTrue("parsedQueryStringMap must contain lux.", parsedQueryStringMap.containsKey("lux"));
+        assertTrue("parsedQueryStringMap must have 1 value for lux.", parsedQueryStringMap.get("lux").length == 1);
     }
     
 }
