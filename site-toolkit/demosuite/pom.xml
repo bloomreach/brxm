@@ -33,7 +33,7 @@
 
    <!-- following properties should be moved to cms7-project -->
     <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
-    <cargo.version>1.1.0-SNAPSHOT</cargo.version>
+    <cargo.version>1.1.0-r4845</cargo.version>
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent></javaagent>
 
