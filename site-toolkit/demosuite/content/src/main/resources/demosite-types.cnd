@@ -19,31 +19,14 @@
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 <'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
 
-[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document orderable
 
 [demosite:commentlink] > hippo:facetselect
 
+[demosite:textdocument] > demosite:basedocument, hippostd:relaxed
 
-[demosite:textdocument] > demosite:basedocument
-- demosite:title (string)
-- demosite:summary (string)
-+ demosite:body (hippostd:html)
+[demosite:newsdocument] > demosite:basedocument, hippostd:relaxed
 
-[demosite:newsdocument] > demosite:textdocument
-- demosite:date (date)
-+ demosite:image (hippogallerypicker:imagelink)
+[demosite:commentdocument] > demosite:basedocument, hippostd:relaxed
 
-[demosite:commentdocument] > demosite:textdocument
-- demosite:date (date)
-+ demosite:commentlink (demosite:commentlink)
-
-[demosite:productdocument] > demosite:basedocument
-- demosite:constructiondate (date)
-- demosite:brand (string)
-- demosite:color (string)
-- demosite:created (date)
-- demosite:mileage (long)
-- demosite:price (double)
-- demosite:product (string)
-+ demosite:body (hippostd:html)
-+ demosite:image (hippogallerypicker:imagelink)
+[demosite:productdocument] > demosite:basedocument, hippostd:relaxed
