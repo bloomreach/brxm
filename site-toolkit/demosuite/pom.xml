@@ -253,7 +253,15 @@
                 <home>${project.build.directory}/tomcat6x</home>
                 <properties>
                   <cargo.jvmargs>
-                <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -noverify ${javaagent}]]>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -noverify ${javaagent}]]>
+                    <!-- for more memory -->
+                    <!-- 
+                    <![CDATA[-Xmx1024m ]]>
+                    -->
+                    <!-- for attaching a profiler like yourkit. Replace the agentpath with the correct path to libyjpagent.so -->
+                    <!--  
+                    <![CDATA[ -agentpath:/home/usr/Yourkit/yjp-9.0.8/bin/linux-x86-32/libyjpagent.so]]>
+                    -->
                   </cargo.jvmargs>
                   <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
                 </properties>
