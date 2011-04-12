@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>4-SNAPSHOT</version>
+    <version>5-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -37,27 +37,32 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.18.01</hippo.repository.version>
-    <hippo.cms.version>2.18.02</hippo.cms.version>
-    <hippo.addon-defaultcontent.version>2.18.01</hippo.addon-defaultcontent.version>
-    <hippo.addon-faceteddate.version>2.18.01</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.18.01</hippo.addon-publication-workflow.version>
+    <hippo.repository.version>2.19.03-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.19.03-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-defaultcontent.version>2.19.03-SNAPSHOT</hippo.addon-defaultcontent.version>
+    <hippo.addon-faceteddate.version>2.19.00-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.19.03-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
-    <hippo.packages.version>2.18.02</hippo.packages.version>
-    <hippo.hst.version>2.20.01</hippo.hst.version>
+    <hippo.packages.version>2.19.03-SNAPSHOT</hippo.packages.version>
+    <hippo.hst.version>2.21.01-SNAPSHOT</hippo.hst.version>
 
-    <forge.dashboard-document-wizard.version>1.02.00</forge.dashboard-document-wizard.version>
-    <forge.gallerypicker.version>1.07.01</forge.gallerypicker.version>    
+    <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
+    <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>    
     <forge.easy-forms-cms.version>2.05.00</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.06.00</forge.easy-forms-hst.version>
     <forge.goto.version>1.02.00</forge.goto.version>
     <forge.poll.version>1.03.00</forge.poll.version>
-    <forge.relateddocs.version>2.07.00</forge.relateddocs.version>
-    <forge.selection.version>2.03.00</forge.selection.version>    
+    <forge.relateddocs.version>2.08.00</forge.relateddocs.version>
+    <forge.selection.version>2.04.00</forge.selection.version>    
     <forge.sitemap.version>1.02.00</forge.sitemap.version>
-    <forge.taxonomy.version>1.05.00</forge.taxonomy.version>
+    <forge.taxonomy.version>1.06.00</forge.taxonomy.version>
     <forge.tcmp.version>1.02.00</forge.tcmp.version>
 
+    <servlet-api.version>2.4</servlet-api.version>
+    <javax.jcr.version>2.0</javax.jcr.version>
+    <jdo2.api.version>2.3-eb</jdo2.api.version>
+    <jta.version>1.1</jta.version>
+    
   </properties>
 
   <repositories>
@@ -104,6 +109,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -115,6 +121,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -412,6 +419,22 @@
         <artifactId>hippo-cms-yui</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-sso</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-surf-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-surf-repository</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
 
       <!-- Hippo Addon artifacts -->
       <dependency>
@@ -438,6 +461,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-publication-workflow-common</artifactId>
         <version>${hippo.addon-publication-workflow.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -614,6 +638,7 @@
         <artifactId>hst-shared-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
         <type>pom</type>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
@@ -770,6 +795,176 @@
         <version>${forge.tcmp.version}</version>
       </dependency>
 
+      <!-- provided third party libraries -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jdo</groupId>
+        <artifactId>jdo2-api</artifactId>
+        <version>${jdo2.api.version}</version>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
+  
+  
+  <dependencies>
+
+    <!-- all shared provided dependencies -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-sso</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-publication-workflow-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-shared-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+  </dependencies>
+  
+  <profiles>
+    <profile>
+      <id>run</id>
+      <properties>
+        <repo.path>${project.build.directory}/storage</repo.path>
+      </properties>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>cargo-start</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <wait>true</wait>
+              <configuration>
+                <home>${project.build.directory}/tomcat6x</home>
+                <properties>
+                  <cargo.jvmargs>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -noverify ${javaagent}]]>
+                  </cargo.jvmargs>
+                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
+                </properties>
+              </configuration>
+              <container>
+                <systemProperties>
+                  <repo.path>${repo.path}</repo.path>
+                  <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
+                </systemProperties>
+                <zipUrlInstaller>
+                  <url>http://apache.hippo.nl/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.tar.gz</url>
+                </zipUrlInstaller>
+                <timeout>600000</timeout>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jdo</groupId>
+                    <artifactId>jdo2-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-repository-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-cms-sso</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-repository-builtin</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-addon-publication-workflow-common</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-commons</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
