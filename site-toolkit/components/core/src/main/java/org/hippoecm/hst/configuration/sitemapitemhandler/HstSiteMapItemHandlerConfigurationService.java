@@ -38,7 +38,7 @@ public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItem
         if(sitemapItemHandlerClassName == null || "".equals(sitemapItemHandlerClassName)) {
             throw new ServiceException("Invalid sitemap item handler because property '"+HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME+"' is missing or empty ");
         }
-        sitemapItemHandlerClassName = sitemapItemHandlerClassName.intern();
+        sitemapItemHandlerClassName = sitemapItemHandlerClassName.trim().intern();
         
         properties = handleNode.getValueProvider().getProperties();
         

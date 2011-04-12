@@ -544,7 +544,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if(string == null) {
             return null;
         }
-        return string.intern();
+        return string.trim().intern();
     }
     
 }

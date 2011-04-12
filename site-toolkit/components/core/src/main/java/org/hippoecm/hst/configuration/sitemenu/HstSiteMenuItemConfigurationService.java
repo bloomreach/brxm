@@ -175,6 +175,6 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         if(string == null) {
             return null;
         }
-        return string.intern();
+        return string.trim().intern();
     }
 }

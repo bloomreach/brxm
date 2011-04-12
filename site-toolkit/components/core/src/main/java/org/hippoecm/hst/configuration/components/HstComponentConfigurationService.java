@@ -645,7 +645,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if(string == null) {
             return null;
         }
-        return string.intern();
+        return string.trim().intern();
     }
 
 }
