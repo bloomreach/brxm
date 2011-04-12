@@ -1514,6 +1514,29 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="image">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:multiple" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:ordered" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>demosite:image</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>hippogallerypicker:imagelink</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hipposysedit:prototypes">
@@ -1909,6 +1932,43 @@
           </sv:property>
           <sv:property sv:name="field" sv:type="String">
             <sv:value>body</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="model.compareTo" sv:type="String">
+            <sv:value>${model.compareTo}</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="validator.id" sv:type="String">
+            <sv:value>${validator.id}</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${wicket.model}</sv:value>
+          </sv:property>
+          <sv:node sv:name="cluster.options">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="image">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Image</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>image</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">
             <sv:value>${mode}</sv:value>
