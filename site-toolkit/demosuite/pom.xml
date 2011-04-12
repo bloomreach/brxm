@@ -29,16 +29,6 @@
   <description>Hippo Site Toolkit Demo Suite</description>
   <packaging>pom</packaging>
 
-  <properties>
-
-   <!-- following properties should be moved to cms7-project -->
-    <jrebel.plugin.version>1.0.7</jrebel.plugin.version>
-    <cargo.version>1.1.0-r4845</cargo.version>
-    <!-- default empty javaagent, see also "jrebel" profile below -->
-    <javaagent></javaagent>
-
-  </properties>
-
   <dependencyManagement>
     <dependencies>
 
@@ -190,27 +180,6 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <pluginManagement>
-      <plugins>
-        <!-- to be moved to cms7-project -->
-        <plugin>
-          <groupId>org.codehaus.cargo</groupId>
-          <artifactId>cargo-maven2-plugin</artifactId>
-          <version>${cargo.version}</version>
-          <configuration>
-            <configuration>
-              <properties>
-                <cargo.remote.username>admin</cargo.remote.username>
-                <cargo.remote.password></cargo.remote.password>
-              </properties>
-            </configuration>
-            <container>
-              <containerId>tomcat6x</containerId>
-            </container>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <profiles>
@@ -338,37 +307,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <profile>
-      <!-- TODO: move to cms7-project -->
-      <id>jrebel</id>
-      <activation>                                               
-        <property>                                               
-          <name>jrebel</name>                          
-        </property>                                              
-      </activation>                                              
-      <properties>
-        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${jrebel.plugin.version}</version>
-            <executions>
-              <execution>
-                <id>generate-rebel-xml</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>generate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>       
     </profile>
   </profiles>
 </project>
