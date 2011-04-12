@@ -1,11 +1,12 @@
 package org.hippoecm.frontend.service.social;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
 
 /**
  * Provides access to a social medium.
  */
-public interface ISocialMedium extends Comparable<ISocialMedium> {
+public interface ISocialMedium extends IClusterable, Comparable<ISocialMedium> {
 
     /**
      * @return the name of this social medium as displayed in a frontend (including the right capitalization etc.)
