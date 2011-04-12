@@ -87,8 +87,6 @@
                 <list>
                   <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
                     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-                    <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
-                    <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
                   </bean>
                   <ref bean="hstconfigreaderSessionPoolRefresher" />
                 </list>

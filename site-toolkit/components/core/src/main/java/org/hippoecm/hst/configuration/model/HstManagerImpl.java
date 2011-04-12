@@ -30,9 +30,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,10 @@ public class HstManagerImpl implements HstManager {
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
+    
+    private HstComponentRegistry componentRegistry;
+    private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
+    
     
     /**
      * The root path of all the hst configuations nodes, by default /hst:hst
@@ -94,6 +100,14 @@ public class HstManagerImpl implements HstManager {
         this.rootPath = rootPath;
     }
     
+    public void setComponentRegistry(HstComponentRegistry componentRegistry) {
+        this.componentRegistry = componentRegistry;
+    }
+    
+    public void setSiteMapItemHandlerRegistry(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
+        this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
+    }
+    
     public synchronized String getRootPath() {
         return rootPath;
     }
@@ -127,6 +141,9 @@ public class HstManagerImpl implements HstManager {
             synchronized(this) {
                 if (virtualHosts == null) {
                     buildSites();
+                    // when we have a new virtualhosts object, clear all registries
+                    componentRegistry.unregisterAllComponents();
+                    siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
                 }
             }
         }

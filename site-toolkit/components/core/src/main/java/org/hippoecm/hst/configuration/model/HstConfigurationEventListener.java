@@ -19,10 +19,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
-import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,21 +29,11 @@ public class HstConfigurationEventListener extends GenericEventListener implemen
     static Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
     
     protected HstManager hstManager;
-    protected HstComponentRegistry componentRegistry;
-    protected HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     
     public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
     }
 
-    public void setComponentRegistry(HstComponentRegistry componentRegistry) {
-        this.componentRegistry = componentRegistry;
-    }
-    
-    public void setSiteMapItemHandlerRegistry(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
-        this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
-    }
-    
     public void onEvent(EventIterator events) {
         Event invaliationEvent = null;
         
@@ -92,8 +80,6 @@ public class HstConfigurationEventListener extends GenericEventListener implemen
     }
     
     private void doInvalidation(String path) {
-        this.componentRegistry.unregisterAllComponents();
-        this.siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
         this.hstManager.invalidate(path);
     }
 }
