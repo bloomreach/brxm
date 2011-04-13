@@ -61,6 +61,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn("user-agent-specific");
 
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn("false");
+        expect(servletConfig.getInitParameter("set-content-length-header")).andReturn("false");
         
         replay(servletConfig);
         binariesServlet.init(servletConfig);
@@ -86,6 +87,7 @@ public class BinariesServletTest {
         expect(servletConfig.getInitParameter("contentDispositionFilenameEncoding")).andReturn(null);
 
         expect(servletConfig.getInitParameter("set-expires-headers")).andReturn(null);
+        expect(servletConfig.getInitParameter("set-content-length-header")).andReturn(null);
 
         replay(servletConfig);
         binariesServlet.init(servletConfig);
