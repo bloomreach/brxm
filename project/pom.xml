@@ -39,27 +39,41 @@
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
-    <plugin.changes.version>2.3</plugin.changes.version>
-    <plugin.changelog.version>2.1</plugin.changelog.version>
-    <plugin.project-info.version>2.1.2</plugin.project-info.version>
-    <plugin.resources.version>2.4</plugin.resources.version>
-    <plugin.javadoc.version>2.7</plugin.javadoc.version>
-    <plugin.source.version>2.1.2</plugin.source.version>
-    <plugin.remote-resources.version>1.1</plugin.remote-resources.version>
-    <plugin.compiler.version>2.3.1</plugin.compiler.version>
-    <plugin.surefire.version>2.5</plugin.surefire.version>
-    <plugin.eclipse.version>2.8</plugin.eclipse.version>
-    <plugin.war.version>2.1.1</plugin.war.version>
-    <plugin.jar.version>2.3.1</plugin.jar.version>
-    <plugin.release.version>2.1</plugin.release.version>
-    <plugin.deploy.version>2.5</plugin.deploy.version>
-    <plugin.install.version>2.3</plugin.install.version>
-    <plugin.assembly.version>2.2.1</plugin.assembly.version>
-    <plugin.antrun.version>1.3</plugin.antrun.version>
-    <plugin.clean.version>2.4.1</plugin.clean.version>
-    <plugin.buildnumber.version>1.0-beta-4</plugin.buildnumber.version>
-    <plugin.jrebel.version>1.0.7</plugin.jrebel.version>
-    <plugin.cargo.version>1.1.0-r4845</plugin.cargo.version>
+    <servlet-api.version>2.4</servlet-api.version>
+    <javax.jcr.version>2.0</javax.jcr.version>
+    <jdo2.api.version>2.3-eb</jdo2.api.version>
+    <jta.version>1.1</jta.version>
+    
+    <maven.plugin.changes.version>2.3</maven.plugin.changes.version>
+    <maven.plugin.changelog.version>2.1</maven.plugin.changelog.version>
+    <maven.plugin.project-info.version>2.1.2</maven.plugin.project-info.version>
+    <maven.plugin.resources.version>2.4</maven.plugin.resources.version>
+    <maven.plugin.javadoc.version>2.7</maven.plugin.javadoc.version>
+    <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
+    <maven.plugin.remote-resources.version>1.1</maven.plugin.remote-resources.version>
+    <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
+    <maven.plugin.surefire.version>2.5</maven.plugin.surefire.version>
+    <maven.plugin.eclipse.version>2.8</maven.plugin.eclipse.version>
+    <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
+    <maven.plugin.jar.version>2.3.1</maven.plugin.jar.version>
+    <maven.plugin.release.version>2.1</maven.plugin.release.version>
+    <maven.plugin.deploy.version>2.5</maven.plugin.deploy.version>
+    <maven.plugin.install.version>2.3</maven.plugin.install.version>
+    <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
+    <maven.plugin.antrun.version>1.3</maven.plugin.antrun.version>
+    <maven.plugin.clean.version>2.4.1</maven.plugin.clean.version>
+    <maven.plugin.buildnumber.version>1.0-beta-4</maven.plugin.buildnumber.version>
+    <maven.plugin.jrebel.version>1.0.7</maven.plugin.jrebel.version>
+    <maven.plugin.cargo.version>1.1.0-r4845</maven.plugin.cargo.version>
+    
+    <!-- if you want a remote debugging on a different a address
+         override on command line with -Dcargo.debug.addres=xxxx -->
+    <cargo.debug.address>8000</cargo.debug.address>
+    <!-- if you want to start remote debugging session suspended
+         override on command line with -Dcargo.debug.suspend=y -->
+    <cargo.debug.suspend>n</cargo.debug.suspend>
+    <cargo.tomcat.major.version>6</cargo.tomcat.major.version>
+    <cargo.tomcat.full.version>6.0.32</cargo.tomcat.full.version>
     
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
@@ -400,7 +414,60 @@
       <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
+  
+  <dependencyManagement>
+    <dependencies>
+      <!-- provided third party libraries -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jta_1.1_spec</artifactId>
+        <version>${jta.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jcr</groupId>
+        <artifactId>jcr</artifactId>
+        <version>${javax.jcr.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.jdo</groupId>
+        <artifactId>jdo2-api</artifactId>
+        <version>${jdo2.api.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
+  
+  <dependencies>
+    
+    <!-- all shared third party dependencies -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+    </dependency>
+    
+  </dependencies>
+  
   <build>
     <extensions>
       <extension>
@@ -414,27 +481,27 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>${plugin.antrun.version}</version>
+          <version>${maven.plugin.antrun.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>${plugin.assembly.version}</version>
+          <version>${maven.plugin.assembly.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>${plugin.install.version}</version>
+          <version>${maven.plugin.install.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>${plugin.deploy.version}</version>
+          <version>${maven.plugin.deploy.version}</version>
         </plugin>      
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>${plugin.release.version}</version>
+          <version>${maven.plugin.release.version}</version>
           <inherited>true</inherited>
           <configuration>
             <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
@@ -459,7 +526,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>${plugin.jar.version}</version>
+          <version>${maven.plugin.jar.version}</version>
           <inherited>true</inherited>
           <configuration>
             <archive>
@@ -473,7 +540,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>${plugin.war.version}</version>
+          <version>${maven.plugin.war.version}</version>
           <configuration>
             <archive>
               <manifest>
@@ -485,7 +552,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
-          <version>${plugin.eclipse.version}</version>
+          <version>${maven.plugin.eclipse.version}</version>
           <inherited>true</inherited>
           <configuration>
             <downloadSources>true</downloadSources>
@@ -495,7 +562,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>${plugin.surefire.version}</version>
+          <version>${maven.plugin.surefire.version}</version>
           <inherited>true</inherited>
           <configuration>
             <workingDirectory>target</workingDirectory>
@@ -504,7 +571,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>${plugin.compiler.version}</version>
+          <version>${maven.plugin.compiler.version}</version>
           <inherited>true</inherited>
           <configuration>
             <fork>true</fork>
@@ -517,7 +584,7 @@
         <plugin>      
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-remote-resources-plugin</artifactId>        
-          <version>${plugin.remote-resources.version}</version>
+          <version>${maven.plugin.remote-resources.version}</version>
           <inherited>true</inherited>
           <executions>
             <execution>
@@ -535,7 +602,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>${plugin.source.version}</version>
+          <version>${maven.plugin.source.version}</version>
           <inherited>true</inherited>
           <executions>
             <execution>
@@ -549,12 +616,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${plugin.javadoc.version}</version>
+          <version>${maven.plugin.javadoc.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>${plugin.resources.version}</version>
+          <version>${maven.plugin.resources.version}</version>
           <configuration>
             <encoding>${project.build.sourceEncoding}</encoding>
           </configuration>
@@ -562,22 +629,22 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>${plugin.project-info.version}</version>
+          <version>${maven.plugin.project-info.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changelog-plugin</artifactId>
-          <version>${plugin.changelog.version}</version>
+          <version>${maven.plugin.changelog.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-changes-plugin</artifactId>
-          <version>${plugin.changes.version}</version>
+          <version>${maven.plugin.changes.version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>${plugin.buildnumber.version}</version>
+          <version>${maven.plugin.buildnumber.version}</version>
           <executions>
             <execution>
               <phase>validate</phase>
@@ -594,7 +661,7 @@
         <plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
-          <version>${plugin.cargo.version}</version>
+          <version>${maven.plugin.cargo.version}</version>
           <configuration>
             <configuration>
               <properties>
@@ -623,7 +690,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>${plugin.clean.version}</version>
+        <version>${maven.plugin.clean.version}</version>
       </plugin>
     </plugins>
   </build>
@@ -669,6 +736,69 @@
                   </includes>
                 </fileset>
               </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>cargo.run</id>
+      <properties>
+        <repo.path>${project.build.directory}/storage</repo.path>
+      </properties>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>cargo-start</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <wait>true</wait>
+              <configuration>
+                <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
+                <properties>
+                  <cargo.jvmargs>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
+                  </cargo.jvmargs>
+                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
+                </properties>
+              </configuration>
+              <container>
+                <systemProperties>
+                  <repo.path>${repo.path}</repo.path>
+                  <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
+                </systemProperties>
+                <zipUrlInstaller>
+                  <url>http://apache.hippo.nl/tomcat/tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}.tar.gz</url>
+                </zipUrlInstaller>
+                <timeout>600000</timeout>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.jdo</groupId>
+                    <artifactId>jdo2-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
             </configuration>
           </plugin>
         </plugins>
