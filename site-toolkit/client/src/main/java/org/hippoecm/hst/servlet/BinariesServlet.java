@@ -264,13 +264,13 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
+    protected InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
         Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
                 allResourceContainers);
         return resourceNode.getProperty(binaryDataPropName).getStream();
     }
 
-    private BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
+    protected BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
         String resourcePath = ResourceUtils.getResourcePath(request, baseBinariesContentPath);
         BinaryPage page = binariesCache.getPageFromBlockingCache(resourcePath);
         if (page != null) {
@@ -282,7 +282,7 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
-    private BinaryPage getValidatedPageFromCache(HttpServletRequest request, BinaryPage page) {
+    protected BinaryPage getValidatedPageFromCache(HttpServletRequest request, BinaryPage page) {
         if (HeaderUtils.isForcedCheck(request) || binariesCache.mustCheckValidity(page)) {
             long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
             if (binariesCache.isPageStale(page, lastModified)) {
@@ -296,7 +296,7 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
-    private long getLastModifiedFromResource(HttpServletRequest request, String resourcePath) {
+    protected long getLastModifiedFromResource(HttpServletRequest request, String resourcePath) {
         Session session = null;
         try {
             session = SessionUtils.getBinariesSession(request);
@@ -312,7 +312,7 @@ public class BinariesServlet extends HttpServlet {
         return -1L;
     }
 
-    private BinaryPage getPage(HttpServletRequest request, String resourcePath) {
+    protected BinaryPage getPage(HttpServletRequest request, String resourcePath) {
         BinaryPage page = new BinaryPage(resourcePath);
         Session session = null;
         try {
@@ -329,7 +329,7 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
-    private void initPageValues(Session session, BinaryPage page) throws RepositoryException {
+    protected void initPageValues(Session session, BinaryPage page) throws RepositoryException {
         if (!ResourceUtils.isValidResourcePath(page.getResourcePath())) {
             page.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -369,7 +369,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void cacheBinaryData(BinaryPage page, Node resourceNode) {
+    protected void cacheBinaryData(BinaryPage page, Node resourceNode) {
         try {
             InputStream input = resourceNode.getProperty(binaryDataPropName).getStream();
             page.loadDataFromStream(input);
@@ -381,7 +381,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void doInit() {
+    protected void doInit() {
         if (initialized) {
             return;
         }
@@ -394,7 +394,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void initPrefix2ResourceMappers() {
+    protected void initPrefix2ResourceMappers() {
         if (prefix2ResourceContainer != null) {
             return;
         }
@@ -424,7 +424,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void initAllResourceContainers() {
+    protected void initAllResourceContainers() {
         if (allResourceContainers != null) {
             return;
         }
@@ -444,7 +444,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void initBinariesConfig() {
+    protected void initBinariesConfig() {
         baseBinariesContentPath = getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
         binaryResourceNodeType = getInitParameter(BINARY_RESOURCE_NODE_TYPE_INIT_PARAM, binaryResourceNodeType);
         binaryDataPropName = getInitParameter(BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
@@ -453,7 +453,7 @@ public class BinariesServlet extends HttpServlet {
                 binaryLastModifiedPropName);
     }
 
-    private void initContentDispostion() throws ServletException {
+    protected void initContentDispostion() throws ServletException {
         contentDispositionFilenamePropertyNames = StringUtils.split(getInitParameter(
                 CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
 
