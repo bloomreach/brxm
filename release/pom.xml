@@ -963,11 +963,6 @@
                     <artifactId>hst-commons</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
-                  <dependency>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
                 </dependencies>
               </container>
             </configuration>
