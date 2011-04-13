@@ -58,20 +58,6 @@
     <forge.taxonomy.version>1.06.00</forge.taxonomy.version>
     <forge.tcmp.version>1.02.00</forge.tcmp.version>
 
-    <servlet-api.version>2.4</servlet-api.version>
-    <javax.jcr.version>2.0</javax.jcr.version>
-    <jdo2.api.version>2.3-eb</jdo2.api.version>
-    <jta.version>1.1</jta.version>
-    
-   <!-- if you want a remote debugging on a different a address
-        override on command line with -Dcargo.debug.addres=xxxx -->
-   <cargo.debug.address>8000</cargo.debug.address>
-   <!-- if you want to start remote debugging session suspended
-        override on command line with -Dcargo.debug.suspend=y -->
-   <cargo.debug.suspend>n</cargo.debug.suspend>
-   <cargo.tomcat.major.version>6</cargo.tomcat.major.version>
-   <cargo.tomcat.full.version>6.0.32</cargo.tomcat.full.version>
-
   </properties>
 
   <repositories>
@@ -804,54 +790,12 @@
         <version>${forge.tcmp.version}</version>
       </dependency>
 
-      <!-- provided third party libraries -->
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${jta.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.jdo</groupId>
-        <artifactId>jdo2-api</artifactId>
-        <version>${jdo2.api.version}</version>
-        <scope>provided</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   
   
   <dependencies>
 
-    <!-- all shared provided dependencies -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
@@ -878,61 +822,15 @@
   
   <profiles>
     <profile>
-      <id>run</id>
-      <properties>
-        <repo.path>${project.build.directory}/storage</repo.path>
-      </properties>
+      <id>cargo.run</id>
       <build>
-        <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>cargo-start</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
-              <wait>true</wait>
-              <configuration>
-                <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
-                <properties>
-                  <cargo.jvmargs>
-                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
-                  </cargo.jvmargs>
-                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
-                </properties>
-              </configuration>
               <container>
-                <systemProperties>
-                  <repo.path>${repo.path}</repo.path>
-                  <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
-                </systemProperties>
-                <zipUrlInstaller>
-                  <url>http://apache.hippo.nl/tomcat/tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}.tar.gz</url>
-                </zipUrlInstaller>
-                <timeout>600000</timeout>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>javax.jcr</groupId>
-                    <artifactId>jcr</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>javax.jdo</groupId>
-                    <artifactId>jdo2-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
+                <dependencies combine.children="append">
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-api</artifactId>
