@@ -682,14 +682,14 @@
         </property>
       </activation>
       <properties>
-        <javaagent>-javaagent:${dollar}{env.REBEL_HOME}/jrebel.jar</javaagent>
+        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
       </properties>
       <build>
         <plugins>
           <plugin>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${dollar}{jrebel.plugin.version}</version>
+            <version>${jrebel.plugin.version}</version>
             <executions>
               <execution>
                 <id>generate-rebel-xml</id>
