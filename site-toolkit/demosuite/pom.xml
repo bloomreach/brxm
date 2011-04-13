@@ -139,25 +139,7 @@
 
   <dependencies>
 
-    <!-- all shared runtime dependencies -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.1_spec</artifactId>
-    </dependency>
-
-    <!-- all shared provided dependencies -->
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-    </dependency>
+    <!-- shared hippo dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
@@ -200,29 +182,17 @@
     </profile>
 
     <profile>
-      <id>run</id>
+      <id>cargo.run</id>
       <build>
-        <defaultGoal>validate</defaultGoal>
         <plugins>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>cargo-start</id>
-                <phase>validate</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
-              <wait>true</wait>
               <configuration>
-                <home>${project.build.directory}/tomcat6x</home>
                 <properties>
                   <cargo.jvmargs>
-                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -noverify ${javaagent}]]>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
                     <!-- for more memory -->
                     <!-- 
                     <![CDATA[-Xmx1024m ]]>
@@ -232,7 +202,6 @@
                     <![CDATA[ -agentpath:/home/usr/Yourkit/yjp-9.0.8/bin/linux-x86-32/libyjpagent.so]]>
                     -->
                   </cargo.jvmargs>
-                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
                 </properties>
                 <deployables>
                   <deployable>
@@ -252,30 +221,7 @@
                 </deployables>
               </configuration>
               <container>
-                <systemProperties>
-                  <repo.path>${project.build.directory}/storage</repo.path>
-                  <!-- for automatic export of repository changes, enable the commented line below  -->
-                  <!-- hippoecm.export.dir>${project.basedir}/content/src/main/resources</hippoecm.export.dir-->
-                </systemProperties>
-                <zipUrlInstaller>
-                  <url>http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.tar.gz</url>
-                </zipUrlInstaller>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    <classpath>extra</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>javax.jcr</groupId>
-                    <artifactId>jcr</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>javax.jdo</groupId>
-                    <artifactId>jdo2-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
+                <dependencies combine.children="append">
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-api</artifactId>
