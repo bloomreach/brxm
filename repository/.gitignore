@@ -70,6 +70,8 @@ connector/tm.out.1
 connector/tm.out.lck
 connector/tmlog.lck
 connector/wdbp-error-log.txt
+dependencies/.project
+dependencies/.settings
 dependencies/target
 engine/*.tmp
 engine/.classpath
@@ -173,6 +175,8 @@ test/tm.out.1
 test/tm.out.lck
 test/tmlog.lck
 test/wdbp-error-log.txt
+tools/.project
+tools/.settings
 tools/documentation/.classpath
 tools/documentation/.project
 tools/documentation/.settings
