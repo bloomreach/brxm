@@ -15,7 +15,13 @@
  */
 package org.onehippo.sso;
 
-import org.apache.commons.codec.binary.Base64;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -25,21 +31,13 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
- * Symmetric cipher that encrypts and decrypts jcr {@link Credentials}.
- * It's key is generated dynamically, being unique for the lifetime of the class.
- *
- * When using the this class to encrypt or decrypt using provided methods, make sure that
- * the same "instance" is used for both the operations.
- * Otherwise you might get exception while decrypting.
+ * Symmetric cipher that encrypts and decrypts jcr {@link Credentials}. It's key is generated dynamically, being unique
+ * for the lifetime of the class.
+ * <p/>
+ * When using the this class to encrypt or decrypt using provided methods, make sure that the same "instance" is used
+ * for both the operations. Otherwise you might get exception while decrypting.
  */
 public final class CredentialCipher {
 
@@ -89,21 +87,22 @@ public final class CredentialCipher {
     }
 
     /**
-     * Get the credentials as Base64 encoded String using apache commons-codec Base64.
+     * Get the credentials as UrlSafeBase64 encoded String.
      * @param credentials JCR Simple Credentials
      * @return Base64 Encoded string of the encrypted credentials.
      */
     public String getEncryptedString(SimpleCredentials credentials) {
-        return Base64.encodeBase64String(encrypt(credentials));
+        return UrlSafeBase64.encode(encrypt(credentials));
     }
 
     /**
-     * Get the Credentials by decrypting Base64 encoded String.
-     * @param credentialString Base64 encoded string which contains encrypted JCR credential String.
+     * Get the Credentials by decrypting UrlSafeBase64 encoded String.
+     *
+     * @param credentialString UrlSafeBase64 encoded string which contains encrypted JCR credential String.
      * @return JcrCredentials (SimpleCredentials).
      */
     public Credentials decryptFromString(String credentialString) {
-        return decrypt(Base64.decodeBase64(credentialString));
+        return decrypt(UrlSafeBase64.decode(credentialString));
     }
 
     public Credentials decrypt(byte[] bytes) {
