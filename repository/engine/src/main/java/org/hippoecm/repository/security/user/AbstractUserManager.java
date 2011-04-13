@@ -19,6 +19,8 @@ import java.security.Principal;
 import java.util.Calendar;
 
 import java.util.Iterator;
+
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -358,8 +360,16 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     public final void saveUsers() throws RepositoryException {
-        session.refresh(true);
-        session.getRootNode().getNode(usersPath).save();
+        try {
+            session.refresh(true);
+            session.getRootNode().getNode(usersPath).save();
+        } catch (InvalidItemStateException e) {
+            log.warn("Unable to save synced user data, this usually happens when the user node"
+                    + " was simultaneously changed by another session: " + e.getMessage());
+            log.debug("StackTrace: ", e);
+            // discard changes in session
+            session.refresh(false);
+        }
     }
 
     public void backendSetPassword(String userId, char[] password) throws NotSupportedException, RepositoryException {

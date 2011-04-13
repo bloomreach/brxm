@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -379,8 +380,16 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final void saveGroups() throws RepositoryException {
-        session.refresh(true);
-        session.getRootNode().getNode(groupsPath).save();
+        try {
+            session.refresh(true);
+            session.getRootNode().getNode(groupsPath).save();
+        } catch (InvalidItemStateException e) {
+            log.warn("Unable to save synced group data, this usually happens when the group node"
+                    + " was simultaneously changed by another session: " + e.getMessage());
+            log.debug("StackTrace: ", e);
+            // discard changes in session
+            session.refresh(false);
+        }
     }
 
     public boolean backendCreateGroup(String groupId) throws NotSupportedException, RepositoryException {
