@@ -3,6 +3,8 @@
 /.project
 /.settings
 /bin
+package-app-dependencies/.project
+package-app-dependencies/.settings
 package-app-dependencies/target
 package-cms-dependencies/.classpath
 package-cms-dependencies/.project
