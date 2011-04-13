@@ -1,0 +1,11 @@
+/.project
+/.settings
+frontend/.classpath
+frontend/.project
+frontend/.settings
+frontend/target
+repository/.classpath
+repository/.project
+repository/.settings
+repository/target
+/target
