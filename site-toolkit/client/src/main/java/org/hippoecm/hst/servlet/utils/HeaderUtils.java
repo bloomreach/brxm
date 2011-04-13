@@ -95,5 +95,8 @@ public final class HeaderUtils {
         }
     }
 
+    public static void setContentLengthHeader(HttpServletResponse response, BinaryPage page) {
+        response.setHeader("Content-Length", Long.toString(page.getLength())); 
+    }
 
 }

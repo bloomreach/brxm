@@ -120,6 +120,8 @@ public class BinariesServlet extends HttpServlet {
 
     private static final String SET_EXPIRES_HEADERS_INIT_PARAM = "set-expires-headers";
 
+    public static final String SET_CONTENT_LENGTH_HEADER_INIT_PARAM = "set-content-length-header";
+
     public static final String BASE_BINARIES_CONTENT_PATH_INIT_PARAM = "baseBinariesContentPath";
 
     public static final String CONTENT_DISPOSITION_CONTENT_TYPES_INIT_PARAM = "contentDispositionContentTypes";
@@ -141,6 +143,8 @@ public class BinariesServlet extends HttpServlet {
     public static final String BINARY_LAST_MODIFIED_PROP_NAME_INIT_PARAM = "binaryLastModifiedPropName";
 
     private static final boolean DEFAULT_SET_EXPIRES_HEADERS = true;
+    
+    private static final boolean DEFAULT_SET_CONTENT_LENGTH_HEADERS = true;
 
     private String baseBinariesContentPath = ResourceUtils.DEFAULT_BASE_BINARIES_CONTENT_PATH;
 
@@ -157,6 +161,8 @@ public class BinariesServlet extends HttpServlet {
     private boolean initialized = false;
 
     private boolean setExpires = DEFAULT_SET_EXPIRES_HEADERS;
+    
+    private boolean setContentLength = DEFAULT_SET_CONTENT_LENGTH_HEADERS;
 
     private String binaryResourceNodeType = ResourceUtils.DEFAULT_BINARY_RESOURCE_NODE_TYPE;
 
@@ -178,6 +184,7 @@ public class BinariesServlet extends HttpServlet {
         initBinariesConfig();
         initContentDispostion();
         initExpires();
+        initSetContentLengthHeader();
     }
 
     @Override
@@ -187,7 +194,7 @@ public class BinariesServlet extends HttpServlet {
                 doInit();
             }
         }
-
+        
         final BinaryPage page = getPageFromCacheOrLoadPage(request);
 
         response.setStatus(page.getStatus());
@@ -207,6 +214,10 @@ public class BinariesServlet extends HttpServlet {
         HeaderUtils.setLastModifiedHeaders(response, page);
         if (setExpiresNeeded) {
             HeaderUtils.setExpiresHeaders(response, page);
+        }
+        
+        if(setContentLength) {
+            HeaderUtils.setContentLengthHeader(response, page);
         }
 
         if (HeaderUtils.hasMatchingEtag(request, page)) {
@@ -467,11 +478,15 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    private void initExpires() {
+    protected void initExpires() {
         setExpires = getBooleanInitParameter(SET_EXPIRES_HEADERS_INIT_PARAM, DEFAULT_SET_EXPIRES_HEADERS);
     }
+    
+    protected void initSetContentLengthHeader() {
+        setContentLength = getBooleanInitParameter(SET_CONTENT_LENGTH_HEADER_INIT_PARAM, DEFAULT_SET_CONTENT_LENGTH_HEADERS);
+    }
 
-    private void initBinariesCache() {
+    protected void initBinariesCache() {
         HstCache cache = null;
         
         String binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
@@ -492,11 +507,11 @@ public class BinariesServlet extends HttpServlet {
                 BinariesCache.DEFAULT_VALIDITY_CHECK_INTERVAL_MILLIS/ 1000 ));
     }
 
-    private String getInitParameter(String paramName, String defaultValue) {
+    protected String getInitParameter(String paramName, String defaultValue) {
         return ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, defaultValue);
     }
 
-    private boolean getBooleanInitParameter(String paramName, boolean defaultValue) {
+    protected boolean getBooleanInitParameter(String paramName, boolean defaultValue) {
         String value = ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, null);
         if (value != null) {
             return Boolean.parseBoolean(value);
@@ -504,7 +519,7 @@ public class BinariesServlet extends HttpServlet {
         return defaultValue;
     }
     
-    private long getLongInitParameter(String paramName, long defaultValue) {
+    protected long getLongInitParameter(String paramName, long defaultValue) {
         String value = ServletConfigUtils.getInitParameter(getServletConfig(), null, paramName, null);
         if (value != null) {
             try {
