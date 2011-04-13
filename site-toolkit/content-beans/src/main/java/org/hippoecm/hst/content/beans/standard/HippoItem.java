@@ -107,7 +107,7 @@ public class HippoItem implements HippoBean {
             if (this.node.hasProperty(HippoNodeType.HIPPO_UUID)) {
                 this.canonicalId = this.node.getProperty(HippoNodeType.HIPPO_UUID).getString();
             } else if (this.node.isNodeType("mix:referenceable")) {
-                this.canonicalId = this.node.getUUID();
+                this.canonicalId = this.node.getIdentifier();
             } else if( (canonicalNode = ((HippoNode)node).getCanonicalNode()) != null) {
                 canonicalId = canonicalNode.getIdentifier();
             } 
@@ -225,6 +225,7 @@ public class HippoItem implements HippoBean {
     }
 
 
+    
     public <T> List<T> getChildBeansByName(String childNodeName) {
         return getChildBeansByName(childNodeName, (Class)null);
     }
@@ -290,30 +291,17 @@ public class HippoItem implements HippoBean {
                     continue;
                 }
 
-                boolean nodeTypeMatch = false;
-                if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
-                    nodeTypeMatch = true;
-                } else if (child.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (child.hasNode(child.getName())) {
-                        child = child.getNode(child.getName());
-                        if (child.getPrimaryNodeType().getName().equals(jcrPrimaryNodeType)) {
-                            nodeTypeMatch = true;
-                        }
-                    }
-                }
-
-                if (!nodeTypeMatch) {
-                    continue;
-                }
-
                 try {
-                    Object bean = this.objectConverter.getObject(child);
-                    if (bean != null && annotatedClass.isAssignableFrom(bean.getClass())) {
-                        childBeans.add((T) bean);
+                    String nodeObjectType = objectConverter.getPrimaryObjectType(child);
+                    if (nodeObjectType != null && nodeObjectType.equals(jcrPrimaryNodeType)) {
+                        T bean = (T)this.objectConverter.getObject(child);
+                        if (bean != null) { // && annotatedClass.isAssignableFrom(bean.getClass())) {
+                            childBeans.add(bean);
+                        }
                     }
                 } catch (ObjectBeanManagerException e) {
                     log.warn("Skipping bean: {}", e);
-                }
+                } 
 
             }
         } catch (RepositoryException e) {
