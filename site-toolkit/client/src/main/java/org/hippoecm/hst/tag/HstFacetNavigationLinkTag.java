@@ -94,7 +94,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             return EVAL_PAGE;
         }
         
-        HstRequestContext reqContext = hstRequest.getRequestContext();
+        HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
         
         HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext,null, true, true);
         
@@ -124,7 +124,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             }
         }
         link.setPath(path);
-        String urlString = link.toUrlForm(hstRequest, hstResponse, false);
+        String urlString = link.toUrlForm(reqContext, false);
         
         // append again the current queryString as we are context relative
         if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {

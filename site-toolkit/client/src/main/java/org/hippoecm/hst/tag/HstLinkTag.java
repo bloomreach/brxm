@@ -40,6 +40,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,7 +140,7 @@ public class HstLinkTag extends ParamContainerTag {
             return EVAL_PAGE;
         }
         
-       HstRequestContext reqContext = getHstRequestContext(servletRequest);
+       HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
        
        if(reqContext == null) {
            if(this.path != null) {
@@ -477,10 +478,6 @@ public class HstLinkTag extends ParamContainerTag {
        this.fallback = fallback;
     }
     
-
-    protected HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
-        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-    }
     private Map<String, String[]> combineParametersMap(Map<String, List<String>> parametersMap,
             Map<String, String[]> currentRequestParameterMap) {
         if((parametersMap == null || parametersMap.isEmpty()) && (currentRequestParameterMap == null || currentRequestParameterMap.isEmpty())) {
