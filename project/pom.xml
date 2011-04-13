@@ -819,7 +819,7 @@
           <plugin>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${jrebel.plugin.version}</version>
+            <version>${maven.plugin.jrebel.version}</version>
             <executions>
               <execution>
                 <id>generate-rebel-xml</id>
