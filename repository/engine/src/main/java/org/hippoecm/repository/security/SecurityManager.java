@@ -327,16 +327,25 @@ public class SecurityManager implements JackrabbitSecurityManager {
                 return true;
             }
 
-            // sync user info and create user node if needed
-            userMgr.syncUserInfo(userId);
-            userMgr.updateLastLogin(userId);
-            userMgr.saveUsers();
 
-            // sync group info
-            groupMgr.syncMemberships(userMgr.getUser(userId));
-            groupMgr.saveGroups();
+            // The sync blocks are synchronized because the underlying
+            // methods can share the same jcr session and the jcr session is
+            // not thread safe. This is a "best effort" solution as the usrMgr
+            // and the groupMgr could also share the same session but generally
+            // do not operate on the same nodes.
 
-            // TODO: move to cron?
+            synchronized(userMgr) {
+                userMgr.syncUserInfo(userId);
+                userMgr.updateLastLogin(userId);
+                userMgr.saveUsers();
+            }
+
+            synchronized(groupMgr) {
+                groupMgr.syncMemberships(userMgr.getUser(userId));
+                groupMgr.saveGroups();
+            }
+
+            // TODO: move to cron based solution
             providers.get(providerId).sync();
 
             return true;
