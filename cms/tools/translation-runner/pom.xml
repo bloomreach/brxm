@@ -31,8 +31,8 @@
   <version>2.19.03-SNAPSHOT</version>
 
   <properties>
-    <repository.api.version>2.18.00</repository.api.version>
-    <translation.version>2.18.00</translation.version>
+    <repository.api.version>2.19.03-SNAPSHOT</repository.api.version>
+    <translation.version>2.19.03-SNAPSHOT</translation.version>
     <org.slf4j.version>1.5.8</org.slf4j.version>
   </properties>
 
