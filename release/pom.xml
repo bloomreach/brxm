@@ -58,6 +58,9 @@
     <forge.taxonomy.version>1.06.00</forge.taxonomy.version>
     <forge.tcmp.version>1.02.00</forge.tcmp.version>
 
+    <forge.content-blocks.version>1.08.00-SNAPSHOT</forge.content-blocks.version>
+    <forge.ecm-tagging.version>4.04.00-SNAPSHOT</forge.ecm-tagging.version>
+
   </properties>
 
   <repositories>
@@ -788,6 +791,16 @@
         <groupId>org.onehippo.forge</groupId>
         <artifactId>tcmp-component</artifactId>
         <version>${forge.tcmp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>content-blocks</artifactId>
+        <version>${forge.content-blocks.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>ecm-tagging</artifactId>
+        <version>${forge.ecm-tagging.version}</version>
       </dependency>
 
     </dependencies>
