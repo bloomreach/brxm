@@ -53,7 +53,6 @@
     <product_name>Hippo HST</product_name>
     <product_abr>HST</product_abr>
 
-    <servlet-api.version>2.4</servlet-api.version>
     <jsp-api.version>2.0</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
@@ -98,14 +97,14 @@
     <jackrabbit.version>2.2.5</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.19.02</hippo.cms.version>
-    <hippo.repository.version>2.19.02</hippo.repository.version>
-    <hippo.packages.version>2.19.02</hippo.packages.version>
-    <hippo.addon-publication-workflow.version>2.19.02</hippo.addon-publication-workflow.version>
+    <hippo.cms.version>2.19.03-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.19.03-SNAPSHOT</hippo.repository.version>
+    <hippo.addon-publication-workflow.version>2.19.03-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.packages.version>2.19.03-SNAPSHOT</hippo.packages.version>
     <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
   
    
-    <jdo.version>2.3-eb</jdo.version>
+    <jdo2.api.version>2.3-eb</jdo2.api.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
     <yui.sources.version>1.01.09</yui.sources.version>
@@ -586,7 +585,7 @@
       <dependency>
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
-        <version>${jdo.version}</version>
+        <version>${jdo2.api.version}</version>
         <scope>provided</scope>
         <exclusions>
           <exclusion>

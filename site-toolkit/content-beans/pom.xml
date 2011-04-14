@@ -44,7 +44,7 @@
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>
-      <version>${jdo.version}</version>
+      <version>${jdo2.api.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

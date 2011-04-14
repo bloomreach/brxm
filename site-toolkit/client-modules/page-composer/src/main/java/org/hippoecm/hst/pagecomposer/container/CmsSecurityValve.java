@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.security.SignatureException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,14 +83,13 @@ public class CmsSecurityValve extends AbstractValve {
             HttpSession session = servletRequest.getSession(false);
 
             if (session == null || session.getAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME) == null) {
+                String key = servletRequest.getSession(true).getId();
 
-                String keyParam = servletRequest.getParameter("key");
                 String credentialParam = servletRequest.getParameter("cred");
 
                 //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
-                if (keyParam == null || credentialParam == null) {
+                if (credentialParam == null) {
                     // generate key; redirect to cms
-                    String key = "VK999981";
                     try {
                         String cmsAuthUrl = null;
                         if (destinationLink != null) {
@@ -116,9 +116,12 @@ public class CmsSecurityValve extends AbstractValve {
                     return;
                 } else {
                     CredentialCipher credentialCipher = CredentialCipher.getInstance();
-                    Credentials cred = credentialCipher.decryptFromString(credentialParam);
-                    servletRequest.getSession(true).setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, cred);
-
+                    try {
+                        Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
+                        servletRequest.getSession(true).setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, cred);
+                    } catch (SignatureException se) {
+                        throw new ContainerException(se);
+                    }
                 }
             }
 
