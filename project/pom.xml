@@ -65,6 +65,7 @@
     <maven.plugin.buildnumber.version>1.0-beta-4</maven.plugin.buildnumber.version>
     <maven.plugin.jrebel.version>1.0.7</maven.plugin.jrebel.version>
     <maven.plugin.cargo.version>1.1.0-r4845</maven.plugin.cargo.version>
+    <maven.plugin.surefire-report.version>2.8</maven.plugin.surefire-report.version>
     
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
@@ -567,6 +568,12 @@
           <configuration>
             <workingDirectory>target</workingDirectory>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>${maven.plugin.surefire-report.version}</version>
+          <inherited>true</inherited>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
