@@ -105,28 +105,6 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
-    <repository>
-      <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <repository>
-      <id>m2snapshots</id>
-      <name>Maven 2 snapshots repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
   </repositories>
 
   <distributionManagement>
