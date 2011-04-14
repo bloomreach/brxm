@@ -57,7 +57,7 @@
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
     <portlet-api.version>2.0</portlet-api.version>
-    <portals-bridges-common.version>1.0.4</portals-bridges-common.version>
+    <portals-bridges-common.version>2.0</portals-bridges-common.version>
     
     <javax.jcr.version>2.0</javax.jcr.version>
     <javax.mail.version>1.4.1</javax.mail.version>
@@ -101,7 +101,7 @@
     <hippo.repository.version>2.19.03-SNAPSHOT</hippo.repository.version>
     <hippo.addon-publication-workflow.version>2.19.03-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.packages.version>2.19.03-SNAPSHOT</hippo.packages.version>
-    <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>1.06.00-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
   
    
     <jdo2.api.version>2.3-eb</jdo2.api.version>
@@ -143,13 +143,23 @@
 
   <repositories>
     <repository>
+      <id>hippo-maven2-snapshots</id>
+      <name>Hippo Maven 2</name>
+      <url>http://maven.onehippo.com/maven2-snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://maven.onehippo.com/maven2/</url>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
     <repository>
       <id>hippogallerypicker</id>
@@ -157,20 +167,6 @@
     </repository>
   </repositories>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-  
   <dependencyManagement>
   
     <dependencies>
@@ -778,6 +774,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.plugin.javadoc.version}</version>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
@@ -785,9 +782,10 @@
       <plugin>
         <groupId>net.sourceforge.maven-taglib</groupId>
         <artifactId>maven-taglib-plugin</artifactId>
+        <version>${maven.plugin.taglib.version}</version>
         <configuration>
           <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
-          <title>HST ${version} JSP tag</title>
+          <title>HST ${project.version} JSP tag</title>
         </configuration>
        <!--
          <taglib.xslt>src/site/scripts/tlddoc</taglib.xslt>
