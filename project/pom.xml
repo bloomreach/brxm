@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2010 Hippo.
+  Copyright 2007-2011 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -73,7 +73,9 @@
     <!-- if you want to start remote debugging session suspended
          override on command line with -Dcargo.debug.suspend=y -->
     <cargo.debug.suspend>n</cargo.debug.suspend>
+    <!-- Cargo Tomcat container version and used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>6</cargo.tomcat.major.version>
+    <!-- Tomcat full version used for Tomcat tarball distribution url -->
     <cargo.tomcat.full.version>6.0.32</cargo.tomcat.full.version>
     
     <!-- default empty javaagent, see also "jrebel" profile below -->
@@ -123,7 +125,7 @@
 
   <ciManagement>
     <system>Hudson</system>
-    <url>http://hudson.onehippo.org/</url>
+    <url>https://builds.onehippo.org/</url>
   </ciManagement>
 
   <developers>
@@ -274,6 +276,24 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Mathijs den Burger</name>
+      <id>mdenburger</id>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <name>Jannis Bloemendal</name>
+      <id>jbloemendal</id>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <contributors>
@@ -342,6 +362,9 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
+    <!-- DISABLED repositories which are often "transitively" pulled in 
+        and/or were used in the past
+    -->
     <repository>
       <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
@@ -349,7 +372,7 @@
         <enabled>false</enabled>
       </snapshots>
       <releases>
-        <updatePolicy>never</updatePolicy>
+        <enabled>false</enabled>
       </releases>
     </repository>
     <repository>
@@ -360,7 +383,7 @@
         <enabled>false</enabled>
       </snapshots>
       <releases>
-        <updatePolicy>never</updatePolicy>
+        <enabled>false</enabled>
       </releases>
     </repository>
     <repository>
@@ -372,7 +395,19 @@
         <enabled>false</enabled>
       </snapshots>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>jpox</id>
+      <name>JPOX maven repository.</name>
+      <url>http://www.jpox.org/downloads/maven2/</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
       </releases>
     </repository>
     <repository>
@@ -384,12 +419,27 @@
         <enabled>false</enabled>
       </snapshots>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </releases>
     </repository>
   </repositories>
 
   <pluginRepositories>
+    <pluginRepository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>http://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </pluginRepository>
+    <!-- DISABLED repositories which are often "transitively" pulled in 
+        and/or were used in the past
+    -->
     <pluginRepository>
       <id>jpox.plugin</id>
       <name>JPOX maven 2 plugin repository.</name>
@@ -399,20 +449,8 @@
         <enabled>false</enabled>
       </snapshots>
       <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots>
         <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
   
@@ -442,6 +480,13 @@
         <artifactId>jdo2-api</artifactId>
         <version>${jdo2.api.version}</version>
         <scope>provided</scope>
+        <exclusions>
+          <!-- we use geronimo-jta_1.1_spec instead -->
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>transaction-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -669,17 +714,6 @@
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
           <version>${maven.plugin.cargo.version}</version>
-          <configuration>
-            <configuration>
-              <properties>
-                <cargo.remote.username>admin</cargo.remote.username>
-                <cargo.remote.password />
-              </properties>
-            </configuration>
-            <container>
-              <containerId>tomcat6x</containerId>
-            </container>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -773,6 +807,8 @@
               <configuration>
                 <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
                 <properties>
+                  <cargo.remote.username>admin</cargo.remote.username>
+                  <cargo.remote.password />
                   <cargo.jvmargs>
                     <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
                   </cargo.jvmargs>
@@ -780,6 +816,7 @@
                 </properties>
               </configuration>
               <container>
+                <containerId>tomcat${cargo.tomcat.major.version}x</containerId>
                 <systemProperties>
                   <repo.path>${repo.path}</repo.path>
                   <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
