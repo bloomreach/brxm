@@ -15,6 +15,23 @@
  */
 package org.hippoecm.frontend;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.EventListenerIterator;
+import javax.servlet.ServletContext;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
@@ -50,24 +67,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.observation.EventListener;
-import javax.jcr.observation.EventListenerIterator;
-import javax.servlet.ServletContext;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Main extends WebApplication {
     @SuppressWarnings("unused")
@@ -250,7 +249,7 @@ public class Main extends WebApplication {
                 final Object keyParams = requestParameters.getParameters().get("key");
                 final Object destinationUrlParams = requestParameters.getParameters().get("destinationUrl");
 
-                if (userCredentials != null && keyParams != null && destinationUrlParams != null) {
+                if (userCredentials != null && (keyParams instanceof String[]) && (destinationUrlParams instanceof String[])) {
 
                     requestTarget = new IRequestTarget() {
 
@@ -264,18 +263,10 @@ public class Main extends WebApplication {
                             String key = ((String[]) keyParams)[0];
                             String destinationUrl = ((String[]) destinationUrlParams)[0];
                             CredentialCipher cipher = CredentialCipher.getInstance();
-                            String encryptedString = cipher.getEncryptedString((SimpleCredentials) userCredentials.getJcrCredentials());
+                            String encryptedString = cipher.getEncryptedString(key, (SimpleCredentials) userCredentials.getJcrCredentials());
 
-                            String utf8Base64EncodedCred = null;
-                            try {
-                                utf8Base64EncodedCred = URLEncoder.encode(encryptedString, "UTF8");
-                                Response response = RequestCycle.get().getResponse();
-                                response.redirect(destinationUrl + "?key=" + key + "&cred=" + utf8Base64EncodedCred);
-                            } catch (UnsupportedEncodingException e) {
-                                throw new RuntimeException("Unable to encode the string to UTF8", e);
-                            }
-
-
+                            Response response = RequestCycle.get().getResponse();
+                            response.redirect(destinationUrl + "?cred=" + encryptedString);
                         }
                     };
                 }

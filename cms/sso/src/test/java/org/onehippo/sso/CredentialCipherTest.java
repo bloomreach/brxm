@@ -15,12 +15,15 @@
  */
 package org.onehippo.sso;
 
+import java.security.SignatureException;
+
 import javax.jcr.SimpleCredentials;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertTrue;
 
 public class CredentialCipherTest {
@@ -57,11 +60,15 @@ public class CredentialCipherTest {
     }
 
     @Test
-    public void testEdge() {
-        byte[] bytes = new byte[]{-79, -3, -125};
+    public void testEncoding() {
+        byte[] bytes = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            bytes[i++] = (byte) i;
+        }
+
         String encoded = UrlSafeBase64.encode(bytes);
         byte[] decoded = UrlSafeBase64.decode(encoded);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 256; i++) {
             assertEquals(bytes[i], decoded[i]);
         }
     }
@@ -69,20 +76,29 @@ public class CredentialCipherTest {
     @Test
     public void testEncryptionAndDecryption() throws Exception {
 
+        String key = "secret";
         SimpleCredentials sc = new SimpleCredentials("admin", "admin".toCharArray());
-        byte[] encrypted = CredentialCipher.getInstance().encrypt(sc);
+        byte[] encrypted = CredentialCipher.getInstance().encrypt(key, sc);
 
         String base64EncString = UrlSafeBase64.encode(encrypted);
         byte[] decrypted = UrlSafeBase64.decode(base64EncString);
 
-        assertEquals(encrypted.length, decrypted.length);
-        for (int i = 0; i < encrypted.length; i++) {
-            assertEquals(encrypted[i], decrypted[i]);
-        }
-
-        SimpleCredentials decryptedCred = (SimpleCredentials) CredentialCipher.getInstance().decrypt(decrypted);
+        SimpleCredentials decryptedCred = (SimpleCredentials) CredentialCipher.getInstance().decrypt(key, decrypted);
         org.junit.Assert.assertEquals("admin", decryptedCred.getUserID());
         org.junit.Assert.assertArrayEquals("admin".toCharArray(), decryptedCred.getPassword());
+    }
+
+    @Test
+    public void testInvalidKeyIsRejected() throws Exception {
+        String key = "aap";
+        SimpleCredentials sc = new SimpleCredentials("admin", "admin".toCharArray());
+        byte[] bytes = CredentialCipher.getInstance().encrypt(key, sc);
+        try {
+            CredentialCipher.getInstance().decrypt("noot", bytes);
+            fail("Decryption succeeded with invalid key");
+        } catch (SignatureException exception) {
+            // this is ok
+        }
 
     }
 

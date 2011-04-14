@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -61,13 +62,14 @@ public final class CredentialCipher {
 
     }
 
-    public byte[] encrypt(SimpleCredentials credentials) {
+    public byte[] encrypt(String key, SimpleCredentials credentials) {
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, secret);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(key);
             oos.writeObject(credentials);
 
             return cipher.doFinal(baos.toByteArray());
@@ -88,11 +90,12 @@ public final class CredentialCipher {
 
     /**
      * Get the credentials as UrlSafeBase64 encoded String.
+     *
      * @param credentials JCR Simple Credentials
      * @return Base64 Encoded string of the encrypted credentials.
      */
-    public String getEncryptedString(SimpleCredentials credentials) {
-        return UrlSafeBase64.encode(encrypt(credentials));
+    public String getEncryptedString(String key, SimpleCredentials credentials) {
+        return UrlSafeBase64.encode(encrypt(key, credentials));
     }
 
     /**
@@ -101,19 +104,22 @@ public final class CredentialCipher {
      * @param credentialString UrlSafeBase64 encoded string which contains encrypted JCR credential String.
      * @return JcrCredentials (SimpleCredentials).
      */
-    public Credentials decryptFromString(String credentialString) {
-        return decrypt(UrlSafeBase64.decode(credentialString));
+    public Credentials decryptFromString(String key, String credentialString) throws SignatureException {
+        return decrypt(key, UrlSafeBase64.decode(credentialString));
     }
 
-    public Credentials decrypt(byte[] bytes) {
+    public Credentials decrypt(String key, byte[] bytes) throws SignatureException {
         try {
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, secret);
 
             byte[] decrypted = cipher.doFinal(bytes);
-
             ByteArrayInputStream baos = new ByteArrayInputStream(decrypted);
             ObjectInputStream oos = new ObjectInputStream(baos);
+            String encryptedKey = (String) oos.readObject();
+            if (!key.equals(encryptedKey)) {
+                throw new SignatureException("Provided key does not match encrypted key");
+            }
             return (Credentials) oos.readObject();
         } catch (NoSuchPaddingException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
@@ -121,11 +127,11 @@ public final class CredentialCipher {
             throw new RuntimeException("Could not decrypt credentials", e);
         } catch (IOException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException("Could not decrypt credentials", e);
         } catch (BadPaddingException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
         } catch (IllegalBlockSizeException e) {
-            throw new RuntimeException("Could not decrypt credentials", e);
-        } catch (InvalidKeyException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
