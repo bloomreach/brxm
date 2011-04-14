@@ -452,6 +452,17 @@
         <enabled>false</enabled>
       </releases>
     </pluginRepository>
+    <pluginRepository>
+      <id>codehaus</id>
+      <url>http://repository.codehaus.org/</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
   </pluginRepositories>
   
   <dependencyManagement>
