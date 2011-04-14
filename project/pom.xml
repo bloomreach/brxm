@@ -65,6 +65,7 @@
     <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
     <maven.plugin.surefire.version>2.5</maven.plugin.surefire.version>
     <maven.plugin.surefire-report.version>2.8</maven.plugin.surefire-report.version>
+    <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
     
     <!-- if you want a remote debugging on a different a address
@@ -680,6 +681,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${maven.plugin.javadoc.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>net.sourceforge.maven-taglib</groupId>
+          <artifactId>maven-taglib-plugin</artifactId>
+          <version>${maven.plugin.taglib.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
