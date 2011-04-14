@@ -31,22 +31,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <version>${javax.jcr.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -61,21 +55,10 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-      <version>${javax.jdo2-api.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>geronimo-spec</groupId>
-          <artifactId>geronimo-spec-jta</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${org.slf4j.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.datanucleus</groupId>
@@ -87,24 +70,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <configuration>
-            <additionalBuildcommands>
-              <buildCommand>
-                <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
-              </buildCommand>
-            </additionalBuildcommands>
-            <additionalProjectnatures>
-              <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
-            </additionalProjectnatures>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -125,6 +90,23 @@
         <groupId>org.datanucleus</groupId>
         <artifactId>maven-datanucleus-plugin</artifactId>
         <version>2.2.1</version>
+        <dependencies>
+          <dependency>
+             <groupId>org.onehippo.cms7</groupId>
+             <artifactId>hippo-repository-api</artifactId>
+             <version>${hippo.repository.version}</version>
+           </dependency>
+           <dependency>
+             <groupId>org.onehippo.cms7</groupId>
+             <artifactId>hippo-cms-editor-common</artifactId>
+             <version>${project.version}</version>
+           </dependency>
+           <dependency>
+            <groupId>javax.jdo</groupId>
+            <artifactId>jdo2-api</artifactId>
+            <version>${jdo2.api.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +116,7 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
-   </plugins>
+    </plugins>
   </build>
 
 </project>
