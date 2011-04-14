@@ -274,6 +274,7 @@ skin/target
 sso/.classpath
 sso/.project
 sso/.settings
+sso/hippo-cms-sso.iml
 sso/target
 surf/*.iml
 surf/.project
