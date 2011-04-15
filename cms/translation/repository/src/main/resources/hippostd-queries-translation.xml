@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   Copyright 2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -14,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="hippo:templates" h:merge="combine">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport"
+  sv:name="hippo:templates" h:merge="combine">
   <sv:node sv:name="new-document" h:merge="combine">
     <sv:property sv:name="hippostd:modify" sv:type="String" h:merge="append">
       <sv:value>./hippotranslation:locale</sv:value>
@@ -51,7 +51,9 @@
       <sv:value>xpath</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder/hippostd:templates/node()</sv:value>
+      <sv:value>
+        /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder/hippostd:templates/node()
+      </sv:value>
     </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -68,10 +70,8 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>36414d02-4f0f-475b-8443-dd6f450a6475</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String"></sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-translated-folder</sv:value>
           <sv:value>new-document</sv:value>
@@ -107,20 +107,6 @@
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
         <sv:value>nieuwe vertaalde map</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:class" sv:type="String">
-        <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value>it</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>[TODO: new translated folder]</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
