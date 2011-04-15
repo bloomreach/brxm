@@ -51,6 +51,7 @@ public class SchedulerModule implements DaemonModule
             properties.put("org.quartz.scheduler.instanceName","Hippo JCR Quartz Job Scheduler");
             properties.put("org.quartz.scheduler.instanceName","HJCRQJS");
             properties.put("org.quartz.scheduler.instanceId","AUTO");
+            properties.put("org.quartz.scheduler.skipUpdateCheck", "true");
             properties.put("org.quartz.threadPool.class","org.quartz.simpl.SimpleThreadPool");
             properties.put("org.quartz.threadPool.threadCount","1");
             properties.put("org.quartz.threadPool.threadPriority","5");
