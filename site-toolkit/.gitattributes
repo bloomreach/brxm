@@ -1649,6 +1649,7 @@ content-beans/src/test/resources/org/hippoecm/hst/util/TestObjectConverterUtils-
 demosuite/README.txt -text svneol=unset#text/plain
 demosuite/cms/pom.xml -text
 demosuite/cms/src/main/resources/log4j.xml svneol=native#text/plain
+demosuite/cms/src/main/webapp/META-INF/context.xml -text svneol=unset#text/plain
 demosuite/cms/src/main/webapp/WEB-INF/web.xml -text
 demosuite/content/pom.xml -text
 demosuite/content/src/main/resources/default-ecm-content.xml -text
