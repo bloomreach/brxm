@@ -167,7 +167,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
      */
     private class ObserverThread extends Thread {
         private ObserverThread() {
-            super("ObserverThread");
+            super("RepositoryTemplateLoaderObserverThread");
             setDaemon(true);
         }
 
