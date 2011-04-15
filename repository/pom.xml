@@ -261,17 +261,6 @@
         <version>${jackrabbit.version}-h3</version>
       </dependency>
       <dependency>
-        <groupId>javax.jdo</groupId>
-        <artifactId>jdo2-api</artifactId>
-        <version>${javax.jdo2-api.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-jta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>${commons-logging.provided.version}</version>
@@ -410,6 +399,17 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>${quartz.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>      
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
