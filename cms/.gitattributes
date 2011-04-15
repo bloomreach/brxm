@@ -927,7 +927,6 @@ engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_fr.properties -t
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_it.properties -text
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/PluginRequestCycleProcessor.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/PluginRequestCycleProcessor.java.new -text
 engine/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/ResourceRewriteFilter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
