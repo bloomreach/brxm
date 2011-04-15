@@ -276,7 +276,7 @@ public class BinariesServlet extends HttpServlet {
         if (page != null) {
             page = getValidatedPageFromCache(request, page);
         } else {
-            page = getPage(request, resourcePath);
+            page = getBinaryPage(request, resourcePath);
             binariesCache.putPage(page);
         }
         return page;
@@ -287,7 +287,7 @@ public class BinariesServlet extends HttpServlet {
             long lastModified = getLastModifiedFromResource(request, page.getResourcePath());
             if (binariesCache.isPageStale(page, lastModified)) {
                 binariesCache.removePage(page);
-                page = getPage(request, page.getResourcePath());
+                page = getBinaryPage(request, page.getResourcePath());
                 binariesCache.putPage(page);
             } else {
                 binariesCache.updateNextValidityCheckTime(page);
@@ -312,12 +312,12 @@ public class BinariesServlet extends HttpServlet {
         return -1L;
     }
 
-    protected BinaryPage getPage(HttpServletRequest request, String resourcePath) {
+    protected BinaryPage getBinaryPage(HttpServletRequest request, String resourcePath) {
         BinaryPage page = new BinaryPage(resourcePath);
         Session session = null;
         try {
             session = SessionUtils.getBinariesSession(request);
-            initPageValues(session, page);
+            initBinaryPageValues(session, page);
             log.info("Page loaded: " + page);
         } catch (RepositoryException e) {
             page.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -329,7 +329,7 @@ public class BinariesServlet extends HttpServlet {
         return page;
     }
 
-    protected void initPageValues(Session session, BinaryPage page) throws RepositoryException {
+    protected void initBinaryPageValues(Session session, BinaryPage page) throws RepositoryException {
         if (!ResourceUtils.isValidResourcePath(page.getResourcePath())) {
             page.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -365,13 +365,13 @@ public class BinariesServlet extends HttpServlet {
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
         if (binariesCache.isBinaryDataCacheable(page)) {
-            cacheBinaryData(page, resourceNode);
+            storeBinaryPageToCache(page, resourceNode);
         }
     }
 
-    protected void cacheBinaryData(BinaryPage page, Node resourceNode) {
+    protected void storeBinaryPageToCache(BinaryPage page, Node resourceNode) {
         try {
-            InputStream input = resourceNode.getProperty(binaryDataPropName).getStream();
+            InputStream input = resourceNode.getProperty(binaryDataPropName).getBinary().getStream();
             page.loadDataFromStream(input);
         } catch (RepositoryException e) {
             log.warn("Unable to cache page data for " + page.getResourcePath(), e);
@@ -394,7 +394,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initPrefix2ResourceMappers() {
+    private void initPrefix2ResourceMappers() {
         if (prefix2ResourceContainer != null) {
             return;
         }
@@ -424,7 +424,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initAllResourceContainers() {
+    private void initAllResourceContainers() {
         if (allResourceContainers != null) {
             return;
         }
@@ -444,7 +444,7 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initBinariesConfig() {
+    private void initBinariesConfig() {
         baseBinariesContentPath = getInitParameter(BASE_BINARIES_CONTENT_PATH_INIT_PARAM, baseBinariesContentPath);
         binaryResourceNodeType = getInitParameter(BINARY_RESOURCE_NODE_TYPE_INIT_PARAM, binaryResourceNodeType);
         binaryDataPropName = getInitParameter(BINARY_DATA_PROP_NAME_INIT_PARAM, binaryDataPropName);
@@ -453,7 +453,7 @@ public class BinariesServlet extends HttpServlet {
                 binaryLastModifiedPropName);
     }
 
-    protected void initContentDispostion() throws ServletException {
+    private void initContentDispostion() throws ServletException {
         contentDispositionFilenamePropertyNames = StringUtils.split(getInitParameter(
                 CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
 
@@ -478,15 +478,15 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
-    protected void initExpires() {
+    private void initExpires() {
         setExpires = getBooleanInitParameter(SET_EXPIRES_HEADERS_INIT_PARAM, DEFAULT_SET_EXPIRES_HEADERS);
     }
     
-    protected void initSetContentLengthHeader() {
+    private void initSetContentLengthHeader() {
         setContentLength = getBooleanInitParameter(SET_CONTENT_LENGTH_HEADER_INIT_PARAM, DEFAULT_SET_CONTENT_LENGTH_HEADERS);
     }
 
-    protected void initBinariesCache() {
+    private void initBinariesCache() {
         HstCache cache = null;
         
         String binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
