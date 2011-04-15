@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -226,8 +225,6 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                             addValue(property, values[index], index);
                         } else {
                             Value value = property.getValues()[0];
-                            property.remove();
-                            property = node.setProperty(path, value);
                             addValue(property, value, JcrPropertyValueModel.NO_INDEX);
                             break;
                         }
@@ -235,8 +232,6 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                 } else {
                     if (descriptor.isMultiple()) {
                         Value value = property.getValue();
-                        property.remove();
-                        property = node.setProperty(path, new Value[] { value });
                         addValue(property, value, 0);
                     } else {
                         addValue(property, property.getValue(), JcrPropertyValueModel.NO_INDEX);
