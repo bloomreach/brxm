@@ -731,6 +731,17 @@
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
           <version>${maven.plugin.cargo.version}</version>
+          <configuration>
+            <configuration>
+              <properties>
+                <cargo.remote.username>admin</cargo.remote.username>
+                <cargo.remote.password />
+              </properties>
+            </configuration>
+            <container>
+              <containerId>tomcat${cargo.tomcat.major.version}x</containerId>
+            </container>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -824,8 +835,6 @@
               <configuration>
                 <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
                 <properties>
-                  <cargo.remote.username>admin</cargo.remote.username>
-                  <cargo.remote.password />
                   <cargo.jvmargs>
                     <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
                   </cargo.jvmargs>
@@ -833,7 +842,6 @@
                 </properties>
               </configuration>
               <container>
-                <containerId>tomcat${cargo.tomcat.major.version}x</containerId>
                 <systemProperties>
                   <repo.path>${repo.path}</repo.path>
                   <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
