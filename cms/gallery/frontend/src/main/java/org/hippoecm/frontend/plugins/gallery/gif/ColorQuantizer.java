@@ -514,7 +514,13 @@ public class ColorQuantizer {
             // create the right color model, depending on transparency settings:
             IndexColorModel icm;
 
-            int colorDepth = getDepth(numColors);
+            /*
+             * FvL 17-04-2011:
+             *   commented out since colorDepth is not used.
+             *   keeping the code here since it was copy-pasted
+             */
+            // int colorDepth = getDepth(numColors);
+
             int width = image.getWidth();
             int height = image.getHeight();
 

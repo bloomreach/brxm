@@ -255,7 +255,6 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             IModel model = getDefaultModel();
             if (model instanceof WorkflowDescriptorModel) {
                 WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
-                Node folderNode = descriptorModel.getNode();
                 List<StdWorkflow> list = new LinkedList<StdWorkflow>();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
                 WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
