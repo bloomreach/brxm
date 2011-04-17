@@ -170,11 +170,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     public void addTranslation(String language, Document document) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
-        String sourceUuid = rootSubject.getUUID();
-        Node parent = rootSubject.getParent();
-        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-            sourceUuid = parent.getUUID();
-        }
         if (userSubject.getNode(HippoTranslationNodeType.TRANSLATIONS).hasNode(language)) {
             throw new WorkflowException("Language already exists");
         }
