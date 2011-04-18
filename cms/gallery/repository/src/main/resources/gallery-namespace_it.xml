@@ -55,7 +55,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Thumbnail [it]</sv:value>
+        <sv:value>Thumbnail</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:property" sv:type="String">
         <sv:value>hippogallery:thumbnail</sv:value>
@@ -72,7 +72,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Original [it]</sv:value>
+        <sv:value>Originale</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:property" sv:type="String">
         <sv:value>hippogallery:original</sv:value>
