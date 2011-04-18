@@ -32,9 +32,10 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
-import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.jcr.EventListenerItemImpl;
+import org.hippoecm.hst.core.jcr.EventListenersContainerImpl;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +51,9 @@ public class RepositoryTemplateLoader implements TemplateLoader {
     
     private Credentials defaultCredentials;
     
-    private Session observerSession;
-    
     volatile boolean stopped = false;
+    
+    private EventListenersContainerImpl repoTemplateEventListenersContainer = new EventListenersContainerImpl(); 
     
     private Map<String, RepositorySource> cache =  Collections.synchronizedMap(new HashMap<String, RepositorySource>());
     
@@ -99,30 +100,6 @@ public class RepositoryTemplateLoader implements TemplateLoader {
         
     }
 
-    public Reader getReader(Object templateSource, String encoding) throws IOException {
-        if(templateSource instanceof RepositorySource) {
-            return new StringReader(((RepositorySource)templateSource).getTemplate());
-        } else {
-            // cannot happen
-        }
-        return null;
-    }
-    
-    private void doInit() {
-        if(repository != null) {
-            return;
-        }
-        
-        if (HstServices.isAvailable()) {
-            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
-            this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-        }
-        // start the observer in a new Thread as it is not allowed to be started within this Thread: The jcr session for the 
-        // observer is not allowed to be returned to the pool. This will happen if started with the same Thread
-        new ObserverThread().start(); 
-        
-     }
-
     private RepositorySource getRepositoryTemplate(String absPath) {
         String template = null;
         Session session = null;
@@ -150,6 +127,44 @@ public class RepositoryTemplateLoader implements TemplateLoader {
         return RepositorySource.repositorySourceNotFound;
     }
     
+    public Reader getReader(Object templateSource, String encoding) throws IOException {
+        if(templateSource instanceof RepositorySource) {
+            return new StringReader(((RepositorySource)templateSource).getTemplate());
+        } else {
+            // cannot happen
+        }
+        return null;
+    }
+    
+    private void doInit() {
+        if(repository != null) {
+            return;
+        }
+        
+        if (HstServices.isAvailable()) {
+            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+            this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        }
+        
+        repoTemplateEventListenersContainer = new EventListenersContainerImpl();
+        repoTemplateEventListenersContainer.setRepository(repository);
+        repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
+        repoTemplateEventListenersContainer.setSessionLiveCheck(true); 
+        
+        EventListenerItemImpl listenerItem = new EventListenerItemImpl();
+        listenerItem.setAbsolutePath("/");
+        listenerItem.setDeep(true);
+        listenerItem.setEventTypes(Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED);
+        String[] nodeTypes = { HstNodeTypes.NODETYPE_HST_TEMPLATE };
+        listenerItem.setNodeTypeNames(nodeTypes);
+        listenerItem.setEventListener(new TemplateChangeListener()); 
+        
+        repoTemplateEventListenersContainer.addEventListenerItem(listenerItem);
+        repoTemplateEventListenersContainer.start(); 
+     }
+
+ 
+    
     private Session getSession() throws RepositoryException {
         Session session = null;
         if (this.repository != null) {
@@ -161,57 +176,6 @@ public class RepositoryTemplateLoader implements TemplateLoader {
         }
         return session;
     }
-    
-    /**
-     * A deamon thread 
-     */
-    private class ObserverThread extends Thread {
-        private ObserverThread() {
-            super("RepositoryTemplateLoaderObserverThread");
-            setDaemon(true);
-        }
-
-        public void run() {
-            while(true) {
-                if(!stopped && (observerSession == null || !observerSession.isLive())) {
-                    // do not log out observerSession!
-                    try {
-                         observerSession = getSession();
-                         ObservationManager obMgr;
-                         obMgr = observerSession.getWorkspace().getObservationManager();
-                         EventListener listener = new TemplateChangeListener();
-                         // TODO : only catch event from hst:script nodetype
-                         String[] nodeTypes = { HstNodeTypes.NODETYPE_HST_TEMPLATE };
-                         obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED
-                                 | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true, null, nodeTypes, true);
-                    } catch (RepositoryException e) {
-                        log.error("RepositoryException in the ObserverThread for RepositoryTemplateLoader", e);;
-                    }
-                }
-                synchronized (this) {
-                    try {
-                        wait(1000);
-                    } catch (InterruptedException e) {
-                        log.error("Exception in the ObserverThread for RepositoryTemplateLoader", e);
-                    }
-                }
-            }
-        }
-        
-        
-    }
-    
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        stopped = true;
-        if(observerSession != null) {
-            if(observerSession.isLive()) {
-                observerSession.logout();
-            }
-        }
-    }
-    
     
     private class TemplateChangeListener implements EventListener {
         
@@ -230,6 +194,15 @@ public class RepositoryTemplateLoader implements TemplateLoader {
                     log.error("RepositoryException during template change listener ", e);
                 }
             }
+        }
+    }
+
+    /**
+     *  destory must be invoked by HstFreemarkerServlet#destroy 
+     */ 
+    public void destroy() {
+        if(repoTemplateEventListenersContainer != null) {
+            repoTemplateEventListenersContainer.stop();  
         }
     }
     

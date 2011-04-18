@@ -54,6 +54,8 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     private boolean lookupVirtualWebappLibResourcePathsEnabled;
 
     private boolean taglibModelInitialized;
+    
+    private RepositoryTemplateLoader repositoryLoader;
 
     @Override
     public void init() throws ServletException {
@@ -69,7 +71,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         TemplateLoader defaultLoader = conf.getTemplateLoader();
         // repository template loader
-        TemplateLoader repositoryLoader = new RepositoryTemplateLoader();
+        repositoryLoader = new RepositoryTemplateLoader();
         TemplateLoader[] loaders = new TemplateLoader[] { defaultLoader, classTemplateLoader, repositoryLoader };
         TemplateLoader multiLoader = new MultiTemplateLoader(loaders);
         conf.setTemplateLoader(multiLoader);
@@ -77,6 +79,16 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         
     }
     
+    
+    
+    @Override
+    public void destroy() {
+        super.destroy();
+        repositoryLoader.destroy();
+    }
+
+
+
     /**
      * Special dispatch info is included when the request contains the attribute {@link ContainerConstants#DISPATCH_URI_SCHEME}. For example
      * this value is 'classpath' or 'jcr' to load a template from a classpath or repository
