@@ -41,7 +41,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
 
     public void setNodeAddedEnabled(boolean nodeAddedEnabled) {
-        this.eventTypes |= Event.NODE_ADDED;
+        if(nodeAddedEnabled) {
+            this.eventTypes |= Event.NODE_ADDED;
+        } else {
+            // flip the bit 
+            this.eventTypes &=  (0xFF^Event.NODE_ADDED); 
+        }
     }
 
     public boolean isNodeRemovedEnabled() {
@@ -49,7 +54,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
 
     public void setNodeRemovedEnabled(boolean nodeRemovedEnabled) {
-        this.eventTypes |= Event.NODE_REMOVED;
+        if(nodeRemovedEnabled) {
+            this.eventTypes |= Event.NODE_REMOVED;
+        } else {
+            // flip the bit 
+            this.eventTypes &=  (0xFF^Event.NODE_REMOVED); 
+        }
     }
 
     public boolean isPropertyAddedEnabled() {
@@ -57,7 +67,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
 
     public void setPropertyAddedEnabled(boolean propertyAddedEnabled) {
-        this.eventTypes |= Event.PROPERTY_ADDED;
+        if(propertyAddedEnabled) {
+            this.eventTypes |= Event.PROPERTY_ADDED;
+        } else {
+            // flip the bit 
+            this.eventTypes &=  (0xFF^Event.PROPERTY_ADDED); 
+        }
     }
 
     public boolean isPropertyChangedEnabled() {
@@ -65,7 +80,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
 
     public void setPropertyChangedEnabled(boolean propertyChangedEnabled) {
-        this.eventTypes |= Event.PROPERTY_CHANGED;
+        if(propertyChangedEnabled) {
+            this.eventTypes |= Event.PROPERTY_CHANGED;
+        } else {
+            // flip the bit 
+            this.eventTypes &=  (0xFF^Event.PROPERTY_CHANGED); 
+        }
     }
 
     public boolean isPropertyRemovedEnabled() {
@@ -73,7 +93,12 @@ public class EventListenerItemImpl implements EventListenerItem {
     }
 
     public void setPropertyRemovedEnabled(boolean propertyRemovedEnabled) {
-        this.eventTypes |= Event.PROPERTY_REMOVED;
+        if(propertyRemovedEnabled) {
+            this.eventTypes |= Event.PROPERTY_REMOVED;
+        } else {
+            // flip the bit 
+            this.eventTypes &=  (0xFF^Event.PROPERTY_REMOVED); 
+        }
     }
 
     public String getAbsolutePath() {
