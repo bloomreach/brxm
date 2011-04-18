@@ -59,9 +59,7 @@
     <portlet-api.version>2.0</portlet-api.version>
     <portals-bridges-common.version>2.0</portals-bridges-common.version>
     
-    <javax.jcr.version>2.0</javax.jcr.version>
     <javax.mail.version>1.4.1</javax.mail.version>
-    <geronimo-jta_1.1_spec.version>1.1</geronimo-jta_1.1_spec.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <slf4j.version>1.5.8</slf4j.version>
@@ -104,7 +102,6 @@
     <hippo.addon-hst-configuration-editor.version>1.06.00-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
   
    
-    <jdo2.api.version>2.3-eb</jdo2.api.version>
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
     <yui.sources.version>1.01.09</yui.sources.version>
@@ -174,37 +171,14 @@
       <!-- Servlet API dependencies -->
       
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      <!-- JTA Spec -->
-          
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>${geronimo-jta_1.1_spec.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-annotation_1.1_spec</artifactId>
         <version>${geronimo-annotation_1.1_spec.version}</version>
         <scope>provided</scope>
       </dependency>
       
-      <!-- JCR API and Hippo CMS7 API dependency -->
+      <!-- Hippo CMS7 API dependency -->
       
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-        <version>${javax.jcr.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
@@ -577,20 +551,6 @@
         <type>war</type>
       </dependency>
       
-      <!-- JDO for Hippo Repository Workflow APIs -->
-      <dependency>
-        <groupId>javax.jdo</groupId>
-        <artifactId>jdo2-api</artifactId>
-        <version>${jdo2.api.version}</version>
-        <scope>provided</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-jta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <!-- Jackrabbit -->
             
       <dependency>

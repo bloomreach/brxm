@@ -55,14 +55,6 @@
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <version>${hippo.packages.version}</version>
       <type>pom</type>
-      <exclusions>
-        <!-- TODO: jta transitive dependency pulled in through repository-engine/quartz-scheduler
-                   needs to be excluded there as we use/deploy generonimo-jta_1.1_spec instead! -->
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     
     <dependency>
