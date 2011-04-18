@@ -100,7 +100,7 @@ public class DummyCarDocsCreator {
             doc.setProperty("demosite:color", COLORS[color]);
             
             double price = r.nextDouble()*(randomCar.upperPrice - randomCar.lowerPrice) + randomCar.lowerPrice;
-            doc.setProperty("demosite:price", Math.round(price));
+            doc.setProperty("demosite:price", ((Long)Math.round(price)).doubleValue());
             
             long mileage = r.nextInt((int)(randomCar.upperMileage-randomCar.lowerMileage)) + randomCar.lowerMileage;
             doc.setProperty("demosite:mileage", mileage);
