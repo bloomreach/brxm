@@ -82,21 +82,12 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
       <version>1.0</version>
       <!--
       <scope>provided</scope>
       -->
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jta_1.0.1B_spec</artifactId>
-      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
