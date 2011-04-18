@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,11 +38,9 @@ import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 
 public class EnhancedImportTest extends TestCase {
     @SuppressWarnings("unused")
@@ -130,6 +130,11 @@ public class EnhancedImportTest extends TestCase {
 
     @Test
     public void testProperty() throws Exception {
+        test();
+    }
+    
+    @Test
+    public void testREPO_110() throws Exception {
         test();
     }
 
