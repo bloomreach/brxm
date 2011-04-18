@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>5-SNAPSHOT</version>
+    <version>5</version>
   </parent>
   
   <name>Translation runner</name>
@@ -31,8 +31,7 @@
   <version>2.19.03-SNAPSHOT</version>
 
   <properties>
-    <repository.api.version>2.19.03-SNAPSHOT</repository.api.version>
-    <translation.version>2.19.03-SNAPSHOT</translation.version>
+    <repository.api.version>2.19.03</repository.api.version>
     <org.slf4j.version>1.5.8</org.slf4j.version>
   </properties>
 
@@ -113,7 +112,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-common</artifactId>
-      <version>${translation.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

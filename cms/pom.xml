@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>5-SNAPSHOT</version>
+    <version>5</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -90,7 +90,7 @@
   </modules>
 
   <properties>
-    <hippo.repository.version>2.19.03-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.19.03</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -118,7 +118,7 @@
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
     <wicket.version>1.4.17</wicket.version>
-    <wicket-extjs.version>0.7-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.7</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <jetty.version>6.1.22</jetty.version>
     <joda-time.version>1.6</joda-time.version>

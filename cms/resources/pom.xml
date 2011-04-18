@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-skin</artifactId>
-      <version>2.19.03-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>war</type>
     </dependency>
     
@@ -41,7 +41,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-layout</artifactId>
-      <version>2.19.03-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>war</type>
     </dependency>
 
