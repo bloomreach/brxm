@@ -37,8 +37,9 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
     }
 
     static WorkflowPostActions createPostActions(WorkflowManagerImpl workflowManager, String workflowCategory, Method workflowMethod, String sourceIdentity) {
-	//if (WorkflowManagerImpl.log.isDebugEnabled()) {
-        System.err.println("inspect workflow for event workflow upon "+workflowCategory+":"+workflowMethod.toString());
+	if (WorkflowManagerImpl.log.isDebugEnabled()) {
+            WorkflowManagerImpl.log.debug("inspect workflow for event workflow upon "+workflowCategory+":"+workflowMethod.toString());
+	}
         if (workflowMethod.getName().equals("hints") || workflowCategory.startsWith(CATAGORYNAMEPREFIX) || workflowCategory.equals("internal")) {
             return null;
         }
@@ -47,12 +48,16 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
             for (NodeIterator categories = workflowManager.rootSession.getNodeByIdentifier(workflowManager.configuration).getNodes(); categories.hasNext();) {
                 Node category = categories.nextNode();
                 if (category.getName().startsWith(CATAGORYNAMEPREFIX)) {
-                    System.err.println("inspect workflow for event workflow events in category "+category.getName());
+	            if (WorkflowManagerImpl.log.isDebugEnabled()) {
+                        WorkflowManagerImpl.log.debug("inspect workflow for event workflow events in category "+category.getName());
+		    }
                     Node wfSubject = workflowManager.rootSession.getNodeByIdentifier(sourceIdentity);
                     try {
                         Node wfNode = workflowManager.getWorkflowNode(category.getName(), wfSubject, workflowManager.rootSession);
                         if (wfNode != null) {
-                            System.err.println("inspect workflow for event workflow selected "+wfNode.getPath());
+	                    if (WorkflowManagerImpl.log.isDebugEnabled()) {
+                                WorkflowManagerImpl.log.debug("inspect workflow for event workflow selected "+wfNode.getPath());
+			    }
                             WorkflowPostActions action = new WorkflowPostAction(workflowManager, wfSubject,
                                     Document.class.isAssignableFrom(workflowMethod.getReturnType()), wfNode,
                                     workflowCategory, workflowMethod.getName());
