@@ -21,22 +21,48 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.hippoecm.hst.core.component.HstComponent;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Parameter {
     
+    /**
+     * @return the name of the parameter used, also see {@link HstComponentConfiguration#getParameter(String)} . This element is mandatory. 
+     */
     String name();
     
+    /**
+     * @return <code>true</code> if this is a required parameter for the {@link HstComponent} to work
+     */
     boolean required() default false;
     
+    /**
+     * @return the default value of this parameter when it is not present in the backing {@link HstComponentConfiguration#getParameters()}. If there is
+     * no defaultValue defined, it is an empty String <code>""</code>
+     */
     String defaultValue() default "";
     
+    /**
+     * @return the displayName of this parameter. This can be the 'pretty' name for {@link #name()}. If missing, implementations can do
+     * a fallback to {@link #name()} 
+     */
     String displayName() default ""; 
     
+    /**
+     * @return the description for this {@link Parameter}
+     */
     String description() default "";
     
+    /**
+     * This is still experimental.  
+     * @return a PropertyEditor
+     */
     Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
 
+    /**
+     * a String used to provide optional YUI tools with a hint about the type the parameter value should be of. For example 'COLOR', 'DATE'.
+     */
     String typeHint() default "";
 
     /**
