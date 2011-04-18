@@ -137,7 +137,7 @@ public class Detail extends BaseHstComponent {
                     });
 
                     // it is not important where we store comments. WE just use some (canonical) time path below our project content
-                    String siteCanonicalBasePath = this.getHstSite(request).getCanonicalContentPath();
+                    String siteCanonicalBasePath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
                     Calendar currentDate = Calendar.getInstance();
 
                     String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
@@ -146,7 +146,7 @@ public class Detail extends BaseHstComponent {
                     String commentNodeName = "comment-for-" + commentTo.getName() + "-" + System.currentTimeMillis();
 
                     // create comment node now
-                    wpm.create(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
+                    wpm.createAndReturn(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
 
                     // retrieve the comment content to manipulate
                     CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
