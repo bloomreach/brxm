@@ -163,6 +163,9 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/append-result.x
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combine-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combine-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combine-result.xml svneol=native#text/plain
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-fixture.xml -text
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-merge.xml -text
+engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/combinetopproperty-result.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/insert-result.xml svneol=native#text/plain
@@ -175,9 +178,6 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/override-result
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/property-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/property-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/property-result.xml svneol=native#text/plain
-engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/repo_110-fixture.xml -text
-engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/repo_110-merge.xml -text
-engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/repo_110-result.xml -text
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/sanity-fixture.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/sanity-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/sanity-result.xml svneol=native#text/plain

@@ -23,7 +23,11 @@
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
     <sv:property sv:name="noot" sv:type="String">
+      <!-- sv:value>walnoot</sv:value -->
       <sv:value>pinda</sv:value>
     </sv:property>
+    <!-- sv:property sv:name="peulvrucht" sv:type="String">
+      <sv:value>pinda</sv:value>
+    </sv:property -->
   </sv:node>
 </sv:node>

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,13 +32,19 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 public class EnhancedImportTest extends TestCase {
     @SuppressWarnings("unused")
@@ -79,7 +83,7 @@ public class EnhancedImportTest extends TestCase {
         String name = stack[2].getMethodName().substring(4).toLowerCase();
         session.importXML("/test", getClass().getResourceAsStream(name + "-fixture.xml"), ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW);
         session.save();
-        session.importXML("/test", getClass().getResourceAsStream(name + "-merge.xml"), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+        ((HippoSession) session).importDereferencedXML("/test", getClass().getResourceAsStream(name + "-merge.xml"), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
         session.save();
         if (session.getRootNode().hasNode("compare")) {
             do {
@@ -134,7 +138,7 @@ public class EnhancedImportTest extends TestCase {
     }
     
     @Test
-    public void testREPO_110() throws Exception {
+    public void testCombineTopProperty() throws Exception {
         test();
     }
 
@@ -188,21 +192,48 @@ public class EnhancedImportTest extends TestCase {
             if(compareResult == 0) {
                 if(property1.getType() == property2.getType()) {
                     boolean equals = true;
-                    switch(property1.getType()) {
-                    case PropertyType.BOOLEAN:
-                        equals = (property1.getBoolean() != property2.getBoolean());
-                        break;
-                    case PropertyType.LONG:
-                        equals = (property1.getLong() != property2.getLong());
-                        break;
-                    case PropertyType.DOUBLE:
-                        equals = (property1.getDouble() != property2.getDouble());
-                        break;
-                    case PropertyType.STRING:
-                        equals = (property1.getString().equals(property2.getString()));
-                        break;
-                    default:
-                        equals = property1.getString().equals(property2.getString());
+                    if (property1.isMultiple()) {
+                        Value[] values1 = property1.getValues();
+                        Value[] values2 = property2.getValues();
+                        if (values1.length == values2.length) {
+                            for (int i = 0; i < values1.length; i++) {
+                                switch (property1.getType()) {
+                                    case PropertyType.BOOLEAN:
+                                        equals = (values1[i].getBoolean() != values2[i].getBoolean());
+                                        break;
+                                    case PropertyType.LONG:
+                                        equals = (values1[i].getLong() != values2[i].getLong());
+                                        break;
+                                    case PropertyType.DOUBLE:
+                                        equals = (values1[i].getDouble() != values2[i].getDouble());
+                                        break;
+                                    case PropertyType.STRING:
+                                        equals = (values1[i].getString().equals(values2[i].getString()));
+                                        break;
+                                    default:
+                                        equals = values1[i].getString().equals(values2[i].getString());
+                                }
+                            }
+                        } else {
+                            equals = false;
+                        }
+                    } else {
+                        switch (property1.getType()) {
+                            case PropertyType.BOOLEAN:
+                                equals = (property1.getBoolean() != property2.getBoolean());
+                                break;
+                            case PropertyType.LONG:
+                                equals = (property1.getLong() != property2.getLong());
+                                break;
+                            case PropertyType.DOUBLE:
+                                equals = (property1.getDouble() != property2.getDouble());
+                                break;
+                            case PropertyType.STRING:
+                                equals = (property1.getString().equals(property2.getString()));
+                                break;
+                            default:
+                                equals = property1.getString().equals(property2.getString());
+                        }
                     }
                     if(!equals) {
                         ++propertyMismatch;
@@ -310,7 +341,9 @@ public class EnhancedImportTest extends TestCase {
             for (PropertyIterator iter = parent.getProperties(); iter.hasNext();) {
                 Property property = iter.nextProperty();
                 for (String excludePath : excludes) {
-                    property.getPath().matches(excludePath);
+                    if (!property.getPath().matches(excludePath)) {
+                        super.add(property);
+                    }
                 }
             }
         }

@@ -21,15 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.UUID;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -362,7 +359,11 @@ public class DereferencedSessionImporter implements Importer {
             if (importPath.equals(parent.safeGetJCRPath())) {
                 // this is the root target node, decided by the user self
                 // only throw an error on the most strict import
-                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE) {
+                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_DISABLE
+                        || ((NodeInfo)nodeInfo).mergeOverlay()
+                        || ((NodeInfo)nodeInfo).mergeCombine()
+                        || ((NodeInfo)nodeInfo).mergeSkip()
+                        || ((NodeInfo)nodeInfo).mergeInsertBefore() != null) {
                     String msg = "The node already exists add " + parent.safeGetJCRPath() + ", creating new one.";
                     log.info(msg);
                 } else {
