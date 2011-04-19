@@ -78,6 +78,20 @@
       <sv:value>21.01</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="templateeditor-system-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>namespace-system_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>21.01</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- Hippo Namespace -->
   <sv:node sv:name="templateeditor-hippo">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -108,6 +122,20 @@
       <sv:value>22.01</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="templateeditor-hippo-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>namespace-hippo_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>22.01</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- Hippo sysedit Namespace -->
   <sv:node sv:name="templateeditor-hipposysedit">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -124,6 +152,20 @@
     </sv:property>
   </sv:node>
   <!-- Hippo sysedit Namespace french translations -->
+  <sv:node sv:name="templateeditor-hipposysedit-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>namespace-hipposysedit_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>22.51</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="templateeditor-hipposysedit-fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -160,6 +202,20 @@
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>namespace-hippostd_fr.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>22.61</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippostd-types-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>namespace-hippostd_it.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
@@ -211,6 +267,20 @@
       <sv:value>23.01</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="templateeditor-namespace_it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>new-namespace_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>23.01</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="templateeditor-type-query.xml">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -231,6 +301,20 @@
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>new-type_fr.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>24.01</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="templateeditor-type-query-it.xml">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>new-type_it.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
