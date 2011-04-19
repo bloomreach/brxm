@@ -242,7 +242,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             return;
         }
         editFakeMode = editPreviousMode;
-        //BERRYThread.dumpStack();
         super.edit();
     }
 
@@ -767,12 +766,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     return true;
                 }
                 if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
-                    if (!current.isNode()) {
-                        PropertyState propState = (PropertyState) current;
-                        if (modifiedExternals.contains(propState.getParentId())) {
-                            return false;
-                        }
-                    }
                     return true;
                 }
                 if (modified) {
