@@ -37,14 +37,14 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.19.03-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.19.03-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-defaultcontent.version>2.19.03-SNAPSHOT</hippo.addon-defaultcontent.version>
-    <hippo.addon-faceteddate.version>2.19.00-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.19.03-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.05.01</hippo.addon-hst-configuration-editor.version>
-    <hippo.packages.version>2.19.03-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.21.01-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.19.04-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.19.04-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-defaultcontent.version>2.19.04-SNAPSHOT</hippo.addon-defaultcontent.version>
+    <hippo.addon-faceteddate.version>2.19.04-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.19.04-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.addon-hst-configuration-editor.version>1.06.00</hippo.addon-hst-configuration-editor.version>
+    <hippo.packages.version>2.19.04-SNAPSHOT</hippo.packages.version>
+    <hippo.hst.version>2.21.02-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>    
@@ -58,8 +58,8 @@
     <forge.taxonomy.version>1.06.00</forge.taxonomy.version>
     <forge.tcmp.version>1.02.00</forge.tcmp.version>
 
-    <forge.content-blocks.version>1.08.00-SNAPSHOT</forge.content-blocks.version>
-    <forge.ecm-tagging.version>4.04.00-SNAPSHOT</forge.ecm-tagging.version>
+    <forge.content-blocks.version>1.08.00</forge.content-blocks.version>
+    <forge.ecm-tagging.version>4.04.00</forge.ecm-tagging.version>
 
   </properties>
 
