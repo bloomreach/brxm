@@ -62,7 +62,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
@@ -95,7 +94,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         return (WorkflowDescriptor) getDefaultModelObject();
     }
     
-    @Deprecated
     public class WorkflowAction extends StdWorkflow {
         ResourceReference iconModel;
 
@@ -179,7 +177,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             throw new WorkflowException("unsupported operation");
         }
 
-        @Deprecated
         public class WorkflowDialog extends AbstractDialog {
 
             private static final long serialVersionUID = 1L;
@@ -230,7 +227,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        @Deprecated
         public class ConfirmDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;
@@ -270,7 +266,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        @Deprecated
         public class NameDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;
@@ -296,7 +291,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        @Deprecated
         public class TextDialog extends WorkflowDialog {
             private static final long serialVersionUID = 1L;
             private IModel title;
@@ -323,7 +317,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        @Deprecated
         public class DestinationDialog extends WorkflowDialog {
 
             private IModel title;
@@ -440,7 +433,6 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             }
         }
 
-        @Deprecated
         public class DateDialog extends WorkflowDialog {
 
             public DateDialog(IModel question, final PropertyModel<Date> dateModel) {
