@@ -242,6 +242,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             return;
         }
         editFakeMode = editPreviousMode;
+        //BERRYThread.dumpStack();
         super.edit();
     }
 
