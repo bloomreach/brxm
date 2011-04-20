@@ -74,7 +74,7 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
 
     public TranslateWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject)
             throws RemoteException, RepositoryException {
-        this.session = userSession;
+        this.session = rootSession;
         this.subject = session.getNodeByIdentifier(subject.getIdentifier());
 
         RepositoryMap config = context.getWorkflowConfiguration();
@@ -145,7 +145,6 @@ public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflo
         if(subject.isNodeType(HippoStdNodeType.NT_LANGUAGEABLE)) {
             subject.setProperty(HippoStdNodeType.HIPPOSTD_LANGUAGE, language);
         }
-
         session.save();
     }
 
