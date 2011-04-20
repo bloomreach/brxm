@@ -1,10 +1,6 @@
 
 /* Control panel */
 /* ================================================ */
-.hippo-controlpanel {
-  margin-top: 25px;
-}
-
 .hippo-controlpanel-panel {
   padding: 15px;
 }
@@ -174,7 +170,8 @@ table.hippo-controlpanel-body {
 .hippo-controlpanel-breadcrumbs {
   background: url("images/hippo-panels-headerback.png") repeat-x;
   border-bottom: 1px dotted #afafaf;
-  font-weight: bold
+  font-weight: bold;
+  margin-top: 25px;
 }
 
 .hippo-controlpanel-breadcrumbs-backbutton {

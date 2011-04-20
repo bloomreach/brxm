@@ -50,7 +50,7 @@
         <sv:value>hippo-controlpanel-perspective-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=35</sv:value>
+        <sv:value>id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=60</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
