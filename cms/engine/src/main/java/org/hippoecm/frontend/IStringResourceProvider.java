@@ -25,4 +25,9 @@ public interface IStringResourceProvider extends IClusterable {
 
     String getString(Map<String, String> keys);
 
+    /**
+     * @return a key that uniquely identifies the resource provider, or null if no such key is available.
+     */
+    String getResourceProviderKey();
+
 }

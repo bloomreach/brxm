@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -442,6 +443,21 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
      */
     public IRenderService getParentService() {
         return parent;
+    }
+
+    /**
+     * Returns a key consisting of all available translator ids. The resource keys in all these translators should
+     * therefore be unique, otherwise they may get mixed up in the Wicket cache (see issue CMS7-3675).
+     *
+     * @return a key consisting of all available translator ids
+     */
+    @Override
+    public String getResourceProviderKey() {
+        final String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
+        if (translators != null) {
+            return Arrays.toString(translators);
+        }
+        return null;
     }
 
     // implement IStringResourceProvider

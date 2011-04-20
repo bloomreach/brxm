@@ -31,6 +31,35 @@ public class StagedLocalizer extends Localizer {
     public StagedLocalizer() {
     }
 
+    /**
+     * Returns a cache key for a resource. The cache key depends on the key, the component path, and a unique key
+     * returned by the resource provider. The resource provider key is ignored when it is null.
+     *
+     * @param key the resource key
+     * @param component the component
+     * @return a cache key
+     *
+     * @see {@link org.hippoecm.frontend.IStringResourceProvider#getResourceProviderKey()}
+     */
+    @Override
+    protected String getCacheKey(final String key, final Component component) {
+        IStringResourceProvider provider = null;
+        if (component instanceof IStringResourceProvider) {
+            provider = (IStringResourceProvider) component;
+        } else if (component != null) {
+            provider = component.findParent(IStringResourceProvider.class);
+        }
+        String resourceProviderKey = null;
+        if (provider != null) {
+            resourceProviderKey = provider.getResourceProviderKey();
+        }
+        if (resourceProviderKey != null) {
+            return resourceProviderKey + super.getCacheKey(key, component);
+        } else {
+            return super.getCacheKey(key, component);
+        }
+    }
+
     @Override
     public String getStringIgnoreSettings(String key, final Component component, final IModel<?> model,
             final String defaultValue) {
