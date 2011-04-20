@@ -29,9 +29,6 @@
   <groupId>org.onehippo.cms7.hst.demosuite</groupId>
   <artifactId>hst-demosuite-content</artifactId>
   <packaging>jar</packaging>
-
-  <build>
-    <defaultGoal>package</defaultGoal>  
-  </build>
+  
 
 </project>
