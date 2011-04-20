@@ -205,7 +205,8 @@
 
 .hippo-editor-field textarea {
   width: 100%;
-  height: 150px;
+  min-height: 100px;
+  overflow-y: auto;
 }
 
 .hippo-editor-field input[type="checkbox"] {

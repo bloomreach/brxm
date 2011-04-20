@@ -48,9 +48,6 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             if (config.getString("rows") != null) {
                 widget.setRows(config.getString("rows"));
             }
-            if (config.getString("cols") != null) {
-                widget.setCols(config.getString("cols"));
-            }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
             add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));

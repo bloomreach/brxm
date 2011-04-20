@@ -26,6 +26,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
 
     private static final long serialVersionUID = 1L;
     private String rows;
+    @Deprecated
     private String cols;
 
     private TextArea<String> textArea;
@@ -39,9 +40,6 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
             protected void onComponentTag(final ComponentTag tag) {
                 if (getRows() != null) {
                     tag.put("rows", getRows());
-                }
-                if (getCols() != null) {
-                    tag.put("cols", getCols());
                 }
                 super.onComponentTag(tag);
             }
@@ -57,10 +55,12 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
         return rows;
     }
 
+    @Deprecated
     public void setCols(String cols) {
         this.cols = cols;
     }
 
+    @Deprecated
     public String getCols() {
         return cols;
     }

@@ -187,7 +187,6 @@
         </sv:property>
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
-          <sv:value>cols</sv:value>
           <sv:value>rows</sv:value>
         </sv:property>
         <sv:property sv:name="frontend:references" sv:type="String">
@@ -201,9 +200,6 @@
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="cols" sv:type="String">
-            <sv:value>${cols}</sv:value>
           </sv:property>
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${engine}</sv:value>
