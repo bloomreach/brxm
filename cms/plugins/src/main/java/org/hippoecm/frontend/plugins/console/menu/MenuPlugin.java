@@ -48,7 +48,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(MenuPlugin.class);
-    
+
     private DialogLink saveDialogLink;
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
@@ -63,7 +63,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new NodeDialog((JcrNodeModel) getDefaultModel());
             }
         };
-        add(new DialogLink("node-dialog", new Model("Add Node"), dialogFactory, dialogService));
+        add(new DialogLink("node-dialog", new Model<String>("Add Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -72,17 +72,18 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new DeleteDialog((JcrNodeModel) getDefaultModel());
             }
         };
-        add(new DialogLink("delete-dialog", new Model("Delete Node"), dialogFactory, dialogService));
+        add(new DialogLink("delete-dialog", new Model<String>("Delete Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new SaveDialog(MenuPlugin.this);
+                return new SaveDialog();
             }
         };
         saveDialogLink = new DialogLink("save-dialog", new Model<String>() {
-            @Override public String getObject() {
+            @Override
+            public String getObject() {
                 final String message = "Write changes to repository";
                 return hasSessionChanges() ? message + "*" : message;
             }
@@ -94,10 +95,10 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new ResetDialog(MenuPlugin.this);
+                return new ResetDialog();
             }
         };
-        add(new DialogLink("reset-dialog", new Model("Reset"), dialogFactory, dialogService));
+        add(new DialogLink("reset-dialog", new Model<String>("Reset"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -106,7 +107,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new PropertyDialog(MenuPlugin.this);
             }
         };
-        add(new DialogLink("property-dialog", new Model("Add Property"), dialogFactory, dialogService));
+        add(new DialogLink("property-dialog", new Model<String>("Add Property"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -115,7 +116,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new RenameDialog((JcrNodeModel) getDefaultModel());
             }
         };
-        add(new DialogLink("rename-dialog", new Model("Rename Node"), dialogFactory, dialogService));
+        add(new DialogLink("rename-dialog", new Model<String>("Rename Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -124,7 +125,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new MoveDialog((JcrNodeModel) getDefaultModel());
             }
         };
-        add(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
+        add(new DialogLink("move-dialog", new Model<String>("Move Node"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -133,7 +134,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new CopyDialog((JcrNodeModel) getDefaultModel());
             }
         };
-        add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
+        add(new DialogLink("copy-dialog", new Model<String>("Copy Node"), dialogFactory, dialogService));
     }
 
     @Override
@@ -143,7 +144,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             target.addComponent(saveDialogLink);
         }
     }
-    
+
     private boolean hasSessionChanges() {
         Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         try {
@@ -152,5 +153,5 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             return false;
         }
     }
-    
+
 }

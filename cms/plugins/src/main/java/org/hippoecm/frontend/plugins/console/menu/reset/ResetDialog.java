@@ -20,14 +20,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
 public class ResetDialog extends AbstractDialog<Node> {
@@ -36,15 +36,11 @@ public class ResetDialog extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
 
     protected boolean hasPendingChanges;
-    protected MenuPlugin plugin;
 
-    public ResetDialog(MenuPlugin plugin) {
-        this.plugin = plugin;
-
+    public ResetDialog() {
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
-            HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
+            HippoNode rootNode = (HippoNode) ((UserSession) Session.get()).getJcrSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
                 hasPendingChanges = true;
                 StringBuffer buf;
@@ -72,8 +68,7 @@ public class ResetDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
-            Node rootNode = nodeModel.getNode().getSession().getRootNode();
+            Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
             // always refresh regardless of the local changes, so external changes
             // can also be exposed.
             rootNode.refresh(false);
@@ -83,7 +78,7 @@ public class ResetDialog extends AbstractDialog<Node> {
     }
 
     public IModel getTitle() {
-        return new Model("Refresh Session");
+        return new Model<String>("Refresh Session");
     }
     
     @Override

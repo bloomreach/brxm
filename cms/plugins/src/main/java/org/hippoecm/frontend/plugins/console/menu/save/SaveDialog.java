@@ -28,7 +28,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -43,14 +42,11 @@ public class SaveDialog extends AbstractDialog<Node> {
     private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
     protected boolean hasPendingChanges;
-    protected MenuPlugin plugin;
 
-    public SaveDialog(MenuPlugin plugin) {
-        this.plugin = plugin;
+    public SaveDialog() {
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
         try {
-            HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
+            HippoNode rootNode = (HippoNode) ((UserSession) Session.get()).getJcrSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
                 hasPendingChanges = true;
                 StringBuffer buf;
@@ -93,9 +89,9 @@ public class SaveDialog extends AbstractDialog<Node> {
     }
 
     public IModel getTitle() {
-        return new Model("Save Session");
+        return new Model<String>("Save Session");
     }
-    
+
     @Override
     public IValueMap getProperties() {
         return MEDIUM;
