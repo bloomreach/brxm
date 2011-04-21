@@ -49,7 +49,7 @@ public class FacetedEngineCacheManager {
         return cache;
     }
 
-    public synchronized void decreaseRefCount(FacetedEngineCache cache) {
+    public synchronized void releaseCache(FacetedEngineCache cache) {
         cache.decreaseRefCount();
     }
 

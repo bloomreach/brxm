@@ -15,26 +15,21 @@
  */
 package org.hippoecm.repository;
 
-import org.apache.jackrabbit.core.SearchManager;
-import org.apache.jackrabbit.core.query.QueryHandler;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.Repository;
-import javax.jcr.Session;
+import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.core.query.QueryManagerImpl;
+import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;

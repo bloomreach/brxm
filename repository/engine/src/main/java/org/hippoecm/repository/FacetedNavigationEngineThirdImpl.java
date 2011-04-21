@@ -36,6 +36,7 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexReader;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
@@ -45,7 +46,6 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
-import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.jackrabbit.spi.commons.query.QueryRootNode;
 import org.apache.lucene.document.Document;
@@ -60,9 +60,8 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
@@ -82,8 +81,8 @@ import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
+import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,7 +324,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         FacetedEngineCache cache = null;
         
         try {
-            cache = facetedEngineCacheMngr.getCache(getIndex().getIndexReader(), bitSetCacheSize, facetValueCountMapCacheSize);
+            cache = facetedEngineCacheMngr.getCache(new JackrabbitIndexReader(getIndex().getIndexReader()), bitSetCacheSize, facetValueCountMapCacheSize);
             IndexReader indexReader = cache.getIndexReader();
             IndexSearcher searcher = cache.getIndexSearcher();
             
@@ -589,7 +588,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             log.error("Error during creating view: ", e);
         } finally {
             if(cache != null) {
-                facetedEngineCacheMngr.decreaseRefCount(cache);
+                facetedEngineCacheMngr.releaseCache(cache);
             }
         }
         return new ResultImpl(0, null);
