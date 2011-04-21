@@ -1300,6 +1300,7 @@ gallery/repository/pom.xml svneol=native#text/plain
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkflowImpl.java -text
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader18a.java svneol=native#text/plain
 gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader18b.java -text
+gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader19a.java -text
 gallery/repository/src/main/resources/gallery-namespace.xml -text
 gallery/repository/src/main/resources/gallery-namespace_it.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain

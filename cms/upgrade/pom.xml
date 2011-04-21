@@ -84,7 +84,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.frontend.upgrade.CmsUpgrader18a</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.frontend.upgrade.CmsUpgrader18a org.hippoecm.frontend.upgrade.CmsUpgrader18b org.hippoecm.frontend.upgrade.CmsUpgrader19a</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

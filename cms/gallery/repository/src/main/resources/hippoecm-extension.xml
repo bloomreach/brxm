@@ -19,7 +19,7 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v18b-cms-gallery</sv:value>
+    <sv:value>v19a-cms-gallery</sv:value>
   </sv:property>
   <!-- hippogallery namespace -->
   <sv:node sv:name="hippogallery">

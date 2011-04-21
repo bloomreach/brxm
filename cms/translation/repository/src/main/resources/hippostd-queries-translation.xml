@@ -51,9 +51,7 @@
       <sv:value>xpath</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>
-        /jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder/hippostd:templates/node()
-      </sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-translated-folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

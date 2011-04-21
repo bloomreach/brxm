@@ -65,7 +65,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b org.hippoecm.repository.gallery.upgrade.GalleryUpgrader19a</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
