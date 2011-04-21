@@ -59,7 +59,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
     @Test
     public void testConcurrentNavigationNoWrites() throws RepositoryException, IOException, InterruptedException {
         int jobCount = 500;
-        int workerCount = 10;
+        int workerCount = 50;
         
         commonStart();
         
@@ -98,7 +98,6 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         }
     }
     
-    @Ignore
     @Test
     public void testConcurrentNavigationWithWrites() throws RepositoryException, IOException, InterruptedException {
         int jobCount = 1000;
@@ -173,7 +172,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
        
         if(errorCount > 0) {
-            fail("Exception happened during concurrent traversal.");
+            fail(errorCount + " exceptions happened during concurrent traversal. ");
         }
         
         
@@ -294,12 +293,18 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         }
 
         public void run() {
+            Session traversalSession = null;
             try {
-                Session traversalSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                traversalSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
                 Node facetedNode = traversalSession.getRootNode().getNode(facetedNodePath);
                 traverse(facetedNode, "", traverseDepth);
             } catch (RepositoryException e) {
+                System.out.println(e);
                 errorCount++;
+            } finally {
+               if(traversalSession != null) {
+                   traversalSession.logout();
+               }
             }
         
         }
