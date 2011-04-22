@@ -70,7 +70,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
     @Test
     public void testConcurrentFacNavigationNoWrites() throws RepositoryException, IOException, InterruptedException {
         int jobCount = 1000;
-        int workerCount = 50;
+        int workerCount = 40;
         
         commonStart();
         
@@ -101,8 +101,6 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         for (Thread worker : workers) {
             worker.join();
         }
-        
-        System.out.println("took " + (System.currentTimeMillis() - start));
         
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
        
@@ -165,7 +163,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         
         
     }
-    
+
     @Test
     public void testConcurrentFacNavigationWithWrites() throws RepositoryException, IOException, InterruptedException {
         int jobCount = 1000;
@@ -196,7 +194,6 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         
         // now while the jobQueue is not empty, we also write nodes:
         int i = 0;
-        int j = 0;
         int prevCount = jobQueue.size();
         while(!jobQueue.isEmpty()) {
            i++;
@@ -219,7 +216,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         }
         
     }
-    
+
     @Test
     public void testConcurrentSearchAndFacNavigationWithWrites() throws RepositoryException, IOException, InterruptedException {
         int jobCount = 1000;
@@ -254,7 +251,6 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         
         // now while the jobQueue is not empty, we also write nodes:
         int i = 0;
-        int j = 0;
         int prevCount = jobQueue.size();
         while(!jobQueue.isEmpty()) {
            i++;

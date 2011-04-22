@@ -36,10 +36,11 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
-import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexReader;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.query.lucene.ReleaseableIndexReader;
+import org.apache.jackrabbit.core.query.lucene.Util;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
@@ -84,6 +85,7 @@ import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
+import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager.CacheAndSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +113,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         FacetFilters facetFilters;
         QueryAndSort queryAndSort = null;
         
+        @SuppressWarnings("deprecation")
         public QueryImpl(String parameter) throws IllegalArgumentException{
             if (parameter.length() >= javax.jcr.query.Query.XPATH.length() + 2 && parameter.substring(0, javax.jcr.query.Query.XPATH.length() + 1).equalsIgnoreCase(javax.jcr.query.Query.XPATH + "(")) {
                 language = javax.jcr.query.Query.XPATH;
@@ -142,6 +145,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             }
         }
 
+        @SuppressWarnings("deprecation")
         public QueryAndSort getLuceneQueryAndSort(ContextImpl context) {
             if (queryAndSort == null) {
                 if (javax.jcr.query.Query.XPATH.equals(language)) {
@@ -250,8 +254,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
     private final FacetedEngineCacheManager facetedEngineCacheMngr = new FacetedEngineCacheManager();
     
-    private int bitSetCacheSize = 1000; 
-    private int facetValueCountMapCacheSize = 1000;
+    private int bitSetCacheSize = 250; 
+    private int facetValueCountMapCacheSize = 250;
       
     public FacetedNavigationEngineThirdImpl() {
     }
@@ -320,13 +324,16 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         BitSet matchingDocs = null;
-        
         FacetedEngineCache cache = null;
+        IndexReader indexReader = null;
         
         try {
-            cache = facetedEngineCacheMngr.getCache(new JackrabbitIndexReader(getIndex().getIndexReader()), bitSetCacheSize, facetValueCountMapCacheSize);
-            IndexReader indexReader = cache.getIndexReader();
-            IndexSearcher searcher = cache.getIndexSearcher();
+            indexReader = getIndex().getIndexReader();
+            
+            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader, bitSetCacheSize, facetValueCountMapCacheSize);
+            
+            cache = cacheAndSearcher.getCache();
+            IndexSearcher searcher =  cacheAndSearcher.getSearcher();
             
             List<BitSet> bitSetFilterList = new ArrayList<BitSet>();
             
@@ -587,8 +594,15 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         } catch (IOException e) {
             log.error("Error during creating view: ", e);
         } finally {
-            if(cache != null) {
-                facetedEngineCacheMngr.releaseCache(cache);
+            
+            if (indexReader != null) {
+                try {
+                    // do not call indexReader.close() as ref counting is taken care of by  
+                    // org.apache.jackrabbit.core.query.lucene.Util#closeOrRelease
+                    Util.closeOrRelease(indexReader);
+                } catch (IOException e) {
+                    log.error("Exception while closing index reader", e);
+                }
             }
         }
         return new ResultImpl(0, null);

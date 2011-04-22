@@ -16,43 +16,42 @@
 
 package org.hippoecm.repository.query.lucene.caching;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.IndexSearcher;
 
 public class FacetedEngineCacheManager {
     
-    private final Map<IndexReader, FacetedEngineCache> feCaches = new ConcurrentHashMap<IndexReader, FacetedEngineCache>();
-     
-    public synchronized FacetedEngineCache getCache(IndexReader currentReader, int bitSetCacheSize, int facetValueCountMapCacheSize) {
-        FacetedEngineCache cache = feCaches.get(currentReader);
-        if(cache == null) {
-            // mark all old instances from the map as disposable. We'll try to close the FacetedEngineCaches here. If the refCount is not 0, it will
-            // be closed later on
-            for(FacetedEngineCache staleCache : feCaches.values()) {
-                synchronized (staleCache) {
-                    staleCache.markStale();
-                    if(staleCache.getRefCount() <= 0 ) {
-                        staleCache.dispose();
-                    }
-                }
-            }
-            // remove all stale caches from the map.
-            feCaches.clear();
-            cache = new FacetedEngineCache(currentReader, bitSetCacheSize, facetValueCountMapCacheSize);
-            feCaches.put(currentReader, cache);
+    private volatile CacheAndSearcher cacheAndSearcher = null; 
+    
+    private volatile IndexReader cacheCreatedWithIndexReader = null;
+    
+    public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader, int bitSetCacheSize, int facetValueCountMapCacheSize) {
+        if(cacheCreatedWithIndexReader == currentReader && cacheAndSearcher != null) {
+            return cacheAndSearcher;
+        }
+        // the currentReader is not the same as the reader with which the cacheAndSearcher was created. Recreate it now 
+        cacheCreatedWithIndexReader = currentReader;
+        FacetedEngineCache feCache = new FacetedEngineCache(bitSetCacheSize, facetValueCountMapCacheSize);
+        cacheAndSearcher = new CacheAndSearcher(feCache, new IndexSearcher(currentReader));
+        return cacheAndSearcher;
+    }
+
+    public class CacheAndSearcher {
+        
+        private FacetedEngineCache cache; 
+        private  IndexSearcher searcher;
+        
+        public CacheAndSearcher(FacetedEngineCache cache, IndexSearcher searcher) {
+            this.cache = cache;
+            this.searcher = searcher;
+        }
+        public FacetedEngineCache getCache() {
+            return cache;
+        }
+        public IndexSearcher getSearcher() {
+            return searcher;
         }
         
-        cache.incrementRefCount();
-        
-        return cache;
     }
-
-    public synchronized void releaseCache(FacetedEngineCache cache) {
-        cache.decreaseRefCount();
-    }
-
-    
   
 }

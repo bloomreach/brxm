@@ -16,15 +16,12 @@
 
 package org.hippoecm.repository.query.lucene.caching;
 
-import java.io.IOException;
 import java.util.BitSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +29,7 @@ import org.slf4j.LoggerFactory;
 public class FacetedEngineCache {
     
     private static final Logger log = LoggerFactory.getLogger(FacetedEngineCache.class);
-    IndexReader indexReader;
-    IndexSearcher indexSearcher;
-    // number of usages of this FECache instance
-    volatile int refCount = 0;
-    // if it is stale and the refCount is 0, this instance can be cleared
-    volatile boolean stale = false;
-    
+   
     Map<String, BitSet> bitSetCache;
     Map<FECacheKey, Map<String, Count>> facetValueCountMapCache;
     
@@ -49,10 +40,8 @@ public class FacetedEngineCache {
     volatile long bitSetMisses = 0L;
     volatile long bitSetHits = 0L;
     
-    public FacetedEngineCache(IndexReader indexReader, int bitSetCacheSize, int facetValueCountMapCacheSize) {
+    public FacetedEngineCache(int bitSetCacheSize, int facetValueCountMapCacheSize) {
         creationTime = System.currentTimeMillis();
-        this.indexReader = indexReader;
-        indexSearcher = new IndexSearcher(indexReader);
         if (bitSetCacheSize < 100) {
             log.warn("Minimum bitSetCache size is 100. Change size to 100");
             bitSetCacheSize = 100;
@@ -64,23 +53,6 @@ public class FacetedEngineCache {
         bitSetCache = new ConcurrentHashMap<String, BitSet>(new LRUMap<String, BitSet>(100, bitSetCacheSize));
         facetValueCountMapCache = new ConcurrentHashMap<FECacheKey, Map<String,Count>>(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
     }
-    
-    public IndexReader getIndexReader() {
-        return indexReader;
-    }
-
-    public IndexSearcher getIndexSearcher() {
-        return indexSearcher;
-    }
-
-    public int getRefCount() {
-        return refCount;
-    }
-
-    public boolean isStale() {
-        return stale;
-    }
-    
     
     public Map<String, Count> getFacetValueCountMap(FECacheKey key) {
         Map<String, Count> val = facetValueCountMapCache.get(key);
@@ -111,73 +83,11 @@ public class FacetedEngineCache {
        bitSetCache.put(key, bitSet);
     }
     
-    public void markStale() {
-        stale = true;
-    }
-
-    /**
-     * Decreases the refCount of this {@link FacetedEngineCache} and when the refCount is 0 and the cache is state, it also disposes
-     * this {@link FacetedEngineCache} instance.
-     */
-    public synchronized void decreaseRefCount() {
-        refCount--;
-        if(refCount < 0) {
-            log.error("refCount cannot be lower than 0 but was '"+refCount+"'");
-        }
-        if(stale && refCount <= 0 ) {
-            dispose();
-        }
-    }
-    
-    public synchronized void incrementRefCount() {
-        refCount++;
-    }
-    
     void clear() {
         bitSetCache.clear();
         facetValueCountMapCache.clear();
     }
     
-    public synchronized void dispose() {
-        if(log.isInfoEnabled()) {
-
-            long bitSetCacheSizeInBytes = estimateMemoryInBytes(bitSetCache, indexReader.maxDoc()); 
-            long fvcSizeInBytes = estimateMemoryInBytes(facetValueCountMapCache); 
-            
-            log.info("---------------------- Faceted Engine Cache stats ----------------------");
-            log.info("Cache lived for {} seconds.", String.valueOf((System.currentTimeMillis() - creationTime)/1000) );
-            if (indexReader != null) {
-                log.info("IndexReader has {} numDocs and {} maxDocs. ", indexReader.numDocs(), indexReader.maxDoc());
-            }
-            log.info("Cache bitSetCache size = '{}'. Each BitSet has length '{}'",bitSetCache.size() ,indexReader.maxDoc());
-            log.info("Cache bitSetCache estimated memory consumption is '{} Kb', or '{} Mb'", (bitSetCacheSizeInBytes + 512)/1024, (bitSetCacheSizeInBytes + (1024 * 512) ) / (1024*1024));
-            log.info("Cache facetValueCountMapCache size = '{}'", facetValueCountMapCache.size());
-            log.info("Cache facetValueCountMapCache estimated memory consumption is '{} Kb', or '{} Mb'", (fvcSizeInBytes + 512)/1024, (fvcSizeInBytes + (1024 * 512) )/(1024*1024));
-            log.info("Cache bitSet stats: hits = '{}' , misses = '{}'. Hit percentage = "+ bitSetHits / Double.valueOf(bitSetHits + bitSetMisses) +"%", bitSetHits, bitSetMisses);
-            log.info("Cache facetValueCountMapCache stats: hits = '{}' , misses = '{}'. Hit percentage = "+ fvcHits / Double.valueOf(fvcHits + fvcMisses) +"%", fvcHits, fvcMisses);
-            log.info("Cache will be disposed now. New cache will be instantiated because of changed Lucene indexes");
-            log.info("------------------------------------------------------------------------");
-        }    
-        
-        clear();
-        if (indexSearcher != null) {
-            try {
-                indexSearcher.close();
-            } catch (IOException e) {
-                log.error("Exception while closiong index searcher", e);
-            }
-            indexSearcher = null;
-        }
-        if (indexReader != null) {
-            try {
-                indexReader.close();
-            } catch (IOException e) {
-                log.error("Exception while closiong index reader", e);
-            }
-            indexReader = null;
-        }
-    }
-
     private long estimateMemoryInBytes(Map<FECacheKey, Map<String, Count>> cache) {
         long start = System.currentTimeMillis();
         long estimatedBytes = 0;
@@ -226,23 +136,27 @@ public class FacetedEngineCache {
 
     @Override
     protected void finalize() throws Throwable {
-        if(indexSearcher != null || indexReader != null) {
-            log.info("Closing indexReader and searcher on finalize. If this happens during repository shutdown this it is correct. Otherwise, it indicates an issue. FacetedEngineCache stale='{}' and FECache refCount='{}'. stale should be true and refCount 0.", stale, refCount);
-            if(indexSearcher !=null) {
-                try {
-                    indexSearcher.close();
-                } catch (IOException e) {
-                    log.error("Exception while closiong index searcher", e);
-                }
+        
+        if(log.isInfoEnabled()) {
+            log.info("---------------------- Faceted Engine Cache stats ----------------------");
+            if(bitSetCache.size() != 0) {
+                int maxDoc = bitSetCache.values().iterator().next().size();
+                long bitSetCacheSizeInBytes = estimateMemoryInBytes(bitSetCache, maxDoc); 
+                log.info("Cache lived for {} seconds.", String.valueOf((System.currentTimeMillis() - creationTime)/1000) );
+                log.info("Cache bitSetCache size = '{}'. Each BitSet has length '{}'",bitSetCache.size() ,maxDoc);
+                log.info("Cache bitSetCache estimated memory consumption is '{} Kb', or '{} Mb'", (bitSetCacheSizeInBytes + 512)/1024, (bitSetCacheSizeInBytes + (1024 * 512) ) / (1024*1024));
             }
-            if(indexReader !=null) {
-                try {
-                    indexReader.close();
-                } catch (IOException e) {
-                    log.error("Exception while closiong index indexReader", e);
-                }
+            if(facetValueCountMapCache.size() != 0) {
+                long fvcSizeInBytes = estimateMemoryInBytes(facetValueCountMapCache); 
+                log.info("Cache facetValueCountMapCache size = '{}'", facetValueCountMapCache.size());
+                log.info("Cache facetValueCountMapCache estimated memory consumption is '{} Kb', or '{} Mb'", (fvcSizeInBytes + 512)/1024, (fvcSizeInBytes + (1024 * 512) )/(1024*1024));
+                log.info("Cache bitSet stats: hits = '{}' , misses = '{}'. Hit percentage = "+ bitSetHits / Double.valueOf(bitSetHits + bitSetMisses) +"%", bitSetHits, bitSetMisses);
+                log.info("Cache facetValueCountMapCache stats: hits = '{}' , misses = '{}'. Hit percentage = "+ fvcHits / Double.valueOf(fvcHits + fvcMisses) +"%", fvcHits, fvcMisses);
+                log.info("Cache will be disposed now. New cache will be instantiated because of changed Lucene indexes");
             }
-        }
+            log.info("------------------------------------------------------------------------");
+        }    
+        
     }
     
     
