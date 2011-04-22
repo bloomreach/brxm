@@ -13,6 +13,7 @@ api/src/main/resources/org/hippoecm/repository/api/package.jdo -text
 api/src/site/apt/index.apt -text
 api/src/site/findbugs-exclude.xml svneol=native#text/plain
 api/src/site/site.xml svneol=native#text/plain
+api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 application/pom.xml svneol=native#text/plain
 application/src/main/webapp/META-INF/services/javax.xml.parsers.DocumentBuilderFactory -text
 application/src/main/webapp/META-INF/services/javax.xml.parsers.SAXParserFactory -text

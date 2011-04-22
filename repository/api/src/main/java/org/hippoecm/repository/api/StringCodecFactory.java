@@ -95,7 +95,7 @@ public class StringCodecFactory {
         public String encode(String utf8) {
             StringBuffer sb = new StringBuffer();
             char[] chars = utf8.toCharArray();
-            boolean lastNoSpace = false;
+            boolean lastSpace = true;
             for (int i = 0; i < chars.length; i++) {
                 boolean appendSpace = false;
                 if ((chars[i] >= 0x00 && chars[i] <= 0x1f) || chars[i] == 0x7f || (chars[i] >= 0x80 && chars[i] <= 0x9f)) {
@@ -519,16 +519,26 @@ public class StringCodecFactory {
                         case 0xc3bf:
                             sb.append("y");
                             break;
-                        default: // no-op
+                        default:
+                            sb.append(Character.toLowerCase(chars[i]));
                     }
                 }
                 if (appendSpace) {
-                    if (lastNoSpace)
+                    if (!lastSpace) {
                         sb.append("-");
-                    lastNoSpace = false;
-                } else
-                    lastNoSpace = true;
+                    }
+                    lastSpace = true;
+                } else {
+                    lastSpace = false;
+                }
             }
+
+            // delete an ending space-replacement
+            final int length = sb.length();
+            if (length > 0 && sb.charAt(length - 1) == '-') {
+                sb.deleteCharAt(length - 1);
+            }
+
             return new String(sb);
         }
 
