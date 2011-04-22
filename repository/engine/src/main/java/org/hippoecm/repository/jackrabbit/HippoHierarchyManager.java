@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.HierarchyManager;
+import org.apache.jackrabbit.core.HierarchyManagerImpl;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
@@ -29,6 +30,7 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.CargoNamePath;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
@@ -44,6 +46,10 @@ public class HippoHierarchyManager implements HierarchyManager {
     protected HierarchyManager hierMgr;
     protected HippoSessionItemStateManager itemStateMgr;
 
+    static final int RETURN_NODE = 1;
+    static final int RETURN_PROPERTY = 2;
+    static final int RETURN_ANY = (RETURN_NODE | RETURN_PROPERTY);
+
     public HippoHierarchyManager(HippoSessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
         this.hierMgr = hierMgr;
         this.itemStateMgr = itemStateMgr;
@@ -51,14 +57,6 @@ public class HippoHierarchyManager implements HierarchyManager {
 
     public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         return itemStateMgr.getItemState(id);
-    }
-
-    public ItemId resolvePath(Path path) throws RepositoryException {
-        return hierMgr.resolvePath(path);
-    }
-
-    public PropertyId resolvePropertyPath(Path path) throws RepositoryException {
-        return hierMgr.resolvePropertyPath(path);
     }
 
     public Path getPath(ItemId id) throws ItemNotFoundException, RepositoryException {
@@ -95,11 +93,37 @@ public class HippoHierarchyManager implements HierarchyManager {
     }
 
     public NodeId resolveNodePath(Path path) throws RepositoryException {
-        Path.Element[] elements = path.getElements();
+        try {
+            return (NodeId) resolvePath(path, 1, ((HierarchyManagerImpl)hierMgr).getRootNodeId(), RETURN_NODE);
+        } catch (ItemStateException e) {
+            throw new RepositoryException("failed to retrieve state of intermediary node", e);
+        }
+    }
+
+    public PropertyId resolvePropertyPath(Path path) throws RepositoryException {
+        return hierMgr.resolvePropertyPath(path);
+        /*try {
+            return (PropertyId) resolvePath(path, 1, ((HierarchyManagerImpl)hierMgr).getRootNodeId(), RETURN_PROPERTY);
+        } catch (ItemStateException e) {
+            throw new RepositoryException("failed to retrieve state of intermediary node", e);
+        }*/
+    }
+
+    public ItemId resolvePath(Path path) throws RepositoryException {
+        try {
+            return resolvePath(path, 1, ((HierarchyManagerImpl)hierMgr).getRootNodeId(), RETURN_ANY);
+        } catch (ItemStateException e) {
+            throw new RepositoryException("failed to retrieve state of intermediary node", e);
+        }
+    }
+
+    protected ItemId resolvePath(Path path, int next,
+                                 ItemId id, int typesAllowed)
+            throws ItemStateException, MalformedPathException, RepositoryException {
         PathBuilder builder = new PathBuilder();
         NodeId smartNodeId = null;
         int count = 0;
-        for (Path.Element element : elements) {
+        for (Path.Element element : path.getElements()) {
             if (element instanceof CargoNamePath) {
                 Name name = element.getName();
                 int index = element.getIndex();
@@ -116,9 +140,9 @@ public class HippoHierarchyManager implements HierarchyManager {
                     } else
                         return null;
                 } catch (NoSuchItemStateException ex) {
-                    throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                    throw new ItemStateException("failed to retrieve state of intermediary node", ex);
                 } catch (ItemStateException ex) {
-                    throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                    throw new ItemStateException("failed to retrieve state of intermediary node", ex);
                 }
                 builder = new PathBuilder();
                 count = 0;
@@ -128,31 +152,47 @@ public class HippoHierarchyManager implements HierarchyManager {
             }
         }
         if (smartNodeId == null) {
-            return hierMgr.resolveNodePath(path);
+            if(typesAllowed == RETURN_PROPERTY) {
+                return hierMgr.resolvePropertyPath(path);
+            } else if(typesAllowed == RETURN_NODE) {
+                return hierMgr.resolveNodePath(path);
+            } else {
+                return null; // unsupported
+            }
         } else {
-            NodeId id = smartNodeId;
+            ItemId itemId = smartNodeId;
             try {
                 if (count > 0) {
-                    for (Path.Element element : builder.getPath().getElements()) {
-                        NodeState parentState = (NodeState)getItemState(id);
+                    Path.Element[] remainingElts = builder.getPath().getElements();
+                    for (int i = 0; i < remainingElts.length; i++) {
+                        Path.Element element = remainingElts[i];
+                        NodeState parentState = (NodeState)getItemState(itemId);
                         Name name = element.getName();
                         int index = element.getIndex();
                         if (index == 0) {
                             index = 1;
                         }
-                        ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
-                        if (nodeEntry != null) {
-                            id = nodeEntry.getId();
-                        } else {
-                            return null;
+                        int typeExpected = (i+1 < remainingElts.length ? RETURN_NODE : typesAllowed);
+                        if ((typeExpected & RETURN_NODE) != 0) {
+                            ChildNodeEntry nodeEntry = parentState.getChildNodeEntry(name, index);
+                            if (nodeEntry != null) {
+                                itemId = nodeEntry.getId();
+                            } else if ((typeExpected & RETURN_PROPERTY) == 0) {
+                                return null;
+                            }
                         }
+                        if ((typeExpected & RETURN_PROPERTY) != 0) {
+                            if (parentState.hasPropertyName(name) && (index <= 1)) {
+                                itemId = new PropertyId(parentState.getNodeId(), name);
+                            }
+                        }               
                     }
                 }
-                return id;
+                return itemId;
             } catch (NoSuchItemStateException ex) {
-                throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                throw new ItemStateException("failed to retrieve state of intermediary node", ex);
             } catch (ItemStateException ex) {
-                throw new RepositoryException("failed to retrieve state of intermediary node", ex);
+                throw new ItemStateException("failed to retrieve state of intermediary node", ex);
             }
         }
     }
