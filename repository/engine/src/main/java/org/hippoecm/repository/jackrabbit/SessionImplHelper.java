@@ -107,6 +107,8 @@ abstract class SessionImplHelper {
      * namespace mappings to be carried over to a new session.
      */
     public void logout() {
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
+        localISM.setEnabled(false);
         namespaces.clear();
     }
 
