@@ -24,7 +24,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
-import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
 public class UserCredentials {
     @SuppressWarnings("unused")
@@ -49,23 +48,14 @@ public class UserCredentials {
     public UserCredentials(CallbackHandler callbackHandler) {
         NameCallback nameCallback = new NameCallback("username");
         PasswordCallback passwordCallback = new PasswordCallback("password", false);
-        CredentialsCallback credentialsCallback = new CredentialsCallback();
         try {
-            callbackHandler.handle(new Callback[] { credentialsCallback, nameCallback });
+            callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
         } catch (IOException ex) {
         } catch (UnsupportedCallbackException ex) {
         }
-        credentials = credentialsCallback.getCredentials();
         username = nameCallback.getName();
-        if(credentials == null) {
-            try {
-                callbackHandler.handle(new Callback[] { nameCallback, passwordCallback });
-                char[] password = passwordCallback.getPassword();
-                credentials = new SimpleCredentials(username, password);
-            } catch (IOException e) {
-            } catch (UnsupportedCallbackException e) {
-            }
-        }
+        char[] password = passwordCallback.getPassword();
+        credentials = new SimpleCredentials(username, password);
     }
 
     @Deprecated
