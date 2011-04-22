@@ -121,6 +121,7 @@
 .hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
 .hippo-console-editor strong{color:#666666}
 .hippo-console-editor sup a{color:#32629b}
+.hippo-console-editor textarea {width: 815px}
 
 .hippo-tree-dropdown-icon { background-image: none; }
 .hippo-tree div.wicket-tree div.row{background-image: none; }
