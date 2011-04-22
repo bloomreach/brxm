@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.plugins.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Collection;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,6 +38,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +79,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        private FileUploadField fileUploadField;
+        //private FileUploadField fileUploadField;
         private FileUploadWidget widget;
 
         public FileUploadForm(String name) {
@@ -101,9 +103,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
 
         @Override
         protected void onSubmit() {
-            final FileUpload upload = fileUploadField.getFileUpload();
-            if (upload != null) {
-            }
+            widget.handleNonFlashSubmit();
         }
     }
 
