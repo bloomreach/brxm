@@ -426,67 +426,6 @@ public class ServicingSearchIndex extends SearchIndex {
         return sortFields;
     }
 
-    @Deprecated
-    private void mergeHippoStandardAggregates(NodeState state, Document doc, IndexFormatVersion indexFormatVersion) {
-        if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
-            ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration) this
-                    .getIndexingConfig();
-
-            List childNodeEntries = state.getChildNodeEntries();
-            List<NodeState> nodeStates = new ArrayList<NodeState>();
-            for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
-                Object o = it.next();
-                if (o instanceof ChildNodeEntry) {
-                    ChildNodeEntry childNodeEntry = (ChildNodeEntry) o;
-                    if (childNodeEntry.getId() instanceof HippoNodeId) {
-                        // do not index virtual child nodes, ever
-                        continue;
-                    }
-                    try {
-                        NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(
-                                childNodeEntry.getId());
-                        Name nodeTypeName = nodeState.getNodeTypeName();
-                        Name[] aggr = servicingIndexingConfiguration.getHippoAggregates();
-                        for (int i = 0; i < aggr.length; i++) {
-                            if (nodeTypeName.equals(aggr[i])) {
-                                nodeStates.add(nodeState);
-                                // leave after first aggr match
-                                break;
-                            }
-                        }
-                    } catch (NoSuchItemStateException e) {
-                        log.warn("NoSuchItemStateException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId(), e);
-                    } catch (ItemStateException e) {
-                        log.warn("ItemStateException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId(), e);
-                    }
-                }
-
-                NodeState[] aggregates = nodeStates.toArray(new NodeState[nodeStates.size()]);
-                for (int j = 0; j < aggregates.length; j++) {
-                    Document aDoc;
-                    try {
-                        aDoc = createDocument(aggregates[j], getNamespaceMappings(), indexFormatVersion);
-                        // transfer fields to doc if there are any
-                        Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
-                        if (fulltextFields != null) {
-                            for (int k = 0; k < fulltextFields.length; k++) {
-                                doc.add(fulltextFields[k]);
-                            }
-                            // Really important to keep here for updating the aggregate when a child is removed or updated
-                            doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, aggregates[j].getNodeId()
-                                    .toString(), Field.Store.NO, Field.Index.NO_NORMS));
-                        }
-                    } catch (RepositoryException e) {
-                        log.warn("RepositoryException while building indexing  hippo standard aggregates for "
-                                + "node with UUID: " + state.getNodeId(), e);
-                    }
-                }
-            }
-        }
-    }
-
     private class NodeIdIteratorImpl implements Iterator<NodeId> {
 
         private final Iterator iter;
@@ -546,33 +485,6 @@ public class ServicingSearchIndex extends SearchIndex {
             process.remove();
         }
 
-    }
-
-    // TODO for some reason, jackrabbit's PropertyTypeRegistry sometimes seem to incorrectly return that it does not know the type of some property. Hence, for now, better not
-    // use this method
-    // jcrPropertyName is of format : {namespace}:localname
-    public int getPropertyType(String namespacedProperty) {
-        try {
-            // try to get the Name for jcrPropertyName
-            Name facetName = NameFactoryImpl.getInstance().create(namespacedProperty);
-            TypeMapping[] typeMappings = getContext().getPropertyTypeRegistry().getPropertyTypes(facetName);
-            if (typeMappings.length == 0) {
-                log
-                        .debug(
-                                "Property name '{}' not mapped in cnd: do not know how to convert from lucene term. Return lucene term",
-                                namespacedProperty);
-            } else if (typeMappings.length > 1) {
-                log
-                        .debug(
-                                "Same property name '{}' mapped to multiple types: do not know how to convert from lucene term. Return lucene term",
-                                namespacedProperty);
-            } else {
-                return typeMappings[0].type;
-            }
-        } catch (IllegalArgumentException e) {
-            log.debug("Cannot get Name for '{}'. Return the luceneTerm as is.", namespacedProperty);
-        }
-        return PropertyType.UNDEFINED;
     }
 
 }
