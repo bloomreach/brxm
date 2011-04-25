@@ -336,7 +336,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         facetselect = testNode.getNode("filtered");
       
         // access through facetselect with search
-        Node facetFreeSearchNavigationNode = testNode.getNode("filtered/hippo:navigation[{green}]");
+        Node facetFreeSearchNavigationNode = facetselect.getNode("hippo:navigation[{green}]");
        
         // We have only one green peugeot
         // assert there is a correct count property:
