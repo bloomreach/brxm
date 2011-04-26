@@ -106,9 +106,9 @@ public class FolderTreePlugin extends RenderPlugin {
 
                     @Override
                     public void renderHead(IHeaderResponse response) {
-                        response.renderOnLoadJavascript(treeHelperBehavior.getRenderString());
+                        response.renderOnDomReadyJavascript(treeHelperBehavior.getRenderString());
                         if (workflowEnabled) {
-                            response.renderOnLoadJavascript(treeHelperBehavior.getUpdateString());
+                            response.renderOnDomReadyJavascript(treeHelperBehavior.getUpdateString());
                         }
                     }
                 });
