@@ -61,7 +61,7 @@ final class NodeNameCodecBehavior extends AbstractExtBehavior {
                 final String encoding = Application.get().getRequestCycleSettings()
                         .getResponseRequestEncoding();
                 r.setCharacterEncoding(encoding);
-                r.setContentType("text/html");
+                r.setContentType("application/json;charset=" + encoding);
 
                 // Make sure it is not cached
                 r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
