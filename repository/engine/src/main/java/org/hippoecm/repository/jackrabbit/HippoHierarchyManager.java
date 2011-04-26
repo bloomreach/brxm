@@ -156,10 +156,7 @@ public class HippoHierarchyManager implements HierarchyManager {
             } else if(typesAllowed == RETURN_NODE) {
                 return hierMgr.resolveNodePath(path);
             } else {
-System.err.println("BERRY "+path);
-Thread.currentThread().dumpStack();
-return hierMgr.resolvePath(path);
-                //return null; // unsupported
+                return hierMgr.resolvePath(path);
             }
         } else {
             ItemId itemId = smartNodeId;
