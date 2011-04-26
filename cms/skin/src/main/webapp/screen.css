@@ -761,10 +761,6 @@ body.hippo-root #doc3 {
   background: none
 }
 
-.hippo-header-shortcuts div div a.website-add-16 {
-  background: none
-}
-
 .hippo-header-shortcuts div div a.image-add {
   background: none
 }
@@ -1911,22 +1907,6 @@ div.wicket-modal div.wicket-tree {
 
 .image-add {
   background-image: url("images/icons/image-add-16.png");
-}
-
-.website-add-128 {
-  background-image: url("images/icons/website-add-128.png")
-}
-
-.website-add-48 {
-  background-image: url("images/icons/website-add-48.png")
-}
-
-.website-add-24 {
-  background-image: url("images/icons/website-add-24.png");
-}
-
-.website-add-16 {
-  background-image: url("images/icons/website-add-16.png");
 }
 
 .rename-128 {
