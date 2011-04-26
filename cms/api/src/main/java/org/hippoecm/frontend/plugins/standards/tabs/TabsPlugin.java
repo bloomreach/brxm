@@ -227,7 +227,6 @@ public class TabsPlugin extends RenderPlugin {
         List<Tab> changedTabs = new ArrayList<Tab>();
         for (Tab tab : tabs) {
             if (ignoreTab != null && tab.equals(ignoreTab)) {
-                System.out.println("ignoring tab " + ignoreTab.getTitle());
                 continue;
             }
             IServiceReference<IRenderService> reference = getPluginContext().getReference(tab.renderer);
