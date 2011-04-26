@@ -62,7 +62,7 @@ public class CopyDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel(this, "name"));
+                TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel<String>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
             } else {
@@ -82,7 +82,7 @@ public class CopyDialog extends LookupDialog {
     }
 
     public IModel getTitle() {
-        return new Model("Copy Node");
+        return new Model<String>("Copy Node");
     }
 
     @Override
