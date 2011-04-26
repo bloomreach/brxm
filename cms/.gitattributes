@@ -91,6 +91,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NameC
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/TypeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/IPagingDefinition.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable.html -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable_fr.properties -text

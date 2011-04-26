@@ -23,81 +23,13 @@ if (!YAHOO.hippo.DataTable) {
 
             resize: function(sizes, preserveScroll) {
                 var table = Dom.get(this.id);
-                if (table.rows.length <= 1) {
-                    return; //no rows in body
-                }
-
-                if (YAHOO.env.ua.gecko > 0 || YAHOO.env.ua.webkit > 0) {
-                    this._updateGecko(sizes, table, preserveScroll);
-                } else {
-                    this._updateIE(sizes, table);
-                }
+                this._updateGecko(sizes, table, preserveScroll);
             },
 
             update : function() {
                 var table = Dom.get(this.id);
                 var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
                 this.resize(un.getSizes(), true);
-            },
-
-            _updateIE: function(sizes, table) {
-                var rows = table.rows;
-
-                //ie8 standards mode fails on rows/cols/cells attributes..
-                if (YAHOO.env.ua.ie == 8 && rows.length == 0) {
-                    var r = Dom.getRegion(table);
-                    if ((r.height - 40) > sizes.wrap.h) {
-                        var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                        if (un) {
-                            un.set('scroll', true);
-                        }
-                    }
-                    return; //don't bother
-                }
-
-                //if table has top margin, add it to table minheight
-                //plus add header height to table minheight
-                //Detect toggle-button and add height if needed
-                var ch = Dom.getChildrenBy(table.parentNode, function(node) {
-                    return node != table;
-                });
-                var sibHeight = 0;
-                for (var j = 0; j < ch.length; ++j) {
-                    sibHeight += Dom.getRegion(ch[j]).height;
-                }
-
-                var nonBodyHeight = this.helper.getMargin(table).h + Dom.getRegion(rows[0].parentNode).height + sibHeight;
-
-                var lastRowParentTag = rows[rows.length - 1].parentNode.tagName;
-                if (lastRowParentTag.toLowerCase() == 'tfoot') {
-                    nonBodyHeight += 65;
-                } else {
-                    //Wicket 1.4 introduces a datatable with two tbody elements instead of thead/tfoot....
-                    var pagingRow = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
-                    if (Lang.isArray(pagingRow) && pagingRow.length > 0) {
-                        nonBodyHeight += 65;
-                    }
-                }
-
-                var tbody = this._getTbody(table);
-
-                var prevHeight = Dom.getStyle(tbody, 'height');
-                Dom.setStyle(tbody, 'height', 'auto');
-
-                var tbodyRegion = Dom.getRegion(tbody);
-                var availableHeight = sizes.wrap.h - nonBodyHeight;
-
-                var scrolling = tbodyRegion.height > availableHeight;
-
-                if (scrolling) {
-                    //Couldn't get the scrolling of a tbody working in IE so set the whole
-                    //unit to scrolling
-                    //TODO: ask Hippo Services
-                    var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
-                    un.set('scroll', true);
-                } else {
-                    Dom.setStyle(tbody, 'height', prevHeight);
-                }
             },
 
             _updateGecko : function(sizes, table, preserveScroll) {
@@ -108,22 +40,24 @@ if (!YAHOO.hippo.DataTable) {
                 }
 
                 var tbody = this._getTbody(table);
-                var previousScrollTop = tbody.scrollTop;
+                var bodyDiv = tbody.parentNode.parentNode;
+                var previousScrollTop = bodyDiv.scrollTop;
 
                 var widthData = this.getWidthData(headers[0], sizes);
 
-                Dom.setStyle(tbody, 'display', 'block');
+                Dom.setStyle(tbody.parentNode.parentNode, 'display', 'block');
                 this._setColsWidth(tbody, headers[0], widthData);
-                Dom.setStyle(thead, 'display', 'block');
+                Dom.setStyle(thead.parentNode.parentNode, 'display', 'block');
 
-                var availableHeight = this.getHeightData(table, thead, tbody, sizes);
-                Dom.setStyle(tbody, 'height', 'auto');
-                var tbodyHeight = Dom.getRegion(tbody).height;
+                var availableHeight = this.getHeightData(table, thead, sizes);
+                Dom.setStyle(bodyDiv, 'height', 'auto');
+                var tbodyHeight = Dom.getRegion(bodyDiv).height;
                 var height =  (tbodyHeight > availableHeight ? availableHeight : tbodyHeight );
-                Dom.setStyle(tbody, 'height', height + 'px');
+                Dom.setStyle(bodyDiv, 'height', height + 'px');
                 if (preserveScroll) {
-                    tbody.scrollTop = previousScrollTop;
+                    bodyDiv.scrollTop = previousScrollTop;
                 }
+                Dom.setStyle(bodyDiv, 'overflow-y', 'auto');
             },
 
             getWidthData : function(headrow, sizes) {
@@ -158,7 +92,7 @@ if (!YAHOO.hippo.DataTable) {
                 return result;
             },
 
-            getHeightData : function(table, thead, tbody, sizes) {
+            getHeightData : function(table, thead, sizes) {
                 var siblings = Dom.getChildren(table.parentNode);
                 var fixedTableHeight = 0;
                 //calculate height of table siblings
@@ -194,7 +128,6 @@ if (!YAHOO.hippo.DataTable) {
 
             _getTbody : function(table) {
                 var tbodies = new YAHOO.util.Element(table).getElementsByTagName('tbody');
-//                var tbodies = Dom.getElementsByClassName('datatable-tbody', 'tbody', table);
                 if (tbodies.length > 0) {
                     return tbodies[0];
                 }
@@ -202,7 +135,11 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _getThead : function(table) {
-                return table.rows[0].parentNode;
+                var theads = new YAHOO.util.Element(table).getElementsByTagName('thead');
+                if (theads.length > 0) {
+                    return theads[0];
+                }
+                return null;
             },
 
             _setColsWidth : function(tbody, headrow, widthData) {

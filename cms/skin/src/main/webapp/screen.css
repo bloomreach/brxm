@@ -509,6 +509,16 @@ body.hippo-root #doc3 {
   width: 100%;
 }
 
+.hippo-list-details table {
+  width: 100%;
+}
+
+/* Apply scrollbars to modern browsers */
+/* table.hippo-list-details > tbody {
+  overflow-x: hidden;
+  overflow-y: auto;
+} */
+
 .hippo-list-details tr td.icon-16 {
   height: 16px;
   width: 16px;
@@ -2076,12 +2086,6 @@ table.hippo-defaultcontent td {
   left: -2000px;
   top: -2000px;
   position: absolute;
-}
-
-/* Apply scrollbars to modern browsers */
-table.hippo-list-details > tbody {
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .navigator-center-body table.hippo-list-documents,

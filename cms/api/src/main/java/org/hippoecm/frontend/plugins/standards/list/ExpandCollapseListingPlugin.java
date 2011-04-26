@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,11 +42,6 @@ import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableSettings;
 import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
     @SuppressWarnings("unused")
@@ -119,9 +120,13 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     @Override
     protected void onSelectionChanged(IModel<Node> model) {
         super.onSelectionChanged(model);
+
+        //FIXME: postpone to render(PluginRequestTarget); only necessary when
+        //       not redrawing complete component
         AjaxRequestTarget target = AjaxRequestTarget.get();
         if (target != null) {
             target.appendJavascript(behavior.getUpdateScript());
+            behavior.renderHead(target.getHeaderResponse());
         }
     }
 

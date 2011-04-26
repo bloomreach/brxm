@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.yui.widget;
 
-import net.sf.json.JsonConfig;
 import org.apache.wicket.Component;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
-public class WidgetBehavior extends AbstractYuiBehavior{
+import net.sf.json.JsonConfig;
+
+public class WidgetBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -65,7 +65,12 @@ public class WidgetBehavior extends AbstractYuiBehavior{
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "hippowidget");
         context.addTemplate(template);
-        context.addOnDomLoad("YAHOO.hippo.WidgetManager.render();");
+    }
+
+    @Override
+    protected void onRenderHead(final IHeaderResponse response) {
+        super.onRenderHead(response);
+        response.renderOnDomReadyJavascript("YAHOO.hippo.WidgetManager.render();");
     }
 
     public String getMarkupId() {
