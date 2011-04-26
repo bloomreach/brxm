@@ -73,7 +73,7 @@ public class AutoEditPlugin extends Plugin {
                             try {
                                 IEditor editor = editService.getEditor(model);
                                 if (editor == null) {
-                                    editor = editService.openEditor(model);
+                                    editService.openEditor(model);
                                 }
                             } catch (ServiceException ex) {
                                 log.error(ex.getMessage());

@@ -16,7 +16,6 @@
 package org.hippoecm.editor.template;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -36,7 +35,6 @@ public class TemplateLocator implements ITemplateLocator {
     }
 
     public IClusterConfig getTemplate(Map<String, Object> criteria) throws StoreException {
-        Map<String, IClusterConfig> templates = new LinkedHashMap<String, IClusterConfig>();
         for (int i = 0; i < stores.length; i++) {
             Iterator<IClusterConfig> iter = stores[i].find(criteria);
             if (iter.hasNext()) {

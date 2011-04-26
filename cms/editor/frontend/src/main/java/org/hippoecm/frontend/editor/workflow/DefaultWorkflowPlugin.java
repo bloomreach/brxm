@@ -269,9 +269,9 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDocumentName();
                 IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() });
+                        new Object[] { docName});
                 IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
-                        new Object[] { getDocumentName() });
+                        new Object[] { docName });
                 return new DeleteDialog(title, message, this, getEditorManager());
             }
 

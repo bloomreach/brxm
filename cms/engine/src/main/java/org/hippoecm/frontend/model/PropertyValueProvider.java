@@ -214,8 +214,6 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
 
         elements = new LinkedList<JcrPropertyValueModel>();
         try {
-            Node node = (Node) getItemModel().getParentModel().getObject();
-            String path = getItemModel().getPath().substring(node.getPath().length() + 1);
             if (getItemModel().exists()) {
                 Property property = (Property) getItemModel().getObject();
                 if (property.getDefinition().isMultiple()) {

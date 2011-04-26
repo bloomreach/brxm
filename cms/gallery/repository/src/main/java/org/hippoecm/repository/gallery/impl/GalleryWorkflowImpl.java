@@ -69,7 +69,6 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         // customized with auto created properties, like user, current time, and -most importantly- also not the
         // hippo:availability property.  This implementation should be revoked entirely.
         Node document, node, folder = rootSession.getNodeByUUID(subject.getUUID());
-        Date date = new Date();
         Calendar timestamp = Calendar.getInstance();
         timestamp.setTime(new Date());
         name = NodeNameCodec.encode(name);

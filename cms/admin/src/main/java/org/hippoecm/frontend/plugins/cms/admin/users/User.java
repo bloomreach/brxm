@@ -210,6 +210,7 @@ public class User implements Comparable<User>, IClusterable {
             String name = p.getName();
             if (name.startsWith("jcr:")) {
                 //skip
+                continue;
             } else if (name.equals(PROP_EMAIL) || name.equalsIgnoreCase("email")) {
                 email = p.getString();
             } else if (name.equals(PROP_FIRSTNAME) || name.equalsIgnoreCase("firstname")) {
@@ -220,6 +221,7 @@ public class User implements Comparable<User>, IClusterable {
                 active = p.getBoolean();
             } else if (name.equals(PROP_PASSWORD) || name.equals(PROP_PASSKEY)) {
                 // do not expose password hash
+                continue;
             } else if (name.equals(PROP_PROVIDER)) {
                 provider = p.getString();
             } else {

@@ -78,11 +78,10 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
             log.error("Could not load primary node type of " + node.getName() + ", cannot create imageset variants", e);
             return;
         }
-        Map<String, IFieldDescriptor> fields = type.getFields();
 
         // create all child resource nodes, reusing the stream of the primary child
         Calendar lastModified = primaryChild.getProperty("jcr:lastModified").getDate();
-        for (IFieldDescriptor field: type.getFields().values()) {
+        for (IFieldDescriptor field : type.getFields().values()) {
             if (field.getTypeDescriptor().isType(HippoGalleryNodeType.IMAGE)) {
                 String childName = field.getPath();
                 if (!node.hasNode(childName)) {

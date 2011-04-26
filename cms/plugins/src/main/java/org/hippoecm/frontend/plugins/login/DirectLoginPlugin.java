@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.jcr.SimpleCredentials;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -30,12 +29,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.PageParameters;
+import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -44,20 +39,14 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-
-import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
-
-import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
-import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-
 import org.hippoecm.repository.WebCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
     @SuppressWarnings("unused")
@@ -169,6 +158,7 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
                     nameCallback.setName(username);
                 }
             } else if (callback instanceof PasswordCallback) {
+                continue;
             } else if (callback instanceof CredentialsCallback) {
                 CredentialsCallback credentialsCallback = (CredentialsCallback) callback;
                 credentialsCallback.setCredentials(new WebCredentials(((WebRequest)getRequest()).getHttpServletRequest()));
