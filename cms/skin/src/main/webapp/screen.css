@@ -1797,18 +1797,6 @@ div.wicket-modal div.wicket-tree {
   background-position: 8px 8px;
 }
 
-.document-48 {
-  background-image: url("images/icons/document-48.png")
-}
-
-.documents-32 {
-  background-image: url(images/icons/emblem-documents-32.png)
-}
-
-.state-review-16 {
-  background-image: url("images/icons/state-review-16.gif")
-}
-
 .state-changed-16 {
   background-image: url("images/icons/state-changed-16.png")
 }
@@ -1833,10 +1821,6 @@ div.wicket-modal div.wicket-tree {
   background-image: url("images/icons/state-prev-live-16.png")
 }
 
-.permissions-16 {
-  background-image: url("images/icons/permissions-16.png")
-}
-
 .arrow-sort-down-16 {
   background-image: url("images/icons/arrow-sort-down-16.png")
 }
@@ -1855,50 +1839,6 @@ div.wicket-modal div.wicket-tree {
 
 .arrow-paging-next-16 {
   background-image: url("images/icons/arrow-paging-next-16.png")
-}
-
-.user-16 {
-  background-image: url("images/icons/user-16.png")
-}
-
-.user-32 {
-  background-image: url("images/icons/user-32.png")
-}
-
-.user-48 {
-  background-image: url("images/icons/user-48.png")
-}
-
-.user-128 {
-  background-image: url("images/icons/user-128.png")
-}
-
-.groups-16 {
-  background-image: url("images/icons/groups-16.png")
-}
-
-.groups-32 {
-  background-image: url("images/icons/groups-32.png")
-}
-
-.groups-48 {
-  background-image: url("images/icons/groups-48.png")
-}
-
-.groups-128 {
-  background-image: url("images/icons/groups-128.png")
-}
-
-.document-new-48 {
-  background-image: url("images/icons/document-48.png")
-}
-
-.user-48 {
-  background-image: url("images/icons/groups-48.png")
-}
-
-.folder-48 {
-  background-image: url("images/icons/folder-32.png")
 }
 
 .image-add-48 {
