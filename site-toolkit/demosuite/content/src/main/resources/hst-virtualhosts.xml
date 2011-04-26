@@ -389,9 +389,6 @@
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>ComposerBootstrapPipeline</sv:value>
                 </sv:property>
@@ -411,9 +408,6 @@
                 </sv:property>
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>ComposerPipeline</sv:value>
@@ -761,9 +755,6 @@
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>ComposerBootstrapPipeline</sv:value>
                 </sv:property>
@@ -783,9 +774,6 @@
                 </sv:property>
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
-                </sv:property>
-                <sv:property sv:name="hst:mountpoint" sv:type="String">
-                  <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:namedpipeline" sv:type="String">
                   <sv:value>ComposerPipeline</sv:value>
