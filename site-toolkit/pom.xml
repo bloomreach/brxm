@@ -512,6 +512,15 @@
       
       <!-- Hippo CMS7 Depedencies -->
     
+    
+      <!-- SSO for encryption/decryption -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-sso</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-connector</artifactId>
