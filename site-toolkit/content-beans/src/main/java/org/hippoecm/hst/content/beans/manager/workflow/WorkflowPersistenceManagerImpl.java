@@ -75,9 +75,9 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     protected String folderNodeTypeName = "hippostd:folder";
 
     /**
-     * The workflow category name to get a folder workflow.
+     * The workflow category name to get a folder workflow. We use threepane as this is the same as the CMS uses
      */
-    protected String folderNodeWorkflowCategory = "internal"; 
+    protected String folderNodeWorkflowCategory = "threepane"; 
     
     /**
      * The workflow category name to get a document workflow. 
