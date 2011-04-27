@@ -320,7 +320,7 @@ public class TabsPlugin extends RenderPlugin {
         }
         final IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
         try {
-            if (editor.isModified()) {
+            if (editor.isModified() || !editor.isValid()) {
 
                 OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
