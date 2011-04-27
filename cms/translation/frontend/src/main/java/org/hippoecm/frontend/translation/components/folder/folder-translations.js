@@ -91,7 +91,8 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
 
     this.translationsfield = Ext.create({
       xtype: 'fieldset',
-      title: self.resources['translation-folders']
+      title: self.resources['translation-folders'],
+      height: 156
     });
     this.translationsfield.add(this.panel);
     config.items.push(this.translationsfield);
@@ -134,7 +135,10 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
       images: this.images,
       resources: this.resources,
       pathRenderer: this.pathRenderer,
-      entries: siblings
+      entries: siblings,
+      height: 140,
+      width: 618,
+      autoScroll: true
     });
   },
   
