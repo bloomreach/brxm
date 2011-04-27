@@ -214,6 +214,11 @@ body.hippo-root #doc3 {
   padding: 2px;
 }
 
+.hippo-login-panel-form input.hippo-form-checkbox {
+  color: #333333;
+  padding: 2px;
+}
+
 .hippo-login-panel select {
   padding: 0;
   width: 186px;
