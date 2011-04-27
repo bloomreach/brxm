@@ -660,7 +660,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Plaatje</sv:value>
+        <sv:value>Afbeelding</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
