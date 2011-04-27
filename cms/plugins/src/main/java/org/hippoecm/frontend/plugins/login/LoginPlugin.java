@@ -18,9 +18,11 @@ package org.hippoecm.frontend.plugins.login;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -30,6 +32,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -64,6 +67,8 @@ public class LoginPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
+
+    public static final String DEFAULT_LOCALE = "en";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
     public final static String[] LOCALES = { "en", "fr", "nl", "it" };
@@ -111,10 +116,10 @@ public class LoginPlugin extends RenderPlugin {
             if (localeArray == null) {
                 localeArray = LOCALES;
             }
-            List<String> locales = Arrays.asList(localeArray);
+            final Set<String> locales = new HashSet<String>(Arrays.asList(localeArray));
 
             // by default, use the user's browser settings for the locale
-            selectedLocale = "en";
+            selectedLocale = DEFAULT_LOCALE;
             if (locales.contains(getSession().getLocale().getLanguage())) {
                 selectedLocale = getSession().getLocale().getLanguage();
             }
@@ -136,7 +141,12 @@ public class LoginPlugin extends RenderPlugin {
                     "username")));
             add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
                     "password")));
-            add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales,
+            add(locale = new DropDownChoice("locale", new PropertyModel<String>(this, "selectedLocale") {
+                    @Override
+                    public void setObject(final String object) {
+                        super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
+                    }
+                }, Arrays.asList(localeArray),
                 // Display the language name from i18n properties
                 new IChoiceRenderer<String>() {
                     public String getDisplayValue(String object) {
