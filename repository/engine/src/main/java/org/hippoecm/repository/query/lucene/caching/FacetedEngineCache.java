@@ -17,10 +17,10 @@
 package org.hippoecm.repository.query.lucene.caching;
 
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.slf4j.Logger;
@@ -50,8 +50,9 @@ public class FacetedEngineCache {
             log.warn("Minimum facetValueCountMapCache size is 100. Change size to 100");
             facetValueCountMapCacheSize = 100;
         }
-        bitSetCache = new ConcurrentHashMap<String, BitSet>(new LRUMap<String, BitSet>(100, bitSetCacheSize));
-        facetValueCountMapCache = new ConcurrentHashMap<FECacheKey, Map<String,Count>>(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
+       
+        bitSetCache =  Collections.synchronizedMap(new LRUMap<String, BitSet>(100, bitSetCacheSize));
+        facetValueCountMapCache = Collections.synchronizedMap(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
     }
     
     public Map<String, Count> getFacetValueCountMap(FECacheKey key) {

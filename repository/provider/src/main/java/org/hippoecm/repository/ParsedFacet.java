@@ -16,10 +16,10 @@
 package org.hippoecm.repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.sf.json.JSONArray;
 
@@ -36,7 +36,7 @@ public class ParsedFacet {
     /*
      * A cache shared between all threads that keep parsedFacets as they are expensive to create 
      */
-    private final static Map<String, ParsedFacet> sharedCache = new ConcurrentHashMap<String, ParsedFacet>(new LRUMap<String, ParsedFacet>()); 
+    private final static Map<String, ParsedFacet> sharedCache = Collections.synchronizedMap(new LRUMap<String, ParsedFacet>()); 
     
     String displayFacetName;
 
