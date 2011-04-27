@@ -23,7 +23,6 @@ import javax.jcr.Node;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -34,6 +33,7 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
@@ -56,6 +56,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
     private boolean isExpanded = false;
     private String className = null;
+    private transient boolean selectionChanged = false;
 
     public ExpandCollapseListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -120,14 +121,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     @Override
     protected void onSelectionChanged(IModel<Node> model) {
         super.onSelectionChanged(model);
-
-        //FIXME: postpone to render(PluginRequestTarget); only necessary when
-        //       not redrawing complete component
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null) {
-            target.appendJavascript(behavior.getUpdateScript());
-            behavior.renderHead(target.getHeaderResponse());
-        }
+        selectionChanged = true;
     }
 
     @Override
@@ -170,6 +164,15 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         }
     }
 
+    @Override
+    public void render(final PluginRequestTarget target) {
+        super.render(target);
+        if (target != null && selectionChanged && isVisible()) {
+            target.appendJavascript(behavior.getUpdateScript());
+            behavior.renderHead(target.getHeaderResponse());
+        }
+        selectionChanged = false;
+    }
 
     protected List<IListColumnProvider> getListColumnProviders() {
         IPluginConfig config = getPluginConfig();

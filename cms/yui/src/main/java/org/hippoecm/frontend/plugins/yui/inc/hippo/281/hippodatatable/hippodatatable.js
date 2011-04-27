@@ -43,17 +43,19 @@ if (!YAHOO.hippo.DataTable) {
                 var bodyDiv = tbody.parentNode.parentNode;
                 var previousScrollTop = bodyDiv.scrollTop;
 
+                var h = Dom.getElementsByClassName(this.config.autoWidthClassName, 'th', headers[0]);
+                if (h != null) {
+                    Dom.setStyle(h, 'width', 'auto');
+                    Dom.setStyle(h, 'min-width', '100px');
+                }
                 var widthData = this.getWidthData(headers[0], sizes);
 
-                Dom.setStyle(tbody.parentNode.parentNode, 'display', 'block');
+                Dom.setStyle(bodyDiv, 'display', 'block');
                 this._setColsWidth(tbody, headers[0], widthData);
                 Dom.setStyle(thead.parentNode.parentNode, 'display', 'block');
 
                 var availableHeight = this.getHeightData(table, thead, sizes);
-                Dom.setStyle(bodyDiv, 'height', 'auto');
-                var tbodyHeight = Dom.getRegion(bodyDiv).height;
-                var height =  (tbodyHeight > availableHeight ? availableHeight : tbodyHeight );
-                Dom.setStyle(bodyDiv, 'height', height + 'px');
+                Dom.setStyle(bodyDiv, 'height', availableHeight + 'px');
                 if (preserveScroll) {
                     bodyDiv.scrollTop = previousScrollTop;
                 }
@@ -66,9 +68,9 @@ if (!YAHOO.hippo.DataTable) {
                     widths: []
                 };
 
-                var fixedHeaderWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                var fixedHeaderWidth = 0;
 
-                var cells = new YAHOO.util.Element(headrow).getElementsByTagName('th');
+                var cells = headrow.getElementsByTagName('th');
                 for (var i = 0; i < cells.length; i++) {
                     var child = cells[i];
                     if (!Dom.hasClass(child, this.config.autoWidthClassName)) {
@@ -127,7 +129,7 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _getTbody : function(table) {
-                var tbodies = new YAHOO.util.Element(table).getElementsByTagName('tbody');
+                var tbodies = table.getElementsByTagName('tbody');
                 if (tbodies.length > 0) {
                     return tbodies[0];
                 }
@@ -135,7 +137,7 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _getThead : function(table) {
-                var theads = new YAHOO.util.Element(table).getElementsByTagName('thead');
+                var theads = table.getElementsByTagName('thead');
                 if (theads.length > 0) {
                     return theads[0];
                 }
@@ -146,23 +148,18 @@ if (!YAHOO.hippo.DataTable) {
                 var widths = widthData.widths;
 
                 if (widthData.autoIndex >= 0) {
-                    // update header
-                    var h = this._getAutoWidthHeader(headrow);
-                    if (h != null) {
-                        var padding = this.helper.getMargin(h).w;
-                        Dom.setStyle(h, 'width', (widths[widthData.autoIndex] - padding) + 'px');
-                    }
-
-                    var rows = new YAHOO.util.Element(tbody).getElementsByTagName('tr');
+                    var rows = tbody.getElementsByTagName('tr');
                     for (var j = 0; j < rows.length; j++) {
                         var cells = rows[j].getElementsByTagName('td');
                         var i = widthData.autoIndex;
                         var cell = cells[i];
                         var padding = this.helper.getMargin(cell).w;
-                        Dom.setStyle(cell, 'width', (widths[i] - padding) + 'px');
+                        var newWidth = (widths[i] - padding);
+                        if (newWidth < 100) {
+                            newWidth = 100;
+                        }
+                        Dom.setStyle(cell, 'width', newWidth + 'px');
                         Dom.setStyle(cell, 'float', 'left');
-                        Dom.setStyle(cell, 'overflow', 'hidden');
-                        Dom.setStyle(cell, 'white-space', 'nowrap');
                     }
                 }
             }

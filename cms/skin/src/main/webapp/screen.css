@@ -558,6 +558,8 @@ body.hippo-root #doc3 {
   border-left: 1px solid transparent;
   padding: 4px 2px 5px 4px;
   border-right: none;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .hippo-list-details tr td:hover {
