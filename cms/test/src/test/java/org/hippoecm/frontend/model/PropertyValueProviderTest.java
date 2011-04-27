@@ -37,6 +37,7 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -136,5 +137,27 @@ public class PropertyValueProviderTest extends PluginTest {
         assertEquals("aap", pvm.getObject());
 
         assertFalse(session.hasPendingChanges());
+    }
+
+    @Test
+    public void canAddValueToMultiValuedPropertyWithSingleValuedDefinition() throws RepositoryException {
+        Node test = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
+        test.setProperty("frontendtest:value", "aap");
+        session.save();
+
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:value");
+        IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:value", new JavaTypeDescriptor("string",
+                "String", null));
+        field.setMultiple(true);
+
+        PropertyValueProvider pvp = new PropertyValueProvider(field, field.getTypeDescriptor(), propModel.getItemModel());
+        Iterator<JcrPropertyValueModel> iterator = pvp.iterator(0, 1);
+        JcrPropertyValueModel pvm = iterator.next();
+        assertEquals("aap", pvm.getObject());
+
+        assertFalse(session.hasPendingChanges());
+
+        pvp.addNew();
+        assertTrue(session.hasPendingChanges());
     }
 }

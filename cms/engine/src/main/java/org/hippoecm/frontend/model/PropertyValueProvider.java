@@ -94,15 +94,17 @@ public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueMode
                     System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                     newValues[oldValues.length] = value;
 
+                    if (node.hasProperty(relPath)) {
+                        node.getProperty(relPath).remove();
+                    }
                     node.setProperty(relPath, newValues);
                 } else if (!descriptor.getValidators().contains("required")) {
                     if (node.hasProperty(relPath)) {
                         log.error("cannot add more than one value to single-valued property");
                         return;
-                    } else {
-                        node.setProperty(relPath, value);
-                        index = JcrPropertyValueModel.NO_INDEX;
                     }
+
+                    index = JcrPropertyValueModel.NO_INDEX;
                     node.setProperty(relPath, value);
                 } else {
                     index = JcrPropertyValueModel.NO_INDEX;
