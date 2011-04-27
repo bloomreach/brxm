@@ -18,22 +18,28 @@ package org.hippoecm.repository.impl;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class WorkflowPostActionsImpl implements WorkflowPostActions {
-    final static Logger log = LoggerFactory.getLogger(WorkflowPostAction.class);
+    final static Logger log = LoggerFactory.getLogger(WorkflowPostActions.class);
 
     final static String CATAGORYNAMEPREFIX = "events";
 
     private List<WorkflowPostActions> actions;
+    private boolean isDocumentPathResult;
+    private WorkflowManagerImpl workflowManager;
     
-    private WorkflowPostActionsImpl(List<WorkflowPostActions> actions) {
+    private WorkflowPostActionsImpl(WorkflowManagerImpl workflowManager, List<WorkflowPostActions> actions, boolean isDocumentPathResult) {
         this.actions = actions;
+        this.isDocumentPathResult = isDocumentPathResult;
+        this.workflowManager = workflowManager;
     }
 
     static WorkflowPostActions createPostActions(WorkflowManagerImpl workflowManager, String workflowCategory, Method workflowMethod, String sourceIdentity) {
@@ -44,6 +50,14 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
             return null;
         }
         List<WorkflowPostActions> actions = new LinkedList<WorkflowPostActions>();
+        boolean isDocumentResult = false;
+        boolean isDocumentPathResult = false;
+        if (Document.class.isAssignableFrom(workflowMethod.getReturnType())) {
+            isDocumentResult = true;
+        } else if (FolderWorkflow.class.isAssignableFrom(workflowMethod.getDeclaringClass()) && workflowMethod.getName().equals("add")) {
+            isDocumentResult = true;
+            isDocumentPathResult = true;
+        }
         try {
             for (NodeIterator categories = workflowManager.rootSession.getNodeByIdentifier(workflowManager.configuration).getNodes(); categories.hasNext();) {
                 Node category = categories.nextNode();
@@ -58,17 +72,26 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
 	                    if (WorkflowManagerImpl.log.isDebugEnabled()) {
                                 WorkflowManagerImpl.log.debug("inspect workflow for event workflow selected "+wfNode.getPath());
 			    }
-                            WorkflowPostActions action = new WorkflowPostAction(workflowManager, wfSubject,
-                                    Document.class.isAssignableFrom(workflowMethod.getReturnType()), wfNode,
-                                    workflowCategory, workflowMethod.getName());
-                            actions.add(action);
+                            WorkflowPostActions action = null;
+                            if (wfNode.isNodeType("hipposys:workflowsimplequeryevent")) {
+                                action = new WorkflowPostActionSimpleQuery(workflowManager, wfSubject,
+                                        isDocumentResult, wfNode,
+                                        workflowCategory, workflowMethod.getName());
+                            } else if (wfNode.isNodeType("hipposys:workflowboundmethodevent")) {
+                                action = new WorkflowPostActionsBoundMethod(workflowManager, wfSubject,
+                                        isDocumentResult, wfNode,
+                                        workflowCategory, workflowMethod.getName());
+                            }
+                            if (action != null) {
+                                actions.add(action);
+                            }
                         }
                     } catch (RepositoryException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     }
                 }
             }
-            return new WorkflowPostActionsImpl(actions);
+            return new WorkflowPostActionsImpl(workflowManager, actions, isDocumentPathResult);
         }  catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             return null;
@@ -77,14 +100,25 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
 
     @Override
     public void execute(Object returnObject) {
-        for(WorkflowPostActions postAction : actions) {
+        if (isDocumentPathResult && returnObject instanceof String) {
+            try {
+                returnObject = new Document(workflowManager.rootSession.getRootNode().getNode(((String)returnObject).substring(1)).getIdentifier());
+            } catch (ItemNotFoundException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                return;
+            } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                return;
+            }
+        }
+        for (WorkflowPostActions postAction : actions) {
             postAction.execute(returnObject);
         }
     }
 
     @Override
     public void dispose() {
-        for(WorkflowPostActions postAction : actions) {
+        for (WorkflowPostActions postAction : actions) {
             postAction.dispose();
         }
     }

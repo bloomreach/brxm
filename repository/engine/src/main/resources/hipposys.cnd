@@ -73,6 +73,12 @@
 + hipposys:eventpostcondition (nt:query)
 + hipposys:eventdocument (nt:query)
 
+[hipposys:workflowboundmethodevent] > hipposys:workflowevent
+- hipposys:eventconditioncategory (string)
+- hipposys:eventconditionmethod (string)
+- hipposys:eventdocument (path)
++ hipposys:eventdocument (nt:query)
+
 [hipposys:workflowcategory] > nt:base orderable
 + * (hipposys:workflow) = hipposys:workflow
 

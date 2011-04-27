@@ -40,8 +40,8 @@ import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class WorkflowPostAction implements WorkflowPostActions {
-    final static Logger log = LoggerFactory.getLogger(WorkflowPostAction.class);
+class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
+    final static Logger log = LoggerFactory.getLogger(WorkflowPostActionSimpleQuery.class);
 
     WorkflowManagerImpl workflowManager;
     String sourceIdentity;
@@ -52,7 +52,7 @@ class WorkflowPostAction implements WorkflowPostActions {
     String workflowCategory;
     String workflowMethod;
 
-    WorkflowPostAction(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
+    WorkflowPostActionSimpleQuery(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
         this.workflowManager = workflowManager;
         this.sourceIdentity = wfSubject.getIdentifier();
         this.wfSubject = wfSubject;
