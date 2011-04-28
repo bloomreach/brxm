@@ -65,7 +65,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>new image folder</sv:value>
+      <sv:value>new folder</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -76,7 +76,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nieuwe beeldbank</sv:value>
+      <sv:value>nieuwe map</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
