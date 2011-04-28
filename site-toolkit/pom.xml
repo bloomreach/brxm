@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>5</version>
+    <version>6-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -59,7 +59,6 @@
     <portlet-api.version>2.0</portlet-api.version>
     <portals-bridges-common.version>2.0</portals-bridges-common.version>
     
-    <javax.mail.version>1.4.1</javax.mail.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <slf4j.version>1.5.8</slf4j.version>
@@ -183,14 +182,6 @@
         <artifactId>hippo-repository-api</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
-      </dependency>
-
-      <!-- Java Mail dependencies for site example -->
-      
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>${javax.mail.version}</version>
       </dependency>
       
       <!-- JSP-related API dependencies -->
