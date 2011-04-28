@@ -78,6 +78,14 @@ public class HierarchyResolverImpl implements HierarchyResolver {
             last.node = null;
             last.relPath = null;
         }
+        if (path.startsWith("/")) {
+            ancestor = ancestor.getSession().getRootNode();
+            if (path.startsWith("/jcr:root/")) {
+                path = path.substring("/jcr:root/".length());
+            } else {
+                path = path.substring(1);
+            }
+        }
         Node node = ancestor;
         String[] pathElts = path.split("/");
         int pathEltsLength = pathElts.length;
