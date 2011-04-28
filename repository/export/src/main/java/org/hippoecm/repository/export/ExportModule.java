@@ -87,7 +87,7 @@ public final class ExportModule implements DaemonModule {
     	// read 'hippoecm.export.dir' system property
     	String configDir = System.getProperty("hippoecm.export.dir");
         File configDirectory = null;
-        if (configDir != null) {
+        if (configDir != null && !configDir.isEmpty()) {
             configDirectory = new File(configDir);
         } else {
             log.info("No config directory set. Automatic export will not be available.");
