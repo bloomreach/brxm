@@ -865,22 +865,22 @@
                   <dependency>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    <classpath>shared</classpath>
+                    <classpath>extra</classpath>
                   </dependency>
                   <dependency>
                     <groupId>javax.jcr</groupId>
                     <artifactId>jcr</artifactId>
-                    <classpath>shared</classpath>
+                    <classpath>extra</classpath>
                   </dependency>
                   <dependency>
                     <groupId>javax.jdo</groupId>
                     <artifactId>jdo2-api</artifactId>
-                    <classpath>shared</classpath>
+                    <classpath>extra</classpath>
                   </dependency>
                   <dependency>
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
-                    <classpath>shared</classpath>
+                    <classpath>extra</classpath>
                   </dependency>
                 </dependencies>
               </container>
