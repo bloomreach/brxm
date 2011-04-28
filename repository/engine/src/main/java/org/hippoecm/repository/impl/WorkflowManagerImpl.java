@@ -81,6 +81,7 @@ import org.hippoecm.repository.quartz.SchedulerWorkflowModule;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
 import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
+/** This class is not part of a public accessible API or extensible interface */
 public class WorkflowManagerImpl implements WorkflowManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+/** This class is not part of a public accessible API or extensible interface */
 interface WorkflowPostActions {
     void execute(Object returnObject);
     void dispose();

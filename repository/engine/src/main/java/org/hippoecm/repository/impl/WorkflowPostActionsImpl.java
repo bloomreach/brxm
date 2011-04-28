@@ -27,6 +27,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** This class is not part of a public accessible API or extensible interface */
 public class WorkflowPostActionsImpl implements WorkflowPostActions {
     final static Logger log = LoggerFactory.getLogger(WorkflowPostActions.class);
 
