@@ -82,6 +82,10 @@
     
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
+    
+    <!-- default empty export directory, override to enable export -->
+    <hippoecm.export.dir/>
+    
   </properties>
 
   <licenses>
@@ -855,7 +859,7 @@
               <container>
                 <systemProperties>
                   <repo.path>${repo.path}</repo.path>
-                  <!--<hippoecm.export.dir>${basedir}/content/src/main/resources</hippoecm.export.dir>-->
+                  <hippoecm.export.dir>${hippoecm.export.dir}</hippoecm.export.dir>
                 </systemProperties>
                 <zipUrlInstaller>
                   <url>http://apache.hippo.nl/tomcat/tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}.tar.gz</url>
