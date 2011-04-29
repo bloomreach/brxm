@@ -43,6 +43,7 @@ public class CmsUpgrader19a implements UpdaterModule {
         registerWorkflowVisitors(context);
         registerNamespaceVisitors(context);
         registerCmsConfigVisitors(context);
+        registerLoginConfigVisitors(context);
         registerTranslationUpdates(context);
     }
 
@@ -244,11 +245,29 @@ public class CmsUpgrader19a implements UpdaterModule {
         });
 
 
+
         context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:initialize") {
             @Override
             protected void leaving(Node node, int level) throws RepositoryException {
                 node.getNode("cms-folder-views").remove();
                 node.getNode("cms-search-views").remove();
+            }
+        });
+    }
+
+    private void registerLoginConfigVisitors(final UpdaterContext context) {
+
+        context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:frontend/login") {
+            @Override
+            protected void leaving(final Node node, final int level) throws RepositoryException {
+                node.remove();
+            }
+        });
+
+        context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:initialize/cms-login") {
+            @Override
+            protected void leaving(Node node, int level) throws RepositoryException {
+                node.remove();
             }
         });
     }
