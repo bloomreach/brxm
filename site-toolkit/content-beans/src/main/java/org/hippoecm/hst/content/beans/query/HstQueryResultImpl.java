@@ -31,6 +31,11 @@ public class HstQueryResultImpl implements HstQueryResult {
     private javax.jcr.query.QueryResult queryResult;
     private ObjectConverter objectConverter;
     private HstVirtualizer virtualizer;
+    
+    // jackrabbit can return a size of -1 if unknown, and higher otherwise. That is why we start with -2 if not set yet
+    private int totalSize = -2;
+    private int size = -2;
+    
 
     public HstQueryResultImpl(ObjectConverter objectConverter, javax.jcr.query.QueryResult queryResult, HstVirtualizer virtualizer) {
         this.objectConverter = objectConverter;
@@ -48,33 +53,41 @@ public class HstQueryResultImpl implements HstQueryResult {
     }
     
     public int getTotalSize() {
+        if(totalSize != -2) {
+            return totalSize;
+        }
         try {
             NodeIterator iterator = queryResult.getNodes();
             if(iterator instanceof HippoNodeIterator) {
-                int total = (int)((HippoNodeIterator)iterator).getTotalSize();
-                if(total == -1) {
-                    log.warn("getTotalSize returned -1 for query. Should not happen. Fallback to normal getSize()");
-                    return getSize();
+                totalSize = (int)((HippoNodeIterator)iterator).getTotalSize();
+                if(totalSize == -1) {
+                    log.error("getTotalSize returned -1 for query. Should not be possible. Fallback to normal getSize()");
+                    totalSize = getSize();
                 } else {
-                    log.debug("getTotalSize call returned '{}' hits", total);
-                    return total;
+                    log.debug("getTotalSize call returned '{}' hits", totalSize);
                 }
+            } else {
+                log.debug("The getTotalSize method only works properly in embedded repository mode. Fallback to normal getSize()");
+                totalSize = getSize();
             }
-            log.debug("The getTotalSize method only works properly in embedded repository mode. Fallback to normal getSize()");
-            return getSize();
         } catch (RepositoryException e) {
             log.error("RepositoryException. Return 0. {}", e);
             return 0;
         }
+        return totalSize;
     }
     
     public int getSize() {
+        if(size != -2) {
+            return size;
+        }
         try {
-            return (int) queryResult.getNodes().getSize();
+            size = (int) queryResult.getNodes().getSize();
         } catch (RepositoryException e) {
             log.error("RepositoryException. Return 0. {}", e);
             return 0;
         }
+        return size;
     }
 
 }
