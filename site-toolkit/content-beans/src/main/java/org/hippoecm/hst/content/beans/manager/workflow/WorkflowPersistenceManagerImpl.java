@@ -17,7 +17,9 @@ package org.hippoecm.hst.content.beans.manager.workflow;
 
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -274,8 +276,26 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
                 String category = documentAdditionWorkflowCategory;
 
+                
                 if (nodeTypeName.equals(folderNodeTypeName)) {
                     category = folderAdditionWorkflowCategory;
+                    
+                    // now check if there is some more specific workflow for hippostd:folder
+                    if(fwf.hints() != null &&  fwf.hints().get("prototypes") != null ) {
+                        Object protypesMap = fwf.hints().get("prototypes");
+                        if(protypesMap instanceof Map) {
+                            for(Object o : ((Map)protypesMap).entrySet()) {
+                                Entry entry = (Entry) o;
+                                if(entry.getKey() instanceof String && entry.getValue() instanceof Set) {
+                                    if( ((Set)entry.getValue()).contains(folderNodeTypeName)) {
+                                        // we found possibly a more specific workflow for folderNodeTypeName. Use the key as category
+                                        category =  (String)entry.getKey();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 String nodeName = uriEncoding.encode(name);
