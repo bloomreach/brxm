@@ -661,6 +661,7 @@ try {
                         StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
                         pcSM.flush();
 } catch(NullPointerException ex) {
+    child.remove();
 }
                     }
                 } else if (value != null) {
