@@ -1,6 +1,14 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -9,17 +17,17 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPl
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class SearchListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     public SearchListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public IHeaderContributor getHeaderContributor() {
+        return CSSPackageResource.getHeaderContribution(SearchListColumnProviderPlugin.class, "SearchListColumnProviderPlugin.css");
     }
 
     @Override

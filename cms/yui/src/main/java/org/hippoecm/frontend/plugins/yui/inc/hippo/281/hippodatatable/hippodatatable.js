@@ -43,6 +43,7 @@ if (!YAHOO.hippo.DataTable) {
                 var bodyDiv = tbody.parentNode.parentNode;
                 var previousScrollTop = bodyDiv.scrollTop;
 
+                Dom.setStyle(thead.parentNode.parentNode, 'margin-right', YAHOO.hippo.HippoAjax.getScrollbarWidth() + 'px');
                 var h = Dom.getElementsByClassName(this.config.autoWidthClassName, 'th', headers[0]);
                 if (h != null) {
                     Dom.setStyle(h, 'width', 'auto');
@@ -68,7 +69,7 @@ if (!YAHOO.hippo.DataTable) {
                     widths: []
                 };
 
-                var fixedHeaderWidth = 0;
+                var fixedHeaderWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
 
                 var cells = headrow.getElementsByTagName('th');
                 for (var i = 0; i < cells.length; i++) {

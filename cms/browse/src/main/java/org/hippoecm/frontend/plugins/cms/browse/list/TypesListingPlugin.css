@@ -15,7 +15,7 @@
  */
 
 .hippo-typeslist tr td.typeslisting-icon,
-.hippo-typeslist tr th.typeslisting-icon { width:16px; }
+.hippo-typeslist tr th.typeslisting-icon { width:16px; min-width: 16px; max-width: 16px;}
 
 .hippo-typeslist tr td.typeslisting-type,
-.hippo-typeslist tr th.typeslisting-type { width:70px; }
+.hippo-typeslist tr th.typeslisting-type { width:70px; min-width:70px; max-width:70px; }

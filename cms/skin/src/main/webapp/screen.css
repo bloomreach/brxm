@@ -527,7 +527,9 @@ body.hippo-root #doc3 {
 .hippo-list-details tr td.icon-16 {
   height: 16px;
   width: 16px;
-  padding: 0px;
+  padding-left: 0px;
+  padding-right: 4px;
+  padding-top: 0px;
 }
 
 .hippo-list-details tr td.icon-16 span {
