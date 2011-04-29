@@ -34,6 +34,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 import javax.jdo.datastore.JDOConnection;
+import org.datanucleus.JDOClassLoaderResolver;
 import org.datanucleus.OMFContext;
 
 import org.datanucleus.jdo.JDOPersistenceManagerFactory;
@@ -77,6 +78,7 @@ public class DocumentManagerImpl implements DocumentManager {
             properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
             pmf = JDOHelper.getPersistenceManagerFactory(properties);
             ((JcrStoreManager)((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager()).setSession(session);
+            ((JDOPersistenceManagerFactory)pmf).setPrimaryClassLoader(getClass().getClassLoader());
             pm = null;
             ph = (JcrPersistenceHandler) ((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager().getPersistenceHandler();
         } catch(IOException ex) {
