@@ -138,24 +138,22 @@ public class FacetedEngineCache {
     @Override
     protected void finalize() throws Throwable {
         
-        if(log.isInfoEnabled()) {
-            log.info("---------------------- Faceted Engine Cache stats ----------------------");
+        if(log.isDebugEnabled()) {
+            log.debug("Disposing old FacetedEngineCache");
             if(bitSetCache.size() != 0) {
                 int maxDoc = bitSetCache.values().iterator().next().size();
                 long bitSetCacheSizeInBytes = estimateMemoryInBytes(bitSetCache, maxDoc); 
-                log.info("Cache lived for {} seconds.", String.valueOf((System.currentTimeMillis() - creationTime)/1000) );
-                log.info("Cache bitSetCache size = '{}'. Each BitSet has length '{}'",bitSetCache.size() ,maxDoc);
-                log.info("Cache bitSetCache estimated memory consumption is '{} Kb', or '{} Mb'", (bitSetCacheSizeInBytes + 512)/1024, (bitSetCacheSizeInBytes + (1024 * 512) ) / (1024*1024));
+                log.debug("Cache lived for {} seconds.", String.valueOf((System.currentTimeMillis() - creationTime)/1000) );
+                log.debug("Cache bitSetCache size = '{}'. Each BitSet has length '{}'",bitSetCache.size() ,maxDoc);
+                log.debug("Cache bitSetCache estimated memory consumption is '{} Kb', or '{} Mb'", (bitSetCacheSizeInBytes + 512)/1024, (bitSetCacheSizeInBytes + (1024 * 512) ) / (1024*1024));
+                log.debug("Cache bitSet stats: hits = '{}' , misses = '{}'. Hit percentage = "+ (bitSetHits * 100) / (bitSetHits + bitSetMisses) +"%", bitSetHits, bitSetMisses);
             }
             if(facetValueCountMapCache.size() != 0) {
                 long fvcSizeInBytes = estimateMemoryInBytes(facetValueCountMapCache); 
-                log.info("Cache facetValueCountMapCache size = '{}'", facetValueCountMapCache.size());
-                log.info("Cache facetValueCountMapCache estimated memory consumption is '{} Kb', or '{} Mb'", (fvcSizeInBytes + 512)/1024, (fvcSizeInBytes + (1024 * 512) )/(1024*1024));
-                log.info("Cache bitSet stats: hits = '{}' , misses = '{}'. Hit percentage = "+ bitSetHits / Double.valueOf(bitSetHits + bitSetMisses) +"%", bitSetHits, bitSetMisses);
-                log.info("Cache facetValueCountMapCache stats: hits = '{}' , misses = '{}'. Hit percentage = "+ fvcHits / Double.valueOf(fvcHits + fvcMisses) +"%", fvcHits, fvcMisses);
-                log.info("Cache will be disposed now. New cache will be instantiated because of changed Lucene indexes");
+                log.debug("Cache facetValueCountMapCache size = '{}'", facetValueCountMapCache.size());
+                log.debug("Cache facetValueCountMapCache estimated memory consumption is '{} Kb', or '{} Mb'", (fvcSizeInBytes + 512)/1024, (fvcSizeInBytes + (1024 * 512) )/(1024*1024));
+                log.debug("Cache facetValueCountMapCache stats: hits = '{}' , misses = '{}'. Hit percentage = "+ ( fvcHits * 100 ) / (fvcHits + fvcMisses) +"%", fvcHits, fvcMisses);
             }
-            log.info("------------------------------------------------------------------------");
         }    
         
     }
