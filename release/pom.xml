@@ -50,7 +50,6 @@
     <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>    
     <forge.easy-forms-cms.version>2.05.00</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.06.00</forge.easy-forms-hst.version>
-    <forge.goto.version>1.02.00</forge.goto.version>
     <forge.poll.version>1.03.00</forge.poll.version>
     <forge.relateddocs.version>2.08.01</forge.relateddocs.version>
     <forge.selection.version>2.04.02-SNAPSHOT</forge.selection.version>    
@@ -706,21 +705,6 @@
         <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
         <artifactId>gallerypicker</artifactId>
         <version>${forge.gallerypicker.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.forge</groupId>
-        <artifactId>goto-addon-frontend</artifactId>
-        <version>${forge.goto.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.forge</groupId>
-        <artifactId>goto-addon-repository</artifactId>
-        <version>${forge.goto.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.forge</groupId>
-        <artifactId>goto-hst-redirect-filter</artifactId>
-        <version>${forge.goto.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.forge.poll</groupId>
