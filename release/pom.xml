@@ -39,7 +39,6 @@
   <properties>
     <hippo.repository.version>2.19.04-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.19.04-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-defaultcontent.version>2.19.04-SNAPSHOT</hippo.addon-defaultcontent.version>
     <hippo.addon-faceteddate.version>2.19.04-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.19.04-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.06.01-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
@@ -434,16 +433,6 @@
       </dependency>
 
       <!-- Hippo Addon artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-defaultcontent-frontend</artifactId>
-        <version>${hippo.addon-default-content.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-defaultcontent-repository</artifactId>
-        <version>${hippo.addon-default-content.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-faceteddate-frontend</artifactId>
