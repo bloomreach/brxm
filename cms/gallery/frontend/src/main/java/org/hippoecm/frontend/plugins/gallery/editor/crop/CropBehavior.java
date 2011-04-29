@@ -27,10 +27,6 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.onehippo.yui.YahooNamespace;
 
-/**
- * Created by IntelliJ IDEA. User: mchatzidakis Date: 2/28/11 Time: 3:07 PM To change this template use File | Settings
- * | File Templates.
- */
 public class CropBehavior extends AbstractYuiBehavior {
 
     private String regionInputId;
