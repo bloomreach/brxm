@@ -657,8 +657,11 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                         child.remove();
                         op.getExecutionContext().deleteObject(value);
                     } else {
+try {
                         StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
                         pcSM.flush();
+} catch(NullPointerException ex) {
+}
                     }
                 } else if (value != null) {
                     String[] nodeTypes = typeResolver.resolve(mmd.getType().getName());
