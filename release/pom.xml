@@ -826,7 +826,7 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <container>
-                <dependencies combine.children="append">
+                <dependencies>
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-api</artifactId>
