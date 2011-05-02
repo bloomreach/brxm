@@ -96,7 +96,7 @@ public class MenuTester extends DataView {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                action.invoke();
+                action.run();
             }
         });
     }

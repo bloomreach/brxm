@@ -15,40 +15,43 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class StdWorkflow extends ActionDescription {
+public abstract class StdWorkflow<T extends Workflow> extends ActionDescription {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
+    private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
+
     private String name;
+    private ResourceReference iconModel;
+    private IPluginContext pluginContext;
+    private RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin;
 
     public StdWorkflow(String id, String name) {
         super(id);
         this.name = name;
-
+        this.iconModel = null;
         add(new ActionDisplay("text") {
             @Override
             protected void initialize() {
@@ -73,7 +76,33 @@ public abstract class StdWorkflow extends ActionDescription {
             }
         });
     }
-    
+
+    public StdWorkflow(String id, String name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name);
+        this.pluginContext = pluginContext;
+        this.enclosingPlugin = enclosingPlugin;
+    }
+
+    public StdWorkflow(String id, StringResourceModel name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name.getObject());
+        this.pluginContext = pluginContext;
+        this.enclosingPlugin = enclosingPlugin;
+    }
+
+    public StdWorkflow(String id, StringResourceModel name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name.getObject());
+        this.iconModel = iconModel;
+        this.pluginContext = pluginContext;
+        this.enclosingPlugin = enclosingPlugin;
+    }
+
+    public StdWorkflow(String id, String name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name);
+        this.iconModel = iconModel;
+        this.pluginContext = pluginContext;
+        this.enclosingPlugin = enclosingPlugin;
+    }
+
     protected final String getName() {
         return name;
     }
@@ -83,48 +112,81 @@ public abstract class StdWorkflow extends ActionDescription {
     }
 
     protected ResourceReference getIcon() {
-        return new ResourceReference(StdWorkflow.class, "workflow-16.png");
+        if (iconModel != null) {
+            return iconModel;
+        } else {
+            return new ResourceReference(StdWorkflow.class, "workflow-16.png");
+        }
     }
 
-    public static abstract class Compatibility extends StdWorkflow {
-        RenderPlugin enclosingPlugin;
-        IPluginContext pluginContext;
-
-        public Compatibility(String id, String name, RenderPlugin enclosingPlugin, IPluginContext context) {
-            super(id, name);
-            this.enclosingPlugin = enclosingPlugin;
-            this.pluginContext = context;
+    @Override
+    protected IModel initModel() {
+        if (enclosingPlugin != null) {
+            return enclosingPlugin.getDefaultModel();
+        } else {
+            return super.initModel();
         }
+    }
 
-        protected abstract void execute(Workflow wf) throws Exception;
+    protected Dialog createRequestDialog() {
+        return null;
+    }
 
-        protected void invoke() {
+    protected Dialog createResponseDialog(String message) {
+        return new ExceptionDialog(message);
+    }
+
+    protected Dialog createResponseDialog(Exception ex) {
+        return new ExceptionDialog(ex);
+    }
+
+    @Override
+    protected void invoke() {
+        Dialog dialog = createRequestDialog();
+        if (dialog != null) {
+            pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
+        } else {
             try {
-                WorkflowDescriptor descriptor = (WorkflowDescriptor)enclosingPlugin.getDefaultModelObject();
-                Session session = ((UserSession)getSession()).getJcrSession();
-                session.refresh(true);
-                session.save();
-                WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-                Workflow workflow = manager.getWorkflow(descriptor);
-                execute(workflow);
-                pluginContext.getService(Home.class.getName(), Home.class).detach();
-                session.refresh(false);
+                execute();
             } catch (WorkflowException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-            } catch (ServiceException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-            } catch (RemoteException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
-            } catch (RepositoryException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.info("Workflow call failed", ex);
+                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex));
             } catch (Exception ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.info("Workflow call failed", ex);
+                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex));
             }
         }
+    }
+
+    protected void execute() throws Exception {
+        execute((WorkflowDescriptorModel<T>)enclosingPlugin.getDefaultModel());
+    }
+
+    protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
+        WorkflowDescriptor descriptor = (WorkflowDescriptor)model.getObject();
+        if (descriptor == null) {
+            throw new MappingException("action no longer valid");
+        }
+        WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
+        javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+        session.refresh(true);
+        session.save();
+        session.refresh(true);
+        Workflow workflow = manager.getWorkflow(descriptor);
+        String message = execute((T)workflow);
+        if (message != null) {
+            throw new WorkflowException(message);
+        }
+
+        // workflow may have closed existing session
+        // FIXME should be removed
+        UserSession us = (UserSession)org.apache.wicket.Session.get();
+        session = us.getJcrSession();
+        session.refresh(false);
+        us.getFacetRootsObserver().broadcastEvents();
+    }
+
+    protected String execute(T workflow) throws Exception {
+        throw new WorkflowException("unsupported operation");
     }
 }

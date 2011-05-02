@@ -22,6 +22,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 
 public abstract class ActionDescription extends Panel {
     @SuppressWarnings("unused")
@@ -45,6 +46,10 @@ public abstract class ActionDescription extends Panel {
 
     public ActionDescription(String id) {
         super(id);
+    }
+
+    public ActionDescription(String id, IModel<?> model) {
+        super(id, model);
     }
 
     public final MarkupContainer add(final Fragment component) {
