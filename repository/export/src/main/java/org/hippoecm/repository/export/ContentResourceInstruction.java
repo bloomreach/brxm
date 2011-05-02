@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Hippo (www.hippo.nl).
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
