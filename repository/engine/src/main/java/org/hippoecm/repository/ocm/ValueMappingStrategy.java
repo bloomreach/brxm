@@ -30,6 +30,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
+import javax.jdo.spi.PersistenceCapable;
 import org.apache.jackrabbit.JcrConstants;
 import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusDataStoreException;
@@ -657,12 +658,8 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                         child.remove();
                         op.getExecutionContext().deleteObject(value);
                     } else {
-try {
                         StateManager pcSM = StateManagerFactory.newStateManagerForPersistentClean(op.getExecutionContext(), id, value);
                         pcSM.flush();
-} catch(NullPointerException ex) {
-    child.remove();
-}
                     }
                 } else if (value != null) {
                     String[] nodeTypes = typeResolver.resolve(mmd.getType().getName());
