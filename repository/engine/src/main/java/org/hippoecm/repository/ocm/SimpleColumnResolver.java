@@ -3,12 +3,49 @@ package org.hippoecm.repository.ocm;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jdo.spi.PersistenceCapable;
-import org.hippoecm.repository.ocm.JcrOID;
 
 public class SimpleColumnResolver implements ColumnResolver {
     public SimpleColumnResolver() {
+    }
+
+    public PropertyDefinition resolvePropertyDefinition(Node node, String column, int propertyType) throws RepositoryException {
+        if(node == null)
+            return null;
+        NodeType[] nodeTypes, mixinNodeTypes = node.getMixinNodeTypes();
+        if (mixinNodeTypes != null) {
+            nodeTypes = new NodeType[mixinNodeTypes.length + 1];
+            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
+        } else {
+            nodeTypes = new NodeType[1];
+        }
+        nodeTypes[0] = node.getPrimaryNodeType();
+        PropertyDefinition wildcardDefinition = null;
+        for (NodeType nodeType : nodeTypes) {
+            PropertyDefinition[] propertyDefinitions = nodeType.getPropertyDefinitions();
+            if (propertyDefinitions != null) {
+                for (PropertyDefinition definition : propertyDefinitions) {
+                    if (definition.getName().equals(column)) {
+                        if (propertyType != PropertyType.UNDEFINED) {
+                            if (definition.getRequiredType() == PropertyType.UNDEFINED) {
+                                if (wildcardDefinition == null || wildcardDefinition.getName().equals("*")) {
+                                    wildcardDefinition = definition;
+                                }
+                            } else if (definition.getRequiredType() == propertyType) {
+                                return definition;
+                            }
+                        } else {
+                            return definition;
+                        }
+                    }
+                }
+            }
+        }
+        return wildcardDefinition;
     }
 
     @Override

@@ -16,12 +16,15 @@
 package org.hippoecm.repository.ocm;
 
 import java.lang.Cloneable;
+import java.lang.InstantiationException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -29,6 +32,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 import javax.jdo.spi.PersistenceCapable;
 import org.apache.jackrabbit.JcrConstants;
@@ -40,6 +44,7 @@ import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.state.StateManagerFactory;
 import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.types.ObjectStringConverter;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.ocm.JcrOID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +62,24 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
 
     public ValueMappingStrategy(ObjectProvider op, AbstractMemberMetaData mmd, Session session, ColumnResolver columnResolver, TypeResolver typeResolver, Node node) {
         super(op, mmd, session, columnResolver, typeResolver, node);
+    }
+
+    private Node getNode() {
+        Node node = null;
+        Object objectId = op.getExternalObjectId();
+        if (objectId instanceof JcrOID) {
+            node = ((JcrOID)objectId).getNode(session);
+        } else if (objectId instanceof OIDImpl) {
+            Object objectKey = ((OIDImpl)objectId).getKeyValue();
+            if (objectKey instanceof String) {
+                node = JcrOID.getNode(session, (String)objectKey);
+            } else {
+                throw new NucleusDataStoreException("OID");
+            }
+        } else {
+            throw new NucleusDataStoreException("OID");
+        }
+        return node;
     }
 
     @Override
@@ -143,6 +166,16 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
             return fetchEnumField(type);
         }
 
+        try {
+            Node node = getNode();
+            PropertyDefinition def = columnResolver.resolvePropertyDefinition(node, mmd.getColumn(), PropertyType.REFERENCE);
+            if (def != null && !def.getName().equals("*")) {
+                return fetchReferenceField(type);
+            }
+        } catch (RepositoryException ex) {
+            log.error("internal error resolving field", ex);
+        }
+        
         return fetchObjectField();
     }
 
@@ -155,20 +188,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
         }
 
         try {
-            Node node = null;
-            Object objectId = op.getExternalObjectId();
-            if(objectId instanceof JcrOID) {
-                node = ((JcrOID) objectId).getNode(session);
-            } else if(objectId instanceof OIDImpl) {
-                Object objectKey = ((OIDImpl) objectId).getKeyValue();
-                if(objectKey instanceof String) {
-                    node = JcrOID.getNode(session, (String) objectKey);
-                } else {
-                    throw new NucleusDataStoreException("OID");
-                }
-            } else {
-                throw new NucleusDataStoreException("OID");
-            }
+            Node node = getNode();
             Property prop = columnResolver.resolveProperty(node, mmd.getColumn());
             if (prop != null) {
                 return prop.getValue();
@@ -202,6 +222,47 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
             throw new NucleusDataStoreException("RepositoryException", ex);
         }
     }
+    
+    private Object fetchReferenceField(Class type) {
+        try {
+            Value value = fetchValueField();
+            if (value != null) {
+                if(value.getType() == PropertyType.REFERENCE || value.getType() == PropertyType.WEAKREFERENCE) {
+                    try {
+                        Object o = type.getConstructor(new Class[] { String.class }).newInstance(new Object[] { value.getString() });
+                        return o;
+                    } catch(NoSuchMethodException ex) {
+                        throw new NucleusDataStoreException("Error creating reference object", ex);
+                    } catch(IllegalAccessException ex) {
+                        throw new NucleusDataStoreException("Error creating reference object", ex);
+                    } catch(InstantiationException ex) {
+                        throw new NucleusDataStoreException("Error creating reference object", ex);
+                    } catch(InvocationTargetException ex) {
+                        throw new NucleusDataStoreException("Error creating reference object", ex);
+                    }
+                } else {
+                    throw new NucleusDataStoreException("ValueFormatException");
+                }
+            } else {
+                return null;
+            }
+        } catch (ValueFormatException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("ValueFormatException", ex);
+        } catch (IllegalStateException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("IllegalStateException", ex);
+        } catch (RepositoryException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("RepositoryException", ex);
+        }
+    }
 
     private Object fetchObjectField() {
         String fieldName = mmd.getName();
@@ -212,21 +273,7 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
         }
         
         try {
-            Node node = null;
-            Object objectId = op.getExternalObjectId();
-            if(objectId instanceof JcrOID) {
-                node = ((JcrOID) objectId).getNode(session);
-            } else if(objectId instanceof OIDImpl) {
-                Object objectKey = ((OIDImpl) objectId).getKeyValue();
-                if(objectKey instanceof String) {
-                    node = JcrOID.getNode(session, (String) objectKey);
-                } else {
-                    throw new NucleusDataStoreException("OID");
-                }
-            } else {
-                throw new NucleusDataStoreException("OID");
-            }
-
+            Node node = getNode();
             Node child = columnResolver.resolveNode(node, mmd.getColumn());
             if (child != null) {
                 Class clazz = mmd.getType();
@@ -610,10 +657,56 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
 //            } else if (type.isEnum()) {
 //                storeEnumField(value);
             } else {
+                try {
+                    Node node = getNode();
+                    PropertyDefinition def = columnResolver.resolvePropertyDefinition(node, mmd.getColumn(), PropertyType.REFERENCE);
+                    if (def != null && !def.getName().equals("*") && Document.class.isAssignableFrom(type)) {
+                        // FIXME: using the Document class here creates an unwanted dependency on Hippo specific implementation
+                        storeReferenceField((Document)value);
+                        return;
+                    }
+                } catch (RepositoryException ex) {
+                    log.error("internal error resolving field", ex);
+                }
+
                 storeObjectField(value);
                 //throw new NucleusException("Field " + mmd.getFullFieldName() + " cannot be persisted because type="
                 //        + mmd.getTypeName() + " is not supported for this datastore");
             }
+        }
+    }
+
+    private void storeReferenceField(Document value) {
+        try {
+            Property property = columnResolver.resolveProperty(node, mmd.getColumn());
+            if (property == null) {
+                if (!node.isCheckedOut()) {
+                    checkoutNode(node);
+                }
+                if (value != null) {
+                    property = node.setProperty(mmd.getColumn(), value.getIdentity());
+                }
+            } else {
+                if (!property.getParent().isCheckedOut()) {
+                    checkoutNode(property.getParent());
+                }
+                property.setValue(value.getIdentity());
+            }
+        } catch (ValueFormatException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("ValueFormatException", ex);
+        } catch (IllegalStateException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("IllegalStateException", ex);
+        } catch (RepositoryException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("failed", ex);
+            }
+            throw new NucleusDataStoreException("RepositoryException", ex);
         }
     }
 

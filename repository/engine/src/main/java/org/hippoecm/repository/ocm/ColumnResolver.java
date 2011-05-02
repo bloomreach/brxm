@@ -3,9 +3,11 @@ package org.hippoecm.repository.ocm;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import org.hippoecm.repository.ocm.JcrOID;
+import javax.jcr.nodetype.PropertyDefinition;
 
 public interface ColumnResolver {
+    public PropertyDefinition resolvePropertyDefinition(Node node, String column, int propertyType) throws RepositoryException;
+    
     public Property resolveProperty(Node node, String column) throws RepositoryException;
 
     public Node resolveNode(Node node, String column) throws RepositoryException;
