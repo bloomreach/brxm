@@ -59,8 +59,8 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
         this.wfSubject = wfSubject;
         this.isDocumentResult = isDocumentResult;
         this.wfNode = wfNode;
-	this.workflowCategory = workflowCategory;
-	this.workflowMethod = workflowMethod;
+        this.workflowCategory = workflowCategory;
+        this.workflowMethod = workflowMethod;
         if (wfNode.hasNode("hipposys:eventdocument")) {
             // TODO
         } else if (wfNode.hasProperty("hipposys:eventdocument")) {
@@ -77,7 +77,7 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
     private Set<String> evaluateQuery(Query query, String resultIdentity) throws RepositoryException {
         Set<String> result = new HashSet<String>();
         ValueFactory valueFactory = workflowManager.rootSession.getValueFactory();
-	Map<String,Value> bindValues = new HashMap<String,Value>();
+        Map<String,Value> bindValues = new HashMap<String,Value>();
         bindValues.put("subject", valueFactory.createValue(sourceIdentity));
         if (isDocumentResult && resultIdentity != null) {
             bindValues.put("result", valueFactory.createValue(resultIdentity));
@@ -85,9 +85,9 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
         bindValues.put("workflowCategory", valueFactory.createValue(workflowCategory));
         bindValues.put("workflowMethod", valueFactory.createValue(workflowMethod));
         for (String bindVariableName : query.getBindVariableNames()) {
-            if(bindValues.containsKey(bindVariableName)) {
+            if (bindValues.containsKey(bindVariableName)) {
                 query.bindValue(bindVariableName, bindValues.get(bindVariableName));
-	    }
+            }
         }
         QueryResult queryResult = query.execute();
         String selectorName = null;

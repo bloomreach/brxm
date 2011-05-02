@@ -59,8 +59,8 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
         this.wfSubject = wfSubject;
         this.isDocumentResult = isDocumentResult;
         this.wfNode = wfNode;
-	this.workflowCategory = workflowCategory;
-	this.workflowMethod = workflowMethod;
+        this.workflowCategory = workflowCategory;
+        this.workflowMethod = workflowMethod;
         if (wfNode.hasNode("hipposys:eventdocument")) {
             // TODO
         } else if (wfNode.hasProperty("hipposys:eventdocument")) {

@@ -420,9 +420,9 @@
         <version>${junit.version}</version>
       </dependency>
       <dependency>
-      	<groupId>xmlunit</groupId>
-      	<artifactId>xmlunit</artifactId>
-      	<version>${xmlunit.version}</version>
+        <groupId>xmlunit</groupId>
+        <artifactId>xmlunit</artifactId>
+        <version>${xmlunit.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
@@ -435,9 +435,9 @@
         <version>${easymock.version}</version>
       </dependency>
       <dependency>
-      	<groupId>dom4j</groupId>
-      	<artifactId>dom4j</artifactId>
-      	<version>${dom4j.version}</version>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>${dom4j.version}</version>
       </dependency>
 
       <!-- Testing needs a JTA implementation -->

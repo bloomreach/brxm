@@ -44,15 +44,13 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-
 class ContentResourceInstruction extends ResourceInstruction {
-    
     private final String contentresource;
     private final String root;
     final String context;
     private final boolean enabled;
     private final Extension extension;
-    
+
     ContentResourceInstruction(String name, Double sequence, File basedir, String contentresource, String root, String context, boolean enabled, Extension extension) {
         super(name, sequence, new File(basedir, contentresource));
         if (!file.exists()) {
@@ -64,25 +62,25 @@ class ContentResourceInstruction extends ResourceInstruction {
         this.enabled = enabled;
         this.extension = extension;
     }
-    
+
     @Override
     void export(Session session) {
-    	if (!enabled) {
-    		log.info("Export in this context is disabled. Changes will be lost.");
-    		return;
-    	}
-    	log.info("Exporting " + contentresource);
-    	try {
-        	if (!file.exists()) {
-        		if (!file.getParentFile().exists()) {
-        			file.getParentFile().mkdirs();
-        		}
-        		file.createNewFile();
-        	}
+        if (!enabled) {
+            log.info("Export in this context is disabled. Changes will be lost.");
+            return;
+        }
+        log.info("Exporting " + contentresource);
+        try {
+            if (!file.exists()) {
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                file.createNewFile();
+            }
             OutputStream out = null;
             try {
                 out = new FileOutputStream(file);
-                SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+                SAXTransformerFactory stf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
                 TransformerHandler handler = stf.newTransformerHandler();
                 Transformer transformer = handler.getTransformer();
                 transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -92,43 +90,40 @@ class ContentResourceInstruction extends ResourceInstruction {
                 handler.setResult(new StreamResult(out));
                 List<String> excluded = new ArrayList<String>();
                 for (Instruction instruction : extension.getInstructions()) {
-                	if (instruction instanceof ContentResourceInstruction) {
-                		String _context = ((ContentResourceInstruction) instruction).context;
-                		if (!_context.equals(context) && _context.startsWith(context)) {
-                			String subcontext = _context.substring(root.length());
-                			excluded.add(subcontext);
-                		}
-                	}
+                    if (instruction instanceof ContentResourceInstruction) {
+                        String _context = ((ContentResourceInstruction)instruction).context;
+                        if (!_context.equals(context) && _context.startsWith(context)) {
+                            String subcontext = _context.substring(root.length());
+                            excluded.add(subcontext);
+                        }
+                    }
                 }
                 ContentHandler filter = new FilterContentHandler(handler, excluded);
-                session = ((HippoSession) session).impersonate(new SimpleCredentials("system", new char[]{}));
-                ((SessionDecorator) session).exportDereferencedView(context, filter, false, false);
-			} finally {
+                session = ((HippoSession)session).impersonate(new SimpleCredentials("system", new char[] {}));
+                ((SessionDecorator)session).exportDereferencedView(context, filter, false, false);
+            } finally {
                 try {
                     out.close();
-                } catch (IOException ex) {}
+                } catch (IOException ex) {
+                }
             }
-    	}
-    	catch (IOException e) {
-    		log.error("Exporting " + contentresource + " failed.", e);
-    	}
-    	catch (RepositoryException e) {
-    		log.error("Exporting " + contentresource + " failed.", e);
-        } 
-    	catch (TransformerConfigurationException e) {
-    		log.error("Exporting " + contentresource + " failed.", e);
-		} 
-    	catch (SAXException e) {
-    		log.error("Exporting " + contentresource + " failed.", e);
+        } catch (IOException e) {
+            log.error("Exporting " + contentresource + " failed.", e);
+        } catch (RepositoryException e) {
+            log.error("Exporting " + contentresource + " failed.", e);
+        } catch (TransformerConfigurationException e) {
+            log.error("Exporting " + contentresource + " failed.", e);
+        } catch (SAXException e) {
+            log.error("Exporting " + contentresource + " failed.", e);
         }
         changed = false;
     }
-    
+
     boolean nodeRemoved(String path) {
-    	changed = true;
-    	return path.equals(context);
+        changed = true;
+        return path.equals(context);
     }
-    
+
     @Override
     public Element createInstructionElement() {
         Element element = createBaseInstructionElement();
@@ -155,186 +150,178 @@ class ContentResourceInstruction extends ResourceInstruction {
         contentRootPropertyValue.setText(root);
         contentRootProperty.add(contentRootPropertyValue);
         element.add(contentRootProperty);
-        
+
         return element;
     }
-    
+
     boolean matchesPath(String path) {
-    	return path.startsWith(context);
+        return path.startsWith(context);
     }
-    
+
     @Override
     public String toString() {
-    	return "ResourceContentInstruction[context=" + context + "]";
+        return "ResourceContentInstruction[context=" + context + "]";
     }
-    
+
     /** 
      * Filters out all namespace declarations except {http://www.jcp.org/jcr/sv/1.0}; 
      * excludes all declared subcontexts from export; and strips version strings from
      * namespace prefixes
      */
     static class FilterContentHandler implements ContentHandler {
+        private final ContentHandler handler;
+        private final List<String> excluded;
+        private final Path path;
+        private String svprefix;
+        private boolean skip = false;
+        private boolean insideTypeProperty = false;
+        private boolean modifyvalue = false;
 
-    	private final ContentHandler handler;
-    	private final List<String> excluded;
-    	private final Path path;
+        FilterContentHandler(ContentHandler handler, List<String> excluded) {
+            this.handler = handler;
+            this.excluded = excluded;
+            this.path = new Path();
+        }
 
-    	private String svprefix;
-    	private boolean skip = false;
-    	private boolean insideTypeProperty = false;
-    	private boolean modifyvalue = false;
-    	
-    	FilterContentHandler(ContentHandler handler, List<String> excluded) {
-    		this.handler = handler;
-    		this.excluded = excluded;
-    		this.path = new Path();
-    	}
-    	
-		@Override
-		public void setDocumentLocator(Locator locator) {
-			handler.setDocumentLocator(locator);
-		}
+        @Override
+        public void setDocumentLocator(Locator locator) {
+            handler.setDocumentLocator(locator);
+        }
 
-		@Override
-		public void startDocument() throws SAXException {
-			handler.startDocument();
-		}
+        @Override
+        public void startDocument() throws SAXException {
+            handler.startDocument();
+        }
 
-		@Override
-		public void endDocument() throws SAXException {
-			handler.endDocument();
-		}
+        @Override
+        public void endDocument() throws SAXException {
+            handler.endDocument();
+        }
 
-		@Override
-		public void startPrefixMapping(String prefix, String uri) throws SAXException {
-			// only forward prefix mappings in the jcr/sv namespace
-			if (uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				svprefix = prefix;
-				handler.startPrefixMapping(prefix, uri);
-			}
-		}
+        @Override
+        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+            // only forward prefix mappings in the jcr/sv namespace
+            if (uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                svprefix = prefix;
+                handler.startPrefixMapping(prefix, uri);
+            }
+        }
 
-		@Override
-		public void endPrefixMapping(String prefix) throws SAXException {
-			if (prefix.equals(svprefix)) {
-				handler.endPrefixMapping(prefix);
-			}
-		}
+        @Override
+        public void endPrefixMapping(String prefix) throws SAXException {
+            if (prefix.equals(svprefix)) {
+                handler.endPrefixMapping(prefix);
+            }
+        }
 
-		@Override
-		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-			if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				String name = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
-				path.push(name);
-				String _path = path.toString();
-				for (String exclude : excluded) {
-					if (_path.startsWith(exclude)) {
-						skip = true;
-						// don't propagate event
-						return;
-					}
-				}
-			}
-			else if (skip) {
-				return;
-			}
-			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				String propName = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
-				if (propName.equals("type") || propName.equals("hipposysedit:supertype")
-						|| propName.equals("jcr:primaryType")) {
-					insideTypeProperty = true;
-				}
-			}
-			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				modifyvalue = insideTypeProperty;
-			}
-			handler.startElement(uri, localName, qName, atts);
-		}
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+            if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                String name = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
+                path.push(name);
+                String _path = path.toString();
+                for (String exclude : excluded) {
+                    if (_path.startsWith(exclude)) {
+                        skip = true;
+                        // don't propagate event
+                        return;
+                    }
+                }
+            } else if (skip) {
+                return;
+            } else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                String propName = atts.getValue("http://www.jcp.org/jcr/sv/1.0", "name");
+                if (propName.equals("type") || propName.equals("hipposysedit:supertype")
+                        || propName.equals("jcr:primaryType")) {
+                    insideTypeProperty = true;
+                }
+            } else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                modifyvalue = insideTypeProperty;
+            }
+            handler.startElement(uri, localName, qName, atts);
+        }
 
-		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				String _path = path.toString();
-				for (String exclude : excluded) {
-					if (_path.startsWith(exclude)) {
-						path.pop();
-						skip = false;
-						// don't propagate event
-						return;
-					}
-				}
-				path.pop();
-			}
-			else if (skip) {
-				return;
-			}
-			else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				insideTypeProperty = false;
-			}
-			else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
-				modifyvalue = false;
-			}
-			handler.endElement(uri, localName, qName);
-		}
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (localName.equals("node") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                String _path = path.toString();
+                for (String exclude : excluded) {
+                    if (_path.startsWith(exclude)) {
+                        path.pop();
+                        skip = false;
+                        // don't propagate event
+                        return;
+                    }
+                }
+                path.pop();
+            } else if (skip) {
+                return;
+            } else if (localName.equals("property") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                insideTypeProperty = false;
+            } else if (localName.equals("value") && uri.equals("http://www.jcp.org/jcr/sv/1.0")) {
+                modifyvalue = false;
+            }
+            handler.endElement(uri, localName, qName);
+        }
 
-		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
-			if (skip) return;
-			if (modifyvalue) {
-				// strip the prefix of version data
-				// e.g. example_1_1:basedocument becomes example:basedocument
-				String value = new String(ch, start, length);
-				int indexOfColon = value.indexOf(':');
-				if (indexOfColon != -1) {
-					String prefix = value.substring(0, indexOfColon);
-					String rest = value.substring(indexOfColon);
-					int indexOfUnderscore = prefix.indexOf('_');
-					prefix = indexOfUnderscore == -1 ? prefix : prefix.substring(0, indexOfUnderscore);
-					ch = (prefix + rest).toCharArray();
-					start = 0;
-					length = ch.length;
-				}
-			}
-			handler.characters(ch, start, length);
-		}
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (skip)
+                return;
+            if (modifyvalue) {
+                // strip the prefix of version data
+                // e.g. example_1_1:basedocument becomes example:basedocument
+                String value = new String(ch, start, length);
+                int indexOfColon = value.indexOf(':');
+                if (indexOfColon != -1) {
+                    String prefix = value.substring(0, indexOfColon);
+                    String rest = value.substring(indexOfColon);
+                    int indexOfUnderscore = prefix.indexOf('_');
+                    prefix = indexOfUnderscore == -1 ? prefix : prefix.substring(0, indexOfUnderscore);
+                    ch = (prefix + rest).toCharArray();
+                    start = 0;
+                    length = ch.length;
+                }
+            }
+            handler.characters(ch, start, length);
+        }
 
-		@Override
-		public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-			if (skip) return;
-			handler.ignorableWhitespace(ch, start, length);
-		}
+        @Override
+        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+            if (skip)
+                return;
+            handler.ignorableWhitespace(ch, start, length);
+        }
 
-		@Override
-		public void processingInstruction(String target, String data) throws SAXException {
-			handler.processingInstruction(target, data);
-		}
+        @Override
+        public void processingInstruction(String target, String data) throws SAXException {
+            handler.processingInstruction(target, data);
+        }
 
-		@Override
-		public void skippedEntity(String name) throws SAXException {
-			handler.skippedEntity(name);
-		}
-		
-		private static final class Path {
-			
-			private final Stack<String> stack = new Stack<String>();
-			
-			void push(String element) {
-				stack.push(element);
-			}
-			
-			void pop() {
-				stack.pop();
-			}
-			
-			@Override
-			public String toString() {
-				StringBuilder sb = new StringBuilder();
-				for (String element : stack) {
-					sb.append("/").append(element);
-				}
-				return sb.toString();
-			}
-		}
+        @Override
+        public void skippedEntity(String name) throws SAXException {
+            handler.skippedEntity(name);
+        }
+
+        private static final class Path {
+            private final Stack<String> stack = new Stack<String>();
+
+            void push(String element) {
+                stack.push(element);
+            }
+
+            void pop() {
+                stack.pop();
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder();
+                for (String element : stack) {
+                    sb.append("/").append(element);
+                }
+                return sb.toString();
+            }
+        }
     }
-    
 }

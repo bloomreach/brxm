@@ -19,19 +19,17 @@ package org.hippoecm.repository.export;
  * A namespace instruction.
  */
 interface NamespaceInstruction extends Instruction {
-
     /**
      * Checks if a namespace matches this namespace.
      * If this namespace instruction represents namespace uri
      * http://examples.com/example/1.0, http://example.com/example/1.1
      * would match this namespace.
      */
-	boolean matchesNamespace(String namespace);
-	
-	/**
-	 * Called if a namespace is updated. For instance from
-	 * http://examples.com/example/1.0 to http://example.com/example/1.1
-	 */
-	void updateNamespace(String namespace);
-	
+    boolean matchesNamespace(String namespace);
+
+    /**
+     * Called if a namespace is updated. For instance from
+     * http://examples.com/example/1.0 to http://example.com/example/1.1
+     */
+    void updateNamespace(String namespace);
 }

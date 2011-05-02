@@ -24,21 +24,20 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceInstruction {
+    private String namespace;
+    private final String namespaceroot;
+    private Element namespacePropertyValue;
 
-	private String namespace;
-	private final String namespaceroot;
-	private Element namespacePropertyValue;
-	
-	NamespaceInstructionImpl(String name, Double sequence, String namespace, Element namespacePropertyValue) {
-		super(name, sequence);
-		this.namespace = namespace;
-		this.namespacePropertyValue = namespacePropertyValue;
-		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-		this.namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-	}
-	
-	@Override
-	public Element createInstructionElement() {
+    NamespaceInstructionImpl(String name, Double sequence, String namespace, Element namespacePropertyValue) {
+        super(name, sequence);
+        this.namespace = namespace;
+        this.namespacePropertyValue = namespacePropertyValue;
+        int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+        this.namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+    }
+
+    @Override
+    public Element createInstructionElement() {
         Element element = createBaseInstructionElement();
         // create element:
         // <sv:property sv:name="hippo:namespace" sv:type="String">
@@ -53,21 +52,21 @@ class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceI
         this.namespacePropertyValue = namespacePropertyValue;
         element.add(namespaceProperty);
         return element;
-	}
-	
-	public boolean matchesNamespace(String namespace) {
-		int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
-		String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
-		return namespaceroot.equals(this.namespaceroot);
-	}
-	
-	public void updateNamespace(String namespace) {
-		this.namespace = namespace;
-		this.namespacePropertyValue.setText(namespace);
-	}
-	
-	@Override
-	public String toString() {
-		return "NamespaceInstruction[namespace=" + namespace + "]"; 
-	}
+    }
+
+    public boolean matchesNamespace(String namespace) {
+        int lastIndexOfPathSeparator = namespace.lastIndexOf('/');
+        String namespaceroot = (lastIndexOfPathSeparator == -1) ? namespace : namespace.substring(0, lastIndexOfPathSeparator);
+        return namespaceroot.equals(this.namespaceroot);
+    }
+
+    public void updateNamespace(String namespace) {
+        this.namespace = namespace;
+        this.namespacePropertyValue.setText(namespace);
+    }
+
+    @Override
+    public String toString() {
+        return "NamespaceInstruction[namespace=" + namespace + "]";
+    }
 }

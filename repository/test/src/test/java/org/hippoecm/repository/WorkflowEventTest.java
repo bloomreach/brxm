@@ -67,7 +67,7 @@ public class WorkflowEventTest extends TestCase {
         "jcr:mixinTypes",                 "hippo:hardhandle",
         "/hippo:configuration/hippo:queries/hippo:templates/test/hippostd:templates/prototype/prototype", "hippo:wfeventdocument",
         "jcr:mixinTypes",                 "hippo:harddocument",
-	"hippo:counter",                  "0",
+        "hippo:counter",                  "0",
 
         "/hippo:configuration/hippo:workflows/postprocess", "hipposys:workflowcategory",
         "/hippo:configuration/hippo:workflows/postprocess/create", "hipposys:workflow",

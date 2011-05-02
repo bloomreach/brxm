@@ -115,9 +115,9 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
         }
         doCycle = false;
         keepRunning = false;
-	if (session.isLive()) {
+        if (session.isLive()) {
             session.logout();
-	}
+        }
         interrupt();
     }
 

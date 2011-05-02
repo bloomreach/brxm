@@ -27,24 +27,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractInstruction implements Instruction {
-	
-	
     static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
-
-    
     final String name;
     final Double sequence;
 
-    
     AbstractInstruction(String name, Double sequence) {
         this.name = name;
         this.sequence = sequence;
     }
-    
+
     public String getName() {
-    	return name;
+        return name;
     }
-    
+
     Element createBaseInstructionElement() {
         // create element:
         // <sv:node sv:name="{m_name}"/>
@@ -74,6 +69,4 @@ abstract class AbstractInstruction implements Instruction {
         instructionNode.add(sequenceProperty);
         return instructionNode;
     }
-
-	
 }

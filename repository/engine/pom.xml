@@ -213,11 +213,11 @@
         <configuration>
           <workingDirectory>target</workingDirectory>
           <systemProperties>
-	    <property>
-	      <name>org.onehippo.repository.test.installfixture</name>
-	      <value>true</value>
-	    </property>
-	  </systemProperties>
+            <property>
+              <name>org.onehippo.repository.test.installfixture</name>
+              <value>true</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
    </plugins>
