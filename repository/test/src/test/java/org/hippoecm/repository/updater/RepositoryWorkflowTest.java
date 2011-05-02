@@ -139,7 +139,7 @@ public class RepositoryWorkflowTest extends TestCase {
         flush();
         session.getRootNode().getNode("test").addNode("folder", "testUpdateModel:folder").addMixin("hippo:harddocument");
         session.save();
-        buildDepth2(session.getRootNode().getNode("test/folder"), 3, 150,3, 3,4);
+        buildDepth2(session.getRootNode().getNode("test/folder"), 150, 150,3, 3,4);
         session.save();
         getWorkflow().updateModel("testUpdateModel", cnd3);
         flush();
@@ -191,7 +191,7 @@ public class RepositoryWorkflowTest extends TestCase {
             + "+ testUpdateModel:html (hippostd:html)\n"
             + "+ testUpdateModel:link (hippo:mirror)\n";
 
-    @Test
+    @Ignore
     public void testMoveAggregate() throws Exception {
        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
        getWorkflow().updateModel("testUpdateModel", cndMoveAggregate1);
