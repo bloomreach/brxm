@@ -8,6 +8,9 @@ import java.util.Map;
  * 
  */
 class LRUMap<K, V> extends LinkedHashMap<K, V> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private static final long serialVersionUID = 1L;
     private int maxCacheSize;
     private final static int DEFAULT_MAX_CAPACITY = 1000;

@@ -25,6 +25,8 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface CopyWorkflow extends Workflow {
+    @SuppressWarnings("unused")
+    final String SVN_ID = "$Id: ";
 
     /**
      * Creates a new document with name newName under the target document.

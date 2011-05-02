@@ -36,6 +36,8 @@ import org.apache.jackrabbit.core.persistence.PMContext;
  * </ul>
  */
 public class ForkedMySqlPersistenceManager extends PatchedBundleDbPersistenceManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     /**
      * {@inheritDoc}

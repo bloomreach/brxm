@@ -47,6 +47,8 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 public class ForkedOraclePersistenceManager extends PatchedBundleDbPersistenceManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     /**
      * the default logger

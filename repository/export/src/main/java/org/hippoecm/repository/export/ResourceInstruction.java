@@ -20,6 +20,9 @@ import java.io.File;
 import javax.jcr.Session;
 
 abstract class ResourceInstruction extends AbstractInstruction {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     /** the resource */
     final File file;
     /** dirty flag */

@@ -17,6 +17,9 @@ package org.hippoecm.repository.impl;
 
 /** This class is not part of a public accessible API or extensible interface */
 interface WorkflowPostActions {
+    @SuppressWarnings("unused")
+    final String SVN_ID = "$Id: ";
+
     void execute(Object returnObject);
     void dispose();
 }

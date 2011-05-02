@@ -9,6 +9,8 @@ import static org.junit.Assert.assertEquals;
  * Tests StringCodecFactory$UriEncoding
  */
 public class UriEncodingTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     private StringCodecFactory.UriEncoding uri;
 

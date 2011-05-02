@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
  * Do not call this class from multiple threads. It is not thread safe.
  */
 class LocationMapper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private final static List<Entry> ENTRIES = new ArrayList<Entry>();
     private final static String NAME = "([\\w:-]+)";
     private final static String ANY = "(.*)";

@@ -4,6 +4,9 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 
 final class Constants {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private Constants() {
     }
     static final Namespace JCR_NAMESPACE = new Namespace("sv", "http://www.jcp.org/jcr/sv/1.0");

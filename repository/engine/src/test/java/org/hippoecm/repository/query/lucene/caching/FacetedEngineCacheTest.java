@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.query.lucene.caching;
 
-
 import static org.junit.Assert.assertTrue;
 
 import java.util.BitSet;
@@ -25,6 +24,8 @@ import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.junit.Test;
 
 public class FacetedEngineCacheTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     @Test
     public void testCacheMaximumSize() {

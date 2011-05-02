@@ -24,6 +24,9 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 class NamespaceInstructionImpl extends AbstractInstruction implements NamespaceInstruction {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private String namespace;
     private final String namespaceroot;
     private Element namespacePropertyValue;

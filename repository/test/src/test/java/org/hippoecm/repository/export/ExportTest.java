@@ -71,6 +71,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 @Ignore
 public class ExportTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     private final static String BUILD_HOME;
     private final static String EXTENSION_HOME;

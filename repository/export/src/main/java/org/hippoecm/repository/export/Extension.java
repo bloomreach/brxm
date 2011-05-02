@@ -44,6 +44,9 @@ import org.slf4j.LoggerFactory;
  * Represents a hippoecm-extension.xml file.
  */
 final class Extension {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
+
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     // ---------- Member variables
     private final File file;

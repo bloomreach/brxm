@@ -54,6 +54,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  */
 public final class ExportModule implements DaemonModule {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: $";
+
     // ---------- Static variables
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";

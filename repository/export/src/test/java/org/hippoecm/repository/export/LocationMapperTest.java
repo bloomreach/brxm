@@ -19,6 +19,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class LocationMapperTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id: ";
 
     @Test
     public void testLocationMapper() {
