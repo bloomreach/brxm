@@ -46,15 +46,15 @@
     <hippo.hst.version>2.21.02-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
-    <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>    
-    <forge.easy-forms-cms.version>2.05.00</forge.easy-forms-cms.version>
+    <forge.gallerypicker.version>1.07.04-SNAPSHOT</forge.gallerypicker.version>    
+    <forge.easy-forms-cms.version>2.06.01-SNAPSHOT</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.06.00</forge.easy-forms-hst.version>
-    <forge.poll.version>1.03.00</forge.poll.version>
+    <forge.poll.version>1.04.01-SNAPSHOT</forge.poll.version>
     <forge.relateddocs.version>2.08.01</forge.relateddocs.version>
     <forge.selection.version>2.04.02-SNAPSHOT</forge.selection.version>    
     <forge.sitemap.version>1.02.00</forge.sitemap.version>
     <forge.taxonomy.version>1.06.01-SNAPSHOT</forge.taxonomy.version>
-    <forge.tcmp.version>1.02.00</forge.tcmp.version>
+    <forge.tcmp.version>1.03.01-SNAPSHOT</forge.tcmp.version>
 
     <forge.content-blocks.version>1.08.00</forge.content-blocks.version>
     <forge.ecm-tagging.version>4.04.00</forge.ecm-tagging.version>
