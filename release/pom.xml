@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>7.07.00-SNAPSHOT</version>
+  <version>7.6.0-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
