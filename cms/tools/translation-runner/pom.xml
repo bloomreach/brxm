@@ -237,4 +237,10 @@
       <layout>default</layout>
     </repository>
   </repositories>
+
+  <scm>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms-2.20.00/hippo-cms7-project-5/translation-runner</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms-2.20.00/hippo-cms7-project-5/translation-runner</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms-2.20.00/hippo-cms7-project-5/translation-runner</url>
+  </scm>
 </project>
