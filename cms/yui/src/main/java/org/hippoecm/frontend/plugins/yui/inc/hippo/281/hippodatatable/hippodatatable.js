@@ -23,6 +23,10 @@ if (!YAHOO.hippo.DataTable) {
 
             resize: function(sizes, preserveScroll) {
                 var table = Dom.get(this.id);
+                if (table == null) {
+//                    console.log('oops: id ' + this.id + ' does no longer exist');
+                    return;
+                }
                 this._updateGecko(sizes, table, preserveScroll);
             },
 
@@ -132,6 +136,11 @@ if (!YAHOO.hippo.DataTable) {
             _getTbody : function(table) {
                 var tbodies = table.getElementsByTagName('tbody');
                 if (tbodies.length > 0) {
+                    for (var i = 0; i < tbodies.length; i++) {
+                        if (Dom.hasClass(tbodies[i].parentNode.parentNode, 'list-data-table-body')) {
+                            return tbodies[i];
+                        }
+                    }
                     return tbodies[0];
                 }
                 return table.rows[table.rows.length - 1].parentNode;
@@ -140,6 +149,11 @@ if (!YAHOO.hippo.DataTable) {
             _getThead : function(table) {
                 var theads = table.getElementsByTagName('thead');
                 if (theads.length > 0) {
+                    for (var i = 0; i < theads.length; i++) {
+                        if (Dom.hasClass(theads[i].parentNode.parentNode, 'list-data-table-header')) {
+                            return theads[i];
+                        }
+                    }
                     return theads[0];
                 }
                 return null;

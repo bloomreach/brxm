@@ -56,7 +56,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
     private boolean isExpanded = false;
     private String className = null;
-    private transient boolean selectionChanged = false;
+    private transient boolean updateDatatable = false;
 
     public ExpandCollapseListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -84,6 +84,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
         addButton(link);
 
+        updateDatatable = true;
         settings = new DataTableSettings();
     }
 
@@ -121,7 +122,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     @Override
     protected void onSelectionChanged(IModel<Node> model) {
         super.onSelectionChanged(model);
-        selectionChanged = true;
+        updateDatatable = true;
     }
 
     @Override
@@ -167,11 +168,10 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     @Override
     public void render(final PluginRequestTarget target) {
         super.render(target);
-        if (target != null && selectionChanged && isVisible()) {
+        if (target != null && updateDatatable && isVisible()) {
             target.appendJavascript(behavior.getUpdateScript());
-            behavior.renderHead(target.getHeaderResponse());
         }
-        selectionChanged = false;
+        updateDatatable = false;
     }
 
     protected List<IListColumnProvider> getListColumnProviders() {
