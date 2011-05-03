@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>6-SNAPSHOT</version>
+    <version>6</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -94,11 +94,11 @@
     <jackrabbit.version>2.2.5</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.19.03</hippo.cms.version>
-    <hippo.repository.version>2.19.03</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.19.03</hippo.addon-publication-workflow.version>
-    <hippo.packages.version>2.19.03</hippo.packages.version>
-    <hippo.addon-hst-configuration-editor.version>1.06.00</hippo.addon-hst-configuration-editor.version>
+    <hippo.cms.version>2.20.00</hippo.cms.version>
+    <hippo.repository.version>2.20.00</hippo.repository.version>
+    <hippo.addon-publication-workflow.version>2.20.00</hippo.addon-publication-workflow.version>
+    <hippo.packages.version>2.20.00</hippo.packages.version>
+    <hippo.addon-hst-configuration-editor.version>1.07.00</hippo.addon-hst-configuration-editor.version>
   
    
     <htmlcleaner.version>2.1</htmlcleaner.version>
