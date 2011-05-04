@@ -124,7 +124,7 @@ public class RepositoryWorkflowTest extends TestCase {
         }
     }
 
-    @Test
+    @Ignore
     public void testCustomFolderUpdate() throws Exception {
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         Workflow wf = wfmgr.getWorkflow("internal", session.getRootNode());
@@ -191,7 +191,7 @@ public class RepositoryWorkflowTest extends TestCase {
             + "+ testUpdateModel:html (hippostd:html)\n"
             + "+ testUpdateModel:link (hippo:mirror)\n";
 
-    @Ignore
+    @Test
     public void testMoveAggregate() throws Exception {
        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
        getWorkflow().updateModel("testUpdateModel", cndMoveAggregate1);
