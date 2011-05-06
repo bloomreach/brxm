@@ -464,8 +464,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     } else {
                         virtual = true;
                     }
-                    nodePath = node.getPath();
-                    if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+                    nodePath = node.getPath(); 
+                    if(!navigationStateful && (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR))) {
                         node = JCRUtilities.getDeref(node);
                         if( node == null ) {
                             log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
