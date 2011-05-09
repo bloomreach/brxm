@@ -20,12 +20,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.AdminPlugin;
+import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 
-public class SystemPropertiesPlugin extends AdminPlugin {
+public class SystemPropertiesPlugin extends AdminPanelPlugin {
 
     public SystemPropertiesPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, SystemPropertiesPanel.class);
+        super(context, config, SystemPropertiesPanel.class);
     }
 
     @Override

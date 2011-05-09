@@ -34,10 +34,11 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
-import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -52,9 +53,9 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
     private final IModel model;
 
-    public ViewUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
+    public ViewUserPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, breadCrumbModel);
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
         
         
@@ -103,15 +104,15 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         });
 
         // actions
-        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-user", context, this, EditUserPanel.class, model);
+        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-user", context, config, this, EditUserPanel.class, model);
         edit.setVisible(!user.isExternal());
         add(edit);
         
-        AjaxBreadCrumbPanelLink password = new AjaxBreadCrumbPanelLink("set-user-password", context, this, SetPasswordPanel.class, model);
+        AjaxBreadCrumbPanelLink password = new AjaxBreadCrumbPanelLink("set-user-password", context, config, this, SetPasswordPanel.class, model);
         password.setVisible(!user.isExternal());
         add(password);
         
-        AjaxBreadCrumbPanelLink memberships = new AjaxBreadCrumbPanelLink("set-user-memberships", context, this, SetMembershipsPanel.class, model);
+        AjaxBreadCrumbPanelLink memberships = new AjaxBreadCrumbPanelLink("set-user-memberships", context, config, this, SetMembershipsPanel.class, model);
         add(memberships);
         
         add(new AjaxLinkLabel("delete-user", new ResourceModel("user-delete")) {

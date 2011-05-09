@@ -13,22 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.crumbs;
+package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IAdminParticipant {
+public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id: PanelPluginBreadCrumbPanel.java 19365 2009-08-24 16:47:23Z bvdschans $";
     private static final long serialVersionUID = 1L;
 
     private FeedbackPanel feedback;
 
-    public AdminBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    private IPluginContext context;
 
+    private IPluginConfig config;
+
+    public PanelPluginBreadCrumbPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
+        this.context = context;
+        this.config = config;
         // add feedback panel to show errors
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
@@ -46,4 +53,14 @@ public abstract class AdminBreadCrumbPanel extends BreadCrumbPanel implements IA
     public FeedbackPanel getFeedbackPanel() {
         return feedback;
     }
+
+    public IPluginContext getPluginContext() {
+        return this.context;
+    }
+
+    public IPluginConfig getPluginConfig() {
+        return this.config;
+    }
+
+
 }

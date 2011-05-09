@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.crumbs;
+package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
@@ -25,11 +25,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-public class AdminBreadCrumbBar extends BreadCrumbBar {
+public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: PanelPluginBreadCrumbBar.java 22056 2010-03-09 16:35:24Z bvanhalderen $";
 
     private static final class BreadCrumbComponent extends Panel {
         private static final long serialVersionUID = 1L;
@@ -49,8 +49,8 @@ public class AdminBreadCrumbBar extends BreadCrumbBar {
             add(link);
 
             IModel title;
-            if (participant instanceof IAdminParticipant) {
-                title = ((IAdminParticipant) participant).getTitle(this);
+            if (participant instanceof IPanelPluginParticipant) {
+                title = ((IPanelPluginParticipant) participant).getTitle(this);
             } else {
                 title = new Model(participant.getTitle());
             }
@@ -58,7 +58,7 @@ public class AdminBreadCrumbBar extends BreadCrumbBar {
         }
     }
 
-    public AdminBreadCrumbBar(String id) {
+    public PanelPluginBreadCrumbBar(String id) {
         super(id);
     }
 

@@ -13,40 +13,47 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin;
+package org.hippoecm.frontend.plugins.standards.panelperspective;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbBar;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelFactory;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbBar;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
 
-public class AdminPerspective extends Perspective {
+public abstract class PanelPluginPerspective extends Perspective {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: PanelPluginPerspective.java 25817 2010-12-20 09:37:20Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 
-    public AdminPerspective(IPluginContext context, IPluginConfig config) {
+    private final BreadCrumbBar breadCrumbBar;
+
+    public PanelPluginPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         setOutputMarkupId(true);
 
 
-        final BreadCrumbBar breadCrumbBar = new AdminBreadCrumbBar("breadCrumbBar");
+        breadCrumbBar = new PanelPluginBreadCrumbBar("bread-crumb-bar");
         add(breadCrumbBar);
 
-        final AdminPanel adminPanel = new AdminPanel("panel", context, breadCrumbBar);
-        add(adminPanel);
+        final PanelPluginPanel panelPluginPanel = new PanelPluginPanel("panel", context, config, breadCrumbBar, getPanelServiceId());
+        add(panelPluginPanel);
 
-        breadCrumbBar.setActive(adminPanel);
+        breadCrumbBar.setActive(panelPluginPanel);
 
         breadCrumbBar.addListener(new IBreadCrumbModelListener() {
             private static final long serialVersionUID = 1L;
@@ -65,18 +72,23 @@ public class AdminPerspective extends Perspective {
             }
         });
 
-        add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+        if (wfConfig != null) {
+            WireframeSettings wfSettings = new WireframeSettings(wfConfig);
+            add(new WireframeBehavior(wfSettings));
+        }
 
-        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin.css"));
-    }
-
-    @Override
-    public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(AdminPerspective.class, "admin-perspective-" + type.getSize() + ".png");
+        add(CSSPackageResource.getHeaderContribution(PanelPluginPerspective.class, "panel-plugin-perspective.css"));
     }
 
     public void showDialog(IDialogService.Dialog dialog) {
         getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
     }
+
+    public BreadCrumbBar getBreadCrumbBar() {
+        return breadCrumbBar;
+    }
+
+    public abstract String getPanelServiceId();
 
 }

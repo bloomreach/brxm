@@ -31,7 +31,9 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -46,9 +48,9 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
     private final Form form;
     private final IModel model;
 
-    public EditGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
+    public EditGroupPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, breadCrumbModel);
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;

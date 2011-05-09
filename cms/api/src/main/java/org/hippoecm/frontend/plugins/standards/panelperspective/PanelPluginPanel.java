@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin;
+package org.hippoecm.frontend.plugins.standards.panelperspective;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,32 +28,34 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.widgets.AbstractView;
 
-public class AdminPanel extends AdminBreadCrumbPanel {
+public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id: PanelPluginPanel.java 27677 2011-04-09 12:14:28Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
 
-    static class AdminPluginProvider implements IDataProvider<AdminPlugin> {
+    static class PanelPluginProvider implements IDataProvider<PanelPlugin> {
         private final IPluginContext context;
+        private String panelServiceId;
+        private transient List<PanelPlugin> services;
 
-        private transient List<AdminPlugin> services;
-
-        public AdminPluginProvider(final IPluginContext context) {
+        public PanelPluginProvider(final IPluginContext context, final String panelServiceId) {
             this.context = context;
+            this.panelServiceId = panelServiceId;
         }
 
         private void load() {
             if (services == null) {
-                services = context.getServices(AdminPlugin.ADMIN_PANEL_ID, AdminPlugin.class);
+                services = context.getServices(this.panelServiceId, PanelPlugin.class);
             }
         }
 
         @Override
-        public Iterator<AdminPlugin> iterator(final int first, final int count) {
+        public Iterator<PanelPlugin> iterator(final int first, final int count) {
             load();
 
             return services.subList(first, first + count).iterator();
@@ -66,7 +68,7 @@ public class AdminPanel extends AdminBreadCrumbPanel {
         }
 
         @Override
-        public IModel<AdminPlugin> model(final AdminPlugin object) {
+        public IModel<PanelPlugin> model(final PanelPlugin object) {
             return new Model(object);
         }
 
@@ -76,14 +78,14 @@ public class AdminPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public AdminPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public PanelPluginPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel, final String panelServiceId) {
+        super(id, context, config, breadCrumbModel);
 
-        add(new AbstractView<AdminPlugin>("panels", new AdminPluginProvider(context)) {
+        add(new AbstractView<PanelPlugin>("panels", new PanelPluginProvider(context, panelServiceId)) {
 
             @Override
-            protected void populateItem(final Item<AdminPlugin> item) {
-                AdminPlugin service = item.getModelObject();
+            protected void populateItem(final Item<PanelPlugin> item) {
+                PanelPlugin service = item.getModelObject();
                 AjaxBreadCrumbPanelLink link = new AjaxBreadCrumbPanelLink("link", getBreadCrumbModel(), service);
                 link.add(new Image("img", service.getImage()));
                 link.add(new Label("title", service.getTitle()).setRenderBodyOnly(true));
@@ -94,6 +96,6 @@ public class AdminPanel extends AdminBreadCrumbPanel {
     }
 
     public IModel getTitle(Component component) {
-        return new StringResourceModel("admin-title", component, null);
+        return new StringResourceModel("panel-plugin-panel-title", component, null);
     }
 }

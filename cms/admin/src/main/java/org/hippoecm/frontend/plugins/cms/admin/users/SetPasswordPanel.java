@@ -29,12 +29,12 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.groups.CreateGroupPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -52,8 +52,8 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
     private String checkPassword;
     
 
-    public SetPasswordPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel model) {
-        super(id, breadCrumbModel);
+    public SetPasswordPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;

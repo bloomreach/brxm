@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.widgets;
+package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import java.lang.reflect.Constructor;
 
@@ -22,14 +22,16 @@ import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id: AjaxBreadCrumbPanelFactory.java 27677 2011-04-09 12:14:28Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
 
     private Class panelClass;
     private final IPluginContext context;
+    private final IPluginConfig config;
 
     public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
         return create(componentId, context, breadCrumbModel);
@@ -43,8 +45,9 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
      *            and must have constructor
      *            {@link BreadCrumbPanel#BreadCrumbPanel(String, IBreadCrumbModel)}
      */
-    public AjaxBreadCrumbPanelFactory(IPluginContext context, final Class panelClass) {
+    public AjaxBreadCrumbPanelFactory(IPluginContext context, IPluginConfig config, final Class panelClass) {
         this.context = context;
+        this.config = config;
         if (panelClass == null) {
             throw new IllegalArgumentException("argument panelClass must be not null");
         }
@@ -64,7 +67,7 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     private BreadCrumbPanel create(String componentId, IPluginContext context, IBreadCrumbModel breadCrumbModel) {
         Constructor ctor = getConstructor();
         try {
-            return (BreadCrumbPanel) ctor.newInstance(new Object[] { componentId, context, breadCrumbModel });
+            return (BreadCrumbPanel) ctor.newInstance(componentId, context, config, breadCrumbModel);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -77,7 +80,7 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel, IModel model) {
         Constructor ctor = getModelConstructor();
         try {
-            return (BreadCrumbPanel) ctor.newInstance(new Object[] { componentId, context, breadCrumbModel, model });
+            return (BreadCrumbPanel) ctor.newInstance(componentId, context, config, breadCrumbModel, model);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -91,7 +94,7 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     private final Constructor getConstructor() {
         try {
             Constructor ctor = panelClass.getConstructor(new Class[] { String.class, IPluginContext.class,
-                    IBreadCrumbModel.class });
+                     IPluginConfig.class, IBreadCrumbModel.class });
             return ctor;
         } catch (SecurityException e) {
             throw new RuntimeException(e);
@@ -108,7 +111,7 @@ public class AjaxBreadCrumbPanelFactory implements IBreadCrumbPanelFactory {
     private final Constructor getModelConstructor() {
         try {
             Constructor ctor = panelClass.getConstructor(new Class[] { String.class, IPluginContext.class,
-                    IBreadCrumbModel.class, IModel.class });
+                    IPluginConfig.class, IBreadCrumbModel.class, IModel.class });
             return ctor;
         } catch (SecurityException e) {
             throw new RuntimeException(e);

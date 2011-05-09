@@ -20,12 +20,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.AdminPlugin;
+import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 
-public class ListGroupsPlugin extends AdminPlugin {
+public class ListGroupsPlugin extends AdminPanelPlugin {
 
     public ListGroupsPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, ListGroupsPanel.class);
+        super(context, config, ListGroupsPanel.class);
     }
 
     @Override

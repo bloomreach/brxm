@@ -1,35 +1,15 @@
-
 /* Control panel */
 /* ================================================ */
-.hippo-controlpanel-panel {
-  padding: 15px;
-}
 
-.hippo-controlpanel .hippo-feedback {
-  top: 15px;
-  right: 15px;
-  width: 500px;
-}
 
-.hippo-controlpanel .hippo-feedback ul {
-  margin-left: 0px;
-  margin-right: 0px
-}
-
-table.hippo-controlpanel-body {
-  height: 100%;
-  width: 100%;
-  margin-bottom: 25px;
-}
-
-.hippo-controlpanel-body h2 {
+.hippo-panel-plugin-body h2 {
   font-size: 20px;
   color: #0d496f;
   margin-top: 0px;
   margin-bottom: 15px;
 }
 
-.hippo-controlpanel-body h3 {
+.hippo-panel-plugin-body h3 {
   font-size: 12px;
   font-weight: bold;
   color: #0d496f;
@@ -58,15 +38,23 @@ table.hippo-controlpanel-body {
   line-height: 16px;
 }
 
-.hippo-controlpanel .icons-128 {
-  background-repeat: no-repeat;
-  background-position: left center;
-  padding-left: 150px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-top: 1px solid #afafaf;
-  border-bottom: 1px solid #afafaf;
-  min-height: 128px;
+.hippo-panel-plugin .icons-128 {
+    background-position: left center;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid #AFAFAF;
+    border-top: 1px solid #AFAFAF;
+    min-height: 128px;
+    padding-bottom: 10px;
+    padding-left: 150px;
+    padding-top: 10px;
+}
+
+.user-128 {
+   background-image: url("users/user-128.png")
+}
+
+.groups-128 {
+  background-image: url("groups/groups-128.png")
 }
 
 .hippo-controlpanel-table-default {
@@ -75,7 +63,7 @@ table.hippo-controlpanel-body {
 }
 
 .hippo-controlpanel-table-default tr th {
-  background: url("images/hippo-panels-headerback.png") repeat-x;
+  background: url("../../../../../../../../../../api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/images/hippo-panels-headerback.png") repeat-x;
   border-bottom: 1px solid #afafaf;
   border-left: none;
   border-right: 1px solid #afafaf;
@@ -167,70 +155,6 @@ table.hippo-controlpanel-body {
   width: 200px
 }
 
-.hippo-controlpanel-breadcrumbs {
-  background: url("images/hippo-panels-headerback.png") repeat-x;
-  border-bottom: 1px dotted #afafaf;
-  font-weight: bold;
-  margin-top: 25px;
-}
-
-.hippo-controlpanel-breadcrumbs-backbutton {
-  display: block;
-  padding: 8px;
-  padding-left: 4px;
-}
-
-.hippo-controlpanel-breadcrumbs span a, .hippo-controlpanel-breadcrumbs span em {
-  font-weight: bold;
-  color: #666666;
-  padding: 4px 2px 4px 8px;
-  background: url("images/hippo-controlpanel-breacrumbs-arrow.png") no-repeat left center;
-  margin-right: 0px;
-}
-
-.hippo-controlpanel-breadcrumbs a:hover {
-  text-decoration: underline
-}
-
-.hippo-controlpanel-navigation li {
-  display: block;
-  float: left
-}
-
-.hippo-controlpanel-navigation li span {
-  display: block;
-  float: left;
-  font-weight: normal;
-  color: #afafaf;
-  font-size: 11px
-}
-
-.hippo-controlpanel-navigation li a {
-  color: #666666;
-  width: 230px;
-  border: 1px solid #f2f2f2;
-  height: 47px;
-  padding: 10px;
-  float: left;
-  margin: 10px;
-  padding-left: 10px;
-  font-size: 12px;
-  font-weight: bold
-}
-
-.hippo-controlpanel-navigation li a div {
-  width: 150px;
-  float: right;
-}
-
-.hippo-controlpanel-navigation li a img {
-  float: left;
-}
-
-.hippo-controlpanel-navigation li a:hover {
-  border: 1px solid #afafaf
-}
-
 div.hippo-controlpanel-actions-top {
   border-bottom: 1px solid #afafaf;
   border-top: none;
@@ -310,12 +234,10 @@ div.hippo-controlpanel-actions-top {
 .hippo-controlpanel-table-default {
 }
 
-.hippo-controlpanel-help-permissionsdiagram {
+hippo-controlpanel-help-permissionsdiagram {
   background: url("images/hippo-controlpanel-help-permissions-en.png") no-repeat;
   width: 580px;
   height: 190px;
   background-position: bottom center;
   margin-bottom: 15px;
 }
-
-

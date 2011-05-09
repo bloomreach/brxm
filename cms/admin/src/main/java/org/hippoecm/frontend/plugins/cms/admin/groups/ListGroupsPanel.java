@@ -34,9 +34,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +52,11 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     private AdminDataTable table;
 
-    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public ListGroupsPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
 
-        add(new AjaxBreadCrumbPanelLink("create-group", context, this, CreateGroupPanel.class));
+        add(new AjaxBreadCrumbPanelLink("create-group", context, config, this, CreateGroupPanel.class));
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
@@ -74,7 +76,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                             public BreadCrumbPanel create(String componentId,
                                     IBreadCrumbModel breadCrumbModel)
                             {
-                                return new ViewGroupPanel(componentId, context, breadCrumbModel, model);
+                                return new ViewGroupPanel(componentId, context, config, breadCrumbModel, model);
                             }
                         });
                     }

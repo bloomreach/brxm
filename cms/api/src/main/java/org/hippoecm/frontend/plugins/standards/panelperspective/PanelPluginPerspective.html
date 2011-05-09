@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2011 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,26 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div yui:id="hippo-controlpanel-perspective-wrapper" class="hippo-controlpanel">
+    <div yui:id="hippo-controlpanel-perspective-wrapper" class="hippo-panel-plugin">
       <div yui:id="hippo-controlpanel-perspective-top">
-        <div yui:id="hippo-controlpanel-perspective-top-body" class="hippo-controlpanel-breadcrumbs">
-          <span class="hippo-controlpanel-breadcrumbs-backbutton" wicket:id="breadCrumbBar">bar</span>
+        <div yui:id="hippo-controlpanel-perspective-top-body" class="hippo-panel-plugin-breadcrumbs">
+          <span class="hippo-panel-plugin-breadcrumbs-backbutton" wicket:id="bread-crumb-bar">bar</span>
         </div>
       </div>
       <div yui:id="hippo-controlpanel-perspective-center">
         <div yui:id="hippo-controlpanel-perspective-center-body">
-          <table class="hippo-controlpanel-body" summary="">
-            <tr>
-              <td width="15%">&nbsp;</td>
-              <td wicket:id="panel" valign="top" width="70%">[ Admin panel ]</td>
-              <td width="15%">&nbsp;</td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <br/><br/>
-              </td>
-            </tr>
-          </table>
+          <div wicket:id="panel"></div>
         </div>
       </div>
     </div>

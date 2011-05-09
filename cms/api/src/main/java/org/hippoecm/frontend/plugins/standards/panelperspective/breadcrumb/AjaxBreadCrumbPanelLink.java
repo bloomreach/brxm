@@ -13,17 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.widgets;
+package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id: AjaxBreadCrumbPanelLink.java 27677 2011-04-09 12:14:28Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
     /** The bread crumb model. */
     private final IBreadCrumbModel breadCrumbModel;
@@ -34,14 +35,14 @@ public class AjaxBreadCrumbPanelLink extends AjaxBreadCrumbLink {
     /** the plugin context */
     private final IModel model;
 
-    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final BreadCrumbPanel caller,
+    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final IPluginConfig config, final BreadCrumbPanel caller,
             final Class panelClass) {
-        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, panelClass));
+        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, config, panelClass));
     }
 
-    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final BreadCrumbPanel caller,
+    public AjaxBreadCrumbPanelLink(final String id, final IPluginContext context, final IPluginConfig config,  final BreadCrumbPanel caller,
             final Class panelClass, IModel model) {
-        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, panelClass), model);
+        this(id, caller.getBreadCrumbModel(), new AjaxBreadCrumbPanelFactory(context, config, panelClass), model);
     }
 
     /**

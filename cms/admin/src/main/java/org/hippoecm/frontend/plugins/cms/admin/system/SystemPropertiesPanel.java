@@ -22,7 +22,9 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColu
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 
 public class SystemPropertiesPanel extends AdminBreadCrumbPanel {
@@ -32,8 +34,8 @@ public class SystemPropertiesPanel extends AdminBreadCrumbPanel {
     
     private static final long serialVersionUID = 1L;
     
-    public SystemPropertiesPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public SystemPropertiesPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+        super(id, context, config, breadCrumbModel);
 
         IColumn[] columns = new IColumn[2];
         columns[0] = new PropertyColumn(new ResourceModel("admin-system-properties-key"), "key");

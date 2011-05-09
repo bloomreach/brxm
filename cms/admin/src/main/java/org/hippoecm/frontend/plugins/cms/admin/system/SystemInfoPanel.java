@@ -27,7 +27,9 @@ import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
@@ -38,8 +40,8 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
     private SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
 
-    public SystemInfoPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public SystemInfoPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
         
         ICellPopulator[] columns = new ICellPopulator[2];

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.widgets;
+package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
@@ -23,7 +23,7 @@ import org.apache.wicket.version.undo.Change;
 
 public abstract class AjaxBreadCrumbLink extends AjaxFallbackLink {
     @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id: AjaxBreadCrumbLink.java 15368 2008-12-18 11:46:10Z bvdschans $";
     private static final long serialVersionUID = 1L;
 
     /** The bread crumb model. */

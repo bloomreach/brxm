@@ -33,8 +33,10 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -49,9 +51,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
     private final IModel model;
 
-    public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
+    public ViewGroupPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, breadCrumbModel);
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;
@@ -66,11 +68,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(new MembershipsListView("members", "member", new PropertyModel(group, "members")));
 
         // actions
-        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-group", context, this, EditGroupPanel.class, model);
+        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-group", context, config, this, EditGroupPanel.class, model);
         edit.setVisible(!group.isExternal());
         add(edit);
         
-        AjaxBreadCrumbPanelLink members = new AjaxBreadCrumbPanelLink("set-group-members", context, this, SetMembersPanel.class, model);
+        AjaxBreadCrumbPanelLink members = new AjaxBreadCrumbPanelLink("set-group-members", context, config, this, SetMembersPanel.class, model);
         members.setVisible(!group.isExternal());
         add(members);
 

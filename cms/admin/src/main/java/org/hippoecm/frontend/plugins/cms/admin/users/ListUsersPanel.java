@@ -33,9 +33,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +55,11 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     private final AdminDataTable table;
 
 
-    public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public ListUsersPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+        super(id, context, config, breadCrumbModel);
         setOutputMarkupId(true);
 
-        add(new AjaxBreadCrumbPanelLink("create-user", context, this, CreateUserPanel.class));
+        add(new AjaxBreadCrumbPanelLink("create-user", context, config, this, CreateUserPanel.class));
         
         List<IColumn> columns = new ArrayList<IColumn>();
 
@@ -77,7 +79,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
                             public BreadCrumbPanel create(String componentId,
                                     IBreadCrumbModel breadCrumbModel)
                             {
-                                return new ViewUserPanel(componentId, context, breadCrumbModel, model);
+                                return new ViewUserPanel(componentId, context, config, breadCrumbModel, model);
                             }
                         });
                     }

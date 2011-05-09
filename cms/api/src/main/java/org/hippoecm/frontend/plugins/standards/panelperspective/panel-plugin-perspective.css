@@ -1,0 +1,94 @@
+
+table.hippo-panel-plugin-body {
+  height: 100%;
+  width: 100%;
+  margin-top:4px;
+  margin-bottom: 25px;
+}
+
+.hippo-plugin-panel .hippo-feedback {
+  top: 15px;
+  right: 15px;
+  width: 500px;
+}
+
+.hippo-plugin-panel .hippo-feedback ul {
+  margin-left: 0px;
+  margin-right: 0px
+}
+
+.hippo-plugin-panel .icons-128 {
+  background-repeat: no-repeat;
+  background-position: left center;
+  padding-left: 150px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #afafaf;
+  border-bottom: 1px solid #afafaf;
+  min-height: 128px;
+}
+
+.hippo-panel-plugin-breadcrumbs {
+  background: url("images/hippo-panels-headerback.png") repeat-x;
+  border-bottom: 1px dotted #afafaf;
+  font-weight: bold;
+  margin-top: 25px;
+}
+
+.hippo-panel-plugin-breadcrumbs-backbutton {
+  display: block;
+  padding: 8px;
+  padding-left: 4px;
+}
+
+.hippo-panel-plugin-breadcrumbs span a, .hippo-panel-plugin-breadcrumbs span em {
+  font-weight: bold;
+  color: #666666;
+  padding: 4px 2px 4px 8px;
+  background: url("images/hippo-controlpanel-breacrumbs-arrow.png") no-repeat left center;
+  margin-right: 0px;
+}
+
+.hippo-panel-plugin-breadcrumbs a:hover {
+  text-decoration: underline
+}
+
+.hippo-panel-plugin-navigation li {
+  display: block;
+  float: left
+}
+
+.hippo-panel-plugin-navigation li span {
+  display: block;
+  float: left;
+  font-weight: normal;
+  color: #afafaf;
+  font-size: 11px
+}
+
+.hippo-panel-plugin-navigation li a {
+  color: #666666;
+  width: 230px;
+  border: 1px solid #f2f2f2;
+  height: 47px;
+  padding: 10px;
+  float: left;
+  margin: 10px;
+  padding-left: 10px;
+  font-size: 12px;
+  font-weight: bold
+}
+
+.hippo-panel-plugin-navigation li a div {
+  width: 150px;
+  float: right;
+}
+
+.hippo-panel-plugin-navigation li a img {
+  float: left;
+}
+
+.hippo-panel-plugin-navigation li a:hover {
+  border: 1px solid #afafaf
+}
+
