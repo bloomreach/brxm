@@ -112,6 +112,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String FEEDBACK = "wicket.feedback";
     public static final String BEHAVIOR = "wicket.behavior";
+    public static final String VISIBLE = "wicket.visible";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -238,7 +239,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
                 context.registerTracker(tracker, name);
             }
         }
-
+        setVisible(config.getAsBoolean(VISIBLE,true));
         context.registerService(this, config.getString("wicket.id"));
     }
 
