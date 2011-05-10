@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.admin.system;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -25,7 +27,7 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 public class SystemInfoPlugin extends AdminPanelPlugin {
 
     public SystemInfoPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config, SystemInfoPanel.class);
+        super(context, config);
     }
 
     @Override
@@ -41,5 +43,11 @@ public class SystemInfoPlugin extends AdminPanelPlugin {
     @Override
     public IModel<String> getHelp() {
         return new ResourceModel("admin-system-info-title-help");
+    }
+
+
+    @Override
+    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
+        return new SystemInfoPanel(componentId, breadCrumbModel);
     }
 }

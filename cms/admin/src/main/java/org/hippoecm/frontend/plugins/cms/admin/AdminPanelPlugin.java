@@ -18,18 +18,13 @@ package org.hippoecm.frontend.plugins.cms.admin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPlugin;
-import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public abstract class AdminPanelPlugin extends PanelPlugin {
 
     public static final String ADMIN_PANEL_SERVICE_ID = "admin.panel";
 
-    private final IPluginContext context;
-
-    public AdminPanelPlugin(final IPluginContext context, final IPluginConfig config, Class<? extends PanelPluginBreadCrumbPanel> panelClass) {
-        super(context, config, panelClass);
-        this.context = context;
+    public AdminPanelPlugin(final IPluginContext context, final IPluginConfig config) {
+        super(context, config);
     }
 
     public String getPanelServiceId() {

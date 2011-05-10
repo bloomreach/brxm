@@ -31,10 +31,7 @@ import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -52,8 +49,8 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
     private String checkPassword;
     
 
-    public SetPasswordPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel, final IModel model) {
-        super(id, context, config, breadCrumbModel);
+    public SetPasswordPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;
@@ -117,7 +114,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         }.setDefaultFormProcessing(false));
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-set-password-title", component, model);
     }
 

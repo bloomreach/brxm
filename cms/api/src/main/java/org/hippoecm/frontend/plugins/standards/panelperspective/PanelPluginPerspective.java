@@ -15,24 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.standards.panelperspective;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelFactory;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbBar;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
-import org.hippoecm.frontend.service.IconSize;
 
 public abstract class PanelPluginPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -50,7 +43,7 @@ public abstract class PanelPluginPerspective extends Perspective {
         breadCrumbBar = new PanelPluginBreadCrumbBar("bread-crumb-bar");
         add(breadCrumbBar);
 
-        final PanelPluginPanel panelPluginPanel = new PanelPluginPanel("panel", context, config, breadCrumbBar, getPanelServiceId());
+        final PanelPluginPanel panelPluginPanel = new PanelPluginPanel("panel", context, breadCrumbBar, getPanelServiceId());
         add(panelPluginPanel);
 
         breadCrumbBar.setActive(panelPluginPanel);

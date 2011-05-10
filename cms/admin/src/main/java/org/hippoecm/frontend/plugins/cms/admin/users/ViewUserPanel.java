@@ -34,13 +34,11 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +51,9 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
     private final IModel model;
 
-    public ViewUserPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
+    public ViewUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, context, config, breadCrumbModel);
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         
@@ -104,15 +102,30 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         });
 
         // actions
-        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-user", context, config, this, EditUserPanel.class, model);
+        PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-user", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new EditUserPanel(componentId, breadCrumbModel, model);
+            }
+        };
         edit.setVisible(!user.isExternal());
         add(edit);
         
-        AjaxBreadCrumbPanelLink password = new AjaxBreadCrumbPanelLink("set-user-password", context, config, this, SetPasswordPanel.class, model);
+        PanelPluginBreadCrumbLink password = new PanelPluginBreadCrumbLink("set-user-password", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new SetPasswordPanel(componentId, breadCrumbModel, model);
+            }
+        };
         password.setVisible(!user.isExternal());
         add(password);
         
-        AjaxBreadCrumbPanelLink memberships = new AjaxBreadCrumbPanelLink("set-user-memberships", context, config, this, SetMembershipsPanel.class, model);
+        PanelPluginBreadCrumbLink memberships = new PanelPluginBreadCrumbLink("set-user-memberships", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new SetMembershipsPanel(componentId, breadCrumbModel, model);
+            }
+        };
         add(memberships);
         
         add(new AjaxLinkLabel("delete-user", new ResourceModel("user-delete")) {
@@ -185,7 +198,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-view-title", component, model);
     }
 

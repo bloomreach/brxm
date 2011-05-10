@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
@@ -28,8 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.widgets.AbstractView;
 
@@ -69,7 +69,7 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
 
         @Override
         public IModel<PanelPlugin> model(final PanelPlugin object) {
-            return new Model(object);
+            return new Model<PanelPlugin>(object);
         }
 
         @Override
@@ -78,15 +78,20 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
         }
     }
 
-    public PanelPluginPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel, final String panelServiceId) {
-        super(id, context, config, breadCrumbModel);
+    public PanelPluginPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final String panelServiceId) {
+        super(id, breadCrumbModel);
 
         add(new AbstractView<PanelPlugin>("panels", new PanelPluginProvider(context, panelServiceId)) {
 
             @Override
             protected void populateItem(final Item<PanelPlugin> item) {
-                PanelPlugin service = item.getModelObject();
-                AjaxBreadCrumbPanelLink link = new AjaxBreadCrumbPanelLink("link", getBreadCrumbModel(), service);
+                final PanelPlugin service = item.getModelObject();
+                PanelPluginBreadCrumbLink link = new PanelPluginBreadCrumbLink("link", getBreadCrumbModel()) {
+                    @Override
+                    protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                        return service.create(componentId, getBreadCrumbModel());
+                    }
+                };
                 link.add(new Image("img", service.getImage()));
                 link.add(new Label("title", service.getTitle()).setRenderBodyOnly(true));
                 link.add(new Label("help", service.getHelp()));
@@ -95,7 +100,7 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
         });
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("panel-plugin-panel-title", component, null);
     }
 }

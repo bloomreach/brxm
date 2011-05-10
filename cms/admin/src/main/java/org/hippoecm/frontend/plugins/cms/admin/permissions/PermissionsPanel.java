@@ -31,10 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
@@ -53,8 +50,8 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
     /** Visibility toggle so that either the link or the form is visible. */
     private boolean formVisible = false;
 
-    public PermissionsPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
         List<String> roles = Group.getAllRoles();        
@@ -76,7 +73,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
                             public BreadCrumbPanel create(String componentId,
                                     IBreadCrumbModel breadCrumbModel)
                             {
-                                return new SetPermissionsPanel(componentId, context, config, breadCrumbModel, model);
+                                return new SetPermissionsPanel(componentId, breadCrumbModel, model);
                             }
                         });
                     }
@@ -144,7 +141,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new ResourceModel("admin-permissions-title");
     }
 

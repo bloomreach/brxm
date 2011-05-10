@@ -26,10 +26,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
@@ -40,8 +37,8 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
     private SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
 
-    public SystemInfoPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public SystemInfoPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         ICellPopulator[] columns = new ICellPopulator[2];
@@ -77,7 +74,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
         });
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new ResourceModel("admin-system-info-title");
     }
 

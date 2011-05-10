@@ -34,10 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
@@ -57,9 +54,8 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
     //private final ListView externalList;
     private final Domain domain;
 
-    public SetPermissionsPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
-            final IModel model) {
-        super(id, context, config, breadCrumbModel);
+    public SetPermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         this.model = model;
         this.domain = (Domain) model.getObject();
@@ -172,7 +168,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("permissions-set-title", component, model);
     }
 

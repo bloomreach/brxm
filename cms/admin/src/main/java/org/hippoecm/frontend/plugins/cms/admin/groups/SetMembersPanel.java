@@ -35,10 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
@@ -57,9 +54,9 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
     private final AdminDataTable table;
 
-    public SetMembersPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
+    public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, context, config, breadCrumbModel);
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;
@@ -148,7 +145,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("group-edit-title", component, model);
     }
 

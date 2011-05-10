@@ -22,16 +22,15 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelFactory;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
-public abstract class PanelPlugin extends AjaxBreadCrumbPanelFactory implements IPlugin, IBreadCrumbPanelFactory {
+public abstract class PanelPlugin implements IPlugin, IBreadCrumbPanelFactory {
 
     private final IPluginContext context;
+    private final IPluginConfig config;
 
-    public PanelPlugin(final IPluginContext context, final IPluginConfig config, Class<? extends PanelPluginBreadCrumbPanel> panelClass) {
-        super(context, config, panelClass);
+    public PanelPlugin(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
+        this.config = config;
     }
 
     public abstract ResourceReference getImage();
@@ -47,6 +46,14 @@ public abstract class PanelPlugin extends AjaxBreadCrumbPanelFactory implements 
 
     @Override
     public void stop() {
+    }
+
+    public IPluginConfig getPluginConfig() {
+        return this.config;
+    }
+
+    public IPluginContext getPluginContext() {
+        return this.context;
     }
 
     public abstract String getPanelServiceId();

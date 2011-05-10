@@ -48,11 +48,11 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
             link.setEnabled(enableLink);
             add(link);
 
-            IModel title;
+            IModel<String> title;
             if (participant instanceof IPanelPluginParticipant) {
                 title = ((IPanelPluginParticipant) participant).getTitle(this);
             } else {
-                title = new Model(participant.getTitle());
+                title = new Model<String>(participant.getTitle());
             }
             link.add(new Label("label", title).setRenderBodyOnly(true));
         }

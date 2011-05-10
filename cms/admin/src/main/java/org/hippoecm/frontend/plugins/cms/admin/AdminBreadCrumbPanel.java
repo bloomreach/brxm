@@ -15,11 +15,7 @@
 */
 package org.hippoecm.frontend.plugins.cms.admin;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 /**
@@ -27,8 +23,8 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
  */
 public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
 
-    public AdminBreadCrumbPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public AdminBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
     }
 
 }

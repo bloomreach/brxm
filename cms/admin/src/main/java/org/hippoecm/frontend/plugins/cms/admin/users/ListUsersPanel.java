@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -33,12 +34,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +54,16 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     private final AdminDataTable table;
 
 
-    public ListUsersPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        add(new AjaxBreadCrumbPanelLink("create-user", context, config, this, CreateUserPanel.class));
+        add(new PanelPluginBreadCrumbLink("create-user", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new CreateUserPanel(componentId, breadCrumbModel);
+            }
+        });
         
         List<IColumn> columns = new ArrayList<IColumn>();
 
@@ -79,7 +83,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
                             public BreadCrumbPanel create(String componentId,
                                     IBreadCrumbModel breadCrumbModel)
                             {
-                                return new ViewUserPanel(componentId, context, config, breadCrumbModel, model);
+                                return new ViewUserPanel(componentId, context, breadCrumbModel, model);
                             }
                         });
                     }
@@ -108,7 +112,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new ResourceModel("admin-users-title");
     }
 }

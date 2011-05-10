@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -34,12 +35,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +51,16 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     private AdminDataTable table;
 
-    public ListGroupsPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        add(new AjaxBreadCrumbPanelLink("create-group", context, config, this, CreateGroupPanel.class));
+        add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new CreateGroupPanel(componentId, breadCrumbModel);
+            }
+        });
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
@@ -76,7 +80,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                             public BreadCrumbPanel create(String componentId,
                                     IBreadCrumbModel breadCrumbModel)
                             {
-                                return new ViewGroupPanel(componentId, context, config, breadCrumbModel, model);
+                                return new ViewGroupPanel(componentId, context, breadCrumbModel, model);
                             }
                         });
                     }
@@ -114,7 +118,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new ResourceModel("admin-groups-title");
     }
 

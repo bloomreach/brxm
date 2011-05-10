@@ -37,10 +37,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
 import org.hippoecm.frontend.session.UserSession;
@@ -62,8 +59,8 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
     private DetachableUser userModel = new DetachableUser();
 
-    public CreateUserPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
-        super(id, context, config, breadCrumbModel);
+    public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
         // add form with markup id setter so it can be updated via ajax
@@ -145,7 +142,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     }
 
     
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-create", component, null);
     }
 

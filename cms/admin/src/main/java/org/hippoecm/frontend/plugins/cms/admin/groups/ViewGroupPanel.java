@@ -33,12 +33,10 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.AjaxBreadCrumbPanelLink;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +49,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
     private final IModel model;
 
-    public ViewGroupPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
+    public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
             final IModel model) {
-        super(id, context, config, breadCrumbModel);
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;
@@ -68,11 +66,20 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(new MembershipsListView("members", "member", new PropertyModel(group, "members")));
 
         // actions
-        AjaxBreadCrumbPanelLink edit = new AjaxBreadCrumbPanelLink("edit-group", context, config, this, EditGroupPanel.class, model);
+        PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-group", breadCrumbModel) {
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new EditGroupPanel(componentId, breadCrumbModel, model);
+            }
+        };
         edit.setVisible(!group.isExternal());
         add(edit);
         
-        AjaxBreadCrumbPanelLink members = new AjaxBreadCrumbPanelLink("set-group-members", context, config, this, SetMembersPanel.class, model);
+        PanelPluginBreadCrumbLink members = new PanelPluginBreadCrumbLink("set-group-members", breadCrumbModel) {
+            @Override
+            protected IBreadCrumbParticipant getParticipant(final String componentId) {
+                return new SetMembersPanel(componentId, breadCrumbModel, model);
+            }
+        };
         members.setVisible(!group.isExternal());
         add(members);
 
@@ -139,7 +146,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("group-view-title", component, model);
     }
 

@@ -34,10 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
@@ -55,9 +52,8 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
     private final ListView localList;
     private final ListView externalList;
 
-    public SetMembershipsPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel,
-            final IModel model) {
-        super(id, context, config, breadCrumbModel);
+    public SetMembershipsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
         this.model = model;
@@ -180,7 +176,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    public IModel getTitle(Component component) {
+    public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-set-memberhips-title", component, model);
     }
 

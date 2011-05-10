@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
     @SuppressWarnings("unused")
@@ -28,14 +26,8 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
 
     private FeedbackPanel feedback;
 
-    private IPluginContext context;
-
-    private IPluginConfig config;
-
-    public PanelPluginBreadCrumbPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
+    public PanelPluginBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
-        this.context = context;
-        this.config = config;
         // add feedback panel to show errors
         final FeedbackPanel feedback = new FeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
@@ -53,14 +45,5 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
     public FeedbackPanel getFeedbackPanel() {
         return feedback;
     }
-
-    public IPluginContext getPluginContext() {
-        return this.context;
-    }
-
-    public IPluginConfig getPluginConfig() {
-        return this.config;
-    }
-
 
 }

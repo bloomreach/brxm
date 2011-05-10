@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -25,7 +27,7 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 public class ListUsersPlugin extends AdminPanelPlugin {
 
     public ListUsersPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config, ListUsersPanel.class);
+        super(context, config);
     }
 
     @Override
@@ -41,5 +43,10 @@ public class ListUsersPlugin extends AdminPanelPlugin {
     @Override
     public IModel<String> getHelp() {
         return new ResourceModel("admin-users-title-help");
+    }
+
+    @Override
+    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
+        return new ListUsersPanel(componentId, getPluginContext(), breadCrumbModel);
     }
 }

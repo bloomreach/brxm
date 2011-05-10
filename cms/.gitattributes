@@ -126,12 +126,10 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/Panel
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPluginPanel.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPluginPerspective.html -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/PanelPluginPerspective.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/AjaxBreadCrumbLink.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/AjaxBreadCrumbPanelFactory.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/AjaxBreadCrumbPanelLink.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/IPanelPluginParticipant.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbBar$BreadCrumbComponent.html -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbBar.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbLink.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbPanel.html -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/breadcrumb/PanelPluginBreadCrumbPanel.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/images/hippo-controlpanel-back.png -text
