@@ -1,8 +1,12 @@
 * text=auto !eol
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.html -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlugin.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
