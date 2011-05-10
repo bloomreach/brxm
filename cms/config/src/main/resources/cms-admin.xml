@@ -41,16 +41,16 @@
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=hippo-controlpanel-perspective-center,body=hippo-controlpanel-perspective-center-body,scroll=true</sv:value>
+        <sv:value>id=hippo-panel-plugin-perspective-center,body=hippo-panel-perspective-perspective-center-body,scroll=true</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>hippo-controlpanel-perspective-wrapper</sv:value>
+        <sv:value>hippo-panel-plugin-wrapper</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=hippo-controlpanel-perspective-top,body=hippo-controlpanel-perspective-top-body,height=60</sv:value>
+        <sv:value>id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=60</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -17,12 +17,12 @@ package org.hippoecm.frontend.plugins.cms.admin.system;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public class SystemPropertiesPlugin extends AdminPanelPlugin {
 
@@ -46,7 +46,7 @@ public class SystemPropertiesPlugin extends AdminPanelPlugin {
     }
 
     @Override
-    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
+    public PanelPluginBreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
         return new SystemPropertiesPanel(componentId, getPluginContext(), getPluginConfig(), breadCrumbModel);
     }
 }

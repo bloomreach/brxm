@@ -17,11 +17,14 @@ package org.hippoecm.frontend.plugins.standards.panelperspective;
 
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public abstract class PanelPlugin implements IPlugin, IBreadCrumbPanelFactory {
 
@@ -57,5 +60,7 @@ public abstract class PanelPlugin implements IPlugin, IBreadCrumbPanelFactory {
     }
 
     public abstract String getPanelServiceId();
+
+    public abstract PanelPluginBreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel);
 
 }

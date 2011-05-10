@@ -23,6 +23,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public class ListGroupsPlugin extends AdminPanelPlugin {
 
@@ -46,7 +47,7 @@ public class ListGroupsPlugin extends AdminPanelPlugin {
     }
 
     @Override
-    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
+    public PanelPluginBreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
         return new ListGroupsPanel(componentId, getPluginContext(), breadCrumbModel);
     }
 }
