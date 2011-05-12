@@ -63,7 +63,7 @@
 }
 
 .hippo-controlpanel-table-default tr th {
-  background: url("../../../../../../../../../../api/src/main/java/org/hippoecm/frontend/plugins/standards/panelperspective/images/hippo-panels-headerback.png") repeat-x;
+  background: url("images/hippo-panels-headerback.png") repeat-x;
   border-bottom: 1px solid #afafaf;
   border-left: none;
   border-right: 1px solid #afafaf;
