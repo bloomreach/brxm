@@ -124,14 +124,6 @@ class MenuHierarchy {
                 }
             }
         }
-        if (submenus.containsKey("newsletter")) {
-            MenuHierarchy submenu = submenus.remove("newsletter");
-            for (ActionDescription action : submenu.items) {
-                if (action.isVisible()) {
-                    put(new String[] { "publication" }, action);
-                }
-            }
-        }
         if (submenus.containsKey("custom")) {
             MenuHierarchy submenu = submenus.remove("custom");
             for (ActionDescription action : submenu.items) {
