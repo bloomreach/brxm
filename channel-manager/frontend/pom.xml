@@ -1,135 +1,135 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>hippo-addon-channel-manager</artifactId>
-        <groupId>org.onehippo.cms7</groupId>
-        <version>1.01.00-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <artifactId>hippo-addon-channel-manager</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <version>1.01.00-SNAPSHOT</version>
+  </parent>
 
 
-    <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-    <packaging>jar</packaging>
+  <artifactId>hippo-addon-channel-manager-frontend</artifactId>
+  <packaging>jar</packaging>
 
-    <name>Addon Channel Manager Frontend</name>
+  <name>Addon Channel Manager Frontend</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-cms-engine</artifactId>
-            <version>${hippo.cms.version}</version>
-            <scope>provided</scope>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-cms-api</artifactId>
-            <version>${hippo.cms.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-connector</artifactId>
-            <version>${hippo.repository.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-connector</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-cms-editor-frontend</artifactId>
-            <version>${hippo.cms.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-cms-gallery-frontend</artifactId>
-            <version>${hippo.cms.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-cms-browse</artifactId>
-            <version>${hippo.cms.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-browse</artifactId>
+      <version>${hippo.cms.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <!-- JCR API and Hippo ECM API dependency -->
-        <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${javax.jcr.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <!-- JCR API and Hippo ECM API dependency -->
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
+      <version>${javax.jcr.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-api</artifactId>
-            <version>${hippo.repository.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <build>
-        <defaultGoal>package</defaultGoal>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>${basedir}/src/main/java</directory>
-                <includes>
-                    <include>**/*.html</include>
-                    <include>**/*.css</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.jpg</include>
-                    <include>**/*.png</include>
-                </includes>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <inherited>true</inherited>
-                <groupId>org.zeroturnaround</groupId>
-                <artifactId>javarebel-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>generate-rebel-xml</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.properties</include>
+          <include>**/*.jpg</include>
+          <include>**/*.png</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.zeroturnaround</groupId>
+        <artifactId>javarebel-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-rebel-xml</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>always</forkMode>
-                    <workingDirectory>${project.build.directory}</workingDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
