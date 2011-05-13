@@ -76,18 +76,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                                 scope: this
                             }
                         }
-                    },
-
-                    '->',
-                    {
-                        text: 'Logout',
-                        id: 'logoutButton',
-                        listeners: {
-                            'click' : {
-                                fn: this.doLogout,
-                                scope: this
-                            }
-                        }
                     }
                 ],
                 listeners: {
@@ -157,15 +145,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 	Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
-    },
-
-    doLogout : function() {
-        Ext.Ajax.request({
-            url: '/site/manager/_rp/' + this.ids.site + './logout',
-            success: function () {
-                location.reload(true);
-            }
-        });
     },
 
     onIframeDOMReady : function(frm) {
