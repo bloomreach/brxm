@@ -52,7 +52,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
     submitForm:function () {
         this.getForm().submit({
-            url: '/site/manager/_rp/' + this.id + './parameters',
+            url: this.baseUrlPath + '/_rp/' + this.id + './parameters',
             method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
@@ -70,7 +70,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
     createDocument: function (ev, target, options) {
 	  
-        var createUrl = '/site/manager/_rp/' + this.siteId + './create';
+        var createUrl = this.baseUrlPath + '/_rp/' + this.siteId + './create';
         var createDocumentWindow = new Ext.Window({
             title: "Create a new document",
             height: 150,
@@ -154,7 +154,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
-                        url: '/site/manager/_rp/' + this.siteId + './documents/' + property.get('docType'),
+                        url: this.baseUrlPath + '/_rp/' + this.siteId + './documents/' + property.get('docType'),
                         fields:['path']
                     });
 
@@ -238,7 +238,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
-            url: '/site/manager/_rp/' + id + './parameters'
+            url: this.baseUrlPath + '/_rp/' + id + './parameters'
         });
         store.on('load', this.loadProperties, this);
         store.on('exception', this.loadException, this);

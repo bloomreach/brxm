@@ -45,7 +45,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     keepAlive : function() {
         if (this.ids.site != null) { //Ping only if the site id is not null
             Ext.Ajax.request({
-                url: '/site/manager/_rp/' + this.ids.site + './keepalive',
+                url: this.iframeUrl+'/_rp/' + this.ids.site + './keepalive',
                 success: function () {
                     //Do nothing
                 }
@@ -198,7 +198,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
     createToolkitStore : function(toolkitId) {
         return new Hippo.App.ToolkitStore({
-            toolkitId : toolkitId
+            toolkitId : toolkitId,
+            baseUrlPath : this.iframeUrl
         });
     },
 
@@ -206,7 +207,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         return new Hippo.App.PageModelStore({
             rootComponentIdentifier: this.rootComponentIdentifier,
             pageId: pageId,
-
+            baseUrlPath: this.iframeUrl,
             listeners: {
                 write : {
                     fn: function(store, action, result, res, records) {
@@ -353,7 +354,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
                     id: 'componentPropertiesPanel',
                     xtype:'h_properties_panel',
                     region: 'center',
-                    split: true
+                    split: true,
+                    baseUrlPath: this.iframeUrl
                 }
             ]
         });
@@ -552,10 +554,11 @@ Hippo.App.RestStore = Ext.extend(Ext.data.Store, {
 Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
 
     constructor : function(config) {
+        var baseUrlPath = config.baseUrlPath;
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : '/site/manager/_rp/' + config.toolkitId + './toolkit'
+                read     : baseUrlPath+'/_rp/' + config.toolkitId + './toolkit'
                 ,create  : '#'
                 ,update  : '#'
                 ,destroy : '#'
@@ -578,12 +581,14 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
 
     constructor : function(config) {
 
+        var baseUrlPath = config.baseUrlPath;
+
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : '/site/manager/_rp/' + config.pageId + './pagemodel'
-                ,create  : {url: '/site/manager/_rp/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
-                ,update  : {url: '/site/manager/_rp/PageModelService/update', method: 'POST'}
-                ,destroy : {url: '/site/manager/_rp/PageModelService/destroy', method: 'GET'}
+                read     : baseUrlPath+'/_rp/' + config.pageId + './pagemodel'
+                ,create  : {url: baseUrlPath+'/_rp/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
+                ,update  : {url: baseUrlPath+'/_rp/PageModelService/update', method: 'POST'}
+                ,destroy : {url: baseUrlPath+'/_rp/PageModelService/destroy', method: 'GET'}
             },
 
             listeners : {
@@ -598,15 +603,15 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: '/site/manager/_rp/' + parentId + './create/' + prototypeId , method: 'POST'});
+                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './create/' + prototypeId , method: 'POST'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
                             var id = rs.get('id');
-                            proxy.setApi(action, {url: '/site/manager/_rp/' + id + './update' , method: 'POST'});
+                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + id + './update' , method: 'POST'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: '/site/manager/_rp/' + parentId + './delete' , method: 'GET'});
+                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './delete' , method: 'GET'});
                         }
                     }
                 },
