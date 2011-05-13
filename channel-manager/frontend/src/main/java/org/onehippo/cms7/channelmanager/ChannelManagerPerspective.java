@@ -26,7 +26,10 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +42,13 @@ public class ChannelManagerPerspective extends Perspective {
 
     public ChannelManagerPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        final String TEMPLATE_COMPOSER_URL = config.getString("template.composer.url", "about:blank");
-        if(TEMPLATE_COMPOSER_URL.equals("about:blank")){
-            log.warn("No template.composer.url specified in the plugin configuration");
+        add(new PageEditor("page-editor"));
+
+        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+        if (wfConfig != null) {
+            WireframeSettings wfSettings = new WireframeSettings(wfConfig);
+            add(new WireframeBehavior(wfSettings));
         }
-        add(new WebMarkupContainer("channel-manager-iframe").add(new SimpleAttributeModifier("src", TEMPLATE_COMPOSER_URL)));
     }
 
 

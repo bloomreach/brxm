@@ -16,18 +16,21 @@
     <sv:value>service.tab</sv:value>
   </sv:property>
 
-  <sv:node sv:name="yui.config">
+  <sv:node sv:name="layout.wireframe">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=channel-manager-perspective-center,body=channel-manager-perspective-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px</sv:value>
+      <sv:value>id=template-composer-perspective-center,body=template-composer-perspective-center-body,scroll=false</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>id=template-composer-perspective-top,body=template-composer-perspective-top-body,height=24</sv:value>
     </sv:property>
     <sv:property sv:name="linked.with.parent" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="root.id" sv:type="String">
-      <sv:value>channel-manager-perspective-wrapper</sv:value>
+      <sv:value>template-composer-plugin-wrapper</sv:value>
     </sv:property>
     <sv:property sv:name="units" sv:type="String">
       <sv:value>center</sv:value>

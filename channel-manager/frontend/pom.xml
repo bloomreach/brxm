@@ -20,6 +20,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicket-extjs</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>${hippo.cms.version}</version>
@@ -61,14 +66,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- JCR API and Hippo ECM API dependency -->
-    <dependency>
-      <groupId>javax.jcr</groupId>
-      <artifactId>jcr</artifactId>
-      <version>${javax.jcr.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
@@ -86,9 +83,8 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
     </dependency>
+
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
@@ -102,6 +98,7 @@
           <include>**/*.properties</include>
           <include>**/*.jpg</include>
           <include>**/*.png</include>
+          <include>**/*.js</include>
         </includes>
       </resource>
     </resources>

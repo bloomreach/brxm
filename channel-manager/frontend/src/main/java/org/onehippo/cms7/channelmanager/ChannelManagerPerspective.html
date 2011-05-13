@@ -16,8 +16,15 @@
 
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <div class="channel-manager-perspective">
-        <iframe wicket:id="channel-manager-iframe" style="width:100%;height:100%"></iframe>
+  <div yui:id="template-composer-plugin-wrapper" class="hippo-panel-plugin">
+    <div yui:id="template-composer-perspective-top">
+      <div yui:id="template-composer-perspective-top-body"></div>
     </div>
+    <div yui:id="template-composer-perspective-center">
+      <div yui:id="template-composer-perspective-center-body">
+        <div wicket:id="page-editor" class="template-composer-perspective"></div>
+      </div>
+    </div>
+  </div>
 </wicket:panel>
 </html>
