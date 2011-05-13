@@ -114,6 +114,8 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                                 break;
                             }
                         }
+                    } else if ((conditions == null || conditions.length == 0) && filter == null) {
+                        matches = true;
                     }
                     if (!matches) {
                         continue;

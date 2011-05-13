@@ -50,6 +50,35 @@ public class TestComponentWindowFactory {
         assertNull(window.getChildWindow("default"));
     }
 
+    @Test
+    public void testDefaultIsUsedWhenNoTagsAreProvided() {
+        HstComponentWindowFactoryImpl factory = new HstComponentWindowFactoryImpl();
+
+        // set up request context
+        MockHstRequestContext requestContext = new MockHstRequestContext();
+
+        // mock environment
+        HstContainerConfig mockHstContainerConfig = createNiceMock(HstContainerConfig.class);
+        HstComponentConfiguration compConfig = createNiceMock(HstComponentConfiguration.class);
+        expect(compConfig.getReferenceName()).andReturn("refName");
+        HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
+        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
+
+        // container items with matching, non-matching and no tags
+        TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
+        expect(compConfig.getChildren()).andReturn(children);
+
+        // instantiate the window
+        replay(mockHstContainerConfig, compConfig, compFactory);
+        HstComponentWindow window = factory.create(mockHstContainerConfig, requestContext, compConfig, compFactory);
+
+        // verify results
+        verify(mockHstContainerConfig, compConfig, compFactory);
+        assertNull(window.getChildWindow("enabled"));
+        assertNull(window.getChildWindow("disabled"));
+        assertNotNull(window.getChildWindow("default"));
+    }
+
     private TreeMap<String, HstComponentConfiguration> getContainerItemConfigurations() {
         TreeMap<String, HstComponentConfiguration> children = new TreeMap<String, HstComponentConfiguration>();
         MockHstComponentConfiguration enabledChild = new MockHstComponentConfiguration("enabled") {
