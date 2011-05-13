@@ -300,8 +300,7 @@ public class AggregationValve extends AbstractValve {
             // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
             // TODO ////////////////////////////////////////////////////////////////////////////
             Mount mount = request.getRequestContext().getResolvedMount().getMount();
-            HttpSession session = request.getSession(false);
-            if(session != null && "true".equals(session.getAttribute(ContainerConstants.COMPOSERMODE_ATTR_NAME)) && mount.isOfType(ContainerConstants.COMPOSERMODE)) {
+            if(mount.isOfType(ContainerConstants.COMPOSERMODE)) {
              // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
                 if(window == rootWindow) {
                     
