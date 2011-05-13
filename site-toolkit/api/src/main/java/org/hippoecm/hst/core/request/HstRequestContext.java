@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.request;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -278,5 +279,14 @@ public interface HstRequestContext {
      * @throws IllegalArgumentException when <code>alias</code> or <code>type</code> is <code>null</code>
      */
     Mount getMount(String alias, String type);
-    
+
+    /**
+     * <p>
+     * the conditions that will trigger a component to be added to the component window hierarchy.
+     * </p>
+     *
+     * @return The (immutable) active set of conditions, or null if conditional rendering is not used
+     */
+    Set<String> getComponentFilterTags();
+
 }

@@ -94,7 +94,7 @@
   
   <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SecurityValve">
   </bean>
-  
+
   <bean id="subjectBasedSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SubjectBasedSessionValve">
     <property name="subjectBasedRepository" ref="javax.jcr.Repository.subjectBased" />
   </bean>
@@ -124,6 +124,8 @@
   <!-- Pipelines -->
   
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
+    <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
+          value="config.getBoolean('pipelines.default.enabled',true)" />
     <property name="defaultPipelineName" value="DefaultSitePipeline" />
     <property name="pipelines">
       <map>

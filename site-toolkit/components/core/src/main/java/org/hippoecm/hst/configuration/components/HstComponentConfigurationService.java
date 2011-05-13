@@ -73,7 +73,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
      */
     private String dummyContent;
-    
+
+    /**
+     * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have conditions to trigger their rendering.
+     */
+    private String[] conditions;
+
     /**
      * the type of this {@link HstComponentConfiguration}. 
      */
@@ -121,8 +126,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
           type = Type.CONTAINER_COMPONENT;
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
-          type = Type.CONTAINER_ITEM_COMPONENT;
-          dummyContent = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
+            type = Type.CONTAINER_ITEM_COMPONENT;
+            dummyContent = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
+            conditions = node.getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAGS);
         } else {
             throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
         }
@@ -305,7 +311,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getDummyContent(){
         return dummyContent;
     }
-    
+
+    @Override
+    public String[] getComponentFilterTags() {
+        return conditions;
+    }
+
     public Map<String, HstComponentConfiguration> getChildren() {
         return Collections.unmodifiableMap(this.componentConfigurations);
     }
@@ -354,6 +365,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.dummyContent = child.dummyContent;
+        if (child.conditions != null) {
+            copy.conditions = child.conditions.clone();
+        }
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);

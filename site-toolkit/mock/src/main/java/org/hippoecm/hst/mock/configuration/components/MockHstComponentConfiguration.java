@@ -166,7 +166,12 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     public Type getComponentType() {
         return componentType;
     }
-    
+
+    @Override
+    public String[] getComponentFilterTags() {
+        return new String[0];
+    }
+
     public void setComponentType(Type componentType) {
         this.componentType = componentType;
     }

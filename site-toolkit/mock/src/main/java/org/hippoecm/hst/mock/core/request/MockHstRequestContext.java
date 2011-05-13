@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -74,6 +75,7 @@ public class MockHstRequestContext implements HstRequestContext {
     private String targetComponentPath;
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
+    private Set<String> componentFilterTags;
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -334,5 +336,15 @@ public class MockHstRequestContext implements HstRequestContext {
         String key = alias + '\uFFFF' + type;
         typeAndAliasMountMap.remove(key);
     }
-    
+
+    public void setComponentFilterTags(final Set<String> componentFilterTags) {
+        this.componentFilterTags = componentFilterTags;
+    }
+
+    public Set<String> getComponentFilterTags() {
+        if (componentFilterTags == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(componentFilterTags);
+    }
 }

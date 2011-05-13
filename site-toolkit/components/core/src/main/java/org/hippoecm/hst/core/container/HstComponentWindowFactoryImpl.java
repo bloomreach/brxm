@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -25,17 +26,17 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * HstComponentWindowFactoryImpl
- * 
+ *
  * @version $Id$
  */
 public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory {
-    
+
     protected String referenceNameSeparator = "_";
-    
+
     public void setReferenceNameSeparator(String referenceNameSeparator) {
         this.referenceNameSeparator = referenceNameSeparator;
     }
-    
+
     public String getReferenceNameSeparator() {
         return this.referenceNameSeparator;
     }
@@ -43,9 +44,9 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
     public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory) throws HstComponentException {
         return create(requestContainerConfig, requestContext, compConfig, compFactory, null);
     }
-    
+
     public HstComponentWindow create(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HstComponentConfiguration compConfig, HstComponentFactory compFactory, HstComponentWindow parentWindow) throws HstComponentException {
-        
+
         String referenceName = compConfig.getReferenceName();
         StringBuilder referenceNamespaceBuilder = new StringBuilder();
 
@@ -55,7 +56,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         } else {
             parentReferenceNamespace = parentWindow.getReferenceNamespace();
         }
-            
+
         if (parentReferenceNamespace == null || "".equals(parentReferenceNamespace)) {
             referenceNamespaceBuilder.append(referenceName);
         } else {
@@ -63,10 +64,10 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         }
 
         String referenceNamespace = referenceNamespaceBuilder.toString();
-        
+
         HstComponent component = null;
         HstComponentException componentFactoryException = null;
-        
+
         try {
             component = compFactory.getComponentInstance(requestContainerConfig, compConfig);
         } catch (HstComponentFatalException e) {
@@ -76,28 +77,53 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         } catch (Exception e) {
             componentFactoryException = new HstComponentException(e);
         }
-        
-        HstComponentWindowImpl window = 
+
+        HstComponentWindowImpl window =
             new HstComponentWindowImpl(
                 compConfig,
-                component, 
-                parentWindow, 
+                component,
+                parentWindow,
                 referenceNamespace);
-        
+
         if (componentFactoryException != null) {
             window.addComponentExcpetion(componentFactoryException);
         }
-        
+
         Map<String, HstComponentConfiguration> childCompConfigMap = compConfig.getChildren();
-        
+
         if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
+            Set<String> filter = requestContext.getComponentFilterTags();
+            boolean doFiltering = false;
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
+                String[] conditions = childCompConfig.getComponentFilterTags();
+                if (conditions != null) {
+                    doFiltering = true;
+                    break;
+                }
+            }
+            for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
+                HstComponentConfiguration childCompConfig = entry.getValue();
+                if (doFiltering) {
+                    String[] conditions = childCompConfig.getComponentFilterTags();
+                    boolean matches = false;
+                    if (conditions != null && filter != null) {
+                        for (String condition : conditions) {
+                            if (filter.contains(condition)) {
+                                matches = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!matches) {
+                        continue;
+                    }
+                }
                 HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
                 window.addChildWindow(childCompWindow);
             }
         }
-        
+
         return window;
     }
 

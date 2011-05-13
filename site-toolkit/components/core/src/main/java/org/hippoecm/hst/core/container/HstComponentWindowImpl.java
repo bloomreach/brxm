@@ -29,7 +29,6 @@ import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstResponseState;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +42,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected final static Logger log = LoggerFactory.getLogger(HstComponentWindowImpl.class);
     
     protected HstComponentConfiguration hstComponentConfiguration;
-    protected ComponentConfiguration componentConfiguration;
     protected String name;
-    protected String referenceName;
     protected String referenceNamespace;
     protected HstComponent component;
     protected String renderPath;

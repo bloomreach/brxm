@@ -80,7 +80,7 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
  * 
  */
 public interface HstComponentConfiguration extends HstComponentInfo {
-    
+
     /**
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
@@ -158,7 +158,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     
     /**
      * Returns the map of all parameters. Also see {@link #getParameter(String)}.
-     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid
      * client code changing configuration
      * 
      * Parameters are inherited from ancestor configurations. Parameters that are configured in an ancestor override parameters
@@ -213,5 +213,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the {@link Type} of this component
      */
     Type getComponentType();
-    
+
+    /**
+     * @return the tags of this component.  See {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags} for details.
+     */
+    String[] getComponentFilterTags();
 }

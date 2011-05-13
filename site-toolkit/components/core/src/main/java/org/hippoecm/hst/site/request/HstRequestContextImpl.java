@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -42,8 +43,8 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.slf4j.Logger;
@@ -80,6 +81,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Locale preferredLocale;
     protected List<Locale> locales;
     protected String pathSuffix;
+    protected Set<String> conditions;
     
     private Map<String, Object> unmodifiableAttributes;
     
@@ -343,11 +345,23 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setPathSuffix(String pathSuffix) {
         this.pathSuffix = pathSuffix;
     }
-    
+
     public String getPathSuffix() {
         return pathSuffix;
     }
 
+    @Override
+    public void setComponentFilterTags(final Set<String> conditions) {
+        this.conditions = conditions;
+    }
+
+    @Override
+    public Set<String> getComponentFilterTags() {
+        if (conditions == null) {
+            return null;
+        }
+        return Collections.unmodifiableSet(conditions);
+    }
     
     public Mount getMount(String alias) {
         if(alias == null) {
@@ -389,7 +403,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         return mount;
     }
-    
+
     private Mount lookupMount(String alias) {
         Mount currentMount = getResolvedMount().getMount();
         String hostGroupName = currentMount.getVirtualHost().getHostGroupName();

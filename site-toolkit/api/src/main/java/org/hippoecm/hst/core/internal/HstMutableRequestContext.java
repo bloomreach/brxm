@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.internal;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.jcr.Session;
 import javax.security.auth.Subject;
@@ -75,7 +76,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
     
     /**
      * Sets the preferred locale associated with this request.
-     * @param The preferred locale associated with this request.
+     * @param locale The preferred locale associated with this request.
      */
     public void setPreferredLocale(Locale locale);
     
@@ -90,5 +91,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @param pathSuffix
      */
     public void setPathSuffix(String pathSuffix);
-    
+
+    /**
+     * set the conditions that will trigger a component to be added to the component window hierarchy.
+     */
+    void setComponentFilterTags(Set<String> conditions);
+
 }

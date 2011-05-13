@@ -61,6 +61,8 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
     public final static String COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME =  "hst:page_errorhandlerclassname";
     public final static String COMPONENT_PROPERTY_DUMMY_CONTENT = "hst:dummycontent";
+    public final static String COMPONENT_PROPERTY_COMPONENT_FILTER_TAGS = "hst:componentfiltertags";
+
 
     public final static String TEMPLATE_PROPERTY_RENDERPATH =  "hst:renderpath";
     public final static String TEMPLATE_PROPERTY_IS_NAMED =  "hst:isnamed";
