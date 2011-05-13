@@ -277,6 +277,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     createMainWindow : function() {
+        // alert(Ext.getCmp('Iframe'));
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: 'Configuration',
             x:10, y: 35,
@@ -288,6 +289,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             constrainHeader: true,
             closeAction: 'hide',
             bodyStyle: 'background-color: #ffffff',
+            renderTo: Ext.query('.template-composer-perspective')[0],
+            constrain: true,
             items: [
                 {
                     region: 'north',
