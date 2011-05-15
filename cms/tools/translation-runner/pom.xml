@@ -19,8 +19,8 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>5</version>
+    <artifactId>hippo-cms-tools</artifactId>
+    <version>2.20.01-SNAPSHOT</version>
   </parent>
   
   <name>Translation runner</name>
@@ -28,12 +28,6 @@
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>translation-runner</artifactId>
   <packaging>jar</packaging>
-  <version>2.20.00</version>
-
-  <properties>
-    <repository.api.version>2.19.03</repository.api.version>
-    <org.slf4j.version>1.5.8</org.slf4j.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -72,7 +66,7 @@
     <dependency>
       <artifactId>hippo-repository-api</artifactId>
       <groupId>org.onehippo.cms7</groupId>
-      <version>${repository.api.version}</version>
+      <version>${hippo.repository.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.jdo</groupId>
@@ -88,7 +82,7 @@
     <dependency>
       <artifactId>hippo-repository-connector</artifactId>
       <groupId>org.onehippo.cms7</groupId>
-      <version>${repository.api.version}</version>
+      <version>${hippo.repository.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.jackrabbit</groupId>
