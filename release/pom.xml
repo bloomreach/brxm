@@ -38,12 +38,12 @@
 
   <properties>
     <hippo.repository.version>2.20.01-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.20.01-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>2.21.00-SNAPSHOT</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.20.00</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.20.00</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.07.00</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>1.01.00-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.packages.version>2.20.01-SNAPSHOT</hippo.packages.version>
+    <hippo.packages.version>2.21.00-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.23.00-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
