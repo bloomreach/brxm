@@ -53,7 +53,7 @@
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
-      <version>${hippo.htmlcleaner.version}</version>
+      <version>${htmlcleaner.version}</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
