@@ -660,6 +660,8 @@ Hippo.App.DragDropOne = (function() {
             var miframePanel = Ext.getCmp('Iframe');
             var miframe = miframePanel.getFrame();
 
+            this.iFramePosition = miframePanel.getPosition();
+
             this.boxs = [];
             this.nodeOverRecord = null;
             var self = this;
@@ -704,8 +706,8 @@ Hippo.App.DragDropOne = (function() {
                 //While over a target node, return the default drop allowed class which
                 //places a "tick" icon into the drag proxy.
                 onNodeOver : function(target, dd, e, data) {
-                    var curX = dd.lastPageX + dd.deltaX;
-                    var curY = dd.lastPageY + dd.deltaY;
+                    var curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
+                    var curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
                     //TODO: implement dynamic fetch of toolbar height to adjust pageY
                     curY -= 27;
 
