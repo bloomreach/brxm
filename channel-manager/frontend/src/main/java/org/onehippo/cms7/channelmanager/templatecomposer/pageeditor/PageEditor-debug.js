@@ -142,13 +142,14 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
    refreshIframe : function() {
-	Ext.Msg.wait('Reloading page ...');
+	    Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
 
     onIframeDOMReady : function(frm) {
-        this.initializeIFrameHead(frm, this.iFrameCssHeadContributions, this.iFrameJsHeadContributions);
+        // clone arrays with concat()
+        this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
     },
 
     onIFrameHeadInitialized : function(frm) {
