@@ -8,6 +8,17 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/core/jquery-1.4.3.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/core/jquery-1.4.3.min.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/plugins/jquery.class.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/plugins/jquery.namespace.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/ui/custom/jquery.ui.sortable.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/ui/jquery-ui-1.8.5.min.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor-debug.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel-debug.js -text
@@ -21,7 +32,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/wheel.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe-debug.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
 /pom.xml eol=lf
 repository/pom.xml eol=lf

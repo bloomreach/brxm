@@ -1,11 +1,17 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
+import java.util.Arrays;
+
 import org.apache.wicket.Application;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.wicketstuff.js.ext.ExtBundle;
 import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
@@ -22,9 +28,14 @@ public class PageEditor extends ExtComponent {
     public PageEditor(String id) {
         super(id);
         // TODO refactor and cleanup js dependencies
+        //        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+        //
+        //        } else {
+        //
+        //        }
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor.css"));
 
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe.js"));
+        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
         add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
 
         add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
@@ -42,12 +53,6 @@ public class PageEditor extends ExtComponent {
         add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
         add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
 
-//        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-//
-//        } else {
-//
-//        }
-
     }
 
     @Override
@@ -60,4 +65,31 @@ public class PageEditor extends ExtComponent {
         return "Hippo.App.Main";
     }
 
+    @Override
+    protected void onRenderProperties(final JSONObject properties) throws JSONException {
+        super.onRenderProperties(properties);
+        // TODO refactor and cleanup js dependencies
+        //        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+        //
+        //        } else {
+        //
+        //        }
+        RequestCycle rc = RequestCycle.get();
+        properties.put("iFrameCssHeadContributions", Arrays.asList(
+            rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/PageEditor.css")).toString())
+        );
+        properties.put("iFrameJsHeadContributions", Arrays.asList(
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/core/jquery-1.4.3.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/ui/jquery-ui-1.8.5.min.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/ui/custom/jquery.ui.sortable.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/plugins/jquery.class.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/plugins/jquery.namespace.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
+            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
+        ));
+    }
 }

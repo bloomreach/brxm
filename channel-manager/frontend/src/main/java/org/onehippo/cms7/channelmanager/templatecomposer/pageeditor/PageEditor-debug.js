@@ -148,9 +148,73 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     onIframeDOMReady : function(frm) {
-        //send init call to iframe app
-        frm.execScript('Hippo.PageComposer.Main.init(' + this.debug + ')', true);
+        this.initializeIFrameHead(frm, this.iFrameCssHeadContributions, this.iFrameJsHeadContributions);
+    },
+
+    onIFrameHeadInitialized : function(frm) {
+        // send init call to iframe app
+        frm.execScript('Hippo.PageComposer.Main.init(' + Hippo.App.Main.debug + ')', true);
         Ext.Msg.hide();
+    },
+
+    initializeIFrameHead : function(frm, cssSources, javascriptSources) {
+        var pageEditor = this;
+        var requestContents = function(queue, processResponseCallback, queueEmptyCallback) {
+            if (queue.length == 0) {
+                queueEmptyCallback();
+                return;
+            }
+            var src = queue.shift();
+            Ext.Ajax.request({
+                url : src,
+                method : 'GET',
+                success : function(result, request) {
+                    processResponseCallback(src, result.responseText);
+                    requestContents(queue, processResponseCallback, queueEmptyCallback);
+                },
+                failure : function(result, request) {
+                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
+                }
+            });
+        };
+
+        var processCssHeadContribution = function(src, responseText) {
+            var frmDocument = frm.getFrameDocument();
+            var headElements = frmDocument.getElementsByTagName("HEAD");
+            var head;
+            if (headElements.length == 0) {
+                head = frmDocument.createElement("HEAD");
+                frmDocument.appendChild(head);
+            } else {
+                head = headElements[0];
+            }
+
+            var styleElement = frmDocument.createElement("STYLE");
+            styleElement.setAttribute("type", "text/css");
+
+            if (null == styleElement.canHaveChildren || styleElement.canHaveChildren) {
+                var textNode = frmDocument.createTextNode(responseText);
+                styleElement.appendChild(textNode);
+            } else {
+                styleElement.text = responseText;
+            }
+            styleElement.setAttribute("title", src);
+
+            head.appendChild(styleElement);
+        };
+
+        var processJsHeadContribution = function(src, responseText) {
+            frm.writeScript(responseText, {type: "text/javascript", "title" : src});
+        };
+
+        requestContents(cssSources, processCssHeadContribution,
+            function() {
+                 requestContents(javascriptSources, processJsHeadContribution,
+                 function() {
+                     pageEditor.onIFrameHeadInitialized.call(pageEditor, frm);
+                 });
+            }
+        );
     },
 
     onIframeAppLoaded : function(data) {
@@ -277,7 +341,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     createMainWindow : function() {
-        // alert(Ext.getCmp('Iframe'));
+
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: 'Configuration',
             x:10, y: 35,
@@ -289,7 +353,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
             constrainHeader: true,
             closeAction: 'hide',
             bodyStyle: 'background-color: #ffffff',
-            renderTo: Ext.query('.template-composer-perspective')[0],
+            renderTo: Ext.getCmp('Iframe').getEl(),
             constrain: true,
             items: [
                 {
