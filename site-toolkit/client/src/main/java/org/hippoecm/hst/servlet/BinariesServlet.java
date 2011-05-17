@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletConfig;
@@ -245,6 +246,11 @@ public class BinariesServlet extends HttpServlet {
                 session = SessionUtils.getBinariesSession(request);
                 input = getRepositoryResourceStream(session, page);
             }
+            if(input == null) {
+                log.warn("Could not find binary for uri '{}'", request.getRequestURI());
+                page.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
             output = response.getOutputStream();
             IOUtils.copy(input, output);
             output.flush();
@@ -264,10 +270,21 @@ public class BinariesServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Return the input stream for a looked up binary for {@link BinaryPage#getResourcePath()} and return <code>null</code> if 
+     * there is not found a binary
+     * @param session
+     * @param page
+     * @return
+     * @throws RepositoryException
+     */
     protected InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
         Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
                 allResourceContainers);
-        return resourceNode.getProperty(binaryDataPropName).getStream();
+        if(resourceNode == null) {
+            return null;
+        }
+        return resourceNode.getProperty(binaryDataPropName).getBinary().getStream();
     }
 
     protected BinaryPage getPageFromCacheOrLoadPage(HttpServletRequest request) {
