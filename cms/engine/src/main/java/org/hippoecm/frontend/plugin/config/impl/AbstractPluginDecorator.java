@@ -229,10 +229,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof AbstractPluginDecorator) {
-            return ((AbstractPluginDecorator) o).upstream.equals(upstream);
-        }
-        return false;
+        return o instanceof AbstractPluginDecorator && ((AbstractPluginDecorator) o).upstream.equals(upstream);
     }
 
     @Override
@@ -278,10 +275,18 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     @Override
     public double getDouble(String key) throws StringValueConversionException {
         Object value = get(key);
+        if (value == null) {
+            throw new StringValueConversionException("Key '" + key + "' not found");
+        }
         if (value instanceof Double) {
             return (Double) value;
         }
-        return super.getDouble(key);
+        final String s = value.toString();
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            throw new StringValueConversionException("Cannot convert '" + s + "' to double value", e);
+        }
     }
 
     @Override
@@ -290,7 +295,15 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
         if (value instanceof Double) {
             return (Double) value;
         }
-        return super.getDouble(key, defaultValue);
+        if (value == null) {
+            return defaultValue;
+        }
+        final String s = value.toString();
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException e) {
+            throw new StringValueConversionException("Cannot convert '" + s + "' to double value", e);
+        }
     }
 
     @Override
