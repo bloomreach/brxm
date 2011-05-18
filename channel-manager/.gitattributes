@@ -9,12 +9,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/core/jquery-1.4.3.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/core/jquery-1.4.3.min.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/plugins/jquery.class.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/plugins/jquery.namespace.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/ui/custom/jquery.ui.sortable.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/jquery/ui/jquery-ui-1.8.5.min.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js -text

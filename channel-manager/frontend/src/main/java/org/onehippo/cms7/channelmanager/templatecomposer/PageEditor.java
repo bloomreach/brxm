@@ -17,6 +17,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtBundle;
 import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -48,32 +49,35 @@ public class PageEditor extends ExtComponent {
         this.toolkitIdentifier = config.getString("toolkitIdentifier", "");
         this.siteIdentifier = config.getString("siteIdentifier", "");
 
-        // TODO refactor and cleanup js dependencies
-        //        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-        //
-        //        } else {
-        //
-        //        }
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor.css"));
-
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
-
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
-
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/baseapp/BaseApp.js"));
-
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/basegrid/BaseGrid.js"));
-
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.js"));
-
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
 
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/globals-debug.js"));
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PropertiesPanel-debug.js"));
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
-        add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
+        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/baseapp/BaseApp.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/basegrid/BaseGrid.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.js"));
 
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/globals-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PropertiesPanel-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
+         } else {
+            // TODO minification
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/baseapp/BaseApp.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/basegrid/BaseGrid.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.js"));
+
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/globals-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PropertiesPanel-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
+        }
     }
 
     @Override
@@ -89,28 +93,41 @@ public class PageEditor extends ExtComponent {
     @Override
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
-        // TODO refactor and cleanup js dependencies
-        //        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-        //
-        //        } else {
-        //
-        //        }
         RequestCycle rc = RequestCycle.get();
         properties.put("iFrameCssHeadContributions", Arrays.asList(
             rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/PageEditor.css")).toString())
         );
-        properties.put("iFrameJsHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/core/jquery-1.4.3.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/ui/jquery-ui-1.8.5.min.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/ui/custom/jquery.ui.sortable.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/plugins/jquery.class.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/jquery/plugins/jquery.namespace.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
-            rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
-        ));
+        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+            properties.put("iFrameJsHeadContributions", Arrays.asList(
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
+
+                rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
+            ));
+        } else {
+            properties.put("iFrameJsHeadContributions", Arrays.asList(
+            rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE_MIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_MIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
+
+                // TODO minification
+                rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
+                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
+            ));
+        }
     }
 }
