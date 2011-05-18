@@ -87,6 +87,7 @@
     <module>dependencies</module>
     <module>tools</module>
     <module>sso</module>
+    <module>jquery</module>
   </modules>
 
   <properties>
