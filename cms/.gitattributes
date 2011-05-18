@@ -2287,6 +2287,7 @@ xinha-integration/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 xinha-integration/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
 xinha-integration/src/test/resources/xinhatest.cnd -text
 xinha-resources/pom.xml svneol=native#text/plain
+xinha-resources/src/main/patches/bugfix/CMS7-5277.patch -text
 xinha-resources/src/main/patches/enhancement/HREPTWO-4261.patch -text
 xinha-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 xinha-resources/src/site/apt/index.apt -text
@@ -2308,6 +2309,7 @@ xinha-resources/webResources/xinha/plugins/CreateExternalLink/lang/nl.js svneol=
 xinha-resources/webResources/xinha/plugins/CreateLink/CreateLink.js svneol=native#text/plain
 xinha-resources/webResources/xinha/plugins/CreateLink/lang/nl.js svneol=native#text/plain
 xinha-resources/webResources/xinha/plugins/FullscreenCompatible/FullscreenCompatible.js svneol=native#text/plain
+xinha-resources/webResources/xinha/plugins/InsertAnchor/InsertAnchor.js -text
 xinha-resources/webResources/xinha/plugins/InsertImage/InsertImage.js svneol=native#text/plain
 xinha-resources/webResources/xinha/skins/hippo-gray/back.png -text
 xinha-resources/webResources/xinha/skins/hippo-gray/button-background.png -text
