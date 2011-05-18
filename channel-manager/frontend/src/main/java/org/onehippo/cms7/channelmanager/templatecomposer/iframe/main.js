@@ -80,11 +80,7 @@ jQuery.noConflict();
 
             this.manager = manager;
 
-            if(HippoInitVars) {
-                sendMessage(HippoInitVars, 'onappload');
-            } else {
-                throw new Error("HippoInitVars not found, failed to signal parent that app has loaded.");
-            }
+            sendMessage({}, 'onappload');
         },
 
         isDebug: function() {

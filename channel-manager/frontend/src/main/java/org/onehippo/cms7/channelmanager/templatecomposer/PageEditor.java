@@ -2,6 +2,9 @@ package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.Arrays;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
@@ -9,6 +12,9 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wicketstuff.js.ext.ExtBundle;
@@ -25,8 +31,23 @@ public class PageEditor extends ExtComponent {
     @ExtProperty
     public String iframeUrl = "/site/manager";
 
-    public PageEditor(String id) {
+    @ExtProperty
+    public String rootComponentIdentifier;
+
+    @ExtProperty
+    public String toolkitIdentifier;
+
+    @ExtProperty
+    public String siteIdentifier;
+
+    public PageEditor(final String id, final IPluginConfig config) {
         super(id);
+
+        this.iframeUrl = config.getString("iframeUrl", "/site/manager");
+        this.rootComponentIdentifier = config.getString("rootComponentIdentifier", "");
+        this.toolkitIdentifier = config.getString("toolkitIdentifier", "");
+        this.siteIdentifier = config.getString("siteIdentifier", "");
+
         // TODO refactor and cleanup js dependencies
         //        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
         //

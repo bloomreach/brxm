@@ -42,7 +42,9 @@ public class ChannelManagerPerspective extends Perspective {
 
     public ChannelManagerPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(new PageEditor("page-editor"));
+
+        IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
+        add(new PageEditor("page-editor", pageEditorConfig));
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
