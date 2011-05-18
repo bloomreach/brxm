@@ -30,10 +30,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.dependencies.DependencyManager;
-import org.hippoecm.hst.pagecomposer.dependencies.HstLinkDependencyWriter;
-import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtApp;
-import org.hippoecm.hst.pagecomposer.dependencies.ext.ExtAppBootstrap;
 
 /**
  * InitializationValve
@@ -79,16 +75,6 @@ public class PageComposerBootstrapValve extends AbstractValve
             PrintWriter writer = context.getServletResponse().getWriter();
             writer.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
             writer.append("\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
-
-            boolean devMode = requestContext.getContainerConfiguration().isDevelopmentMode();
-            DependencyManager manager = new DependencyManager(devMode);
-            manager.add(new ExtApp());
-
-            String editableUrl = creator.create("/", parentMount).toUrlForm(requestContext, false);
-            manager.add(new ExtAppBootstrap(editableUrl));
-
-            manager.write(new HstLinkDependencyWriter(requestContext, writer));
-
             writer.append("</head>");
             writer.append("</html>");
             writer.flush();

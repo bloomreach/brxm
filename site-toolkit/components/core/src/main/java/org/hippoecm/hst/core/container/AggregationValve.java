@@ -302,27 +302,7 @@ public class AggregationValve extends AbstractValve {
             Mount mount = request.getRequestContext().getResolvedMount().getMount();
             if(mount.isOfType(ContainerConstants.COMPOSERMODE)) {
              // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
-                if(window == rootWindow) {
-                    
-                    HstComponentConfiguration rootCompConfig = ((HstComponentConfiguration)window.getComponentInfo());
-                  
-                    Element el = response.createElement("script");
-                    el.setAttribute("type", "text/javascript");
-                    el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "hippoPagecomposer");
-
-                    // TODO make below the UUID of the mount or HstSite
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("\nHippoInitVars = {\n");
-                    builder.append("  rootComponentIdentifier : '").append(rootCompConfig.getCanonicalIdentifier()).append("',\n");
-                    //TODO: implement real toolkitIdentifier
-                    builder.append("  toolkitIdentifier : '").append(mount.getHstSite().getCanonicalIdentifier()).append("',\n");
-                    builder.append("  siteIdentifier : '").append(mount.getHstSite().getCanonicalIdentifier()).append("'\n");
-                    builder.append("};\n");
-                    Text scriptValue = el.getOwnerDocument().createTextNode(builder.toString()); 
-                   // Text scriptValue = el.getOwnerDocument().createTextNode("rootComponentUuid = '"+uuid+"';");
-                    el.appendChild(scriptValue);
-                    response.addHeadElement(el, rootCompConfig.getCanonicalIdentifier());
-                } else {
+                if(window != rootWindow) {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
                     Element el = response.createElement("div");
                     el.setAttribute("class", "componentContentWrapper");
@@ -335,25 +315,6 @@ public class AggregationValve extends AbstractValve {
             // TODO ////////////////////////////////////////////////////////////////////////////
         }
 
-    }
-    
-    private void addCssHeadElement(HstRequest request, HstResponse response, Mount mount, String href) {
-        Element el = response.createElement("link");
-        el.setAttribute("rel", "stylesheet");
-        el.setAttribute("media", "screen");
-        HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
-        el.setAttribute("href", creator.create(href, mount, true).toUrlForm(request.getRequestContext(), false));
-        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "pagecomposerCss"); 
-        response.addHeadElement(el, href);
-    }
-
-    private void addScriptHeadElement(HstRequest request, HstResponse response, Mount mount, String src) {
-        Element el = response.createElement("script");
-        el.setAttribute("type", "text/javascript");
-        HstLinkCreator creator = request.getRequestContext().getHstLinkCreator();
-        el.setAttribute("src", creator.create(src, mount, true).toUrlForm(request.getRequestContext(), false));
-        el.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "hippoPagecomposer"); 
-        response.addHeadElement(el, src);
     }
     
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
