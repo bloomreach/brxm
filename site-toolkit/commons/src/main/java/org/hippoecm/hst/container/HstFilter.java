@@ -283,12 +283,8 @@ public class HstFilter implements Filter {
     			return;
     		}
 
-    		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-    		
-    		if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
-    		    requestContext.setFullyQualifiedURLs(true);
-    		}
-    		
+            HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
@@ -300,6 +296,10 @@ public class HstFilter implements Filter {
     		requestContext.setServletContext(filterConfig.getServletContext());
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
             
+            if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
+                requestContext.setFullyQualifiedURLs(true);
+            }
+
             if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
                 /*
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
@@ -533,7 +533,10 @@ public class HstFilter implements Filter {
                 return;
             }
     
-            final String url = link.toUrlForm(requestContext, false);
+            String url = link.toUrlForm(requestContext, false);
+            if (requestContext.isFullyQualifiedURLs()) {
+                url += "?" + ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS + "=true";
+            }
             if (logger.isInfoEnabled()) {
                 logger.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
             }
