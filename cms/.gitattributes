@@ -1335,6 +1335,7 @@ gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsS
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/images/dashboard-goto-button.png -text svneol=unset#image/png
 gotolink/src/main/resources/cms-dashshortcuts-gotolink.xml -text svneol=unset#text/plain
 gotolink/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
+jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
 layout/pom.xml -text svneol=unset#text/plain
 layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/dialog/ajax-loader.gif -text
 layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective.html -text

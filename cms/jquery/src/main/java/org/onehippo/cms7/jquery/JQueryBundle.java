@@ -9,6 +9,8 @@ public class JQueryBundle {
 
     public static String JQUERY_NAMESPACE_PLUGIN = "plugins/jquery.namespace.js";
 
+    public static String JQUERY_HEAD_PLUGIN = "plugins/jquery.head-1.0.3b.js";
+
     public static String JQUERY_UI = "ui/jquery-ui-1.8.5.js";
     public static String JQUERY_UI_MIN = "ui/jquery-ui-1.8.5.min.js";
 
