@@ -60,7 +60,7 @@ public class ResourceRewriteFilter implements Filter {
             String superPath = super.getPathTranslated();
             String stripped = stripPrefix(superPath);
             if (log.isDebugEnabled()) {
-                if (!stripped.equals(superPath)) {
+                if (stripped != null && !stripped.equals(superPath)) {
                     log.debug("TranslatedTranslated Path from " + superPath + " to " + stripped);
                 }
             }
@@ -72,7 +72,7 @@ public class ResourceRewriteFilter implements Filter {
             String superPath = super.getServletPath();
             String stripped = stripPrefix(superPath);
             if (log.isDebugEnabled()) {
-                if (!stripped.equals(superPath)) {
+                if (stripped != null && !stripped.equals(superPath)) {
                     log.debug("Translated ServletPath from " + superPath + " to " + stripped);
                 }
             }
