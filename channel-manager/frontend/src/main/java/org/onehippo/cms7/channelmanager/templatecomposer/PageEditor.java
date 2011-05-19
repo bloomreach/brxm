@@ -47,24 +47,10 @@ public class PageEditor extends ExtComponent {
     @ExtProperty
     public String iframeUrl = "/site/manager";
 
-    @ExtProperty
-    public String rootComponentIdentifier;
-
-    @ExtProperty
-    public String toolkitIdentifier;
-
-    @ExtProperty
-    public String siteIdentifier;
-
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
-
         this.iframeUrl = config.getString("iframeUrl", "/site/manager");
-        this.rootComponentIdentifier = config.getString("rootComponentIdentifier", "");
-        this.toolkitIdentifier = config.getString("toolkitIdentifier", "");
-        this.siteIdentifier = config.getString("siteIdentifier", "");
 
-        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor.css"));
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
 
         if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
@@ -117,10 +103,11 @@ public class PageEditor extends ExtComponent {
         if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_HEAD_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
 
                 rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
                 rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
@@ -131,11 +118,12 @@ public class PageEditor extends ExtComponent {
             ));
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE_MIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_MIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE_MIN)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_HEAD_PLUGIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_MIN)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
 
                 // TODO minification
                 rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),

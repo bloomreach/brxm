@@ -44,16 +44,6 @@
     <sv:property sv:name="iframeUrl" sv:type="String">
       <sv:value>/site/manager</sv:value>
     </sv:property>
-    <!-- replace the following uuids with the appropriate project specific ones -->
-    <sv:property sv:name="rootComponentIdentifier" sv:type="String">
-      <sv:value>90ba4315-2be6-4b22-a3da-94a4bb496c02</sv:value>
-    </sv:property>
-    <sv:property sv:name="siteIdentifier" sv:type="String">
-      <sv:value>f5a4382d-624b-40dd-8121-76bb1c929b68</sv:value>
-    </sv:property>
-    <sv:property sv:name="toolkitIdentifier" sv:type="String">
-      <sv:value>f5a4382d-624b-40dd-8121-76bb1c929b68</sv:value>
-    </sv:property>
   </sv:node>
 
 </sv:node>

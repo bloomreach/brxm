@@ -21,7 +21,6 @@
         <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
 
-
     <sv:node sv:name="channel-manager-perspective">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>

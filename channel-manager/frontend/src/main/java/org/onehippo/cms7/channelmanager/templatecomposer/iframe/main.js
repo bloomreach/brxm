@@ -80,7 +80,12 @@ jQuery.noConflict();
 
             this.manager = manager;
 
-            sendMessage({}, 'onappload');
+            $.head(document.location.href, function(headers) {
+                sendMessage({
+                    siteId: headers['HST-Site-Id'],
+                    pageId: headers['HST-Page-Id']},
+                'onappload');
+            });
         },
 
         isDebug: function() {
