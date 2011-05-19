@@ -282,10 +282,16 @@ public interface HstRequestContext {
     
     /**
      * <p>
-     * the conditions that will trigger a component to be added to the component window hierarchy.
+     * The tags that will be used to render container items.
+     * </p>
+     * <p>
+     * When tags are available, and there is a container item in a container that matches the tag,
+     * those container items will be rendered at the exclusion of the other items.
+     * If no tags are provided, or none matches any of the tags on the container items,
+     * only those container items that do not have a tag will be rendered.
      * </p>
      *
-     * @return The (immutable) active set of conditions, or null if conditional rendering is not used
+     * @return The (immutable) active set of filter tags, empty when conditional rendering is not used.
      */
     Set<String> getComponentFilterTags();
 

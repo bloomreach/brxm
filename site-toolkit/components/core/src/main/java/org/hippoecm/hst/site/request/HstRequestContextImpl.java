@@ -81,7 +81,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Locale preferredLocale;
     protected List<Locale> locales;
     protected String pathSuffix;
-    protected Set<String> conditions;
+    protected Set<String> componentFilterTags;
     protected boolean fullyQualifiedURLs;
     
     private Map<String, Object> unmodifiableAttributes;
@@ -352,16 +352,16 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public void setComponentFilterTags(final Set<String> conditions) {
-        this.conditions = conditions;
+    public void setComponentFilterTags(final Set<String> componentFilterTags) {
+        this.componentFilterTags = componentFilterTags;
     }
 
     @Override
     public Set<String> getComponentFilterTags() {
-        if (conditions == null) {
-            return null;
+        if (componentFilterTags == null) {
+            return Collections.emptySet();
         }
-        return Collections.unmodifiableSet(conditions);
+        return Collections.unmodifiableSet(componentFilterTags);
     }
     
     public Mount getMount(String alias) {

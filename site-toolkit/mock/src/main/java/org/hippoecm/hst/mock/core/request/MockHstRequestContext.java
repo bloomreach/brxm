@@ -344,7 +344,7 @@ public class MockHstRequestContext implements HstRequestContext {
 
     public Set<String> getComponentFilterTags() {
         if (componentFilterTags == null) {
-            return null;
+            return Collections.emptySet();
         }
         return Collections.unmodifiableSet(componentFilterTags);
     }

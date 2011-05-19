@@ -83,16 +83,16 @@ public class TestComponentWindowFactory {
         TreeMap<String, HstComponentConfiguration> children = new TreeMap<String, HstComponentConfiguration>();
         MockHstComponentConfiguration enabledChild = new MockHstComponentConfiguration("enabled") {
             @Override
-            public String[] getComponentFilterTags() {
-                return new String[]{"enabled"};
+            public String getComponentFilterTag() {
+                return "enabled";
             }
         };
         enabledChild.setName("enabled");
         children.put("enabled", enabledChild);
         MockHstComponentConfiguration disabledChild = new MockHstComponentConfiguration("disabled") {
             @Override
-            public String[] getComponentFilterTags() {
-                return new String[]{"disabled"};
+            public String getComponentFilterTag() {
+                return "disabled";
             }
         };
         disabledChild.setName("disabled");

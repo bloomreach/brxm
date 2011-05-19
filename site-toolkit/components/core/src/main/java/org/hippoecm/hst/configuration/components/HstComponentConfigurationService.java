@@ -75,9 +75,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String dummyContent;
 
     /**
-     * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have conditions to trigger their rendering.
+     * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have a filter tag to trigger their rendering.
      */
-    private String[] conditions;
+    private String componentFilterTag;
 
     /**
      * the type of this {@link HstComponentConfiguration}. 
@@ -128,11 +128,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
             dummyContent = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
-            conditions = node.getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAGS);
+            componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
         } else {
             throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
         }
-        
+
         this.parent = parent;
 
         if(parent == null) {
@@ -313,8 +313,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
-    public String[] getComponentFilterTags() {
-        return conditions;
+    public String getComponentFilterTag() {
+        return componentFilterTag;
     }
 
     public Map<String, HstComponentConfiguration> getChildren() {
@@ -365,9 +365,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.dummyContent = child.dummyContent;
-        if (child.conditions != null) {
-            copy.conditions = child.conditions.clone();
-        }
+        copy.componentFilterTag = child.componentFilterTag;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -447,6 +445,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.dummyContent == null) {
                     this.dummyContent = referencedComp.dummyContent;
+                }
+                if (this.componentFilterTag == null) {
+                    this.componentFilterTag = referencedComp.componentFilterTag;
                 }
                 
                 if (this.parameters == null) {
@@ -537,6 +538,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.dummyContent == null) {
             this.dummyContent = childToMerge.dummyContent;
+        }
+        if (this.componentFilterTag == null) {
+            this.componentFilterTag = childToMerge.componentFilterTag;
         }
         
         if (this.parameters == null) {

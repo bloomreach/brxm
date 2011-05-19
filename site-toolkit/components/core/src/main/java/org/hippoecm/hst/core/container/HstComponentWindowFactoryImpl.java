@@ -93,33 +93,24 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
 
         if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
             Set<String> filter = requestContext.getComponentFilterTags();
-            boolean doFiltering = false;
+            boolean matchTag = false;
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
-                String[] conditions = childCompConfig.getComponentFilterTags();
-                if (conditions != null) {
-                    doFiltering = true;
+                String tag = childCompConfig.getComponentFilterTag();
+                if (tag != null && filter.contains(tag)) {
+                    matchTag = true;
                     break;
                 }
             }
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
                 HstComponentConfiguration childCompConfig = entry.getValue();
-                if (doFiltering) {
-                    String[] conditions = childCompConfig.getComponentFilterTags();
-                    boolean matches = false;
-                    if (conditions != null && filter != null) {
-                        for (String condition : conditions) {
-                            if (filter.contains(condition)) {
-                                matches = true;
-                                break;
-                            }
-                        }
-                    } else if ((conditions == null || conditions.length == 0) && filter == null) {
-                        matches = true;
-                    }
-                    if (!matches) {
+                String tag = childCompConfig.getComponentFilterTag();
+                if (matchTag) {
+                    if (tag == null || !filter.contains(tag)) {
                         continue;
                     }
+                } else if (tag != null) {
+                    continue;
                 }
                 HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
                 window.addChildWindow(childCompWindow);

@@ -50,7 +50,7 @@
 - hst:referencecomponent(string)
 - hst:xtype (string) mandatory
 - hst:dummycontent (string)
-- hst:componentfiltertags (string) multiple
+- hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
 
 [hst:containercomponent] > hst:abstractcomponent orderable

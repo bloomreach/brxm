@@ -168,8 +168,8 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     }
 
     @Override
-    public String[] getComponentFilterTags() {
-        return new String[0];
+    public String getComponentFilterTag() {
+        return null;
     }
 
     public void setComponentType(Type componentType) {

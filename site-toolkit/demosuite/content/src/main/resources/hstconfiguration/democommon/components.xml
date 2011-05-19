@@ -176,7 +176,7 @@
                     <sv:property sv:name="hst:template" sv:type="String">
                         <sv:value>banner</sv:value>
                     </sv:property>
-                    <sv:property sv:name="hst:componentfiltertags" sv:type="String">
+                    <sv:property sv:name="hst:componentfiltertag" sv:type="String">
                         <sv:value>aap</sv:value>
                     </sv:property>
                 </sv:node>
@@ -193,7 +193,7 @@
                     <sv:property sv:name="hst:xtype" sv:type="String">
                       <sv:value>HST.Item</sv:value>
                     </sv:property>
-                    <sv:property sv:name="hst:componentfiltertags" sv:type="String">
+                    <sv:property sv:name="hst:componentfiltertag" sv:type="String">
                         <sv:value>noot</sv:value>
                     </sv:property>
                 </sv:node>

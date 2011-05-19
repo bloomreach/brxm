@@ -43,10 +43,13 @@ public class TagFilteringValve extends AbstractValve {
         HstMutableRequestContext requestContext = (HstMutableRequestContext) context.getRequestContext();
 
         Cookie abcookie = null;
-        for (Cookie cookie : servletRequest.getCookies()) {
-            if ("TagFiltering".equals(cookie.getName())) {
-                abcookie = cookie;
-                break;
+        Cookie[] cookies = servletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("TagFiltering".equals(cookie.getName())) {
+                    abcookie = cookie;
+                    break;
+                }
             }
         }
 
