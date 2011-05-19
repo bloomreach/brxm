@@ -149,12 +149,13 @@ public class HstLinkImpl implements HstLink {
         Mount requestMount = requestContext.getResolvedMount().getMount();
         /*
          * we create a url including http when the Mount is not null and one of the lines below is true
+         * 0) requestContext.isFullyQualifiedURLs() = true
          * 1) external = true
          * 2) The virtualhost from current request Mount is different than the Mount for this link
          * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
          */
         if(mount != null) {
-            if (external || requestMount.getVirtualHost() != mount.getVirtualHost()
+            if (requestContext.isFullyQualifiedURLs() || external || requestMount.getVirtualHost() != mount.getVirtualHost()
                          || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
                          || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
                String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();

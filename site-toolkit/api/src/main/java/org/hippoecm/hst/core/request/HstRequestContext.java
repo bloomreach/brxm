@@ -279,7 +279,7 @@ public interface HstRequestContext {
      * @throws IllegalArgumentException when <code>alias</code> or <code>type</code> is <code>null</code>
      */
     Mount getMount(String alias, String type);
-
+    
     /**
      * <p>
      * the conditions that will trigger a component to be added to the component window hierarchy.
@@ -289,4 +289,9 @@ public interface HstRequestContext {
      */
     Set<String> getComponentFilterTags();
 
+    /**
+     * @return <code>true</code> when all URLs must be fully qualified, ie, including scheme, domain and portnumber (if present)
+     */
+    public boolean isFullyQualifiedURLs();
+    
 }

@@ -92,9 +92,17 @@ public interface HstMutableRequestContext extends HstRequestContext {
      */
     public void setPathSuffix(String pathSuffix);
 
+
     /**
      * set the conditions that will trigger a component to be added to the component window hierarchy.
      */
     void setComponentFilterTags(Set<String> conditions);
-
+    
+    /**
+     * 
+     * @param fullyQualifiedURLs sets whether created URLs will be fully qualified
+     */
+    public void setFullyQualifiedURLs(boolean fullyQualifiedURLs);
+    
+    
 }

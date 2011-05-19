@@ -75,7 +75,8 @@ public class MockHstRequestContext implements HstRequestContext {
     private String targetComponentPath;
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
-    private Set<String> componentFilterTags;
+    private Set<String> componentFilterTags;   
+    protected boolean fullyQualifiedURLs;
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -347,4 +348,10 @@ public class MockHstRequestContext implements HstRequestContext {
         }
         return Collections.unmodifiableSet(componentFilterTags);
     }
+    
+    @Override
+    public boolean isFullyQualifiedURLs() {
+        return fullyQualifiedURLs;
+    }
+    
 }

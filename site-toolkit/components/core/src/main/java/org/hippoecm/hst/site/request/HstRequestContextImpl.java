@@ -82,6 +82,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected List<Locale> locales;
     protected String pathSuffix;
     protected Set<String> conditions;
+    protected boolean fullyQualifiedURLs;
     
     private Map<String, Object> unmodifiableAttributes;
     
@@ -473,5 +474,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             }
         }
         return counter;
+    }
+
+    @Override
+    public void setFullyQualifiedURLs(boolean fullyQualifiedURLs) {
+       this.fullyQualifiedURLs = fullyQualifiedURLs;
+    }
+
+    @Override
+    public boolean isFullyQualifiedURLs() {
+        return fullyQualifiedURLs;
     }
 }

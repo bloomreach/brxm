@@ -126,4 +126,7 @@ public interface ContainerConstants {
      */
     String COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME = "org.hippoecm.hst.composermode-template-view";
     
+
+    String HST_REQUEST_USE_FULLY_QUALIFIED_URLS = "org.hippoecm.hst.container.request.fqu";
+    
 }

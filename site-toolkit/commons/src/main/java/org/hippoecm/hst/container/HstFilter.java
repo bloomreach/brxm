@@ -284,6 +284,11 @@ public class HstFilter implements Filter {
     		}
 
     		HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    		
+    		if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
+    		    requestContext.setFullyQualifiedURLs(true);
+    		}
+    		
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
