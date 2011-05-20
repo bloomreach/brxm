@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
@@ -165,7 +166,7 @@ public class BrowserPlugin extends RenderPlugin {
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public AbstractDialog<Node> createDialog() {
-                    return new NodeDialog(model);
+                    return new NodeDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("add-node", new Model("Add node"), dialogFactory, getDialogService()));
@@ -174,7 +175,7 @@ public class BrowserPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "add-node.gif");
+                    return new ResourceReference(BrowserPlugin.class, "add-node.png");
                 }
             };
             iconAddNode.setOutputMarkupId(true);
@@ -184,7 +185,7 @@ public class BrowserPlugin extends RenderPlugin {
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public AbstractDialog<Node> createDialog() {
-                    return new DeleteDialog(model);
+                    return new DeleteDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("delete-node", new Model("Delete node"), dialogFactory, getDialogService()));
@@ -193,7 +194,7 @@ public class BrowserPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "delete-node.gif");
+                    return new ResourceReference(BrowserPlugin.class, "delete-node.png");
                 }
             };
             iconDeleteNode.setOutputMarkupId(true);
@@ -203,7 +204,7 @@ public class BrowserPlugin extends RenderPlugin {
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public AbstractDialog<Node> createDialog() {
-                    return new CopyDialog(model);
+                    return new CopyDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("copy-node", new Model("Copy node"), dialogFactory, getDialogService()));
@@ -212,7 +213,7 @@ public class BrowserPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "copy-node.gif");
+                    return new ResourceReference(BrowserPlugin.class, "copy-node.png");
                 }
             };
             iconCopyNode.setOutputMarkupId(true);
@@ -222,7 +223,7 @@ public class BrowserPlugin extends RenderPlugin {
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public AbstractDialog<Node> createDialog() {
-                    return new MoveDialog(model);
+                    return new MoveDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("move-node", new Model("Move node"), dialogFactory, getDialogService()));
@@ -231,7 +232,7 @@ public class BrowserPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "move-node.gif");
+                    return new ResourceReference(BrowserPlugin.class, "move-node.png");
                 }
             };
             iconMoveNode.setOutputMarkupId(true);
@@ -241,7 +242,7 @@ public class BrowserPlugin extends RenderPlugin {
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public AbstractDialog<Node> createDialog() {
-                    return new RenameDialog(model);
+                    return new RenameDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("rename-node", new Model("Rename node"), dialogFactory, getDialogService()));
@@ -250,7 +251,7 @@ public class BrowserPlugin extends RenderPlugin {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "rename-node.gif");
+                    return new ResourceReference(BrowserPlugin.class, "rename-node.png");
                 }
             };
             iconRenameNode.setOutputMarkupId(true);
@@ -260,7 +261,7 @@ public class BrowserPlugin extends RenderPlugin {
             IDialogFactory factory1 = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public IDialogService.Dialog createDialog() {
-                    return new ContentExportDialog(model);
+                    return new ContentExportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), factory1, getDialogService()));
@@ -278,7 +279,7 @@ public class BrowserPlugin extends RenderPlugin {
             IDialogFactory factory2 = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public IDialogService.Dialog createDialog() {
-                    return new ContentImportDialog(model);
+                    return new ContentImportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
             menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), factory2, getDialogService()));
@@ -294,5 +295,7 @@ public class BrowserPlugin extends RenderPlugin {
             menuContainer.add(iconXmlImport);
             return menuContainer;
         }
+
     }
+
 }

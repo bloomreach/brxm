@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.delete;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.model.IModelReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +39,11 @@ public class DeleteDialog extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
+    private final IModelReference modelReference;
 
-    public DeleteDialog(JcrNodeModel model) {
+    public DeleteDialog(IModelReference modelReference) {
+        this.modelReference = modelReference;
+        JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setModel(model);
 
         String path;
@@ -63,7 +67,7 @@ public class DeleteDialog extends AbstractDialog<Node> {
             nodeModel.getNode().remove();
 
             //set the parent model as current model
-            this.setDefaultModel(parentModel);
+            modelReference.setModel(parentModel);
         } catch (RepositoryException ex) {
             log.error("Error while deleting document", ex);
             error("Error while deleting document " + ex.getMessage());

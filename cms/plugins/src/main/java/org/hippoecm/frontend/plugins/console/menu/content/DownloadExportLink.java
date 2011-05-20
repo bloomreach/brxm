@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -46,16 +47,19 @@ public class DownloadExportLink extends Link {
 
     private static final Logger log = LoggerFactory.getLogger(DownloadExportLink.class);
 
+    private final IModelReference modelReference;
     private IModel skipBinaryModel;
 
-    public DownloadExportLink(String id, JcrNodeModel nodeModel, IModel skipBinaryModel) {
-        super(id, nodeModel);
+    public DownloadExportLink(String id, IModelReference modelReference, IModel skipBinaryModel) {
+        super(id, modelReference.getModel());
+        this.modelReference = modelReference;
         this.skipBinaryModel = skipBinaryModel;
     }
 
     @Override
     public void onClick() {
         JcrNodeModel model = (JcrNodeModel) getModel();
+        modelReference.setModel(model);
         JcrExportRequestTarget rsrt = new JcrExportRequestTarget(model.getNode());
         RequestCycle.get().setRequestTarget(rsrt);
     }

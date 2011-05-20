@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
@@ -46,9 +47,12 @@ public class MoveDialog extends LookupDialog {
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
+    private final IModelReference modelReference;
 
-    public MoveDialog(JcrNodeModel model) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null), model);
+    public MoveDialog(IModelReference modelReference) {
+        super(new JcrTreeNode(new JcrNodeModel("/"), null), (JcrNodeModel) modelReference.getModel());
+        this.modelReference = modelReference;
+        JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setSelectedNode(model);
 
         try {
@@ -126,7 +130,7 @@ public class MoveDialog extends LookupDialog {
 
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
-                setDefaultModel(new JcrNodeModel(targetNode));
+                modelReference.setModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());

@@ -39,6 +39,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,8 +54,11 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
 
     private boolean skipBinary = false;
+    private final IModelReference modelReference;
 
-    public ContentExportDialog(final JcrNodeModel nodeModel) {
+    public ContentExportDialog(final IModelReference modelReference) {
+        this.modelReference = modelReference;
+        final JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
         setModel(nodeModel);
 
         try {
@@ -71,8 +75,8 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
         add(skipBinaries);
 
-        DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
-        link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
+        DownloadExportLink link = new DownloadExportLink("download-link", modelReference, skipBinaryModel);
+        link.add(new Label("download-link-text", "Download (or right click and choose \"Save as...\")"));
         add(link);
         setFocus(link);
 
@@ -91,6 +95,8 @@ public class ContentExportDialog extends AbstractDialog<Node> {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
                     export = prettyPrint(out.toByteArray());
+                    JcrNodeModel newNodeModel = new JcrNodeModel(node);
+                    modelReference.setModel(newNodeModel);
                 } catch (Exception e) {
                     export = e.getMessage();
                 }

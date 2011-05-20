@@ -25,6 +25,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -40,9 +41,12 @@ public class RenameDialog extends AbstractDialog<Node> {
     static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
     private String name;
+    private final IModelReference modelReference;
 
-    public RenameDialog(JcrNodeModel model) {
-        setModel(model);
+    public RenameDialog(IModelReference modelReference) {
+        this.modelReference = modelReference;
+
+        JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         try {
             // get name of current node
             name = model.getNode().getName();
@@ -59,7 +63,7 @@ public class RenameDialog extends AbstractDialog<Node> {
     @Override
     protected void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
 
             if (nodeModel.getParentModel() != null) {
                 JcrNodeModel parentModel = nodeModel.getParentModel();
@@ -75,7 +79,7 @@ public class RenameDialog extends AbstractDialog<Node> {
                 jcrSession.move(oldPath, newPath);
 
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
-                setDefaultModel(newNodeModel);
+                modelReference.setModel(newNodeModel);
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());

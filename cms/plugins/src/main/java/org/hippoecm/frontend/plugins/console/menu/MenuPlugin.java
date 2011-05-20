@@ -28,6 +28,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
@@ -60,7 +61,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new NodeDialog((JcrNodeModel) getDefaultModel());
+                return new NodeDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("node-dialog", new Model<String>("Add Node"), dialogFactory, dialogService));
@@ -69,7 +70,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new DeleteDialog((JcrNodeModel) getDefaultModel());
+                return new DeleteDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("delete-dialog", new Model<String>("Delete Node"), dialogFactory, dialogService));
@@ -113,7 +114,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new RenameDialog((JcrNodeModel) getDefaultModel());
+                return new RenameDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("rename-dialog", new Model<String>("Rename Node"), dialogFactory, dialogService));
@@ -122,7 +123,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new MoveDialog((JcrNodeModel) getDefaultModel());
+                return new MoveDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("move-dialog", new Model<String>("Move Node"), dialogFactory, dialogService));
@@ -131,7 +132,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new CopyDialog((JcrNodeModel) getDefaultModel());
+                return new CopyDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("copy-dialog", new Model<String>("Copy Node"), dialogFactory, dialogService));

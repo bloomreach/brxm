@@ -24,6 +24,7 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class ContentExportPlugin extends RenderPlugin<Node> {
@@ -35,7 +36,7 @@ public class ContentExportPlugin extends RenderPlugin<Node> {
         IDialogFactory factory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
             public Dialog createDialog() {
-                return new ContentExportDialog((JcrNodeModel) getDefaultModel());
+                return new ContentExportDialog(new NodeModelReference(ContentExportPlugin.this, (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("link", new Model<String>("XML Export"), factory, getDialogService()));

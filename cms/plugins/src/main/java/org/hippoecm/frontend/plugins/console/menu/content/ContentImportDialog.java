@@ -43,6 +43,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
@@ -56,6 +57,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
+    private final IModelReference modelReference;
 
     public class LookupHashMap<K,V> extends HashMap<K,V> {
         private static final long serialVersionUID = 9065806784464553409L;
@@ -104,10 +106,10 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     }
 
-
-    public ContentImportDialog(JcrNodeModel nodeModel) {
+    public ContentImportDialog(IModelReference modelReference) {
+        this.modelReference = modelReference;
         InitMaps();
-        this.nodeModel = nodeModel;
+        this.nodeModel = (JcrNodeModel) modelReference.getModel();
         
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
@@ -155,9 +157,11 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             try {
                 InputStream contentStream = new BufferedInputStream(upload.getInputStream());
                 String absPath = nodeModel.getNode().getPath();
-                log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," +derefBehavior);
+                log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," + derefBehavior);
 
                 ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
+                // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
+                // modelReference.setModel(newNodeModel);
                 info("Import done.");
 
             } catch (PathNotFoundException ex) {

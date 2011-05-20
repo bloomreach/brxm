@@ -38,6 +38,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
@@ -55,8 +56,11 @@ public class NodeDialog extends AbstractDialog<Node> {
     private String type = "nt:unstructured";
 
     private final Map<String,String> choices = new HashMap<String, String>();
+    private final IModelReference modelReference;
 
-    public NodeDialog(final JcrNodeModel nodeModel) {
+    public NodeDialog(IModelReference modelReference) {
+        this.modelReference = modelReference;
+        JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
         setModel(nodeModel);
         
         // list defined child node names and types for automatic completion
@@ -157,7 +161,7 @@ public class NodeDialog extends AbstractDialog<Node> {
             JcrNodeModel nodeModel = (JcrNodeModel) getModel();
             Node node = nodeModel.getNode().addNode(getName(), getType());
 
-            this.setDefaultModel(new JcrNodeModel(node));
+            modelReference.setModel(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
             error(ex.toString());
         }
