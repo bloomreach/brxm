@@ -510,6 +510,12 @@ public class JcrObservationManager implements ObservationManager {
             for (Node node : new ArrayList<Node>(nodes)) {
                 if (node.isNew()) {
                     ItemVisitor visitor = new TraversingItemVisitor() {
+                        public void visit(Node node) throws RepositoryException {
+                            // do not traverse into virtual paths
+                            if(!(node instanceof HippoNode) || node.isSame(((HippoNode)node).getCanonicalNode())) {
+                                super.visit(node);
+                            }
+                        }
 
                         @Override
                         protected void entering(Property property, int level) throws RepositoryException {
