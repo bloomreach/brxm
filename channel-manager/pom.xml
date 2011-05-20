@@ -23,7 +23,6 @@
     <javax.jcr.version>2.0</javax.jcr.version>
     <commons-lang.version>2.1</commons-lang.version>
     <slf4j.version>1.5.8</slf4j.version>
-    <wicket-extjs.version>0.8-SNAPSHOT</wicket-extjs.version>
   </properties>
 
   <repositories>
@@ -43,11 +42,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.wicketstuff</groupId>
-        <artifactId>wicket-extjs</artifactId>
-        <version>${wicket-extjs.version}</version>
-      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
