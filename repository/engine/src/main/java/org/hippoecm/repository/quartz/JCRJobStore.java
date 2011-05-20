@@ -58,6 +58,8 @@ public class JCRJobStore implements JobStore {
     static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
     private boolean clustered = false;
+    private String clusteredInstanceName = null;
+    private String clusteredInstanceId = null;
 
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
         signaler.signalSchedulingChange(1000);
@@ -387,26 +389,31 @@ public class JCRJobStore implements JobStore {
                         "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
                                 + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
                 QueryResult result = query.execute();
-                Node triggerNode = null;
                 for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-                    triggerNode = iter.nextNode();
+                    Node triggerNode = iter.nextNode();
                     if(triggerNode != null && triggerNode.hasProperty("hipposched:nextFireTime")) {
-                        break;
+                        if (triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
+                            triggerNode.checkout();
+                        }
+                        Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
+                        Trigger trigger = (Trigger)o;
+                        trigger.setName(triggerNode.getUUID());
+                        trigger.setJobName(triggerNode.getParent().getParent().getUUID());
+                        triggerNode.getProperty("hipposched:nextFireTime").remove();
+                        /* If saving the trigger node fails, this is most likely due to another node in
+                         * a clustered installation picking up the trigger.  This will render the nextFireTime
+                         * to be already removed.  In such a case, it is proper to just proceed to the next
+                         * possible trigger in the query.
+                         */
+                        try {
+                            session.save();
+                            return (Trigger)o;
+                        } catch(RepositoryException ex) {
+                            session.refresh(false);
+                        }
                     } else {
                         triggerNode = null;
                     }
-                }
-                if(triggerNode != null) {
-                    if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
-                        triggerNode.checkout();
-                    }
-                    Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
-                    Trigger trigger = (Trigger) o;
-                    trigger.setName(triggerNode.getUUID());
-                    trigger.setJobName(triggerNode.getParent().getParent().getUUID());
-                    triggerNode.getProperty("hipposched:nextFireTime").remove();
-                    triggerNode.save();
-                    return (Trigger) o;
                 }
             }
         } catch(RepositoryException ex) {
@@ -518,12 +525,12 @@ public class JCRJobStore implements JobStore {
         }
     }
 
-    public void setInstanceId(String s) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setInstanceId(String id) {
+        clusteredInstanceId = id;
     }
 
-    public void setInstanceName(String s) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setInstanceName(String name) {
+        clusteredInstanceName = name;
     }
 
     private Session getSession(SchedulingContext ctxt) throws RepositoryException {
