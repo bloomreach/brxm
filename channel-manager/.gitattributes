@@ -9,6 +9,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text
@@ -16,8 +17,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditorBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/PluginsBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js -text
