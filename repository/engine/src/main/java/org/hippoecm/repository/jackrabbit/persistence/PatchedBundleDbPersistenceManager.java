@@ -207,34 +207,8 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
                             //throw new SQLException("bundle cannot be retrieved?");
                             log.error("invalid bundle '" + id + "', bundle cannot be retrieved or empty result?");
                         } else {
-                            Blob blob = bRs.getBlob(1);
-                            data = getBytes(blob);
-                            try {
-                                // parse and check bundle
-                                // checkBundle will log any problems itself
-                                
-                                NodePropBundle bundle = null;
-                                try {
-                                    InputStream din = new DataInputStream(new ByteArrayInputStream(data));
-                                    if (rs.getMetaData().getColumnType(1) == Types.BLOB) {
-                                        din = rs.getBlob(1).getBinaryStream();
-                                    } else {
-                                        din = rs.getBinaryStream(1);
-                                    }
-                                    try {
-                                        bundle = binding.readBundle(din, id);
-                                    } finally {
-                                        din.close();
-                                    }
-                                } catch (IOException e) {
-                                    SQLException exception = new SQLException("Failed to parse bundle " + id);
-                                    exception.initCause(e);
-                                    throw exception;
-                                }
-                                checkBundleConsistency(id, bundle, fix, modifications);
-                           } catch (Exception e) {
-                               log.error("Error in bundle " + id + ": " + e);
-                           }
+                            NodePropBundle bundle = readBundle(id, bRs, 1);
+                            checkBundleConsistency(id, bundle, fix, modifications);
                         }
                     } finally {
                         DbUtility.close(bRs);
@@ -512,4 +486,37 @@ public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManage
         destroyBundle(bundle);
         evictBundle(bundle.getId());
       }
+
+    /**
+     * Reads and parses a bundle from the BLOB in the given column of the
+     * current row of the given result set. This is a helper method to
+     * circumvent issues JCR-1039 and JCR-1474.
+     *
+     * @param id bundle identifier
+     * @param rs result set
+     * @param column BLOB column
+     * @return parsed bundle
+     * @throws SQLException if the bundle can not be read or parsed
+     */
+    private NodePropBundle readBundle(NodeId id, ResultSet rs, int column)
+            throws SQLException {
+        try {
+            InputStream in;
+            if (rs.getMetaData().getColumnType(column) == Types.BLOB) {
+                in = rs.getBlob(column).getBinaryStream();
+            } else {
+                in = rs.getBinaryStream(column);
+            }
+            try {
+                return binding.readBundle(in, id);
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            SQLException exception =
+                new SQLException("Failed to parse bundle " + id);
+            exception.initCause(e);
+            throw exception;
+        }
+    }
 }
