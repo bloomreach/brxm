@@ -41,6 +41,53 @@
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/*.html</exclude>
+            <exclude>**/*.css</exclude>
+            <exclude>**/*.properties</exclude>
+          </excludes>
+          <aggregations>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.4.3-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.5-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/custom/jquery.ui.sortable-min.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/jquery/jquery-all-min.js</output>
+            </aggregation>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.4.3.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.5.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/custom/jquery.ui.sortable.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/jquery/jquery-all.js</output>
+            </aggregation>
+          </aggregations>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>
