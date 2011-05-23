@@ -24,6 +24,10 @@
             warn : function() {
             },
             error : function() {
+            },
+            group : function() {
+            },
+            groupEnd : function() {
             }
         };
     }

@@ -106,6 +106,98 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/*.html</exclude>
+            <exclude>**/*.css</exclude>
+            <exclude>**/*.properties</exclude>
+          </excludes>
+          <aggregations>
+            <!-- iframe bundle -->
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main-min.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/iframe-all-min.js</output>
+            </aggregation>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/iframe-all.js</output>
+            </aggregation>
+
+            <!-- page editor bundle -->
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all.js</output>
+            </aggregation>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel-min.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all-min.js</output>
+            </aggregation>
+
+            <!-- plugins bundle -->
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all.js</output>
+            </aggregation>
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg-min.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all-min.js</output>
+            </aggregation>
+          </aggregations>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

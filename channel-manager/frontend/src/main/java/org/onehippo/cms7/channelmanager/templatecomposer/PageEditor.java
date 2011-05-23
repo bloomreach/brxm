@@ -17,23 +17,18 @@ package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.Arrays;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoSession;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
-import org.wicketstuff.js.ext.ExtBundle;
 import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
@@ -42,7 +37,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
 public class PageEditor extends ExtComponent {
 
     @ExtProperty
-    public String debug = "false";
+    public Boolean debug = false;
 
     @ExtProperty
     public String iframeUrl = "/site/manager";
@@ -54,38 +49,28 @@ public class PageEditor extends ExtComponent {
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
 
         if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-            this.debug = "true";
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/baseapp/BaseApp.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/basegrid/BaseGrid.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.js"));
+            this.debug = true;
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME));
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME_MSG));
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.BASE_GRID));
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.COLOR_FIELD));
 
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/globals-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PropertiesPanel-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "globals.js"));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PAGE_MODEL));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR));
          } else {
-            this.debug = "false";
-            // TODO minification
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/miframe-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/miframe/modules/mifmsg.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/floatingwindow/FloatingWindow.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/baseapp/BaseApp.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/basegrid/BaseGrid.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.js"));
-
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/globals-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PropertiesPanel-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageModel-debug.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "pageeditor/PageEditor-debug.js"));
+            this.debug = false;
+            // I'm a bit worried about switching to minified versions /JB/
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.ALL));
+            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ALL));
         }
     }
 
     @Override
     public void buildInstantiationJs(StringBuilder js, String extClass, JSONObject properties) {
-        js.append(String.format(" Ext.namespace(\"%s\"); window.%s = new %s(%s); \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
+        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.error(e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
     }
 
     @Override
@@ -109,29 +94,18 @@ public class PageEditor extends ExtComponent {
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
 
-                rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
+                rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MANAGER)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString()
             ));
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE_MIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_HEAD_PLUGIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_MIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
-
-                // TODO minification
-                rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/globals-debug.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/util.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/factory.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/manager.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/widgets.js")).toString(),
-                rc.urlFor(new ResourceReference(PageEditor.class, "iframe/main.js")).toString()
+                // I'm a bit worried about switching to minified versions /JB/
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()
             ));
         }
     }

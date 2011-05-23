@@ -16,12 +16,10 @@
 
 Ext.namespace('Hippo.App');
 
-Hippo.App.PageEditor = Ext.extend(Ext.App, {
+Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
-    loadMessage: 'Initializing Template Composer ... ',
-
-    init : function(config) {
-        if (this.debug) {
+    constructor : function(config) {
+        if (config.debug) {
             Ext.Ajax.timeout = 90000; // this changes the 30 second default to 90 seconds
         }
 
@@ -39,6 +37,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
         this.pageModelFacade = null;
 
         this.initUI(config);
+
+        Hippo.App.PageEditor.superclass.constructor.call(this, config);
     },
 
     //Keeps the session alive every minute
@@ -54,79 +54,113 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
     },
 
     initUI : function(config) {
-        this.items =  [
-            {
-                id: 'Iframe',
-                xtype: 'iframepanel',
-                // loadMask: true,
-                defaultSrc: this.iframeUrl,
-                collapsible: false,
-                disableMessaging: false,
-                tbar: [
-                    {
-                        text: 'Template Composer',
-                        iconCls: 'title-button',
-                        id: 'pageComposerButton',
-                        enableToggle: true,
-                        pressed: true,
-                        width: 150,
-                        listeners: {
-                            'click': {
-                                fn: this.toggleConfigWindow,
-                                scope: this
+        Ext.apply(config, { items :
+            [
+                {
+                    id: 'Iframe',
+                    xtype: 'iframepanel',
+                    // loadMask: true,
+                    defaultSrc: config.iframeUrl,
+                    collapsible: false,
+                    disableMessaging: false,
+                    tbar: [
+                        {
+                            text: 'Template Composer',
+                            iconCls: 'title-button',
+                            id: 'pageComposerButton',
+                            enableToggle: true,
+                            pressed: true,
+                            width: 150,
+                            listeners: {
+                                'click': {
+                                    fn: this.toggleConfigWindow,
+                                    scope: this
+                                }
                             }
                         }
-                    }
-                ],
-                listeners: {
-                    'message': {
-                        fn: this.handleFrameMessages,
-                        scope:this
-                    },
-                    'documentloaded' : {
-                        fn: function(frm) {
-                            //Only called after the first load. Every refresh within a running iframe result in
-                            //a domready event only
-                            if (Ext.isSafari || Ext.isChrome) {
-                                this.onIframeDOMReady(frm);
-                            }
+                    ],
+                    listeners: {
+                        'message': {
+                            fn: this.handleFrameMessages,
+                            scope:this
                         },
-                        scope: this
-                    },
-                    'domready' : {
-                        fn: function(frm) {
-                            //Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
-                            //in 'undefined' errors.
-                            if (Ext.isGecko || Ext.isIE) {
-                                this.onIframeDOMReady(frm);
-                            }
+                        'documentloaded' : {
+                            fn: function(frm) {
+                                //Only called after the first load. Every refresh within a running iframe result in
+                                //a domready event only
+                                if (Ext.isSafari || Ext.isChrome) {
+                                    this.onIframeDOMReady(frm);
+                                }
+                            },
+                            scope: this
                         },
-                        scope: this
-                    },
-                    'exception' : {
-                        fn: function(frm, e) {
-                            console.error(e); //ignore for now..
+                        'domready' : {
+                            fn: function(frm) {
+                                //Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
+                                //in 'undefined' errors.
+                                if (Ext.isGecko || Ext.isIE) {
+                                    this.onIframeDOMReady(frm);
+                                }
+                            },
+                            scope: this
                         },
-                        scope: this
-                    },
-                    'resize' : {
-                        fn: function() {
-                            this.sendFrameMessage({}, 'resize');
+                        'exception' : {
+                            fn: function(frm, e) {
+                                console.error(e); //ignore for now..
+                            },
+                            scope: this
                         },
-                        scope: this
+                        'resize' : {
+                            fn: function() {
+                                this.sendFrameMessage({}, 'resize');
+                            },
+                            scope: this
+                        }
                     }
                 }
-            }
-        ];
+            ]
+        });
 
+        if (this.debug) {
+            Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
+                if (!res.success && res.message) {
+                    console.error(res.message);
+                }
+                else {
+                    if (e) {
+                        if(typeof console.error == 'function') {
+                           console.error(e);
+                        } else {
+                            throw e;
+                        }
+                    } else if(res.status) {
+                        var json = Ext.util.JSON.decode(res.responseText);
+                        var msg = '<br/><b>StatusText:</b> ' + res.statusText + '<br/><b>StatusCode:</b> ' + res.status +
+                                '<br/><b>Detailed message:</b> ' + json.message;
+                        console.error(json.message);
+                    } else {
+                        console.group("Exception");
+                        console.dir(arguments);
+                        console.groupEnd();
+                    }
+                }
+            }, this);
+
+            Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
+                console.log('Data Proxy Action: ' + action + '<br/>Message: ' + res.message);
+            }, this);
+        }
+    },
+
+    initComponent : function() {
+        Hippo.App.PageEditor.superclass.initComponent.call(this);
         // recalculate the ExtJs layout when the YUI layout manager fires a resize event
-        this.on('afterrender', function(portal, layout) {
+        this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
         }, this, {single: true});
-
     },
 
     toggleConfigWindow: function () {
@@ -237,7 +271,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.App, {
 
         if (!this.mainWindow) {
             var win = this.mainWindow = this.createMainWindow();
-            this.beforeQuit(win.close, win);
             win.show();
         } else {
             if (toolkitId != this.ids.toolkit) {
