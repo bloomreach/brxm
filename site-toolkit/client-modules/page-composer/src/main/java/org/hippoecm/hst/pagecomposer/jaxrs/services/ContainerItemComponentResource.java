@@ -76,7 +76,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return null;
     }
 
-    @POST
+    @GET
     @Path("/parameters/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse,

@@ -71,6 +71,17 @@
         </bean>
       </list>
     </property>
+    <property name="inInterceptors">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.provider.JsonpInInterceptor" />
+      </list>
+    </property>
+    <property name="outInterceptors">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.provider.JsonpPreStreamInterceptor" />
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.provider.JsonpPostStreamInterceptor" />
+      </list>
+    </property>
   </bean>
 
   <!-- Pipelining -->

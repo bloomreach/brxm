@@ -86,7 +86,7 @@ public class SiteResource extends AbstractConfigResource {
      * @param params The POST parameters
      * @return response JSON with the status of the result
      */
-    @POST
+    @GET
     @Path("/create/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocument(@Context HttpServletRequest servletRequest,
@@ -120,7 +120,7 @@ public class SiteResource extends AbstractConfigResource {
      *                        docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
      */
-    @POST
+    @GET
     @Path("/documents/{docType}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDocumentsByType(@Context HttpServletRequest servletRequest,
@@ -185,8 +185,5 @@ public class SiteResource extends AbstractConfigResource {
         }
         return ok("You are logged out", null);
     }
-
-
-
 
 }

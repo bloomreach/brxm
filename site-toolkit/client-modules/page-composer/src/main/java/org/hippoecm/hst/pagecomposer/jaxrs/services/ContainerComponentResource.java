@@ -55,7 +55,7 @@ import com.google.gson.reflect.TypeToken;
 public class ContainerComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
-    @POST
+    @GET
     @Path("/create/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
         }
     }
 
-    @POST
+    @GET
     @Path("/update/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
