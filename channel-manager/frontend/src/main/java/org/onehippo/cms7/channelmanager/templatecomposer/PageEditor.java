@@ -55,6 +55,7 @@ public class PageEditor extends ExtComponent {
             add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));
             add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.BASE_GRID));
             add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.COLOR_FIELD));
+            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.JSONP));
 
             add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "globals.js"));
             add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));

@@ -44,12 +44,14 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     //Keeps the session alive every minute
     keepAlive : function() {
         if (this.ids.site != null) { //Ping only if the site id is not null
-            Ext.Ajax.request({
-                url: this.iframeUrl+'/_rp/' + this.ids.site + './keepalive',
-                success: function () {
+            var url = this.iframeUrl+'/_rp/' + this.ids.site + './keepalive';
+            var options = {
+                callback: function () {
                     //Do nothing
-                }
-            });
+                },
+                callbackKey: '_jsonp'
+            };
+            Ext.ux.JSONP.request(url, options);
         }
     },
 
@@ -657,13 +659,14 @@ Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
     constructor : function(config) {
         var baseUrlPath = config.baseUrlPath;
 
-        var proxy = new Ext.data.HttpProxy({
+        var proxy = new Ext.data.ScriptTagProxy({
             api: {
                 read     : baseUrlPath+'/_rp/' + config.toolkitId + './toolkit'
                 ,create  : '#'
                 ,update  : '#'
                 ,destroy : '#'
-            }
+            },
+            callbackParam: '_jsonp'
         });
 
         var cfg = {
@@ -684,11 +687,11 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
 
         var baseUrlPath = config.baseUrlPath;
 
-        var proxy = new Ext.data.HttpProxy({
+        var proxy = new Ext.data.ScriptTagProxy({
             api: {
                 read     : baseUrlPath+'/_rp/' + config.pageId + './pagemodel'
-                ,create  : {url: baseUrlPath+'/_rp/PageModelService/create', method: 'POST'}  // Server MUST return idProperty of new record
-                ,update  : {url: baseUrlPath+'/_rp/PageModelService/update', method: 'POST'}
+                ,create  : {url: baseUrlPath+'/_rp/PageModelService/create', method: 'GET'}  // Server MUST return idProperty of new record
+                ,update  : {url: baseUrlPath+'/_rp/PageModelService/update', method: 'GET'}
                 ,destroy : {url: baseUrlPath+'/_rp/PageModelService/destroy', method: 'GET'}
             },
 
@@ -704,11 +707,11 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './create/' + prototypeId , method: 'POST'});
+                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './create/' + prototypeId , method: 'GET'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
                             var id = rs.get('id');
-                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + id + './update' , method: 'POST'});
+                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + id + './update' , method: 'GET'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
                             var parentId = rs.get('parentId');
@@ -729,9 +732,8 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                         Ext.Msg.hide();
                     }
                 }
-
-
-            }
+            },
+            callbackParam: '_jsonp'
         });
         var cfg = {
             id: 'PageModelStore',

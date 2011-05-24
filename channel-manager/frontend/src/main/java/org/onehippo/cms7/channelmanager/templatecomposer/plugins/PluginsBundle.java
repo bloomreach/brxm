@@ -17,6 +17,9 @@ public class PluginsBundle {
     public static final String MI_FRAME_MSG = "miframe/modules/mifmsg.js";
     public static final String MI_FRAME_MSG_MIN = "miframe/modules/mifmsg-min.js";
 
+    public static final String JSONP = "jsonp/jsonp.js";
+    public static final String JSONP_MIN = "jsonp/jsonp-min.js";
+
     public static final String ALL = "plugins-all.js";
     public static final String ALL_MIN = "plugins-all-min.js";
 

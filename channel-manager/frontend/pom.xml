@@ -180,6 +180,7 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/jsonp/jsonp.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all.js</output>
             </aggregation>
@@ -191,6 +192,7 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/jsonp/jsonp-min.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all-min.js</output>
             </aggregation>
