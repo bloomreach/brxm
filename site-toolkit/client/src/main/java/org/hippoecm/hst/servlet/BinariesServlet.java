@@ -198,12 +198,13 @@ public class BinariesServlet extends HttpServlet {
         
         final BinaryPage page = getPageFromCacheOrLoadPage(request);
 
-        response.setStatus(page.getStatus());
         if (page.getStatus() != HttpServletResponse.SC_OK) {
             // nothing left to do
+            response.sendError(page.getStatus());
             return;
         }
         
+        response.setStatus(page.getStatus());
         boolean setExpiresNeeded = setExpires;
         
         if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes)) {
