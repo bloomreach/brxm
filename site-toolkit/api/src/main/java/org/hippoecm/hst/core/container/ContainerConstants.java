@@ -126,7 +126,28 @@ public interface ContainerConstants {
      */
     String COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME = "org.hippoecm.hst.composermode-template-view";
     
-
+    /**
+     * The parameter name used in the request to store whether or not all URLs that are created must be fully qualified
+     */
     String HST_REQUEST_USE_FULLY_QUALIFIED_URLS = "org.hippoecm.hst.container.request.fqu";
+
+    /**
+     * The parameter name used in the request to store whether or not a different host than the one in the request needs to be used
+     */
+    String RENDERING_HOST = "org.hippoecm.hst.container.render_host"; 
     
+    /**
+     * The parameter/attribute name used to store the real_host 
+     */
+    String REAL_HOST = "org.hippoecm.hst.container.real_host"; 
+ 
+    /**
+     * http session attribute to indicate a single sign on session is created through the cms
+     */
+    String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
+    
+    /**
+     * request attribute to indicate that cms single sign on is needed
+     */
+    String CMS_SSO_AUTHENTICATION_NEEDED = "org.hippoecm.hst.container.cms_sso_authentication_needed";
 }

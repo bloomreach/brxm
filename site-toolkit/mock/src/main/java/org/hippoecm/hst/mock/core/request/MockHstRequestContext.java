@@ -77,6 +77,7 @@ public class MockHstRequestContext implements HstRequestContext {
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
     private Set<String> componentFilterTags;   
     protected boolean fullyQualifiedURLs;
+    protected String renderHost;
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -352,6 +353,11 @@ public class MockHstRequestContext implements HstRequestContext {
     @Override
     public boolean isFullyQualifiedURLs() {
         return fullyQualifiedURLs;
+    }
+    
+    @Override
+    public String getRenderHost() {
+        return renderHost;
     }
     
 }

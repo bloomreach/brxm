@@ -300,4 +300,11 @@ public interface HstRequestContext {
      */
     public boolean isFullyQualifiedURLs();
     
+    /**
+     * 
+     * @return the render host to use for rendering the request  or <code>null</code> when no specific render host is defined. In this case,
+     * the host from the {@link HttpServletRequest#getHeader("X-forwarded-Host")} is used. 
+     */
+    public String getRenderHost();
+    
 }

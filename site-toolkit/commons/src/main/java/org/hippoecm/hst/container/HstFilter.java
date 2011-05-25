@@ -284,7 +284,8 @@ public class HstFilter implements Filter {
     		}
 
             HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-
+            
+                
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
@@ -300,6 +301,14 @@ public class HstFilter implements Filter {
                 requestContext.setFullyQualifiedURLs(true);
             }
 
+            if(request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
+                String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
+                requestContext.setRenderHost(xfh);
+                requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
+                // we indicate on the request that CMS single sign on authentication is needed to proceed rendering later on
+                request.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED, true);
+            }
+            
             if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
                 /*
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute

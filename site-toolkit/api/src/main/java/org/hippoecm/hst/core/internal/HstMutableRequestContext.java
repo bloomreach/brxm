@@ -99,10 +99,14 @@ public interface HstMutableRequestContext extends HstRequestContext {
     void setComponentFilterTags(Set<String> conditions);
     
     /**
-     * 
      * @param fullyQualifiedURLs sets whether created URLs will be fully qualified
      */
     public void setFullyQualifiedURLs(boolean fullyQualifiedURLs);
     
-    
+    /**
+     * Sets a specific render host. This can be used to render the request as if host <code>renderHost</code> was the actual 
+     * used host in the request. 
+     * @param renderHost the host to be used for rendering
+     */
+    public void setRenderHost(String renderHost);
 }

@@ -65,6 +65,24 @@ public class SecurityValve extends AbstractValve {
         HstRequestContext requestContext = context.getRequestContext();
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
         
+        // first check whether there is a cms single sign on required already
+        if(servletRequest.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED) != null && Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED))) {
+            log.debug("CMS single sign on is required.");
+            // there needs to be a http session containing a boolean attr with value true for ContainerConstants.CMS_SSO_AUTHENTICATED
+            HttpSession session = servletRequest.getSession(false);
+            if(session == null || session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED) == null || !Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+              log.debug("CMS single sign on is required but the request does not have an http session with CMS_SSO_AUTHENTICATED set to true. Return a throw new ContainerSecurityNotAuthorizedException");
+                try {
+                    servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                } catch (IOException e) {
+                    log.error("Exception during sending error", e);
+                    throw new ContainerException("Exception during sending error", e);
+                }
+            } 
+        }
+        
+        
         boolean accessAllowed = false;
         boolean authenticationRequired = false;
         ContainerSecurityException securityException = null;
@@ -176,6 +194,7 @@ public class SecurityValve extends AbstractValve {
     }
     
     protected void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
+        
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         Set<String> roles = null;

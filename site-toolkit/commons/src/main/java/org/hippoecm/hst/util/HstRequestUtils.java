@@ -176,16 +176,19 @@ public class HstRequestUtils {
     }
     
     /**
-     * Returns the original host informations requested by the client or the proxies 
-     * in the Host HTTP request headers.
      * @param request
+     * @param checkRenderHost
      * @return
      */
-    public static String [] getRequestHosts(HttpServletRequest request) {
-        String xfh = request.getHeader("X-Forwarded-Host");
-        
-        if (xfh != null) {
-            String [] hosts = xfh.split(",");
+    public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
+        String host;  
+        if(checkRenderHost && request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
+            host = request.getParameter(ContainerConstants.RENDERING_HOST);
+        } else {
+            host = request.getHeader("X-Forwarded-Host");
+        } 
+        if (host != null) {
+            String [] hosts = host.split(",");
             
             for (int i = 0; i < hosts.length; i++) {
                 hosts[i] = hosts[i].trim();
@@ -198,12 +201,33 @@ public class HstRequestUtils {
     }
     
     /**
+     * Returns the original host informations requested by the client or the proxies 
+     * in the Host HTTP request headers.
+     * @param request
+     * @return
+     */
+    public static String [] getRequestHosts(HttpServletRequest request) {
+        return getRequestHosts(request, true);
+    }
+    
+    /**
      * Returns the original host information requested by the client.
      * @param request
      * @return
      */
     public static String getFarthestRequestHost(HttpServletRequest request) {
         return getRequestHosts(request)[0];
+    }
+    
+    /**
+     * Returns the original host information requested by the client and do check optional 
+     * injected render host information only when <code>checkRenderHost</code> is <code>true</code>
+     * @param request
+     * @param checkRenderHost when <code>true</code> the optional render host is used when present. 
+     * @return the farthest request host or option render host when <code>checkRenderHost</code> is <code>true</code>
+     */ 
+    public static String getFarthestRequestHost(HttpServletRequest request, boolean checkRenderHost) {
+        return getRequestHosts(request, checkRenderHost)[0];
     }
     
     /**

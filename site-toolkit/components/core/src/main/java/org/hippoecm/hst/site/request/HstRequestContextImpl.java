@@ -83,6 +83,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected String pathSuffix;
     protected Set<String> componentFilterTags;
     protected boolean fullyQualifiedURLs;
+    protected String renderHost;
     
     private Map<String, Object> unmodifiableAttributes;
     
@@ -485,4 +486,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public boolean isFullyQualifiedURLs() {
         return fullyQualifiedURLs;
     }
+    
+    @Override
+    public void setRenderHost(String renderHost) {
+        this.renderHost = renderHost;
+    }
+    
+    @Override
+    public String getRenderHost() {
+        return renderHost;
+    }
+    
 }

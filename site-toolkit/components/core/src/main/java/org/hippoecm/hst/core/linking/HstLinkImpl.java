@@ -154,11 +154,19 @@ public class HstLinkImpl implements HstLink {
          * 2) The virtualhost from current request Mount is different than the Mount for this link
          * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
          */
+        String renderHost = requestContext.getRenderHost();
         if(mount != null) {
             if (requestContext.isFullyQualifiedURLs() || external || requestMount.getVirtualHost() != mount.getVirtualHost()
                          || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
                          || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
-               String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+                
+               String host;
+               if(requestContext.getRenderHost() != null && requestContext.getAttribute(ContainerConstants.REAL_HOST) != null) {
+                   host = mount.getScheme() + "://" + requestContext.getAttribute(ContainerConstants.REAL_HOST).toString();
+                   renderHost =  mount.getVirtualHost().getHostName();
+               } else {
+                   host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+               }
                if(mount.isPortInUrl()) {
                    int port = mount.getPort();
                    if(port == 0) {
@@ -176,7 +184,18 @@ public class HstLinkImpl implements HstLink {
                urlString =  host + urlString;
             }
         }
-       
+        
+        // TODO HSTTWO-1599 improve below as this does not work for navigationStateful links
+        if(renderHost != null) {
+            // we need to append the render host as a request parameter
+            if(urlString.contains("?")) {
+                urlString += "&";
+            } else {
+                urlString += "?";
+            }
+            urlString += ContainerConstants.RENDERING_HOST +"=" + renderHost;
+        }
+        
         return urlString;
     }
     

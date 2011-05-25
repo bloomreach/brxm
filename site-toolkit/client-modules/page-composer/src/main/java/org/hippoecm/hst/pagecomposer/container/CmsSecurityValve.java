@@ -118,7 +118,9 @@ public class CmsSecurityValve extends AbstractValve {
                     CredentialCipher credentialCipher = CredentialCipher.getInstance();
                     try {
                         Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
-                        servletRequest.getSession(true).setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, cred);
+                        session = servletRequest.getSession(true);
+                        session.setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, cred);
+                        session.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
                     } catch (SignatureException se) {
                         throw new ContainerException(se);
                     }
