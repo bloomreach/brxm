@@ -51,10 +51,9 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     },
 
     submitForm:function () {
-        // TODO check if we can switch back to POST
         this.getForm().submit({
             url: this.baseUrlPath + '/_rp/' + this.id + './parameters',
-            method: 'GET' ,
+            method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
                 Ext.Msg.wait('Refreshing page ...');
