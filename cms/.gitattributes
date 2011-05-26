@@ -1491,7 +1491,6 @@ search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searc
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox.js svneol=native#text/plain
 skin/pom.xml svneol=native#text/plain
 skin/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
-skin/src/main/webapp/images/Hippo[!!-~]ECM[!!-~]-[!!-~]Quick[!!-~]M7[!!-~]colorscheme[!!-~]edit_18.png -text
 skin/src/main/webapp/images/accordion-unit-back.png -text
 skin/src/main/webapp/images/accordion-unit-back2.png -text
 skin/src/main/webapp/images/addfolder.png -text svneol=unset#image/png
