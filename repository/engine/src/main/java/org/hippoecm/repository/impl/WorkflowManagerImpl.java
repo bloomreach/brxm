@@ -361,9 +361,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         objectPersist = true;
                         Object object = documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
-                        if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowNode, getSession(), item));
-                        }
+                    }
+                    if (workflow instanceof WorkflowImpl) {
+                        ((WorkflowImpl)workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowNode, getSession(), item));
                     }
                     try {
                         Class[] interfaces = workflow.getClass().getInterfaces();
@@ -895,9 +895,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         objectPersist = true;
                         Object object = manager.documentManager.getObject(uuid, classname, types);
                         workflow = (Workflow)object;
-                        if (workflow instanceof WorkflowImpl) {
-                            ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextNodeImpl(workflowNode, item.getSession(), item));
-                        }
+                    }
+                    if (workflow instanceof WorkflowImpl) {
+                        ((WorkflowImpl)workflow).setWorkflowContext(manager.new WorkflowContextNodeImpl(workflowNode, item.getSession(), item));
                     }
                 } catch (IllegalAccessException ex) {
                     log.debug("no access to standards plugin", ex);
