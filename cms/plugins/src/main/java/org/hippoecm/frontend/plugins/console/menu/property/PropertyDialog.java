@@ -102,8 +102,13 @@ public class PropertyDialog extends AbstractDialog<Node> {
         }
 
         // checkbox for property ismultiple
-        final CheckBox checkBox = new CheckBox("isMultiple", new PropertyModel<Boolean>(this, "isMultiple") {
+        final CheckBox checkBox = new CheckBox("isMultiple", new Model<Boolean>() {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setObject(Boolean multiple) {
+                PropertyDialog.this.isMultiple = multiple;
+            }
 
             @Override
             public Boolean getObject() {
@@ -115,10 +120,15 @@ public class PropertyDialog extends AbstractDialog<Node> {
                         return pd.isMultiple();
                     }
                 }
-                return super.getObject();
+                return PropertyDialog.this.isMultiple;
             }
         });
         checkBox.setOutputMarkupId(true);
+        checkBox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {}
+        });
         add(checkBox);
 
         // dropdown for property type
@@ -141,6 +151,11 @@ public class PropertyDialog extends AbstractDialog<Node> {
         });
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
+        ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {}
+        });
         add(ddChoice);
 
         // text field for property name
