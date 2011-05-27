@@ -117,6 +117,11 @@ public class NodeDialog extends AbstractDialog<Node> {
             }
         };
         typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css"));
+        typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {}
+        });
         add(typeField);
         
         final Model<String> nameModel = new Model<String>() {
