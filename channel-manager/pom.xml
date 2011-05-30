@@ -9,7 +9,7 @@
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>1.01.00</version>
+  <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -27,15 +27,14 @@
   <repositories>
     <repository>
       <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
+      <name>Hippo Maven 2</name>
+      <url>http://maven.onehippo.com/maven2/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-      <layout>default</layout>
     </repository>
   </repositories>
 
@@ -55,11 +54,10 @@
     <module>repository</module>
   </modules>
 
-
-
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-addon-channel-manager-1.01.00</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-addon-channel-manager-1.01.00</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-addon-channel-manager-1.01.00</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</url>
   </scm>
+
 </project>
