@@ -18,6 +18,7 @@ package org.hippoecm.hst.jaxrs.services;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -106,12 +107,29 @@ public abstract class AbstractResource {
     	this.objectConverter = objectConverter;
     }
     
+    /**
+     * @param requestContext
+     * @return
+     * @deprecated use {@link #getHstQueryManager(Session, HstRequestContext)} instead
+     */
+    @Deprecated 
     public HstQueryManager getHstQueryManager(HstRequestContext requestContext) {
         if (hstQueryManager == null) {
             ComponentManager compManager = HstServices.getComponentManager();
             if (compManager != null) {
                 HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
                 hstQueryManager = hstQueryManagerFactory.createQueryManager(getObjectConverter(requestContext));
+            }
+        }
+        return hstQueryManager;
+    }
+    
+    public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
+        if (hstQueryManager == null) {
+            ComponentManager compManager = HstServices.getComponentManager();
+            if (compManager != null) {
+                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
+                hstQueryManager = hstQueryManagerFactory.createQueryManager(session, getObjectConverter(requestContext));
             }
         }
         return hstQueryManager;

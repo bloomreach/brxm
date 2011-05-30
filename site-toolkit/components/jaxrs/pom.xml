@@ -53,11 +53,6 @@
       <scope>runtime</scope>
     </dependency>
     
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-jcr-commons</artifactId>
-    </dependency>
-    
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>

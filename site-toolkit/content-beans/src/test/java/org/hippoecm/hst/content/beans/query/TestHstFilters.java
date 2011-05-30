@@ -18,21 +18,26 @@ package org.hippoecm.hst.content.beans.query;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.jcr.Session;
+
+import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.junit.Test;
 
-public class TestHstFilters {
+public class TestHstFilters extends AbstractBeanTestCase {
 
     @Test
     public void testEmptyFilter() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
         assertEquals(null,mainFilter.getJcrExpression());
     }
     
     @Test
     public void testSimpleFilter() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addEqualTo("@a", "a");
         assertEquals("@a = 'a'",mainFilter.getJcrExpression());
         
@@ -46,11 +51,12 @@ public class TestHstFilters {
      */
     @Test
     public void testANDedChildFilters() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addContains(".", "contains");
-        Filter subAnd1a = new FilterImpl();
-        Filter subAnd1b = new FilterImpl();
-        Filter subAnd1c = new FilterImpl();
+        Filter subAnd1a = new FilterImpl(session);
+        Filter subAnd1b = new FilterImpl(session);
+        Filter subAnd1c = new FilterImpl(session);
         subAnd1a.addEqualTo("@a", "a");
         subAnd1b.addEqualTo("@b", "b");
         subAnd1c.addEqualTo("@c", "c");
@@ -67,10 +73,11 @@ public class TestHstFilters {
      */
     @Test
     public void testANDedChildFiltersWithEmptyParent() throws Exception {
-        Filter mainFilter = new FilterImpl();
-        Filter subAnd1a = new FilterImpl();
-        Filter subAnd1b = new FilterImpl();
-        Filter subAnd1c = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
+        Filter subAnd1a = new FilterImpl(session);
+        Filter subAnd1b = new FilterImpl(session);
+        Filter subAnd1c = new FilterImpl(session);
         subAnd1a.addEqualTo("@a", "a");
         subAnd1b.addEqualTo("@b", "b");
         subAnd1c.addEqualTo("@c", "c");
@@ -86,11 +93,12 @@ public class TestHstFilters {
      */
     @Test
     public void testORedChildFilters() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addContains(".", "contains");
-        Filter subOr1a = new FilterImpl();
-        Filter subOr1b = new FilterImpl();
-        Filter subOr1c = new FilterImpl();
+        Filter subOr1a = new FilterImpl(session);
+        Filter subOr1b = new FilterImpl(session);
+        Filter subOr1c = new FilterImpl(session);
         subOr1a.addEqualTo("@a", "a");
         subOr1b.addEqualTo("@b", "b");
         subOr1c.addEqualTo("@c", "c");
@@ -106,10 +114,11 @@ public class TestHstFilters {
     */
    @Test
    public void testORedChildFiltersWithEmptyParent() throws Exception {
-       Filter mainFilter = new FilterImpl();
-       Filter subOr1a = new FilterImpl();
-       Filter subOr1b = new FilterImpl();
-       Filter subOr1c = new FilterImpl();
+       Session session = getSession();
+       Filter mainFilter = new FilterImpl(session);
+       Filter subOr1a = new FilterImpl(session);
+       Filter subOr1b = new FilterImpl(session);
+       Filter subOr1c = new FilterImpl(session);
        subOr1a.addEqualTo("@a", "a");
        subOr1b.addEqualTo("@b", "b");
        subOr1c.addEqualTo("@c", "c");
@@ -125,10 +134,11 @@ public class TestHstFilters {
      */
     @Test
     public void testNested_AND_OR_ChildFilters() throws Exception {
-        Filter mainFilter = new FilterImpl();
-        Filter subFilter1 = new FilterImpl();
-        Filter sub1a = new FilterImpl();
-        Filter sub1b = new FilterImpl();
+        Session session = getSession();
+        Filter mainFilter = new FilterImpl(session);
+        Filter subFilter1 = new FilterImpl(session);
+        Filter sub1a = new FilterImpl(session);
+        Filter sub1b = new FilterImpl(session);
         sub1a.addEqualTo("@a", "a");
         sub1b.addEqualTo("@b", "b");
         subFilter1.addAndFilter(sub1a);

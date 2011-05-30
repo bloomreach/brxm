@@ -40,7 +40,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
         super.setUp();
         ObjectConverter objectConverter = getObjectConverter();
         Session session = this.getSession();
-        HstQueryManager queryMngr = new HstQueryManagerImpl(objectConverter, new HstCtxWhereClauseComputerImpl());
+        HstQueryManager queryMngr = new HstQueryManagerImpl(session,objectConverter, new HstCtxWhereClauseComputerImpl());
         Node scope = session.getRootNode();
         query = queryMngr.createQuery(scope);
     }
@@ -56,7 +56,8 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     
     @Test
     public void testEmptyFilter() throws Exception {
-        Filter emptyFilter = new FilterImpl();
+        Session session = this.getSession();
+        Filter emptyFilter = new FilterImpl(session);
         query.setFilter(emptyFilter);
         assertEquals("//*["+COMMON_QUERY_SCOPE_PART+"]", query.getQueryAsString(true).trim());
     }
@@ -65,7 +66,8 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     
     @Test
     public void testSimpleFilter() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = this.getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addEqualTo("@a", "a");
         assertEquals("@a = 'a'",mainFilter.getJcrExpression());
         mainFilter.addEqualTo("@b", "b");
@@ -80,11 +82,12 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFilters() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = this.getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addContains(".", "contains");
-        Filter subAnd1a = new FilterImpl();
-        Filter subAnd1b = new FilterImpl();
-        Filter subAnd1c = new FilterImpl();
+        Filter subAnd1a = new FilterImpl(session);
+        Filter subAnd1b = new FilterImpl(session);
+        Filter subAnd1c = new FilterImpl(session);
         subAnd1a.addEqualTo("@a", "a");
         subAnd1b.addEqualTo("@b", "b");
         subAnd1c.addEqualTo("@c", "c");
@@ -102,10 +105,11 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFiltersWithEmptyParent() throws Exception {
-        Filter mainFilter = new FilterImpl();
-        Filter subAnd1a = new FilterImpl();
-        Filter subAnd1b = new FilterImpl();
-        Filter subAnd1c = new FilterImpl();
+        Session session = this.getSession();
+        Filter mainFilter = new FilterImpl(session);
+        Filter subAnd1a = new FilterImpl(session);
+        Filter subAnd1b = new FilterImpl(session);
+        Filter subAnd1c = new FilterImpl(session);
         subAnd1a.addEqualTo("@a", "a");
         subAnd1b.addEqualTo("@b", "b");
         subAnd1c.addEqualTo("@c", "c");
@@ -122,11 +126,12 @@ public class TestHstQuery  extends AbstractBeanTestCase {
      */
     @Test
     public void testORedChildFilters() throws Exception {
-        Filter mainFilter = new FilterImpl();
+        Session session = this.getSession();
+        Filter mainFilter = new FilterImpl(session);
         mainFilter.addContains(".", "contains");
-        Filter subOr1a = new FilterImpl();
-        Filter subOr1b = new FilterImpl();
-        Filter subOr1c = new FilterImpl();
+        Filter subOr1a = new FilterImpl(session);
+        Filter subOr1b = new FilterImpl(session);
+        Filter subOr1c = new FilterImpl(session);
         subOr1a.addEqualTo("@a", "a");
         subOr1b.addEqualTo("@b", "b");
         subOr1c.addEqualTo("@c", "c");

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -56,15 +57,19 @@ public class HstQueryImpl implements HstQuery {
     private List<String> orderByList = new ArrayList<String>();
     private NodeTypeFilter nodeTypeFilter;
     private IsNodeTypeFilter isNodeTypeFilter;
+    private Session session;
 
     /**
      * 
+     * @param session the jcr session. This session can be <code>null</code> as long as HSTTWO-1600 is not done
      * @param hstCtxWhereClauseComputer
      * @param objectConverter
-     * @param scope
+     * @param scope the scope to search below. Scope can be <code>null</code>
      * @param nodeTypeFilter
+     * 
      */
-    public HstQueryImpl(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
+    public HstQueryImpl(Session session, HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
+        this.session = session;
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         if(scope != null) {
@@ -74,13 +79,14 @@ public class HstQueryImpl implements HstQuery {
     }
     
     /**
-     * 
+     * @param session the jcr session. This session can be <code>null</code> as long as HSTTWO-1600 is not done
      * @param hstCtxWhereClauseComputer
      * @param objectConverter
-     * @param scope
+     * @param scope the scope to search below. Scope can be <code>null</code>
      * @param isNodeTypeFilter
      */
-    public HstQueryImpl(HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
+    public HstQueryImpl(Session session, HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
+        this.session = session;
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         if(scope != null) {
@@ -99,9 +105,9 @@ public class HstQueryImpl implements HstQuery {
     }
     
 
-    
     public Filter createFilter() {
-        return new FilterImpl();
+        // note: the session can be null
+        return new FilterImpl(session);
     }
 
     public BaseFilter getFilter() {

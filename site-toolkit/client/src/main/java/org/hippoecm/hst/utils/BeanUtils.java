@@ -109,15 +109,21 @@ public class BeanUtils {
 
         String canonicalHandleUUID = bean.getCanonicalHandleUUID();
 
-        HstQuery query = component.getQueryManager().createQuery(scope, beanMappingClass, includeSubTypes);
-        Filter filter = query.createFilter();
-        for (String linkPath : linkPaths) {
-            Filter orFilter = query.createFilter();
-            orFilter.addEqualTo(linkPath, canonicalHandleUUID);
-            filter.addOrFilter(orFilter);
+        HstQuery query;
+        try {
+            query = component.getQueryManager(bean.getNode().getSession()).createQuery(scope, beanMappingClass, includeSubTypes);
+            Filter filter = query.createFilter();
+            for (String linkPath : linkPaths) {
+                Filter orFilter = query.createFilter();
+                orFilter.addEqualTo(linkPath, canonicalHandleUUID);
+                filter.addOrFilter(orFilter);
+            }
+            query.setFilter(filter);
+            return query;
+        } catch (RepositoryException e) {
+            throw new QueryException("RepositoryException",e);
         }
-        query.setFilter(filter);
-        return query;
+        
     }
 
     

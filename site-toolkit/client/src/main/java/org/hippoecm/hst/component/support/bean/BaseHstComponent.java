@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -95,7 +96,7 @@ public class BaseHstComponent extends GenericHstComponent {
     
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
-    protected HstQueryManager queryManager;
+    protected HstQueryManagerFactory hstQueryManagerFactory;
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
@@ -326,8 +327,49 @@ public class BaseHstComponent extends GenericHstComponent {
         
     }
     
+    /**
+     * @deprecated use {@link #getQueryManager(HstRequest)}, {@link #getQueryManager(HstRequestContext)} or #getQue instead
+     */
+    @Deprecated
     public HstQueryManager getQueryManager(){
-       return this.queryManager;
+        log.warn("This method getQueryManager() has been deprecated. Use getQueryManager(HstRequestContext) or getQueryManager(HstRequest) instead");
+       return hstQueryManagerFactory.createQueryManager(this.objectConverter);
+    }
+
+    /**
+     * @param request the {@link HstRequest}
+     * @return the {@link HstQueryManager}
+     * @see returns same as {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)} does
+     */
+    public HstQueryManager getQueryManager(HstRequest request){
+        return getQueryManager(request.getRequestContext());
+    }
+    
+    /**
+     * 
+     * @param  ctx the {@link HstRequestContext}
+     * @return the {@link HstQueryManager}
+     * @see returns same as {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)} does
+     */
+    public HstQueryManager getQueryManager(HstRequestContext ctx) {
+        HstQueryManager queryManager = null;
+        try {
+            return getQueryManager(ctx.getSession());
+        } catch (RepositoryException e) {
+            log.error("Unable to get a queryManager", e);
+        }    
+        return queryManager;
+    }
+    
+    /**
+     * @param  session the {@link Session}
+     * @return the {@link HstQueryManager}
+     * @see returns same as {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)} does
+     */
+    public HstQueryManager getQueryManager(Session session) {
+        HstQueryManager queryManager = null;
+        queryManager = hstQueryManagerFactory.createQueryManager(session, this.objectConverter);
+        return queryManager;
     }
     
     public ObjectBeanManager getObjectBeanManager(HstRequest request) {
@@ -404,8 +446,7 @@ public class BaseHstComponent extends GenericHstComponent {
             
             ComponentManager compMngr = HstServices.getComponentManager();
             if (compMngr != null) {
-                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
-                this.queryManager = hstQueryManagerFactory.createQueryManager(this.objectConverter);
+                hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
             }
             
             this.beansInitialized = true;

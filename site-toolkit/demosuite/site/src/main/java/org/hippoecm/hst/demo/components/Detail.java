@@ -96,7 +96,7 @@ public class Detail extends BaseHstComponent {
                 // example how to get the comments only of last week
                 Calendar sinceLastWeek = Calendar.getInstance();
                 sinceLastWeek.add(Calendar.DAY_OF_MONTH, -7);
-                Filter f = new FilterImpl();
+                Filter f = commentQuery.createFilter();
                 f.addGreaterOrEqualThan("demosite:date", sinceLastWeek);
                 ((Filter) commentQuery.getFilter()).addAndFilter(f);
             }

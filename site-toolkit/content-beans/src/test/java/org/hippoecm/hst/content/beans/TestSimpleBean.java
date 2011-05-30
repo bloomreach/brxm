@@ -94,12 +94,12 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         
-        HstQueryManager queryManager = new HstQueryManagerImpl(objectConverter, new HstCtxWhereClauseComputerImpl());
+        HstQueryManager queryManager = new HstQueryManagerImpl(session, objectConverter, new HstCtxWhereClauseComputerImpl());
         
         HstQuery hstQuery = queryManager.createQuery(folder);
 
         String query = "homepage";
-        Filter filter = new FilterImpl();
+        Filter filter = new FilterImpl(session);
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         
@@ -107,7 +107,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         assertFalse("The query cannot find any result with '" + query + "'.", resultBeans.isEmpty());
         
         query = "is";
-        filter = new FilterImpl();
+        filter = new FilterImpl(session);
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         

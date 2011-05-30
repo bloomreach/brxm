@@ -370,7 +370,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         
         try {
             ObjectBeanPersistenceManager cpm = getContentPersistenceManager(requestContext);
-            HstQueryManager queryManager = getHstQueryManager(requestContext);
+            HstQueryManager queryManager = getHstQueryManager(requestContext.getSession(), requestContext);
             
             HstQuery hstQuery = null;
             

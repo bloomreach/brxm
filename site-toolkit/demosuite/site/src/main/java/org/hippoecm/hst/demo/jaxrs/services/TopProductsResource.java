@@ -62,7 +62,7 @@ public class TopProductsResource extends AbstractResource {
             String mountContentPath = requestContext.getResolvedMount().getMount().getContentPath();
             Node mountContentNode = requestContext.getSession().getRootNode().getNode(PathUtils.normalizePath(mountContentPath));
             
-            HstQueryManager manager = getHstQueryManager(requestContext);
+            HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
             HstQuery hstQuery = manager.createQuery(mountContentNode, ProductBean.class);
             hstQuery.addOrderByDescending("demosite:price");
             hstQuery.setLimit(NumberUtils.toInt(maxParam, 10));

@@ -91,7 +91,6 @@
     <spring.version>3.0.4.RELEASE</spring.version>
     <aspectj.version>1.6.2</aspectj.version>
 
-    <jackrabbit.version>2.2.5</jackrabbit.version>
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.cms.version>2.20.00</hippo.cms.version>
@@ -550,14 +549,8 @@
         <type>war</type>
       </dependency>
       
-      <!-- Jackrabbit -->
+      <!-- Jackrabbit ocm -->
             
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
-      </dependency>
-      
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-ocm</artifactId>

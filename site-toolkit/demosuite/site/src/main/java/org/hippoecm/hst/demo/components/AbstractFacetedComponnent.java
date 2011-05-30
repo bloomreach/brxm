@@ -39,7 +39,7 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
             // account for the free text string
             
             try {
-                hstQuery = this.queryManager.createQuery(this.getSiteContentBaseBean(request));
+                hstQuery = getQueryManager(request).createQuery(this.getSiteContentBaseBean(request));
                 if(query != null && !"".equals(query)) {
                     Filter f = hstQuery.createFilter();
                     Filter f1 = hstQuery.createFilter();

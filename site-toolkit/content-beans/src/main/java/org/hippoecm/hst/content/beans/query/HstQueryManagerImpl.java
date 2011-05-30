@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -34,8 +35,23 @@ public class HstQueryManagerImpl implements HstQueryManager{
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
     private ObjectConverter objectConverter;
     private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
+    private Session session;
  
+    /**
+     * 
+     * @param objectConverter
+     * @param hstCtxWhereClauseComputer
+     * @deprecated use {@link #HstQueryManagerImpl(Session, ObjectConverter, HstCtxWhereClauseComputer)} instead
+     */
+    @Deprecated
     public HstQueryManagerImpl(ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
+        this.objectConverter = objectConverter;
+        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
+    }
+    
+
+    public HstQueryManagerImpl(Session session, ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
+        this.session = session;
         this.objectConverter = objectConverter;
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
@@ -61,7 +77,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
         } else {
             isNodeTypeFilter = new IsNodeTypeFilter(primaryNodeTypeNameForBean);
         }
-        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
     }
     
    
@@ -127,7 +143,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
         }
         
         IsNodeTypeFilter isNodeTypeFilter = new IsNodeTypeFilter(nodeType);
-        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
     }
     
     public HstQuery createQuery(HippoBean scope, String... primaryNodeTypes) throws QueryException {
@@ -149,7 +165,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
     }
     
     private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
-        return new HstQueryImpl(this.hstCtxWhereClauseComputer, this.objectConverter, scope, filter);
+        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, filter);
     }
     
 }

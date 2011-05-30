@@ -24,7 +24,7 @@ import javax.jcr.ValueFormatException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.apache.jackrabbit.util.ISO8601;
+import org.hippoecm.hst.util.ForkedISO8601;
 
 /**
  * @version $Id$
@@ -40,7 +40,7 @@ public class PropertyValue {
     public PropertyValue(Object valueObject) {
         if (valueObject != null) {
             if (valueObject instanceof Calendar) {
-                this.value = ISO8601.format((Calendar) valueObject);
+                this.value = ForkedISO8601.format((Calendar) valueObject);
             } 
             else {
                 this.value = valueObject.toString();
@@ -67,7 +67,7 @@ public class PropertyValue {
             value = Double.toString(valueObject.getDouble());
             break;
         case PropertyType.DATE :
-            value = ISO8601.format(valueObject.getDate());
+            value = ForkedISO8601.format(valueObject.getDate());
             break;
         }
     }

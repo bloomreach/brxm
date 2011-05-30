@@ -15,13 +15,19 @@
  */
 package org.hippoecm.hst.core.search;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
 
+    private static final Logger log = LoggerFactory.getLogger(HstQueryManagerFactoryImpl.class);
+    
     private volatile org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     
     public org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
@@ -40,8 +46,16 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
 
+    
     public HstQueryManager createQueryManager(ObjectConverter objectConverter) {
+        log.warn("This method createQueryManager(ObjectConverter) has been deprecated. Use createQueryManager(Session, ObjectConverter) instead");
         HstQueryManager mngr = new HstQueryManagerImpl(objectConverter, this.getHstCtxWhereClauseComputer());
+        return mngr;
+    }
+
+    @Override
+    public HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter) {
+        HstQueryManager mngr = new HstQueryManagerImpl(session, objectConverter, this.getHstCtxWhereClauseComputer());
         return mngr;
     }
 
