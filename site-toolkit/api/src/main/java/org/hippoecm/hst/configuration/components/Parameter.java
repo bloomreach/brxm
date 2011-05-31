@@ -61,7 +61,9 @@ public @interface Parameter {
     Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
 
     /**
-     * a String used to provide optional YUI tools with a hint about the type the parameter value should be of. For example 'COLOR', 'DATE'.
+     * a String used to provide optional YUI tools with a hint about the type the parameter value should be of. For example 'COLOR', 'DATE', 'DOCUMENT'.
+     * Note that this is a typeHint for for example the template composer. Thus it does influence the actual return type of the getter method that 
+     * is used for the Parameter annotation. 
      */
     String typeHint() default "";
 
