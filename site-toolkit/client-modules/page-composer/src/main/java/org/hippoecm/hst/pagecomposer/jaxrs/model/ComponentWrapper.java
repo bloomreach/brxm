@@ -241,7 +241,7 @@ public class ComponentWrapper {
     }
 
     /**
-     * ParameterType used to provide a hint to the pagecomposer about the type of the parameter.
+     * ParameterType used to provide a hint to the template composer about the type of the parameter.
      * This is just a convenience interface that provides some constants for the field types.
      */
     public static interface ParameterType {
