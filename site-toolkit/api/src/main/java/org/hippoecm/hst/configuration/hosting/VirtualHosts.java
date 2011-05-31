@@ -126,4 +126,12 @@ public interface VirtualHosts {
      * @return the List<{@link Mount}> belonging to <code>hostGroupName</code> or <code>null</code> when there are no {@link Mount} for <code>hostGroupName</code>
      */
     List<Mount> getMountsByHostGroup(String hostGroupName);
+    
+    /**
+     * 
+     * @param uuid
+     * @return
+     */
+    Mount getMountByIdentifier(String uuid);
+    
 }

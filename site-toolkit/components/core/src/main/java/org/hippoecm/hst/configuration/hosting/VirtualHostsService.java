@@ -49,6 +49,7 @@ public class VirtualHostsService implements VirtualHosts {
     private Map<String, Map<String, VirtualHostService>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, VirtualHostService>>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<String, List<Mount>>();
+    private Map<String, Mount> mountsByIdentifier = new HashMap<String, Mount>();
     private Map<String, Map<String, Mount>> mountByGroupAliasAndType = new HashMap<String, Map<String, Mount>>();
     
   
@@ -196,6 +197,8 @@ public class VirtualHostsService implements VirtualHosts {
                 		". Failed for mount '{}' in hostgroup '"+mount.getVirtualHost().getHostGroupName()+"' for host '"+mount.getVirtualHost().getHostName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot be used for lookup. Change alias for it.", mount.getName(), mount.getName());
             }
         }
+        
+        mountsByIdentifier.put(mount.getIdentifier(), mount);
 
     }
     
@@ -380,6 +383,12 @@ public class VirtualHostsService implements VirtualHosts {
 
     private String getAliasTypeKey(String alias, String type) {
         return alias.toLowerCase() + '\uFFFF' + type;
+    }
+
+
+    @Override
+    public Mount getMountByIdentifier(String uuid) {
+        return mountsByIdentifier.get(uuid);
     }
 
     

@@ -35,6 +35,11 @@ public class MountService implements Mount {
     private String name;
     
     /**
+     * the identifier of this {@link Mount}
+     */
+    private String uuid;
+    
+    /**
      * The virtual host of where this {@link Mount} belongs to
      */
     private VirtualHost virtualHost;
@@ -175,7 +180,7 @@ public class MountService implements Mount {
         this.parent = parent;
         this.port = port;
         this.name = mount.getValueProvider().getName().intern();
-
+        this.uuid = mount.getValueProvider().getIdentifier();
         // default for when there is no alias property
         
         this.allProperties = mount.getValueProvider().getProperties();
@@ -467,6 +472,11 @@ public class MountService implements Mount {
     public String getName() {
         return name;
     }
+    
+    public String getIdentifier() {
+        return uuid;
+    }
+
 
     public String getAlias() {
         return alias;

@@ -387,4 +387,9 @@ public interface Mount {
      * @return all the mount properties and an empty map if there where no mount properties
      */
     Map<String, String> getMountProperties();
+
+    /**
+     * @return the identifier of this {@link Mount}
+     */
+    String getIdentifier();
 }
