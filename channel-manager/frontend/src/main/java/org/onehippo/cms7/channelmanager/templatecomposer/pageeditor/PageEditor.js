@@ -59,7 +59,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     id: 'Iframe',
                     xtype: 'iframepanel',
                     // loadMask: true,
-                    defaultSrc: config.composerMountUrl+"?"+config.renderHostParameterName+"="+config.renderHost,
                     collapsible: false,
                     disableMessaging: false,
                     tbar: [
@@ -159,6 +158,17 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
+
+            // do initial handshake with CmsSecurityValve of the composer mount and
+            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+            var that = this;
+            Ext.Ajax.request({
+                url: this.composerMountUrl,
+                success: function () {
+                    var iFrame = Ext.getCmp('Iframe');
+                    iFrame.setSrc(that.composerMountUrl+"?"+that.renderHostParameterName+"="+that.renderHost);
+                },
+            });
         }, this, {single: true});
     },
 
