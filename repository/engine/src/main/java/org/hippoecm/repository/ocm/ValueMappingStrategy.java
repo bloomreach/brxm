@@ -747,7 +747,9 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                     Object id = new JcrOID(child.getIdentifier(), clazz.getName());
                     if (value == null) {
                         Node n = child.getParent();
-                        String m = child.getName();
+                        if (!n.isCheckedOut()) {
+                            checkoutNode(n);
+                        }
                         child.remove();
                         op.getExecutionContext().deleteObject(value);
                     } else {
