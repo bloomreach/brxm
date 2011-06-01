@@ -41,8 +41,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
-    <sv:property sv:name="iframeUrl" sv:type="String">
+    <sv:property sv:name="composerMountUrl" sv:type="String">
       <sv:value>/site/manager</sv:value>
+    </sv:property>
+    <sv:property sv:name="renderHost" sv:type="String">
+      <sv:value>localhost</sv:value>
     </sv:property>
   </sv:node>
 

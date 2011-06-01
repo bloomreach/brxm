@@ -42,7 +42,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                     scope: this,
                     hidden: true,
                     handler: function () {
-                        this.reload(this.siteId, this.id);
+                        this.reload(this.id);
                     }
                 }
             ]
@@ -70,7 +70,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
     createDocument: function (ev, target, options) {
 	  
-        var createUrl = this.baseUrlPath + '/_rp/' + this.siteId + './create';
+        var createUrl = this.baseUrlPath + '/_rp/' + this.mountId + './create';
         var createDocumentWindow = new Ext.Window({
             title: "Create a new document",
             height: 150,
@@ -154,7 +154,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
-                        url: this.baseUrlPath + '/_rp/' + this.siteId + './documents/' + property.get('docType'),
+                        url: this.baseUrlPath + '/_rp/' + this.mountId + './documents/',
                         fields:['path']
                     });
 
@@ -230,8 +230,8 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     }
     ,
 
-    reload:function(siteId, id, name, path) {
-        this.siteId = siteId;
+    reload:function(id, name, path) {
+        // the id is set with the onClick of the component
         this.id = id;
         var store = new Ext.data.JsonStore({
             autoLoad: true,

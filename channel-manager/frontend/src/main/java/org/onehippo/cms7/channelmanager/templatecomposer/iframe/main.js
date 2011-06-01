@@ -83,7 +83,8 @@ jQuery.noConflict();
             $.head(document.location.href, function(headers) {
                 sendMessage({
                     siteId: headers['HST-Site-Id'],
-                    pageId: headers['HST-Page-Id']},
+                    pageId: headers['HST-Page-Id'],
+                    mountId: headers['HST-Mount-Id']},
                 'onappload');
             });
         },

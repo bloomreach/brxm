@@ -23,6 +23,7 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
@@ -40,11 +41,18 @@ public class PageEditor extends ExtComponent {
     public Boolean debug = false;
 
     @ExtProperty
-    public String iframeUrl = "/site/manager";
+    public String composerMountUrl = "/site/manager";
+
+    @ExtProperty
+    public String renderHost = "localhost";
+
+    @ExtProperty
+    public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
-        this.iframeUrl = config.getString("iframeUrl", "/site/manager");
+        this.composerMountUrl = config.getString("composerMountUrl", "/site/manager");
+        this.renderHost = config.getString("renderHost", "localhost");
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
 
