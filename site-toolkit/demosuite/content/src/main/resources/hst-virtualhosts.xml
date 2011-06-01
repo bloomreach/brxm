@@ -748,5 +748,40 @@
             </sv:node>
           </sv:node>
       </sv:node>
-    </sv:node>  
+    </sv:node>
+    <sv:node sv:name="dev-test-many">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhostgroup</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>85241dd9-a5bf-4d31-9928-5c44eefc1da1</sv:value>
+      </sv:property>
+      <sv:node sv:name="localhost">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhost</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>486e7e94-7be1-497e-8253-49d6151e4c0b</sv:value>
+        </sv:property>
+        <sv:node sv:name="com">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:virtualhost</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>43b46853-9efb-46c6-bdcf-c36af504b507</sv:value>
+          </sv:property>
+          <sv:node sv:name="hst:root">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+              <sv:value>ae01209f-9065-46ca-94c4-a07dfcb11bb7</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/demosite-test-many-live</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
 </sv:node>

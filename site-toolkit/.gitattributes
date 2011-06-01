@@ -746,6 +746,10 @@ demosuite/content/src/main/resources/hstconfiguration/demosite/templates.xml -te
 demosuite/content/src/main/resources/hstconfiguration/demosite_fr/sitemap.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hstconfiguration/demosite_fr/sitemenus.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hstconfiguration/demosite_fr/templates.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
 demosuite/pom.xml svneol=native#text/plain
 demosuite/site/pom.xml svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
@@ -772,6 +776,7 @@ demosuite/site/src/main/java/org/hippoecm/hst/demo/components/RSS.java svneol=na
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/Right.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
+demosuite/site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/TodoListParametersInfo.java -text
 demosuite/site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
@@ -850,6 +855,7 @@ demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/leftmenu.jsp -text sv
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
+demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage403.jsp -text
