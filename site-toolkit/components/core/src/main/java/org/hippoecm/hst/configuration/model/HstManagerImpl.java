@@ -236,7 +236,7 @@ public class HstManagerImpl implements HstManager {
         }
          
         try {
-            this.virtualHosts = new VirtualHostsService(getVirtualHostsNode(), this);
+            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         }
@@ -249,9 +249,6 @@ public class HstManagerImpl implements HstManager {
         siteRootNodes.clear();
     }
     
-    public HstNode getVirtualHostsNode() {
-        return virtualHostsNode;
-    }
     
     public Map<String, HstSiteRootNode> getHstSiteRootNodes(){
         return siteRootNodes;

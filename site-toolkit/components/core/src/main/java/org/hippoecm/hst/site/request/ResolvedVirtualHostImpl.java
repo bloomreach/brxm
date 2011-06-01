@@ -34,14 +34,14 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     private final static Logger log = LoggerFactory.getLogger(ResolvedVirtualHostImpl.class);
     
     private VirtualHost virtualHost;
+    private PortMount portMount;
     
     private String hostName;
-    private int portNumber;
     
-    public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName, int portNumber) {
+    public ResolvedVirtualHostImpl(VirtualHost virtualHost, String hostName, PortMount portMount) {
         this.virtualHost = virtualHost;
         this.hostName = hostName;
-        this.portNumber = portNumber;
+        this.portMount = portMount;
     }
 
     public VirtualHost getVirtualHost() {
@@ -49,22 +49,9 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     }
 
     public ResolvedMount matchMount(String contextPath, String requestPath) throws MatchException {
-        PortMount portMount = virtualHost.getPortMount(portNumber);
-        if(portMount == null && portNumber != 0) {
-            log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one");
-            portMount = virtualHost.getPortMount(0);
-            if(portMount == null) {
-                log.warn("Virtual Host '{}' is not (correctly) mounted for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber));
-                return null;
-            }
-        }
-        if(portMount == null) {
-            log.warn("Cannot match virtual Host '{}' for portnumber '{}': We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
-            return null;
-        }
         
         if(portMount.getRootMount() == null) {
-            log.warn("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portNumber)); 
+            log.error("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber())); 
             return null;
         }
         
@@ -121,7 +108,7 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
     }
     
     public int getPortNumber() {
-    	return portNumber;
+    	return portMount.getPortNumber();
     }
 
 }

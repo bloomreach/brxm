@@ -229,7 +229,7 @@ public class VirtualHostsService implements VirtualHosts {
         if(!virtualHostsConfigured) {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
-        
+         
         // NOTE : the resolvedMapCache does not need synchronization. Theoretically it would need it as it is used concurrent. 
         // In practice it won't happen ever. Trust me
         ResolvedVirtualHost rvHost = resolvedMapCache.get(hostName);
@@ -282,24 +282,48 @@ public class VirtualHostsService implements VirtualHosts {
     protected ResolvedVirtualHost findMatchingVirtualHost(String hostName, int portNumber) {
         String[] requestServerNameSegments = hostName.split("\\.");
         int depth = requestServerNameSegments.length - 1;
-        VirtualHost host = null;
+        VirtualHost host = null; 
+        PortMount portMount = null; 
         for(Map<String, VirtualHostService> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
-            host = rootVirtualHosts.get(requestServerNameSegments[depth]);
-            if(host == null) {
+            VirtualHost tryHost = rootVirtualHosts.get(requestServerNameSegments[depth]);
+            if(tryHost == null) {
               continue;
             }
-            host = traverseInToHost(host, requestServerNameSegments, depth);
-            if(host != null) {
-                break;
+            tryHost = traverseInToHost(tryHost, requestServerNameSegments, depth);
+            if(tryHost != null) {
+                // check whether this is a valid host: In other words, whether it has
+                // a Mount associated with its portMount 
+                PortMount tryPortMount = tryHost.getPortMount(portNumber);
+                if(tryPortMount != null && tryPortMount.getRootMount() != null) {
+                    // we found a match for the host && port. We are done
+                    host = tryHost;
+                    portMount = tryPortMount;
+                    break;
+                }
+                if(tryPortMount == null && portNumber != 0) {
+                    log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one", String.valueOf(portNumber));
+                    tryPortMount = tryHost.getPortMount(0);
+                    if(tryPortMount != null && tryPortMount.getRootMount() != null) {
+                        // we found a Mount for the default port '0'. This is the host and mount we need to use when we 
+                        // do not find a portMount for another host which also matches the correct portNumber!
+                        // we'll continue the loop.
+                        if(host != null) {
+                            log.debug("We already did find a possible matching host ('{}') with not an explicit portnumber match but we'll use host ('{}') as this one is equally suited.", host.getHostName() + " (hostgroup="+host.getHostGroupName()+")", tryHost.getHostName() + " (hostgroup="+tryHost.getHostGroupName()+")");
+                        }
+                        host = tryHost;
+                        portMount = tryPortMount;
+                    }
+                }
             }
         }
         if(host == null) {
             return null;
         }
         
-        return new ResolvedVirtualHostImpl(host, hostName, portNumber);
+        return new ResolvedVirtualHostImpl(host, hostName, portMount);
       
     }
+    
     
     /**
      * Override this method if you want a different algorithm to resolve requestServerName
