@@ -24,7 +24,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-
   <bean id="jaxrsHstConfigService" class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService">
     <constructor-arg value="jaxrsHstConfigService"/>
     <property name="servletPath" value=""/>
@@ -46,11 +45,6 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ComponentResource"/>
-          </constructor-arg>
-        </bean>
-        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
-          <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"/>
           </constructor-arg>
         </bean>
@@ -61,7 +55,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">

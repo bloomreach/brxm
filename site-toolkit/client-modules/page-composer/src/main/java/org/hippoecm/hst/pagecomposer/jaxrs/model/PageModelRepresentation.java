@@ -35,8 +35,7 @@ public class PageModelRepresentation {
 
     List<ComponentRepresentation> components = new ArrayList<ComponentRepresentation>();
 
-    public PageModelRepresentation represent(Mount mount, String rootComponentId) {
-        HstSite site = mount.getHstSite();
+    public PageModelRepresentation represent(HstSite site, String rootComponentId) {
         HstComponentConfiguration rootComponentConfig = null;
         for (HstComponentConfiguration config : site.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (config.getCanonicalIdentifier().equals(rootComponentId)) {

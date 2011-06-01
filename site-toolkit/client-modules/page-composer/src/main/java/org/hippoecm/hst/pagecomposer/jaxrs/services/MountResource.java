@@ -37,17 +37,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.Document;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,26 +53,48 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 
-@Path("/hst:site/")
-public class SiteResource extends AbstractConfigResource {
-    private static Logger log = LoggerFactory.getLogger(SiteResource.class);
+@Path("/hst:mount/")
+public class MountResource extends AbstractConfigResource {
+    private static Logger log = LoggerFactory.getLogger(MountResource.class);
 
+    @GET
+    @Path("/pagemodel/{pageId}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest,
+                                               @Context HttpServletResponse servletResponse,
+                                               @PathParam("pageId") String pageId) {
+        try {
+            final HstRequestContext requestContext = getRequestContext(servletRequest);
+            final HstSite editingHstSite = getEditingHstSite(requestContext);
+            if (editingHstSite == null) {
+                log.error("Could not get the editing site to create the pate model representation.");
+                return error("Could not get the editing site to create the pate model representation.");
+            }
+            final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingHstSite, pageId);
+            return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve page model.", e);
+            } else {
+                log.warn("Failed to retrieve page model. {}", e.toString());
+            }
+            return error(e.toString());
+        }
+    }
 
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest,
                                              @Context HttpServletResponse servletResponse) {
-
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
-        if (parentMount == null) {
-            log.warn("Page Composer only work when there is a parent Mount");
-            return error("Page Composer only work when there is a parent Mount");
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final Mount editingMount = getEditingHstMount(requestContext);
+        if (editingMount == null) {
+            log.error("Could not get the editing site to create the toolkit representation.");
+            return error("Could not get the editing site to create the toolkit representation.");
         }
-        ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(parentMount);
+        ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
-
     }
 
     /**
@@ -93,9 +112,14 @@ public class SiteResource extends AbstractConfigResource {
                                    @Context HttpServletResponse servletResponse,
                                    MultivaluedMap<String, String> params) {
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        String canonicalContentPath = requestContext.getResolvedMount().getMount().getParent().getCanonicalContentPath();
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
+            final Mount editingHstMount = getEditingHstMount(requestContext);
+            if (editingHstMount == null) {
+                log.error("Could not get the editing mount to get the content path for creating the document.");
+                return error("Could not get the editing mount to get the content path for creating the document.");
+            }
+            String canonicalContentPath = editingHstMount.getCanonicalContentPath();
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));
             workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
@@ -126,11 +150,14 @@ public class SiteResource extends AbstractConfigResource {
     public Response getDocumentsByType(@Context HttpServletRequest servletRequest,
                                        @Context HttpServletResponse servletResponse, @PathParam("docType") String docType) {
 
-        HstRequestContext requestContext = getRequestContext(servletRequest);
-        Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
-
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final Mount editingHstMount = getEditingHstMount(requestContext);
+        if (editingHstMount == null) {
+            log.error("Could not get the editing mount to get the content path for listing documents.");
+            return error("Could not get the editing mount to get the content path for listing documents.");
+        }
         List<Document> documentLocations = new ArrayList<Document>();
-        String canonicalContentPath = parentMount.getCanonicalContentPath();
+        String canonicalContentPath = editingHstMount.getCanonicalContentPath();
         try {
             Session session = requestContext.getSession();
 
@@ -172,21 +199,18 @@ public class SiteResource extends AbstractConfigResource {
         return ok("Keepalive successful", null);
     }
 
-    @GET
-    @Path("/logout/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response logout(@Context HttpServletRequest servletRequest,
-                           @Context HttpServletResponse servletResponse) {
-
-        HttpSession session = servletRequest.getSession(false);
-        if (session != null) {
-            // logout
-            session.invalidate();
+    private HstSite getEditingHstSite(final HstRequestContext requestContext) {
+        final Mount mount = getEditingHstMount(requestContext);
+        if (mount == null) {
+            log.warn("No mount found for identifier '{}'", getRequestConfigIdentifier(requestContext));
+            return null;
         }
-        return ok("You are logged out", null);
+        return mount.getHstSite();
     }
 
-
-
+    private Mount getEditingHstMount(final HstRequestContext requestContext) {
+        final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
+        return requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
+    }
 
 }
