@@ -177,6 +177,11 @@
   </servlet>
 
   <servlet>
+    <servlet-name>PingServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.servlet.HstPingServlet</servlet-class>
+  </servlet>
+
+  <servlet>
     <servlet-name>HstDispatcherServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</servlet-class>
     <init-param>
@@ -236,6 +241,11 @@
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>PingServlet</servlet-name>
+    <url-pattern>/ping/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

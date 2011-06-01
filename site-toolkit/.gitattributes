@@ -262,6 +262,7 @@ client/src/main/java/org/hippoecm/hst/freemarker/RepositoryTemplateLoader.java s
 client/src/main/java/org/hippoecm/hst/linking/HstLinkProcessorTemplate.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/BinariesServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/servlet/HstFreemarkerServlet.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/servlet/HstPingServlet.java -text
 client/src/main/java/org/hippoecm/hst/sitemapitemhandler/AbstractHstSiteMapHandler.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/tag/BaseHstURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/DefineObjectsTag.java svneol=native#text/plain

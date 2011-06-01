@@ -38,10 +38,10 @@ public final class SessionUtils {
     }
 
     public static Session getBinariesSession(HttpServletRequest request) throws RepositoryException {
-        return getSession(request, "binaries");
+        return getPooledSession(request, "binaries");
     }
 
-    private static Session getSession(HttpServletRequest request, String poolName) throws RepositoryException {
+    public static Session getPooledSession(HttpServletRequest request, String poolName) throws RepositoryException {
         Session session = getSessionFromRequest(request);
         if (session == null && HstServices.isAvailable()) {
             session = getSessionFromHstServices(poolName);
@@ -50,9 +50,18 @@ public final class SessionUtils {
     }
 
     public static void releaseSession(HttpServletRequest request, Session session) {
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
-        if (hstRequest == null && session != null) {
-            session.logout();
+        if (session == null) {
+            return;
+        }
+        try {
+            if (session != getSessionFromRequest(request)) {
+                session.logout();
+            }
+        } catch (RepositoryException re) {
+            HstRequest hstRequest = HstRequestUtils.getHstRequest(request);
+            if (hstRequest == null) {
+                session.logout();
+            }
         }
     }
 
