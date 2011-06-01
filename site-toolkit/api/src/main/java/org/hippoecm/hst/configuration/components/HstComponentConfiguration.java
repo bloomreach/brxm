@@ -215,9 +215,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     Type getComponentType();
 
     /**
-     * The tag (see {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags}) for this component.
+     * The filter tag (see {@link org.hippoecm.hst.core.request.HstRequestContext#getComponentFilterTags}) for this component.
      *
-     * @return the tag of this component, or null if no tag is available.
+     * @return the filter tag of this component, or null if no tag is available.
      */
     String getComponentFilterTag();
 }
