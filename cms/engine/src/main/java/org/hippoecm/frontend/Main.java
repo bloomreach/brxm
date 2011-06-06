@@ -266,7 +266,11 @@ public class Main extends WebApplication {
                             String encryptedString = cipher.getEncryptedString(key, (SimpleCredentials) userCredentials.getJcrCredentials());
 
                             Response response = RequestCycle.get().getResponse();
-                            response.redirect(destinationUrl + "?cred=" + encryptedString);
+                            if (destinationUrl.contains("?")) {
+                                response.redirect(destinationUrl + "&cred=" + encryptedString);
+                            } else {
+                                response.redirect(destinationUrl + "?cred=" + encryptedString);
+                            }
                         }
                     };
                 }
