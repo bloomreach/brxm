@@ -61,6 +61,9 @@ public final class DetachableGroup extends LoadableDetachableModel {
      */
     @Override
     public int hashCode() {
+        if (path == null) {
+            return super.hashCode();
+        }
         return path.hashCode();
     }
 
@@ -78,6 +81,9 @@ public final class DetachableGroup extends LoadableDetachableModel {
             return false;
         } else if (obj instanceof DetachableGroup) {
             DetachableGroup other = (DetachableGroup) obj;
+            if (path == null || other.path == null) {
+                return false;
+            }
             return path.equals(other.path);
         }
         return false;
