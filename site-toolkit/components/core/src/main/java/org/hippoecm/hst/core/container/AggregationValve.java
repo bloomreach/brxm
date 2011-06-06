@@ -300,9 +300,10 @@ public class AggregationValve extends AbstractValve {
             // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
             // TODO ////////////////////////////////////////////////////////////////////////////
             Mount mount = request.getRequestContext().getResolvedMount().getMount();
-            if (mount.isOfType(ContainerConstants.COMPOSERMODE)) {
-             // we are in composer mode. Add the wrapper elements that are needed for the composer around all components
+            if (request.getRequestContext().getRenderHost() != null) {
+             // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
                 if (window == rootWindow) {
+                    rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                     rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                     rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
                 } else {
