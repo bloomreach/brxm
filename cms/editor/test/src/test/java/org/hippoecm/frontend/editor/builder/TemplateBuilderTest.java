@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -283,6 +284,46 @@ public class TemplateBuilderTest extends PluginTest {
         home.processEvents();
 
         assertFalse(prototype.getNode().hasProperty("test:titel_new"));
+    }
+
+    @Test
+    public void testChangingMultiplicityUpdatesPrototype() throws Exception {
+        PluginSelectModel pluginModel = new PluginSelectModel();
+        pluginModel.setObject("title");
+
+        TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), pluginModel);
+
+        // initialize type descriptor and template
+        ITypeDescriptor type = builder.getTypeDescriptor();
+        session.save();
+        home.processEvents();
+
+        Map<String, IFieldDescriptor> fields = type.getFields();
+        IFieldDescriptor titleField = fields.get("title");
+        assertEquals("test:title", titleField.getPath());
+
+        JcrNodeModel prototype = builder.getPrototype();
+        Node node = prototype.getNode();
+        node.setProperty("test:title", "titel");
+
+        titleField.setMultiple(true);
+        home.processEvents();
+
+        // same plugin should still be selected
+        assertEquals("title", pluginModel.getObject());
+
+        assertTrue(prototype.getNode().hasProperty("test:title"));
+
+        Property property = prototype.getNode().getProperty("test:title");
+        assertTrue(property.isMultiple());
+        assertEquals("titel", property.getValues()[0].getString());
+
+        // remove field
+        type.removeField("title");
+
+        home.processEvents();
+
+        assertFalse(prototype.getNode().hasProperty("test:titel"));
     }
 
     @Test

@@ -34,6 +34,9 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.ItemDefinition;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -152,6 +155,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         public void setMultiple(boolean multiple) {
             delegate.setMultiple(multiple);
+            try {
+                updateItem(getPrototype().getObject(), delegate.getPath(), delegate);
+            } catch (RepositoryException ex) {
+                log.error("Failed to update prototype", ex);
+            } catch (BuilderException ex) {
+                log.error("Failed to find prototype when updating the path", ex);
+            }
         }
 
         public void setOrdered(boolean isOrdered) {
@@ -816,31 +826,38 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private void updateItem(Node prototype, String oldPath, IFieldDescriptor newField) throws RepositoryException {
         if (newField != null) {
             ITypeDescriptor fieldType = newField.getTypeDescriptor();
-            if (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*") && !oldPath.equals("*")) {
+            ItemDefinition itemDefinition = null;
+            boolean multiple = false;
+            if (fieldType.isNode() && prototype.hasNode(oldPath)) {
+                itemDefinition = prototype.getNode(oldPath).getDefinition();
+                multiple = ((NodeDefinition) itemDefinition).allowsSameNameSiblings();
+            } else if (!fieldType.isNode() && prototype.hasProperty(oldPath)) {
+                itemDefinition = prototype.getProperty(oldPath).getDefinition();
+                multiple = ((PropertyDefinition) itemDefinition).isMultiple();
+            }
+            if (itemDefinition != null &&
+                    ((!fieldType.isNode() && multiple != newField.isMultiple()) ||
+                    (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*") && !oldPath.equals("*")))) {
                 if (fieldType.isNode()) {
-                    if (prototype.hasNode(oldPath)) {
-                        Node child = prototype.getNode(oldPath);
-                        child.getSession().move(child.getPath(), prototype.getPath() + "/" + newField.getPath());
-                    }
+                    Node child = prototype.getNode(oldPath);
+                    child.getSession().move(child.getPath(), prototype.getPath() + "/" + newField.getPath());
                 } else {
-                    if (prototype.hasProperty(oldPath)) {
-                        Property property = prototype.getProperty(oldPath);
-                        if (property.getDefinition().isMultiple()) {
-                            Value[] values = property.getValues();
-                            property.remove();
-                            if (newField.isMultiple()) {
-                                prototype.setProperty(newField.getPath(), values);
-                            } else if (values.length > 0) {
-                                prototype.setProperty(newField.getPath(), values[0]);
-                            }
+                    Property property = prototype.getProperty(oldPath);
+                    if (property.getDefinition().isMultiple()) {
+                        Value[] values = property.getValues();
+                        property.remove();
+                        if (newField.isMultiple()) {
+                            prototype.setProperty(newField.getPath(), values);
+                        } else if (values.length > 0) {
+                            prototype.setProperty(newField.getPath(), values[0]);
+                        }
+                    } else {
+                        Value value = property.getValue();
+                        property.remove();
+                        if (newField.isMultiple()) {
+                            prototype.setProperty(newField.getPath(), new Value[]{value});
                         } else {
-                            Value value = property.getValue();
-                            property.remove();
-                            if (newField.isMultiple()) {
-                                prototype.setProperty(newField.getPath(), new Value[]{value});
-                            } else {
-                                prototype.setProperty(newField.getPath(), value);
-                            }
+                            prototype.setProperty(newField.getPath(), value);
                         }
                     }
                 }
