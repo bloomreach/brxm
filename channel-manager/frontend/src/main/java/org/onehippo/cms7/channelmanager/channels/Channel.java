@@ -54,4 +54,12 @@ public class Channel implements Serializable {
     public void setLiveConfigPath(String liveConfigPath) {
         this.liveConfigPath = liveConfigPath;
     }
+
+    @Override
+    public String toString() {
+        return "Channel{" +
+                "type='" + type + '\'' +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }
