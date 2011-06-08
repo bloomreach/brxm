@@ -44,6 +44,9 @@ public class PageEditor extends ExtComponent {
     public String composerMountUrl = "/site/manager";
 
     @ExtProperty
+    public String renderHostSubMountPath = "";
+
+    @ExtProperty
     public String renderHost = "localhost";
 
     @ExtProperty
@@ -53,6 +56,7 @@ public class PageEditor extends ExtComponent {
         super(id);
         this.composerMountUrl = config.getString("composerMountUrl", "/site/manager");
         this.renderHost = config.getString("renderHost", "localhost");
+        this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
 
@@ -79,7 +83,7 @@ public class PageEditor extends ExtComponent {
 
     @Override
     public void buildInstantiationJs(StringBuilder js, String extClass, JSONObject properties) {
-        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.error(e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
+        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert(e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
     }
 
     @Override

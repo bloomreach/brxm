@@ -161,12 +161,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
             // do initial handshake with CmsSecurityValve of the composer mount and
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-            var that = this;
+            var me = this;
             Ext.Ajax.request({
                 url: this.composerMountUrl,
                 success: function () {
                     var iFrame = Ext.getCmp('Iframe');
-                    iFrame.setSrc(that.composerMountUrl+"?"+that.renderHostParameterName+"="+that.renderHost);
+                    iFrame.setSrc(me.composerMountUrl+me.renderHostSubMountPath+"?"+me.renderHostParameterName+"="+me.renderHost);
                 },
             });
         }, this, {single: true});
