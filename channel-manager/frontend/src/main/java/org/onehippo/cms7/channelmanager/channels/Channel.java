@@ -10,6 +10,20 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
 
+    private Channel parent;  //The parent channel, null if this is the root
+
+    public Channel(String title) {
+        this.title = title;
+    }
+
+    public Channel getParent() {
+        return parent;
+    }
+
+    public void setParent(Channel parent) {
+        this.parent = parent;
+    }
+
     public String getContentRoot() {
         return contentRoot;
     }
@@ -26,12 +40,10 @@ public class Channel implements Serializable {
         this.hstConfigPath = hstConfigPath;
     }
 
-    public Channel(String title) {
-        this.title = title;
-    }
 
     public String getTitle() {
-        return title;
+        if(this.parent == null) return "/";
+        return parent.getTitle() + "/" + title;
     }
 
     public void setTitle(String title) {
@@ -57,8 +69,12 @@ public class Channel implements Serializable {
     @Override
     public String toString() {
         return "Channel{" +
-                "type='" + type + '\'' +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                ", type='" + type + '\'' +
+                ", hstConfigPath='" + hstConfigPath + '\'' +
+                ", contentRoot='" + contentRoot + '\'' +
+                ", parent=" + parent +
                 '}';
     }
 }

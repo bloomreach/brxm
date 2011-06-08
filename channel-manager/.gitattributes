@@ -8,6 +8,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Channel.java eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelComparator.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelDataProvider.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
