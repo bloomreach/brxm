@@ -44,11 +44,9 @@ public class ChannelDataProvider implements IDataProvider {
             boolean ignoreMount = false;
             Node currNode = nodes.nextNode();
             if (currNode.isNodeType(HST_MOUNT_NT)) {
-
-
                 if (currNode.hasProperty(HST_TYPE_PROP)) {
-                   String hstMountType = currNode.getProperty(HST_TYPE_PROP).getString();
-                    if(hstMountType.contains("rest") || hstMountType.contains("composer")) {
+                    String hstMountType = currNode.getProperty(HST_TYPE_PROP).getString();
+                    if (hstMountType.contains("rest") || hstMountType.contains("composer")) {
                         ignoreMount = true;
                     }
 

@@ -7,9 +7,24 @@ public class Channel implements Serializable {
     private String title;
     private String url; //Probably not needed for all channels ?
     private String type; //Channel type - preview/live.
-    private String previewConfigPath; //preview hst config node path
-    private String liveConfigPath; //live hst config node path
+    private String hstConfigPath;
+    private String contentRoot;
 
+    public String getContentRoot() {
+        return contentRoot;
+    }
+
+    public void setContentRoot(String contentRoot) {
+        this.contentRoot = contentRoot;
+    }
+
+    public String getHstConfigPath() {
+        return hstConfigPath;
+    }
+
+    public void setHstConfigPath(String hstConfigPath) {
+        this.hstConfigPath = hstConfigPath;
+    }
 
     public Channel(String title) {
         this.title = title;
@@ -37,22 +52,6 @@ public class Channel implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getPreviewConfigPath() {
-        return previewConfigPath;
-    }
-
-    public void setPreviewConfigPath(String previewConfigPath) {
-        this.previewConfigPath = previewConfigPath;
-    }
-
-    public String getLiveConfigPath() {
-        return liveConfigPath;
-    }
-
-    public void setLiveConfigPath(String liveConfigPath) {
-        this.liveConfigPath = liveConfigPath;
     }
 
     @Override

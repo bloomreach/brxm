@@ -20,6 +20,8 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -47,21 +49,31 @@ import java.util.List;
 public class ChannelManagerPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
     private static final String CHANNEL_MANAGER_PANEL_SERVICE_ID = "channelmanager.panel";
-    private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhost.config.path";
+    private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhostgroup.path";
 
 
     public ChannelManagerPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP, "/hst:hst/hst:hosts/dev-localhost");
-        JcrNodeModel hstConfigNodeModel = new JcrNodeModel(hstConfigLocation);
-        ChannelDataProvider channelDataProvider = new ChannelDataProvider(hstConfigNodeModel);
+        Label errorLabel = new Label("error-msg", new Model<String>("No host group is configured for retrieving list of channels, please set the property " +
+                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!"));
 
-        DataTable<Channel> channelDataTable = new DataTable<Channel>("channels-data-table", getTableColumns(), channelDataProvider, 20);
+        final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP);
+        if (hstConfigLocation == null) {
+            log.error("No host group is configured for retrieving list of channels, please set the property " +
+                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!");
+            
+            errorLabel.setVisible(true);
+            add(new EmptyPanel("channels-data-table"));
+        } else {
+            JcrNodeModel hstConfigNodeModel = new JcrNodeModel(hstConfigLocation);
+            ChannelDataProvider channelDataProvider = new ChannelDataProvider(hstConfigNodeModel);
+            DataTable<Channel> channelDataTable = new DataTable<Channel>("channels-data-table", getTableColumns(), channelDataProvider, 20);
+            add(channelDataTable);
+            errorLabel.setVisible(false);
+        }
 
-        add(channelDataTable);
-
-
+        add(errorLabel);
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
