@@ -301,14 +301,6 @@ public class HstFilter implements Filter {
                 requestContext.setFullyQualifiedURLs(true);
             }
 
-            if(request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
-                String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
-                requestContext.setRenderHost(xfh);
-                requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
-                // we indicate on the request that CMS single sign on authentication is needed to proceed rendering later on
-                request.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED, true);
-            }
-            
             if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
                 /*
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
@@ -335,11 +327,21 @@ public class HstFilter implements Filter {
                 sendRedirectToUuidUrl(req, res, requestContext, jcrUuid, logger);
                 return;
             } else {
+                
                 ResolvedMount mount = requestContext.getResolvedMount();
+                
                 if (mount == null) {
                     mount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
                     if(mount != null) {
                         requestContext.setResolvedMount(mount);
+                        // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
+                        if(request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
+                            String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
+                            requestContext.setRenderHost(xfh);
+                            requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
+                            // we indicate on the request that CMS single sign on authentication is needed to proceed rendering later on
+                            request.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED, true);
+                        }
                     }
                     else {
                         throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");

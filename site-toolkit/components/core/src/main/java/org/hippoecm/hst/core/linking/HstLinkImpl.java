@@ -156,17 +156,26 @@ public class HstLinkImpl implements HstLink {
          */
         String renderHost = requestContext.getRenderHost();
         if(mount != null) {
-            if (requestContext.isFullyQualifiedURLs() || external || requestMount.getVirtualHost() != mount.getVirtualHost()
+            if(requestContext.getRenderHost() != null) {
+                // when renderhost is not null, we never create fully qualified URLs any more: Cross-domain is not a use case.
+                if(requestMount != mount) {
+                    // URL is cross mount. Check whether we should return # or a cross mount link:
+                    // TODO: for now, we never return a cross mount link when having a render host. When we want to support a 
+                    // preview from the cms, we might need a switch to support cross mount linking in combination with a renderhost.
+                    boolean enableCrossMountLink = false;
+                    if(enableCrossMountLink) {
+                        // return the url with renderHost which might be a different host.
+                        renderHost =  mount.getVirtualHost().getHostName(); 
+                    } else {
+                        return "#";
+                    }
+                }
+            } else if(requestContext.isFullyQualifiedURLs() || external || requestMount.getVirtualHost() != mount.getVirtualHost()
                          || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
                          || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
                 
-               String host;
-               if(requestContext.getRenderHost() != null && requestContext.getAttribute(ContainerConstants.REAL_HOST) != null) {
-                   host = mount.getScheme() + "://" + requestContext.getAttribute(ContainerConstants.REAL_HOST).toString();
-                   renderHost =  mount.getVirtualHost().getHostName();
-               } else {
-                   host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
-               }
+               String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+               
                if(mount.isPortInUrl()) {
                    int port = mount.getPort();
                    if(port == 0) {
@@ -186,8 +195,8 @@ public class HstLinkImpl implements HstLink {
         }
         
         // TODO HSTTWO-1599 improve below as this does not work for navigationStateful links
-        if(renderHost != null) {
-            // we need to append the render host as a request parameter
+        if(renderHost != null && !this.containerResource) {
+            // we need to append the render host as a request parameter but it is not needed for resources
             if(urlString.contains("?")) {
                 urlString += "&";
             } else {
