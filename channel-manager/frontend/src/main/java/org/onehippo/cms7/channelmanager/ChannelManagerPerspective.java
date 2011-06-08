@@ -84,8 +84,8 @@ public class ChannelManagerPerspective extends Perspective {
     @SuppressWarnings({"unchecked"})
     private IColumn<Channel>[] getTableColumns() {
         List<IColumn> columns = new ArrayList<IColumn>();
-        columns.add(new PropertyColumn(new ResourceModel("channel-title", "Channel Name"), "title"));
-        columns.add(new PropertyColumn(new ResourceModel("channel-url", "URL"), "url"));
+        columns.add(new PropertyColumn(new ResourceModel("title", "Channel Name"), "title"));
+        columns.add(new PropertyColumn(new ResourceModel("content-root", "Content Root"), "contentRoot"));
         return columns.toArray(new IColumn[columns.size()]);
     }
 

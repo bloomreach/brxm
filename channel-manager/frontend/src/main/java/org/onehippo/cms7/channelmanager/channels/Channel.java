@@ -43,7 +43,7 @@ public class Channel implements Serializable {
 
     public String getTitle() {
         if(this.parent == null) return "/";
-        return parent.getTitle() + this.title;
+        return parent.getTitle() + this.title + "/";
     }
 
     public void setTitle(String title) {

@@ -71,6 +71,21 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
                         channel.setType(mountType);
                     }
                     channel.setParent(parent);
+
+                    if (currNode.hasProperty("hst:mountpoint")) {
+                        String mountPoint = currNode.getProperty("hst:mountpoint").getString();
+                        Node siteNode = currNode.getSession().getNode(mountPoint);
+                        if (siteNode.hasProperty("hst:configurationpath")) {
+                            channel.setHstConfigPath(siteNode.getProperty("hst:configurationpath").getString());
+                        }
+                        Node contentNode = siteNode.getNode("hst:content");
+                        if (contentNode.hasProperty("hippo:docbase")) {
+                            String siteDocbase = contentNode.getProperty("hippo:docbase").getString();
+                            String contentRoot = contentNode.getSession().getNodeByIdentifier(siteDocbase).getPath();
+                            channel.setContentRoot(contentRoot);
+                        }
+                    }
+
                     this.channels.add(channel);
                 }
             }
@@ -87,20 +102,25 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
     public ChannelDataProvider(JcrNodeModel hstHostGroupNodeModel) {
         this.configNodeModel = hstHostGroupNodeModel;
         this.channels = new ArrayList<Channel>();
-        Channel c;
         try {
             Node configNode = this.configNodeModel.getNode();
-            NodeIterator rootChannelNodes = configNode.getNodes();
+            Node hstHostsNode = configNode.getParent();
 
-            while (rootChannelNodes.hasNext()) {
-                Node n = rootChannelNodes.nextNode();
-                //Get only the virtualhost nodes.
-                if (n.isNodeType(HST_VIRTUALHOST_NT)) {
-                    vhostNodeName = n.getName();
-                    populateChannels(n, null);
+            if (!hstHostsNode.getName().equals("hst:hosts")) {
+                //panic
+                log.error("The config node is not a virtualhost group under hst:hosts, please check the configuration");
+            } else {
+                NodeIterator rootChannelNodes = configNode.getNodes();
+                while (rootChannelNodes.hasNext()) {
+                    Node n = rootChannelNodes.nextNode();
+                    //Get only the virtualhost nodes.
+                    if (n.isNodeType(HST_VIRTUALHOST_NT)) {
+                        vhostNodeName = n.getName();
+                        populateChannels(n, null);
+                    }
                 }
+                Collections.sort(channels, new ChannelComparator());
             }
-            Collections.sort(channels, new ChannelComparator());
         } catch (RepositoryException e) {
             log.error("Unable to get the list of channel nodes from repository :  " + e.getMessage(), e);
         }
@@ -125,15 +145,15 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
     /**
      * Returns readonly {@link Channel} model.
      *
-     * @param object
-     * @return
+     * @param channel - {@link Channel} object to be wrapped.
+     * @return Read only Channel Model.
      */
     @Override
-    public IModel<Channel> model(final Channel object) {
+    public IModel<Channel> model(final Channel channel) {
         return new AbstractReadOnlyModel<Channel>() {
             @Override
             public Channel getObject() {
-                return object;
+                return channel;
             }
         };
     }
@@ -144,6 +164,5 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
     @Override
     public void detach() {
         this.configNodeModel.detach();
-
     }
 }
