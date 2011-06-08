@@ -86,6 +86,7 @@ public class ChannelManagerPerspective extends Perspective {
         List<IColumn> columns = new ArrayList<IColumn>();
         columns.add(new PropertyColumn(new ResourceModel("title", "Channel Name"), "title"));
         columns.add(new PropertyColumn(new ResourceModel("content-root", "Content Root"), "contentRoot"));
+        columns.add(new PropertyColumn(new ResourceModel("hst-config-path", "HST Configuration"), "hstConfigPath"));
         return columns.toArray(new IColumn[columns.size()]);
     }
 
