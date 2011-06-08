@@ -23,6 +23,9 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 public class LogoutDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -58,8 +61,12 @@ public class LogoutDialog extends AbstractDialog {
     public void onClose() {
         if (logout) {
             UserSession userSession = (UserSession) getSession();
+            try {
+                userSession.getJcrSession().refresh(false);
+            } catch (RepositoryException e) {
+                log.error("Unable to remove the pending changes upon logout.");
+            }
             userSession.logout();
         }
     }
-
 }
