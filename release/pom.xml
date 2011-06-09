@@ -33,7 +33,7 @@
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</connection>
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</url>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</url>
   </scm>
 
   <properties>
