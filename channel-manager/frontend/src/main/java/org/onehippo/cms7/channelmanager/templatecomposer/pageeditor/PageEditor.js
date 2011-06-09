@@ -494,11 +494,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     handleOnClick : function(element) {
 
-        var id = element.getAttribute('hst:id');
+        var id = element.getAttribute(HST.ATTR.ID);
         var recordIndex = this.stores.pageModel.findExact('id', id);
 
         if (recordIndex < 0) {
-            console.warn('Handling onClick for element[@hst:id=' + id + '] with no record in component store');
+            console.warn('Handling onClick for element['+HST.ATTR.ID+'=' + id + '] with no record in component store');
             return;
         }
 
@@ -603,7 +603,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     removeByElement : function(element) {
         var store = this.stores.pageModel;
-        var index = store.findExact('id', Ext.fly(element).getAttribute('hst:id'));
+        var index = store.findExact('id', Ext.fly(element).getAttribute(HST.ATTR.ID));
         this.removeByRecord(store.getAt(index))
     },
 

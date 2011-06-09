@@ -84,7 +84,7 @@ jQuery.noConflict();
                 overlay.addClass(this.cls.overlay.custom);
             }
             overlay.css('position', 'absolute');
-            overlay.attr('hst:id', this.id);
+            overlay.attr(HST.ATTR.ID, this.id);
             overlay.attr('id', this.overlayId);
 
             var self = this;
@@ -315,7 +315,6 @@ jQuery.noConflict();
                 connectWith: '.' + this.cls.overlay.base,
                 start   : $.proxy(this.ddOnStart, this),
                 stop    : $.proxy(this.ddOnStop, this),
-                helper  : $.proxy(this.ddHelper, this),
                 update  : $.proxy(this.ddOnUpdate, this),
                 receive : $.proxy(this.ddOnReceive, this),
                 remove  : $.proxy(this.ddOnRemove, this),
@@ -378,12 +377,6 @@ jQuery.noConflict();
         ddOnRemove : function(event, ui) {
             var id = $(ui.item).attr(HST.ATTR.ID);
             this.removeItem(id, true);
-        },
-
-        ddHelper : function(event, element) {
-            var id = element.attr(HST.ATTR.ID);
-            var item = this.items.get(id);
-            return item.menu.clone().css('width', '100px').css('height', '18px').offset({top: event.clientY, left:event.clientX}).appendTo(document.body);
         },
 
         ddOnChange : function(event, ui) {

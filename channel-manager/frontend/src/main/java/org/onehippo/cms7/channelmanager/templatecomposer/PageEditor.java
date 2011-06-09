@@ -105,7 +105,6 @@ public class PageEditor extends ExtComponent {
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_HEAD_PLUGIN)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI_SORTABLE)).toString(),
 
                 rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),

@@ -25,7 +25,7 @@ Ext.namespace('Hippo.App.PageModel');
 
             var id, name, path, type, xtype;
             if (typeof element !== 'undefined' && element !== null) {
-                id = element.getAttribute('hst:id');
+                id = element.getAttribute(HST.ATTR.ID);
                 name = element.getAttribute('hst:name');
                 path = element.getAttribute('hst:path');
                 type = element.getAttribute('hst:type');
@@ -92,7 +92,7 @@ Ext.namespace('Hippo.App.PageModel');
             if (element == null) {
                 element = document.createElement('div');
                 element.id = record.id;
-                element.setAttribute('hst:id', record.id);
+                element.setAttribute(HST.ATTR.ID, record.id);
                 element.setAttribute('hst:name', record.name);
                 element.setAttribute('hst:type', record.type);
                 element.setAttribute('hst:xtype', record.xtype);

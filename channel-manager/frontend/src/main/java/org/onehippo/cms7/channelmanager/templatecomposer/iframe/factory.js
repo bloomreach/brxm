@@ -54,14 +54,14 @@ jQuery.noConflict();
                 }
 
                 var el = $(element);
-                var id = el.attr('hst:id');
+                var id = el.attr(HST.ATTR.ID);
                 if (typeof id === 'undefined') {
-                    die('Attribute hst:id not found on element');
+                    die('Attribute '+HST.ATTR.ID+' not found on element');
                 }
 
                 if (!element.id) {
                     if(Hippo.PageComposer.Main.isDebug()) {
-                        console.warn('No @id found on element, using value of hst:id instead.');
+                        console.warn('No @id found on element, using value of '+HST.ATTR.ID+' instead.');
                     }
                     element.id = id;
                 }
