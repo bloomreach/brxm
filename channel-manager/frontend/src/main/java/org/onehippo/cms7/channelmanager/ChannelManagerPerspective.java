@@ -17,7 +17,7 @@
 package org.onehippo.cms7.channelmanager;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,6 +35,7 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
 import org.onehippo.cms7.channelmanager.channels.Channel;
 import org.onehippo.cms7.channelmanager.channels.ChannelDataProvider;
+import org.onehippo.cms7.channelmanager.channels.ChannelsListPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,46 +50,23 @@ import java.util.List;
 public class ChannelManagerPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
     private static final String CHANNEL_MANAGER_PANEL_SERVICE_ID = "channelmanager.panel";
-    private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhostgroup.path";
-
 
     public ChannelManagerPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        Label errorLabel = new Label("error-msg", new Model<String>("No host group is configured for retrieving list of channels, please set the property " +
-                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!"));
+        BreadCrumbBar breadCrumbBar = new BreadCrumbBar("breadcrumbs");
+        add(breadCrumbBar);
+        ChannelsListPanel channelsList = new ChannelsListPanel(config, "channels-list", breadCrumbBar);
+        add(channelsList);
 
-        final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP);
-        if (hstConfigLocation == null) {
-            log.error("No host group is configured for retrieving list of channels, please set the property " +
-                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!");
-            
-            errorLabel.setVisible(true);
-            add(new EmptyPanel("channels-data-table"));
-        } else {
-            JcrNodeModel hstConfigNodeModel = new JcrNodeModel(hstConfigLocation);
-            ChannelDataProvider channelDataProvider = new ChannelDataProvider(hstConfigNodeModel);
-            DataTable<Channel> channelDataTable = new DataTable<Channel>("channels-data-table", getTableColumns(), channelDataProvider, 20);
-            add(channelDataTable);
-            errorLabel.setVisible(false);
-        }
-
-        add(errorLabel);
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
+
     }
 
-    @SuppressWarnings({"unchecked"})
-    private IColumn<Channel>[] getTableColumns() {
-        List<IColumn> columns = new ArrayList<IColumn>();
-        columns.add(new PropertyColumn(new ResourceModel("title", "Channel Name"), "title"));
-        columns.add(new PropertyColumn(new ResourceModel("content-root", "Content Root"), "contentRoot"));
-        columns.add(new PropertyColumn(new ResourceModel("hst-config-path", "HST Configuration"), "hstConfigPath"));
-        return columns.toArray(new IColumn[columns.size()]);
-    }
 
 
     @Override

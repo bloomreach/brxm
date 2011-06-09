@@ -1,9 +1,25 @@
+/**
+ * Copyright 2010 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onehippo.cms7.channelmanager.channels;
 
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +32,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class ChannelDataProvider implements IDataProvider<Channel> {
+/**
+ * Data provider for the channels list. Lists all the mounts (except 'rest' and 'composer' types)
+ * as channels.
+ */
+public class ChannelDataProvider extends SortableDataProvider<Channel> {
 
     private final static Logger log = LoggerFactory.getLogger(ChannelDataProvider.class);
 
@@ -28,7 +48,81 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
 
     private List<Channel> channels;
     private JcrNodeModel configNodeModel;
-    static String vhostNodeName;
+
+
+    /**
+     * Create ChannelDataProvider with the {@link Channel}s.
+     *
+     * @param hstHostGroupNodeModel - the JcrNodeModel for hst host-group.
+     */
+    public ChannelDataProvider(JcrNodeModel hstHostGroupNodeModel) {
+        this.configNodeModel = hstHostGroupNodeModel;
+        this.channels = new ArrayList<Channel>();
+        try {
+            Node configNode = this.configNodeModel.getNode();
+            Node hstHostsNode = configNode.getParent();
+
+            if (!hstHostsNode.getName().equals("hst:hosts")) {
+                //panic
+                log.error("The config node is not a virtualhost group under hst:hosts, please check the configuration");
+            } else {
+                NodeIterator rootChannelNodes = configNode.getNodes();
+                while (rootChannelNodes.hasNext()) {
+                    Node n = rootChannelNodes.nextNode();
+                    //Get only the virtualhost nodes.
+                    if (n.isNodeType(HST_VIRTUALHOST_NT)) {
+                        String vhostNodeName = n.getName();
+                        populateChannels(n, null);
+                    }
+                }
+                Collections.sort(channels, new ChannelComparator());
+            }
+        } catch (RepositoryException e) {
+            log.error("Unable to get the list of channel nodes from repository :  " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public Iterator<Channel> iterator(int first, int count) {
+        return channels.subList(first, first + count).iterator();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public int size() {
+        return channels.size();
+    }
+
+    /**
+     * Returns readonly {@link Channel} model.
+     *
+     * @param channel - {@link Channel} object to be wrapped.
+     * @return Read only Channel Model.
+     */
+    @Override
+    public IModel<Channel> model(final Channel channel) {
+        return new AbstractReadOnlyModel<Channel>() {
+            @Override
+            public Channel getObject() {
+                return channel;
+            }
+        };
+    }
+
+    /**
+     * Detaches the configuration node model.
+     */
+    @Override
+    public void detach() {
+        if (this.configNodeModel != null) {
+            this.configNodeModel.detach();
+        }
+    }
 
     /**
      * Recursively gets the list of "channels" configured under a virtual host node.
@@ -94,75 +188,4 @@ public class ChannelDataProvider implements IDataProvider<Channel> {
         }
     }
 
-    /**
-     * Create ChannelDataProvider with the {@link Channel}s.
-     *
-     * @param hstHostGroupNodeModel - the JcrNodeModel for hst host-group.
-     */
-    public ChannelDataProvider(JcrNodeModel hstHostGroupNodeModel) {
-        this.configNodeModel = hstHostGroupNodeModel;
-        this.channels = new ArrayList<Channel>();
-        try {
-            Node configNode = this.configNodeModel.getNode();
-            Node hstHostsNode = configNode.getParent();
-
-            if (!hstHostsNode.getName().equals("hst:hosts")) {
-                //panic
-                log.error("The config node is not a virtualhost group under hst:hosts, please check the configuration");
-            } else {
-                NodeIterator rootChannelNodes = configNode.getNodes();
-                while (rootChannelNodes.hasNext()) {
-                    Node n = rootChannelNodes.nextNode();
-                    //Get only the virtualhost nodes.
-                    if (n.isNodeType(HST_VIRTUALHOST_NT)) {
-                        vhostNodeName = n.getName();
-                        populateChannels(n, null);
-                    }
-                }
-                Collections.sort(channels, new ChannelComparator());
-            }
-        } catch (RepositoryException e) {
-            log.error("Unable to get the list of channel nodes from repository :  " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public Iterator<Channel> iterator(int first, int count) {
-        return channels.subList(first, first + count).iterator();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public int size() {
-        return channels.size();
-    }
-
-    /**
-     * Returns readonly {@link Channel} model.
-     *
-     * @param channel - {@link Channel} object to be wrapped.
-     * @return Read only Channel Model.
-     */
-    @Override
-    public IModel<Channel> model(final Channel channel) {
-        return new AbstractReadOnlyModel<Channel>() {
-            @Override
-            public Channel getObject() {
-                return channel;
-            }
-        };
-    }
-
-    /**
-     * Detaches the configuration node model.
-     */
-    @Override
-    public void detach() {
-        this.configNodeModel.detach();
-    }
 }
