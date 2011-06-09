@@ -32,7 +32,7 @@ public interface HstComponent {
     /**
      * Allows the component to initialize itself
      * 
-     * @param servletConfig the servletConfig of the HST container servlet
+     * @param servletContext the servletConfig of the HST container servlet
      * @param componentConfig the componentConfigBean configuration
      * @throws HstComponentException
      */
