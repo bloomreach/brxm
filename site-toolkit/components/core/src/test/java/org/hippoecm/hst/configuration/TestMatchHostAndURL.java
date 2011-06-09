@@ -400,6 +400,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          */
         @Test 
         public void testSiteWithNoConfiguredPort(){
+
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
@@ -418,7 +419,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertFalse("For port 7979 we do not have a configured a portmount, and thus we should get a mount that is live ", mount.getMount().isPreview());
                 
-                assertTrue("Resolved virtualhost must have the portnumber! ",mount.getResolvedVirtualHost().getPortNumber() == 7979);
+                assertTrue("Resolved virtualhost has a portMount but this port has to be 0 because it is not present ",mount.getResolvedVirtualHost().getPortNumber() == 0);
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
@@ -455,6 +456,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 
                 assertTrue("For port 8081 we do not have a configured a portmount, and thus we should get a mount that is preview ", mount.getMount().isPreview());
+                
+                assertTrue("Resolved virtualhost has a portMount and this mount has to be 8081 because it is present ",mount.getResolvedVirtualHost().getPortNumber() == 8081);
+                
                 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
