@@ -310,7 +310,7 @@ public class AggregationValve extends AbstractValve {
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
                     Element el = response.createElement("div");
                     el.setAttribute("class", "componentContentWrapper");
-                    el.setAttribute("hst:id", compConfig.getCanonicalIdentifier());
+                    el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
                     el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
                     el.setAttribute("hst:type", compConfig.getComponentType().toString());
                     response.setWrapperElement(el);
