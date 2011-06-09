@@ -10,6 +10,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Channel.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelComparator.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelDataProvider.java eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel$ContentRootRenderer.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text

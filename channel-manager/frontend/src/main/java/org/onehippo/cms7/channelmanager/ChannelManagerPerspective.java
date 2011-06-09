@@ -56,7 +56,7 @@ public class ChannelManagerPerspective extends Perspective {
 
         BreadCrumbBar breadCrumbBar = new BreadCrumbBar("breadcrumbs");
         add(breadCrumbBar);
-        ChannelsListPanel channelsList = new ChannelsListPanel(config, "channels-list", breadCrumbBar);
+        ChannelsListPanel channelsList = new ChannelsListPanel(context, config, "channels-list", breadCrumbBar);
         add(channelsList);
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");

@@ -17,20 +17,25 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +51,15 @@ public class ChannelsListPanel extends BreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(ChannelsListPanel.class);
 
     private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhostgroup.path";
+    private IPluginContext context;
+    private IPluginConfig config;
 
 
-    public ChannelsListPanel(IPluginConfig config, String id, IBreadCrumbModel breadCrumbModel) {
+    public ChannelsListPanel(IPluginContext context, IPluginConfig config, String id, IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
+        this.context = context;
+        this.config = config;
+
         final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP);
         if (hstConfigLocation == null) {
             log.error("No host group is configured for retrieving list of channels, please set the property " +
@@ -65,8 +75,8 @@ public class ChannelsListPanel extends BreadCrumbPanel {
                     channelDataProvider,
                     new ListDataTable.TableSelectionListener<Channel>() {
                         @Override
-                        public void selectionChanged(IModel iModel) {
-                            System.out.println("Selection Changed!!!");
+                        public void selectionChanged(IModel<Channel> channelIModel) {
+                            //Do nothing for now. or may be highlight the row ?
                         }
                     },
                     false,
@@ -117,7 +127,46 @@ public class ChannelsListPanel extends BreadCrumbPanel {
         });
 
         columns.add(nameColumn);
+
+        ListColumn<Channel> contentRootColumn = new ListColumn<Channel>(new ResourceModel("contentRoot", "Content Root"), "contentRoot");
+
+        contentRootColumn.setRenderer(new IListCellRenderer<Channel>() {
+            @Override
+            public Component getRenderer(String id, IModel<Channel> channelIModel) {
+                return new ContentRootRenderer(id, channelIModel);
+            }
+
+            @Override
+            public IObservable getObservable(IModel<Channel> channelIModel) {
+                Channel channel = channelIModel.getObject();
+                IModel<String> displayName = new Model<String>(channel.getContentRoot());
+                if (displayName instanceof IObservable) {
+                    return (IObservable) displayName;
+                }
+                return null;
+            }
+        });
+
+        columns.add(contentRootColumn);
         return columns;
     }
+
+    private class ContentRootRenderer extends Panel {
+
+        public ContentRootRenderer(String id, final IModel<Channel> model) {
+            super(id, model);
+            AjaxLink link = new AjaxLink("link") {
+
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                   //TODO Browse to the content root of the channel.
+                }
+            };
+
+            link.add(new Label("link-text", model.getObject().getContentRoot()));
+            add(link);
+        }
+    }
+
 
 }
