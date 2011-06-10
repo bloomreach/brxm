@@ -365,7 +365,7 @@ if (!YAHOO.hippo.EditorManager) {
                 Xinha.prototype.setHTML = function(html) {
                     var editor = this;
                     if (!this.config.fullPage) {
-                        if (Xinha.is_ie && Xinha.ie_version == 7) {
+                        if (Xinha.is_ie && (Xinha.ie_version == 7 || Xinha.ie_version == 8)) {
                             var input = html;
                             html = '';
                             //try {
