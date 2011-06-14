@@ -6,6 +6,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Channel.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelComparator.java -text
@@ -40,3 +43,4 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
 repository/src/main/resources/hippoecm-extension.xml eol=lf
+repository/src/main/resources/template-composer-perspective.xml -text
