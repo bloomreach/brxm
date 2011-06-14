@@ -75,7 +75,6 @@ public class PageEditor extends ExtComponent {
             add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR));
          } else {
             this.debug = false;
-            // I'm a bit worried about switching to minified versions /JB/
             add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.ALL));
             add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ALL));
         }
@@ -115,8 +114,7 @@ public class PageEditor extends ExtComponent {
             ));
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
-                // I'm a bit worried about switching to minified versions /JB/
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL)).toString(),
+                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()
             ));
         }

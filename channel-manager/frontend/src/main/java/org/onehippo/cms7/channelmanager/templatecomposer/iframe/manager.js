@@ -112,6 +112,10 @@ jQuery.noConflict();
         },
 
         onDragStart : function(ui, container) {
+            if(this.dropIndicator == null) {
+                this.dropIndicator = $('<div id="hst-drop-indicator"/>').appendTo(document.body);
+                this.dropIndicator.css('position', 'absolute');
+            }
             this.onDrag(ui, container);
             $.each(this.containers, function(key, value) {
                 value.beforeDrag();
@@ -119,10 +123,6 @@ jQuery.noConflict();
         },
 
         onDrag : function(ui, container) {
-            if(this.dropIndicator == null) {
-                this.dropIndicator = $('<div id="hst-drop-indicator"/>').appendTo(document.body);
-                this.dropIndicator.css('position', 'absolute');
-            }
             container.drawDropIndicator(ui, this.dropIndicator);
         },
 
