@@ -6,6 +6,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/NewChannelDialog.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/NewChannelDialog.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
@@ -13,10 +15,15 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Channel.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelComparator.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelDataProvider.java eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel$ContentRootRenderer.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelsListPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text

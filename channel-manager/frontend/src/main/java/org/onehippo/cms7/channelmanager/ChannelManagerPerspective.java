@@ -17,30 +17,22 @@
 package org.onehippo.cms7.channelmanager;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
-import org.onehippo.cms7.channelmanager.channels.Channel;
-import org.onehippo.cms7.channelmanager.channels.ChannelDataProvider;
+import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelsListPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ChannelManagerPerspective
@@ -51,23 +43,17 @@ public class ChannelManagerPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
     private static final String CHANNEL_MANAGER_PANEL_SERVICE_ID = "channelmanager.panel";
 
-    public ChannelManagerPerspective(IPluginContext context, IPluginConfig config) {
+    public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        BreadCrumbBar breadCrumbBar = new BreadCrumbBar("breadcrumbs");
-        add(breadCrumbBar);
-        ChannelsListPanel channelsList = new ChannelsListPanel(context, config, "channels-list", breadCrumbBar);
-        add(channelsList);
+        ChannelGridPanel channelGridPanel = new ChannelGridPanel("channel-list");
+        add(channelGridPanel);
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
-
     }
-
-
 
     @Override
     public IModel<String> getTitle() {
