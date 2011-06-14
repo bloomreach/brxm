@@ -90,16 +90,4 @@ public class Channel implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
-
-    @Override
-    public String toString() {
-        return "Channel{" +
-                "title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                ", type='" + type + '\'' +
-                ", hstConfigPath='" + hstConfigPath + '\'' +
-                ", contentRoot='" + contentRoot + '\'' +
-                ", parent=" + parent +
-                '}';
-    }
 }

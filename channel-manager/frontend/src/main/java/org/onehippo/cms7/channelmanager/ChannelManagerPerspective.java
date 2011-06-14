@@ -45,7 +45,7 @@ public class ChannelManagerPerspective extends Perspective {
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        ChannelGridPanel channelGridPanel = new ChannelGridPanel("channel-list");
+        ChannelGridPanel channelGridPanel = new ChannelGridPanel("channel-list", config);
         add(channelGridPanel);
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");

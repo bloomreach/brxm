@@ -1,8 +1,12 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -16,17 +20,27 @@ import java.util.List;
  */
 @ExtClass("Hippo.ChannelManager.ChannelGridPanel")
 public class ChannelGridPanel extends ExtPanel {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
+    private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhostgroup.path";
     private ChannelStore store;
 
-    public ChannelGridPanel(String id) {
+    public ChannelGridPanel(String id, IPluginConfig config) {
         super(id);
         add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class,
                 "Hippo.ChannelManager.ChannelGridPanel.js"));
 
         List<ExtField> fieldList = new ArrayList<ExtField>();
         fieldList.add(new ExtField("title"));
-        this.store = new ChannelStore(fieldList);
-        add(this.store);
+        final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP);
+        if (hstConfigLocation == null) {
+            log.error("No host group is configured for retrieving list of channels, please set the property " +
+                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!");
+
+        } else {
+            this.store = new ChannelStore(fieldList, new JcrNodeModel(hstConfigLocation));
+            add(this.store);
+        }
     }
 
     @Override
