@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.util.Calendar;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
@@ -67,7 +65,6 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         int page = getIntValue(pageParam, 1);
 
         request.setAttribute("page", page);
-        System.out.println("okj");
         HstQueryManager manager = getQueryManager(request);
         try {
             
@@ -89,14 +86,6 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                 request.setAttribute("query", StringEscapeUtils.escapeHtml(query));
             }
             
-            if (true) {
-                Filter filter = hstQuery.createFilter();
-                
-                filter.addLessOrEqualThan("demosite:date", Calendar.getInstance());
-                hstQuery.setFilter(filter);
-                
-            }
-
             final HstQueryResult result = hstQuery.execute();
             PageableCollection<SearchResult<HippoBean>> results = new PageableCollection<SearchResult<HippoBean>>(
                     result.getSize());
