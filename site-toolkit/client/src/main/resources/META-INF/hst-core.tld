@@ -516,7 +516,7 @@
         <attribute>
             <name>keyHint</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
             <description>Tag is Deprecated: use headContribution instead.
             </description>
@@ -532,7 +532,7 @@
         <attribute>
             <name>category</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
             <description>Tag is Deprecated: use headContribution instead.
             </description>
