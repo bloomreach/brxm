@@ -91,6 +91,11 @@ public interface ContainerConstants {
     /**
      * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)
      */
+     String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
+    
+    /**
+     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)
+     */
     String CMS_SSO_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
     
     /**
