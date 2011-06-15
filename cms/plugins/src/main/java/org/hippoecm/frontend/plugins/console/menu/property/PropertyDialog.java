@@ -75,8 +75,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
     }
 
-    private String name;
-    private String value;
+    private String name = "";
+    private String value = "";
     private Boolean isMultiple = Boolean.FALSE;
     private String type = PropertyType.TYPENAME_STRING;
     private MenuPlugin plugin;
@@ -232,6 +232,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     public void setName(String name) {
+        if (name == null)
+            name = "";
         this.name = name;
     }
 
@@ -240,6 +242,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     public void setValue(String value) {
+        if (value == null)
+            value = "";
         this.value = value;
     }
 
