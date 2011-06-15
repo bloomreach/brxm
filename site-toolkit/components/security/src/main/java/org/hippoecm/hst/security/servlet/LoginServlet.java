@@ -295,7 +295,7 @@ public class LoginServlet extends HttpServlet {
                 Credentials repoCreds = createSubjectRepositoryCredentials(request);
                 
                 if (repoCreds != null) {
-                    session.setAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME, repoCreds);
+                    session.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, repoCreds);
                 }
             }
             
