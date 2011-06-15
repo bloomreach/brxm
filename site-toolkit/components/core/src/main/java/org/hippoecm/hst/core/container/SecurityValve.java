@@ -300,10 +300,10 @@ public class SecurityValve extends AbstractValve {
             HttpSession session = request.getSession(false);
             
             if (session != null) {
-                Credentials subjectRepoCreds = (Credentials) session.getAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
+                Credentials subjectRepoCreds = (Credentials) session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
                 
                 if (subjectRepoCreds != null) {
-                    session.removeAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
+                    session.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
                     privCred.add(subjectRepoCreds);
                 }
                 

@@ -30,6 +30,11 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
   </bean>
 
+  <!-- lazy non-pooling delegating repository -->
+  <bean id="javax.jcr.Repository.pagecomposer.lazyDelegatingBased" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepository">
+    <constructor-arg ref="javax.jcr.Repository.delegating" />
+  </bean>
+
   <!-- 
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
@@ -69,6 +74,7 @@
 
   <!-- Pipelining -->
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.pagecomposer.container.CmsSecurityValve">
+    <property name="repository" ref="javax.jcr.Repository.pagecomposer.lazyDelegatingBased"/>
   </bean>
   <bean id="jaxrsHstConfigServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
     <constructor-arg ref="jaxrsHstConfigService"/>
@@ -94,7 +100,6 @@
           <property name="invokingValves">
             <list>
               <ref bean="cmsSecurityValve"/>
-              <ref bean="subjectBasedSessionValve"/>
               <ref bean="jcrSessionStatefulConcurrencyValve"/>
               <ref bean="noCacheResponseHeadersValve"/>
               <ref bean="jaxrsHstConfigServiceValve"/>
@@ -132,7 +137,6 @@
               <ref bean="contextResolvingValve"/>
               <ref bean="localizationValve"/>
               <ref bean="cmsSecurityValve"/>
-              <ref bean="subjectBasedSessionValve"/>
               <ref bean="jcrSessionStatefulConcurrencyValve"/>
               <ref bean="siteMenusResolvingValve"/>
               <ref bean="actionValve"/>
