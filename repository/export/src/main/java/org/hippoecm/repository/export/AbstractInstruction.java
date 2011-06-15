@@ -42,6 +42,10 @@ abstract class AbstractInstruction implements Instruction {
     public String getName() {
         return name;
     }
+    
+    public Double getSequence() {
+        return sequence;
+    }
 
     Element createBaseInstructionElement() {
         // create element:

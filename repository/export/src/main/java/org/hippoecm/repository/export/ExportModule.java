@@ -39,6 +39,7 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.dom4j.DocumentException;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,6 +287,7 @@ public final class ExportModule implements DaemonModule {
                                         log.debug("Adding instruction " + instruction);
                                     }
                                     extension.addInstruction(instruction);
+                                    addInitializeItem(instruction);
                                 } else {
                                     log.warn("Unable to create instruction. This change will be lost");
                                 }
@@ -299,6 +301,7 @@ public final class ExportModule implements DaemonModule {
                                     }
                                     // the root node of this instruction was removed, remove the instruction
                                     extension.removeInstruction(instruction);
+                                    removeInitializeItem(instruction);
                                 }
                             } else {
                                 log.warn("Change not handled by export. "
@@ -363,6 +366,7 @@ public final class ExportModule implements DaemonModule {
                                 log.debug("Adding instruction " + instruction);
                             }
                             extension.addInstruction(instruction);
+                            addInitializeItem(instruction);
                         }
                         uris.add(uri);
                     }
@@ -382,6 +386,36 @@ public final class ExportModule implements DaemonModule {
                 log.debug("onEvent took " + TimeUnit.MILLISECONDS.convert(estimatedTime, TimeUnit.NANOSECONDS) + " ms.");
             }
 
+        }
+        
+        private void addInitializeItem(Instruction instruction) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("adding initialize item " + instruction.getName());
+                }
+                Node parent = session.getNode("/hippo:configuration/hippo:initialize");
+                Node node = parent.addNode(instruction.getName());
+                node.setPrimaryType(HippoNodeType.NT_INITIALIZEITEM);
+                node.setProperty("hippo:sequence", instruction.getSequence());
+                session.save();
+            }
+            catch (RepositoryException e) {
+                log.error("Failed to add initialize item: " + instruction.getName(), e);
+            }
+        }
+        
+        private void removeInitializeItem(Instruction instruction) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("removing initialize item " + instruction.getName());
+                }
+                Node node = session.getNode("/hippo:configuration/hippo:initialize/" + instruction.getName());
+                node.remove();
+                session.save();
+            }
+            catch (RepositoryException e) {
+                log.error("Failed to remove initialize item: " + instruction.getName(), e);
+            }
         }
 
         private boolean ignore(String path) {

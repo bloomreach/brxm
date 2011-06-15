@@ -21,13 +21,15 @@ import org.dom4j.Element;
  * Represents an instruction element (a hippo:initializeitem) inside hippoecm-extension.xml file.
  */
 interface Instruction {
-    @SuppressWarnings("unused")
+
     final String SVN_ID = "$Id: $";
 
     /**
      * @return  The name of this instruction
      */
     String getName();
+    
+    Double getSequence();
 
     /**
      * @return  xml representation of this instruction.

@@ -19,7 +19,7 @@ package org.hippoecm.repository.export;
  * A namespace instruction.
  */
 interface NamespaceInstruction extends Instruction {
-    @SuppressWarnings("unused")
+
     final String SVN_ID = "$Id: ";
 
     /**
