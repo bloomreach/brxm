@@ -729,6 +729,8 @@ demosuite/content/src/main/resources/democontent/demosite-products.xml -text
 demosuite/content/src/main/resources/democontent_fr/demo-common-fr.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/demosite-namespace.xml svneol=native#text/plain
 demosuite/content/src/main/resources/demosite-types.cnd -text
+demosuite/content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 demosuite/content/src/main/resources/hst-configurations.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hst-sites.xml -text
@@ -751,6 +753,11 @@ demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/pages.x
 demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/security/group-sitegroup.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/security/user-editor.xml -text svneol=unset#text/plain
+demosuite/content/src/main/resources/security/user-siteuser.xml -text svneol=unset#text/plain
 demosuite/pom.xml svneol=native#text/plain
 demosuite/site/pom.xml svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
