@@ -30,7 +30,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
-import org.onehippo.cms7.channelmanager.channels.ChannelsListPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
