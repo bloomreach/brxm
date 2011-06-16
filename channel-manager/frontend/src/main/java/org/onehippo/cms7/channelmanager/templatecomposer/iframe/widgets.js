@@ -224,7 +224,6 @@ jQuery.noConflict();
                 items : this.sel.sortable + ' .' + this.cls.overlay.item,
                 itemsRel : '.' + this.cls.overlay.item
             };
-            this.ddEventCounter = 0;
 
             this.sel.append = {
                 item    : '',
@@ -381,18 +380,7 @@ jQuery.noConflict();
         },
 
         ddOnChange : function(event, ui) {
-            // change events are not queued for rendering in jQuery UI, so let's do
-            this.ddEventCounter++;
-            // ugly but faster than creating another scope with e.g. a anonymous function
-            ddEventCounter = this.ddEventCounter;
-            var self = this;
-            window.setTimeout(function() {
-                if (self.ddEventCounter != ddEventCounter) {
-                    // only render the last fired event
-                    return;
-                }
-                self.parent.onDrag.apply(self.parent, [ui, self]);
-            }, 10);
+            this.parent.onDrag(ui, this);
         },
 
         drawDropIndicator : function(ui, el) {
