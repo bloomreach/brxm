@@ -16,7 +16,10 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -44,6 +47,11 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
 
         final DropDownChoice<String> protocolsChoice = new DropDownChoice<String>("protocols",
                 new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS);
+        protocolsChoice.add(new OnChangeAjaxBehavior() {
+            protected void onUpdate(AjaxRequestTarget target) {
+                // nothing, just update the model
+            }
+        });
         protocolsChoice.setOutputMarkupId(true);
         add(protocolsChoice);
 
