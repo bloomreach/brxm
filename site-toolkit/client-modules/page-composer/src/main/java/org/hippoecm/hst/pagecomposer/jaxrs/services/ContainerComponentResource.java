@@ -20,12 +20,9 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Workspace;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -38,6 +35,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -47,9 +47,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @Path("/hst:containercomponent/")
 public class ContainerComponentResource extends AbstractConfigResource {
@@ -93,16 +90,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
             session.getWorkspace().copy(containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
-            // now copy all the other child nodes from containerNode to newItem
-            Workspace workspace = session.getWorkspace();
-            NodeIterator childs = containerItem.getNodes();
-            while (childs.hasNext()) {
-                Node child = childs.nextNode();
-                if (child == null) {
-                    throw new ContainerException("Error during iterating child nodes of container item");
-                }
-                workspace.copy(child.getPath(), newItem.getPath());
-            }
 
             // now save the container node
             session.save();
