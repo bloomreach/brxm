@@ -117,7 +117,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String extension;
     private String prefix; 
     
-    public HstSiteMapItemService(HstNode node, String siteMapRootNodePath, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    public HstSiteMapItemService(HstNode node, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
         this.depth = depth;
@@ -125,8 +125,17 @@ public class HstSiteMapItemService implements HstSiteMapItem {
       
         this.qualifiedId = nodePath;
         
-        // path & id are the same
-        this.id = nodePath.substring(siteMapRootNodePath.length()+1).intern();
+        // the id is the relative path below the root sitemap node. Find the root sitemap node for the current HstNode.
+        // and take the path after it as id. Note that you cannot take the same sitemap root node path every time, as due to inheritance,
+        // the HstNode can come from a different root sitemap node
+    
+        HstNode rootSiteMapNode = node;
+        while(rootSiteMapNode.getParent().getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
+            rootSiteMapNode = rootSiteMapNode.getParent();
+        }
+        rootSiteMapNode =  rootSiteMapNode.getParent();;
+        this.id = nodePath.substring(rootSiteMapNode.getValueProvider().getPath().length() + 1);
+        
         // currently, the value is always the nodename
         this.value = node.getValueProvider().getName().intern();
          
@@ -288,7 +297,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapRootNodePath, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {
