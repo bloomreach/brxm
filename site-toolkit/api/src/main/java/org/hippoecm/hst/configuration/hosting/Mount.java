@@ -392,4 +392,10 @@ public interface Mount {
      * @return the identifier of this {@link Mount}
      */
     String getIdentifier();
+
+    /**
+     * @return the channel id of this {@link Mount}
+     */
+    String getChannelId();
+
 }

@@ -45,6 +45,11 @@ public class MountService implements Mount {
     private VirtualHost virtualHost;
 
     /**
+     * The channel to which this {@link Mount} belongs
+     */
+    private String channelId;
+
+    /**
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
      */
     private Mount parent;
@@ -439,6 +444,10 @@ public class MountService implements Mount {
             this.contentPath = hstSiteNodeForMount.getContentPath();
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
         }
+
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
+            channelId = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELID);
+        }
         
         // check whether there are child Mounts now for this Mount
         
@@ -477,6 +486,10 @@ public class MountService implements Mount {
         return uuid;
     }
 
+    @Override
+    public String getChannelId() {
+        return channelId;
+    }
 
     public String getAlias() {
         return alias;

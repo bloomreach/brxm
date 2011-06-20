@@ -197,6 +197,12 @@
 - hst:sessionstateful (boolean)
 // form login page for this site mount, to which the request can be redirected for non-authenticated user.
 - hst:formloginpage (string)
+// channel to which this mount belongs
+- hst:channelid (string)
+// blueprint for the channel
+- hst:blueprintid (string)
+// properties of the channel
++ hst:channelproperties (nt:base)
 // to hold all the 'free defined properties'
 - * (string)
 
@@ -237,9 +243,21 @@
 - hst:versioninpreviewheader (boolean)
 + * (hst:virtualhostgroup)
 
+[hst:blueprint] > nt:base, mix:referenceable, mix:versionable
+- hst:parameterinfoclass (string)
+- hst:pluginclass (string)
++ * (hst:configuration)
++ * (hst:site)
++ * (hst:mount)
+
+
+[hst:blueprints] > nt:base, mix:referenceable, mix:versionable
++ * (hst:blueprint)
+
 [hst:hst] > nt:base, mix:referenceable, mix:versionable
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
++ hst:blueprints (hst:blueprints) = hst:blueprints version
 + * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites

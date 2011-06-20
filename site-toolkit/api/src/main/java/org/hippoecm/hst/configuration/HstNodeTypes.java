@@ -121,6 +121,9 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_SUBJECTBASEDSESSION =  "hst:subjectbasedsession";
     public final static String MOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
     public final static String MOUNT_PROPERTY_FORMLOGINPAGE =  "hst:formloginpage";
+    public final static String MOUNT_PROPERTY_CHANNELID =  "hst:channelid";
+    public final static String MOUNT_PROPERTY_BLUEPRINTID =  "hst:blueprintid";
+    public final static String MOUNT_PROPERTY_CHANNELPROPERTIES =  "hst:channelproperties";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
@@ -134,8 +137,8 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_CATALOG = "hst:catalog";
     public final static String NODENAME_HST_PAGES = "hst:pages";
     public final static String NODENAME_HST_TEMPLATES = "hst:templates";
-    public static final String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
+    public final static String NODENAME_HST_SITEMAPITEMHANDLERS = "hst:sitemapitemhandlers";
     public final static String NODENAME_HST_HSTDEFAULT = "hst:default";
-    
-    
+    public final static String NODENAME_HST_BLUEPRINTS = "hst:blueprints";
+
 }

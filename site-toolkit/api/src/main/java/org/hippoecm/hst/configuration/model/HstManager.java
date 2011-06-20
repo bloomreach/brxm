@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -28,7 +29,12 @@ public interface HstManager {
      * @return the <code>VirtualHosts</code> 
      */
     VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException;
-    
+
+    /**
+     * INTERNAL ONLY
+     * @return the <code>ChannelManager</code>
+     */
+    ChannelManager getChannelManager() throws RepositoryNotAvailableException;
     
     /**
      * @return the HstURLFactory
