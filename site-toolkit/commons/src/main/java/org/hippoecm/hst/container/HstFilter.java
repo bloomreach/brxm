@@ -604,6 +604,12 @@ public class HstFilter implements Filter {
 			return;
 		}
 
+        if (resolvedSiteMapItem.getStatusCode() > 0) {
+            logger.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code" 
+                    ,String.valueOf(resolvedSiteMapItem.getStatusCode()), req.getRequestURL().toString() );
+            res.setStatus(resolvedSiteMapItem.getStatusCode());
+        }
+
 		HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, req, res, resolvedSiteMapItem.getNamedPipeline());
 
 		// now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
