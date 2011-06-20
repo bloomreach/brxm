@@ -111,13 +111,16 @@ public class HstHtmlTag extends TagSupport {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }
         
+        if(html == null) {
+            html = "";
+        }
         if (var == null) {
             try {               
                 JspWriter writer = pageContext.getOut();
                 writer.print(html);
             } catch (IOException ioe) {
                 throw new JspException(
-                    "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                    " Exception: cannot write to the output writer.");
             }
         } 
         else {
