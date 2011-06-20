@@ -1,7 +1,6 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,18 +28,10 @@ public class ChannelGridPanel extends ExtPanel {
         super(id);
         add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class,
                 "Hippo.ChannelManager.ChannelGridPanel.js"));
-
         List<ExtField> fieldList = new ArrayList<ExtField>();
         fieldList.add(new ExtField("title"));
-        final String hstConfigLocation = config.getString(HOST_GROUP_CONFIG_PROP);
-        if (hstConfigLocation == null) {
-            log.error("No host group is configured for retrieving list of channels, please set the property " +
-                    HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!");
-
-        } else {
-            this.store = new ChannelStore(fieldList);
-            add(this.store);
-        }
+        this.store = new ChannelStore(fieldList);
+        add(this.store);
     }
 
     @Override

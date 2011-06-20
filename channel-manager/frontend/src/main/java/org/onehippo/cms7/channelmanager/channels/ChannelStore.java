@@ -2,6 +2,8 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,13 +25,21 @@ public class ChannelStore extends ExtJsonStore<Object> {
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
 
     private Map<String, Channel> channels;
-    private ChannelManager channelManager;
 
 
     public ChannelStore(List<ExtField> fields) {
         super(fields);
-        this.channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        this.channels = channelManager.getChannels();
+        ChannelManager channelManager = null;
+        try {
+            channelManager = ((HstManager) HstServices.getComponentManager().getComponent(HstManager.class.getName())).getChannelManager();
+        } catch (RepositoryNotAvailableException e) {
+            log.error("Unable to get the ChannelManager from HST: " + e.getMessage(), e);
+        }
+        if (channelManager != null) {
+            this.channels = channelManager.getChannels();
+        } else {
+            //TODO Show error message in the Plugin UI
+        }
     }
 
     @Override
