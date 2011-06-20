@@ -73,6 +73,7 @@ public class SitesOverview extends BaseHstComponent {
                 Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
                 Node mount = host.addNode("hst:root", "hst:mount");
                 mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many-live"+tryToAdd);
+                mount.setProperty("hst:alias", "mount"+tryToAdd);
                 
                 // add a new hst:site
                 
