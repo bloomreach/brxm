@@ -137,15 +137,14 @@ public class FolderTreePlugin extends RenderPlugin {
                             }
                         }
                     });
-                    return null;
-                } else {
-                    MarkupContainer container = super.newContextLink(parent, id, node, content);
-                    if (!workflowEnabled) {
-                        container.setEnabled(false);
-                    }
-                    return container;
+
                 }
-            };
+                MarkupContainer container = super.newContextLink(parent, id, node, content);
+                if (!workflowEnabled) {
+                    container.setEnabled(false);
+                }
+                return container;
+            }
 
             @Override
             protected void onContextLinkClicked(MarkupContainer content, AjaxRequestTarget target) {
