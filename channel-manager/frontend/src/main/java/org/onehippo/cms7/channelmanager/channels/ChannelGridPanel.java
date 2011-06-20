@@ -38,7 +38,7 @@ public class ChannelGridPanel extends ExtPanel {
                     HOST_GROUP_CONFIG_PROP + " on the channel-manager configuration!");
 
         } else {
-            this.store = new ChannelStore(fieldList, new JcrNodeModel(hstConfigLocation));
+            this.store = new ChannelStore(fieldList);
             add(this.store);
         }
     }
