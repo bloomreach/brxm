@@ -28,6 +28,11 @@ public class StringPool {
     private static final Map<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
     
     /**
+     * not allowed to instantiate
+     */
+    private StringPool(){}
+    
+    /**
      * If <code>string</code> is already present in the pool (same hashcode and equals), then the already present String 
      * object is returned. Else, the <code>string</code> is added to the stringPool. 
      * @param string 
@@ -48,7 +53,7 @@ public class StringPool {
     /**
      * Clears the entire StringPool
      */
-    public void clear() {
+    public static void clear() {
         stringPool.clear();
     }
 }
