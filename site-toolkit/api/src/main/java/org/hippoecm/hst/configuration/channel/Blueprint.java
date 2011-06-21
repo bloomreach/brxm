@@ -16,10 +16,10 @@
 package org.hippoecm.hst.configuration.channel;
 
 /**
- * A BluePrint is a "node" provided by the developers that is used to create and manage channels by the ChannelManager,
+ * A Blueprint is a "node" provided by the developers that is used to create and manage channels by the ChannelManager,
  * and is defined by the node type hst:blueprint. Please see the hst.cnd for the node type definition.
  */
-public interface BluePrint {
+public interface Blueprint {
 
     /**
      * Unique id for this blueprint

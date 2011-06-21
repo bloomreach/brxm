@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.channel;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-public class BluePrintService implements BluePrint {
+public class BlueprintService implements Blueprint {
 
     private final String id;
     private final String cmsPluginClass;
@@ -26,7 +26,7 @@ public class BluePrintService implements BluePrint {
     private final String name;
     private final String description;
 
-    public BluePrintService(final Node bluePrint) throws RepositoryException {
+    public BlueprintService(final Node bluePrint) throws RepositoryException {
 
         id = bluePrint.getName();
 

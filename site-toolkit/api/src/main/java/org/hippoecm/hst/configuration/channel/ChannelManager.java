@@ -32,11 +32,11 @@ public interface ChannelManager {
     /**
      * Creates a channel with a unique ID.  The channel will not be persisted until save is invoked.
      *
-     * @param bluePrintId
+     * @param blueprintId
      * @return
      * @throws ChannelException when the blueprint is not valid
      */
-    Channel createChannel(String bluePrintId) throws ChannelException;
+    Channel createChannel(String blueprintId) throws ChannelException;
 
     /**
      * Persist a channel; will create the mounts, sites and configuration when the channel is new,
@@ -51,12 +51,12 @@ public interface ChannelManager {
      * The list of available blueprints
      * @return
      */
-    List<BluePrint> listBluePrints();
+    List<Blueprint> getBlueprints();
 
     /**
      * Retrieve a blue print from it's ID.
      * @param id
      * @return
      */
-    BluePrint getBluePrint(String id);
+    Blueprint getBlueprint(String id);
 }

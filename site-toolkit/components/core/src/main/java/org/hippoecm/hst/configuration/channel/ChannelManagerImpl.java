@@ -40,7 +40,7 @@ public class ChannelManagerImpl implements ChannelManager {
     private final String rootPath;
 
     private int lastChannelId;
-    private Map<String, BluePrint> bluePrints;
+    private Map<String, Blueprint> bluePrints;
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
@@ -49,7 +49,7 @@ public class ChannelManagerImpl implements ChannelManager {
         rootPath = configNode.getPath();
 
         this.channels = new HashMap<String, Channel>();
-        this.bluePrints = new HashMap<String, BluePrint>();
+        this.bluePrints = new HashMap<String, Blueprint>();
 
         loadChannels(configNode);
 
@@ -62,7 +62,7 @@ public class ChannelManagerImpl implements ChannelManager {
             NodeIterator bluePrintIterator = bluePrintsNode.getNodes();
             while (bluePrintIterator.hasNext()) {
                 Node bluePrint = bluePrintIterator.nextNode();
-                bluePrints.put(bluePrint.getName(), new BluePrintService(bluePrint));
+                bluePrints.put(bluePrint.getName(), new BlueprintService(bluePrint));
             }
         }
     }
@@ -146,12 +146,12 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public List<BluePrint> listBluePrints() {
-        return new ArrayList<BluePrint>(bluePrints.values());
+    public List<Blueprint> listBluePrints() {
+        return new ArrayList<Blueprint>(bluePrints.values());
     }
 
     @Override
-    public BluePrint getBluePrint(final String id) {
+    public Blueprint getBluePrint(final String id) {
         return bluePrints.get(id);
     }
 
