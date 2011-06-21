@@ -117,7 +117,6 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
             },
 
             processNextStep:function() {
-                console.log(this.layout.activeItem.id);
                 if(this.layout.activeItem.id === 'form-panel' ) {
                     this.layout.setActiveItem('properties');
                 }
