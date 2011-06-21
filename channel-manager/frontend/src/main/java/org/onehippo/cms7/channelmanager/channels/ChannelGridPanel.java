@@ -37,7 +37,6 @@ import java.util.List;
 public class ChannelGridPanel extends ExtPanel {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
-    private static final String HOST_GROUP_CONFIG_PROP = "hst.virtualhostgroup.path";
     private ChannelStore store;
 
     public ChannelGridPanel(String id, IPluginConfig config) {
@@ -55,6 +54,7 @@ public class ChannelGridPanel extends ExtPanel {
         store.onRenderExtHead(js);
         super.preRenderExtHead(js);
     }
+
 
     @Override
     protected void onRenderProperties(JSONObject properties) throws JSONException {

@@ -16,10 +16,6 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -32,6 +28,10 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Channel JSON Store.
@@ -57,8 +57,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         //JsonStore
         final JSONObject props = super.getProperties();
         Map<String, String> sortInfo = new HashMap<String, String>();
-        sortInfo.put("title", "title");
-        props.put("sortInfo", sortInfo);
+           sortInfo.put("field", "title");
+        sortInfo.put("direction", "ASC");
         Map<String, String> baseParams = new HashMap<String, String>();
         baseParams.put("xaction", "read");
         props.put("baseParams", baseParams);
@@ -77,7 +77,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.total = channels.size();
         for (Channel channel : channels.values()) {
             JSONObject object = new JSONObject();
-            object.put("title", channel.getTitle());
+            object.put("title", channel.getId());
             object.put("contentRoot", channel.getContentRoot());
             data.put(object);
         }

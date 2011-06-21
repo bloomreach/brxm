@@ -16,12 +16,10 @@
 
 Ext.namespace('Hippo.ChannelManager');
 
-/*
- --------------------------
- ChannelGridPanel
- --------------------------
+/**
+ * @class Hippo.ChannelManager.ChannelGridPanel
+ * @extends Ext.grid.GridPanel
  */
-
 Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             constructor: function(config) {
                 this.store = config.store;
@@ -53,6 +51,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                                     {
                                         header: 'Channel Name',
                                         width: 20,
+                                        dataIndex: 'title',
                                         scope: me
                                     }
                                 ]
@@ -78,8 +77,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         });
 
 Ext.reg('Hippo.ChannelManager.ChannelGridPanel', Hippo.ChannelManager.ChannelGridPanel);
-
-
 
 /**
  * @class Hippo.ChannelManager.ChannelStore

@@ -16,12 +16,10 @@
 
 Ext.namespace('Hippo.ChannelManager');
 
-/*
- --------------------------
- ChannelGridPanel
- --------------------------
+/**
+ * @class Hippo.ChannelManager.BlueprintListPanel
+ * @extends Ext.grid.GridPanel
  */
-
 Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
             constructor: function(config) {
                 this.store = config.store;
