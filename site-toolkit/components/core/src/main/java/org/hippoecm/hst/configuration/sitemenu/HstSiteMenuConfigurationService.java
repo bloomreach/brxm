@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
 
     public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) throws ServiceException{
        this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
-       this.name = siteMenu.getValueProvider().getName().intern();
+       this.name = StringPool.get(siteMenu.getValueProvider().getName());
         for(HstNode siteMenuItem : siteMenu.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMENUITEM.equals(siteMenuItem.getNodeTypeName())) {
                 try {

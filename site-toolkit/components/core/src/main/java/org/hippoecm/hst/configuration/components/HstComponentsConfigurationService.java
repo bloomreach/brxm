@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
@@ -148,7 +149,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             while (usedReferenceNames.contains(autoRefName)) {
                 autoRefName = "r" + (++autocreatedCounter);
             }
-            ((HstComponentConfigurationService) componentConfiguration).setReferenceName(autoRefName.intern());
+            ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
         }
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
@@ -174,7 +175,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             {
                 if(child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                  // add to the used referencenames set 
-                    usedReferenceNames.add(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME).intern());
+                    usedReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
                 }
                 try {
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,

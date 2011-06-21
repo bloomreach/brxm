@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -50,9 +51,9 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
         
-        this.name = intern(siteMenuItem.getValueProvider().getName());
+        this.name = StringPool.get(siteMenuItem.getValueProvider().getName());
         if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
-            this.externalLink = intern(siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK));
+            this.externalLink = StringPool.get(siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK));
         }else if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
            // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
            this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
@@ -93,8 +94,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
                log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
            }  else {
                for(int i = 0; i < parameterNames.length ; i++) {
-                   this.parameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
-                   this.localParameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
+                   this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                   this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                }
            }
         }
@@ -103,7 +104,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             // add the parent parameters that are not already present
             for(Entry<String, String> parentParam : this.parent.getParameters().entrySet()) {
                 if(!this.parameters.containsKey(parentParam.getKey())) {
-                    this.parameters.put(intern(parentParam.getKey()), intern(parentParam.getValue()));
+                    this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
                 }
             }
         }
@@ -167,14 +168,4 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         return properties;
     }
 
-    /*
-     * because there can be many similar HstComponentConfigurationService instances we intern most strings to avoid many duplicate String
-     * in the java heap
-     */
-    protected String intern(String string) {
-        if(string == null) {
-            return null;
-        }
-        return string.trim().intern();
-    }
 }

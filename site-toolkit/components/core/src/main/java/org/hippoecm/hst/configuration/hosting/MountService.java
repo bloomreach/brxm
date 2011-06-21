@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
@@ -184,20 +185,20 @@ public class MountService implements Mount {
         this.virtualHost = virtualHost;
         this.parent = parent;
         this.port = port;
-        this.name = mount.getValueProvider().getName().intern();
+        this.name = StringPool.get(mount.getValueProvider().getName());
         this.uuid = mount.getValueProvider().getIdentifier();
         // default for when there is no alias property
         
         this.allProperties = mount.getValueProvider().getProperties();
       
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
-            this.alias = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase().intern();
+            this.alias = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase());
         }
         
         if(parent == null) {
             mountPath = "";
         } else {
-            mountPath = (parent.getMountPath() + "/" + name).intern();
+            mountPath = StringPool.get((parent.getMountPath() + "/" + name));
         }
        
         // is the context path visible in the url
@@ -248,7 +249,7 @@ public class MountService implements Mount {
             if(this.scheme == null || "".equals(this.scheme)) {
                 this.scheme = VirtualHostsService.DEFAULT_SCHEME;
             } else {
-                this.scheme.intern();
+                this.scheme = StringPool.get(scheme);
             }
         } else {
            // try to get the one from the parent
@@ -261,9 +262,7 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
-            if(homepage != null) {
-                homepage.intern();
-            }
+            homepage = StringPool.get(homepage);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -275,9 +274,7 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
-            if(locale != null) {
-                locale.intern();
-            }
+            locale = StringPool.get(locale);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -289,9 +286,7 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
-            if(pageNotFound != null) {
-                pageNotFound.intern();
-            }
+            pageNotFound = StringPool.get(pageNotFound);
         } else {
            // try to get the one from the parent
             if(parent != null) {
@@ -315,15 +310,16 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
-            if(type != null) {
-                type.intern();
-            }
+            type = StringPool.get(type);
         } else if(parent != null) {
             this.type = parent.getType();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPES)) {
             String[] typesProperty = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_TYPES);
+            for(int i = 0; i< typesProperty.length ; i++) {
+                typesProperty[i] = StringPool.get(typesProperty[i]);
+            }
             this.types = Arrays.asList(typesProperty);
         } else if(parent != null) {
             // because the parent.getTypes also includes the primary type, below we CANNOT use parent.getTypes() !!
@@ -344,9 +340,7 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE);
-            if(namedPipeline != null) {
-                namedPipeline.intern();
-            }
+            namedPipeline  = StringPool.get(namedPipeline);
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
         }
@@ -360,11 +354,9 @@ public class MountService implements Mount {
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             this.mountPoint = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT);
-            if(mountPoint != null) {
-                mountPoint.intern();
-            }
+            mountPoint = StringPool.get(mountPoint);
             // now, we need to create the HstSite object
-            if(mountPoint == null || "".equals(mountPoint)){
+            if("".equals(mountPoint)){
                 mountPoint = null;
             }
         } else if(parent != null) {
@@ -413,7 +405,7 @@ public class MountService implements Mount {
         }
         
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE)) {
-            this.formLoginPage = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE);
+            this.formLoginPage = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE));
         } else if (parent != null){
             this.formLoginPage = parent.getFormLoginPage();
         }

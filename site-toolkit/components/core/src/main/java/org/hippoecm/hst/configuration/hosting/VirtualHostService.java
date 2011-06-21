@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
@@ -79,7 +80,7 @@ public class VirtualHostService implements VirtualHost {
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
-        this.hostGroupName = intern(hostGroupName);
+        this.hostGroupName = StringPool.get(hostGroupName);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
@@ -116,7 +117,7 @@ public class VirtualHostService implements VirtualHost {
                 this.scheme = virtualHosts.getScheme();
             }
         }
-        scheme = intern(scheme);
+        scheme = StringPool.get(scheme);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
@@ -128,7 +129,7 @@ public class VirtualHostService implements VirtualHost {
                 this.locale = virtualHosts.getLocale();
             }
         }
-        locale = intern(locale);
+        locale = StringPool.get(locale);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
@@ -141,7 +142,7 @@ public class VirtualHostService implements VirtualHost {
             }
         }
 
-        homepage = intern(homepage);
+        homepage = StringPool.get(homepage);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
@@ -154,7 +155,7 @@ public class VirtualHostService implements VirtualHost {
             }
         }
 
-        pageNotFound = intern(pageNotFound);
+        pageNotFound = StringPool.get(pageNotFound);
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
@@ -187,7 +188,7 @@ public class VirtualHostService implements VirtualHost {
             
             // if the fullName is for example 127.0.0.1, then this items name is '1', its child is 0 which has a child 0, which has
             // the last child is '127'
-            this.name = intern(nameSegments[nameSegments.length - 1]);
+            this.name = StringPool.get(nameSegments[nameSegments.length - 1]);
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
@@ -206,7 +207,7 @@ public class VirtualHostService implements VirtualHost {
             this.name = virtualHostNode.getValueProvider().getName();
         }
         
-        hostName = intern(buildHostName());
+        hostName = StringPool.get(buildHostName());
         
         HstNode mountRoot = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mountRoot != null) {
@@ -265,7 +266,7 @@ public class VirtualHostService implements VirtualHost {
             VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
-        hostName = buildHostName();
+        hostName = StringPool.get(buildHostName());
     }
     
     
@@ -356,14 +357,4 @@ public class VirtualHostService implements VirtualHost {
         return builder.toString();
     }
 
-    /*
-     * because there can be many similar HstComponentConfigurationService instances we intern most strings to avoid many duplicate String
-     * in the java heap
-     */
-    protected String intern(String string) {
-        if(string == null) {
-            return null;
-        }
-        return string.trim().intern();
-    }
 }

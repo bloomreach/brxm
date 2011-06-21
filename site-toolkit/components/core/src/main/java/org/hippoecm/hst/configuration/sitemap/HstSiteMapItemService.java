@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
@@ -121,7 +122,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
         this.depth = depth;
-        String nodePath = node.getValueProvider().getPath().intern();
+        String nodePath = StringPool.get(node.getValueProvider().getPath());
       
         this.qualifiedId = nodePath;
         
@@ -137,10 +138,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.id = nodePath.substring(rootSiteMapNode.getValueProvider().getPath().length() + 1);
         
         // currently, the value is always the nodename
-        this.value = node.getValueProvider().getName().intern();
+        this.value = StringPool.get(node.getValueProvider().getName());
          
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
-            this.refId = intern(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
+            this.refId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
         }
 
         this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
@@ -193,7 +194,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             parameterizedPath = parameterizedPath + value;
         }
         
-        parameterizedPath = intern(parameterizedPath);
+        parameterizedPath = StringPool.get(parameterizedPath);
         
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -203,8 +204,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
            }  else {
                for(int i = 0; i < parameterNames.length ; i++) {
-                   this.parameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
-                   this.localParameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
+                   this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                   this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                }
            }
         }
@@ -213,7 +214,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             // add the parent parameters that are not already present
             for(Entry<String, String> parentParam : this.parentItem.getParameters().entrySet()) {
                 if(!this.parameters.containsKey(parentParam.getKey())) {
-                    this.parameters.put(intern(parentParam.getKey()), intern(parentParam.getValue()));
+                    this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
                 }
             }
         }
@@ -226,9 +227,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                  relativeContentPath = relativeContentPath.replace(PARENT_PROPERTY_PLACEHOLDER, parentItem.getRelativeContentPath());
              }
         }
-        relativeContentPath = intern(relativeContentPath);
+        relativeContentPath = StringPool.get(relativeContentPath);
         
-        this.componentConfigurationId = intern(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID));
+        this.componentConfigurationId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID));
         
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
@@ -237,7 +238,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                 if(handlerConfiguration == null) {
                     log.error("Incorrect configuration: SiteMapItem '{}' contains a handlerId '{}' which cannot be found in the siteMapItemHandlers configuration. The handler will be ignored", getQualifiedId(), handlerId);
                 } else {
-                    this.siteMapItemHandlerConfigurations.put(intern(handlerId), handlerConfiguration);
+                    this.siteMapItemHandlerConfigurations.put(StringPool.get(handlerId), handlerConfiguration);
                 }
             }
         }
@@ -251,7 +252,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else {
             this.locale = hstSiteMap.getSite().getMount().getLocale();
         }
-        locale = intern(locale);
+        locale = StringPool.get(locale);
         
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
             this.authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
@@ -292,7 +293,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.namedPipeline = this.getHstSiteMap().getSite().getMount().getNamedPipeline();
         }
         
-        namedPipeline = intern(namedPipeline);
+        namedPipeline = StringPool.get(namedPipeline);
         
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
@@ -545,15 +546,5 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return isExcludedForLinkRewriting;
     }
 
-    /*
-     * because there can be many similar HstComponentConfigurationService instances we intern most strings to avoid many duplicate String
-     * in the java heap
-     */
-    protected String intern(String string) {
-        if(string == null) {
-            return null;
-        }
-        return string.trim().intern();
-    }
     
 }

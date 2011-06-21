@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -172,7 +173,7 @@ public class LocationMapTreeImpl implements LocationMapTree{
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getTreeItem(pathFragment.get(0));
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            this.children.put(pathFragment.get(0).intern(), child);
+            this.children.put(StringPool.get(pathFragment.get(0)), child);
         }
         pathFragment.remove(0);
         child.addSiteMapItem(pathFragment , hstSiteMapItem);

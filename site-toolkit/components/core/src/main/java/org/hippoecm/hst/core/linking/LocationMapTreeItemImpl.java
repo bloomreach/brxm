@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class LocationMapTreeItemImpl implements LocationMapTreeItem{
@@ -43,7 +44,7 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem{
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getChild(pathFragment.get(0));
         if(child == null) {
             child = new LocationMapTreeItemImpl();
-            this.children.put(pathFragment.get(0).intern(), child);
+            this.children.put(StringPool.get(pathFragment.get(0)), child);
             child.setParentItem(this);
             if(HstNodeTypes.WILDCARD.equals(pathFragment.get(0))){
                 child.setIsWildCard(true);

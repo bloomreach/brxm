@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.provider.ValueProvider;
@@ -102,7 +103,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
-        this.id = intern(id);
+        this.id = StringPool.get(id);
     }
 
     
@@ -118,8 +119,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
             String rootNodeName, boolean traverseDescendants) throws ServiceException {
     
-        this.canonicalStoredLocation = intern(node.getValueProvider().getCanonicalPath());
-        this.canonicalIdentifier = intern(node.getValueProvider().getIdentifier());
+        this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
+        this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
        
         if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
           type = Type.COMPONENT;
@@ -127,7 +128,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
           type = Type.CONTAINER_COMPONENT;
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
-            dummyContent = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
+            dummyContent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
         } else {
             throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
@@ -136,21 +137,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.parent = parent;
 
         if(parent == null) {
-            this.id = intern(rootNodeName + "/" + node.getValueProvider().getName());   
+            this.id = StringPool.get(rootNodeName + "/" + node.getValueProvider().getName());   
         } else {
-            this.id = intern(parent.getId() + "/" + node.getValueProvider().getName());   
+            this.id = StringPool.get(parent.getId() + "/" + node.getValueProvider().getName());   
         }
         
-        this.name = intern(node.getValueProvider().getName());
-        this.referenceName = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
-        this.componentClassName = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
+        this.name = StringPool.get(node.getValueProvider().getName());
+        this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
+        this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
         if (componentClassName == null) {
-            this.componentClassName = intern(GenericHstComponent.class.getName());
+            this.componentClassName = StringPool.get(GenericHstComponent.class.getName());
         } else {
             this.hasClassNameConfigured = true;
         }
       
-        this.referenceComponent = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
+        this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
         
         if(referenceComponent != null) {
             if(type == Type.CONTAINER_COMPONENT) {
@@ -159,12 +160,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
         
-        this.hstTemplate = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE));
-        this.hstResourceTemplate = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE));
-        this.pageErrorHandlerClassName = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
+        this.hstTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE));
+        this.hstResourceTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE));
+        this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
         
         if(type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
-            this.xtype = intern(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
+            this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
         } 
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -174,8 +175,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 log.warn("Skipping parameters for component '{}' because they only make sense if there are equal number of names and values", id);
             } else {
                 for (int i = 0; i < parameterNames.length; i++) {
-                    this.parameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
-                    this.localParameters.put(intern(parameterNames[i]), intern(parameterValues[i]));
+                    this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                    this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                 }
             }
         }
@@ -190,16 +191,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
                   )  {
                 if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                    usedChildReferenceNames.add(intern(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
+                    usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
                 }
                 try {
                     HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
                             child, this, rootNodeName, true);
-                    componentConfigurations.put(intern(componentConfiguration.getId()), componentConfiguration);
+                    componentConfigurations.put(StringPool.get(componentConfiguration.getId()), componentConfiguration);
 
                     // we also need an ordered list
                     orderedListConfigs.add(componentConfiguration);
-                    childConfByName.put(intern(child.getValueProvider().getName()), componentConfiguration);
+                    childConfByName.put(StringPool.get(child.getValueProvider().getName()), componentConfiguration);
                     log.debug("Added component service with key '{}'", id);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {
@@ -325,7 +326,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (derivedChildrenByName == null) {
             HashMap<String, HstComponentConfiguration> children = new HashMap<String, HstComponentConfiguration>();
             for (HstComponentConfiguration config : orderedListConfigs) {
-                children.put(intern(config.getName()), config);
+                children.put(StringPool.get(config.getName()), config);
             }
             derivedChildrenByName = children;
         }
@@ -347,7 +348,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
         }
-        HstComponentConfigurationService copy = new HstComponentConfigurationService(intern(newId));
+        HstComponentConfigurationService copy = new HstComponentConfigurationService(newId);
         copy.parent = parent;
         copy.componentClassName = child.componentClassName;
         copy.name = child.name;
@@ -372,12 +373,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         ArrayList<String> copyToList = (ArrayList<String>) child.usedChildReferenceNames.clone();
         copy.usedChildReferenceNames = copyToList;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
-            String descId = intern(copy.id + descendant.id);
+            String descId = StringPool.get(copy.id + descendant.id);
             HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
                     rootComponentConfigurations);
             copy.componentConfigurations.put(copyDescendant.id, copyDescendant);
             copy.orderedListConfigs.add(copyDescendant);
-            copy.childConfByName.put(intern(copyDescendant.getName()), copyDescendant);
+            copy.childConfByName.put(StringPool.get(copyDescendant.getName()), copyDescendant);
             // do not need them by name for copies
         }
         // the copy is populated
@@ -571,7 +572,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
 
-        String newId = intern(this.id + "-" + childToMerge.id);
+        String newId = StringPool.get(this.id + "-" + childToMerge.id);
         
         HstComponentConfigurationService copy = deepCopy(this, newId, childToMerge, populated,
                 rootComponentConfigurations);
@@ -599,7 +600,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
         }
         
-        this.renderPath = intern(templateRenderPath);
+        this.renderPath = StringPool.get(templateRenderPath);
         
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setRenderPath(templateResourceMap);
@@ -624,7 +625,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.isNamedResourceServer = template.getValueProvider().getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
         }
         
-        this.serveResourcePath = intern(templateServeResourcePath);
+        this.serveResourcePath = StringPool.get(templateServeResourcePath);
         
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setServeResourcePath(templateResourceMap);
@@ -650,20 +651,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 while (usedChildReferenceNames.contains(autoRefName)) {
                     autoRefName = "r" + (++autocreatedCounter);
                 }
-                child.setReferenceName(intern(autoRefName));
+                child.setReferenceName(StringPool.get(autoRefName));
             }
         }
-    }
-
-    /*
-     * because there can be many similar HstComponentConfigurationService instances we intern most strings to avoid many duplicate String
-     * in the java heap
-     */
-    protected String intern(String string) {
-        if(string == null) {
-            return null;
-        }
-        return string.trim().intern();
     }
 
 }

@@ -1,0 +1,54 @@
+/*
+ *  Copyright 2011 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.configuration;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * A String pool utility that can be used to return an already present String object from the heap instead
+ * of creating new Strings for String objects that are equal. 
+ * Since the hst configuration object contains many equal strings for multiple sites, this saves lots of memory. 
+ */
+public class StringPool {
+
+    private static final Map<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
+    
+    /**
+     * If <code>string</code> is already present in the pool (same hashcode and equals), then the already present String 
+     * object is returned. Else, the <code>string</code> is added to the stringPool. 
+     * @param string 
+     * @return the String object from the argument or if their was already and equal object in the pool, the object that was already there.
+     */
+    public static String get(String string) {
+        if(string == null) {
+            return null;
+        }
+        String o = stringPool.get(string);
+        if(o == null) {
+            stringPool.put(string,string);
+            o = string;
+        } 
+        return o;
+    }
+    
+    /**
+     * Clears the entire StringPool
+     */
+    public void clear() {
+        stringPool.clear();
+    }
+}
