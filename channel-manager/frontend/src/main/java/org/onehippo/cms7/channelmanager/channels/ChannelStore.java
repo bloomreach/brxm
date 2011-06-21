@@ -16,10 +16,13 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Channel JSON Store.
@@ -86,16 +85,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     private Map<String, Channel> getChannels() {
-        ChannelManager channelManager;
-        try {
-            HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-            channelManager = hstManager.getChannelManager();
-        } catch (RepositoryNotAvailableException e) {
-            log.error("Unable to get the ChannelManager from HST: " + e.getMessage(), e);
-            throw new RuntimeException("Unable to get the channels from Channel Manager" + e);
-        }
+        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         if (channelManager != null) {
-            return channelManager.getChannels();
+            try {
+                return channelManager.getChannels();
+            } catch (ChannelException e) {
+                throw new RuntimeException("Unable to get the channels from Channel Manager", e);
+            }
         } else {
             throw new RuntimeException("Unable to get the channels from Channel Manager");
         }
