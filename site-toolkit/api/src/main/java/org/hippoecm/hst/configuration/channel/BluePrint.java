@@ -15,13 +15,31 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+/**
+ * A BluePrint is a "node" provided by the developers that is used to create and manage channels by the ChannelManager,
+ * and is defined by the node type hst:blueprint. Please see the hst.cnd for the node type definition.
+ */
 public interface BluePrint {
 
     /**
      * Unique id for this blueprint
-     * @return
+     *
+     * @return The node name
      */
     String getId();
+
+    /**
+     * The name of the blue print as provided in the property hst:name, if the property doesn't
+     * exist, the id (node name) is returned as the name.
+     *
+     * @return the name of the blue print.
+     */
+    String getName();
+
+    /**
+     * @return value of hst:description of the blueprint node, returns null if the property doesn't exist.
+     */
+    String getDescription();
 
     /**
      * @return the CMS plugin that is able to edit the configuration for this blueprint
@@ -30,8 +48,10 @@ public interface BluePrint {
 
     /**
      * Class for interface that is exposed at runtime to components
+     *
      * @return
      */
     String getParameterInfo();
+
 
 }

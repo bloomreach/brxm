@@ -244,6 +244,9 @@
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable
+//"User-friendly" Name of the Blueprint that is used in Channel Manager
+- hst:name (string)
+- hst:description (string)
 - hst:parameterinfoclass (string)
 - hst:pluginclass (string)
 + * (hst:configuration)

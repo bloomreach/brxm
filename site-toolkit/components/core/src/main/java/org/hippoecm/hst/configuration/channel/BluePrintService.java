@@ -23,10 +23,24 @@ public class BluePrintService implements BluePrint {
     private final String id;
     private final String cmsPluginClass;
     private final String parameterInfoClass;
+    private final String name;
+    private final String description;
 
     public BluePrintService(final Node bluePrint) throws RepositoryException {
 
         id = bluePrint.getName();
+
+        if (bluePrint.hasProperty("hst:name")) {
+            this.name = bluePrint.getProperty("hst:name").getString();
+        } else {
+            this.name = this.id;
+        }
+
+        if (bluePrint.hasProperty("hst:description")) {
+            this.description = bluePrint.getProperty("hst:description").getString();
+        } else {
+            this.description = null;
+        }
 
         if (bluePrint.hasProperty("hst:pluginclass")) {
             cmsPluginClass = bluePrint.getProperty("hst:pluginClass").getString();
@@ -44,6 +58,16 @@ public class BluePrintService implements BluePrint {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description;
     }
 
     @Override
