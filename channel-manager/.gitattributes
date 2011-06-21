@@ -20,6 +20,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.ja
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/PropertiesPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.java -text

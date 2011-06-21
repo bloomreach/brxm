@@ -32,7 +32,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 var config = {
                     store: me.store,
                     stripeRows: true,
-                    height: 400,
+                    autoHeight: true,
                     viewConfig: {
                         forceFit: true
                     },
