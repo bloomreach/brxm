@@ -7,10 +7,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:authrole</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:groups" sv:type="String"
-      sv:multiple="true">
-      <sv:value>admin</sv:value>
-    </sv:property>
+    <sv:property sv:name="hipposys:groups" sv:type="String" sv:multiple="true"/>
     <sv:property sv:name="hipposys:role" sv:type="String">
       <sv:value>readwrite</sv:value>
     </sv:property>
