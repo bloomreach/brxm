@@ -76,6 +76,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
                 var config = {
                     title: "New Channel",
+                    closeAction: 'hide',
                     width: 720,
                     height: 450,
                     modal: true,
@@ -92,7 +93,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                             text: 'Cancel',
                             scope: this,
                             handler: function() {
-                                this.close();
+                                this.hide();
                             }
                         }
                     ]

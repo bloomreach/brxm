@@ -57,11 +57,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 }, this);
                 this.store.load();
 
-            },
-
-            showChannelWindow: function() {
-                console.log("TODO: Show channel window with blueprints ");
-
             }
 
         });

@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
+import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 import java.util.List;
 
@@ -46,9 +47,17 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     }
 
     @Override
+    protected JSONObject getProperties() throws JSONException {
+        final JSONObject properties = super.getProperties();
+        properties.put("writer", new JSONIdentifier("new Ext.data.JsonWriter()"));
+        return properties;
+    }
+
+
+    @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-        List<Blueprint> blueprints= getBlueprints();
+        List<Blueprint> blueprints = getBlueprints();
         this.total = blueprints.size();
         for (Blueprint blueprint : blueprints) {
             JSONObject object = new JSONObject();
