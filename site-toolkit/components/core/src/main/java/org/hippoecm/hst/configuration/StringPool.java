@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.configuration;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A String pool utility that can be used to return an already present String object from the heap instead
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class StringPool {
 
-    private static final Map<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
+    private static final ConcurrentMap<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
     
     /**
      * not allowed to instantiate
@@ -42,12 +42,8 @@ public class StringPool {
         if(string == null) {
             return null;
         }
-        String o = stringPool.get(string);
-        if(o == null) {
-            stringPool.put(string,string);
-            o = string;
-        } 
-        return o;
+        String cached = stringPool.putIfAbsent(string, string);
+        return (cached == null) ? string : cached;
     }
     
     /**
