@@ -6,6 +6,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text
@@ -13,15 +14,12 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspect
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/PropertiesPanel.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/wizard/BlueprintListPanel.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/wizard/BlueprintStore.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/wizard/Hippo.ChannelManager.BlueprintListPanel.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/wizard/NewChannelWizardPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.java -text

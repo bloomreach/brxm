@@ -82,17 +82,6 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                     resizable: false,
                     layout: 'card',
                     activeItem: 0,
-                    items: [
-                        {
-                            id: 'form-panel',
-                            html: "<h1>Blue PrintListing Panel</h1>"
-                        },
-                        {
-                            id: 'properties',
-                            html: "<h1>Channel Mandatory Properties Panel</h1>"
-                        }
-
-                    ],
                     buttons: [
                         {
                             text: 'Next',
@@ -112,13 +101,21 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
+
                 Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
+
+                this.add(new Hippo.ChannelManager.BlueprintListPanel({
+                            store: me.blueprintStore,
+                            id: 'blueprints-panel'
+                        }));
+
+                this.add({id: 'properties-panel', html:"<h1>Channel Properties Form</h1>"});
 
             },
 
             processNextStep:function() {
-                if(this.layout.activeItem.id === 'form-panel' ) {
-                    this.layout.setActiveItem('properties');
+                if (this.layout.activeItem.id === 'blueprints-panel') {
+                    this.layout.setActiveItem('properties-panel');
                 }
 
             }

@@ -61,4 +61,8 @@ public class ChannelGridPanel extends ExtPanel {
         properties.put("store", new JSONIdentifier(this.store.getJsObjectId()));
     }
 
+    public ChannelStore getStore() {
+        return this.store;
+    }
+
 }

@@ -22,6 +22,7 @@ Ext.namespace('Hippo.ChannelManager');
  */
 Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
             constructor: function(config) {
+                console.log(config);
                 this.store = config.store;
                 this.columns = config.columns;
                 Hippo.ChannelManager.BlueprintListPanel.superclass.constructor.call(this, config);
