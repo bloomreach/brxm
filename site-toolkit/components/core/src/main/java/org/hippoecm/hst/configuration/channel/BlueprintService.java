@@ -17,6 +17,8 @@ package org.hippoecm.hst.configuration.channel;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import java.util.Collections;
+import java.util.List;
 
 public class BlueprintService implements Blueprint {
 
@@ -73,6 +75,12 @@ public class BlueprintService implements Blueprint {
     @Override
     public String getCmsPluginClass() {
         return cmsPluginClass;
+    }
+
+    @Override
+    public List<PropertyDefinition> getPropertyDefinitions() {
+        //TODO
+        return null;
     }
 
     @Override

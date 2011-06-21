@@ -54,6 +54,13 @@ public interface Blueprint {
      *
      * @return
      */
+
+    String getParameterInfo();
+
+    /**
+     * Returns the list of {@link PropertyDefinition}s for a Channel Blueprint.
+     * @return
+     */
     List<PropertyDefinition> getPropertyDefinitions();
 
 
