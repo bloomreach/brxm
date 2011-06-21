@@ -30,17 +30,8 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             initComponent: function() {
                 var me = this;
                 var config = {
-                    title: 'Manage Channels',
                     store: me.store,
                     stripeRows: true,
-                    tbar: [
-                        {
-                            text: "New Channel",
-                            handler: me.showChannelWindow,
-                            scope: me
-                        }
-                    ],
-
                     height: 400,
                     viewConfig: {
                         forceFit: true
@@ -67,7 +58,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 this.store.load();
 
             },
-
 
             showChannelWindow: function() {
                 console.log("TODO: Show channel window with blueprints ");

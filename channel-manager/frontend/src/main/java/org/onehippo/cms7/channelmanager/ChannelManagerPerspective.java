@@ -26,7 +26,6 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
-import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +36,20 @@ import org.slf4j.LoggerFactory;
  */
 public class ChannelManagerPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
-    private static final String CHANNEL_MANAGER_PANEL_SERVICE_ID = "channelmanager.panel";
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        ChannelGridPanel channelGridPanel = new ChannelGridPanel("channel-list", config);
-        add(channelGridPanel);
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
+
+        RootPanel rootPanel = new RootPanel("channel-root");
+        add(rootPanel);
+
+
     }
 
     @Override

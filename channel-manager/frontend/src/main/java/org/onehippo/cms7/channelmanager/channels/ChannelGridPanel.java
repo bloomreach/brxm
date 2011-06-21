@@ -17,7 +17,6 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,8 +38,8 @@ public class ChannelGridPanel extends ExtPanel {
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
 
-    public ChannelGridPanel(String id, IPluginConfig config) {
-        super(id);
+    public ChannelGridPanel() {
+        super();
         add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class,
                 "Hippo.ChannelManager.ChannelGridPanel.js"));
         List<ExtField> fieldList = new ArrayList<ExtField>();
