@@ -31,12 +31,14 @@ public class RootPanel extends ExtPanel {
         add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.RootPanel.js"));
         ChannelGridPanel gridPanel = new ChannelGridPanel();
         gridPanel.setRegion(BorderLayout.Region.CENTER);
+        gridPanel.setSplit(true);
         add(gridPanel);
 
         PropertiesPanel propertiesPanel = new PropertiesPanel();
         propertiesPanel.setRegion(BorderLayout.Region.EAST);
         propertiesPanel.setCollapsed(true);
-        propertiesPanel.setTitleCollapse(true);
+        propertiesPanel.setCollapsible(true);
+        propertiesPanel.setSplit(true);
         add(propertiesPanel);
 
     }

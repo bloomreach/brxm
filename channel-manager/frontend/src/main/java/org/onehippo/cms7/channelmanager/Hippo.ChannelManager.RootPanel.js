@@ -52,8 +52,11 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             },
 
             openChannelWizard:function() {
-                alert("opening new channel wizard")
+                alert("opening new channel wizard");
             }
         });
 
 Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);
+
+
+

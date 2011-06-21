@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.channelmanager.channels;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.onehippo.cms7.channelmanager.channels.wizard;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -32,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
+import java.util.List;
+
 public class BlueprintStore extends ExtJsonStore<Object> {
 
     private long total;
@@ -41,20 +39,6 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         super(fields);
     }
 
-
-    @Override
-    protected JSONObject getProperties() throws JSONException {
-        //Need the sortinfo and xaction params since we are using GroupingStore instead of
-        //JsonStore
-        final JSONObject props = super.getProperties();
-        Map<String, String> sortInfo = new HashMap<String, String>();
-        sortInfo.put("title", "title");
-        props.put("sortInfo", sortInfo);
-        Map<String, String> baseParams = new HashMap<String, String>();
-        baseParams.put("xaction", "read");
-        props.put("baseParams", baseParams);
-        return props;
-    }
 
     @Override
     protected long getTotal() {
@@ -82,7 +66,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             try {
                 return channelManager.getBlueprints();
             } catch (ChannelException e) {
-                throw new RuntimeException("Unable to get the Channel Manager instance.", e);
+                throw new RuntimeException("Unable to get blueprints from ChannelManager.", e);
             }
         } else {
             throw new RuntimeException("Unable to get the Channel Manager instance.");

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.channelmanager.channels;
+package org.onehippo.cms7.channelmanager.channels.wizard;
 
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.json.JSONException;
