@@ -15,11 +15,10 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -27,11 +26,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChannelManagerImpl implements ChannelManager {
 
@@ -40,7 +39,7 @@ public class ChannelManagerImpl implements ChannelManager {
     private final String rootPath;
 
     private int lastChannelId;
-    private Map<String, Blueprint> bluePrints;
+    private Map<String, Blueprint> blueprints;
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
@@ -49,20 +48,20 @@ public class ChannelManagerImpl implements ChannelManager {
         rootPath = configNode.getPath();
 
         this.channels = new HashMap<String, Channel>();
-        this.bluePrints = new HashMap<String, Blueprint>();
+        this.blueprints = new HashMap<String, Blueprint>();
 
         loadChannels(configNode);
 
-        loadBluePrints(configNode);
+        loadBlueprints(configNode);
     }
 
-    private void loadBluePrints(final Node configNode) throws RepositoryException {
+    private void loadBlueprints(final Node configNode) throws RepositoryException {
         if (configNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS)) {
-            Node bluePrintsNode = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
-            NodeIterator bluePrintIterator = bluePrintsNode.getNodes();
-            while (bluePrintIterator.hasNext()) {
-                Node bluePrint = bluePrintIterator.nextNode();
-                bluePrints.put(bluePrint.getName(), new BlueprintService(bluePrint));
+            Node blueprintsNode = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+            NodeIterator blueprintIterator = blueprintsNode.getNodes();
+            while (blueprintIterator.hasNext()) {
+                Node blueprint = blueprintIterator.nextNode();
+                blueprints.put(blueprint.getName(), new BlueprintService(blueprint));
             }
         }
     }
@@ -106,11 +105,11 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public Channel createChannel(final String bluePrintId) throws ChannelException {
-        if (!bluePrints.containsKey(bluePrintId)) {
-            throw new ChannelException("Blue print id " + bluePrintId + " is not valid");
+    public Channel createChannel(final String blueprintId) throws ChannelException {
+        if (!blueprints.containsKey(blueprintId)) {
+            throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
         }
-        return new Channel(bluePrintId, nextChannelId());
+        return new Channel(blueprintId, nextChannelId());
     }
 
     @Override
@@ -125,7 +124,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
                 if (channels.containsKey(channel.getId())) {
                     Channel previous = channels.get(channel.getId());
-                    if (!previous.getBluePrintId().equals(channel.getBluePrintId())) {
+                    if (!previous.getBlueprintId().equals(channel.getBlueprintId())) {
                         throw new ChannelException("Cannot change channel to new blue print");
                     }
 
@@ -146,13 +145,13 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public List<Blueprint> listBluePrints() {
-        return new ArrayList<Blueprint>(bluePrints.values());
+    public List<Blueprint> getBlueprints() {
+        return new ArrayList<Blueprint>(blueprints.values());
     }
 
     @Override
-    public Blueprint getBluePrint(final String id) {
-        return bluePrints.get(id);
+    public Blueprint getBlueprint(final String id) {
+        return blueprints.get(id);
     }
 
     /**
@@ -181,17 +180,17 @@ public class ChannelManagerImpl implements ChannelManager {
             }
 
             String id = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID).getString();
-            String bluePrintId = null;
+            String blueprintId = null;
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID)) {
-                bluePrintId = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID).getString();
+                blueprintId = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID).getString();
             }
             if (channels.containsKey(id)) {
                 channel = channels.get(id);
-                if (!channel.getBluePrintId().equals(bluePrintId)) {
-                    log.warn("Channel found with id " + id + " that has a different blueprint id; " + "expected " + channel.getBluePrintId() + ", found " + bluePrintId + ".  Ignoring mount");
+                if (!channel.getBlueprintId().equals(blueprintId)) {
+                    log.warn("Channel found with id " + id + " that has a different blueprint id; " + "expected " + channel.getBlueprintId() + ", found " + blueprintId + ".  Ignoring mount");
                 }
             } else {
-                channel = new Channel(bluePrintId, id);
+                channel = new Channel(blueprintId, id);
                 channels.put(id, channel);
             }
 

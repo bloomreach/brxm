@@ -44,7 +44,7 @@ public class Channel implements Serializable {
      * The Blue Print ID for this channel, or {@value UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
      * @return Blue Print ID
      */
-    public String getBluePrintId() {
+    public String getBlueprintId() {
         return bluePrintId != null ? bluePrintId : UNKNOWN_BLUEPRINT;
     }
 

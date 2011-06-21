@@ -15,14 +15,13 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.Map;
+import org.hippoecm.hst.test.AbstractHstTestCase;
+import org.junit.Test;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-
-import org.hippoecm.hst.test.AbstractHstTestCase;
-import org.junit.Test;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -38,7 +37,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         Channel channel = channels.values().iterator().next();
         assertEquals("testchannel", channel.getId());
-        assertEquals(Channel.UNKNOWN_BLUEPRINT, channel.getBluePrintId());
+        assertEquals(Channel.UNKNOWN_BLUEPRINT, channel.getBlueprintId());
     }
 
     private ChannelManagerImpl createManager() throws RepositoryException {
