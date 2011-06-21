@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
-import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -27,30 +27,21 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
-import org.wicketstuff.js.ext.data.ExtGroupingStore;
-import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.data.ExtJsonStore;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Channel JSON Store.
- */
-@ExtClass("Hippo.ChannelManager.ChannelStore")
-public class ChannelStore extends ExtGroupingStore<Object> {
+public class BlueprintStore extends ExtJsonStore<Object> {
 
-    /**
-     * The first serialized version of this source. Version {@value}.
-     */
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
     private long total;
+    private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
-    public ChannelStore(List<ExtField> fields) {
+    public BlueprintStore(List<ExtField> fields) {
         super(fields);
     }
+
 
     @Override
     protected JSONObject getProperties() throws JSONException {
@@ -74,30 +65,33 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-        Map<String, Channel> channels = getChannels();
-        this.total = channels.size();
-        for (Channel channel : channels.values()) {
+        List<Blueprint> blueprints= getBlueprints();
+        this.total = blueprints.size();
+        for (Blueprint blueprint : blueprints) {
             JSONObject object = new JSONObject();
-            object.put("title", channel.getTitle());
-            object.put("contentRoot", channel.getContentRoot());
+            object.put("id", blueprint.getId());
+            object.put("description", blueprint.getDescription());
+            object.put("name", blueprint.getName());
             data.put(object);
         }
         return data;
     }
 
-    private Map<String, Channel> getChannels() {
+    private List<Blueprint> getBlueprints() {
         ChannelManager channelManager;
         try {
             HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
             channelManager = hstManager.getChannelManager();
         } catch (RepositoryNotAvailableException e) {
-            log.error("Unable to get the ChannelManager from HST: " + e.getMessage(), e);
-            throw new RuntimeException("Unable to get the channels from Channel Manager" + e);
+            log.error("Unable to get blueprints from HST: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to get the blueprints from Channel Manager" + e);
         }
         if (channelManager != null) {
-            return channelManager.getChannels();
+            return channelManager.getBlueprints();
         } else {
-            throw new RuntimeException("Unable to get the channels from Channel Manager");
+            throw new RuntimeException("Unable to get the Channel Manager instance.");
         }
     }
+
+
 }

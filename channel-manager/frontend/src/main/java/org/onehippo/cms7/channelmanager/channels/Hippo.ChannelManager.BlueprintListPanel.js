@@ -22,27 +22,18 @@ Ext.namespace('Hippo.ChannelManager');
  --------------------------
  */
 
-Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
+Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
             constructor: function(config) {
                 this.store = config.store;
                 this.columns = config.columns;
-                Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
+                Hippo.ChannelManager.BlueprintListPanel.superclass.constructor.call(this, config);
             },
 
             initComponent: function() {
                 var me = this;
                 var config = {
-                    title: 'Manage Channels',
                     store: me.store,
                     stripeRows: true,
-                    tbar: [
-                        {
-                            text: "New Channel",
-                            handler: me.showChannelWindow,
-                            scope: me
-                        }
-                    ],
-
                     height: 400,
                     viewConfig: {
                         forceFit: true
@@ -51,8 +42,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     colModel: new Ext.grid.ColumnModel({
                                 columns: [
                                     {
-                                        header: 'Channel Name',
-                                        width: 20,
+                                        header: 'Blueprint Name',
                                         scope: me
                                     }
                                 ]
@@ -61,40 +51,13 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-                Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
+                Hippo.ChannelManager.BlueprintListPanel.superclass.initComponent.apply(this, arguments);
                 this.on('reloadGrid', function() {
                     this.store.reload();
                 }, this);
                 this.store.load();
 
-            },
-
-
-            showChannelWindow: function() {
-                console.log("TODO: Show channel window with blueprints ");
-
             }
-
         });
 
-Ext.reg('Hippo.ChannelManager.ChannelGridPanel', Hippo.ChannelManager.ChannelGridPanel);
-
-
-
-/**
- * @class Hippo.ChannelManager.ChannelStore
- * @extends Ext.data.GroupingStore
- *
- * A simple extension of the grouping store that is configured with a reader automatically, similar to the
- * Ext.data.JsonStore
- *
- */
-Hippo.ChannelManager.ChannelStore = Ext.extend(Ext.data.GroupingStore, {
-  constructor: function(config) {
-    Hippo.ChannelManager.ChannelStore.superclass.constructor.call(this, Ext.apply(config, {
-      reader: new Ext.data.JsonReader(config)
-    }));
-  }
-});
-
-Ext.reg('Hippo.ChannelManager.ChannelStore', Hippo.ChannelManager.ChannelStore);
+Ext.reg('Hippo.ChannelManager.BlueprintListPanel', Hippo.ChannelManager.BlueprintListPanel);
