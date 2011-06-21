@@ -6,6 +6,5 @@ public class NewChannelWizardPanel extends ExtPanel {
 
     public NewChannelWizardPanel() {
         super();
-
     }
 }

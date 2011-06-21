@@ -52,11 +52,80 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             },
 
             openChannelWizard:function() {
-                alert("opening new channel wizard");
+                var win = new Hippo.ChannelManager.NewChannelWindow({
+                            blueprintStore: this.blueprintStore,
+                            channelStore : this.channelStore
+                        });
+                win.show();
             }
         });
 
 Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);
+
+
+Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
+            constructor: function(config) {
+                this.blueprintStore = config.blueprintStore;
+                this.channelStore = config.channelStore;
+
+                Hippo.ChannelManager.NewChannelWindow.superclass.constructor.call(this, config);
+            },
+
+            initComponent: function() {
+                var me = this;
+
+                var config = {
+                    title: "New Channel",
+                    width: 720,
+                    height: 450,
+                    modal: true,
+                    resizable: false,
+                    layout: 'card',
+                    activeItem: 0,
+                    items: [
+                        {
+                            id: 'form-panel',
+                            html: "<h1>Blue PrintListing Panel</h1>"
+                        },
+                        {
+                            id: 'properties',
+                            html: "<h1>Channel Mandatory Properties Panel</h1>"
+                        }
+
+                    ],
+                    buttons: [
+                        {
+                            text: 'Next',
+                            scope: me,
+                            handler: me.processNextStep
+                        },
+                        {
+                            text: 'Cancel',
+                            scope: this,
+                            handler: function() {
+                                this.close();
+                            }
+                        }
+                    ]
+
+                };
+
+                Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+                Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
+
+            },
+
+            processNextStep:function() {
+                console.log(this.layout.activeItem.id);
+                if(this.layout.activeItem.id === 'form-panel' ) {
+                    this.layout.setActiveItem('properties');
+                }
+
+            }
+        }
+//end extending Config
+);
 
 
 
