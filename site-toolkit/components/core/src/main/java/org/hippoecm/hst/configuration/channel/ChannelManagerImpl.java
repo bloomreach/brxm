@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -26,17 +27,17 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChannelManagerImpl implements ChannelManager {
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
-    private final String rootPath;
+    private String rootPath = "/hst:hst";
 
     private int lastChannelId;
     private Map<String, Blueprint> blueprints;
@@ -44,15 +45,19 @@ public class ChannelManagerImpl implements ChannelManager {
     private Credentials credentials;
     private Repository repository;
 
-    public ChannelManagerImpl(Node configNode) throws RepositoryException {
-        rootPath = configNode.getPath();
+    public ChannelManagerImpl() {
+    }
 
-        this.channels = new HashMap<String, Channel>();
-        this.blueprints = new HashMap<String, Blueprint>();
+    public void setCredentials(final Credentials credentials) {
+        this.credentials = credentials;
+    }
 
-        loadChannels(configNode);
+    public void setRepository(final Repository repository) {
+        this.repository = repository;
+    }
 
-        loadBlueprints(configNode);
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 
     private void loadBlueprints(final Node configNode) throws RepositoryException {
@@ -73,6 +78,84 @@ public class ChannelManagerImpl implements ChannelManager {
             while (rootChannelNodes.hasNext()) {
                 Node hgNode = rootChannelNodes.nextNode();
                 populateChannels(hgNode);
+            }
+        }
+    }
+
+    /**
+     * Recursively gets the list of "channels" configured under a virtual host node.
+     * <p/>
+     * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
+     *
+     * @param node - the inital node to start with, must be a virtual host node.
+     * @throws javax.jcr.RepositoryException - In case cannot read required node/property from the repository.
+     */
+    private void populateChannels(Node node) throws RepositoryException {
+        NodeIterator nodes = node.getNodes();
+        while (nodes.hasNext()) {
+            Channel channel = null;
+            Node currNode = nodes.nextNode();
+
+            //Get the channels from the child node.
+            populateChannels(currNode);
+
+            if (!currNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT)) {
+                continue;
+            }
+
+            if (!currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
+                continue;
+            }
+
+            String id = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID).getString();
+            String bluePrintId = null;
+            if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID)) {
+                bluePrintId = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID).getString();
+            }
+            if (channels.containsKey(id)) {
+                channel = channels.get(id);
+                if (!channel.getBlueprintId().equals(bluePrintId)) {
+                    log.warn("Channel found with id " + id + " that has a different blueprint id; " + "expected " + channel.getBlueprintId() + ", found " + bluePrintId + ".  Ignoring mount");
+                }
+            } else {
+                channel = new Channel(bluePrintId, id);
+                channels.put(id, channel);
+            }
+
+            if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+                String mountPoint = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
+                Node siteNode = currNode.getSession().getNode(mountPoint);
+                if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+                    channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
+                }
+                Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                if (contentNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                    String siteDocbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    String contentRoot = contentNode.getSession().getNodeByIdentifier(siteDocbase).getPath();
+                    channel.setContentRoot(contentRoot);
+                }
+            }
+        }
+    }
+
+    private void load() throws ChannelException {
+        if (channels == null) {
+            Session session = null;
+            try {
+                session = getSession();
+                Node configNode = null;
+                configNode = session.getNode(rootPath);
+
+                channels = new HashMap<String, Channel>();
+                blueprints = new HashMap<String, Blueprint>();
+                loadChannels(configNode);
+                loadBlueprints(configNode);
+            } catch (RepositoryException e) {
+                throw new ChannelException("Could not load channels and/or blueprints", e);
+            } finally {
+                if (session != null) {
+                    session.logout();
+                }
             }
         }
     }
@@ -99,21 +182,25 @@ public class ChannelManagerImpl implements ChannelManager {
         return session;
     }
 
+    // PUBLIC interface; all synchronised to guarantee consistent state
+
     @Override
-    public Map<String, Channel> getChannels() {
+    public synchronized Map<String, Channel> getChannels() throws ChannelException {
+        load();
         return Collections.unmodifiableMap(channels);
     }
 
     @Override
-    public Channel createChannel(final String blueprintId) throws ChannelException {
+    public synchronized Channel createChannel(final String blueprintId) throws ChannelException {
+        load();
         if (!blueprints.containsKey(blueprintId)) {
-            throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
+            throw new ChannelException("Blue print id " + blueprintId + " is not valid");
         }
         return new Channel(blueprintId, nextChannelId());
     }
 
     @Override
-    public void save(final Channel channel) throws ChannelException {
+    public synchronized void save(final Channel channel) throws ChannelException {
         Session session = null;
         try {
             session = getSession();
@@ -145,76 +232,22 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public List<Blueprint> getBlueprints() {
+    public synchronized List<Blueprint> getBlueprints() throws ChannelException {
+        load();
         return new ArrayList<Blueprint>(blueprints.values());
     }
 
     @Override
-    public Blueprint getBlueprint(final String id) {
+    public synchronized Blueprint getBlueprint(final String id) throws ChannelException {
+        load();
+        if (!blueprints.containsKey(id)) {
+            throw new ChannelException("Blueprint " + id + " does not exist");
+        }
         return blueprints.get(id);
     }
 
-    /**
-     * Recursively gets the list of "channels" configured under a virtual host node.
-     * <p/>
-     * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
-     *
-     * @param node - the inital node to start with, must be a virtual host node.
-     * @throws javax.jcr.RepositoryException - In case cannot read required node/property from the repository.
-     */
-    private void populateChannels(Node node) throws RepositoryException {
-        NodeIterator nodes = node.getNodes();
-        while (nodes.hasNext()) {
-            Channel channel = null;
-            Node currNode = nodes.nextNode();
-
-            //Get the channels from the child node.
-            populateChannels(currNode);
-
-            if (!currNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT)) {
-                continue;
-            }
-
-            if (!currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
-                continue;
-            }
-
-            String id = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID).getString();
-            String blueprintId = null;
-            if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID)) {
-                blueprintId = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID).getString();
-            }
-            if (channels.containsKey(id)) {
-                channel = channels.get(id);
-                if (!channel.getBlueprintId().equals(blueprintId)) {
-                    log.warn("Channel found with id " + id + " that has a different blueprint id; " + "expected " + channel.getBlueprintId() + ", found " + blueprintId + ".  Ignoring mount");
-                }
-            } else {
-                channel = new Channel(blueprintId, id);
-                channels.put(id, channel);
-            }
-
-            if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-                String mountPoint = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
-                Node siteNode = currNode.getSession().getNode(mountPoint);
-                if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                    channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
-                }
-                Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                if (contentNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                    String siteDocbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    String contentRoot = contentNode.getSession().getNodeByIdentifier(siteDocbase).getPath();
-                    channel.setContentRoot(contentRoot);
-                }
-            }
-        }
-    }
-
-    public void setCredentials(final Credentials credentials) {
-        this.credentials = credentials;
-    }
-
-    public void setRepository(final Repository repository) {
-        this.repository = repository;
+    public synchronized void invalidate() {
+        channels = null;
+        blueprints = null;
     }
 }

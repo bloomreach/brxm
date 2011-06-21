@@ -15,13 +15,13 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import org.hippoecm.hst.test.AbstractHstTestCase;
-import org.junit.Test;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import java.util.Map;
+
+import org.hippoecm.hst.test.AbstractHstTestCase;
+import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -40,9 +40,26 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(Channel.UNKNOWN_BLUEPRINT, channel.getBlueprintId());
     }
 
+/*
+    @Test
+    public void ChannelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
+        ChannelManagerImpl manager = createManager();
+
+        List<Blueprint> bluePrints = manager.getBlueprints();
+        assertEquals(1, bluePrints.size());
+
+        Channel channel = manager.createChannel(bluePrints.get(0).getId());
+        channel.setUrl("http://localhost/mychannel");
+        channel.setContentRoot("/content/documents");
+        manager.save(channel);
+
+    }
+*/
+
     private ChannelManagerImpl createManager() throws RepositoryException {
-        Session session = getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-        ChannelManagerImpl manager = new ChannelManagerImpl(session.getNode("/hst:hst"));
+        ChannelManagerImpl manager = new ChannelManagerImpl();
+        manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
+        manager.setRepository(getRepository());
         return manager;
     }
 

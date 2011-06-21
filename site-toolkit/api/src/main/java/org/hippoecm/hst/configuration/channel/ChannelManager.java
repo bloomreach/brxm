@@ -27,7 +27,7 @@ public interface ChannelManager {
      * List all managed channels, identified by their channel IDs
      * @return
      */
-    Map<String, Channel> getChannels();
+    Map<String, Channel> getChannels() throws ChannelException;
 
     /**
      * Creates a channel with a unique ID.  The channel will not be persisted until save is invoked.
@@ -51,12 +51,12 @@ public interface ChannelManager {
      * The list of available blueprints
      * @return
      */
-    List<Blueprint> getBlueprints();
+    List<Blueprint> getBlueprints() throws ChannelException;
 
     /**
      * Retrieve a blue print from it's ID.
      * @param id
      * @return
      */
-    Blueprint getBlueprint(String id);
+    Blueprint getBlueprint(String id) throws ChannelException;
 }

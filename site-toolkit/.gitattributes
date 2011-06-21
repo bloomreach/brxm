@@ -358,6 +358,7 @@ components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCache
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/StringPool.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelConfigurationEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
@@ -472,6 +473,7 @@ components/core/src/main/java/org/hippoecm/hst/site/request/SiteMapItemHandlerCo
 components/core/src/main/java/org/hippoecm/hst/site/request/SiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
 components/core/src/main/resources/ehcache.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml -text
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain

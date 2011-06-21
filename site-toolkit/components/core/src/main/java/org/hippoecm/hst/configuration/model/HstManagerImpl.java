@@ -27,8 +27,6 @@ import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -89,11 +87,6 @@ public class HstManagerImpl implements HstManager {
      * Request path suffix delimiter
      */
     private String pathSuffixDelimiter = "./";
-
-    /**
-     * Channel manager
-     */
-    private ChannelManager channelManager;
 
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
@@ -158,11 +151,6 @@ public class HstManagerImpl implements HstManager {
         return virtualHosts;
     }
 
-    @Override
-    public ChannelManager getChannelManager() throws RepositoryNotAvailableException {
-        return channelManager;
-    }
-
     protected void buildSites() throws RepositoryNotAvailableException{
         Session session = null;
         
@@ -189,11 +177,6 @@ public class HstManagerImpl implements HstManager {
                 // there is exactly one virtualHostsNode
                 Node virtualHostsJcrNode = virtualHostNodes.nextNode();
                 virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
-
-                ChannelManagerImpl channelManagerImpl = new ChannelManagerImpl(session.getNode(rootPath));
-                channelManagerImpl.setRepository(repository);
-                channelManagerImpl.setCredentials(credentials);
-                channelManager = channelManagerImpl;
             } 
             
             // if there is a common catalog, we load this one:
