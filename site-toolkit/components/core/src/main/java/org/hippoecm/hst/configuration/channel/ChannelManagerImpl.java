@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -40,10 +42,14 @@ public class ChannelManagerImpl implements ChannelManager {
     private String rootPath = "/hst:hst";
 
     private int lastChannelId;
-    private Map<String, Blueprint> blueprints;
+    private Map<String, BlueprintService> blueprints;
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
+
+    private String hostGroup = "dev-localhost";
+
+    private String sites = "hst:sites";
 
     public ChannelManagerImpl() {
     }
@@ -60,6 +66,14 @@ public class ChannelManagerImpl implements ChannelManager {
         this.rootPath = rootPath;
     }
 
+    public void setHostGroup(String hostGroup) {
+        this.hostGroup = hostGroup;
+    }
+
+    public void setSites(final String sites) {
+        this.sites = sites;
+    }
+
     private void loadBlueprints(final Node configNode) throws RepositoryException {
         if (configNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS)) {
             Node blueprintsNode = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
@@ -72,13 +86,11 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private void loadChannels(final Node configNode) throws RepositoryException {
-        if (configNode.hasNode("hst:hosts")) {
-            Node virtualHosts = configNode.getNode("hst:hosts");
-            NodeIterator rootChannelNodes = virtualHosts.getNodes();
-            while (rootChannelNodes.hasNext()) {
-                Node hgNode = rootChannelNodes.nextNode();
-                populateChannels(hgNode);
-            }
+        Node virtualHosts = configNode.getNode("hst:hosts/" + hostGroup);
+        NodeIterator rootChannelNodes = virtualHosts.getNodes();
+        while (rootChannelNodes.hasNext()) {
+            Node hgNode = rootChannelNodes.nextNode();
+            populateChannels(hgNode);
         }
     }
 
@@ -147,7 +159,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 configNode = session.getNode(rootPath);
 
                 channels = new HashMap<String, Channel>();
-                blueprints = new HashMap<String, Blueprint>();
+                blueprints = new HashMap<String, BlueprintService>();
                 loadChannels(configNode);
                 loadBlueprints(configNode);
             } catch (RepositoryException e) {
@@ -220,14 +232,91 @@ public class ChannelManagerImpl implements ChannelManager {
                     throw new ChannelException("Channel was removed since it's retrieval");
                 }
             } else {
+                BlueprintService bps = blueprints.get(channel.getBlueprintId());
+                if (bps == null) {
+                    throw new ChannelException("Invalid blueprint ID " + channel.getBlueprintId());
+                }
 
+                Node blueprintNode = bps.getNode(session);
+                createChannelFromBlueprint(configNode, blueprintNode, channel);
             }
+            session.save();
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
         } finally {
             if (session != null) {
                 session.logout();
             }
+        }
+    }
+
+    void validateChannel(Channel channel) {
+        /*
+        - check URL is valid
+        - check ID is valid
+         */
+    }
+
+    private void createChannelFromBlueprint(Node configRoot, final Node blueprintNode, final Channel channel) throws ChannelException, RepositoryException {
+        String tmp = channel.getUrl();
+        tmp = tmp.substring("http://".length());
+        String mountPath = tmp.substring(tmp.indexOf('/') + 1);
+        while (mountPath.lastIndexOf('/') == mountPath.length() - 1) {
+            mountPath = mountPath.substring(0, mountPath.lastIndexOf('/'));
+        }
+        String domainEls = tmp.substring(0, tmp.indexOf('/'));
+
+        // create virtual host
+        Node parent = configRoot.getNode("hst:hosts/" + hostGroup);
+        String[] elements = domainEls.split("[.]");
+        for (int i = elements.length - 1; i >= 0; i--) {
+            if (parent.hasNode(elements[i])) {
+                parent = parent.getNode(elements[i]);
+            } else {
+                parent = parent.addNode(elements[i], "hst:virtualhost");
+            }
+        }
+
+        // create mounts
+        String[] mountPathEls = mountPath.split("/");
+        if (mountPathEls.length > 0) {
+            if (parent.hasNode("hst:root")) {
+                parent = parent.getNode("hst:root");
+            } else {
+                parent = parent.addNode("hst:root", "hst:mount");
+            }
+            for (int i = 0; i < mountPathEls.length - 1; i++) {
+                if (parent.hasNode(mountPathEls[i])) {
+                    parent = parent.getNode(mountPathEls[i]);
+                } else {
+                    parent = parent.addNode(mountPathEls[i], "hst:mount");
+                }
+            }
+            copyNodes(blueprintNode.getNode("hst:mount"), parent, mountPathEls[mountPathEls.length - 1]);
+        } else {
+            copyNodes(blueprintNode.getNode("hst:mount"), parent, "hst:root");
+        }
+
+        copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
+        copyNodes(blueprintNode.getNode("hst:configuration"), configRoot.getNode("hst:configurations"), channel.getId());
+    }
+
+    static void copyNodes(Node source, Node parent, String name) throws RepositoryException {
+        Node clone = parent.addNode(name, source.getPrimaryNodeType().getName());
+        for (PropertyIterator pi = source.getProperties(); pi.hasNext(); ) {
+            Property prop = pi.nextProperty();
+            if (prop.getDefinition().isProtected()) {
+                continue;
+            }
+            if (prop.isMultiple()) {
+                clone.setProperty(prop.getName(), prop.getValues());
+            } else {
+                clone.setProperty(prop.getName(), prop.getValue());
+            }
+        }
+        for (NodeIterator ni = source.getNodes(); ni.hasNext(); ) {
+            Node node = ni.nextNode();
+            copyNodes(node, clone, node.getName());
         }
     }
 

@@ -996,6 +996,7 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sit
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sitemapitemhandlers.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sitemenus.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/templates.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/unittest-blueprint.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-namespace.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-types.cnd -text

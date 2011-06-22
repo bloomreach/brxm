@@ -15,10 +15,11 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.util.Collections;
-import java.util.List;
+import javax.jcr.Session;
 
 public class BlueprintService implements Blueprint {
 
@@ -27,8 +28,10 @@ public class BlueprintService implements Blueprint {
     private final String parameterInfoClass;
     private final String name;
     private final String description;
+    private final String path;
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
+        path = bluePrint.getPath();
 
         id = bluePrint.getName();
 
@@ -86,5 +89,9 @@ public class BlueprintService implements Blueprint {
     @Override
     public String getParameterInfo() {
         return parameterInfoClass;
+    }
+
+    public Node getNode(final Session session) throws RepositoryException {
+        return session.getNode(path);
     }
 }

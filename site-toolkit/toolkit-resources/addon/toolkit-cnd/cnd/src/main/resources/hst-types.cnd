@@ -249,9 +249,9 @@
 - hst:description (string)
 - hst:parameterinfoclass (string)
 - hst:pluginclass (string)
-+ * (hst:configuration)
-+ * (hst:site)
-+ * (hst:mount)
++ hst:configuration (hst:configuration)
++ hst:site (hst:site)
++ hst:mount (hst:mount)
 
 
 [hst:blueprints] > nt:base, mix:referenceable, mix:versionable
