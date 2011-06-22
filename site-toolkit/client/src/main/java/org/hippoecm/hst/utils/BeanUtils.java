@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -32,30 +31,25 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryResult;
-import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.mvc.BaseCommandController;
 
 /**
  * Class containing utility methods for Beans
  * 
  */
+
 public class BeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
@@ -66,8 +60,7 @@ public class BeanUtils {
      * You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with '/myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or 
      * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
      * 
-     * @see Same as {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, ObjectConverter, Class, boolean)}
-     * @deprecated use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, ObjectConverter, Class, boolean)} instead. 
+     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, ObjectConverter, Class, boolean)} instead. 
      * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
      */
     @Deprecated
@@ -75,35 +68,16 @@ public class BeanUtils {
             String linkPath, BaseHstComponent component,
             Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
-        return createIncomingBeansQuery(bean, scope, linkPath, component.getObjectConverter(), beanMappingClass, includeSubTypes);
+        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, linkPath, component.getObjectConverter(), beanMappingClass, includeSubTypes);
     }
     
-    /**
-     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
-     * 
-     * You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with '/myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or 
-     * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
-     * 
-     */
-
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, 
-            String linkPath, ObjectConverter converter,
-            Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
-
-        List<String> linkPaths = new ArrayList<String>();
-        linkPaths.add(linkPath);
-        return createIncomingBeansQuery(bean, scope, linkPaths, converter, beanMappingClass, includeSubTypes);
-    
-    }
-
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
      * 
      * The depth indicates how many child nodes deep is searched for a link to the HippoDocumentBean {@code bean}. The depth is allowed to range from 0 (direct hippo:docbase) to 4 (at most 4 levels deep searching is done)
      * 
      * 
-     * @see Same as {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, ObjectConverter, Class, boolean)}
-     * @deprecated use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, ObjectConverter, Class, boolean)} instead. 
+     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, ObjectConverter, Class, boolean)} instead. 
      * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
      */
     @Deprecated
@@ -111,38 +85,16 @@ public class BeanUtils {
             BaseHstComponent component, Class<? extends HippoBean> beanMappingClass,
             boolean includeSubTypes) throws QueryException{
        
-        return createIncomingBeansQuery(bean, scope, depth, component.getObjectConverter(), beanMappingClass, includeSubTypes);
+        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, depth, component.getObjectConverter(), beanMappingClass, includeSubTypes);
     }
     
-    /**
-     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
-     * 
-     * The depth indicates how many child nodes deep is searched for a link to the HippoDocumentBean {@code bean}. The depth is allowed to range from 0 (direct hippo:docbase) to 4 (at most 4 levels deep searching is done)
-     */
-
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth,
-            ObjectConverter converter, Class<? extends HippoBean> beanMappingClass,
-            boolean includeSubTypes) throws QueryException{
-        if (depth < 0 || depth > 4) {
-            throw new FilterException("Depth must be (including) between 0 and 4");
-        }
-        String path = "@hippo:docbase";
-        List<String> linkPaths = new ArrayList<String>();
-        linkPaths.add(path);
-        for (int i = 1; i <= depth; i++) {
-            path = "*/" + path;
-            linkPaths.add(path);
-        }
-        return createIncomingBeansQuery(bean, scope, linkPaths, converter, beanMappingClass, includeSubTypes);
-    }
-
+   
     /**
      * Returns a HstQuery for incoming beans. You can add filters and ordering to the query before executing it 
      * 
      * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
      * 
-     * @see Same as {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List<String>, ObjectConverter, Class, boolean)}
-     * @deprecated use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List<String>, ObjectConverter, Class, boolean)} instead. 
+     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, ObjectConverter, Class, boolean)} instead. 
      * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
      */
     @Deprecated
@@ -150,67 +102,23 @@ public class BeanUtils {
             List<String> linkPaths, BaseHstComponent component,
             Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
-        return createIncomingBeansQuery(bean, scope, linkPaths, component.getObjectConverter(), beanMappingClass, includeSubTypes);
+        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, linkPaths, component.getObjectConverter(), beanMappingClass, includeSubTypes);
         
     }
-    
-    /**
-     * Returns a HstQuery for incoming beans. You can add filters and ordering to the query before executing it 
-     * 
-     * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
-     */
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-            List<String> linkPaths, ObjectConverter converter,
-            Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
-
-        String canonicalHandleUUID = bean.getCanonicalHandleUUID();
-        HstQuery query;
-        try {
-            ComponentManager compMngr = HstServices.getComponentManager();
-            HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
-            query = hstQueryManagerFactory.createQueryManager(bean.getNode().getSession(), converter).createQuery(scope, beanMappingClass, includeSubTypes);
-            Filter filter = query.createFilter();
-            for (String linkPath : linkPaths) {
-                Filter orFilter = query.createFilter();
-                orFilter.addEqualTo(linkPath, canonicalHandleUUID);
-                filter.addOrFilter(orFilter);
-            }
-            query.setFilter(filter);
-            return query;
-        } catch (RepositoryException e) {
-            throw new QueryException("RepositoryException",e);
-        }
-        
-    }
-
     
     /**
      * Returns a list of beans of type T (the same type as {@code beanMappingClass}) that have a (facet)link to the HippoDocumentBean {@code bean}. If no incoming beans are found, 
      * an <code>empty</code> list will be returned. 
      * 
      * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
+     * 
+     * @deprecated use {@link ContentBeanUtils#getIncomingBeans(HstQuery, Class)} instead
      */
+    @Deprecated
     public static <T extends HippoBean> List<T> getIncomingBeans(HstQuery query,
             Class<? extends HippoBean> beanMappingClass) throws QueryException {
 
-        List<T> incomingBeans = new ArrayList<T>();
-
-        HstQueryResult result = query.execute();
-        HippoBeanIterator beans = result.getHippoBeans();
-        while (beans.hasNext()) {
-            T incomingBean = (T) beans.nextHippoBean();
-            if(incomingBean == null) {
-                continue;
-            }
-            if (!beanMappingClass.isAssignableFrom(incomingBean.getClass())) {
-                // should not be possible
-                log.warn("Found a bean not being of type or subtype of '{}'. Skip bean", beanMappingClass.getName());
-                continue;
-            }
-            incomingBeans.add(incomingBean);
-        }
-
-        return incomingBeans;
+        return ContentBeanUtils.getIncomingBeans(query, beanMappingClass);
     }
     
     /**
