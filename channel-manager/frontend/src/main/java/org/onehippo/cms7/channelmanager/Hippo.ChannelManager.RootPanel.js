@@ -75,7 +75,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                 var me = this;
 
                 var config = {
-                    title: "New Channel",
+                    title: "Blueprint Chooser",
                     closeAction: 'hide',
                     width: 720,
                     height: 450,
@@ -85,16 +85,19 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                     activeItem: 0,
                     buttons: [
                         {
-                            text: 'Next',
-                            scope: me,
-                            handler: me.processNextStep
-                        },
-                        {
+                            id: 'cancelButton',
                             text: 'Cancel',
-                            scope: this,
+                            scope: me,
                             handler: function() {
                                 this.hide();
                             }
+
+                        },
+                        {
+                            id: 'createButton',
+                            text: 'Choose ...',
+                            handler: me.processNextStep,
+                            scope: me
                         }
                     ]
 
@@ -106,19 +109,25 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                 Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
 
                 this.add(new Hippo.ChannelManager.BlueprintListPanel({
-                            store: me.blueprintStore,
-                            id: 'blueprints-panel'
+                            id: 'blueprints-panel',
+                            store: me.blueprintStore
                         }));
 
-                this.add({id: 'properties-panel', html:"<h1>Channel Properties Form</h1>"});
+                this.add(new Hippo.ChannelManager.ChannelFormPanel({
+                            id: 'channel-form-panel',
+                            store: me.channelStore
+                        }));
 
             },
 
             processNextStep:function() {
                 if (this.layout.activeItem.id === 'blueprints-panel') {
-                    this.layout.setActiveItem('properties-panel');
+                    this.layout.setActiveItem('channel-form-panel');
+                    this.setTitle("Channel Properties");
+                    Ext.getCmp('createButton').setText("Create Channel")
+                } else { //current item is the form panel so call submit on it.
+                    Ext.getCmp('channel-form-panel').submitForm();
                 }
-
             }
         }
 //end extending Config

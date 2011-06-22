@@ -7,6 +7,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.ChannelFormPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text

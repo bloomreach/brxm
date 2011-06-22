@@ -40,7 +40,6 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         super(fields);
     }
 
-
     @Override
     protected long getTotal() {
         return this.total;
@@ -52,7 +51,6 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         properties.put("writer", new JSONIdentifier("new Ext.data.JsonWriter()"));
         return properties;
     }
-
 
     @Override
     protected JSONArray getData() throws JSONException {
@@ -81,6 +79,4 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             throw new RuntimeException("Unable to get the Channel Manager instance.");
         }
     }
-
-
 }
