@@ -59,9 +59,12 @@ public class SitesOverview extends BaseHstComponent {
             String numberStr = request.getParameter("number");
             int numberToAdd = Integer.parseInt(numberStr);
             int tryToAdd = 1;
-            
+
+            String copyComponentsStr = request.getParameter("copycomponents");
+            boolean copyComponents = copyComponentsStr != null ? Boolean.parseBoolean(copyComponentsStr) : true;
+
             while(numberToAdd > 0) {
-                System.out.println("numberToAdd " + numberToAdd);
+                //System.out.println("numberToAdd " + numberToAdd);
                 numberToAdd--;
 
                 // add a new host first: First check the first non-existing 'com' + integer host:
@@ -87,20 +90,25 @@ public class SitesOverview extends BaseHstComponent {
                 String[] modes = {"single"};
                 content.setProperty("hippo:modes", modes);
                 content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many-live/hst:content").getProperty("hippo:docbase").getString());
-                
-                // now copy the hst:configurations 
-                
+
+                writableSession.save();
+
+                // now copy the hst:configurations
+
                 Node config = writableSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
                 String[] inherits = {"../democommon"};
                 config.setProperty("hst:inheritsfrom", inherits);
-                
+
                 writableSession.save();
-                
-                
+
+
                 writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
                 writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
-                writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
-                writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
+
+                if (copyComponents) {
+                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
+                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
+                }
             }
             
         } catch (RepositoryException e) {

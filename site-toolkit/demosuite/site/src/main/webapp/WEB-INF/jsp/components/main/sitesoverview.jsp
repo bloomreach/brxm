@@ -27,34 +27,57 @@
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 1 New Site" /> 
   </form>
-  
   <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="5"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 5 New Sites" /> 
   </form>
-  
-   <form method="post" action="<hst:actionURL/>">
+  <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="10"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 10 New Sites" /> 
   </form>
-   <form method="post" action="<hst:actionURL/>">
+  <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="25"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 25 New Sites" /> 
   </form>
-   <form method="post" action="<hst:actionURL/>">
+  <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="100"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 100 New Sites" /> 
   </form>
-  
-  
-   <form method="post" action="<hst:actionURL/>">
+  <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="1000"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 1000 New Sites" /> 
+  </form>
+
+  <form method="post" action="<hst:actionURL/>">
+     <input type="hidden" name="number" value="1"/>
+     <input type="hidden" name="copycomponents" value="false"/>
+     <input type="hidden" name="type" value="addnewsites"/>
+     <input type="submit" value="add 1 New Site - Sitemap, Sitemenu only" /> 
+  </form>
+  
+  <form method="post" action="<hst:actionURL/>">
+     <input type="hidden" name="number" value="10"/>
+     <input type="hidden" name="copycomponents" value="false"/>
+     <input type="hidden" name="type" value="addnewsites"/>
+     <input type="submit" value="add 10 New Sites - Sitemap, Sitemenu only" /> 
+  </form>
+
+  <form method="post" action="<hst:actionURL/>">
+     <input type="hidden" name="number" value="100"/>
+     <input type="hidden" name="copycomponents" value="false"/>
+     <input type="hidden" name="type" value="addnewsites"/>
+     <input type="submit" value="add 100 New Sites - Sitemap, Sitemenu only" /> 
+  </form>
+  <form method="post" action="<hst:actionURL/>">
+     <input type="hidden" name="number" value="1000"/>
+     <input type="hidden" name="copycomponents" value="false"/>
+     <input type="hidden" name="type" value="addnewsites"/>
+     <input type="submit" value="add 1000 New Sites - Sitemap, Sitemenu only" /> 
   </form>
    
   <br/>
