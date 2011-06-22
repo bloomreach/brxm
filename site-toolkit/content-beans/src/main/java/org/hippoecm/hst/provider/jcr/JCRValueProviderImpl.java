@@ -617,7 +617,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 Node canonical = ((HippoNode)jcrNode).getCanonicalNode();
                 if(canonical != null) {
                     if(canonical.isNodeType("mix:referenceable")) {
-                        this.identifier = canonical.getUUID();
+                        this.identifier = canonical.getIdentifier();
                     } else {
                         log.info("We take as the identifier of a node that is not mix:referenceable the canonical path");
                         this.identifier = canonical.getPath();
