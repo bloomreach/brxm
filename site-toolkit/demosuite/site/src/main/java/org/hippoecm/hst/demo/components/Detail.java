@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.components;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
@@ -28,7 +29,6 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
-import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -37,7 +37,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
-import org.hippoecm.hst.utils.BeanUtils;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class Detail extends BaseHstComponent {
         request.setAttribute("document", crBean);
 
         try {
-            HstQuery commentQuery = BeanUtils.createIncomingBeansQuery((BaseBean) crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this, CommentBean.class, false);
+            HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this.getObjectConverter(), CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
 
@@ -100,7 +100,7 @@ public class Detail extends BaseHstComponent {
                 f.addGreaterOrEqualThan("demosite:date", sinceLastWeek);
                 ((Filter) commentQuery.getFilter()).addAndFilter(f);
             }
-            List<CommentBean> comments = BeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
+            List<CommentBean> comments = ContentBeanUtils.getIncomingBeans(commentQuery, CommentBean.class);
             request.setAttribute("comments", comments);
         } catch (QueryException e) {
             log.warn("QueryException ", e);
