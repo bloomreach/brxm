@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -27,6 +28,8 @@ import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -56,6 +59,15 @@ public class HstManagerImpl implements HstManager {
     
     private HstComponentRegistry componentRegistry;
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
+    
+    /**
+     * This is a temporal cache only used during building the hst config model: When all the backing HstNode's for 
+     * hst:pages, hst:components, hst:catalog and hst:templates, then, the HstComponentsConfiguration object can be shared between different Mounts.
+     * The key is the Set of all HstNode path's directly below the components, pages, catalog and templates : The path uniquely defines the HstNode
+     * and there is only inheritance on the nodes directly below components, pages, catalog and templates: Since no fine-grained inheritance, these
+     * HstNode's identify uniqueness 
+     */
+    private Map<Set<String>, HstComponentsConfigurationService> tmpHstComponentsConfigurationInstanceCache;
     
     
     /**
@@ -164,7 +176,6 @@ public class HstManagerImpl implements HstManager {
             // session can come from a pooled event based pool so always refresh before building configuration:
             session.refresh(false);
             
-            
            // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
             {
                 String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS+") order by @jcr:score descending ";
@@ -185,13 +196,13 @@ public class HstManagerImpl implements HstManager {
                 Node catalog = (Node)session.getItem(rootPath +"/hst:configurations/hst:catalog");
                 commonCatalog = new HstNodeImpl(catalog, null, true);
             } 
-            
+ 
             // get all the root hst configuration nodes
             {
                 String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")  order by @jcr:score descending ";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 NodeIterator configurationRootJcrNodes = result.getNodes();
-                
+                int i = 0;
                 while(configurationRootJcrNodes.hasNext()) {
                     Node configurationRootNode = configurationRootJcrNodes.nextNode();
                     if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
@@ -202,8 +213,10 @@ public class HstManagerImpl implements HstManager {
                             continue;
                         }
                         try {
+                           // long startnew = System.currentTimeMillis();
                             HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
                             configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
+                           // System.out.println("HstSiteConfigurationRootNodeImpl "+ i++ +" took " + (System.currentTimeMillis() - startnew));
                         } catch (HstNodeException e) {
                             log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
                         }
@@ -212,7 +225,8 @@ public class HstManagerImpl implements HstManager {
                 }
             }
             
-            // get all the mount points
+            // get all the hst:site's
+           
             String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")  order by @jcr:score descending ";
             QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
             NodeIterator siteRootJcrNodes = result.getNodes();
@@ -222,6 +236,7 @@ public class HstManagerImpl implements HstManager {
                 HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null);
                 siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
             }
+            
             
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
@@ -236,9 +251,15 @@ public class HstManagerImpl implements HstManager {
         }
          
         try {
-            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+            tmpHstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();
+            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);           
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
+        } finally {
+            // we are finished with rebuild the hst model: Set the temporary cache to null. 
+            tmpHstComponentsConfigurationInstanceCache = null;
+            // clear the StringPool as it is not needed any more
+            StringPool.clear();
         }
     }
     
@@ -260,6 +281,10 @@ public class HstManagerImpl implements HstManager {
     
     public HstNode getCommonCatalog(){
         return commonCatalog;
+    }
+    
+    public Map<Set<String>, HstComponentsConfigurationService> getTmpHstComponentsConfigurationInstanceCache() {
+        return tmpHstComponentsConfigurationInstanceCache;
     }
 
     public String getPathSuffixDelimiter() {

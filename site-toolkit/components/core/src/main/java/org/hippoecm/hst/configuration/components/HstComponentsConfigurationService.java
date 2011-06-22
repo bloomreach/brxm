@@ -17,16 +17,19 @@ package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +60,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(HstNode configurationNode, Map<String, HstNode> templateResourceMap, HstManagerImpl hstManager) throws ServiceException {
-
+    public HstComponentsConfigurationService(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
+ 
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
         if (components != null) {
@@ -98,11 +101,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          * 3: setting renderpaths for each component
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
+        
+        Map<String, HstNode> templateResourceMap = getTemplateResourceMap(configurationNode);
         enhanceComponentTree(templateResourceMap);
 
     }
 
-    
     private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) throws ServiceException{
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
@@ -229,5 +233,38 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
+    private Map<String, HstNode> getTemplateResourceMap(HstNode configurationNode) throws ServiceException {
+        Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
+           
+           // templates
+           HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
+           
+           if(hstTemplates == null) {
+               throw new ServiceException("There are no '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' present for the configuration at '"+configurationNode.getValueProvider().getPath()+"'");
+           }
+           
+           for(HstNode template : hstTemplates.getNodes()) {
+               ValueProvider valueProvider = template.getValueProvider();
+               boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+               boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
+               
+               if (!renderPathExisting && !scriptExisting) {
+                   log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
+                   continue;
+               }
+               
+               if (renderPathExisting && !scriptExisting) {
+                   String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+                   
+                   if (StringUtils.isBlank(resourcePath)) {
+                       log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
+                       continue;
+                   }
+               }
+               
+               templateResourceMap.put(valueProvider.getName(), template);
+           }
+        return templateResourceMap;
+    }
 
 }

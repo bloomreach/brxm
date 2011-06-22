@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -36,7 +36,6 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
-import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class HstSiteService implements HstSite {
     
     
     public HstSiteService(HstSiteRootNode site, Mount mount, HstManagerImpl hstManager) throws ServiceException{
-        this.name = site.getValueProvider().getName();
+        name = site.getValueProvider().getName();
         this.mount = mount;
         contentPath = site.getContentPath();
         canonicalContentPath = site.getCanonicalContentPath();
@@ -80,39 +79,23 @@ public class HstSiteService implements HstSite {
 
     
     private void init(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
-       Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
+        // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
+      
+        // the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
+        Set<String> cachekey = computeCacheKey(configurationNode);
+        Map<Set<String>, HstComponentsConfigurationService> tmpHstComponentsConfigurationInstanceCache = hstManager.getTmpHstComponentsConfigurationInstanceCache();
+        if(tmpHstComponentsConfigurationInstanceCache == null) {
+            throw new ServiceException("During initialization, the hstManager#getTmpHstComponentsConfigurationInstanceCache() should return a non null cache");
+        }
        
-       // templates
-       HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
-       
-       if(hstTemplates == null) {
-           throw new ServiceException("There are no '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' present for the configuration at '"+configurationNode.getValueProvider().getPath()+"'");
+       HstComponentsConfigurationService prevLoaded =  tmpHstComponentsConfigurationInstanceCache.get(cachekey);
+       if(prevLoaded == null) {
+           componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstManager); 
+           tmpHstComponentsConfigurationInstanceCache.put(cachekey, componentsConfigurationService);
+       } else {
+           log.info("Reusing existing HstComponentsConfiguration because exact same configuration. We do not build HstComponentsConfiguration for '{}' but use existing version.", configurationNode.getValueProvider().getPath());
+           componentsConfigurationService = prevLoaded; 
        }
-       
-       for(HstNode template : hstTemplates.getNodes()) {
-           ValueProvider valueProvider = template.getValueProvider();
-           boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-           boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
-           
-           if (!renderPathExisting && !scriptExisting) {
-               log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
-               continue;
-           }
-           
-           if (renderPathExisting && !scriptExisting) {
-               String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-               
-               if (StringUtils.isBlank(resourcePath)) {
-                   log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
-                   continue;
-               }
-           }
-           
-           templateResourceMap.put(valueProvider.getName(), template);
-       }
-       
-       // component configuration
-       this.componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, templateResourceMap, hstManager); 
        
        // sitemapitem handlers
        
@@ -121,7 +104,7 @@ public class HstSiteService implements HstSite {
        if(sitemapItemHandlersNode != null) {
            log.info("Found a '{}' configuration. Initialize sitemap item handlers service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
            try {
-               this.siteMapItemHandlersConfigurationService = new HstSiteMapItemHandlersConfigurationService(sitemapItemHandlersNode);
+               siteMapItemHandlersConfigurationService = new HstSiteMapItemHandlersConfigurationService(sitemapItemHandlersNode);
            } catch (ServiceException e) {
                log.error("ServiceException: Skipping handlesConfigurationService", e);
            }
@@ -134,16 +117,16 @@ public class HstSiteService implements HstSite {
        if(siteMapNode == null) {
            throw new ServiceException("There is no sitemap configured");
        }
-       this.siteMapService = new HstSiteMapService(this, siteMapNode, siteMapItemHandlersConfigurationService); 
+       siteMapService = new HstSiteMapService(this, siteMapNode, siteMapItemHandlersConfigurationService); 
        
        checkAndLogAccessibleRootComponents();
        
-       this.locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
+       locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
        
        HstNode siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
        if(siteMenusNode != null) {
            try {
-               this.siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
+               siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
            } catch (ServiceException e) {
                log.error("ServiceException: Skipping SiteMenusConfiguration", e);
            }
@@ -152,7 +135,8 @@ public class HstSiteService implements HstSite {
        }
        
     }
-   
+
+
     public Mount getMount(){
         return this.mount;
     }
@@ -162,7 +146,7 @@ public class HstSiteService implements HstSite {
      * (jsp/freemarker/etc) configured. If not, we log a warning about this
      */
     private void checkAndLogAccessibleRootComponents() {
-        for(HstSiteMapItem hstSiteMapItem :this.siteMapService.getSiteMapItems()){
+        for(HstSiteMapItem hstSiteMapItem : siteMapService.getSiteMapItems()){
             sanitizeSiteMapItem(hstSiteMapItem);
         }
     }
@@ -194,11 +178,11 @@ public class HstSiteService implements HstSite {
     }
 
     public HstSiteMap getSiteMap() {
-       return this.siteMapService;
+       return siteMapService;
     }
     
     public HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration(){
-        return this.siteMapItemHandlersConfigurationService;
+        return siteMapItemHandlersConfigurationService;
     }
     
     public String getContentPath() {
@@ -214,7 +198,7 @@ public class HstSiteService implements HstSite {
     }
     
     public String getConfigurationPath() {
-        return this.configurationPath;
+        return configurationPath;
     }
 
     public String getName() {
@@ -222,11 +206,29 @@ public class HstSiteService implements HstSite {
     }
     
     public LocationMapTree getLocationMapTree() {
-        return this.locationMapTree;
+        return locationMapTree;
     }
 
     public HstSiteMenusConfiguration getSiteMenusConfiguration() {
-        return this.siteMenusConfigurations;
+        return siteMenusConfigurations;
+    }
+    
+    private Set<String> computeCacheKey(HstNode configurationNode) {
+        Set<String> key = new HashSet<String>();
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS));
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES));
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG));
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES));
+        return key;
+    }
+
+
+    private void augmentKey(Set<String> key, HstNode node) {
+        if(node != null) {
+            for(HstNode n :node.getNodes()) {
+                key.add(n.getValueProvider().getIdentifier());
+            }
+        }
     }
 
 }
