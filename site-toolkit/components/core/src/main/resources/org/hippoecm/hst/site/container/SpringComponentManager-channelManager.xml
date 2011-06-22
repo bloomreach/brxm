@@ -33,36 +33,4 @@
     <!--<property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        -->
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
-    <property name="targetMethod" value="addEventListenerItem"/>
-    <property name="arguments">
-      <!-- Behavioral configuration invalidation listener -->
-      <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
-        <property name="nodeAddedEnabled" value="true"/>
-        <property name="nodeRemovedEnabled" value="true"/>
-        <property name="propertyAddedEnabled" value="true"/>
-        <property name="propertyChangedEnabled" value="true"/>
-        <property name="propertyRemovedEnabled" value="true"/>
-        <property name="absolutePath" value="${hst.configuration.rootPath}"/>
-        <property name="deep" value="true"/>
-        <property name="uuids">
-          <null/>
-        </property>
-        <property name="noLocal" value="false"/>
-        <property name="eventListener">
-          <bean class="org.hippoecm.hst.configuration.channel.ChannelConfigurationEventListener">
-            <property name="manager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-          </bean>
-        </property>
-      </bean>
-    </property>
-  </bean>
-
-  <!-- After adding an EventListenerItem we need to invoke start() again to trigger this new listener to be added -->
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
-    <property name="targetMethod" value="start"/>
-  </bean>
-
 </beans>

@@ -37,7 +37,9 @@ import org.hippoecm.hst.site.HstServices;
  * </P>
  * 
  * @version $Id$
+ * @deprecated unused since 2.23.xx
  */
+@Deprecated
 public class DelegatingEventListener implements EventListener, EventListenersContainerListener {
     
     private static final String LOGGER_CATEGORY_NAME = DelegatingEventListener.class.getName();

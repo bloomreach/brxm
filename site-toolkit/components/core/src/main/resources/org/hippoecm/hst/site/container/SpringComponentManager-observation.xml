@@ -34,26 +34,6 @@
     </property>
   </bean>
   
-  <bean id="baseDelegatingEventListener" abstract="true" parent="baseEventListener">
-    <property name="maxEvents" value="1" />
-  </bean>
-  
-  <bean id="hstconfigreaderSessionPoolRefresher" parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionsRefreshEventListener">
-    <property name="poolingRepositories">
-      <list>
-        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-          <property name="targetObject" ref="javax.jcr.Repository"/>
-          <property name="targetMethod" value="getRepositoryByCredentials"/>
-          <property name="arguments">
-            <list>
-              <ref bean="javax.jcr.Credentials.hstconfigreader"/>
-            </list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-  
   <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer"
     class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl" init-method="start"
     destroy-method="stop">
@@ -65,8 +45,8 @@
     <property name="eventListenerItems">
       <list>
 
-        <!-- Virtual host manager refreshing event listener on virtual hosts configuration node path -->
-        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
+         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
           <property name="nodeRemovedEnabled" value="true"/>
           <property name="propertyAddedEnabled" value="true"/>
@@ -82,19 +62,31 @@
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
-            <bean parent="baseDelegatingEventListener" class="org.hippoecm.hst.core.jcr.DelegatingEventListener">
-              <constructor-arg>
-                <list>
-                  <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
-                    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-                  </bean>
-                  <ref bean="hstconfigreaderSessionPoolRefresher" />
-                </list>
-              </constructor-arg>
+                <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+                  <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+                </bean>
+          </property>
+        </bean>
+        
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="${hst.configuration.rootPath}"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean class="org.hippoecm.hst.configuration.channel.ChannelConfigurationEventListener">
+              <property name="manager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
             </bean>
           </property>
         </bean>
-                
+        
         <!-- session pools refreshing event listener -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>

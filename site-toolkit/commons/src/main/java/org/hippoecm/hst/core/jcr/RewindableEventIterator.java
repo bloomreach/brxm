@@ -34,7 +34,9 @@ import javax.jcr.observation.EventIterator;
  * </P>
  * 
  * @version $Id$
+ *  * @deprecated unused since 2.23.xx
  */
+@Deprecated
 public class RewindableEventIterator implements EventIterator {
     
     private List<Event> eventList;

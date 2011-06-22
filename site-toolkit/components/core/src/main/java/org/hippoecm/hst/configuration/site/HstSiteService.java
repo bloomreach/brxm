@@ -73,7 +73,6 @@ public class HstSiteService implements HstSite {
         if(configurationNode == null) {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
         }
-        
         init(configurationNode, hstManager);
     }
 

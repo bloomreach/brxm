@@ -25,6 +25,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -252,7 +254,9 @@ public class HstManagerImpl implements HstManager {
          
         try {
             tmpHstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();
-            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);           
+            long start = System.currentTimeMillis();
+            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+            System.out.println("building model took " + (System.currentTimeMillis() - start ));
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {
@@ -263,13 +267,55 @@ public class HstManagerImpl implements HstManager {
         }
     }
     
-    public void invalidate(String path) {
-        virtualHosts = null;
-        commonCatalog = null;
-        configurationRootNodes.clear();
-        siteRootNodes.clear();
+    @Override
+    public void invalidate(EventIterator events) {
+       
+        synchronized(this) {
+            virtualHosts = null;
+            commonCatalog = null;
+            configurationRootNodes.clear();
+            siteRootNodes.clear();
+            try {
+                while (events.hasNext()) {
+                    Event ev = events.nextEvent();
+
+                    String path =  ev.getPath();
+                    ev.getIdentifier();
+                    switch (ev.getType()) {
+                    case Event.NODE_ADDED:
+                        break;
+                    case Event.NODE_REMOVED:
+                        
+                        break;
+                    case Event.NODE_MOVED:
+                        break;
+                    case Event.PROPERTY_ADDED:
+                        break;
+                    case Event.PROPERTY_CHANGED:
+                        break;
+                    case Event.PROPERTY_REMOVED:
+                        break;
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("RepositoryException happened. Invalidate hst model completely", e);
+                virtualHosts = null;
+                commonCatalog = null;
+                configurationRootNodes.clear();
+                siteRootNodes.clear();
+            }
+        }
     }
-    
+
+    @Override
+    public void invalidateAll() {
+        synchronized(this) {
+            virtualHosts = null;
+            commonCatalog = null;
+            configurationRootNodes.clear();
+            siteRootNodes.clear();
+        }
+    }
     
     public Map<String, HstSiteRootNode> getHstSiteRootNodes(){
         return siteRootNodes;
@@ -294,4 +340,6 @@ public class HstManagerImpl implements HstManager {
     public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
         this.pathSuffixDelimiter = pathSuffixDelimiter;
     }
+
+    
 }

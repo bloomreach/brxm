@@ -33,7 +33,9 @@ import org.junit.Test;
  * TestRewindableEventIterator
  * 
  * @version $Id$
+ *  * @deprecated unused since 2.23.xx
  */
+@Deprecated
 public class TestRewindableEventIterator {
     
     private List<Event> events;

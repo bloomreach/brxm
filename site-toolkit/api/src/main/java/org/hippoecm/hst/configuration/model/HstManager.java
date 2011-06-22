@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import javax.jcr.observation.EventIterator;
+
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -47,10 +49,17 @@ public interface HstManager {
     HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
     
     /**
-     * Invalidates this HstSitesManager. Typically this invalidate is called after a received event indicating that for example
+     * Invalidates this HstSitesManager with EventIterator events. Typically this invalidate is called after a received event indicating that for example
      * the backing hosts configuration has been changed.
+     * @param events
      */
-    void invalidate(String path);
+    void invalidate(EventIterator events);
+    
+    /**
+     * Invalidates this HstSitesManager completely. For example useful after a 
+     * repository reconnection where you do not know whether some events might have been missed
+     */
+    void invalidateAll();
     
     /**
      * Returns the request path suffix delimiter.
