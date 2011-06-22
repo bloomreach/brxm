@@ -187,6 +187,7 @@ public class HstManagerImpl implements HstManager {
                 }
                 // there is exactly one virtualHostsNode
                 Node virtualHostsJcrNode = virtualHostNodes.nextNode();
+
                 virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
             } 
             
@@ -202,7 +203,7 @@ public class HstManagerImpl implements HstManager {
                 String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")  order by @jcr:score descending ";
                 QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
                 NodeIterator configurationRootJcrNodes = result.getNodes();
-                int i = 0;
+
                 while(configurationRootJcrNodes.hasNext()) {
                     Node configurationRootNode = configurationRootJcrNodes.nextNode();
                     if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
@@ -213,10 +214,9 @@ public class HstManagerImpl implements HstManager {
                             continue;
                         }
                         try {
-                           // long startnew = System.currentTimeMillis();
                             HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
                             configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
-                           // System.out.println("HstSiteConfigurationRootNodeImpl "+ i++ +" took " + (System.currentTimeMillis() - startnew));
+                           
                         } catch (HstNodeException e) {
                             log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
                         }
