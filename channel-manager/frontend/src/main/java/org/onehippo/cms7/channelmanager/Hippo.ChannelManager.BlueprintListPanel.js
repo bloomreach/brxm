@@ -30,7 +30,9 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
             initComponent: function() {
                 var me = this;
                 var config = {
+                    id: me.id,
                     store: me.store,
+                    loadMask: true,
                     stripeRows: true,
                     height: 400,
                     viewConfig: {
@@ -40,8 +42,7 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
                     colModel: new Ext.grid.ColumnModel({
                                 columns: [
                                     {
-                                        header: 'Blueprint Name',
-                                        scope: me
+                                        header: 'Blueprint Name'
                                     }
                                 ]
                             })
@@ -50,10 +51,11 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
                 Hippo.ChannelManager.BlueprintListPanel.superclass.initComponent.apply(this, arguments);
-                this.on('reloadGrid', function() {
-                    this.store.reload();
+
+                this.on('render', function() {
+                    this.store.load();
                 }, this);
-                this.store.load();
+
 
             }
         });

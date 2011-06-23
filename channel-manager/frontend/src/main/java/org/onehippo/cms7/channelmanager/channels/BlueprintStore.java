@@ -27,9 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
-import org.wicketstuff.js.ext.util.JSONIdentifier;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BlueprintStore extends ExtJsonStore<Object> {
 
@@ -48,7 +49,9 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected JSONObject getProperties() throws JSONException {
         final JSONObject properties = super.getProperties();
-        properties.put("writer", new JSONIdentifier("new Ext.data.JsonWriter()"));
+         Map<String, String> baseParams = new HashMap<String, String>();
+        baseParams.put("xaction", "read");
+        properties.put("baseParams", baseParams);
         return properties;
     }
 
@@ -66,6 +69,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         }
         return data;
     }
+
 
     private List<Blueprint> getBlueprints() {
         ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());

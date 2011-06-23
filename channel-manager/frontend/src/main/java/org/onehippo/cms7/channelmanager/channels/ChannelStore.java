@@ -57,7 +57,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         //JsonStore
         final JSONObject props = super.getProperties();
         Map<String, String> sortInfo = new HashMap<String, String>();
-           sortInfo.put("field", "title");
+        sortInfo.put("field", "title");
         sortInfo.put("direction", "ASC");
         Map<String, String> baseParams = new HashMap<String, String>();
         baseParams.put("xaction", "read");
@@ -82,6 +82,20 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             data.put(object);
         }
         return data;
+    }
+
+    @Override
+    protected JSONObject createRecord(JSONObject record) throws JSONException {
+        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        Channel c = new Channel("mobile", "mobile-french-channel");
+        c.setTitle(record.getString("name"));
+        c.setUrl(record.getString("domain"));
+        try {
+            channelManager.save(c);
+        } catch (ChannelException e) {
+            log.error("Unable to save channel" + e.getMessage(), e);
+        }
+        return record;
     }
 
     private Map<String, Channel> getChannels() {

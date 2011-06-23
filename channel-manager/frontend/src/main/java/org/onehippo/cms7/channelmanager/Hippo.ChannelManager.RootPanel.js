@@ -49,14 +49,14 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
                 Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
+                 this.win = new Hippo.ChannelManager.NewChannelWindow({
+                            blueprintStore: me.blueprintStore,
+                            channelStore : me.channelStore
+                        });
             },
 
             openChannelWizard:function() {
-                var win = new Hippo.ChannelManager.NewChannelWindow({
-                            blueprintStore: this.blueprintStore,
-                            channelStore : this.channelStore
-                        });
-                win.show();
+                this.win.show();
             }
         });
 
@@ -67,22 +67,31 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
             constructor: function(config) {
                 this.blueprintStore = config.blueprintStore;
                 this.channelStore = config.channelStore;
-
                 Hippo.ChannelManager.NewChannelWindow.superclass.constructor.call(this, config);
             },
 
             initComponent: function() {
                 var me = this;
-
                 var config = {
                     title: "Blueprint Chooser",
-                    closeAction: 'hide',
                     width: 720,
                     height: 450,
                     modal: true,
                     resizable: false,
-                    layout: 'card',
-                    activeItem: 0,
+                    closeAction: 'hide',
+                    layout:'fit',
+                    items: [
+                        {
+                            id: 'card-container',
+                            layout: 'card',
+                            activeItem: 0,
+                            layoutConfig: {
+                                hideMode:'offsets',
+                                deferredRender: true ,
+                                layoutOnCardChange: true
+                             }
+                        }
+                    ],
                     buttons: [
                         {
                             id: 'cancelButton',
@@ -105,26 +114,29 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-
                 Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
 
-                this.add(new Hippo.ChannelManager.BlueprintListPanel({
+                this.on('beforeshow',function () {
+                     Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
+                },this);
+
+                Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
                             id: 'blueprints-panel',
                             store: me.blueprintStore
                         }));
 
-                this.add(new Hippo.ChannelManager.ChannelFormPanel({
+                Ext.getCmp('card-container').add(new Hippo.ChannelManager.ChannelFormPanel({
                             id: 'channel-form-panel',
                             store: me.channelStore
                         }));
-
             },
 
             processNextStep:function() {
-                if (this.layout.activeItem.id === 'blueprints-panel') {
-                    this.layout.setActiveItem('channel-form-panel');
+                if (Ext.getCmp('card-container').layout.activeItem.id === 'blueprints-panel') {
+                    Ext.getCmp('card-container').layout.setActiveItem('channel-form-panel');
                     this.setTitle("Channel Properties");
-                    Ext.getCmp('createButton').setText("Create Channel")
+                    Ext.getCmp('createButton').setText("Create Channel");
+
                 } else { //current item is the form panel so call submit on it.
                     Ext.getCmp('channel-form-panel').submitForm();
                 }
