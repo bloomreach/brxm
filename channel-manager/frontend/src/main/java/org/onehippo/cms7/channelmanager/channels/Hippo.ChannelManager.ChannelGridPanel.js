@@ -54,10 +54,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
                 Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
 
-                this.store.on('load', function() {
-                    this.
-                }, this);
-
                 this.store.load();
 
             }
