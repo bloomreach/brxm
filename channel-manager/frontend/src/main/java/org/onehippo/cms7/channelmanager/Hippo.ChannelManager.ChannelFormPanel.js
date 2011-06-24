@@ -20,7 +20,7 @@ Ext.namespace('Hippo.ChannelManager');
  * @class Hippo.ChannelManager.ChannelFormPanel
  * @extends Ext.form.FormPanel
  */
-Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.Panel, {
+Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
             constructor: function(config) {
                 this.store = config.store;
                 Hippo.ChannelManager.ChannelFormPanel.superclass.constructor.call(this, config);
@@ -29,45 +29,43 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.Panel, {
             initComponent: function() {
                 var me = this;
                 var config = {
-                    layout: 'fit',
                     padding: 5,
-                    height: 400,
+                    url: me.store.url,
+                    defaults: {
+                        labelAlign: 'top',
+                        width: 450,
+                        labelWidth: 75
+                    },
                     items:[
                         {
-                            xtype: 'form',
-                            id: 'channel-form',
-                            autoHeight: true,
-                            url: me.store.url,
-                            height: 400,
-                            defaults :{
-                                width: 650,
-                                labelAlign: 'top'
-                            },
-                            items:[
-                                {
-                                    xtype: 'textfield',
-                                    fieldLabel: 'Name',
-                                    id: 'name',
-                                    allowBlank: false
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    fieldLabel: 'Domain',
-                                    id: 'domain',
-                                    allowBlank: false
-                                }
-                            ]
+                            xtype: 'textfield',
+                            fieldLabel: 'Name',
+                            id: 'name',
+                            allowBlank: false
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Domain',
+                            id: 'domain',
+                            allowBlank: false
+                        },
+                        {
+                            xtype: 'textarea',
+                            fieldLabel: 'Description',
+                            id: 'description'
                         }
                     ]
                 };
 
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
                 Hippo.ChannelManager.ChannelFormPanel.superclass.initComponent.apply(this, arguments);
-                Ext.getCmp('channel-form').doLayout();
+                this.addEvents('channel-created');
+                this.doLayout();
             },
 
             submitForm: function() {
-                var form = Ext.getCmp('channel-form').getForm();
+                var form = this.getForm();
+                var panel = this;
                 if (form.isValid()) {
                     form.submit({
                                 params: {
@@ -77,6 +75,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.Panel, {
 
                                 success: function(form, action) {
                                     //Event to hide the window & rerender the channels panel
+                                    console.log(action);
+                                    panel.fireEvent('channel-created');
                                 },
                                 failure: function(form, action) {
                                     switch (action.failureType) {
@@ -87,7 +87,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.Panel, {
                                             Ext.Msg.alert("Error", "Unable to connect to the server");
                                             break;
                                         case Ext.form.Action.SERVER_INVALID:
-                                            Ext.Msg.alert("Error", "Error while creating the A/B test" + action.result.msg);
+                                            Ext.Msg.alert("Error", "Error while creating the Channel " + action.result.msg);
                                             break;
                                     }
                                 }

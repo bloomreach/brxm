@@ -45,6 +45,9 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
                                         header: 'Blueprint Name'
                                     }
                                 ]
+                            }),
+                    sm: new Ext.grid.RowSelectionModel({
+                              singleSelect: true
                             })
                 };
 
@@ -56,6 +59,10 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
                     this.store.load();
                 }, this);
 
+                this.store.on('load', function () {
+                    //TODO: select the first row only when there are rows.
+                    this.getSelectionModel().selectFirstRow();
+                }, this)
 
             }
         });

@@ -49,10 +49,16 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
                 Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
-                 this.win = new Hippo.ChannelManager.NewChannelWindow({
+                this.win = new Hippo.ChannelManager.NewChannelWindow({
                             blueprintStore: me.blueprintStore,
                             channelStore : me.channelStore
                         });
+
+                //Register event listeners on event
+                Ext.getCmp('channel-form-panel').on('channel-created', function() {
+                    this.win.hide();
+                    this.channelStore.reload();
+                }, this);
             },
 
             openChannelWizard:function() {
@@ -89,7 +95,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                                 hideMode:'offsets',
                                 deferredRender: true ,
                                 layoutOnCardChange: true
-                             }
+                            }
                         }
                     ],
                     buttons: [
@@ -116,9 +122,9 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
                 Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
 
-                this.on('beforeshow',function () {
-                     Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
-                },this);
+                this.on('beforeshow', function () {
+                    Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
+                }, this);
 
                 Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
                             id: 'blueprints-panel',
@@ -129,6 +135,8 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                             id: 'channel-form-panel',
                             store: me.channelStore
                         }));
+
+
             },
 
             processNextStep:function() {
@@ -136,8 +144,8 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                     Ext.getCmp('card-container').layout.setActiveItem('channel-form-panel');
                     this.setTitle("Channel Properties");
                     Ext.getCmp('createButton').setText("Create Channel");
-
                 } else { //current item is the form panel so call submit on it.
+                    alert('submit form');
                     Ext.getCmp('channel-form-panel').submitForm();
                 }
             }

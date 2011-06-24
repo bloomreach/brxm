@@ -30,6 +30,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             initComponent: function() {
                 var me = this;
                 var config = {
+                    id: 'channel-grid-panel',
                     store: me.store,
                     stripeRows: true,
                     autoHeight: true,
@@ -52,9 +53,11 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
 
                 Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
-                this.on('reloadGrid', function() {
-                    this.store.reload();
+
+                this.store.on('load', function() {
+                    this.
                 }, this);
+
                 this.store.load();
 
             }
