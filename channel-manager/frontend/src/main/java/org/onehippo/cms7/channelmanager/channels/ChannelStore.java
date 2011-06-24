@@ -16,9 +16,19 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Credentials;
+import javax.security.auth.Subject;
+
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,15 +97,33 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     @Override
     protected JSONObject createRecord(JSONObject record) throws JSONException {
         JSONObject result = new JSONObject();
-        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        Channel c = new Channel("mobile", "mobile-french-channel");
+        final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final Channel c = new Channel("mobile", "mobile-french-channel");
         c.setTitle(record.getString("name"));
         c.setUrl(record.getString("domain"));
-        try {
-            channelManager.save(c);
+
+        // FIXME: move boilerplate to CMS engine
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        Credentials credentials = session.getCredentials().getJcrCredentials();
+        Subject subject = new Subject();
+        subject.getPrivateCredentials().add(credentials);
+        subject.setReadOnly();
+        ChannelException ce = HstSubject.doAsPrivileged(subject, new PrivilegedAction<ChannelException>() {
+            public ChannelException run() {
+                try {
+                    channelManager.save(c);
+                    return null;
+                } catch (ChannelException e) {
+                    return e;
+                } finally {
+                    HstSubject.clearSubject();
+                }
+            }
+        }, null);
+        if (ce == null) {
             result.put("success", true);
-        } catch (ChannelException e) {
-            log.error("Unable to save channel" + e.getMessage(), e);
+        } else {
+            log.error("Unable to save channel" + ce.getMessage(), ce);
             result.put("success", false);
         }
 
