@@ -105,7 +105,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
-        boolean success = false;
+        boolean success = true;
 
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
@@ -116,9 +116,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     }, null);
         } catch (PrivilegedActionException e) {
             log.error("Unable to save channel" + e.getException().getMessage(), e.getException());
-            success = true;
+            success = false;
         } finally {
             HstSubject.clearSubject();
+
         }
 
         final JSONObject result = new JSONObject();
