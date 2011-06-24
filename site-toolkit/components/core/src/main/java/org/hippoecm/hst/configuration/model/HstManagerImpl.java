@@ -29,6 +29,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.query.QueryResult;
 
+import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
@@ -101,6 +102,12 @@ public class HstManagerImpl implements HstManager {
      * Request path suffix delimiter
      */
     private String pathSuffixDelimiter = "./";
+    
+
+    private boolean clearAll = false;
+    private Set<String> loadOrReloadHstConfigurationSet= new ConcurrentHashSet<String>();
+    private Set<String> loadOrReloadHstHostSet = new ConcurrentHashSet<String>();
+    private Set<String> loadOrReloadHstSiteSet = new ConcurrentHashSet<String>();
 
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
@@ -166,8 +173,16 @@ public class HstManagerImpl implements HstManager {
     }
 
     protected void buildSites() throws RepositoryNotAvailableException{
+        if(clearAll) { 
+            loadOrReloadHstConfigurationSet.clear();
+            loadOrReloadHstHostSet.clear();
+            loadOrReloadHstSiteSet.clear();
+            commonCatalog = null;
+            configurationRootNodes.clear();
+            siteRootNodes.clear();
+        }
         Session session = null;
-        
+          
         try {
             if (this.credentials == null) {
                 session = this.repository.login();
@@ -193,50 +208,77 @@ public class HstManagerImpl implements HstManager {
                 virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
             } 
             
-            // if there is a common catalog, we load this one:
-            if(session.itemExists(rootPath +"/hst:configurations/hst:catalog")) {
+            // if there is a common catalog that is not yet loaded, we load this one:
+            if(commonCatalog == null && session.itemExists(rootPath +"/hst:configurations/hst:catalog")) {
                 // we have a common catalog. Load this catalog. It is available for every (sub)site
                 Node catalog = (Node)session.getItem(rootPath +"/hst:configurations/hst:catalog");
                 commonCatalog = new HstNodeImpl(catalog, null, true);
             } 
  
             // get all the root hst configuration nodes
-            {
-                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")  order by @jcr:score descending ";
-                QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-                NodeIterator configurationRootJcrNodes = result.getNodes();
-
-                while(configurationRootJcrNodes.hasNext()) {
-                    Node configurationRootNode = configurationRootJcrNodes.nextNode();
-                    if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
-                        // the hstdefault is only meant for 'implicit inheriting'. We can skip it here
-                    } else {
-                        if(configurationRootNodes.containsKey(configurationRootNode.getPath())) {
-                            // already loaded, for example because inherited configs can already be loaded through HstSiteConfigurationRootNodeImpl
+            { 
+                if(configurationRootNodes.isEmpty()) {
+                    String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_CONFIGURATION+")  order by @jcr:score descending ";
+                    QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+                    NodeIterator configurationRootJcrNodes = result.getNodes();
+    
+                    while(configurationRootJcrNodes.hasNext()) {
+                        Node configurationRootNode = configurationRootJcrNodes.nextNode();
+                        if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
+                            // the hstdefault is only meant for 'implicit inheriting'. We can skip it here
+                        } else {
+                            if(configurationRootNodes.containsKey(configurationRootNode.getPath())) {
+                                // already loaded, for example because inherited configs can already be loaded through HstSiteConfigurationRootNodeImpl
+                                continue;
+                            }
+                            try {
+                                HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
+                                configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
+                               
+                            } catch (HstNodeException e) {
+                                log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
+                            }
+                            
+                        }
+                    }
+                } else {
+                    // only reload the change configurations 
+                    for(String configurationNode : loadOrReloadHstConfigurationSet) {
+                        if(!session.itemExists(configurationNode)) {
                             continue;
                         }
-                        try {
+                        Node configurationRootNode = session.getNode(configurationNode);
+                        if(configurationRootNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
                             HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
-                            configurationRootNodes.put(configurationRootNode.getPath(), hstNode);
-                           
-                        } catch (HstNodeException e) {
-                            log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
+                            configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
                         }
-                        
                     }
                 }
             }
             
             // get all the hst:site's
-           
-            String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")  order by @jcr:score descending ";
-            QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-            NodeIterator siteRootJcrNodes = result.getNodes();
-            
-            while(siteRootJcrNodes.hasNext()) {
-                Node rootSiteNode = siteRootJcrNodes.nextNode();
-                HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null);
-                siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
+            if(siteRootNodes.isEmpty()) {
+                String xpath = "/jcr:root"+rootPath+"//element(*, "+HstNodeTypes.NODETYPE_HST_SITE+")  order by @jcr:score descending ";
+                QueryResult result =  session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+                NodeIterator siteRootJcrNodes = result.getNodes();
+                
+                while(siteRootJcrNodes.hasNext()) {
+                    Node rootSiteNode = siteRootJcrNodes.nextNode();
+                    HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null);
+                    siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
+                }
+            } else {
+                // only reload the changed sites 
+                for(String siteNode : loadOrReloadHstSiteSet) {
+                    if(!session.itemExists(siteNode)) {
+                        continue;
+                    }
+                    Node siteRootNode = session.getNode(siteNode);
+                    if(siteRootNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
+                        HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(siteRootNode, null);
+                        siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
+                    }
+                }
             }
             
             
@@ -254,9 +296,7 @@ public class HstManagerImpl implements HstManager {
          
         try {
             tmpHstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();
-            long start = System.currentTimeMillis();
             this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
-            System.out.println("building model took " + (System.currentTimeMillis() - start ));
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {
@@ -264,46 +304,122 @@ public class HstManagerImpl implements HstManager {
             tmpHstComponentsConfigurationInstanceCache = null;
             // clear the StringPool as it is not needed any more
             StringPool.clear();
+            loadOrReloadHstConfigurationSet.clear();
+            loadOrReloadHstHostSet.clear();
+            loadOrReloadHstSiteSet.clear();
+            clearAll = false;
         }
     }
     
     @Override
     public void invalidate(EventIterator events) {
-       
-        synchronized(this) {
+        
+        // TODO remove this clearAll = true here: this is a shortcut to mimic the old, non finegrained reloading 
+        // as this finegrained reloading is not yet completely done
+        clearAll = true;
+        if(clearAll) {
+            // TODO remove this part and use code below with finegrained invalidation
             virtualHosts = null;
-            commonCatalog = null;
-            configurationRootNodes.clear();
-            siteRootNodes.clear();
+            return;
+        }
+        
+        synchronized(this) {
+            /*
+             * below, we are going to prepare which HstNode's should be reloaded in our model. 
+             * Depending on the change in the jcr node in the hst configuration we will mark either:
+             * 
+             * 1) To reload some specific entire hst:site node + descendants
+             * 2) To reload some specific entire hst:configuration node + descendants
+             * 3) To reload the entire hst:hosts + descendants
+             */
+            
+            // below we first collide all events for the same nodes to one eventPath
+            
+            // all nodes that have been added or moved or have a property added/changed/removed
+            Map<String, String> idPathMapOfChangedAddedOrMovedNodes = new HashMap<String, String>();
+            // all removed nodes
+            Map<String, String> idPathMapOfRemovedNodes = new HashMap<String, String>();
+            
             try {
                 while (events.hasNext()) {
                     Event ev = events.nextEvent();
-
-                    String path =  ev.getPath();
-                    ev.getIdentifier();
+                    
                     switch (ev.getType()) {
-                    case Event.NODE_ADDED:
-                        break;
-                    case Event.NODE_REMOVED:
-                        
-                        break;
-                    case Event.NODE_MOVED:
-                        break;
-                    case Event.PROPERTY_ADDED:
-                        break;
-                    case Event.PROPERTY_CHANGED:
-                        break;
-                    case Event.PROPERTY_REMOVED:
-                        break;
-                    }
+                        case Event.NODE_ADDED:
+                            if(idPathMapOfChangedAddedOrMovedNodes.containsKey(ev.getIdentifier())) {
+                                break;
+                            }
+                            idPathMapOfChangedAddedOrMovedNodes.put(ev.getIdentifier(), ev.getPath());
+                            break;
+                        case Event.NODE_REMOVED:
+                            idPathMapOfRemovedNodes.put(ev.getIdentifier(), ev.getPath());
+                            break;
+                        case Event.NODE_MOVED:
+                            if(idPathMapOfChangedAddedOrMovedNodes.containsKey(ev.getIdentifier())) {
+                                break;
+                            }
+                            break;
+                        case Event.PROPERTY_ADDED:
+                            addNodePathIfAbsentForPropertyToMap(idPathMapOfChangedAddedOrMovedNodes, ev);
+                            break;
+                        case Event.PROPERTY_CHANGED:
+                            addNodePathIfAbsentForPropertyToMap(idPathMapOfChangedAddedOrMovedNodes, ev);
+                            break;
+                        case Event.PROPERTY_REMOVED:
+                            addNodePathIfAbsentForPropertyToMap(idPathMapOfChangedAddedOrMovedNodes, ev);
+                            break;
+                      }
                 }
             } catch (RepositoryException e) {
                 log.error("RepositoryException happened. Invalidate hst model completely", e);
                 virtualHosts = null;
-                commonCatalog = null;
-                configurationRootNodes.clear();
-                siteRootNodes.clear();
+                clearAll = true;
+                return;
             }
+            
+            // now that we have the changed and deleted maps, let's compute which hst:configuration nodes need to be reloaded,
+            // which hst:sites and which hst:hosts
+
+            String hstConfigPath = rootPath+"/hst:configurations/";
+            String hstCommonCatalogPath = hstConfigPath+"/hst:catalog/";
+            String hstHostsPath = rootPath+"/hst:hosts/";
+            String hstBlueprintsPath = rootPath+"/hst:blueprints/";
+            for(String path : idPathMapOfChangedAddedOrMovedNodes.values()) {
+                if(path.startsWith(hstConfigPath)) {
+                    String pathOfConfigurationNode = path.substring(hstConfigPath.length());
+                    pathOfConfigurationNode = hstConfigPath + pathOfConfigurationNode.substring(0, pathOfConfigurationNode.indexOf("/"));
+                    loadOrReloadHstConfigurationSet.add(pathOfConfigurationNode);
+                } else if(path.startsWith(hstCommonCatalogPath)) {
+                    // this is the common catalog: set that one to null
+                    commonCatalog = null;
+                } else if (path.startsWith(hstHostsPath)) {
+                    // for now reload all hosts. Can be improved by finegrained invalidation
+                    virtualHostsNode = null;
+                } else if (path.startsWith(hstBlueprintsPath)) {
+                    // do nothing
+                } else {
+                    // it must be a change in a hst:site or in hst:hst, or in hst:hosts, hst:sites or hst:configurations
+                    String[] elems = path.split("/");
+                    if (elems.length < 4) {
+                        // ignore for now.
+                    } else {
+                        String siteNodePath = "/" + elems[1] + "/" + elems[2] + "/" + elems[3];
+                        loadOrReloadHstSiteSet.add(siteNodePath);
+                    }
+                } 
+            }
+            // set the model to null
+            virtualHosts = null;
+        }
+    }
+    
+    private void addNodePathIfAbsentForPropertyToMap(Map<String, String> idPathMapOfChangedAddedOrMovedNodes, Event ev) throws RepositoryException {
+        if(idPathMapOfChangedAddedOrMovedNodes.containsKey(ev.getIdentifier())) {
+            return;
+        } else {
+            String propertyPath = ev.getPath();
+            String nodePath = propertyPath.substring(0,propertyPath.lastIndexOf("/"));
+            idPathMapOfChangedAddedOrMovedNodes.put(ev.getIdentifier(), nodePath);
         }
     }
 
@@ -311,9 +427,7 @@ public class HstManagerImpl implements HstManager {
     public void invalidateAll() {
         synchronized(this) {
             virtualHosts = null;
-            commonCatalog = null;
-            configurationRootNodes.clear();
-            siteRootNodes.clear();
+            clearAll = true;
         }
     }
     
