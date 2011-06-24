@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +31,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
@@ -105,9 +106,9 @@ public class HstManagerImpl implements HstManager {
     
 
     private boolean clearAll = false;
-    private Set<String> loadOrReloadHstConfigurationSet= new ConcurrentHashSet<String>();
-    private Set<String> loadOrReloadHstHostSet = new ConcurrentHashSet<String>();
-    private Set<String> loadOrReloadHstSiteSet = new ConcurrentHashSet<String>();
+    private Set<String> loadOrReloadHstConfigurationSet= Collections.synchronizedSet(new HashSet<String>());
+    private Set<String> loadOrReloadHstHostSet = Collections.synchronizedSet(new HashSet<String>());
+    private Set<String> loadOrReloadHstSiteSet = Collections.synchronizedSet(new HashSet<String>());
 
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
