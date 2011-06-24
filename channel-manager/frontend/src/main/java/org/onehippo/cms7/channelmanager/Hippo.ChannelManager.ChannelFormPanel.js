@@ -39,6 +39,13 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     items:[
                         {
                             xtype: 'textfield',
+                            fieldLabel: 'Blueprint',
+                            id: 'blueprintId',
+                            disabled: true,
+                            allowBlank: false
+                        },
+                        {
+                            xtype: 'textfield',
                             fieldLabel: 'Name',
                             id: 'name',
                             allowBlank: false
@@ -60,6 +67,10 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 Ext.apply(this, Ext.apply(this.initialConfig, config));
                 Hippo.ChannelManager.ChannelFormPanel.superclass.initComponent.apply(this, arguments);
                 this.addEvents('channel-created');
+                this.on('beforeshow', function () {
+                    var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
+                     Ext.getCmp('blueprintId').setValue(blueprint.id);
+                }, this);
                 this.doLayout();
             },
 
@@ -93,9 +104,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                                 }
                             });
                 } else {
-                    //Do nothing?
+                    //Do nothing, the invalid fields will be highlighted automatically.
                 }
-
             }
         });
 

@@ -53,6 +53,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         baseParams.put("xaction", "read");
         properties.put("baseParams", baseParams);
         return properties;
+
     }
 
     @Override

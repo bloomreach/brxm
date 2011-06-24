@@ -140,12 +140,12 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
             },
 
             processNextStep:function() {
-                if (Ext.getCmp('card-container').layout.activeItem.id === 'blueprints-panel') {
-                    Ext.getCmp('card-container').layout.setActiveItem('channel-form-panel');
+                var cc = Ext.getCmp('card-container');
+                if (cc.layout.activeItem.id === 'blueprints-panel') {
                     this.setTitle("Channel Properties");
                     Ext.getCmp('createButton').setText("Create Channel");
+                    cc.layout.setActiveItem('channel-form-panel');
                 } else { //current item is the form panel so call submit on it.
-                    alert('submit form');
                     Ext.getCmp('channel-form-panel').submitForm();
                 }
             }
