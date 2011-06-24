@@ -41,7 +41,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Blueprint',
                             id: 'blueprintId',
-                            disabled: true,
+                            readOnly: true,
                             allowBlank: false
                         },
                         {
@@ -78,6 +78,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 var form = this.getForm();
                 var panel = this;
                 if (form.isValid()) {
+                    console.log(form.getValues());
                     form.submit({
                                 params: {
                                     xaction: 'create',
