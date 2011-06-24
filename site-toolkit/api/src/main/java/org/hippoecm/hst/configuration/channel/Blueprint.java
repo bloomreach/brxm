@@ -50,18 +50,10 @@ public interface Blueprint {
     String getCmsPluginClass();
 
     /**
-     * Class for interface that is exposed at runtime to components
-     *
+     * Returns the list of {@link HstPropertyDefinition}s for a Channel Blueprint.
+     * If no properties have been defined for the blueprint, null is returned.
      * @return
      */
-
-    String getParameterInfo();
-
-    /**
-     * Returns the list of {@link PropertyDefinition}s for a Channel Blueprint.
-     * @return
-     */
-    List<PropertyDefinition> getPropertyDefinitions();
-
+    List<HstPropertyDefinition> getPropertyDefinitions();
 
 }

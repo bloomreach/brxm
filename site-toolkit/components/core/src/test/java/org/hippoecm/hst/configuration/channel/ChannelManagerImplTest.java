@@ -15,14 +15,18 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
 
+import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.test.AbstractHstTestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -34,7 +38,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     public void ChannelsAreReadCorrectly() throws ChannelException, RepositoryException {
         ChannelManagerImpl manager = createManager();
 
-        Map<String,Channel> channels = manager.getChannels();
+        Map<String, Channel> channels = manager.getChannels();
         assertEquals(1, channels.size());
         assertEquals("testchannel", channels.keySet().iterator().next());
 
@@ -45,24 +49,77 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     @Test
     public void ChannelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
-        ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = createManager();
 
-        List<Blueprint> bluePrints = manager.getBlueprints();
+        final List<Blueprint> bluePrints = manager.getBlueprints();
         assertEquals(1, bluePrints.size());
 
-        Channel channel = manager.createChannel(bluePrints.get(0).getId());
-        channel.setUrl("http://myhost/mychannel");
-        channel.setContentRoot("/content/documents");
-        manager.save(channel);
+        asAdmin(new PrivilegedAction<ChannelException>() {
+            @Override
+            public ChannelException run() {
+                try {
+                    Channel channel = manager.createChannel(bluePrints.get(0).getId());
+                    channel.setUrl("http://myhost/mychannel");
+                    channel.setContentRoot("/content/documents");
+                    manager.save(channel);
+                } catch (ChannelException ce) {
+                    return ce;
+                }
+                return null;
+            }
+        });
+        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
+
+        assertTrue(node.hasNode("myhost/hst:root/mychannel"));
+    }
+
+    @Test
+    @Ignore
+    public void ChannelProperties() throws ChannelException, RepositoryException {
+        final ChannelManagerImpl manager = createManager();
+
+        final List<Blueprint> bluePrints = manager.getBlueprints();
+        assertEquals(1, bluePrints.size());
+
+        asAdmin(new PrivilegedAction<ChannelException>() {
+            @Override
+            public ChannelException run() {
+                try {
+                    Channel channel = manager.createChannel(bluePrints.get(0).getId());
+                    channel.setUrl("http://myhost/mychannel");
+                    channel.setContentRoot("/content/documents");
+                    manager.save(channel);
+                } catch (ChannelException ce) {
+                    return ce;
+                }
+                return null;
+            }
+        });
 
         Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
         assertTrue(node.hasNode("myhost/hst:root/mychannel"));
     }
 
+    private <T extends Exception> void asAdmin(PrivilegedAction<T> action) throws T {
+        T ce = HstSubject.doAs(createSubject(), action);
+        HstSubject.clearSubject();
+        if (ce != null) {
+            throw ce;
+        }
+    }
+
+    private Subject createSubject() {
+        Subject subject = new Subject();
+        subject.getPrivateCredentials().add(new SimpleCredentials("admin", "admin".toCharArray()));
+        subject.setReadOnly();
+        return subject;
+    }
+
     private ChannelManagerImpl createManager() throws RepositoryException {
         ChannelManagerImpl manager = new ChannelManagerImpl();
-        manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
         manager.setRepository(getRepository());
+        // FIXME: use readonly credentials
+        manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
         manager.setHostGroup("dev-internal");
         manager.setSites("hst:unittestsites");
         return manager;

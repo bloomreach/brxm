@@ -16,6 +16,8 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Channel implements Serializable {
 
@@ -30,6 +32,7 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
+    private final Map<String, Object> properties = new HashMap<String, Object>();
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -106,6 +109,10 @@ public class Channel implements Serializable {
 
     public void setComposerModeEnabled(final boolean composerModeEnabled) {
         this.composerModeEnabled = composerModeEnabled;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
     public int hashCode() {

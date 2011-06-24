@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -481,6 +481,12 @@ public class MountService implements Mount {
     @Override
     public String getChannelId() {
         return channelId;
+    }
+
+    @Override
+    public Map<String, Object> getChannelProperties() {
+        // TODO: implement
+        throw new RuntimeException("Not yet implemented");
     }
 
     public String getAlias() {

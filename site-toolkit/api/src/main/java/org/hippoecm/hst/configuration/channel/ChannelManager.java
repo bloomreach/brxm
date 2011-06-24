@@ -41,6 +41,10 @@ public interface ChannelManager {
     /**
      * Persist a channel; will create the mounts, sites and configuration when the channel is new,
      * when the channel already exists, only the properties may have changed.
+     * <p>
+     * When invoking this method, an HstSubject context must be provided with the credentials necessary
+     * to persist the channel.
+     * </p>
      *
      * @param channel
      * @throws ChannelException

@@ -20,8 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -29,8 +31,10 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +138,13 @@ public class ChannelManagerImpl implements ChannelManager {
                 channels.put(id, channel);
             }
 
+            if (currNode.hasNode("hst:channelproperties")) {
+                List<HstPropertyDefinition> propertyDefinitions = blueprints.get(bluePrintId).getPropertyDefinitions();
+                Node propertiesNode = currNode.getNode("hst:channelproperties");
+                Map<String, Object> properties = ChannelPropertyMapper.getProperties(propertiesNode, propertyDefinitions);
+                channel.getProperties().putAll(properties);
+            }
+
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
                 String mountPoint = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
                 Node siteNode = currNode.getSession().getNode(mountPoint);
@@ -154,7 +165,7 @@ public class ChannelManagerImpl implements ChannelManager {
         if (channels == null) {
             Session session = null;
             try {
-                session = getSession();
+                session = getSession(false);
                 Node configNode = null;
                 configNode = session.getNode(rootPath);
 
@@ -179,13 +190,27 @@ public class ChannelManagerImpl implements ChannelManager {
         return "channel-" + lastChannelId;
     }
 
-    protected Session getSession() throws RepositoryException {
+    protected Session getSession(boolean writable) throws RepositoryException {
         javax.jcr.Session session = null;
 
-        if (this.credentials == null) {
+        Credentials credentials = this.credentials;
+        if (writable) {
+            Subject subject = HstSubject.getSubject(null);
+            if (subject != null) {
+                Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
+                if (!repoCredsSet.isEmpty()) {
+                    credentials = repoCredsSet.iterator().next();
+                } else {
+                    throw new LoginException("Repository credentials for the subject is not found.");
+                }
+            } else {
+                throw new LoginException("No subject available to obtain writable session");
+            }
+        }
+        if (credentials == null) {
             session = this.repository.login();
         } else {
-            session = this.repository.login(this.credentials);
+            session = this.repository.login(credentials);
         }
 
         // session can come from a pooled event based pool so always refresh before building configuration:
@@ -208,14 +233,21 @@ public class ChannelManagerImpl implements ChannelManager {
         if (!blueprints.containsKey(blueprintId)) {
             throw new ChannelException("Blue print id " + blueprintId + " is not valid");
         }
-        return new Channel(blueprintId, nextChannelId());
+        Channel channel = new Channel(blueprintId, nextChannelId());
+        List<HstPropertyDefinition> propertyDefinitions = blueprints.get(blueprintId).getPropertyDefinitions();
+        if (propertyDefinitions != null) {
+            for (HstPropertyDefinition hpd : propertyDefinitions) {
+                channel.getProperties().put(hpd.getName(), hpd.getDefaultValue());
+            }
+        }
+        return channel;
     }
 
     @Override
     public synchronized void save(final Channel channel) throws ChannelException {
         Session session = null;
         try {
-            session = getSession();
+            session = getSession(true);
             Node configNode = session.getNode(rootPath);
             if (channels.containsKey(channel.getId())) {
                 channels.clear();
@@ -228,6 +260,7 @@ public class ChannelManagerImpl implements ChannelManager {
                     }
 
                     // TODO: validate that mandatory properties (URL and such) have not changed
+                    // ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
                 } else {
                     throw new ChannelException("Channel was removed since it's retrieval");
                 }
@@ -259,26 +292,42 @@ public class ChannelManagerImpl implements ChannelManager {
 
     private void createChannelFromBlueprint(Node configRoot, final Node blueprintNode, final Channel channel) throws ChannelException, RepositoryException {
         String tmp = channel.getUrl();
-        tmp = tmp.substring("http://".length());
-        String mountPath = tmp.substring(tmp.indexOf('/') + 1);
-        while (mountPath.lastIndexOf('/') == mountPath.length() - 1) {
-            mountPath = mountPath.substring(0, mountPath.lastIndexOf('/'));
+        if (!tmp.startsWith("http://")) {
+            throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
         }
-        String domainEls = tmp.substring(0, tmp.indexOf('/'));
+        tmp = tmp.substring("http://".length());
 
-        // create virtual host
-        Node parent = configRoot.getNode("hst:hosts/" + hostGroup);
-        String[] elements = domainEls.split("[.]");
-        for (int i = elements.length - 1; i >= 0; i--) {
-            if (parent.hasNode(elements[i])) {
-                parent = parent.getNode(elements[i]);
-            } else {
-                parent = parent.addNode(elements[i], "hst:virtualhost");
+        String mountPath = "";
+        if (tmp.indexOf('/') >= 0) {
+            mountPath = tmp.substring(tmp.indexOf('/') + 1);
+            while (mountPath.lastIndexOf('/') == mountPath.length() - 1) {
+                mountPath = mountPath.substring(0, mountPath.lastIndexOf('/'));
             }
         }
+        Node parent = createVirtualHost(configRoot, tmp);
 
         // create mounts
+        Node mount = createMount(parent, blueprintNode, mountPath);
+        Node channelPropsNode;
+        if (blueprintNode.hasNode("hst:channelproperties")) {
+            channelPropsNode = mount.addNode("hst:channelproperties", blueprintNode.getNode("hst:channelproperties").getPrimaryNodeType().getName());
+        } else {
+            channelPropsNode = mount.addNode("hst:channelproperties", "nt:unstructured");
+        }
+        ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
+
+        if (blueprintNode.hasNode("hst:site")) {
+            copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
+        }
+        if (blueprintNode.hasNode("hst:configuration")) {
+            copyNodes(blueprintNode.getNode("hst:configuration"), configRoot.getNode("hst:configurations"), channel.getId());
+        }
+    }
+
+    private Node createMount(Node parent, final Node blueprintNode, final String mountPath) throws RepositoryException {
+        Node mount;
         String[] mountPathEls = mountPath.split("/");
+        String name = "hst:root";
         if (mountPathEls.length > 0) {
             if (parent.hasNode("hst:root")) {
                 parent = parent.getNode("hst:root");
@@ -292,16 +341,33 @@ public class ChannelManagerImpl implements ChannelManager {
                     parent = parent.addNode(mountPathEls[i], "hst:mount");
                 }
             }
-            copyNodes(blueprintNode.getNode("hst:mount"), parent, mountPathEls[mountPathEls.length - 1]);
-        } else {
-            copyNodes(blueprintNode.getNode("hst:mount"), parent, "hst:root");
+            name = mountPathEls[mountPathEls.length - 1];
         }
-
-        copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
-        copyNodes(blueprintNode.getNode("hst:configuration"), configRoot.getNode("hst:configurations"), channel.getId());
+        if (blueprintNode.hasNode("hst:mount")) {
+            mount = copyNodes(blueprintNode.getNode("hst:mount"), parent, name);
+        } else {
+            mount = parent.addNode(name, "hst:mount");
+        }
+        return mount;
     }
 
-    static void copyNodes(Node source, Node parent, String name) throws RepositoryException {
+    private Node createVirtualHost(final Node configRoot, final String tmp) throws RepositoryException {
+        String domainEls = tmp.substring(0, tmp.indexOf('/'));
+
+        // create virtual host
+        Node parent = configRoot.getNode("hst:hosts/" + hostGroup);
+        String[] elements = domainEls.split("[.]");
+        for (int i = elements.length - 1; i >= 0; i--) {
+            if (parent.hasNode(elements[i])) {
+                parent = parent.getNode(elements[i]);
+            } else {
+                parent = parent.addNode(elements[i], "hst:virtualhost");
+            }
+        }
+        return parent;
+    }
+
+    static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
         Node clone = parent.addNode(name, source.getPrimaryNodeType().getName());
         for (PropertyIterator pi = source.getProperties(); pi.hasNext(); ) {
             Property prop = pi.nextProperty();
@@ -318,6 +384,7 @@ public class ChannelManagerImpl implements ChannelManager {
             Node node = ni.nextNode();
             copyNodes(node, clone, node.getName());
         }
+        return clone;
     }
 
     @Override

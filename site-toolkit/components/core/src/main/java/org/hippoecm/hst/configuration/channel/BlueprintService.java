@@ -15,9 +15,13 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -25,10 +29,10 @@ public class BlueprintService implements Blueprint {
 
     private final String id;
     private final String cmsPluginClass;
-    private final String parameterInfoClass;
     private final String name;
     private final String description;
     private final String path;
+    private final List<HstPropertyDefinition> properties;
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -53,10 +57,18 @@ public class BlueprintService implements Blueprint {
             cmsPluginClass = null;
         }
 
-        if (bluePrint.hasProperty("hst:parameterinfoclass")) {
-            parameterInfoClass = bluePrint.getProperty("hst:parameterinfoclass").getString();
+        if (bluePrint.hasNode("hst:channelproperties")) {
+            properties = new ArrayList<HstPropertyDefinition>();
+            Node channelProps = bluePrint.getNode("hst:channelproperties");
+            for (PropertyIterator propIter = channelProps.getProperties(); propIter.hasNext();) {
+                Property prop = propIter.nextProperty();
+                if (prop.getDefinition().isProtected()) {
+                    continue;
+                }
+                properties.add(new HstPropertyDefinitionService(prop, true));
+            }
         } else {
-            parameterInfoClass = null;
+            properties = null;
         }
     }
 
@@ -81,14 +93,8 @@ public class BlueprintService implements Blueprint {
     }
 
     @Override
-    public List<PropertyDefinition> getPropertyDefinitions() {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public String getParameterInfo() {
-        return parameterInfoClass;
+    public List<HstPropertyDefinition> getPropertyDefinitions() {
+        return properties != null ? Collections.unmodifiableList(properties) : null;
     }
 
     public Node getNode(final Session session) throws RepositoryException {

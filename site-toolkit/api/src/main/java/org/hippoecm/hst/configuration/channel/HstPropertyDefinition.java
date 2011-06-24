@@ -19,6 +19,16 @@ package org.hippoecm.hst.configuration.channel;
 /**
  * Definition of a Channel Property.
  */
-public interface PropertyDefinition {
+public interface HstPropertyDefinition {
+
+    HstPropertyType getType();
+
+    String getName();
+
+    Object getDefaultValue();
+
+    boolean isMultiValued();
+
+    boolean isValid(Object value);
 
 }

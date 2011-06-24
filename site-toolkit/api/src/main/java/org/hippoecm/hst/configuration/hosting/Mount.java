@@ -398,4 +398,5 @@ public interface Mount {
      */
     String getChannelId();
 
+    Map<String, Object> getChannelProperties();
 }
