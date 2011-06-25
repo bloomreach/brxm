@@ -94,6 +94,7 @@ demosuite/content/.settings
 demosuite/content/hst-demosuite-content.iml
 demosuite/content/target
 demosuite/demosuite.iml
+demosuite/derby.log
 demosuite/site/.classpath
 demosuite/site/.project
 demosuite/site/.settings
