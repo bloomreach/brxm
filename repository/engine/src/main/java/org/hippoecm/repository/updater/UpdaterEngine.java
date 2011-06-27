@@ -29,7 +29,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -1088,44 +1087,31 @@ public class UpdaterEngine {
             return false;
         }
 
-        public NodeIterator iterator(final Session session) throws RepositoryException {
+        public NodeIterator iterator(Session session) throws RepositoryException {
+            final Set<Node> collection = new HashSet<Node>();
             isCollecting = true;
             isExecuting = false;
             //session.getRootNode().accept(this);
             isCollecting = false;
             isExecuting = true;
-            final NodeTypeIterator typeIter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes();
-            return new NodeIterator() {
-                Node nextNode;
-                NodeIterator nodeIter = null;
-                int position = 0;
-                private void fetch() {
-                    if (nextNode != null)
-                        return;
-                    while (nodeIter == null || !nodeIter.hasNext()) {
-                        if (typeIter.hasNext()) {
-                        } else
-                            return;
-                        NodeType nodeType = typeIter.nextNodeType();
-                        if (nodeType.getName().startsWith(namespace + ":")) {
-                            try {
-                                Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM " + nodeType.getName(), Query.SQL);
-                                QueryResult result = query.execute();
-                                log.debug("upgrade querying for namespace " + namespace + ": " + query.getStatement());
-                                for (NodeIterator nodeIter = result.getNodes(); nodeIter.hasNext();) {
-                                    Node candidate = nodeIter.nextNode();
-                                    if (isMatch(candidate)) {
-                                        nextNode = candidate;
-                                        return;
-                                    }
-                                }
-                            } catch (RepositoryException ex) {
-                                log.debug(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                            }
+            collection.clear();
+            for (NodeTypeIterator iter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes(); iter.hasNext();) {
+                NodeType nodeType = iter.nextNodeType();
+                if (nodeType.getName().startsWith(namespace + ":")) {
+                    Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM " + nodeType.getName(), Query.SQL);
+                    QueryResult result = query.execute();
+                    log.debug("upgrade querying for namespace "+namespace+": "+query.getStatement());
+                    for (NodeIterator nodeIter = result.getNodes(); nodeIter.hasNext();) {
+                        Node candidate = nodeIter.nextNode();
+                        if (isMatch(candidate)) {
+                            collection.add(candidate);
                         }
                     }
                 }
- 
+            }
+            final Iterator<Node> iterator = collection.iterator();
+            return new NodeIterator() {
+                int position = 0;
                 public Node nextNode() {
                     return (Node) next();
                 }
@@ -1134,88 +1120,17 @@ public class UpdaterEngine {
                         next();
                 }
                 public long getSize() {
-                    return -1;
+                    return collection.size();
                 }
                 public long getPosition() {
                     return position;
                 }
                 public boolean hasNext() {
-                    fetch();
-                    return nextNode != null;
+                    return iterator.hasNext();
                 }
                 public Object next() {
-                    fetch();
-                    Object object = nextNode;
+                    Object object = iterator.next();
                     ++position;
-                    nextNode = null;
-                    return object;
-                }
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
-
-        public NodeIterator iterator2(final Session session) throws RepositoryException {
-            isCollecting = true;
-            isExecuting = false;
-            //session.getRootNode().accept(this);
-            isCollecting = false;
-            isExecuting = true;
-            final Stack<NodeIterator> nodeIterators = new Stack<NodeIterator>();
-            nodeIterators.push(session.getRootNode().getNodes());
-            return new NodeIterator() {
-                Node nextNode = null;
-                int position = 0;
-                private void fetch() {
-                    if (nextNode != null)
-                        return;
-                    while (!nodeIterators.empty()) {
-                        if (nodeIterators.peek().hasNext()) {
-                            nextNode = nodeIterators.peek().nextNode();
-                            try {
-                                nodeIterators.push(nextNode.getNodes());
-                            } catch (RepositoryException ex) {
-                                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                            }
-                            try {
-                                if (isMatch(nextNode)) {
-                                    return;
-                                } else {
-                                    nextNode = null;
-                                }
-                            } catch (RepositoryException ex) {
-                                nextNode = null;
-                                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                            }
-                        } else {
-                            nodeIterators.pop();
-                        }
-                    }
-                }
- 
-                public Node nextNode() {
-                    return (Node) next();
-                }
-                public void skip(long skipNum) {
-                    while(skipNum > 0)
-                        next();
-                }
-                public long getSize() {
-                    return -1;
-                }
-                public long getPosition() {
-                    return position;
-                }
-                public boolean hasNext() {
-                    fetch();
-                    return nextNode != null;
-                }
-                public Object next() {
-                    fetch();
-                    Object object = nextNode;
-                    ++position;
-                    nextNode = null;
                     return object;
                 }
                 public void remove() {
