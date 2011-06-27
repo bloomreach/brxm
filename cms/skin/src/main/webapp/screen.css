@@ -1526,7 +1526,8 @@ ents-small-folders h3 {
 }
 
 .hippo-tree div.wicket-tree div.row .hippo-tree-dropdown {
-  visibility: hidden
+  visibility: hidden;
+  float: right;
 }
 
 .hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {

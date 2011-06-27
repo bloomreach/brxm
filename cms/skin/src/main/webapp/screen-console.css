@@ -85,6 +85,9 @@
  
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px;}
 
+.hippo-console-tree-dropdown {visibility: hidden;}
+
+
 /* Disabled sorter button */
 .hippo-console-tree-sorter li span em{ background: #abd5ff; border: 1px solid #fff;}
 /* Enabled sorter button */
