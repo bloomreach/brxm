@@ -100,4 +100,7 @@ public interface WorkflowManager {
      * @throws javax.jcr.RepositoryException
      */
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws MappingException, RepositoryException;
+    
+    public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException;
 }
+

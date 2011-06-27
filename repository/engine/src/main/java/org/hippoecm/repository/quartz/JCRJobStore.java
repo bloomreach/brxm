@@ -105,24 +105,26 @@ public class JCRJobStore implements JobStore {
             log.trace("trace");
         }
         Session session = ((JCRSchedulingContext)ctxt).getSession();
-        try {
-            Node jobNode = session.getRootNode().getNode(newJob.getName().substring(1));
-            jobNode.setProperty("hipposched:data",new ByteArrayInputStream(objectToBytes(newJob)));
-            jobNode.setProperty("hippo:document",(String) newJob.getJobDataMap().get("document"));
-            if(!jobNode.hasNode("hipposched:triggers")) {
-                jobNode.addNode("hipposched:triggers","hipposched:triggers");
+        synchronized(session) {
+            try {
+                Node jobNode = session.getRootNode().getNode(newJob.getName().substring(1));
+                jobNode.setProperty("hipposched:data",new ByteArrayInputStream(objectToBytes(newJob)));
+                jobNode.setProperty("hippo:document",(String) newJob.getJobDataMap().get("document"));
+                if(!jobNode.hasNode("hipposched:triggers")) {
+                    jobNode.addNode("hipposched:triggers","hipposched:triggers");
+                }
+                String triggerRelPath = newTrigger.getName().substring(newJob.getName().length()+1);
+                Node triggerNode = jobNode.getNode("hipposched:triggers").addNode(triggerRelPath, "hipposched:trigger");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(newTrigger.getNextFireTime());
+                triggerNode.setProperty("hipposched:nextFireTime", cal);
+                triggerNode.setProperty("hipposched:fireTime", cal);
+                triggerNode.setProperty("hipposched:data", new ByteArrayInputStream(objectToBytes(newTrigger)));
+                jobNode.getParent().save();
+            } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new JobPersistenceException("Failure storing job and trigger", ex);
             }
-            String triggerRelPath = newTrigger.getName().substring(newJob.getName().length()+1);
-            Node triggerNode = jobNode.getNode("hipposched:triggers").addNode(triggerRelPath, "hipposched:trigger");
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(newTrigger.getNextFireTime());
-            triggerNode.setProperty("hipposched:nextFireTime", cal);
-            triggerNode.setProperty("hipposched:fireTime", cal);
-            triggerNode.setProperty("hipposched:data", new ByteArrayInputStream(objectToBytes(newTrigger)));
-            jobNode.getParent().save();
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("Failure storing job and trigger", ex);
         }
     }
 

@@ -17,7 +17,6 @@ package org.hippoecm.repository.quartz;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
 import javax.jcr.SimpleCredentials;
 
 import org.quartz.Job;
@@ -27,30 +26,41 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import org.hippoecm.repository.ext.WorkflowInvocation;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.WorkflowException;
 
 public class WorkflowJob implements Job {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final String IMPERSONATED_USER = "workflowuser";
+    private static final char[] IMPERSONATED_PASSWORD = new char[0];
+
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        Session impersonated = null;
         try {
             JobDetail jobDetail = context.getJobDetail();
             JobDataMap jobDataMap = jobDetail.getJobDataMap();
             WorkflowInvocation invocation = (WorkflowInvocation)jobDataMap.get("invocation");
             JCRScheduler scheduler = (JCRScheduler)context.getScheduler();
             Session session = ((JCRSchedulingContext)scheduler.ctx).getSession();
-            synchronized(session) { // FIXME
-                session.refresh(false);
-                String uuid = (String) jobDataMap.get("document");
-                invocation.setSubject(session.getNodeByUUID(uuid));
-                invocation.invoke(session);
-                session.save();
+
+            synchronized(session) {
+                impersonated = session.impersonate(new SimpleCredentials(IMPERSONATED_USER, IMPERSONATED_PASSWORD));
             }
+            String uuid = (String) jobDataMap.get("document");
+            invocation.setSubject(impersonated.getNodeByUUID(uuid));
+            invocation.invoke(impersonated);
+            impersonated.save();
+
         } catch (WorkflowException ex) {
             throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
         } catch (RepositoryException ex) {
             throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
+        } finally {
+            if (impersonated != null) {
+                impersonated.logout();
+            }
         }
     }
 }

@@ -163,7 +163,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.DateSchedulerInvocationModule org.hippoecm.repository.quartz.CronSchedulerInvocationModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

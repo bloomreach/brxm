@@ -26,12 +26,11 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.AccessControlException;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -45,23 +44,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
 import javax.jcr.version.VersionException;
-
 import javax.jdo.JDOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.Modules;
 
 import org.hippoecm.repository.RepositoryMapImpl;
 import org.hippoecm.repository.api.Document;
@@ -74,12 +65,15 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.ext.WorkflowManagerModule;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
-import org.hippoecm.repository.quartz.SchedulerWorkflowModule;
+import org.hippoecm.repository.ext.WorkflowInvocationHandlerModuleFactory;
+import org.hippoecm.repository.ext.WorkflowManagerRegister;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
-import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** This class is not part of a public accessible API or extensible interface */
 public class WorkflowManagerImpl implements WorkflowManager {
@@ -547,6 +541,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
+    @Override
+    public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException {
+        return null;
+    }
+
     class WorkflowInvocationHandler implements InvocationHandler {
         String category;
         Workflow upstream;
@@ -1011,6 +1010,31 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
+    class WorkflowManagerRegisterImpl implements WorkflowManagerRegister, Comparable {
+        Class contextClass;
+        WorkflowInvocationHandlerModuleFactory handlerClass;
+        @Override
+        public <T> void bind(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass) {
+            this.contextClass = contextClass;
+            this.handlerClass = handlerClass;
+        }
+        @Override
+        public int compareTo(Object o) {
+            if(o instanceof WorkflowManagerRegisterImpl) {
+                WorkflowManagerRegisterImpl other = (WorkflowManagerRegisterImpl) o;
+                if(contextClass.isAssignableFrom(other.contextClass)) {
+                    return -1;
+                } else if(other.contextClass.isAssignableFrom(contextClass)) {
+                    return 1;
+                } else {
+                    return contextClass.getName().compareTo(other.contextClass.getName());
+                }
+            } else {
+                return -1;
+            }
+        }
+    }
+    
     private abstract class WorkflowContextImpl implements WorkflowContext {
         Session subjectSession;
         Node workflowDefinition;
@@ -1035,10 +1059,26 @@ public class WorkflowManagerImpl implements WorkflowManager {
             }
         }
 
+        WorkflowInvocationHandlerModule getWorkflowInvocationHandlerModule(Object specification) {
+            Modules<WorkflowManagerModule> modules = new Modules<WorkflowManagerModule>(Modules.getModules(), WorkflowManagerModule.class);
+            final SortedSet<WorkflowManagerRegisterImpl> invocationHandlers = new TreeSet<WorkflowManagerRegisterImpl>();
+            for(WorkflowManagerModule module: modules) {
+                WorkflowManagerRegisterImpl registration = new WorkflowManagerRegisterImpl();
+                module.register(registration);
+                if(!registration.contextClass.isInterface()) {
+                    invocationHandlers.add(registration);
+                }
+            }
+            for(WorkflowManagerRegisterImpl invocationHandler : invocationHandlers) {
+                if(invocationHandler.contextClass.isInstance(specification)) {
+                    return invocationHandler.handlerClass.createInvocationHandler(specification);
+                }
+            }
+            return null;
+        }
+        
         public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
-            if(specification instanceof java.util.Date) {
-                return newContext(workflowDefinition, subjectSession, new SchedulerWorkflowModule((java.util.Date)specification));
-            } else if(specification instanceof Document) {
+            if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
                 Node node = subjectSession.getNodeByUUID(uuid);
                 return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, node, module);
@@ -1048,9 +1088,15 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         return invocation.invoke(rootSession);
                     }
                 });
+            } else {
+                WorkflowInvocationHandlerModule invocationHandlerModule = getWorkflowInvocationHandlerModule(specification);
+                if (invocationHandlerModule != null) {
+                    return newContext(workflowDefinition, subjectSession, invocationHandlerModule);
+                } else {
+                    log.debug("No context defined for class " + (specification != null ? specification.getClass().getName() : "none"));
+                    throw new MappingException("No context defined for class " + (specification != null ? specification.getClass().getName() : "none"));
+                }
             }
-            log.debug("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
-            throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
         }
 
         public Document getDocument(String category, String identifier) throws RepositoryException {

@@ -97,4 +97,12 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
             throw new RemoteRuntimeException(ex);
         }
     }
+
+    public WorkflowManager getContextWorkflowManager(Object specification) throws RepositoryException {
+        try {
+            return remote.getContextWorkflowManager(specification);
+        } catch(RemoteException ex) {
+            throw new RemoteRuntimeException(ex);
+        }
+    }
 }

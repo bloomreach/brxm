@@ -17,7 +17,10 @@ package org.hippoecm.repository.quartz;
 
 import java.util.Properties;
 
+import javax.jcr.LoginException;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -42,9 +45,11 @@ public class SchedulerModule implements DaemonModule
     static SchedulerFactory schedFactory = null;
 
     public SchedulerModule() {
+        log.debug("<init>");
     }
 
     public void initialize(Session session) {
+        log.debug("initializing");
         SchedulerModule.session = session;
         Properties properties = new Properties();
         try {
@@ -53,7 +58,7 @@ public class SchedulerModule implements DaemonModule
             properties.put("org.quartz.scheduler.instanceId","AUTO");
             properties.put("org.quartz.scheduler.skipUpdateCheck", "true");
             properties.put("org.quartz.threadPool.class","org.quartz.simpl.SimpleThreadPool");
-            properties.put("org.quartz.threadPool.threadCount","1");
+            properties.put("org.quartz.threadPool.threadCount","2");
             properties.put("org.quartz.threadPool.threadPriority","5");
             properties.put("org.quartz.jobStore.misfireThreshold","60000");
             properties.put("org.quartz.jobStore.class",JCRJobStore.class.getName());

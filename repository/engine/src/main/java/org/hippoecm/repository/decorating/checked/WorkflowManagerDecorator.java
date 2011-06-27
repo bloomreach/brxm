@@ -21,6 +21,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -70,5 +71,10 @@ public class WorkflowManagerDecorator implements WorkflowManager {
     public Workflow getWorkflow(String category, Document document) throws RepositoryException {
         check();
         return workflowManager.getWorkflow(category, document);
+    }
+
+    public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException {
+        check();
+        return workflowManager.getContextWorkflowManager(specification);
     }
 }
