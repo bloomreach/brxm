@@ -88,7 +88,7 @@
 
 <script language="javascript"> 
  
-YUI().use('io-upload-iframe', 'json', 'node', 'async-queue',
+YUI().use('io-upload-iframe', 'json', 'node',
 function(Y) {
 
   var tagsLabel = Y.one("#<hst:namespace/>tagsLabel");
@@ -111,8 +111,6 @@ function(Y) {
     e.halt();
   };
 
-  var asyncQueue = new Y.AsyncQueue();
-  
   var onSaveComplete = function(id, o, args) {
     if (o.status > 400) {
       alert("You are not authorized to edit the tags.");
@@ -223,11 +221,6 @@ function(Y) {
     var uri = '<hst:link hippobean="${document.image}" mount="restapi-gallery" subPath="original/content" />';
     var request = Y.io(uri, cfg);
 
-    // Because YUI3 doesn't fire io:complete event handler properly with io-upload-iframe,
-    // refresh image after 3 seconds as a temporary solution.
-    asyncQueue.add({fn: function() {}, timeout: 3000}, refreshProductImage);
-    asyncQueue.run();
-    
     e.halt();
   };
   

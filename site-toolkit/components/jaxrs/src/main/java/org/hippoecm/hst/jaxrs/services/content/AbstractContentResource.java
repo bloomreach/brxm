@@ -67,14 +67,14 @@ public abstract class AbstractContentResource extends AbstractResource {
         return (HippoBean) getObjectConverter(requestContext).getObject(requestContentNode);
     }
 
-    protected void deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
+    protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
         HippoBean child = baseBean.getBean(relPath);
         
         if (child == null) {
             throw new IllegalArgumentException("Child node not found: " + relPath);
         }
         
-        deleteHippoBean(servletRequest, child);
+        return deleteHippoBean(servletRequest, child);
     }
     
     protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, String targetMountAlias) {

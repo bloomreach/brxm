@@ -184,19 +184,19 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @POST
     @Path("/folders/{folderName}/")
-    public void createFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public String createFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-        createContentResource(servletRequest, hippoFolderBean, "hippostd:folder", folderName);
+        return createContentResource(servletRequest, hippoFolderBean, "hippostd:folder", folderName);
     }
     
     @DELETE
     @Path("/folders/{folderName}/")
-    public void deleteFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public String deleteFolderResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("folderName") String folderName) {
         try {
             HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-            deleteContentResource(servletRequest, hippoFolderBean, folderName);
+            return deleteContentResource(servletRequest, hippoFolderBean, folderName);
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to delete content folder.", e);
@@ -307,19 +307,19 @@ public class HippoFolderContentResource extends AbstractContentResource {
     
     @POST
     @Path("/documents/{documentName}/")
-    public void createDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public String createDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("documentName") String documentName, @FormParam("type") String nodeTypeName) {
         HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-        createContentResource(servletRequest, hippoFolderBean, nodeTypeName, documentName);
+        return createContentResource(servletRequest, hippoFolderBean, nodeTypeName, documentName);
     }
     
     @DELETE
     @Path("/documents/{documentName}/")
-    public void deleteDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
+    public String deleteDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo, 
             @PathParam("documentName") String documentName) {
         try {
             HippoFolderBean hippoFolderBean = getRequestContentAsHippoFolderBean(getRequestContext(servletRequest));
-            deleteContentResource(servletRequest, hippoFolderBean, documentName);
+            return deleteContentResource(servletRequest, hippoFolderBean, documentName);
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to delete content folder.", e);
@@ -475,7 +475,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         return (HippoFolderBean) hippoBean;
     }
     
-    private void createContentResource(HttpServletRequest servletRequest, HippoFolderBean baseFolderBean, String nodeTypeName, String name) throws WebApplicationException {
+    private String createContentResource(HttpServletRequest servletRequest, HippoFolderBean baseFolderBean, String nodeTypeName, String name) throws WebApplicationException {
         ObjectBeanPersistenceManager obpm = null;
         
         try {
@@ -490,7 +490,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
         }
         
         try {
-            obpm.create(baseFolderBean.getPath(), nodeTypeName, name);
+            return obpm.createAndReturn(baseFolderBean.getPath(), nodeTypeName, name, true);
         } catch (ObjectBeanPersistenceException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to create node.", e);

@@ -171,10 +171,12 @@ public abstract class AbstractResource {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
     
-    protected void deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
+    protected String deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
+        String path = hippoBean.getPath();
         ObjectBeanPersistenceManager obpm = getContentPersistenceManager(getRequestContext(servletRequest));
         obpm.remove(hippoBean);
         obpm.save();
+        return path;
     }
     
     protected HippoBean getChildBeanByRelPathOrPrimaryNodeType(HippoBean hippoBean, String relPath, String primaryNodeType) {

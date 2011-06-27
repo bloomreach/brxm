@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -41,6 +40,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.jackrabbit.value.BinaryValue;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
@@ -174,7 +174,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     
     @PUT
     @Path("/image/{imageName}/content")
-    public void updateImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    public String updateImageResourceContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("imageName") String imageName,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             InputStream childResourceContentStream) {
@@ -189,11 +189,8 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             
             try {
                 Node childResourceNode = childImageBean.getNode();
-                Property mimeTypeProp = childResourceNode.getProperty("jcr:mimeType");
-                mimeTypeProp.setValue(mimeType);
-                Property dataProp = childResourceNode.getProperty("jcr:data");
-                dataProp.setValue(childResourceContentStream);
-                dataProp.save();
+                childResourceNode.setProperty("jcr:mimeType", mimeType);
+                childResourceNode.setProperty("jcr:data", new BinaryValue(childResourceContentStream));
                 childResourceNode.save();
                 
                 if (binariesCache != null) {
@@ -201,6 +198,8 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                     String contentPath = hstLink.getMount().getMountPoint() + "/" + hstLink.getPath();
                     binariesCache.remove(contentPath);
                 }
+                
+                return childResourceNode.getPath();
             } finally {
                 IOUtils.closeQuietly(childResourceContentStream);
             }
@@ -218,12 +217,12 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     @POST
     @Path("/image/{imageName}/content")
     @Consumes("multipart/form-data")
-    public void updateImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+    public String updateImageResourceContentByAttachments(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("imageName") String imageName,
             @MatrixParam("mimetype") @DefaultValue("application/octet-stream") String mimeType,
             List<Attachment> attachments) {
         if (attachments == null || attachments.isEmpty()) {
-            return;
+            return "";
         }
         
         Attachment attachment = attachments.get(0);
@@ -237,7 +236,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
         
         try {
             attachmentStream = attachment.getDataHandler().getInputStream();
-            updateImageResourceContent(servletRequest, servletResponse, uriInfo, imageName, attachmentMimeType, attachmentStream);
+            return updateImageResourceContent(servletRequest, servletResponse, uriInfo, imageName, attachmentMimeType, attachmentStream);
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content stream.", e);
