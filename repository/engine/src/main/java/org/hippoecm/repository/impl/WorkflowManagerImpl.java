@@ -1010,21 +1010,20 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    class WorkflowManagerRegisterImpl implements WorkflowManagerRegister, Comparable {
-        Class contextClass;
-        WorkflowInvocationHandlerModuleFactory handlerClass;
-        @Override
-        public <T> void bind(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass) {
+    static class InvocationBinding<T> implements Comparable {
+        Class<T> contextClass;
+        WorkflowInvocationHandlerModuleFactory<T> handlerClass;
+        public InvocationBinding(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass) {
             this.contextClass = contextClass;
             this.handlerClass = handlerClass;
         }
         @Override
         public int compareTo(Object o) {
-            if(o instanceof WorkflowManagerRegisterImpl) {
-                WorkflowManagerRegisterImpl other = (WorkflowManagerRegisterImpl) o;
-                if(contextClass.isAssignableFrom(other.contextClass)) {
+            if (o instanceof InvocationBinding) {
+                InvocationBinding other = (InvocationBinding)o;
+                if (contextClass.isAssignableFrom(other.contextClass)) {
                     return -1;
-                } else if(other.contextClass.isAssignableFrom(contextClass)) {
+                } else if (other.contextClass.isAssignableFrom(contextClass)) {
                     return 1;
                 } else {
                     return contextClass.getName().compareTo(other.contextClass.getName());
@@ -1034,7 +1033,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             }
         }
     }
-    
+
     private abstract class WorkflowContextImpl implements WorkflowContext {
         Session subjectSession;
         Node workflowDefinition;
@@ -1060,16 +1059,21 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         WorkflowInvocationHandlerModule getWorkflowInvocationHandlerModule(Object specification) {
+            System.err.println("BERRY#1");
             Modules<WorkflowManagerModule> modules = new Modules<WorkflowManagerModule>(Modules.getModules(), WorkflowManagerModule.class);
-            final SortedSet<WorkflowManagerRegisterImpl> invocationHandlers = new TreeSet<WorkflowManagerRegisterImpl>();
-            for(WorkflowManagerModule module: modules) {
-                WorkflowManagerRegisterImpl registration = new WorkflowManagerRegisterImpl();
-                module.register(registration);
-                if(!registration.contextClass.isInterface()) {
-                    invocationHandlers.add(registration);
-                }
+            System.err.println("BERRY#2");
+            final SortedSet<InvocationBinding> invocationHandlers = new TreeSet<InvocationBinding>();
+            System.err.println("BERRY#3");
+            for (WorkflowManagerModule module : modules) {
+                System.err.println("BERRY#4 " + module.getClass().getName());
+                module.register(new WorkflowManagerRegister() {
+                    public <T> void bind(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass) {
+                        invocationHandlers.add(new InvocationBinding(contextClass, handlerClass));
+                    }
+                });
             }
-            for(WorkflowManagerRegisterImpl invocationHandler : invocationHandlers) {
+            for(InvocationBinding invocationHandler : invocationHandlers) {
+            System.err.println("BERRY#5 "+invocationHandler.contextClass.getName());
                 if(invocationHandler.contextClass.isInstance(specification)) {
                     return invocationHandler.handlerClass.createInvocationHandler(specification);
                 }
