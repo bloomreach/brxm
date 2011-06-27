@@ -43,8 +43,9 @@
     <javax.jcr.version>2.0</javax.jcr.version>
     <jdo2.api.version>2.3-eb</jdo2.api.version>
     <jta.version>1.1</jta.version>
-    <xml-apis.version>1.0.b2</xml-apis.version>
     <mail.version>1.4.3</mail.version>
+    <slf4j.version>1.5.6</slf4j.version>
+    <log4j.version>1.2.14</log4j.version>
     
     <maven.plugin.antrun.version>1.3</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
@@ -492,8 +493,8 @@
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>${xml-apis.version}</version>
-        <scope>provided</scope>
+        <version>1.0.b2</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -519,6 +520,36 @@
         <artifactId>mail</artifactId>
         <version>${mail.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>${log4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -551,7 +582,26 @@
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
     </dependency>
-    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
   </dependencies>
   
   <build>
@@ -898,6 +948,26 @@
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
                     <classpath>extra</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
               </container>
