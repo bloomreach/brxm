@@ -20,7 +20,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -147,12 +149,16 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 return Response.ok(new byte[0], MediaType.valueOf(mimeType)).build();
             }
             
-            final InputStream dataInputStream = childImageBean.getNode().getProperty("jcr:data").getStream();
+            final Binary binary = childImageBean.getNode().getProperty("jcr:data").getBinary();
             
             StreamingOutput output = new StreamingOutput() {
                 public void write(OutputStream output) throws IOException, WebApplicationException {
+                    InputStream dataInputStream = null;
                     try {
+                        dataInputStream = binary.getStream();
                         IOUtils.copy(dataInputStream, output);
+                    } catch (RepositoryException e) {
+                        throw new WebApplicationException(e);
                     } finally {
                         IOUtils.closeQuietly(dataInputStream);
                         IOUtils.closeQuietly(output);
@@ -194,7 +200,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 childResourceNode.save();
                 
                 if (binariesCache != null) {
-                    HstLink hstLink = requestContext.getHstLinkCreator().create(imageSetBean, requestContext);
+                    HstLink hstLink = requestContext.getHstLinkCreator().create(childImageBean, requestContext);
                     String contentPath = hstLink.getMount().getMountPoint() + "/" + hstLink.getPath();
                     binariesCache.remove(contentPath);
                 }

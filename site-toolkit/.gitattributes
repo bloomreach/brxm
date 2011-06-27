@@ -570,6 +570,7 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFace
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFacetsAvailableNavigationContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFixedDirectoryContentResource.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoFolderContentResource.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/HippoGalleryImageThumbnailCreator.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/services/content/ImageSetContentResource.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/AnnotatedContentBeanClassesScanner.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/util/NodePropertyUtils.java -text

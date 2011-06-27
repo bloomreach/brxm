@@ -73,7 +73,9 @@
     Image:
     <br/>
     <c:if test="${not empty document.image}">
-      <img id="productImg" src="<hst:link hippobean="${document.image.original}"/>"/>
+      <a href="<hst:link hippobean="${document.image.original}"/>" target="_blank">
+        <img id="productImg" src="<hst:link hippobean="${document.image.thumbnail}"/>" border="0"/>
+      </a>
     </c:if>
     <br/>
     <c:if test="${isPreview and empty(hstRequest.userPrincipal)}">
