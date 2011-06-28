@@ -342,8 +342,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 }
             }
             if (sourceTranslatedFolder == null) {
-                log.error("Could not find a linked ancestor folder in language " + language);
-                return;
+                throw new RepositoryException("Unable to find root folder for language " + language);
             }
 
             TranslatedFolder targetTranslatedFolder = sourceTranslatedFolder.getSibling(language);
