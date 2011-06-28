@@ -105,7 +105,7 @@ public class ActionValve extends AbstractValve {
                     try {
                         int errorCode = responseState.getErrorCode();
                         String errorMessage = responseState.getErrorMessage();
-                        String componentClassName = window.getComponentInfo().getComponentClassName();
+                        String componentClassName = window.getComponentName();
 
                         if (log.isDebugEnabled()) {
                             log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);

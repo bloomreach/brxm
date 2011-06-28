@@ -210,7 +210,7 @@ public abstract class AbstractValve implements Valve {
                     componentExceptions = new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
                 }
                 
-                HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo());
+                HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo(), window.getComponentName());
                 KeyValue<HstComponentInfo, Collection<HstComponentException>> pair = 
                     new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(componentInfo, new ArrayList<HstComponentException>(window.getComponentExceptions()));
                 componentExceptions.add(pair);

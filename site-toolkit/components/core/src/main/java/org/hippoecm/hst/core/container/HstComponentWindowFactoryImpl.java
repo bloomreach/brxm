@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -77,10 +78,17 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         } catch (Exception e) {
             componentFactoryException = new HstComponentException(e);
         }
-
+        
+        String componentName = compConfig.getComponentClassName();
+        
+        if (StringUtils.isBlank(componentName)) {
+            componentName = compFactory.getDefaultHstComponentClassName();
+        }
+        
         HstComponentWindowImpl window =
             new HstComponentWindowImpl(
                 compConfig,
+                componentName,
                 component,
                 parentWindow,
                 referenceNamespace);

@@ -93,6 +93,10 @@ public class MockHstComponentWindow implements HstComponentWindow {
         this.component = component;
     }
 
+    public String getComponentName() {
+        return component.getClass().getName();
+    }
+
     public List<HstComponentException> getComponentExceptions() {
         return componentExceptions;
     }

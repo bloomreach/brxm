@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -29,9 +31,24 @@ import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 public class HstComponentFactoryImpl implements HstComponentFactory {
     
     protected HstComponentRegistry componentRegistry;
+    protected Class<?> defaultHstComponentClass = GenericHstComponent.class;
+    protected String defaultHstComponentClassName = GenericHstComponent.class.getName();
     
     public HstComponentFactoryImpl(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
+    }
+    
+    public String getDefaultHstComponentClassName() {
+        return defaultHstComponentClassName;
+    }
+
+    public Class<?> getDefaultHstComponentClass() {
+        return defaultHstComponentClass;
+    }
+
+    public void setDefaultHstComponentClass(Class<?> defaultHstComponentClass) {
+        this.defaultHstComponentClass = defaultHstComponentClass;
+        defaultHstComponentClassName = defaultHstComponentClass.getName();
     }
     
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException {
@@ -41,7 +58,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         
         if (component == null) {
             boolean initialized = false;
-            String componentClassName = compConfig.getComponentClassName();
+            String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
             
             ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
             ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
@@ -51,9 +68,17 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                     Thread.currentThread().setContextClassLoader(containerClassloader);
                 }
                 
-                Class compClass = containerClassloader.loadClass(componentClassName);
+                Class<?> compClass = null;
+                
+                if (!StringUtils.isEmpty(componentClassName)) {
+                    compClass = containerClassloader.loadClass(componentClassName);
+                } else {
+                    compClass = defaultHstComponentClass;
+                    componentClassName = defaultHstComponentClassName;
+                }
+                
                 component = (HstComponent) compClass.newInstance();
-               
+                
                 ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig); 
                 
                 component.init(requestContainerConfig.getServletContext(), compConfigImpl);

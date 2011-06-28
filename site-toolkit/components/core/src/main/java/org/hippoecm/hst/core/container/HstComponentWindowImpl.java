@@ -45,6 +45,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String name;
     protected String referenceNamespace;
     protected HstComponent component;
+    protected String componentName;
     protected String renderPath;
     protected String namedRenderer;
     protected String serveResourcePath;
@@ -59,8 +60,9 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     protected HstResponseState responseState;
     
-    public HstComponentWindowImpl(HstComponentConfiguration hstComponentConfiguration, HstComponent component, HstComponentWindow parentWindow, String referenceNamespace) {
+    public HstComponentWindowImpl(HstComponentConfiguration hstComponentConfiguration, String componentName, HstComponent component, HstComponentWindow parentWindow, String referenceNamespace) {
         this.hstComponentConfiguration = hstComponentConfiguration;
+        this.componentName = componentName;
         this.component = component;
         this.parentWindow = parentWindow;
         this.referenceNamespace = referenceNamespace;
@@ -68,6 +70,10 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public HstComponent getComponent() {
         return this.component;
+    }
+    
+    public String getComponentName() {
+        return componentName;
     }
     
     public boolean hasComponentExceptions() {

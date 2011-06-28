@@ -37,7 +37,8 @@
   
   <bean id="org.hippoecm.hst.core.container.HstComponentFactory"
         class="org.hippoecm.hst.core.container.HstComponentFactoryImpl">
-    <constructor-arg ref="org.hippoecm.hst.core.container.HstComponentRegistry" />  
+    <constructor-arg ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
+    <property name="defaultHstComponentClass" value="${default.hst.component.class}" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstComponentWindowFactory"

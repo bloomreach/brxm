@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+
 /**
  * DelegatingHstComponentInfo
  * 
@@ -23,13 +24,29 @@ package org.hippoecm.hst.configuration.components;
 public class DelegatingHstComponentInfo implements HstComponentInfo {
     
     private HstComponentInfo delegatee;
+    private String componentName;
     
+    /**
+     * @deprecated Use {@link #DelegatingHstComponentInfo(HstComponentInfo, String)} instead.
+     * @param delegatee
+     */
     public DelegatingHstComponentInfo(HstComponentInfo delegatee) {
+        this(delegatee, null);
+    }
+    
+    /**
+     * HST Component Info constructor with delegatee and component name arguments.
+     * Normally, the component name can be full qualified class name which also can be retrieved from HstComponentWindow.
+     * @param delegatee
+     * @param componentName
+     */
+    public DelegatingHstComponentInfo(HstComponentInfo delegatee, String componentName) {
         this.delegatee = delegatee;
+        this.componentName = componentName;
     }
     
     public String getComponentClassName() {
-        return delegatee.getComponentClassName();
+        return (componentName != null ? componentName : delegatee.getComponentClassName());
     }
 
     public String getId() {

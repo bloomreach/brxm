@@ -47,4 +47,9 @@ public interface HstComponentFactory {
      */
     <T> T getObjectInstance(HstContainerConfig requestContainerConfig, String className) throws HstComponentException;
     
+    /**
+     * Returns the default HST Component class name
+     * @return
+     */
+    String getDefaultHstComponentClassName();
 }

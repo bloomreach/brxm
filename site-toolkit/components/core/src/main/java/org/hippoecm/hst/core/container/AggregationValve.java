@@ -25,7 +25,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -35,11 +34,9 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /**
  * AggregationValve
@@ -131,7 +128,7 @@ public class AggregationValve extends AbstractValve {
                     try {
                         int errorCode = errorCodeSendingWindow.getResponseState().getErrorCode();
                         String errorMessage = errorCodeSendingWindow.getResponseState().getErrorMessage();
-                        String componentClassName = errorCodeSendingWindow.getComponentInfo().getComponentClassName();
+                        String componentClassName = errorCodeSendingWindow.getComponentName();
                         
                         if (log.isDebugEnabled()) {
                             log.debug("The component window has error status code, {} from {}.", errorCode, componentClassName);

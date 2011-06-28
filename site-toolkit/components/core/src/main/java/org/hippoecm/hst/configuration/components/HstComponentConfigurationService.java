@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
@@ -145,9 +144,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.name = StringPool.get(node.getValueProvider().getName());
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
-        if (componentClassName == null) {
-            this.componentClassName = StringPool.get(GenericHstComponent.class.getName());
-        } else {
+        if (componentClassName != null) {
             this.hasClassNameConfigured = true;
         }
       

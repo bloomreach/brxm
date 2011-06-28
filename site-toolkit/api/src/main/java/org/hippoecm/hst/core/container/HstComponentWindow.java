@@ -54,6 +54,13 @@ public interface HstComponentWindow {
     String getReferenceNamespace();
 
     /**
+     * The HstComponent name. Normally the component name is fully qualified class name.
+     * 
+     * @return the HstComponent name
+     */
+    String getComponentName();
+    
+    /**
      * The actual HstComponent instance.
      * 
      * @return the actual HstComponent instance

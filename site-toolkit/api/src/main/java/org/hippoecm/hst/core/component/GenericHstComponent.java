@@ -25,7 +25,8 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  * <p/>
  * It provides a base class to be subclassed to create HstComponents. Common practice is that 
  * {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration}'s whose only purpose is layout (markup) and do not have
- * actual behavior, use this default <code>HstComponent</code> implementation as their component classname, see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getComponentClassName()}.
+ * actual behavior, use this default <code>HstComponent</code> implementation as their component classname, 
+ * see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getComponentClassName()}.
  * 
  * <p/>
  * A subclass of <code>GenericHstComponent</code> can override methods, usually
