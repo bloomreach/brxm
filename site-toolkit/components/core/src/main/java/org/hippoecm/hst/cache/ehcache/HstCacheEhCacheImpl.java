@@ -36,8 +36,9 @@ public class HstCacheEhCacheImpl implements HstCache {
     public CacheElement get(Object key) {
         Element element = ehcache.get(key);
 
-        if (element == null)
+        if (element == null) {
             return null;
+        }
 
         return new CacheElementEhCacheImpl(element);
     }
@@ -64,11 +65,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     }
 
     public boolean remove(Object key) {
-        if (ehcache.isKeyInCache(key)) {
-            return ehcache.remove(key);
-        }
-
-        return false;
+        return ehcache.remove(key);
     }
 
     public void clear() {
