@@ -90,4 +90,8 @@ public class WorkflowManagerDecorator implements WorkflowManager {
             Thread.currentThread().setContextClassLoader(old);
         }
     }
+
+    public WorkflowManager getContextWorkflowManager(Object specification) throws RepositoryException {
+        return delegate.getContextWorkflowManager(specification);
+    }
 }
