@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008 Hippo.
- * 
+ *  Copyright 2008-2011 Hippo.
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,9 @@ import java.util.Set;
 
 import javax.jcr.Item;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -63,6 +65,13 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private static final String CLUSTER_OPTIONS = "cluster.options";
+
+    private static final String MAX_ITEMS = "maxitems";
+    private static final int DEFAULT_MAX_ITEMS = 0;
+    private final int maxItems;
+    private IPluginConfig parameters;
 
     static abstract class ValidationFilter extends Model<String> {
         private static final long serialVersionUID = 1L;
@@ -113,6 +122,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        this.parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
+        this.maxItems =  config.getInt(MAX_ITEMS, DEFAULT_MAX_ITEMS);
+
         helper = new FieldPluginHelper(context, config);
         if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
             context.registerService(new Observer((IObservable) helper.getValidationModel()) {
@@ -151,7 +163,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 mode = IEditor.Mode.VIEW;
             }
         }
-        
+
         if (IEditor.Mode.COMPARE == mode) {
             comparingController = new ComparingController<C>(context, config, this, getComparer(), getItemId());
 
@@ -300,7 +312,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (engine != null) {
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<C> provider = newProvider(field, subType, model);
-                if (IEditor.Mode.EDIT == mode && provider.size() == 0
+                if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
                         && (!field.isMultiple() || field.getValidators().contains("required"))) {
                     provider.addNew();
                 }
@@ -315,7 +327,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     /**
      * Factory method for provider of models that will be used to instantiate templates.
      * This method may be called from the base class constructor.
-     * 
+     *
      * @param descriptor
      * @param type
      * @param parentModel
@@ -326,7 +338,18 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canAddItem() {
         IFieldDescriptor field = getFieldHelper().getField();
-        return IEditor.Mode.EDIT == mode && (field != null) && (field.isMultiple() || provider.size() == 0);
+        if (IEditor.Mode.EDIT == mode && (field != null)) {
+            if (field.isMultiple()) {
+                if (getMaxItems() > 0) {
+                    return getNumberOfItems() < getMaxItems();
+                }
+                return true;
+            }
+
+            return getNumberOfItems() == 0;
+        }
+
+        return false;
     }
 
     protected boolean canRemoveItem() {
@@ -479,12 +502,26 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             }
         }
 
-        IPluginConfig parameters = new JavaPluginConfig(getPluginConfig().getPluginConfig("cluster.options"));
-        parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
-        parameters.put(RenderService.WICKET_ID, id);
-        parameters.put(ITemplateEngine.MODE, mode.toString());
+        this.parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
+        this.parameters.put(RenderService.WICKET_ID, id);
+        this.parameters.put(ITemplateEngine.MODE, mode.toString());
 
         return getPluginContext().newCluster(template, parameters);
     }
 
+    protected Component createNrItemsLabel() {
+        if ((IEditor.Mode.EDIT == mode) && (getMaxItems() > 0)) {
+            final IModel propertyModel = new StringResourceModel("nrItemsLabel", this, new Model<AbstractFieldPlugin>(this));
+            return new Label("nrItemsLabel", propertyModel).setOutputMarkupId(true);
+        }
+        return new Label("nrItemsLabel").setVisible(false);
+    }
+
+    public int getMaxItems() {
+        return maxItems;
+    }
+
+    public int getNumberOfItems() {
+        return provider.size();
+    }
 }
