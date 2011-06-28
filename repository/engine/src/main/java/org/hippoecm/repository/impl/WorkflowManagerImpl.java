@@ -1059,13 +1059,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         WorkflowInvocationHandlerModule getWorkflowInvocationHandlerModule(Object specification) {
-            System.err.println("BERRY#1");
             Modules<WorkflowManagerModule> modules = new Modules<WorkflowManagerModule>(Modules.getModules(), WorkflowManagerModule.class);
-            System.err.println("BERRY#2");
             final SortedSet<InvocationBinding> invocationHandlers = new TreeSet<InvocationBinding>();
-            System.err.println("BERRY#3");
             for (WorkflowManagerModule module : modules) {
-                System.err.println("BERRY#4 " + module.getClass().getName());
                 module.register(new WorkflowManagerRegister() {
                     public <T> void bind(Class<T> contextClass, WorkflowInvocationHandlerModuleFactory<T> handlerClass) {
                         invocationHandlers.add(new InvocationBinding(contextClass, handlerClass));
@@ -1073,7 +1069,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 });
             }
             for(InvocationBinding invocationHandler : invocationHandlers) {
-            System.err.println("BERRY#5 "+invocationHandler.contextClass.getName());
                 if(invocationHandler.contextClass.isInstance(specification)) {
                     return invocationHandler.handlerClass.createInvocationHandler(specification);
                 }
