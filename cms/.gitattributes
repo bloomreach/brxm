@@ -409,10 +409,6 @@ api/src/test/java/org/hippoecm/frontend/plugins/standards/list/SearchDocumentsPr
 api/src/test/java/org/hippoecm/frontend/plugins/standards/search/TextSearchTest.java svneol=native#text/plain
 api/src/test/java/org/hippoecm/frontend/plugins/standards/tabs/TabsTest.java svneol=native#text/plain
 api/src/test/resources/mock.jar -text
-application/pom.xml svneol=native#text/plain
-application/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
-application/src/site/apt/index.apt -text
-application/src/site/site.xml svneol=native#text/plain
 browse/pom.xml svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
