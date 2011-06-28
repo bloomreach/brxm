@@ -62,24 +62,24 @@
     <property name="server" ref="hstMBeanServer" />
     <property name="beans">
       <map>
-        <entry key="bean:name=defaultSessionPool" value-ref="_defaultSessionPool" />
-        <entry key="bean:name=defaultSessionPoolCounter">
+        <entry key="org.onehippo.hst:type=SessionPool,name=default" value-ref="_defaultSessionPool" />
+        <entry key="org.onehippo.hst:type=SessionPoolCounter,name=default">
           <util:property-path path="_defaultSessionPool.poolingCounter" />
         </entry>
-        <entry key="bean:name=previewSessionPool" value-ref="_previewSessionPool" />
-        <entry key="bean:name=previewSessionPoolCounter">
+        <entry key="org.onehippo.hst:type=SessionPool,name=preview" value-ref="_previewSessionPool" />
+        <entry key="org.onehippo.hst:type=SessionPoolCounter,name=preview">
           <util:property-path path="_previewSessionPool.poolingCounter" />
         </entry>
-        <entry key="bean:name=binariesSessionPool" value-ref="_binariesSessionPool" />
-        <entry key="bean:name=binariesSessionPoolCounter">
+        <entry key="org.onehippo.hst:type=SessionPool,name=binaries" value-ref="_binariesSessionPool" />
+        <entry key="org.onehippo.hst:type=SessionPoolCounter,name=binaries">
           <util:property-path path="_binariesSessionPool.poolingCounter" />
         </entry>
-        <entry key="bean:name=writableSessionPool" value-ref="_writableSessionPool" />
-        <entry key="bean:name=writableSessionPoolCounter">
+        <entry key="org.onehippo.hst:type=SessionPool,name=writable" value-ref="_writableSessionPool" />
+        <entry key="org.onehippo.hst:type=SessionPoolCounter,name=writable">
           <util:property-path path="_writableSessionPool.poolingCounter" />
         </entry>
-        <entry key="bean:name=hstconfigreaderSessionPool" value-ref="_hstconfigreaderSessionPool" />
-        <entry key="bean:name=hstconfigreaderSessionPoolCounter">
+        <entry key="org.onehippo.hst:type=SessionPool,name=hstconfigreader" value-ref="_hstconfigreaderSessionPool" />
+        <entry key="org.onehippo.hst:type=SessionPoolCounter,name=hstconfigreader">
           <util:property-path path="_hstconfigreaderSessionPool.poolingCounter" />
         </entry>
       </map>
