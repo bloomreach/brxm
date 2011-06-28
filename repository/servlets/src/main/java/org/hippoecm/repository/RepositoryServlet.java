@@ -114,7 +114,7 @@ public class RepositoryServlet extends HttpServlet {
             // try to parse the relative path
             storageLocation = config.getServletContext().getRealPath(storageLocation);
             if (storageLocation == null) {
-                throw new ServletException("Cannot determin repository location "
+                throw new ServletException("Cannot determine repository location "
                         + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
             }
         }
@@ -249,6 +249,7 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // explicitly set character encoding
+        
         req.setCharacterEncoding("UTF-8");
         res.setContentType("text/html;charset=UTF-8");
 
