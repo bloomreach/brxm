@@ -1525,7 +1525,8 @@ ents-small-folders h3 {
   padding-bottom: 2px;
 }
 
-.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown {
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown,
+.hippo-tree div.wicket-tree div.row-selected .hippo-tree-dropdown {
   visibility: hidden;
   float: right;
 }
