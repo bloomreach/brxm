@@ -41,6 +41,7 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.hippoecm.hst.cache.HstCache;
@@ -51,6 +52,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.HippoGalleryImageSetRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.Link;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,8 +203,9 @@ public class BaseImageSetContentResource extends AbstractContentResource {
                 
                 if (binariesCache != null) {
                     HstLink hstLink = requestContext.getHstLinkCreator().create(childImageBean, requestContext);
-                    String contentPath = hstLink.getMount().getMountPoint() + "/" + hstLink.getPath();
-                    binariesCache.remove(contentPath);
+                    String relativeContentPath = 
+                        StringUtils.removeStart(hstLink.getPath(), PathUtils.normalizePath(requestContext.getContainerConfiguration().getString("binaries.prefix.path", "/binaries")));
+                    binariesCache.remove(relativeContentPath);
                 }
                 
                 return childResourceNode.getPath();

@@ -73,8 +73,8 @@
     Image:
     <br/>
     <c:if test="${not empty document.image}">
-      <a href="<hst:link hippobean="${document.image.original}"/>" target="_blank">
-        <img id="productImg" src="<hst:link hippobean="${document.image.thumbnail}"/>" border="0"/>
+      <a href="<hst:link hippobean="${document.image.original}"><hst:param name="t" value="<%=Long.toString(System.currentTimeMillis())%>"/></hst:link>" target="_blank">
+        <img id="productImg" src="<hst:link hippobean="${document.image.thumbnail}"><hst:param name="t" value="<%=Long.toString(System.currentTimeMillis())%>"/></hst:link>" border="0"/>
       </a>
     </c:if>
     <br/>
