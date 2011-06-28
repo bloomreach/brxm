@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>6</version>
+    <version>7-SNAPSHOT</version>
   </parent>
 
 
@@ -16,13 +16,10 @@
   <name>Hippo Addon Channel Manager</name>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hippo.cms.version>2.21.01-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.23.01-SNAPSHOT</hippo.hst.version>
     <hippo.repository.version>2.20.01</hippo.repository.version>
-    <javax.jcr.version>2.0</javax.jcr.version>
     <commons-lang.version>2.1</commons-lang.version>
-    <slf4j.version>1.5.8</slf4j.version>
   </properties>
 
   <repositories>
