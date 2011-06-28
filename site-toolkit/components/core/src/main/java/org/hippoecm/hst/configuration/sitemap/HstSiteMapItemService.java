@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -232,6 +233,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.componentConfigurationId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID));
         
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+        if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
+            Mount mount = hstSiteMap.getSite().getMount();
+            do {
+                siteMapItemHandlerIds = (String []) mount.getPropertyAsObject(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
+                mount = mount.getParent();
+            } while (ArrayUtils.isEmpty(siteMapItemHandlerIds) && mount != null);
+        }
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
             for(String handlerId : siteMapItemHandlerIds) {
                 HstSiteMapItemHandlerConfiguration handlerConfiguration = siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);

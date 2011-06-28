@@ -174,6 +174,7 @@
 - hst:scheme (string)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
+- hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)

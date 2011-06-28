@@ -26,8 +26,8 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isMapped()} property returns <code>true</code> or missing,
@@ -375,6 +375,14 @@ public interface Mount {
      * @return the value of the property or <code>null</code> when the property is not present
      */
     String getProperty(String name);
+    
+    /**
+     * Returns an immutable object value of the property or <code>null</code> when the property is not present.
+     * The object value can be either single value or array of values of type Boolean, Calendar, Double, Long or String.
+     * @param name the name of the property
+     * @return the object value of the property or <code>null</code> when the property is not present
+     */
+    Object getPropertyAsObject(String name);
     
     /**
      * <p>

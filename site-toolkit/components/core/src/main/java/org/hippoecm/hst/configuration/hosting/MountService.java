@@ -2,13 +2,14 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -641,6 +642,49 @@ public class MountService implements Mount {
             return o.toString();
         }
         return null;
+    }
+    
+    public Object getPropertyAsObject(String name) {
+        Object o = allProperties.get(name);
+        
+        if (o == null) {
+            return null;
+        }
+        
+        Class<?> type = o.getClass();
+        
+        if (!type.isArray()) {
+            return o;
+        }
+        
+        if (type == String[].class) {
+            String [] source = (String []) o;
+            String [] cloned = new String[source.length];
+            System.arraycopy(source, 0, cloned, 0, source.length);
+            return cloned;
+        } else if (type == Boolean[].class) {
+            Boolean [] source = (Boolean []) o;
+            Boolean [] cloned = new Boolean[source.length];
+            System.arraycopy(source, 0, cloned, 0, source.length);
+            return cloned;
+        } else if (type == Long[].class) {
+            Long [] source = (Long []) o;
+            Long [] cloned = new Long[source.length];
+            System.arraycopy(source, 0, cloned, 0, source.length);
+            return cloned;
+        } else if (type == Double[].class) {
+            Double [] source = (Double []) o;
+            Double [] cloned = new Double[source.length];
+            System.arraycopy(source, 0, cloned, 0, source.length);
+            return cloned;
+        } else if (type == Calendar[].class) {
+            Calendar [] source = (Calendar []) o;
+            Calendar [] cloned = new Calendar[source.length];
+            System.arraycopy(source, 0, cloned, 0, source.length);
+            return cloned;
+        } else {
+            throw new IllegalStateException("Property value(s) for " + name + " should be type of String, Boolean, Long, Double or Calendar. " + o);
+        }
     }
     
     public Map<String, String> getMountProperties() {
