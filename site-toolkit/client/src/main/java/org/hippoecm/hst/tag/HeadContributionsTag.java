@@ -137,7 +137,7 @@ public class HeadContributionsTag extends TagSupport {
                             }
                             
                             if (xhtml) {
-                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement));
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement, isResponseTextHtmlContent()));
                             } else {
                                 pageContext.getOut().println(HeadElementUtils.toHtmlString(outHeadElement));
                             }
@@ -152,7 +152,7 @@ public class HeadContributionsTag extends TagSupport {
                             }
                             
                             if (xhtml) {
-                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement));
+                                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement, isResponseTextHtmlContent()));
                             } else {
                                 pageContext.getOut().println(HeadElementUtils.toHtmlString(outHeadElement));
                             }
@@ -169,4 +169,8 @@ public class HeadContributionsTag extends TagSupport {
         return SKIP_BODY;
     }
     
+    private boolean isResponseTextHtmlContent() {
+        String responseContentType = pageContext.getResponse().getContentType();
+        return (responseContentType != null && responseContentType.startsWith("text/html"));
+    }
 }
