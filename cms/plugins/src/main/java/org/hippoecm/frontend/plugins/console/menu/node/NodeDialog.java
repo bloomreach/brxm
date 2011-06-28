@@ -40,7 +40,6 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,13 +68,19 @@ public class NodeDialog extends AbstractDialog<Node> {
             NodeType pnt = node.getPrimaryNodeType();
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
             	if (!nd.getName().equals("*")) {
-                	choices.put(nd.getName(), nd.getDefaultPrimaryTypeName());
+                    String defaultPriTypeName = nd.getDefaultPrimaryTypeName();
+                    if (defaultPriTypeName != null) {
+                        choices.put(nd.getName(), defaultPriTypeName);
+                    }
             	}
             }
             for (NodeType nt : node.getMixinNodeTypes()) {
             	for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
             		if (!nd.getName().equals("*")) {
-                		choices.put(nd.getName(), nd.getDefaultPrimaryTypeName());
+                        String defaultPriTypeName = nd.getDefaultPrimaryTypeName();
+                        if (defaultPriTypeName != null) {
+                    		choices.put(nd.getName(), nd.getDefaultPrimaryTypeName());
+                        }
             		}
             	}
             }
