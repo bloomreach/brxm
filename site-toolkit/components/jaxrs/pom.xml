@@ -47,17 +47,6 @@
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -195,12 +184,6 @@
     </dependency>
     
     <!-- Test dependencies -->
-    
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
     
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

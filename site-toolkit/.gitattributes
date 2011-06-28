@@ -726,8 +726,9 @@ content-beans/src/test/java/org/hippoecm/hst/util/TestObjectConverterUtils.java 
 content-beans/src/test/resources/org/hippoecm/hst/util/TestObjectConverterUtils-beans-annotated-classes.xml -text
 demosuite/README.txt -text svneol=unset#text/plain
 demosuite/cms/pom.xml -text
-demosuite/cms/src/main/resources/log4j.xml svneol=native#text/plain
 demosuite/cms/src/main/webapp/WEB-INF/web.xml -text
+demosuite/conf/log4j.dtd -text
+demosuite/conf/log4j.xml -text
 demosuite/content/pom.xml -text
 demosuite/content/src/main/resources/default-ecm-content.xml -text
 demosuite/content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
@@ -833,7 +834,6 @@ demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProc
 demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
 demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 demosuite/site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
-demosuite/site/src/main/resources/log4j.xml svneol=native#text/plain
 demosuite/site/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
 demosuite/site/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
 demosuite/site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text

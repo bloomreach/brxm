@@ -41,14 +41,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- To exclude slf4j depedency explicitly. 
-         hst-commons must not have this dependency because it is deployed to shared lib directory. -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
