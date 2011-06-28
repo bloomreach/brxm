@@ -27,6 +27,7 @@ import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
@@ -53,18 +54,27 @@ public abstract class AbstractContentResource extends AbstractResource {
     	return (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
     }
     
+    /**
+     * @deprecated Use {@link #getRequestContentBean(HstRequestContext)} instead.
+     * @param requestContext
+     * @return
+     */
     protected Node getRequestContentNode(HstRequestContext requestContext) {
     	return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
     }
     
     protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        Node requestContentNode = getRequestContentNode(requestContext);
+        String requestContentPath = (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
+        ObjectBeanPersistenceManager obpm = null;
         
-        if (requestContentNode == null) {
-            throw new ObjectBeanManagerException("Invalid request content node: null");
+        try {
+            obpm = (ObjectBeanPersistenceManager) getContentPersistenceManager(requestContext);
+        } catch (RepositoryException e) {
+            throw new ObjectBeanManagerException(e);
         }
         
-        return (HippoBean) getObjectConverter(requestContext).getObject(requestContentNode);
+        return (HippoBean) obpm.getObject(requestContentPath);
+        
     }
 
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
