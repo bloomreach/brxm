@@ -334,13 +334,6 @@
         <artifactId>htmlunit</artifactId>
         <version>${htmlunit.version}</version>
       </dependency>
-
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
-        <scope>provided</scope>
-      </dependency>
       <dependency>
         <groupId>org.datanucleus</groupId>
         <artifactId>datanucleus-core</artifactId>
