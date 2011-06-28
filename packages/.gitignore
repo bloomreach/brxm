@@ -20,10 +20,4 @@ package-cms-resources/.classpath
 package-cms-resources/.project
 package-cms-resources/.settings
 package-cms-resources/target
-package-cms-war/.classpath
-package-cms-war/.project
-package-cms-war/.settings
-package-cms-war/src/main/webapp/skin
-package-cms-war/src/main/webapp/xinha
-package-cms-war/target
 /target
