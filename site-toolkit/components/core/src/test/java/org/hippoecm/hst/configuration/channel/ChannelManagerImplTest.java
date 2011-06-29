@@ -20,19 +20,37 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.test.AbstractHstTestCase;
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        Node internalHostGroup = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
+        if (internalHostGroup.hasNode("myhost")) {
+            internalHostGroup.getNode("myhost").remove();
+        }
+        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:unittestsites").getNodes("channel-*"); ni.hasNext(); ) {
+            ni.nextNode().remove();
+        }
+        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("channel-*"); ni.hasNext(); ) {
+            ni.nextNode().remove();
+        }
+        internalHostGroup.getSession().save();
+        super.tearDown();
+    }
 
     @Test
     public void ChannelsAreReadCorrectly() throws ChannelException, RepositoryException {
@@ -50,17 +68,18 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Test
     public void ChannelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
         final ChannelManagerImpl manager = createManager();
+        int numberOfChannels = manager.getChannels().size();
 
         final List<Blueprint> bluePrints = manager.getBlueprints();
         assertEquals(1, bluePrints.size());
 
+        final Channel channel = manager.createChannel(bluePrints.get(0).getId());
+        channel.setUrl("http://myhost/mychannel");
+        channel.setContentRoot("/content/documents");
         asAdmin(new PrivilegedAction<ChannelException>() {
             @Override
             public ChannelException run() {
                 try {
-                    Channel channel = manager.createChannel(bluePrints.get(0).getId());
-                    channel.setUrl("http://myhost/mychannel");
-                    channel.setContentRoot("/content/documents");
                     manager.save(channel);
                 } catch (ChannelException ce) {
                     return ce;
@@ -71,10 +90,14 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
 
         assertTrue(node.hasNode("myhost/hst:root/mychannel"));
+
+        Map<String, Channel> channels = manager.getChannels();
+        assertEquals(numberOfChannels + 1, channels.size());
+        assertTrue(channels.containsKey(channel.getId()));
     }
+/*
 
     @Test
-    @Ignore
     public void ChannelProperties() throws ChannelException, RepositoryException {
         final ChannelManagerImpl manager = createManager();
 
@@ -99,6 +122,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
         assertTrue(node.hasNode("myhost/hst:root/mychannel"));
     }
+*/
 
     private <T extends Exception> void asAdmin(PrivilegedAction<T> action) throws T {
         T ce = HstSubject.doAs(createSubject(), action);

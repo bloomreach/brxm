@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Credentials;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -35,6 +36,7 @@ import javax.security.auth.Subject;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.security.HstSubject;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +129,10 @@ public class ChannelManagerImpl implements ChannelManager {
             String bluePrintId = null;
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID)) {
                 bluePrintId = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID).getString();
+                if (!blueprints.containsKey(bluePrintId)) {
+                    log.warn("Invalid blue print id '" + bluePrintId + "' found; ignoring channel");
+                    continue;
+                }
             }
             if (channels.containsKey(id)) {
                 channel = channels.get(id);
@@ -166,13 +172,13 @@ public class ChannelManagerImpl implements ChannelManager {
             Session session = null;
             try {
                 session = getSession(false);
-                Node configNode = null;
-                configNode = session.getNode(rootPath);
+                Node configNode = session.getNode(rootPath);
+
+                blueprints = new HashMap<String, BlueprintService>();
+                loadBlueprints(configNode);
 
                 channels = new HashMap<String, Channel>();
-                blueprints = new HashMap<String, BlueprintService>();
                 loadChannels(configNode);
-                loadBlueprints(configNode);
             } catch (RepositoryException e) {
                 throw new ChannelException("Could not load channels and/or blueprints", e);
             } finally {
@@ -273,6 +279,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node blueprintNode = bps.getNode(session);
                 createChannelFromBlueprint(configNode, blueprintNode, channel);
             }
+
+            channels = null;
+
             session.save();
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
@@ -281,13 +290,6 @@ public class ChannelManagerImpl implements ChannelManager {
                 session.logout();
             }
         }
-    }
-
-    void validateChannel(Channel channel) {
-        /*
-        - check URL is valid
-        - check ID is valid
-         */
     }
 
     private void createChannelFromBlueprint(Node configRoot, final Node blueprintNode, final Channel channel) throws ChannelException, RepositoryException {
@@ -306,8 +308,19 @@ public class ChannelManagerImpl implements ChannelManager {
         }
         Node parent = createVirtualHost(configRoot, tmp);
 
-        // create mounts
+        // create mount
         Node mount = createMount(parent, blueprintNode, mountPath);
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID, channel.getId());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID, channel.getBlueprintId());
+        if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+            if (blueprintNode.hasNode("hst:site")) {
+                mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());
+            } else {
+                mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
+            }
+        }
+
+
         Node channelPropsNode;
         if (blueprintNode.hasNode("hst:channelproperties")) {
             channelPropsNode = mount.addNode("hst:channelproperties", blueprintNode.getNode("hst:channelproperties").getPrimaryNodeType().getName());
@@ -316,8 +329,33 @@ public class ChannelManagerImpl implements ChannelManager {
         }
         ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
 
+        Session jcrSession = configRoot.getSession();
         if (blueprintNode.hasNode("hst:site")) {
-            copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
+            Node siteNode = copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
+            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
+            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+                if (blueprintNode.hasNode("hst:configuration")) {
+                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode("hst:configurations").getPath() + "/" + channel.getId());
+                } else {
+                    siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).remove();
+                }
+                channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
+            }
+
+            Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+            if (channel.getContentRoot() != null) {
+                String contentRootPath = channel.getContentRoot();
+                if (jcrSession.itemExists(contentRootPath)) {
+                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
+                } else {
+                    log.warn("Specified content root '" + contentRootPath + "' does not exist");
+                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
+                }
+            } else {
+                contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
+            }
+        } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+            mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
         }
         if (blueprintNode.hasNode("hst:configuration")) {
             copyNodes(blueprintNode.getNode("hst:configuration"), configRoot.getNode("hst:configurations"), channel.getId());
@@ -382,6 +420,20 @@ public class ChannelManagerImpl implements ChannelManager {
         }
         for (NodeIterator ni = source.getNodes(); ni.hasNext(); ) {
             Node node = ni.nextNode();
+
+            // skip virtual nodes
+            if (node instanceof HippoNode) {
+                HippoNode hn = (HippoNode) node;
+                try {
+                    Node canonicalNode = hn.getCanonicalNode();
+                    if (canonicalNode == null) {
+                        continue;
+                    }
+                } catch (ItemNotFoundException infe) {
+                    continue;
+                }
+            }
+
             copyNodes(node, clone, node.getName());
         }
         return clone;
