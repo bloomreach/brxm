@@ -223,7 +223,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
             if (context.getSessionState().isAlive()) {
                 log.info("Unclosed session detected.");
                 logout();
-                context.getSessionState().close();
             }
         }
     }
