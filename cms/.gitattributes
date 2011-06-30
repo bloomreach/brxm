@@ -1336,16 +1336,6 @@ gotolink/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.1.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.13.js -text
-layout/pom.xml -text svneol=unset#text/plain
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/dialog/ajax-loader.gif -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective.html -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective.properties -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_fr.properties -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_it.properties -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_nl.properties -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/standards/tabs/TabsPlugin.html -text
-layout/src/main/webapp/WEB-INF/default/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
-layout/src/main/webapp/WEB-INF/web.xml -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
@@ -1496,7 +1486,6 @@ reporting/src/main/resources/hipporeport.cnd -text
 reporting/src/main/resources/reporting-dashboard.xml -text
 reporting/src/main/resources/reports-cluster-loader.xml -text
 resources/pom.xml svneol=native#text/plain
-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
@@ -2356,7 +2345,6 @@ yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionManagerBe
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionSectionBehavior.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/init.js svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/AjaxIndicatorBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteBehavior.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteSettings.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js svneol=native#text/plain

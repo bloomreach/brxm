@@ -141,36 +141,6 @@ public class Main extends WebApplication {
         });
 
         IResourceSettings resourceSettings = getResourceSettings();
-        final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
-        final String layout = "/WEB-INF/" + getConfigurationParameter("config", "default") + "/";
-
-        resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
-            @Override
-            public IResourceStream locate(final Class clazz, final String path) {
-                // EAR packaging
-                try {
-                    ServletContext layoutContext = getServletContext().getContext("/layout");
-                    if (layoutContext != null) {
-                        URL url = layoutContext.getResource(layout + path);
-                        if (url != null) {
-                            return new UrlResourceStream(url);
-                        }
-                    }
-                } catch (MalformedURLException ex) {
-                    log.warn("malformed url for layout override " + ex.getMessage());
-                }
-                // WAR packaging
-                try {
-                    URL url = getServletContext().getResource("/layout" + layout + path);
-                    if (url != null) {
-                        return new UrlResourceStream(url);
-                    }
-                } catch (MalformedURLException ex) {
-                    log.warn("malformed url for layout override " + ex.getMessage());
-                }
-                return oldLocator.locate(clazz, path);
-            }
-        });
 
         // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings

@@ -37,14 +37,6 @@
       <type>war</type>
     </dependency>
     
-    <!-- Application layout (must be included before actual front-end application) -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-layout</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
-
     <!-- Xinha html editor (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -77,16 +69,19 @@
               <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-skin</artifactId>
               <targetPath>skin</targetPath>
+              <excludes>
+                <exclude>WEB-INF/**</exclude>
+                <exclude>META-INF/**</exclude>
+              </excludes>
             </overlay>
             <overlay>
               <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-xinha-resources</artifactId>
               <targetPath>xinha</targetPath>
-            </overlay>
-            <overlay>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-layout</artifactId>
-              <targetPath>layout</targetPath>
+              <excludes>
+                <exclude>WEB-INF/**</exclude>
+                <exclude>META-INF/**</exclude>
+              </excludes>
             </overlay>
           </overlays>
         </configuration>

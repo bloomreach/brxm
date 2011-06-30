@@ -210,11 +210,6 @@ gotolink/.settings
 gotolink/hippo-cms-gotolink.iml
 gotolink/target
 /hippo-cms.iml
-layout/.classpath
-layout/.project
-layout/.settings
-layout/hippo-cms-layout.iml
-layout/target
 plugins/*.tmp
 plugins/.classpath
 plugins/.project

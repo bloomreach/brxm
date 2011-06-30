@@ -13,23 +13,29 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
+<html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div wicket:id="tabs" class="tabpanel">
-      <div wicket:id="tabs-container">
-        <ul class="tabs">
-          <li wicket:id="tabs">
-            <div wicket:id="container" style="white-space: nowrap">
-              <a href="#" wicket:id="close" class="close">X</a>
-              <a href="#" wicket:id="link">
-                <img wicket:id="icon" /><span wicket:id="title">[[tab title]]</span>
-              </a>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div wicket:id="panel-container">
-        <div wicket:id="panel">[panel]</div>
+    <div wicket:id="tabs" class="hippo-tabs-documents">
+      <div yui:id="tabbed-panel-layout">
+        <div class="hippo-tabs-documents-top" yui:id="tabbed-panel-layout-top">
+          <div wicket:id="tabs-container">
+            <ul>
+              <li wicket:id="tabs">
+                <div wicket:id="container" style="white-space: nowrap">
+                  <a class="hippo-tabs-documents-tab" href="#" wicket:id="link">
+                    <img wicket:id="icon" /><span wicket:id="title">[[tab title]]</span>
+                  </a>
+                  <a href="#" wicket:id="close" class="hippo-tabs-documents-close">X</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div yui:id="tabbed-panel-layout-center">
+          <div wicket:id="panel-container">
+            <div wicket:id="panel">[panel]</div>
+          </div>
+        </div>
       </div>
     </div>
   </wicket:panel>

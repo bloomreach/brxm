@@ -77,7 +77,6 @@
     <module>translation</module>
     <module>translate</module>
     <module>gallery</module>
-    <module>layout</module>
     <module>config</module>
     <module>skin</module>
     <module>surf</module>
