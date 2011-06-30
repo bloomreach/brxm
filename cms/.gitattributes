@@ -580,6 +580,8 @@ dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-pe
 dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.html svneol=native#text/plain
 dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
 dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
+dashboard/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+dashboard/src/main/resources/reporting.cnd -text
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
 dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest.java svneol=native#text/plain
@@ -1469,10 +1471,6 @@ plugins/src/test/java/org/hippoecm/frontend/plugins/login/Base64EncodingTest.jav
 plugins/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain
 /pom.xml svneol=native#text/plain
 reporting/pom.xml svneol=native#text/plain
-reporting/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-reporting/src/main/resources/reporting.cnd -text
-reporting/src/site/apt/index.apt -text
-reporting/src/site/site.xml svneol=native#text/plain
 resources/pom.xml svneol=native#text/plain
 resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
