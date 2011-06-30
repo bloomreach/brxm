@@ -45,6 +45,7 @@
               <Implementation-Build>${buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
     </plugins>
