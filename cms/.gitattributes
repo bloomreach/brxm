@@ -2308,7 +2308,6 @@ xinha-integration/src/test/resources/xinhatest.cnd -text
 xinha-resources/pom.xml svneol=native#text/plain
 xinha-resources/src/main/patches/bugfix/CMS7-5277.patch -text
 xinha-resources/src/main/patches/enhancement/HREPTWO-4261.patch -text
-xinha-resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 xinha-resources/src/site/apt/index.apt -text
 xinha-resources/src/site/site.xml svneol=native#text/plain
 xinha-resources/webResources/xinha/iconsets/Hippo/de/bold.gif -text
