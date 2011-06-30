@@ -84,6 +84,7 @@
               </excludes>
             </overlay>
           </overlays>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
     </plugins>
