@@ -32,7 +32,9 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -51,6 +53,9 @@
         <includes>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.js</include>
+          <include>**/*.gif</include>
+          <include>**/*.png</include>
           <include>**/*.properties</include>
         </includes>
       </resource>

@@ -1,0 +1,11 @@
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
+<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
+<hippofacnav='http://www.onehippo.org/jcr/hippofacnav/nt/1.0'>
+<hipporeport='http://www.onehippo.com/jcr/hipporeport/nt/1.0'>
+
+[hipporeport:folder] > nt:base
++ * (hippofacnav:facetnavigation)
++ * (hippo:facetsearch)

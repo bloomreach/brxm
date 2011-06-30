@@ -1471,6 +1471,30 @@ plugins/src/test/java/org/hippoecm/frontend/plugins/login/Base64EncodingTest.jav
 plugins/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain
 /pom.xml svneol=native#text/plain
 reporting/pom.xml svneol=native#text/plain
+reporting/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeReportingBehavior.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/ExtPlugin.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective.html -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective.properties -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective_fr.properties -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective_it.properties -text
+reporting/src/main/java/org/onehippo/cms7/reports/ReportsPerspective_nl.properties -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/images/refresh.gif -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/package-info.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/portal/Hippo.Reports.Portal.css -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/portal/Hippo.Reports.Portal.js -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/portal/PortalPanel.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/layout/reporting.css -text
+reporting/src/main/java/org/onehippo/cms7/reports/package-info.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/plugins/ReportPanel.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/plugins/ReportUtil.java -text
+reporting/src/main/java/org/onehippo/cms7/reports/plugins/report-panel-bg.gif -text
+reporting/src/main/java/org/onehippo/cms7/reports/reports-32.png -text
+reporting/src/main/resources/hippo-reports-facets.xml -text
+reporting/src/main/resources/hippoecm-extension.xml -text
+reporting/src/main/resources/hipporeport.cnd -text
+reporting/src/main/resources/reporting-dashboard.xml -text
+reporting/src/main/resources/reports-cluster-loader.xml -text
 resources/pom.xml svneol=native#text/plain
 resources/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
 rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain

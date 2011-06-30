@@ -1,0 +1,33 @@
+.hippo-report .hippo-report-message-wrapper {
+  display: table;
+  border-top: 2px solid #cccccc;
+  border-bottom: 2px solid #cccccc;
+}
+
+.hippo-report .hippo-report-message-normal,
+.hippo-report .hippo-report-message-error {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.hippo-report .hippo-report-message-error {
+  color: red;
+  font-weight: bold;
+}
+
+.hippo-report .hippo-report-title-normal-large,
+.hippo-report .hippo-report-title-highlighted-large,
+.hippo-report .hippo-report-title-alert-large {
+  font-size: 17px;
+}
+
+.hippo-report .hippo-report-title-highlighted-normal,
+.hippo-report .hippo-report-title-highlighted-large {
+  color: #107EC0;
+}
+
+.hippo-report .hippo-report-title-alert-normal,
+.hippo-report .hippo-report-title-alert-large {
+  color: #CA2B2A;
+}
