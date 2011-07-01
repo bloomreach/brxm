@@ -104,7 +104,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-reporting</artifactId>
+      <artifactId>hippo-cms-dashboard</artifactId>
       <version>${hippo.cms.version}</version>
     </dependency>
     <dependency>
