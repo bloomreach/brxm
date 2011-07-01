@@ -330,7 +330,16 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         if (this.observationManager != null) {
             for (EventListenerItem item : getEventListenerItems()) {
                 try {
-                    this.observationManager.removeEventListener(item.getEventListener());
+                    EventListener eventListener = item.getEventListener();
+                    if (eventListener == null) {
+                        Logger log = getLogger();
+                        if (log.isWarnEnabled()) {
+                            log.warn("event listener object is null. Just ignored.");
+                        }
+                    }
+                    else {
+                        this.observationManager.removeEventListener(eventListener);
+                    }
                 } catch (Exception e) {
                     Logger log = getLogger();
                     if (log.isWarnEnabled()) {
