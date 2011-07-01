@@ -27,6 +27,7 @@
 - * (Date)
 - * (Long)
 - * (String)
+- * (String) multiple
 
 [hippo:realdocument] > hippo:document
 + hippo:mirror (hippo:facetselect) version

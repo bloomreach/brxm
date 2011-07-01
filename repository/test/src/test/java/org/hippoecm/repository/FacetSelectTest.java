@@ -24,6 +24,9 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,9 +34,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 public class FacetSelectTest extends TestCase {
     @SuppressWarnings("unused")
@@ -411,4 +411,35 @@ public class FacetSelectTest extends TestCase {
         session.save();
         session2.logout();
     }
+
+
+    @Test
+    public void testSingleFilterBlocksEmptyMultiValue() throws Exception {
+        final String[] data = new String[] {
+            "/test", "nt:unstructured",
+            "/test/docs", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+            "/test/docs/doc", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+            "/test/docs/doc/doc", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+            "/test/test4", "hippo:facetselect",
+                "hippo:docbase", "/test/docs",
+                "hippo:facets", "state",
+                "hippo:values", "xxx",
+                "hippo:modes", "single",
+        };
+        build(session, data);
+        Node document = session.getNode("/test/docs/doc/doc");
+        document.setProperty("state", new String[] {});
+        session.save();
+        session.refresh(false);
+
+        // facetselect with mode = single. We expect no hippo:document (because facetselect state = xxx which no doc has) below the handle
+        {
+            Node doc = traverse(session, "/test/test4/doc");
+            assertTrue(doc.getNodes().getSize() == 0);
+        }
+    }
+
 }

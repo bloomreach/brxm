@@ -216,7 +216,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             Name facet = entry.getKey();
             String value = entry.getValue();
             String[] matching = getProperty(candidate, facet);
-            if (matching != null && matching.length > 0) {
+            if (matching != null) {
                 if (value != null && !value.equals("") && !value.equals("*")) {
                     int i;
                     for (i = 0; i < matching.length; i++) {
