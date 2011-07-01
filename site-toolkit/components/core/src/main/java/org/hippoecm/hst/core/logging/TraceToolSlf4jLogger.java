@@ -30,149 +30,151 @@ public class TraceToolSlf4jLogger implements Logger {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private LogEventBuffer traceToolLogEventBuffer;
-    private org.slf4j.Logger logger;
+    private String loggerName;
+    private Logger teeLogger;
 
     public TraceToolSlf4jLogger(final LogEventBuffer traceToolLogEventBuffer, final org.slf4j.Logger logger) {
         this.traceToolLogEventBuffer = traceToolLogEventBuffer;
-        this.logger = logger;
+        this.loggerName = logger.getName();
+        this.teeLogger = new Slf4jLogger(logger);
     }
     
     public void debug(String msg) {
         addTraceToolLogEvent(LogEvent.Level.DEBUG, msg);
-        logger.debug(msg);
+        teeLogger.debug(msg);
     }
 
     public void debug(String format, Object arg) {
         addTraceToolLogEvent(LogEvent.Level.DEBUG, format, arg);
-        logger.debug(format, arg);
+        teeLogger.debug(format, arg);
     }
 
     public void debug(String format, Object arg1, Object arg2) {
         addTraceToolLogEvent(LogEvent.Level.DEBUG, format, arg1, arg2);
-        logger.debug(format, arg1, arg2);
+        teeLogger.debug(format, arg1, arg2);
     }
 
     public void debug(String format, Object[] argArray) {
         addTraceToolLogEvent(LogEvent.Level.DEBUG, format, argArray);
-        logger.debug(format, argArray);
+        teeLogger.debug(format, argArray);
     }
 
     public void debug(String msg, Throwable t) {
         addTraceToolLogEvent(LogEvent.Level.DEBUG, msg, t); 
-        logger.debug(msg, t);
+        teeLogger.debug(msg, t);
     }
 
     public void error(String msg) {
         addTraceToolLogEvent(LogEvent.Level.ERROR, msg);
-        logger.error(msg);
+        teeLogger.error(msg);
     }
 
     public void error(String format, Object arg) {
         addTraceToolLogEvent(LogEvent.Level.ERROR, format, arg);
-        logger.error(format, arg);
+        teeLogger.error(format, arg);
     }
 
     public void error(String format, Object arg1, Object arg2) {
         addTraceToolLogEvent(LogEvent.Level.ERROR, format, arg1, arg2);
-        logger.error(format, arg1, arg2);
+        teeLogger.error(format, arg1, arg2);
     }
 
     public void error(String format, Object[] argArray) {
         addTraceToolLogEvent(LogEvent.Level.ERROR, format, argArray);
-        logger.error(format, argArray);
+        teeLogger.error(format, argArray);
     }
 
     public void error(String msg, Throwable t) {
         addTraceToolLogEvent(LogEvent.Level.ERROR, msg, t);
-        logger.error(msg, t);
+        teeLogger.error(msg, t);
     }
 
     public void info(String msg) {
         addTraceToolLogEvent(LogEvent.Level.INFO, msg);
-        logger.info(msg);
+        teeLogger.info(msg);
     }
 
     public void info(String format, Object arg) {
         addTraceToolLogEvent(LogEvent.Level.INFO, format, arg);
-        logger.info(format, arg);
+        teeLogger.info(format, arg);
     }
 
     public void info(String format, Object arg1, Object arg2) {
         addTraceToolLogEvent(LogEvent.Level.INFO, format, arg1, arg2);
-        logger.info(format, arg1, arg2);
+        teeLogger.info(format, arg1, arg2);
     }
 
     public void info(String format, Object[] argArray) {
         addTraceToolLogEvent(LogEvent.Level.INFO, format, argArray);
-        logger.info(format, argArray);
+        teeLogger.info(format, argArray);
     }
 
     public void info(String msg, Throwable t) {
         addTraceToolLogEvent(LogEvent.Level.INFO, msg, t);
-        logger.info(msg, t);
+        teeLogger.info(msg, t);
     }
 
     public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return teeLogger.isDebugEnabled();
     }
 
     public boolean isErrorEnabled() {
-        return logger.isErrorEnabled();
+        return teeLogger.isErrorEnabled();
     }
 
     public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
+        return teeLogger.isInfoEnabled();
     }
 
     public boolean isWarnEnabled() {
-        return logger.isWarnEnabled();
+        return teeLogger.isWarnEnabled();
     }
 
     public void warn(String msg) {
         addTraceToolLogEvent(LogEvent.Level.WARN, msg);
-        logger.warn(msg);
+        teeLogger.warn(msg);
     }
 
     public void warn(String format, Object arg) {
         addTraceToolLogEvent(LogEvent.Level.WARN, format, arg);
-        logger.warn(format, arg);
+        teeLogger.warn(format, arg);
     }
 
     public void warn(String format, Object[] argArray) {
         addTraceToolLogEvent(LogEvent.Level.WARN, format, argArray);
-        logger.warn(format, argArray);
+        teeLogger.warn(format, argArray);
     }
 
     public void warn(String format, Object arg1, Object arg2) {
         addTraceToolLogEvent(LogEvent.Level.WARN, format, arg1, arg2);
-        logger.warn(format, arg1, arg2);
+        teeLogger.warn(format, arg1, arg2);
     }
 
     public void warn(String msg, Throwable t) {
         addTraceToolLogEvent(LogEvent.Level.WARN, msg, t);
-        logger.warn(msg, t);
+        teeLogger.warn(msg, t);
     }
 
     private void addTraceToolLogEvent(Level level, String message) {
-        LogEvent event = new LogEventImpl(logger.getName(), level, message);
+        LogEvent event = new LogEventImpl(loggerName, level, message);
         traceToolLogEventBuffer.add(event);
     }
     
     private void addTraceToolLogEvent(Level level, String format, Object arg) {
         String message = MessageFormatter.format(format, arg);
-        LogEvent event = new LogEventImpl(logger.getName(), level, message);
+        LogEvent event = new LogEventImpl(loggerName, level, message);
         traceToolLogEventBuffer.add(event);
     }
     
     private void addTraceToolLogEvent(Level level, String format, Object arg1, Object arg2) {
         String message = MessageFormatter.format(format, arg1, arg2);
-        LogEvent event = new LogEventImpl(logger.getName(), level, message);
+        LogEvent event = new LogEventImpl(loggerName, level, message);
         traceToolLogEventBuffer.add(event);
     }
     
     private void addTraceToolLogEvent(Level level, String format, Object [] argArray) {
         String message = MessageFormatter.arrayFormat(format, argArray);
-        LogEvent event = new LogEventImpl(logger.getName(), level, message);
+        LogEvent event = new LogEventImpl(loggerName, level, message);
         traceToolLogEventBuffer.add(event);
     }
     
@@ -194,7 +196,7 @@ public class TraceToolSlf4jLogger implements Logger {
             IOUtils.closeQuietly(sw);
         }
         
-        LogEvent event = new LogEventImpl(logger.getName(), level, sbMessage.toString());
+        LogEvent event = new LogEventImpl(loggerName, level, sbMessage.toString());
         traceToolLogEventBuffer.add(event);
     }
 

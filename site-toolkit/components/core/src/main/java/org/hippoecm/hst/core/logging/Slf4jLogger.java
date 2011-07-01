@@ -16,73 +16,198 @@
 package org.hippoecm.hst.core.logging;
 
 import org.hippoecm.hst.logging.Logger;
+import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.spi.LocationAwareLogger;
 
 public class Slf4jLogger implements Logger {
-    
+
+    /**
+     * Following the pattern discussed in pages 162 through 168 of "The complete
+     * log4j manual".
+     */
+    private final static String FQCN = Slf4jLogger.class.getName();
+
     private org.slf4j.Logger logger;
+    private LocationAwareLogger locationAwareLogger;
 
     public Slf4jLogger(final org.slf4j.Logger logger) {
         this.logger = logger;
+
+        if (logger instanceof LocationAwareLogger) {
+            this.locationAwareLogger = (LocationAwareLogger) logger;
+        }
     }
-    
+
     public void debug(String msg) {
-        logger.debug(msg);
+        if (locationAwareLogger == null) {
+            logger.debug(msg);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null);
+        }
     }
 
     public void debug(String format, Object arg) {
-        logger.debug(format, arg);
+        if (locationAwareLogger == null) {
+            logger.debug(format, arg);
+        } else {
+            String msg = MessageFormatter.format(format, arg);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null);
+        }
     }
 
     public void debug(String format, Object arg1, Object arg2) {
-        logger.debug(format, arg1, arg2);
+        if (locationAwareLogger == null) {
+            logger.debug(format, arg1, arg2);
+        } else {
+            String msg = MessageFormatter.format(format, arg1, arg2);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null);
+        }
     }
 
     public void debug(String format, Object[] argArray) {
-        logger.debug(format, argArray);
+        if (locationAwareLogger == null) {
+            logger.debug(format, argArray);
+        } else {
+            String msg = MessageFormatter.format(format, argArray);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, null);
+        }
     }
 
     public void debug(String msg, Throwable t) {
-        logger.debug(msg, t);
-    }
-
-    public void error(String msg) {
-        logger.error(msg);
-    }
-
-    public void error(String msg, Object arg) {
-        logger.error(msg, arg);
-    }
-
-    public void error(String format, Object arg1, Object arg2) {
-        logger.error(format, arg1, arg2);
-    }
-
-    public void error(String format, Object[] argArray) {
-        logger.error(format, argArray);
-    }
-
-    public void error(String msg, Throwable t) {
-        logger.error(msg, t);
+        if (locationAwareLogger == null) {
+            logger.debug(msg, t);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, msg, t);
+        }
     }
 
     public void info(String msg) {
-        logger.info(msg);
+        if (locationAwareLogger == null) {
+            logger.info(msg);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null);
+        }
     }
 
     public void info(String format, Object arg) {
-        logger.info(format, arg);
+        if (locationAwareLogger == null) {
+            logger.info(format, arg);
+        } else {
+            String msg = MessageFormatter.format(format, arg);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null);
+        }
     }
 
     public void info(String format, Object arg1, Object arg2) {
-        logger.info(format, arg1, arg2);
+        if (locationAwareLogger == null) {
+            logger.info(format, arg1, arg2);
+        } else {
+            String msg = MessageFormatter.format(format, arg1, arg2);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null);
+        }
     }
 
-    public void info(String format, Object[] arg1) {
-        logger.info(format, arg1);
+    public void info(String format, Object[] argArray) {
+        if (locationAwareLogger == null) {
+            logger.info(format, argArray);
+        } else {
+            String msg = MessageFormatter.format(format, argArray);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, null);
+        }
     }
 
     public void info(String msg, Throwable t) {
-        logger.info(msg, t);
+        if (locationAwareLogger == null) {
+            logger.info(msg, t);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.INFO_INT, msg, t);
+        }
+    }
+
+    public void warn(String msg) {
+        if (locationAwareLogger == null) {
+            logger.warn(msg);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null);
+        }
+    }
+
+    public void warn(String format, Object arg) {
+        if (locationAwareLogger == null) {
+            logger.warn(format, arg);
+        } else {
+            String msg = MessageFormatter.format(format, arg);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null);
+        }
+    }
+
+    public void warn(String format, Object arg1, Object arg2) {
+        if (locationAwareLogger == null) {
+            logger.warn(format, arg1, arg2);
+        } else {
+            String msg = MessageFormatter.format(format, arg1, arg2);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null);
+        }
+    }
+
+    public void warn(String format, Object[] argArray) {
+        if (locationAwareLogger == null) {
+            logger.warn(format, argArray);
+        } else {
+            String msg = MessageFormatter.format(format, argArray);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, null);
+        }
+    }
+
+    public void warn(String msg, Throwable t) {
+        if (locationAwareLogger == null) {
+            logger.warn(msg, t);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.WARN_INT, msg, t);
+        }
+    }
+
+    public void error(String msg) {
+        if (locationAwareLogger == null) {
+            logger.error(msg);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null);
+        }
+    }
+
+    public void error(String format, Object arg) {
+        if (locationAwareLogger == null) {
+            logger.error(format, arg);
+        } else {
+            String msg = MessageFormatter.format(format, arg);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null);
+        }
+    }
+
+    public void error(String format, Object arg1, Object arg2) {
+        if (locationAwareLogger == null) {
+            logger.error(format, arg1, arg2);
+        } else {
+            String msg = MessageFormatter.format(format, arg1, arg2);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null);
+        }
+    }
+
+    public void error(String format, Object[] argArray) {
+        if (locationAwareLogger == null) {
+            logger.error(format, argArray);
+        } else {
+            String msg = MessageFormatter.format(format, argArray);
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, null);
+        }
+    }
+
+    public void error(String msg, Throwable t) {
+        if (locationAwareLogger == null) {
+            logger.error(msg, t);
+        } else {
+            locationAwareLogger.log(null, FQCN, LocationAwareLogger.ERROR_INT, msg, t);
+        }
     }
 
     public boolean isDebugEnabled() {
@@ -99,26 +224,6 @@ public class Slf4jLogger implements Logger {
 
     public boolean isWarnEnabled() {
         return logger.isWarnEnabled();
-    }
-
-    public void warn(String msg) {
-        logger.warn(msg);
-    }
-
-    public void warn(String format, Object arg) {
-        logger.warn(format, arg);
-    }
-
-    public void warn(String format, Object[] argArray) {
-        logger.warn(format, argArray);
-    }
-
-    public void warn(String format, Object arg1, Object arg2) {
-        logger.warn(format, arg1, arg2);
-    }
-
-    public void warn(String msg, Throwable t) {
-        logger.warn(msg, t);
     }
 
 }
