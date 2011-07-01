@@ -66,6 +66,8 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 			jaxrsServerFactoryBean.setDestinationFactory(df);
 			jaxrsServerFactoryBean.create();
 			controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, bus);
+			// guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
+			controller.setDisableAddressUpdates(true);
 			servletContext.setAttribute(servletControllerAttributeName, controller);
 			servletContext.setAttribute(cxfBusAttributeName, bus);
 		}
