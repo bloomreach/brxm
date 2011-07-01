@@ -32,10 +32,12 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
+import org.hippoecm.hst.core.ResourceVisitor;
 
 public class MultipleRepositoryImpl implements MultipleRepository {
     
     private static ThreadLocal<Repository> tlCurrentRepository = new ThreadLocal<Repository>();
+    private ResourceLifecycleManagement currentRepositoryResourceLifecycleManagement = new CurrentRepositoryResourceLifecycleManagement();
     
     protected Map<CredentialsWrapper, Repository> repositoryMap = Collections.synchronizedMap(new HashMap<CredentialsWrapper, Repository>());
     protected ResourceLifecycleManagement [] resourceLifecycleManagements;
@@ -217,8 +219,10 @@ public class MultipleRepositoryImpl implements MultipleRepository {
             }
         }
         
-        ResourceLifecycleManagement [] tempResourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size()];
-        int index = 0;
+        ResourceLifecycleManagement [] tempResourceLifecycleManagements = new ResourceLifecycleManagement[resourceLifecycleManagementSet.size() + 1];
+        tempResourceLifecycleManagements[0] = currentRepositoryResourceLifecycleManagement;
+        
+        int index = 1;
         
         for (ResourceLifecycleManagement rlm : resourceLifecycleManagementSet) {
             tempResourceLifecycleManagements[index++] = rlm;
@@ -286,5 +290,57 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         public int hashCode() {
             return this.hash;
         }
+    }
+    
+    protected static class CurrentRepositoryResourceLifecycleManagement implements ResourceLifecycleManagement {
+
+        public boolean isActive() {
+            return true;
+        }
+        
+        public void setActive(boolean active) {
+        }
+        
+        public boolean isAlwaysActive() {
+            return true;
+        }
+        
+        public void setAlwaysActive(boolean alwaysActive) {
+        }
+
+        public void registerResource(Object resource) {
+            tlCurrentRepository.set((Repository) resource);
+        }
+
+        public void unregisterResource(Object resource) {
+            if (tlCurrentRepository.get() == resource) {
+                tlCurrentRepository.remove();
+            }
+        }
+
+        public void disposeAllResources() {
+            tlCurrentRepository.remove();
+        }
+
+        public void disposeResource(Object resource) {
+            if (tlCurrentRepository.get() == resource) {
+                tlCurrentRepository.remove();
+            }
+        }
+
+        public Object visitResources(ResourceVisitor visitor) {
+            if (visitor == null) {
+                throw new IllegalArgumentException("argument visitor may not be null");
+            }
+
+            Repository repository = tlCurrentRepository.get();
+            
+            if (repository != null) {
+                return visitor.resource(repository);
+            }
+            
+            return null;
+        }
+
     }
 }

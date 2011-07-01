@@ -109,7 +109,7 @@ public class TestLazyMultiplePoolingRepository {
         
         ResourceLifecycleManagement [] rlms = multipleRepository.getResourceLifecycleManagements();
         assertNotNull(rlms);
-        assertEquals(1, rlms.length);
+        assertEquals(2, rlms.length);
         
         Session session = multipleRepository.login(defaultCreds);
         assertNotNull(session);
@@ -120,7 +120,7 @@ public class TestLazyMultiplePoolingRepository {
         
         rlms = multipleRepository.getResourceLifecycleManagements();
         assertNotNull(rlms);
-        assertEquals(1, rlms.length);
+        assertEquals(2, rlms.length);
         
         BasicPoolingRepository defaultRepository = (BasicPoolingRepository) multipleRepository.getRepositoryByCredentials(defaultCreds);
         BasicPoolingRepository wikiRepository = (BasicPoolingRepository) multipleRepository.getRepositoryByCredentials(wikiCreds);

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedList;
@@ -154,6 +155,29 @@ public class TestMultipleRepository extends AbstractSessionPoolSpringTestCase {
         assertTrue("The job queue is not empty.", jobQueue.isEmpty());
         assertTrue("Active session count is not zero.", 0 == defaultRepository.getNumActive());
         assertTrue("Active session count is not zero.", 0 == writableRepository.getNumActive());
+    }
+    
+    @Test
+    public void testCurrentRepositoryLifeCycleManagementPerThread() throws Exception {
+        ResourceLifecycleManagement [] rlms = multipleRepository.getResourceLifecycleManagements();
+        for (ResourceLifecycleManagement rlm : rlms) {
+            rlm.setActive(true);
+        }
+        
+        Repository defaultRepository = multipleRepository.getRepositoryByCredentials(this.defaultCredentials);
+        Session sessionFromDefaultRepository = multipleRepository.login(this.defaultCredentials);
+        assertTrue("Current session's repository is not the expected repository", 
+                defaultRepository == ((MultipleRepositoryImpl) multipleRepository).getCurrentThreadRepository());
+        sessionFromDefaultRepository.logout();
+        assertTrue("Current session's repository is not the expected repository", 
+                defaultRepository == ((MultipleRepositoryImpl) multipleRepository).getCurrentThreadRepository());
+        
+        for (ResourceLifecycleManagement rlm : rlms) {
+            rlm.disposeAllResources();
+        }
+        
+        assertNull("Current session's repository should have been removed after resource disposal.", 
+                ((MultipleRepositoryImpl) multipleRepository).getCurrentThreadRepository());
     }
     
     @Ignore
