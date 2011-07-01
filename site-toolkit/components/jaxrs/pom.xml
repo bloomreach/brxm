@@ -168,6 +168,10 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-web</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     
