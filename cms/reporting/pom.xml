@@ -65,6 +65,9 @@
         <includes>
           <include>**/*.xml</include>
           <include>**/*.cnd</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
         </includes>
       </resource>
     </resources>

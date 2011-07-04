@@ -38,13 +38,6 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPersp
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.session.UserSession;
 
-/**
- * ReportsPerspective provides a CMS perspective that loads report plugins via {@link com.onehippo.cms7.reports.layout.ReportsRenderPlugin}.
- * <p>
- * The configuration for this perspective is at <code>/hippo:configuration/hippo:frontend/cms/hippo-reports/reportsPerspective</code>.
- * This plugin provides <code>service.reports</code> extension point, which is used by the {@link com.onehippo.cms7.reports.layout.ReportsRenderPlugin}
- * </p>
- */
 public class ReportsPerspective extends PanelPluginPerspective {
     
     private static final long serialVersionUID = 1L;
