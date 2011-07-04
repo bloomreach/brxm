@@ -39,6 +39,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -628,7 +629,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         ((NodeState)state).removeAllChildNodeEntries();
                         if(changedParents.contains(state.getId())) {
                             modifiedExternals.add(state.getId());
-                        } else if(!(state.hasOverlayedState() && state.getOverlayedState().getParentId().equals(state.getParentId()))) {
+                        }  else if (hasExternalBeenMovedOrRenamed((NodeState) state)) {
                             modifiedExternals.add(state.getId());
                         }
                         //store(state);
@@ -636,6 +637,39 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     //virtualStates.add(state);
                 }
             }
+        }
+
+        private boolean hasExternalBeenMovedOrRenamed(NodeState state) {
+            try {
+                ItemState sharedState = sharedStateMgr.getItemState(state.getId());
+                if (!sharedState.getParentId().equals(state.getParentId())) {
+                    return true;
+                }
+                NodeState parentState = (NodeState) get(state.getParentId());
+                if (parentState != null) {
+                    try {
+                        NodeState sharedParentState = (NodeState) sharedStateMgr.getItemState(parentState.getId());
+                        ChildNodeEntry sharedEntry = sharedParentState.getChildNodeEntry((NodeId) state.getId());
+                        if (sharedEntry == null) {
+                            return false;
+                        }
+                        ChildNodeEntry stateEntry = parentState.getChildNodeEntry((NodeId) state.getId());
+                        if (!stateEntry.getName().equals(sharedEntry.getName())) {
+                            return true;
+                        }
+                    } catch (NoSuchItemStateException nsise) {
+                        // parent should
+                        return false;
+                    } catch (ItemStateException e) {
+                        return false;
+                    }
+                }
+            } catch (NoSuchItemStateException nsise) {
+                return true;
+            } catch (ItemStateException e) {
+                return false;
+            }
+            return false;
         }
 
         private void repopulate() {

@@ -21,7 +21,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.After;
@@ -382,34 +384,131 @@ public class FacetSelectTest extends TestCase {
         assertFalse(session.getRootNode().getNode("test/filterToParentOfFilter/filter1/four").getNodes().hasNext());
     }
 
+    void recurse(Node node) throws RepositoryException {
+        if (node instanceof HippoNode) {
+            HippoNode hn = (HippoNode) node;
+            Node canonicalNode = hn.getCanonicalNode();
+            if (canonicalNode == null) {
+                return;
+            }
+            if (!canonicalNode.isSame(node)) {
+                return;
+            }
+        }
+        for (NodeIterator nodes = node.getNodes(); nodes.hasNext(); ) {
+            recurse(nodes.nextNode());
+        }
+    }
+
     @Test
     public void testMultiSessionObservation() throws RepositoryException {
         String[] content = {
             "/test", "nt:unstructured",
-            "jcr:mixinTypes", "mix:referenceable",
+                "jcr:mixinTypes", "mix:referenceable",
+            "/test/target", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
             "/test/nav", "hippo:facetselect",
-            "hippo:docbase", "/test",
-            "hippo:facets", null,
-            "hippo:modes", null,
-            "hippo:values", null
+                "hippo:docbase", "/test/target",
+                "hippo:facets", null,
+                "hippo:modes", null,
+                "hippo:values", null
         };
-
-        Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        session2.getWorkspace().getObservationManager().addEventListener(new EventListener() {
-            public void onEvent(EventIterator events) {
-            }
-        }, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED, "/", true, null, null, false);
-        session.getWorkspace().getObservationManager().addEventListener(new EventListener() {
-            public void onEvent(EventIterator events) {
-            }
-        }, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED, "/", true, null, null, false);
         build(session, content);
         session.save();
+        session.refresh(false);
+
+        final Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        class SessionEventListener implements javax.jcr.observation.EventListener {
+
+            private Session session;
+
+            SessionEventListener(Session session) throws RepositoryException {
+                this.session = session;
+                session.getWorkspace().getObservationManager().addEventListener(this,
+                        Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED, "/",
+                        true, null, null, true);
+            }
+
+            void destroy() throws RepositoryException {
+                session.getWorkspace().getObservationManager().removeEventListener(this);
+            }
+
+            public void onEvent(EventIterator events) {
+            }
+        };
+        new SessionEventListener(session2);
+
+        SessionEventListener listener = new SessionEventListener(session);
+
+        recurse(session.getNode("/test"));
+        recurse(session2.getNode("/test"));
+
         traverse(session, "/test/nav").remove();
         traverse(session2, "/test").setProperty("x", "x");
         session2.save();
         session.save();
         session2.logout();
+
+        listener.destroy();
+    }
+
+    @Test
+    public void testRenamedFacetSelectIsIndexed() throws RepositoryException {
+        String[] content = {
+            "/test", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+            "/test/target", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+            "/test/nav", "hippo:facetselect",
+                "hippo:docbase", "/test/target",
+                "hippo:facets", null,
+                "hippo:modes", null,
+                "hippo:values", null
+        };
+        build(session, content);
+        session.save();
+        session.refresh(false);
+
+        recurse(session.getNode("/test"));
+
+        session.move("/test/nav", "/test/mirror");
+        session.save();
+        session.refresh(false);
+
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//element(mirror,hippo:facetselect)", Query.XPATH);
+        QueryResult result = query.execute();
+        assertTrue(result.getNodes().hasNext());
+    }
+
+    @Test
+    public void testMovedFacetSelectIsIndexed() throws RepositoryException {
+        String[] content = {
+            "/test", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+            "/test/target", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+            "/test/nav", "hippo:facetselect",
+                "hippo:docbase", "/test/target",
+                "hippo:facets", null,
+                "hippo:modes", null,
+                "hippo:values", null,
+            "/test/folder", "nt:unstructured"
+        };
+        build(session, content);
+        session.save();
+        session.refresh(false);
+
+        recurse(session.getNode("/test"));
+
+        session.move("/test/nav", "/test/folder/mirror");
+        session.save();
+        session.refresh(false);
+
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//element(mirror,hippo:facetselect)", Query.XPATH);
+        QueryResult result = query.execute();
+        assertTrue(result.getNodes().hasNext());
     }
 
 
