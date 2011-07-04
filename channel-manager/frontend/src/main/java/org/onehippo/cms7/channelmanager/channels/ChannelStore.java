@@ -51,7 +51,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
-    private long total;
+    private transient Map<String, Channel> channels;
 
     public ChannelStore(List<ExtField> fields) {
         super(fields);
@@ -73,15 +73,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     @Override
     protected long getTotal() {
-        return this.total;
+        return getChannels().size();
     }
 
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-        Map<String, Channel> channels = getChannels();
-        this.total = channels.size();
-        for (Channel channel : channels.values()) {
+        for (Channel channel : getChannels().values()) {
             JSONObject object = new JSONObject();
             object.put("title", channel.getId());
             object.put("contentRoot", channel.getContentRoot());
@@ -97,7 +95,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final Channel c = new Channel(record.getString("blueprintId"), "mobile-french-channel");
         c.setTitle(record.getString("name"));
         c.setUrl(record.getString("domain"));
-
 
         // FIXME: move boilerplate to CMS engine
         UserSession session = (UserSession) org.apache.wicket.Session.get();
@@ -128,15 +125,18 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     private Map<String, Channel> getChannels() {
-        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        if (channelManager != null) {
-            try {
-                return channelManager.getChannels();
-            } catch (ChannelException e) {
-                throw new RuntimeException("Unable to get the channels from Channel Manager", e);
+        if (channels == null) {
+            ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+            if (channelManager != null) {
+                try {
+                    channels = channelManager.getChannels();
+                } catch (ChannelException e) {
+                    throw new RuntimeException("Unable to get the channels from Channel Manager", e);
+                }
+            } else {
+                throw new RuntimeException("Unable to get the channels from Channel Manager");
             }
-        } else {
-            throw new RuntimeException("Unable to get the channels from Channel Manager");
         }
+        return channels;
     }
 }
