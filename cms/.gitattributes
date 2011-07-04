@@ -2345,6 +2345,7 @@ yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionManagerBe
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionSectionBehavior.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/init.js svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/AjaxIndicatorBehavior.java svneol=native#text/plain
+yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteBehavior.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteSettings.java svneol=native#text/plain
 yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js svneol=native#text/plain
