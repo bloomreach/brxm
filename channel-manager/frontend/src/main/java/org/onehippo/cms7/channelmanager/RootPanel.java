@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
-import org.onehippo.cms7.channelmanager.channels.PropertiesPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.layout.BorderLayout;
@@ -37,7 +37,7 @@ public class RootPanel extends ExtPanel {
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
-
+    private ChannelGridPanel channelPanel;
 
     public RootPanel(String id) {
         super(id);
@@ -45,28 +45,22 @@ public class RootPanel extends ExtPanel {
         add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.BlueprintListPanel.js"));
         add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.ChannelFormPanel.js"));
 
-        ChannelGridPanel gridPanel = new ChannelGridPanel();
-        gridPanel.setRegion(BorderLayout.Region.CENTER);
-        gridPanel.setSplit(true);
-        add(gridPanel);
+        channelPanel = new ChannelGridPanel();
+        channelPanel.setRegion(BorderLayout.Region.CENTER);
+        add(channelPanel);
+
         //Use the same store variable as the grid panel, no need to create another store.
-        this.channelStore = gridPanel.getStore();
+        this.channelStore = channelPanel.getStore();
 
-
-        PropertiesPanel propertiesPanel = new PropertiesPanel();
-        propertiesPanel.setRegion(BorderLayout.Region.EAST);
-        propertiesPanel.setCollapsed(true);
-        propertiesPanel.setCollapsible(true);
-        propertiesPanel.setSplit(true);
-        add(propertiesPanel);
+        ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel();
+        channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
+        add(channelPropertiesPanel);
 
         List<ExtField> blueprintFieldList = new ArrayList<ExtField>();
         blueprintFieldList.add(new ExtField("name"));
         this.blueprintStore = new BlueprintStore(blueprintFieldList);
         add(this.blueprintStore);
-
     }
-
 
     @Override
     protected void preRenderExtHead(StringBuilder js) {

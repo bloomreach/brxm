@@ -21,50 +21,89 @@ Ext.namespace('Hippo.ChannelManager');
  * @extends Ext.Panel
  */
 Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
-            constructor: function(config) {
-                this.channelStore = config.channelStore;
-                this.blueprintStore = config.blueprintStore;
-                Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
-            },
+    constructor: function(config) {
+        this.channelStore = config.channelStore;
+        this.blueprintStore = config.blueprintStore;
 
-            initComponent: function() {
-                var me = this;
-                var config = {
-                    layout: 'border',
-                    height: 900,
-                    title: "Channel Manager",
-                    tbar: [
-                        {
-                            text: "New Channel",
-                            handler: me.openChannelWizard,
-                            scope: me
-                        }
-                    ],
-                    viewConfig: {
-                        forceFit: true
-                    }
+        Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
+    },
 
-                };
-
-                Ext.apply(this, Ext.apply(this.initialConfig, config));
-
-                Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
-                this.win = new Hippo.ChannelManager.NewChannelWindow({
-                            blueprintStore: me.blueprintStore,
-                            channelStore : me.channelStore
-                        });
-
-                //Register event listeners on event
-                Ext.getCmp('channel-form-panel').on('channel-created', function() {
-                    this.win.hide();
-                    this.channelStore.reload();
-                }, this);
-            },
-
-            openChannelWizard:function() {
-                this.win.show();
+    initComponent: function() {
+        var me = this;
+        var config = {
+            layout: 'border',
+            height: 900,
+            title: "Channel Manager",
+            tbar: [
+                {
+                    text: "New Channel",
+                    handler: me.openChannelWizard,
+                    scope: me
+                }
+            ],
+            viewConfig: {
+                forceFit: true
             }
+        };
+
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
+
+        // get all child components
+        this.win = new Hippo.ChannelManager.NewChannelWindow({
+            blueprintStore: me.blueprintStore,
+            channelStore : me.channelStore
         });
+        this.formPanel = Ext.getCmp('channel-form-panel');
+        this.gridPanel = Ext.getCmp('channel-grid-panel');
+        this.propertiesPanel = Ext.getCmp('channel-properties-panel');
+
+        // register channel creation events
+        this.formPanel.on('channel-created', function() {
+            this.win.hide();
+            this.channelStore.reload();
+        }, this);
+
+        // register properties panel events
+        this.selectedRow = -1;
+        this.gridPanel.getSelectionModel().on('beforerowselect', function(sm, rowIndex, keepExisting, record) {
+            this.selectedRow = rowIndex;
+            this.propertiesPanel.showPanel(record.get('title'));
+        }, this);
+        this.gridPanel.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
+            this.gridPanel.selectedRow = -1;
+            this.gridPanel.fireEvent('selectionchange')
+        }, this);
+        this.gridPanel.getSelectionModel().on('rowdeselect', function(sm) {
+            if (this.gridPanel.selectedRow >= 0) {
+                this.propertiesPanel.hidePanel();
+                this.gridPanel.fireEvent('selectionchange')
+            }
+        }, this);
+
+        // register keyboard navigation
+        this.gridPanel.on('keydown', function(event) {
+            switch (event.keyCode) {
+                case 13: // ENTER
+                    this.propertiesPanel.showPanel();
+                    break;
+                case 27: // ESC
+                    if (this.propertiesPanel.isShown()) {
+                        this.propertiesPanel.hidePanel();
+                    } else {
+                        this.gridPanel.selectChannel(null);
+                    }
+                    break;
+            }
+        }, this);
+
+    },
+
+    openChannelWizard:function() {
+        this.win.show();
+    }
+});
 
 Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);
 
@@ -127,14 +166,14 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                 }, this);
 
                 Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
-                            id: 'blueprints-panel',
-                            store: me.blueprintStore
-                        }));
+                    id: 'blueprints-panel',
+                    store: me.blueprintStore
+                }));
 
                 Ext.getCmp('card-container').add(new Hippo.ChannelManager.ChannelFormPanel({
-                            id: 'channel-form-panel',
-                            store: me.channelStore
-                        }));
+                    id: 'channel-form-panel',
+                    store: me.channelStore
+                }));
 
 
             },

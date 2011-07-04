@@ -21,44 +21,95 @@ Ext.namespace('Hippo.ChannelManager');
  * @extends Ext.grid.GridPanel
  */
 Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
-            constructor: function(config) {
-                this.store = config.store;
-                this.columns = config.columns;
-                Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
+    constructor: function(config) {
+        var self = this;
+
+        this.store = config.store;
+        this.columns = config.columns;
+        this.selectedChannel = null;
+
+        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+        Ext.apply(config, {
+            id: 'channel-grid-panel',
+            store: self.store,
+            stripeRows: true,
+            autoHeight: true,
+            viewConfig: {
+                forceFit: true
             },
+            stateful: true,
+            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'selectionchange' ],
 
-            initComponent: function() {
-                var me = this;
-                var config = {
-                    id: 'channel-grid-panel',
-                    store: me.store,
-                    stripeRows: true,
-                    autoHeight: true,
-                    viewConfig: {
-                        forceFit: true
-                    },
+            colModel: new Ext.grid.ColumnModel({
+                columns: [
+                    {
+                        header: 'Channel Name',
+                        width: 20,
+                        dataIndex: 'title',
+                        sortable: true,
+                        scope: self
+                    }
+                ]
+            }),
 
-                    colModel: new Ext.grid.ColumnModel({
-                                columns: [
-                                    {
-                                        header: 'Channel Name',
-                                        width: 20,
-                                        dataIndex: 'title',
-                                        scope: me
-                                    }
-                                ]
-                            })
-                };
-
-                Ext.apply(this, Ext.apply(this.initialConfig, config));
-
-                Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
-
-                this.store.load();
-
-            }
-
+            sm: new Ext.grid.RowSelectionModel({
+                singleSelect: true
+            })
         });
+
+        Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
+    },
+
+    initComponent: function() {
+        Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
+        this.store.load({
+            callback: function() {
+                this.selectChannel(this.selectedChannel);
+                this.getView().focusEl.focus();
+            },
+            scope: this
+        });
+    },
+
+    // Selects the row of the channel with this title. If no such channel exists, the selection will be cleared.
+    selectChannel: function(title) {
+        var index = this.store.find('title', title)
+        this.selectRow(index);
+    },
+
+    // Selects the row with this index (0-based). A negative index clears the selection.
+    selectRow: function(index) {
+        if (index >= 0) {
+            this.getSelectionModel().selectRow(index);
+            this.getView().focusRow(index);
+            return;
+        } else {
+            // clear existing selection and fire the selectionchange event to force a state update
+            this.getSelectionModel().clearSelections();
+            this.fireEvent('selectionchange', this);
+        }
+    },
+
+    // Returns the title of the currently selected channel
+    getState: function() {
+        var state = Hippo.ChannelManager.ChannelGridPanel.superclass.getState.call(this);
+        var selectedRecord = this.getSelectionModel().getSelected();
+        if (selectedRecord) {
+            state.selected = selectedRecord.get('title');
+        }
+        return state;
+    },
+
+    // Restores the title of the currently selected channel. The corresponding row is selected after the store has
+    // been loaded.
+    applyState: function(state) {
+        if (state.selected) {
+            this.selectedChannel = state.selected;
+        }
+    }
+
+});
 
 Ext.reg('Hippo.ChannelManager.ChannelGridPanel', Hippo.ChannelManager.ChannelGridPanel);
 
@@ -71,11 +122,11 @@ Ext.reg('Hippo.ChannelManager.ChannelGridPanel', Hippo.ChannelManager.ChannelGri
  *
  */
 Hippo.ChannelManager.ChannelStore = Ext.extend(Ext.data.GroupingStore, {
-  constructor: function(config) {
-    Hippo.ChannelManager.ChannelStore.superclass.constructor.call(this, Ext.apply(config, {
-      reader: new Ext.data.JsonReader(config)
-    }));
-  }
+    constructor: function(config) {
+        Hippo.ChannelManager.ChannelStore.superclass.constructor.call(this, Ext.apply(config, {
+            reader: new Ext.data.JsonReader(config)
+        }));
+    }
 });
 
 Ext.reg('Hippo.ChannelManager.ChannelStore', Hippo.ChannelManager.ChannelStore);

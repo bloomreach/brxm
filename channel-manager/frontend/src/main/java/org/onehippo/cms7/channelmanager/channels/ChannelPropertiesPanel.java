@@ -16,25 +16,23 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.Model;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wicketstuff.js.ext.ExtPanel;
+import org.wicketstuff.js.ext.util.ExtClass;
 
-public class PropertiesPanel extends ExtPanel {
+@ExtClass("Hippo.ChannelManager.ChannelPropertiesPanel")
+public class ChannelPropertiesPanel extends ExtPanel {
 
-    public PropertiesPanel() {
+    public ChannelPropertiesPanel() {
         super();
-        setHeight(400);
-        setWidth(600);
-        setAnimCollapse(true);
-        setCollapsed(true);
-        setTitle(new Model<String>("Channel Details"));
+        add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesPanel.class, "Hippo.ChannelManager.ChannelPropertiesPanel.js"));
     }
 
     @Override
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
-        properties.put("html", "<h1>Channel Properties Panel");
     }
 }
