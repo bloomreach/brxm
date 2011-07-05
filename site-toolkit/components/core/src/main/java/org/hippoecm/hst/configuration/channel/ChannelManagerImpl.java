@@ -144,10 +144,14 @@ public class ChannelManagerImpl implements ChannelManager {
                 channels.put(id, channel);
             }
 
-            if (currNode.hasNode("hst:channelproperties")) {
-                List<HstPropertyDefinition> propertyDefinitions = blueprints.get(bluePrintId).getPropertyDefinitions();
-                Node propertiesNode = currNode.getNode("hst:channelproperties");
-                Map<String, Object> properties = ChannelPropertyMapper.getProperties(propertiesNode, propertyDefinitions);
+            if (currNode.hasNode("hst:channelinfo")) {
+                Node propertiesNode = currNode.getNode("hst:channelinfo");
+                List<HstPropertyDefinition> propertyDefinitions = null;
+                Class<?> channelInfoClass = blueprints.get(bluePrintId).getChannelInfoClass();
+                if (channelInfoClass != null) {
+                    propertyDefinitions = ChannelInfoClassProcessor.getProperties(channelInfoClass);
+                }
+                Map<HstPropertyDefinition, Object> properties = ChannelPropertyMapper.loadProperties(propertiesNode, propertyDefinitions);
                 channel.getProperties().putAll(properties);
             }
 
@@ -179,6 +183,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
                 channels = new HashMap<String, Channel>();
                 loadChannels(configNode);
+
             } catch (RepositoryException e) {
                 throw new ChannelException("Could not load channels and/or blueprints", e);
             } finally {
@@ -239,13 +244,19 @@ public class ChannelManagerImpl implements ChannelManager {
         if (!blueprints.containsKey(blueprintId)) {
             throw new ChannelException("Blue print id " + blueprintId + " is not valid");
         }
-        Channel channel = new Channel(blueprintId, nextChannelId());
-        List<HstPropertyDefinition> propertyDefinitions = blueprints.get(blueprintId).getPropertyDefinitions();
+        Channel channel = new Channel(blueprintId, nextChannelId());/*
+        BlueprintService blueprint = blueprints.get(blueprintId);
+        List<HstPropertyDefinition> propertyDefinitions = blueprint.getPropertyDefinitions();
+        Map<HstPropertyDefinition, Object> defaultValues = blueprint.getDefaultValues();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition hpd : propertyDefinitions) {
-                channel.getProperties().put(hpd.getName(), hpd.getDefaultValue());
+                if (defaultValues.containsKey(hpd)) {
+                    channel.loadProperties().put(hpd, defaultValues.get(hpd));
+                } else {
+                    channel.loadProperties().put(hpd, hpd.getDefaultValue());
+                }
             }
-        }
+        }*/
         return channel;
     }
 
@@ -266,7 +277,7 @@ public class ChannelManagerImpl implements ChannelManager {
                     }
 
                     // TODO: validate that mandatory properties (URL and such) have not changed
-                    // ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
+                    // ChannelPropertyMapper.saveProperties(channelPropsNode, channel.loadProperties());
                 } else {
                     throw new ChannelException("Channel was removed since it's retrieval");
                 }
@@ -291,6 +302,41 @@ public class ChannelManagerImpl implements ChannelManager {
             }
         }
     }
+
+    @Override
+    public synchronized List<Blueprint> getBlueprints() throws ChannelException {
+        load();
+        return new ArrayList<Blueprint>(blueprints.values());
+    }
+
+    @Override
+    public synchronized Blueprint getBlueprint(final String id) throws ChannelException {
+        load();
+        if (!blueprints.containsKey(id)) {
+            throw new ChannelException("Blueprint " + id + " does not exist");
+        }
+        return blueprints.get(id);
+    }
+
+    @Override
+    public synchronized <T> T getChannelInfo(String channelId) throws ChannelException {
+        load();
+        if (channelId != null && channels.containsKey(channelId)) {
+            Channel channel = channels.get(channelId);
+            Blueprint bp = blueprints.get(channel.getBlueprintId());
+            if (bp.getChannelInfoClass() != null) {
+                return (T) ChannelUtils.getChannelInfo(channel.getProperties(), bp.getChannelInfoClass());
+            }
+        }
+        return null;
+    }
+
+    public synchronized void invalidate() {
+        channels = null;
+        blueprints = null;
+    }
+
+    // private - internal - methods
 
     private void createChannelFromBlueprint(Node configRoot, final Node blueprintNode, final Channel channel) throws ChannelException, RepositoryException {
         String tmp = channel.getUrl();
@@ -320,13 +366,7 @@ public class ChannelManagerImpl implements ChannelManager {
             }
         }
 
-
-        Node channelPropsNode;
-        if (blueprintNode.hasNode("hst:channelproperties")) {
-            channelPropsNode = mount.addNode("hst:channelproperties", blueprintNode.getNode("hst:channelproperties").getPrimaryNodeType().getName());
-        } else {
-            channelPropsNode = mount.addNode("hst:channelproperties", "nt:unstructured");
-        }
+        Node channelPropsNode = mount.addNode("hst:channelinfo", "hst:channelinfo");
         ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
 
         Session jcrSession = configRoot.getSession();
@@ -439,23 +479,4 @@ public class ChannelManagerImpl implements ChannelManager {
         return clone;
     }
 
-    @Override
-    public synchronized List<Blueprint> getBlueprints() throws ChannelException {
-        load();
-        return new ArrayList<Blueprint>(blueprints.values());
-    }
-
-    @Override
-    public synchronized Blueprint getBlueprint(final String id) throws ChannelException {
-        load();
-        if (!blueprints.containsKey(id)) {
-            throw new ChannelException("Blueprint " + id + " does not exist");
-        }
-        return blueprints.get(id);
-    }
-
-    public synchronized void invalidate() {
-        channels = null;
-        blueprints = null;
-    }
 }

@@ -15,17 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
 
 
@@ -72,31 +71,12 @@ public class ComponentWrapper {
             Class componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
                 ParametersInfo parameterInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                Method[] methods = parameterInfo.type().getMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(Parameter.class)) {
-                        Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                        Property prop = new Property();
-                        prop.setName(propAnnotation.name());
-                        prop.setDefaultValue(propAnnotation.defaultValue());
-                        prop.setDescription(propAnnotation.description());
-                        prop.setType(propAnnotation.typeHint());
-                        prop.setDocType(propAnnotation.docType());
-                        prop.setRequired(propAnnotation.required());
-                        if (propAnnotation.displayName().equals("")) {
-                            prop.setLabel(propAnnotation.name());
-                        } else {
-                            prop.setLabel(propAnnotation.displayName());
+                properties = ParametersInfoProcessor.getProperties(parameterInfo);
+                if (hstParameters != null) {
+                    for (Property prop : properties) {
+                        if (hstParameters.get(prop.getName()) != null) {
+                            prop.setValue(hstParameters.get(prop.getName()));
                         }
-                        prop.setDocLocation(propAnnotation.docLocation());
-                        prop.setAllowCreation(propAnnotation.allowCreation());
-
-                        //Set the value to be default value before setting it with original value
-                        prop.setValue(propAnnotation.defaultValue());
-                        if (hstParameters != null && hstParameters.get(propAnnotation.name()) != null) {
-                            prop.setValue(hstParameters.get(propAnnotation.name()));
-                        }
-                        properties.add(prop);
                     }
                 }
 
@@ -121,135 +101,4 @@ public class ComponentWrapper {
         this.success = success;
     }
 
-    private static class Property {
-        private String name;
-        private String value;
-        private String type;
-        private String label;
-        private String defaultValue;
-        private String description;
-        private boolean required;
-        private String docType;
-        private boolean allowCreation;
-        private String docLocation;
-
-        Property() {
-            name = "";
-            value = "";
-            type = ParameterType.STRING;
-            label = "";
-            defaultValue = "";
-            description = "";
-            required = false;
-            docType = "";
-            allowCreation = false;
-            docLocation = "";
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            if (type.equals(ParameterType.DATE)) {
-                this.type = "datefield";
-            } else if (type.equals(ParameterType.BOOLEAN)) {
-                this.type = "checkbox";
-            } else if (type.equals(ParameterType.NUMBER)) {
-                this.type = "numberfield";
-            } else if (type.equals(ParameterType.DOCUMENT)) {
-                this.type = "combo";
-            } else if (type.equals(ParameterType.COLOR)) {
-                this.type = "colorfield";
-            } else {
-                this.type = "textfield";
-            }
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public void setDefaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public boolean isRequired() {
-            return required;
-        }
-
-        public void setRequired(boolean required) {
-            this.required = required;
-        }
-
-        public void setDocType(final String docType) {
-            this.docType = docType;
-        }
-
-        public String getDocType() {
-            return this.docType;
-        }
-
-        public boolean isAllowCreation() {
-            return allowCreation;
-        }
-
-        public void setAllowCreation(boolean allowCreation) {
-            this.allowCreation = allowCreation;
-        }
-
-        public String getDocLocation() {
-            return docLocation;
-        }
-
-        public void setDocLocation(String docLocation) {
-            this.docLocation = docLocation;
-        }
-
-    }
-
-    /**
-     * ParameterType used to provide a hint to the template composer about the type of the parameter.
-     * This is just a convenience interface that provides some constants for the field types.
-     */
-    public static interface ParameterType {
-        String STRING = "STRING";
-        String NUMBER = "NUMBER";
-        String BOOLEAN = "BOOLEAN";
-        String DATE = "DATE";
-        String COLOR = "COLOR";
-        String DOCUMENT = "DOCUMENT";
-    }
 }

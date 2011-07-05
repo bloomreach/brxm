@@ -13,19 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.channel;
+package org.hippoecm.hst.configuration.components;
 
-public enum HstPropertyType {
+public enum HstValueType {
 
     STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), DATE();
 
     private final Object defaultValue;
 
-    private HstPropertyType() {
+    private HstValueType() {
         this(null);
     }
 
-    private HstPropertyType(Object value) {
+    private HstValueType(Object value) {
         defaultValue = value;
     }
 

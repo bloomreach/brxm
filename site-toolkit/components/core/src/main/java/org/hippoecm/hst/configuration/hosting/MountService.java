@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
@@ -181,7 +182,8 @@ public class MountService implements Mount {
     private boolean sessionStateful;
     
     private String formLoginPage;
-     
+    private Object channelInfo;
+
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
@@ -457,7 +459,15 @@ public class MountService implements Mount {
                 }
             }
         }
-        
+
+        if (getChannelId() != null) {
+            try {
+                channelInfo = hstManager.getChannelManager().getChannelInfo(getChannelId());
+            } catch (ChannelException e) {
+                log.error("Could not set channel info", e);
+            }
+        }
+
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
@@ -482,12 +492,6 @@ public class MountService implements Mount {
     @Override
     public String getChannelId() {
         return channelId;
-    }
-
-    @Override
-    public Map<String, Object> getChannelProperties() {
-        // TODO: implement
-        throw new RuntimeException("Not yet implemented");
     }
 
     public String getAlias() {
@@ -686,7 +690,7 @@ public class MountService implements Mount {
             throw new IllegalStateException("Property value(s) for " + name + " should be type of String, Boolean, Long, Double or Calendar. " + o);
         }
     }
-    
+
     public Map<String, String> getMountProperties() {
         Map<String, String> mountProperties = new HashMap<String, String>();
         for(Entry<String, Object> entry : allProperties.entrySet()) {
@@ -703,5 +707,7 @@ public class MountService implements Mount {
         return mountProperties;
     }
 
-
+    public <T> T getChannelInfo() {
+        return (T) channelInfo;
+    }
 }

@@ -158,6 +158,18 @@
 - hst:redirect (string)
 
 
+[hst:channelinfo]
+- * (string)
+- * (string) multiple
+- * (boolean)
+- * (boolean) multiple
+- * (long)
+- * (long) multiple
+- * (double)
+- * (double) multiple
+- * (date)
+- * (date) multiple
+
 [hst:mount] > nt:base, mix:referenceable
 + * (hst:mount)
 // the path to the (sub)site. for example /preview/myproject
@@ -203,7 +215,7 @@
 // blueprint for the channel
 - hst:blueprintid (string)
 // properties of the channel
-+ hst:channelproperties (nt:base)
++ hst:channelinfo (hst:channelinfo)
 // to hold all the 'free defined properties'
 - * (string)
 
@@ -248,10 +260,10 @@
 //"User-friendly" Name of the Blueprint that is used in Channel Manager
 - hst:name (string)
 - hst:description (string)
-- hst:pluginclass (string)
+- hst:channelinfoclass (string)
 // prototype for the channel properties.
-// Used for default values and "type" construction
-+ hst:channelproperties (nt:base)
+// Used for default values
++ hst:defaultchannelinfo (hst:channelinfo)
 + hst:configuration (hst:configuration)
 + hst:site (hst:site)
 + hst:mount (hst:mount)

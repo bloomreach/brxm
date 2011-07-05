@@ -63,4 +63,14 @@ public interface ChannelManager {
      * @return
      */
     Blueprint getBlueprint(String id) throws ChannelException;
+
+    /**
+     * The channel info for this channel.  It is an instance of the {@link Blueprint#getChannelInfoClass()} class.
+     *
+     * @param channelId
+     * @param <T>
+     * @return
+     * @throws ChannelException
+     */
+    <T> T getChannelInfo(String channelId) throws ChannelException;
 }

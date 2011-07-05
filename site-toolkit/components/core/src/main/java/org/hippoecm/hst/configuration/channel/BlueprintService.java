@@ -15,24 +15,27 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BlueprintService implements Blueprint {
 
+    final static Logger log = LoggerFactory.getLogger(BlueprintService.class);
+
     private final String id;
-    private final String cmsPluginClass;
     private final String name;
     private final String description;
     private final String path;
-    private final List<HstPropertyDefinition> properties;
+    private final Map<HstPropertyDefinition, Object> defaultValues;
+    private final Class<?> channelInfoClass;
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -51,24 +54,21 @@ public class BlueprintService implements Blueprint {
             this.description = null;
         }
 
-        if (bluePrint.hasProperty("hst:pluginclass")) {
-            cmsPluginClass = bluePrint.getProperty("hst:pluginClass").getString();
-        } else {
-            cmsPluginClass = null;
-        }
-
-        if (bluePrint.hasNode("hst:channelproperties")) {
-            properties = new ArrayList<HstPropertyDefinition>();
-            Node channelProps = bluePrint.getNode("hst:channelproperties");
-            for (PropertyIterator propIter = channelProps.getProperties(); propIter.hasNext();) {
-                Property prop = propIter.nextProperty();
-                if (prop.getDefinition().isProtected()) {
-                    continue;
-                }
-                properties.add(new HstPropertyDefinitionService(prop, true));
+        Class clazz = null;
+        if (bluePrint.hasProperty("hst:channelinfoclass")) {
+            String className = bluePrint.getProperty("hst:channelinfoclass").getString();
+            try {
+                clazz = getClass().getClassLoader().loadClass(className);
+            } catch (ClassNotFoundException e) {
+                log.error("Could not load ", e);
             }
+        }
+        channelInfoClass = clazz;
+
+        if (bluePrint.hasNode("hst:defaultchannelinfo")) {
+            defaultValues = ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), getPropertyDefinitions());
         } else {
-            properties = null;
+            defaultValues = Collections.emptyMap();
         }
     }
 
@@ -88,13 +88,16 @@ public class BlueprintService implements Blueprint {
     }
 
     @Override
-    public String getCmsPluginClass() {
-        return cmsPluginClass;
+    public Class<?> getChannelInfoClass() {
+        return channelInfoClass;
     }
 
-    @Override
     public List<HstPropertyDefinition> getPropertyDefinitions() {
-        return properties != null ? Collections.unmodifiableList(properties) : null;
+        Class<?> channelInfoClass = getChannelInfoClass();
+        if (channelInfoClass != null) {
+            return ChannelInfoClassProcessor.getProperties(channelInfoClass);
+        }
+        return Collections.emptyList();
     }
 
     public Node getNode(final Session session) throws RepositoryException {

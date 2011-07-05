@@ -21,17 +21,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-public final class HstPropertyDefinitionService implements HstPropertyDefinition {
+import org.hippoecm.hst.configuration.components.HstValueType;
 
-    private final HstPropertyType type;
-    private final String name;
-    private final boolean multiValued;
-    private final Object defaultValue;
+public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinition {
 
-    public HstPropertyDefinitionService(Property prop, boolean isPrototype) throws RepositoryException {
+    public JcrHstPropertyDefinition(Property prop, boolean isPrototype) throws RepositoryException {
+        super(prop.getName());
         PropertyDefinition pd = prop.getDefinition();
-
-        name = prop.getName();
 
         type = getHstType(prop.getType());
         multiValued = pd.isMultiple();
@@ -52,47 +48,21 @@ public final class HstPropertyDefinitionService implements HstPropertyDefinition
         }
     }
 
-    private static HstPropertyType getHstType(int jcrType) throws RepositoryException {
+    private static HstValueType getHstType(int jcrType) throws RepositoryException {
         switch (jcrType) {
             case PropertyType.STRING:
-                return HstPropertyType.STRING;
+                return HstValueType.STRING;
             case PropertyType.BOOLEAN:
-                return HstPropertyType.BOOLEAN;
+                return HstValueType.BOOLEAN;
             case PropertyType.DATE:
-                return HstPropertyType.DATE;
+                return HstValueType.DATE;
             case PropertyType.LONG:
-                return HstPropertyType.INTEGER;
+                return HstValueType.INTEGER;
             case PropertyType.DOUBLE:
-                return HstPropertyType.DOUBLE;
+                return HstValueType.DOUBLE;
             default:
                 throw new RepositoryException();
         }
-    }
-
-    @Override
-    public HstPropertyType getType() {
-        return type;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public boolean isMultiValued() {
-        return multiValued;
-    }
-
-    @Override
-    public boolean isValid(final Object value) {
-        // FIXME: use validators
-        return true;
     }
 
 }

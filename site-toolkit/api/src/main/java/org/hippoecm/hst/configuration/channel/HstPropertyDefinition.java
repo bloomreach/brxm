@@ -16,19 +16,28 @@
 
 package org.hippoecm.hst.configuration.channel;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
+import org.hippoecm.hst.configuration.components.HstValueType;
+
 /**
  * Definition of a Channel Property.
  */
 public interface HstPropertyDefinition {
 
-    HstPropertyType getType();
+    HstValueType getValueType();
 
     String getName();
 
     Object getDefaultValue();
 
+    public boolean isRequired();
+
     boolean isMultiValued();
 
     boolean isValid(Object value);
+
+    List<Annotation> getAnnotations();
 
 }

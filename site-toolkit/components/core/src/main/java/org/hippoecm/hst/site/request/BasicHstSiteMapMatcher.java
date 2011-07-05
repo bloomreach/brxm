@@ -50,7 +50,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
      
     private HstLinkProcessor linkProcessor;
     
-    public void setlinkProcessor(HstLinkProcessor linkProcessor) {
+    public void setLinkProcessor(HstLinkProcessor linkProcessor) {
         this.linkProcessor = linkProcessor;
     }
 

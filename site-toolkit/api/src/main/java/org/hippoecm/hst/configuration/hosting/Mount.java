@@ -406,5 +406,12 @@ public interface Mount {
      */
     String getChannelId();
 
-    Map<String, Object> getChannelProperties();
+    /**
+     * The channel properties for this mount.  The actual type of the info is set on the blueprint
+     * for the channel of the Mount ({@see Blueprint#getChannelInfoClass()}).
+     *
+     * @param <T> Type of the channel info.  Only checked at runtime on assignment.
+     * @return A channel properties instance.
+     */
+    <T> T getChannelInfo();
 }

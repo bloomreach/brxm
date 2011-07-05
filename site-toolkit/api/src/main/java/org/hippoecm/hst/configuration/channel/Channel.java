@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.Parameter;
+
 public class Channel implements Serializable {
 
     public final static String UNKNOWN_BLUEPRINT = "<unknown-blueprint>";
@@ -32,7 +34,7 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
-    private final Map<String, Object> properties = new HashMap<String, Object>();
+    private final Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -44,7 +46,7 @@ public class Channel implements Serializable {
     }
 
     /**
-     * The Blue Print ID for this channel, or {@value UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
+     * The Blue Print ID for this channel, or {@value #UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
      * @return Blue Print ID
      */
     public String getBlueprintId() {
@@ -111,7 +113,7 @@ public class Channel implements Serializable {
         this.composerModeEnabled = composerModeEnabled;
     }
 
-    public Map<String, Object> getProperties() {
+    public Map<HstPropertyDefinition, Object> getProperties() {
         return properties;
     }
 

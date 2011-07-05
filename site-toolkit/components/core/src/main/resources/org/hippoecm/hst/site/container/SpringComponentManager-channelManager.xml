@@ -30,7 +30,6 @@
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
     <property name="hostGroup" value="${channel.manager.hostGroup}"/>
     <property name="sites" value="${channel.manager.sites}"/>
-    <!--<property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        -->
   </bean>
 
 </beans>

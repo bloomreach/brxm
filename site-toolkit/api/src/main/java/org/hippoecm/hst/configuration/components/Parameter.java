@@ -63,24 +63,36 @@ public @interface Parameter {
     /**
      * a String used to provide optional YUI tools with a hint about the type the parameter value should be of. For example 'COLOR', 'DATE', 'DOCUMENT'.
      * Note that this is a typeHint for for example the template composer. Thus it does influence the actual return type of the getter method that 
-     * is used for the Parameter annotation. 
+     * is used for the Parameter annotation.
+     * @deprecated use the method return type for the storage type, add additional annotations
+     *             like {@link DocumentLink} or {@link Color} for more detailed information
      */
+    @Deprecated
     String typeHint() default "";
 
     /**
      * Specifies the node type of the document to be searched for.
      * @return the document type String
+     *
+     * @deprecated see {@link DocumentLink}
      */
+    @Deprecated
     String docType() default ""; //Document type is only used when a DOCUMENT type is used.
 
     /**
      * @return  specifies whether to show a link to create a new document of the type as specified by the docType
+     *
+     * @deprecated see {@link DocumentLink}
      */
+    @Deprecated
     boolean allowCreation() default false;
 
     /**
      * @return the relative path of the folder where the document is created
+     *
+     * @deprecated see {@link DocumentLink}
      */
+    @Deprecated
     String docLocation() default "";
     
 }

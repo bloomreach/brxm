@@ -29,13 +29,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.hippoecm.hst.configuration.components.HstValueType;
+
 public class ChannelPropertyMapper {
 
     private ChannelPropertyMapper() {
     }
 
-    public static Map<String, Object> getProperties(Node mountNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
-        Map<String, Object> properties = new HashMap<String, Object>();
+    public static Map<HstPropertyDefinition, Object> loadProperties(Node mountNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
+        Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition pd : propertyDefinitions) {
                 Property property = mountNode.getProperty(pd.getName());
@@ -43,7 +45,7 @@ public class ChannelPropertyMapper {
                     throw new RepositoryException();
                 }
                 Object value = getHstValueFromJcr(pd, property);
-                properties.put(pd.getName(), value);
+                properties.put(pd, value);
             }
         } else {
             for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
@@ -51,14 +53,14 @@ public class ChannelPropertyMapper {
                 if (prop.getDefinition().isProtected()) {
                     continue;
                 }
-                HstPropertyDefinition hpd = new HstPropertyDefinitionService(prop, false);
-                properties.put(prop.getName(), getHstValueFromJcr(hpd, prop));
+                HstPropertyDefinition hpd = new JcrHstPropertyDefinition(prop, false);
+                properties.put(hpd, getHstValueFromJcr(hpd, prop));
             }
         }
         return properties;
     }
 
-    public static void saveProperties(Node mountNode, Map<String, Object> properties) throws RepositoryException {
+    public static void saveProperties(Node mountNode, Map<HstPropertyDefinition, Object> properties) throws RepositoryException {
         for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
             Property prop = propertyIterator.nextProperty();
             if (prop.getDefinition().isProtected()) {
@@ -66,8 +68,8 @@ public class ChannelPropertyMapper {
             }
             prop.remove();
         }
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            setHstValueToJcr(mountNode, entry.getKey(), entry.getValue());
+        for (Map.Entry<HstPropertyDefinition, Object> entry : properties.entrySet()) {
+            setHstValueToJcr(mountNode, entry.getKey().getName(), entry.getValue());
         }
     }
 
@@ -76,15 +78,15 @@ public class ChannelPropertyMapper {
         if (property.isMultiple()) {
             List values = (List) (value = new LinkedList());
             for (Value jcrValue : property.getValues()) {
-                values.add(jcrToJava(jcrValue, pd.getType()));
+                values.add(jcrToJava(jcrValue, pd.getValueType()));
             }
         } else {
-            value = jcrToJava(property.getValue(), pd.getType());
+            value = jcrToJava(property.getValue(), pd.getValueType());
         }
         return value;
     }
 
-    public static Object jcrToJava(final Value value, final HstPropertyType type) throws RepositoryException {
+    public static Object jcrToJava(final Value value, final HstValueType type) throws RepositoryException {
         if (type == null) {
             switch (value.getType()) {
                 case PropertyType.STRING:

@@ -33,6 +33,8 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
@@ -109,6 +111,7 @@ public class HstManagerImpl implements HstManager {
     private Set<String> loadOrReloadHstConfigurationSet= Collections.synchronizedSet(new HashSet<String>());
     private Set<String> loadOrReloadHstHostSet = Collections.synchronizedSet(new HashSet<String>());
     private Set<String> loadOrReloadHstSiteSet = Collections.synchronizedSet(new HashSet<String>());
+    private ChannelManager channelManager;
 
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
@@ -456,5 +459,12 @@ public class HstManagerImpl implements HstManager {
         this.pathSuffixDelimiter = pathSuffixDelimiter;
     }
 
-    
+
+    public void setChannelManager(ChannelManager channelManager) {
+        this.channelManager = channelManager;
+    }
+
+    public ChannelManager getChannelManager() {
+        return channelManager;
+    }
 }
