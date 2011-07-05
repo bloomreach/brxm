@@ -124,6 +124,7 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_CHANNELID =  "hst:channelid";
     public final static String MOUNT_PROPERTY_BLUEPRINTID =  "hst:blueprintid";
     public final static String MOUNT_PROPERTY_CHANNELPROPERTIES =  "hst:channelproperties";
+    public final static String MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS =  "hst:defaultsitemapitemhandlerids";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     

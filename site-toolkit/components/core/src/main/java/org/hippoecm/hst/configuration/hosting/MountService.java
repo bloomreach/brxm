@@ -183,6 +183,8 @@ public class MountService implements Mount {
     
     private String formLoginPage;
     private Object channelInfo;
+    
+    private String[] defaultSiteMapItemHandlerIds;
 
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -468,6 +470,10 @@ public class MountService implements Mount {
             }
         }
 
+        defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
+        if(defaultSiteMapItemHandlerIds == null && parent != null) {
+            defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
+        }
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
@@ -647,50 +653,13 @@ public class MountService implements Mount {
         }
         return null;
     }
-    
-    public Object getPropertyAsObject(String name) {
-        Object o = allProperties.get(name);
-        
-        if (o == null) {
-            return null;
-        }
-        
-        Class<?> type = o.getClass();
-        
-        if (!type.isArray()) {
-            return o;
-        }
-        
-        if (type == String[].class) {
-            String [] source = (String []) o;
-            String [] cloned = new String[source.length];
-            System.arraycopy(source, 0, cloned, 0, source.length);
-            return cloned;
-        } else if (type == Boolean[].class) {
-            Boolean [] source = (Boolean []) o;
-            Boolean [] cloned = new Boolean[source.length];
-            System.arraycopy(source, 0, cloned, 0, source.length);
-            return cloned;
-        } else if (type == Long[].class) {
-            Long [] source = (Long []) o;
-            Long [] cloned = new Long[source.length];
-            System.arraycopy(source, 0, cloned, 0, source.length);
-            return cloned;
-        } else if (type == Double[].class) {
-            Double [] source = (Double []) o;
-            Double [] cloned = new Double[source.length];
-            System.arraycopy(source, 0, cloned, 0, source.length);
-            return cloned;
-        } else if (type == Calendar[].class) {
-            Calendar [] source = (Calendar []) o;
-            Calendar [] cloned = new Calendar[source.length];
-            System.arraycopy(source, 0, cloned, 0, source.length);
-            return cloned;
-        } else {
-            throw new IllegalStateException("Property value(s) for " + name + " should be type of String, Boolean, Long, Double or Calendar. " + o);
-        }
-    }
 
+
+    @Override
+    public String[] getDefaultSiteMapItemHandlerIds() {
+        return defaultSiteMapItemHandlerIds;
+    }
+    
     public Map<String, String> getMountProperties() {
         Map<String, String> mountProperties = new HashMap<String, String>();
         for(Entry<String, Object> entry : allProperties.entrySet()) {
@@ -710,4 +679,6 @@ public class MountService implements Mount {
     public <T> T getChannelInfo() {
         return (T) channelInfo;
     }
+
+
 }

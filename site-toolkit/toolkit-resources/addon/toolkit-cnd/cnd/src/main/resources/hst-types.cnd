@@ -186,7 +186,8 @@
 - hst:scheme (string)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
-- hst:sitemapitemhandlerids (string) multiple
+// the hst:defaultsitemapitemhandlerids that all sitemap items get that do not define their own hst:sitemapitemhandlerids
+- hst:defaultsitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)

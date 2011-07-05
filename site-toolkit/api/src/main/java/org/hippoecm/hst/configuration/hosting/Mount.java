@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -377,14 +378,6 @@ public interface Mount {
     String getProperty(String name);
     
     /**
-     * Returns an immutable object value of the property or <code>null</code> when the property is not present.
-     * The object value can be either single value or array of values of type Boolean, Calendar, Double, Long or String.
-     * @param name the name of the property
-     * @return the object value of the property or <code>null</code> when the property is not present
-     */
-    Object getPropertyAsObject(String name);
-    
-    /**
      * <p>
      * Returns all the properties that start with {@value #PROPERTY_NAME_MOUNT_PREFIX} and have value of type {@link String}. This map has as key the 
      * propertyname after {@value #PROPERTY_NAME_MOUNT_PREFIX}.
@@ -414,4 +407,9 @@ public interface Mount {
      * @return A channel properties instance.
      */
     <T> T getChannelInfo();
+
+    /**
+     * @return the String[] of defaultSiteMapItemHandlerIds which all {@link HstSiteMapItem}'s get or <code>null</code> if non configured
+     */
+    String[] getDefaultSiteMapItemHandlerIds();
 }

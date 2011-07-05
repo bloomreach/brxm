@@ -235,10 +235,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
             Mount mount = hstSiteMap.getSite().getMount();
-            do {
-                siteMapItemHandlerIds = (String []) mount.getPropertyAsObject(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
-                mount = mount.getParent();
-            } while (ArrayUtils.isEmpty(siteMapItemHandlerIds) && mount != null);
+            siteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
         }
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
             for(String handlerId : siteMapItemHandlerIds) {
