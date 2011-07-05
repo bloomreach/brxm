@@ -32,6 +32,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -262,6 +263,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     @Override
     public synchronized void save(final Channel channel) throws ChannelException {
+        load();
         Session session = null;
         try {
             session = getSession(true);
@@ -391,8 +393,6 @@ public class ChannelManagerImpl implements ChannelManager {
                     log.warn("Specified content root '" + contentRootPath + "' does not exist");
                     contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
                 }
-            } else {
-                contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
             }
         } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
@@ -447,6 +447,9 @@ public class ChannelManagerImpl implements ChannelManager {
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
         Node clone = parent.addNode(name, source.getPrimaryNodeType().getName());
+        for (NodeType mixin : source.getMixinNodeTypes()) {
+            clone.addMixin(mixin.getName());
+        }
         for (PropertyIterator pi = source.getProperties(); pi.hasNext(); ) {
             Property prop = pi.nextProperty();
             if (prop.getDefinition().isProtected()) {
@@ -467,6 +470,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 try {
                     Node canonicalNode = hn.getCanonicalNode();
                     if (canonicalNode == null) {
+                        continue;
+                    }
+                    if (!canonicalNode.isSame(hn)) {
                         continue;
                     }
                 } catch (ItemNotFoundException infe) {
