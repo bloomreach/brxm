@@ -38,7 +38,6 @@ import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ParametersInfo(type = TodoListParametersInfo.class)
 public class TodoList extends BaseHstComponent {
 
     private static final Logger log = LoggerFactory.getLogger(Home.class);
