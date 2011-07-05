@@ -646,27 +646,32 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     return true;
                 }
                 NodeState parentState = (NodeState) get(state.getParentId());
-                if (parentState != null) {
+                if (parentState != null && parentState.getStatus() != ItemState.STATUS_NEW) {
                     try {
                         NodeState sharedParentState = (NodeState) sharedStateMgr.getItemState(parentState.getId());
                         ChildNodeEntry sharedEntry = sharedParentState.getChildNodeEntry((NodeId) state.getId());
                         if (sharedEntry == null) {
+                            log.warn("Parent of external node " + state.getId() + " no longer has a child node entry for it");
                             return false;
                         }
                         ChildNodeEntry stateEntry = parentState.getChildNodeEntry((NodeId) state.getId());
                         if (!stateEntry.getName().equals(sharedEntry.getName())) {
                             return true;
                         }
-                    } catch (NoSuchItemStateException nsise) {
-                        // parent should
+                    } catch (NoSuchItemStateException e) {
+                        // parent no longer exists
+                        log.warn("Parent state for external node " + state.getId() + " no longer exists", e);
                         return false;
                     } catch (ItemStateException e) {
+                        log.error("Error retrieving parent state", e);
                         return false;
                     }
                 }
-            } catch (NoSuchItemStateException nsise) {
+            } catch (NoSuchItemStateException e) {
+                log.warn("State was modified, but could not be found in shared; " + state.getId(), e);
                 return true;
             } catch (ItemStateException e) {
+                log.error("Could not retrieve state for external node " + state.getId(), e);
                 return false;
             }
             return false;
