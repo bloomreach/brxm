@@ -35,28 +35,24 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
+
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.WorkspaceImpl;
-import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
-import org.apache.jackrabbit.core.session.SessionContext;
-import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-
-import org.apache.jackrabbit.core.HierarchyManager;
-import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
+import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     @SuppressWarnings("unused")
@@ -209,7 +205,6 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
             if (context.getSessionState().isAlive()) {
                 log.info("Unclosed session detected.");
                 logout();
-                context.getSessionState().close();
             }
         }
     }
