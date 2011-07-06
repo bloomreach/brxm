@@ -58,6 +58,7 @@ public class RootPanel extends ExtPanel {
 
         List<ExtField> blueprintFieldList = new ArrayList<ExtField>();
         blueprintFieldList.add(new ExtField("name"));
+        blueprintFieldList.add(new ExtField("description"));
         this.blueprintStore = new BlueprintStore(blueprintFieldList);
         add(this.blueprintStore);
     }
