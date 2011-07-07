@@ -88,6 +88,15 @@
   </p>
 </div>
 
+<c:choose>
+  <c:when test="${isPreview}">
+    <a href="<hst:link hippobean="${document}" mountType="live"/>">View in Live</a>
+  </c:when>
+  <c:otherwise>
+    <a href="<hst:link hippobean="${document}" mountType="preview"/>">Edit in Preview</a>
+  </c:otherwise>
+</c:choose>
+
 <script language="javascript"> 
  
 YUI().use('io-upload-iframe', 'json', 'node',

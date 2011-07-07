@@ -43,6 +43,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 /**
  * Abstract supporting class for Hst Link tags
@@ -88,6 +89,11 @@ public class HstLinkTag extends ParamContainerTag {
      * The alias of the mount the link is meant for
      */
     protected String mountAlias;
+    
+    /**
+     * The type of the mount the link is meant for
+     */
+    protected String mountType;
     
     protected boolean skipTag; 
 
@@ -177,18 +183,30 @@ public class HstLinkTag extends ParamContainerTag {
            return EVAL_PAGE;
        } 
        
-       if( (preferSiteMapItem != null || navigationStateful) && mountAlias != null) {
+       boolean mountAliasOrTypeSet = (mountAlias != null || mountType != null);
+       
+       if( (preferSiteMapItem != null || navigationStateful) && mountAliasOrTypeSet) {
            log.error("It is not allowed in a hst:link tag to configure a mount in combination with 'navigationStateful == true' or a hst:sitemapitem in the hst:link.");
            throw new JspException("It is not allowed in a hst:link tag to configure a mount in combination with 'navigationStateful == true' or a hst:sitemapitem in the hst:link.");
        }
        
        Mount mount = null;
-       if(mountAlias != null) {
-          mount = reqContext.getMount(mountAlias);
-          if(mount == null) {
-              log.warn("Cannot resolve mount with alias '{}' for current request. Cannot create a link for '{}'. Return page not found Link for current Mount", mountAlias, path);
-              this.link = reqContext.getHstLinkCreator().create(reqContext.getResolvedMount().getMount().getPageNotFound(), reqContext.getResolvedMount().getMount());
-          }
+       if(mountAliasOrTypeSet) {
+           if (mountAlias != null && mountType != null) {
+               mount = reqContext.getMount(mountAlias, mountType);
+           } else if (mountAlias != null && mountType == null) {
+               mount = reqContext.getMount(mountAlias);
+           } else if (mountAlias == null && mountType != null) {
+               mount = reqContext.getMount(reqContext.getResolvedMount().getMount().getAlias(), mountType);
+           }
+           if(mount == null) {
+               if (log.isWarnEnabled()) {
+                   String logMsg = MessageFormatter.arrayFormat("Cannot resolve mount with alias '{}' (type '{}') for current request. Cannot create a link for '{}'. Return page not found Link for current Mount", 
+                           new Object [] { mountAlias, mountType, path });
+                   log.warn(logMsg);
+               }
+               this.link = reqContext.getHstLinkCreator().create(reqContext.getResolvedMount().getMount().getPageNotFound(), reqContext.getResolvedMount().getMount());
+           }
        } else {
            mount = reqContext.getResolvedMount().getMount();
        }
@@ -198,7 +216,7 @@ public class HstLinkTag extends ParamContainerTag {
                 log.warn("Cannot get a link for a detached node");
                 return EVAL_PAGE;
             }
-            if(mountAlias != null) {
+            if(mountAliasOrTypeSet) {
                 this.link = reqContext.getHstLinkCreator().create(hippoBean.getNode(), mount);
             }
             else if(canonical) {
@@ -342,6 +360,7 @@ public class HstLinkTag extends ParamContainerTag {
         canonical = false;
         navigationStateful = false;
         mountAlias = null;
+        mountType = null;
     }
     
     /* (non-Javadoc)
@@ -433,6 +452,14 @@ public class HstLinkTag extends ParamContainerTag {
         return mountAlias;
     }
     
+    public String getMountType() {
+        return mountType;
+    }
+
+    public void setMountType(String mountType) {
+        this.mountType = mountType;
+    }
+
     /**
      * Sets the var property.
      * @param var The var to set
