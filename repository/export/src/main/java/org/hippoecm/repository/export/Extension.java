@@ -197,8 +197,15 @@ final class Extension {
         String root = contextNode.substring(0, lastIndexOfPathSeparator);
         if (root.equals(""))
             root = "/";
-
-        return new ContentResourceInstruction(name, 30000.3, file.getParentFile(), fileForPath, root, contextNode, true, this);
+        
+        double sequence = 30000.3;
+        // find the parent content resource instruction to determine the sequence number
+        ContentResourceInstruction parent = findContentResourceInstruction(root, true);
+        if (parent != null) {
+            sequence = parent.sequence + 1;
+        }
+        
+        return new ContentResourceInstruction(name, sequence, file.getParentFile(), fileForPath, root, contextNode, true, this);
     }
 
     private NodetypesResourceInstruction createNodetypesResourceInstruction(String path) {
