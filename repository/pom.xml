@@ -24,7 +24,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>2.20.02-SNAPSHOT</version>
+  <version>2.21.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <repositories>
