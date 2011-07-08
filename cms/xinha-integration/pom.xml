@@ -139,6 +139,7 @@
           <include>**/*.js</include>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.gif</include>
           <include>**/*.png</include>
           <include>**/*.properties</include>
         </includes>
