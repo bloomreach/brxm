@@ -18,10 +18,11 @@ Ext.namespace('Hippo.ChannelManager');
 
 /**
  * @class Hippo.ChannelManager.PropertiesPanel
- * @extends Ext.grid.GridPanel
+ * @extends Ext.Panel
  */
 Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
     constructor: function(config) {
+        var me = this;
 
         Ext.apply(config, {
             id: 'channel-properties-panel',
@@ -34,7 +35,12 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             hideCollapseTool: true,
             disabled: true,
             title: ' ',
-            split: true
+            split: true,
+            tbar: [{
+                text: "Save",
+                handler: me.saveChannel,
+                scope: me
+            }]
         });
 
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
@@ -46,11 +52,16 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         if (title) {
             this.setTitle(title);
         }
+        this.fireEvent('selectchannel', title);
     },
 
     hidePanel: function() {
         this.disable();
         this.collapse();
+    },
+
+    saveChannel: function() {
+        this.fireEvent('save');
     },
 
     isShown: function() {

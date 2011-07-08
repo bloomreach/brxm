@@ -16,15 +16,19 @@
 
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <div yui:id="template-composer-plugin-wrapper" class="hippo-panel-plugin template-composer-perspective">
-        <div yui:id="template-composer-perspective-top">
-            <div yui:id="template-composer-perspective-top-body"></div>
-        </div>
-        <div yui:id="template-composer-perspective-center">
-            <div yui:id="template-composer-perspective-center-body">
-                <div wicket:id="channel-root"></div>
-            </div>
-        </div>
+  <div yui:id="template-composer-plugin-wrapper" class="hippo-panel-plugin template-composer-perspective">
+    <div yui:id="template-composer-perspective-top">
+      <div yui:id="template-composer-perspective-top-body"></div>
     </div>
+    <div yui:id="template-composer-perspective-center">
+      <div yui:id="template-composer-perspective-center-body">
+        <div wicket:id="channel-root">
+          <ul wicket:id="container">
+            <li wicket:id="properties"><span wicket:id="key">key</span>: <span wicket:id="value">value</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </wicket:panel>
 </html>

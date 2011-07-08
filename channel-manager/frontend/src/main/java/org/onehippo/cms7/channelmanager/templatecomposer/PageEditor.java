@@ -21,14 +21,11 @@ import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -57,27 +54,9 @@ public class PageEditor extends ExtComponent {
         this.composerMountUrl = config.getString("composerMountUrl", "/site/manager");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
+        this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
-
-        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
-            this.debug = true;
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME));
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME_MSG));
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.BASE_GRID));
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.COLOR_FIELD));
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.JSONP));
-
-            add(JavascriptPackageResource.getHeaderContribution(PageEditor.class, "globals.js"));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PAGE_MODEL));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR));
-         } else {
-            this.debug = false;
-            add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.ALL));
-            add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ALL));
-        }
     }
 
     @Override
@@ -97,7 +76,7 @@ public class PageEditor extends ExtComponent {
         properties.put("iFrameCssHeadContributions", Arrays.asList(
             rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/PageEditor.css")).toString())
         );
-        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+        if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),

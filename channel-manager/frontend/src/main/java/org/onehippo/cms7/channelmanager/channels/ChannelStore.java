@@ -16,6 +16,15 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Credentials;
+import javax.security.auth.Subject;
+
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -30,14 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
-
-import javax.jcr.Credentials;
-import javax.security.auth.Subject;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Channel JSON Store.

@@ -16,7 +16,10 @@
 
 package org.onehippo.cms7.channelmanager;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -25,7 +28,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
+import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +54,23 @@ public class ChannelManagerPerspective extends Perspective {
 
         RootPanel rootPanel = new RootPanel("channel-root");
         add(rootPanel);
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+            IRenderService renderService = this;
+            while (renderService.getParentService() != null) {
+                renderService = renderService.getParentService();
+            }
+            Page page = renderService.getComponent().getPage();
+            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.RootPanel.js"));
+            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.BlueprintListPanel.js"));
+            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.ChannelFormPanel.js"));
+            page.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesPanel.class, "Hippo.ChannelManager.ChannelPropertiesPanel.js"));
+            page.add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class, "Hippo.ChannelManager.ChannelGridPanel.js"));
+        }
     }
 
     @Override
