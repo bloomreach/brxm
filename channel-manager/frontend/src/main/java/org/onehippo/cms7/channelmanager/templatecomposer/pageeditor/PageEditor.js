@@ -278,7 +278,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         }
 
         if (!this.mainWindow) {
-            var win = this.mainWindow = this.createMainWindow();
+            var win = this.mainWindow = this.createMainWindow(mountId);
             win.show();
         } else {
             if (mountId != this.ids.mountId) {
@@ -382,8 +382,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         });
     },
 
-    createMainWindow : function() {
-
+    createMainWindow : function(mountId) {
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: 'Configuration',
             x:10, y: 35,
@@ -464,7 +463,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     xtype:'h_properties_panel',
                     region: 'center',
                     split: true,
-                    baseUrlPath: this.composerMountUrl
+                    baseUrlPath: this.composerMountUrl,
+                    mountId: mountId
                 }
             ]
         });
