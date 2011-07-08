@@ -145,6 +145,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 channels.put(id, channel);
             }
 
+            String url = getUrlFor(currNode);
+            channel.setUrl(url);
+
             if (currNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 Node propertiesNode = currNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
                 BlueprintService blueprint = blueprints.get(bluePrintId);
@@ -166,6 +169,32 @@ public class ChannelManagerImpl implements ChannelManager {
                 }
             }
         }
+    }
+
+    private String getUrlFor(final Node currNode) throws RepositoryException {
+        StringBuilder mountBuilder = new StringBuilder();
+        Node ancestor = currNode;
+        while (!ancestor.isNodeType("hst:virtualhostgroup")) {
+            if ("hst:root".equals(ancestor.getName())) {
+                ancestor = ancestor.getParent();
+                break;
+            }
+            mountBuilder.insert(0, ancestor.getName());
+            mountBuilder.insert(0, "/");
+            ancestor = ancestor.getParent();
+        }
+        boolean firstHost = true;
+        StringBuilder hostBuilder = new StringBuilder();
+        while (!ancestor.isNodeType("hst:virtualhostgroup")) {
+            if (firstHost) {
+                firstHost = false;
+            } else {
+                hostBuilder.append(".");
+            }
+            hostBuilder.append(ancestor.getName());
+            ancestor = ancestor.getParent();
+        }
+        return "http://" + hostBuilder.toString() + mountBuilder.toString();
     }
 
     private void load() throws ChannelException {
@@ -262,30 +291,21 @@ public class ChannelManagerImpl implements ChannelManager {
         load();
         Session session = null;
         try {
+            BlueprintService bps = blueprints.get(channel.getBlueprintId());
+            if (bps == null) {
+                throw new ChannelException("Invalid blueprint ID " + channel.getBlueprintId());
+            }
+
             session = getSession(true);
             Node configNode = session.getNode(rootPath);
             if (channels.containsKey(channel.getId())) {
-                channels.clear();
-                loadChannels(configNode);
 
-                if (channels.containsKey(channel.getId())) {
-                    Channel previous = channels.get(channel.getId());
-                    if (!previous.getBlueprintId().equals(channel.getBlueprintId())) {
-                        throw new ChannelException("Cannot change channel to new blue print");
-                    }
+                // verify none of the essential properties has changed
+                checkChannelUpdate(channels.get(channel.getId()), channel);
 
-                    // TODO: validate that mandatory properties (URL and such) have not changed
-                    // ChannelPropertyMapper.saveProperties(channelPropsNode, channel.loadProperties());
-                } else {
-                    throw new ChannelException("Channel was removed since it's retrieval");
-                }
+                updateChannel(configNode, bps, channel);
             } else {
-                BlueprintService bps = blueprints.get(channel.getBlueprintId());
-                if (bps == null) {
-                    throw new ChannelException("Invalid blueprint ID " + channel.getBlueprintId());
-                }
-
-                createChannelFromBlueprint(configNode, bps, session, channel);
+                createChannel(configNode, bps, session, channel);
             }
 
             channels = null;
@@ -335,7 +355,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     // private - internal - methods
 
-    private void createChannelFromBlueprint(Node configRoot, BlueprintService bps, Session session, final Channel channel) throws ChannelException, RepositoryException {
+    private void createChannel(Node configRoot, BlueprintService bps, Session session, final Channel channel) throws ChannelException, RepositoryException {
         Node blueprintNode = bps.getNode(session);
 
         String tmp = channel.getUrl();
@@ -460,26 +480,80 @@ public class ChannelManagerImpl implements ChannelManager {
         }
         for (NodeIterator ni = source.getNodes(); ni.hasNext(); ) {
             Node node = ni.nextNode();
-
-            // skip virtual nodes
-            if (node instanceof HippoNode) {
-                HippoNode hn = (HippoNode) node;
-                try {
-                    Node canonicalNode = hn.getCanonicalNode();
-                    if (canonicalNode == null) {
-                        continue;
-                    }
-                    if (!canonicalNode.isSame(hn)) {
-                        continue;
-                    }
-                } catch (ItemNotFoundException infe) {
-                    continue;
-                }
+            if (isVirtual(node)) {
+                continue;
             }
 
             copyNodes(node, clone, node.getName());
         }
         return clone;
+    }
+
+    private static boolean isVirtual(final Node node) throws RepositoryException {
+        // skip virtual nodes
+        if (node instanceof HippoNode) {
+            HippoNode hn = (HippoNode) node;
+            try {
+                Node canonicalNode = hn.getCanonicalNode();
+                if (canonicalNode == null) {
+                    return true;
+                }
+                if (!canonicalNode.isSame(hn)) {
+                    return true;
+                }
+            } catch (ItemNotFoundException infe) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void checkChannelUpdate(Channel reference, Channel update) throws ChannelException {
+        if (reference.getBlueprintId().equals(update.getBlueprintId())) {
+            return;
+        }
+        throw new ChannelException("Essential channel property has changed");
+    }
+
+    private void updateChannel(Node configRoot, BlueprintService bps, final Channel channel) throws ChannelException, RepositoryException {
+        Channel previous = channels.get(channel.getId());
+        if (!previous.getBlueprintId().equals(channel.getBlueprintId())) {
+            throw new ChannelException("Cannot change channel to new blue print");
+        }
+
+        String tmp = channel.getUrl();
+        if (!tmp.startsWith("http://")) {
+            throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
+        }
+        tmp = tmp.substring("http://".length());
+
+        String mountPath = "";
+        if (tmp.indexOf('/') >= 0) {
+            mountPath = tmp.substring(tmp.indexOf('/') + 1);
+        }
+
+        // resolve virtual host
+        Node mount = configRoot.getNode("hst:hosts/" + hostGroup);
+        String[] elements = tmp.substring(0, tmp.indexOf('/')).split("[.]");
+        for (int i = elements.length - 1; i >= 0; i--) {
+            mount = mount.getNode(elements[i]);
+        }
+
+        // resolve mount
+        mount = mount.getNode("hst:root");
+        String[] mountPathEls = mountPath.split("/");
+        for (int i = 0; i < mountPathEls.length; i++) {
+            mount = mount.getNode(mountPathEls[i]);
+        }
+
+        Node channelPropsNode;
+        if (!mount.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+            channelPropsNode = mount.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        } else {
+            channelPropsNode = mount.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+        }
+
+        ChannelPropertyMapper.saveProperties(channelPropsNode, bps.getPropertyDefinitions(), channel.getProperties());
     }
 
 }

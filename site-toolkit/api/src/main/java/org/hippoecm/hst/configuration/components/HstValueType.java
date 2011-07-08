@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Date;
+
 public enum HstValueType {
 
     STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), DATE();
@@ -33,4 +35,19 @@ public enum HstValueType {
         return defaultValue;
     }
 
+    public Object from(String string) {
+        switch (this) {
+            case STRING:
+                return string;
+            case BOOLEAN:
+                return Boolean.parseBoolean(string);
+            case INTEGER:
+                return Integer.parseInt(string);
+            case DOUBLE:
+                return Double.parseDouble(string);
+            case DATE:
+                return Date.parse(string);
+        }
+        throw new RuntimeException("Could not parse " + string + " to type " + this);
+    }
 };
