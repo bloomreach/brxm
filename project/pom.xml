@@ -942,6 +942,7 @@
                   <hippoecm.export.dir>${hippoecm.export.dir}</hippoecm.export.dir>
                 </systemProperties>
                 <zipUrlInstaller>
+                  <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
                   <url>http://apache.hippo.nl/tomcat/tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}.tar.gz</url>
                 </zipUrlInstaller>
                 <timeout>600000</timeout>
