@@ -43,6 +43,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
@@ -80,26 +81,32 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private Boolean isMultiple = Boolean.FALSE;
     private String type = PropertyType.TYPENAME_STRING;
     private MenuPlugin plugin;
+    private IModel<Map<String, PropertyDefinition>> choiceModel;
 
-    public PropertyDialog(MenuPlugin plugin) {
+    public PropertyDialog(final MenuPlugin plugin) {
         this.plugin = plugin;
 
         // list defined properties for automatic completion
-        final Map<String, PropertyDefinition> choices = new HashMap<String, PropertyDefinition>();
-        Node node = ((JcrNodeModel) plugin.getDefaultModel()).getNode();
-        try {
-            NodeType pnt = node.getPrimaryNodeType();
-            for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
-                choices.put(pd.getName(), pd);
-            }
-            for (NodeType nt : node.getMixinNodeTypes()) {
-                for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
-                    choices.put(pd.getName(), pd);
+        choiceModel = new LoadableDetachableModel<Map<String, PropertyDefinition>>() {
+            protected Map<String, PropertyDefinition> load() {
+                Map<String, PropertyDefinition> choices = new HashMap<String, PropertyDefinition>();
+                Node node = ((JcrNodeModel) plugin.getDefaultModel()).getNode();
+                try {
+                    NodeType pnt = node.getPrimaryNodeType();
+                    for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
+                        choices.put(pd.getName(), pd);
+                    }
+                    for (NodeType nt : node.getMixinNodeTypes()) {
+                        for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
+                            choices.put(pd.getName(), pd);
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Unable to populate autocomplete list for property names", e);
                 }
+                return choices;
             }
-        } catch (RepositoryException e) {
-            log.warn("Unable to populate autocomplete list for property names", e);
-        }
+        };
 
         // checkbox for property ismultiple
         final CheckBox checkBox = new CheckBox("isMultiple", new Model<Boolean>() {
@@ -113,7 +120,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             @Override
             public Boolean getObject() {
                 if (PropertyDialog.this.name != null) {
-                    PropertyDefinition pd = choices.get(PropertyDialog.this.name);
+                    PropertyDefinition pd = choiceModel.getObject().get(PropertyDialog.this.name);
                     if (pd != null) {
                         // somehow need to set isMultiple here, otherwise it doesn't get picked up...
                         PropertyDialog.this.isMultiple = pd.isMultiple();
@@ -139,7 +146,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             @Override
             public List<? extends String> getObject() {
                 if (PropertyDialog.this.name != null) {
-                    PropertyDefinition pd = choices.get(PropertyDialog.this.name);
+                    PropertyDefinition pd = choiceModel.getObject().get(PropertyDialog.this.name);
                     if (pd != null) {
                         List<String> result = new ArrayList<String>(1);
                         result.add(PropertyType.nameFromValue(pd.getRequiredType()));
@@ -174,7 +181,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     return Collections.EMPTY_LIST.iterator();
                 }
                 List<String> result = new ArrayList<String>();
-                for (String propName : choices.keySet()) {
+                for (String propName : choiceModel.getObject().keySet()) {
                     if (propName.startsWith(input)) {
                         result.add(propName);
                     }
@@ -279,6 +286,12 @@ public class PropertyDialog extends AbstractDialog<Node> {
     @Override
     public IValueMap getProperties() {
         return SMALL;
+    }
+
+    @Override
+    protected void onDetach() {
+        choiceModel.detach();
+        super.onDetach();
     }
 
 }
