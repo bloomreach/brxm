@@ -69,6 +69,12 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="folder" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -80,6 +86,12 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -95,6 +107,12 @@
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.ExtendedFolderWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="directory" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -106,6 +124,12 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hipposys:config" h:merge="combine">
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippotranslation:id</sv:value>
+        <sv:value>$uuid</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
