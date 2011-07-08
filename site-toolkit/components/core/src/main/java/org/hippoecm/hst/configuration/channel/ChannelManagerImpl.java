@@ -145,15 +145,11 @@ public class ChannelManagerImpl implements ChannelManager {
                 channels.put(id, channel);
             }
 
-            if (currNode.hasNode("hst:channelinfo")) {
-                Node propertiesNode = currNode.getNode("hst:channelinfo");
-                List<HstPropertyDefinition> propertyDefinitions = null;
-                Class<?> channelInfoClass = blueprints.get(bluePrintId).getChannelInfoClass();
-                if (channelInfoClass != null) {
-                    propertyDefinitions = ChannelInfoClassProcessor.getProperties(channelInfoClass);
-                }
-                Map<HstPropertyDefinition, Object> properties = ChannelPropertyMapper.loadProperties(propertiesNode, propertyDefinitions);
-                channel.getProperties().putAll(properties);
+            if (currNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+                Node propertiesNode = currNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+                BlueprintService blueprint = blueprints.get(bluePrintId);
+                Map<String, Object> channelProperties = channel.getProperties();
+                channelProperties.putAll(blueprint.loadChannelProperties(propertiesNode));
             }
 
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
@@ -289,8 +285,7 @@ public class ChannelManagerImpl implements ChannelManager {
                     throw new ChannelException("Invalid blueprint ID " + channel.getBlueprintId());
                 }
 
-                Node blueprintNode = bps.getNode(session);
-                createChannelFromBlueprint(configNode, blueprintNode, channel);
+                createChannelFromBlueprint(configNode, bps, session, channel);
             }
 
             channels = null;
@@ -340,7 +335,9 @@ public class ChannelManagerImpl implements ChannelManager {
 
     // private - internal - methods
 
-    private void createChannelFromBlueprint(Node configRoot, final Node blueprintNode, final Channel channel) throws ChannelException, RepositoryException {
+    private void createChannelFromBlueprint(Node configRoot, BlueprintService bps, Session session, final Channel channel) throws ChannelException, RepositoryException {
+        Node blueprintNode = bps.getNode(session);
+
         String tmp = channel.getUrl();
         if (!tmp.startsWith("http://")) {
             throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
@@ -361,19 +358,19 @@ public class ChannelManagerImpl implements ChannelManager {
         mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID, channel.getId());
         mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID, channel.getBlueprintId());
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-            if (blueprintNode.hasNode("hst:site")) {
+            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
                 mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());
             } else {
                 mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
             }
         }
 
-        Node channelPropsNode = mount.addNode("hst:channelinfo", "hst:channelinfo");
-        ChannelPropertyMapper.saveProperties(channelPropsNode, channel.getProperties());
+        Node channelPropsNode = mount.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        bps.saveChannelProperties(channelPropsNode, channel.getProperties());
 
         Session jcrSession = configRoot.getSession();
-        if (blueprintNode.hasNode("hst:site")) {
-            Node siteNode = copyNodes(blueprintNode.getNode("hst:site"), configRoot.getNode(sites), channel.getId());
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
+            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE), configRoot.getNode(sites), channel.getId());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 if (blueprintNode.hasNode("hst:configuration")) {

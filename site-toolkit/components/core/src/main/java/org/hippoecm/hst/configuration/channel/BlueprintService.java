@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ public class BlueprintService implements Blueprint {
     private final String path;
     private final Map<HstPropertyDefinition, Object> defaultValues;
     private final Class<?> channelInfoClass;
+    private final Map<String, HstPropertyDefinition> properties = new HashMap<String, HstPropertyDefinition>();
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -103,4 +105,19 @@ public class BlueprintService implements Blueprint {
     public Node getNode(final Session session) throws RepositoryException {
         return session.getNode(path);
     }
+
+    public Map<String, Object> loadChannelProperties(Node mountNode) throws RepositoryException {
+        List<HstPropertyDefinition> propertyDefinitions = getPropertyDefinitions();
+        Map<HstPropertyDefinition, Object> properties = ChannelPropertyMapper.loadProperties(mountNode, propertyDefinitions);
+        Map<String, Object> channelProperties = new HashMap<String, Object>();
+        for (Map.Entry<HstPropertyDefinition, Object> entry : properties.entrySet()) {
+            channelProperties.put(entry.getKey().getName(), entry.getValue());
+        }
+        return channelProperties;
+    }
+
+    public void saveChannelProperties(Node mountNode, Map<String, Object> properties) throws RepositoryException {
+        ChannelPropertyMapper.saveProperties(mountNode, getPropertyDefinitions(), properties);
+    }
+
 }

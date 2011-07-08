@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.components.Parameter;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 
 public class ChannelInfoClassTest {
 
@@ -42,15 +41,14 @@ public class ChannelInfoClassTest {
         HstPropertyDefinition definition = properties.get(0);
         assertEquals("test-name", definition.getName());
         assertEquals(true, definition.isRequired());
-        assertFalse(definition.isMultiValued());
         assertEquals(HstValueType.STRING, definition.getValueType());
     }
 
     @Test
     public void proxyProvidesCorrectValues() {
         List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(TestInfo.class);
-        Map<HstPropertyDefinition, Object> values = new HashMap<HstPropertyDefinition, Object>();
-        values.put(properties.get(0), "aap");
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put(properties.get(0).getName(), "aap");
 
         TestInfo info = ChannelUtils.getChannelInfo(values, TestInfo.class);
         assertEquals("aap", info.getTestName());

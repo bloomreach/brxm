@@ -16,6 +16,8 @@
 package org.hippoecm.hst.configuration.channel;
 
 
+import java.util.List;
+
 /**
  * A Blueprint is a "node" provided by the developers that is used to create and manage channels by the ChannelManager,
  * and is defined by the node type hst:blueprint. Please see the hst.cnd for the node type definition.
@@ -47,4 +49,11 @@ public interface Blueprint {
      * @return info class of the blueprint.
      */
     Class<?> getChannelInfoClass();
+
+    /**
+     * The property definitions for this blueprint.
+     *
+     * @return
+     */
+    List<HstPropertyDefinition> getPropertyDefinitions();
 }

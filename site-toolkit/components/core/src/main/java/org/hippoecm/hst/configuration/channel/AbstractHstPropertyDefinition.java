@@ -26,7 +26,6 @@ public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
 
     protected HstValueType type;
     protected boolean required;
-    protected boolean multiValued;
     protected Object defaultValue;
 
     public AbstractHstPropertyDefinition(String name) {
@@ -51,17 +50,6 @@ public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
     @Override
     public boolean isRequired() {
         return required;
-    }
-
-    @Override
-    public boolean isMultiValued() {
-        return multiValued;
-    }
-
-    @Override
-    public boolean isValid(final Object value) {
-        // FIXME: use validators
-        return true;
     }
 
     @Override

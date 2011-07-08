@@ -50,13 +50,13 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
     private static HstValueType getHstType(Class type) {
         if (type == String.class) {
             return HstValueType.STRING;
-        } else if (type == Boolean.class) {
+        } else if (type == Boolean.class || type == boolean.class) {
             return HstValueType.BOOLEAN;
-        } else if (type == Long.class || type == Integer.class) {
+        } else if (type == Long.class || type == Integer.class || type == int.class || type == long.class) {
             return HstValueType.INTEGER;
         } else if (type == Calendar.class) {
             return HstValueType.DATE;
-        } else if (type == Double.class) {
+        } else if (type == Double.class || type == double.class || type == float.class) {
             return HstValueType.DOUBLE;
         }
         throw new ClassCastException("Could not cast " + type + " to any of the primitive types");

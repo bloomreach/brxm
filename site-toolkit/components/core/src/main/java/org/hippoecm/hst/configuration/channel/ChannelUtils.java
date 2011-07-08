@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,15 +26,10 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 public class ChannelUtils {
 
     @SuppressWarnings("unchecked")
-    public static <T> T getChannelInfo(Map<HstPropertyDefinition, Object> values, Class<?> parametersInfoType) {
+    public static <T> T getChannelInfo(final Map<String, Object> values, Class<?> parametersInfoType) {
 
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
-        }
-
-        final Map<String, Object> nameToValue = new HashMap<String, Object>();
-        for (Map.Entry<HstPropertyDefinition, Object> entry : values.entrySet()) {
-            nameToValue.put(entry.getKey().getName(), entry.getValue());
         }
 
         ProxyFactory factory = new ProxyFactory();
@@ -69,7 +63,7 @@ public class ChannelUtils {
                 if (isSetter) {
                     throw new UnsupportedOperationException("Setter method is not supported.");
                 } else {
-                    return nameToValue.get(parameterName);
+                    return values.get(parameterName);
                 }
             }
         };

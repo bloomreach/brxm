@@ -34,10 +34,6 @@ public interface HstPropertyDefinition {
 
     public boolean isRequired();
 
-    boolean isMultiValued();
-
-    boolean isValid(Object value);
-
     List<Annotation> getAnnotations();
 
 }

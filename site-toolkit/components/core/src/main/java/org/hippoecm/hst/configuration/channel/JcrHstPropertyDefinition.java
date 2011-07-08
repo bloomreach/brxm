@@ -30,19 +30,9 @@ public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinitio
         PropertyDefinition pd = prop.getDefinition();
 
         type = getHstType(prop.getType());
-        multiValued = pd.isMultiple();
         if (isPrototype) {
-            if (multiValued) {
-                Value[] values = prop.getValues();
-                if (values.length > 0) {
-                    defaultValue = ChannelPropertyMapper.jcrToJava(values[0], type);
-                } else {
-                    defaultValue = null;
-                }
-            } else {
-                Value value = prop.getValue();
-                defaultValue = ChannelPropertyMapper.jcrToJava(value, type);
-            }
+            Value value = prop.getValue();
+            defaultValue = ChannelPropertyMapper.jcrToJava(value, type);
         } else {
             defaultValue = null;
         }

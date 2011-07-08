@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 public class ChannelPropertyMapperTest extends AbstractHstTestCase {
@@ -59,11 +60,21 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     }
 
     @Test
+    public void unsetPropertyHasNullValue() throws RepositoryException {
+        List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
+
+        HstPropertyDefinition nameDef = definitions.get(0);
+        Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(getSession().getNode("/test"), definitions);
+        assertTrue(values.containsKey(nameDef));
+        assertNull(values.get(nameDef));
+    }
+
+    @Test
     public void simplePropertyIsStoredWithOwnName() throws RepositoryException {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
-        Map<HstPropertyDefinition, Object> values = new HashMap<HstPropertyDefinition, Object>();
-        values.put(definitions.get(0), "aap");
-        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), values);
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put(definitions.get(0).getName(), "aap");
+        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
 
         assertTrue(getSession().itemExists("/test/test-name"));
         Property nameProperty = (Property) getSession().getItem("/test/test-name");

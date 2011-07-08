@@ -40,11 +40,11 @@ public class ChannelPropertyMapper {
         Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition pd : propertyDefinitions) {
-                Property property = mountNode.getProperty(pd.getName());
-                if (pd.isMultiValued() != property.isMultiple()) {
-                    throw new RepositoryException();
+                Object value = null;
+                if (mountNode.hasProperty(pd.getName())) {
+                    Property property = mountNode.getProperty(pd.getName());
+                    value = getHstValueFromJcr(pd, property);
                 }
-                Object value = getHstValueFromJcr(pd, property);
                 properties.put(pd, value);
             }
         } else {
@@ -60,7 +60,7 @@ public class ChannelPropertyMapper {
         return properties;
     }
 
-    public static void saveProperties(Node mountNode, Map<HstPropertyDefinition, Object> properties) throws RepositoryException {
+    public static void saveProperties(Node mountNode, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
         for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
             Property prop = propertyIterator.nextProperty();
             if (prop.getDefinition().isProtected()) {
@@ -68,8 +68,10 @@ public class ChannelPropertyMapper {
             }
             prop.remove();
         }
-        for (Map.Entry<HstPropertyDefinition, Object> entry : properties.entrySet()) {
-            setHstValueToJcr(mountNode, entry.getKey().getName(), entry.getValue());
+        for (HstPropertyDefinition definition : definitions) {
+            if (properties.containsKey(definition.getName()) && properties.get(definition.getName()) != null) {
+                setHstValueToJcr(mountNode, definition.getName(), properties.get(definition.getName()));
+            }
         }
     }
 
