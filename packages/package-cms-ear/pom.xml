@@ -50,26 +50,12 @@
       <version>${hippo.cms.version}</version>
       <type>war</type>
     </dependency>
-    
-    <!-- Application layout (must be included before actual front-end application) -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-layout</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>war</type>
-    </dependency>
 
     <!-- End applications -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-application</artifactId>
       <version>${hippo.repository.version}</version>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-application</artifactId>
-      <version>${hippo.cms.version}</version>
       <type>war</type>
     </dependency>
 
@@ -311,11 +297,6 @@
             </webModule>
             <webModule>
               <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-layout</artifactId>
-              <contextRoot>/layout</contextRoot>
-            </webModule>
-            <webModule>
-              <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-cms-xinha-resources</artifactId>
               <contextRoot>/xinha</contextRoot>
             </webModule>
@@ -323,11 +304,6 @@
               <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-repository-application</artifactId>
               <contextRoot>/repository</contextRoot>
-            </webModule>
-            <webModule>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-application</artifactId>
-              <contextRoot>/</contextRoot>
             </webModule>
 
             <!-- jarModule>
