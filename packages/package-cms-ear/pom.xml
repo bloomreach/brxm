@@ -164,12 +164,6 @@
       <version>${hippo.cms.version}</version>
       <type>jar</type>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-reporting</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>jar</type>
-    </dependency>
 
     <!-- CMS 7 addons-->
     <dependency>
