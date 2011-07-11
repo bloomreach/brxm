@@ -6,6 +6,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.propeties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.ChannelFormPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js -text
@@ -25,6 +26,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelMa
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text

@@ -41,9 +41,8 @@ public class RootPanel extends ExtPanel {
 
     public RootPanel(String id) {
         super(id);
-        add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.RootPanel.js"));
-        add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.BlueprintListPanel.js"));
-        add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.ChannelFormPanel.js"));
+
+        add(new ChannelManagerResourceBehaviour());
 
         channelPanel = new ChannelGridPanel();
         channelPanel.setRegion(BorderLayout.Region.CENTER);

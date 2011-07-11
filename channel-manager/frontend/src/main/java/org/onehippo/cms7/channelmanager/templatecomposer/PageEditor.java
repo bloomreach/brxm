@@ -21,11 +21,14 @@ import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.wicketstuff.js.ext.ExtComponent;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -57,6 +60,7 @@ public class PageEditor extends ExtComponent {
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
+        add(new TemplateComposerResourceBehavior());
     }
 
     @Override

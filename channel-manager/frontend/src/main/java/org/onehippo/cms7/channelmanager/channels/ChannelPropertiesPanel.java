@@ -59,11 +59,12 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     static final Logger log = LoggerFactory.getLogger(ChannelPropertiesPanel.class);
 
+    public static final String CHANNEL_PROPERTIES_PANEL_JS = "Hippo.ChannelManager.ChannelPropertiesPanel.js";
+
     private Channel channel;
 
     public ChannelPropertiesPanel() {
         super();
-        add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesPanel.class, "Hippo.ChannelManager.ChannelPropertiesPanel.js"));
 
         final WebMarkupContainer container = new WebMarkupContainer("container");
         container.add(new ListView<String>("properties", new LoadableDetachableModel<List<String>>() {

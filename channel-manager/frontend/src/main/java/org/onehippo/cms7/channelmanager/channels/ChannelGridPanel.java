@@ -35,13 +35,13 @@ import java.util.List;
 @ExtClass("Hippo.ChannelManager.ChannelGridPanel")
 public class ChannelGridPanel extends ExtPanel {
 
+    public static final String CHANNEL_GRID_PANEL_JS = "Hippo.ChannelManager.ChannelGridPanel.js";
+
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
 
     public ChannelGridPanel() {
         super();
-        add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class,
-                "Hippo.ChannelManager.ChannelGridPanel.js"));
         List<ExtField> fieldList = new ArrayList<ExtField>();
         fieldList.add(new ExtField("title"));
         this.store = new ChannelStore(fieldList);

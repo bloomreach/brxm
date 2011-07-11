@@ -30,10 +30,9 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
-import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
-import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
  * ChannelManagerPerspective
@@ -65,11 +64,8 @@ public class ChannelManagerPerspective extends Perspective {
                 renderService = renderService.getParentService();
             }
             Page page = renderService.getComponent().getPage();
-            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.RootPanel.js"));
-            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.BlueprintListPanel.js"));
-            page.add(JavascriptPackageResource.getHeaderContribution(RootPanel.class, "Hippo.ChannelManager.ChannelFormPanel.js"));
-            page.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesPanel.class, "Hippo.ChannelManager.ChannelPropertiesPanel.js"));
-            page.add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class, "Hippo.ChannelManager.ChannelGridPanel.js"));
+            page.add(new ExtResourcesBehaviour());
+            page.add(new ChannelManagerResourceBehaviour());
         }
     }
 

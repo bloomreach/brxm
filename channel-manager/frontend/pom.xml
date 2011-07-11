@@ -140,18 +140,6 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main-min.js</include>
-              </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/iframe-all-min.js</output>
-            </aggregation>
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js</include>
@@ -173,16 +161,6 @@
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all.js</output>
             </aggregation>
-            <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel-min.js</include>
-              </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/page-editor-all-min.js</output>
-            </aggregation>
 
             <!-- plugins bundle -->
             <aggregation>
@@ -196,16 +174,18 @@
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all.js</output>
             </aggregation>
+
+            <!-- channel manager bundle -->
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg-min.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.ChannelFormPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelPropertiesPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js</include>
               </includes>
-              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all-min.js</output>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channel-manager-all.js</output>
             </aggregation>
           </aggregations>
         </configuration>
