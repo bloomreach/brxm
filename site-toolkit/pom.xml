@@ -89,11 +89,11 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.21.01</hippo.cms.version>
-    <hippo.repository.version>2.21.00</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.21.01</hippo.addon-publication-workflow.version>
-    <hippo.packages.version>2.21.01</hippo.packages.version>
-    <hippo.addon-hst-configuration-editor.version>1.08.01</hippo.addon-hst-configuration-editor.version>
+    <hippo.cms.version>2.21.02-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.21.01-SNAPSHOT</hippo.repository.version>
+    <hippo.addon-publication-workflow.version>2.21.02-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.packages.version>2.21.02-SNAPSHOT</hippo.packages.version>
+    <hippo.addon-hst-configuration-editor.version>1.08.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
   
    
     <htmlcleaner.version>2.1</htmlcleaner.version>
