@@ -32,6 +32,8 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -452,21 +454,28 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
         
         try {
-            HippoBean contentBean = (HippoBean) content;
-            Node canonical = NodeUtils.getCanonicalNode(contentBean.getNode());
-            Node handleNode = canonical.getParent();
-            String nodeName = handleNode.getName();
-            HippoBean folderBean = contentBean.getParentBean();
-            Node folderNode = NodeUtils.getCanonicalNode(folderBean.getNode());
-               
-            Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
+            HippoBean beanToRemove = (HippoBean) content;
+            
+            Node canonicalNodeToRemove = NodeUtils.getCanonicalNode(beanToRemove.getNode());
+            
+            if(beanToRemove instanceof HippoDocumentBean) {
+                canonicalNodeToRemove = canonicalNodeToRemove.getParent();
+            } else if(beanToRemove instanceof HippoFolderBean){
+                // do nothing
+            } else {
+                throw new ObjectBeanPersistenceException("Don't know how to persist a bean of type '"+beanToRemove.getClass().getName()+"'");
+            }
+            
+            String nodeNameToRemove = canonicalNodeToRemove.getName();
+            Node folderNodeToRemoveFrom = canonicalNodeToRemove.getParent();
+            Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNodeToRemoveFrom);
             
             if (wf instanceof FolderWorkflow) {
                 FolderWorkflow fwf = (FolderWorkflow) wf;
-                fwf.delete(nodeName);
+                fwf.delete(nodeNameToRemove);
                 
             } else {
-                throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderBean.getPath() + ": " + wf);
+                throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for " + folderNodeToRemoveFrom.getPath() + ": " + wf);
             }
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
