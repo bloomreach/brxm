@@ -224,27 +224,26 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
         var processCssHeadContribution = function(src, responseText) {
             var frmDocument = frm.getFrameDocument();
-            var headElements = frmDocument.getElementsByTagName("HEAD");
-            var head;
-            if (headElements.length == 0) {
-                head = frmDocument.createElement("HEAD");
-                frmDocument.appendChild(head);
+
+            if (Ext.isIE) {
+                var style = frmDocument.createStyleSheet().cssText = responseText;
             } else {
-                head = headElements[0];
-            }
+                var headElements = frmDocument.getElementsByTagName("HEAD");
+                var head;
+                if (headElements.length == 0) {
+                    head = frmDocument.createElement("HEAD");
+                    frmDocument.appendChild(head);
+                } else {
+                    head = headElements[0];
+                }
 
-            var styleElement = frmDocument.createElement("STYLE");
-            styleElement.setAttribute("type", "text/css");
-
-            if (null == styleElement.canHaveChildren || styleElement.canHaveChildren) {
+                var styleElement = frmDocument.createElement("STYLE");
+                styleElement.setAttribute("type", "text/css");
                 var textNode = frmDocument.createTextNode(responseText);
                 styleElement.appendChild(textNode);
-            } else {
-                styleElement.text = responseText;
+                styleElement.setAttribute("title", src);
+                head.appendChild(styleElement);
             }
-            styleElement.setAttribute("title", src);
-
-            head.appendChild(styleElement);
         };
 
         var processJsHeadContribution = function(src, responseText) {

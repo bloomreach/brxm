@@ -157,7 +157,16 @@ jQuery.noConflict();
             //test for single border and assume it all around.
             //TODO: test all borders
             var border = overlay.css('border-left-width');
-            var borderWidth = !!border ? parseFloat(border.substring(0, border.length - 2)) : 0;
+            var borderWidth = 0;
+            if (border === 'thin') {
+                borderWidth = 1;
+            } else if (border === 'medium') {
+                borderWidth = 2;
+            } else if (border === 'thick') {
+                borderWidth = 4;
+            } else if (border && border.length > 2) {
+                borderWidth = parseFloat(border.substring(0, border.length - 2));
+            }
 
             var data = {
                 left: elOffset.left,
