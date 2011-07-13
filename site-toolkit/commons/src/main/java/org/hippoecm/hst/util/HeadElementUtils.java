@@ -99,7 +99,7 @@ public class HeadElementUtils {
             writer.write(' ');
             writer.write(entry.getKey());
             writer.write("=\"");
-            writer.write(encode(entry.getValue()));
+            writer.write(XmlUtils.encode(entry.getValue()));
             writer.write("\"");
         }
 
@@ -140,7 +140,7 @@ public class HeadElementUtils {
                             writer.write(textContent);
                         }
                     } else {
-                        writer.write(encode(textContent));
+                        writer.write(XmlUtils.encode(textContent));
                     }
                 }
 
@@ -161,13 +161,6 @@ public class HeadElementUtils {
             writer.write(tagName);
             writer.write('>');
         }
-    }
-
-    /**
-     * @deprecated Use {@link XmlUtils#encode(String)}.
-     */
-    public static String encode(String value) {
-        return XmlUtils.encode(value);
     }
 
 }
