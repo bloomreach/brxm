@@ -34,6 +34,9 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Blueprint;
@@ -46,9 +49,12 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerPerspective;
+import org.onehippo.cms7.channelmanager.TemplateComposerPerspective;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtBoxComponent;
+import org.wicketstuff.js.ext.ExtButton;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.form.ExtFormPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -118,6 +124,17 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         ExtBoxComponent box = new ExtBoxComponent();
         box.add(container);
         add(box);
+
+        add(new ExtButton(new Model<String>("Channel")) {
+            @Override
+            protected void onClick(final AjaxRequestTarget target) {
+                super.onClick(target);
+                ChannelManagerPerspective channelManagerPerspective = findParent(ChannelManagerPerspective.class);
+                IPluginContext context = channelManagerPerspective.getPluginContext();
+                TemplateComposerPerspective templateComposerPerspective = context.getService(TemplateComposerPerspective.TC_PERSPECTIVE_SERVICE, TemplateComposerPerspective.class);
+                templateComposerPerspective.focus(target, channel.getHostname(), channel.getSubMountPath());
+            }
+        });
 
         addEventListener("selectchannel", new ExtEventListener() {
             @Override

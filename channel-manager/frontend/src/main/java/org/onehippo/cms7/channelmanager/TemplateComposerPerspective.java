@@ -19,7 +19,10 @@ package org.onehippo.cms7.channelmanager;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -41,17 +44,33 @@ import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 public class TemplateComposerPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
 
+    public static final String TC_PERSPECTIVE_SERVICE = "TC_PERSPECTIVE_SERVICE";
+
+    private PageEditor pageEditor;
+
     public TemplateComposerPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        context.registerService(this, TC_PERSPECTIVE_SERVICE);
 
+        setOutputMarkupId(true);
         IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        add(new PageEditor("page-editor", pageEditorConfig));
+
+        pageEditor = new PageEditor("page-editor", pageEditorConfig);
+        pageEditor.setOutputMarkupId(true);
+        add(pageEditor);
 
         IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
         if (wfConfig != null) {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
+    }
+
+    public void focus(final AjaxRequestTarget target, final String renderHost, final String renderHostSubMountPath) {
+        pageEditor.setRenderHost(renderHost);
+        pageEditor.setRenderHostSubMountPath(renderHostSubMountPath);
+        target.addComponent(pageEditor);
+        focus(null);
     }
 
     @Override

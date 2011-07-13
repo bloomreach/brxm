@@ -44,7 +44,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     keepAlive : function() {
         if (this.ids.mountId != null) { //Ping only if the site id is not null
             Ext.Ajax.request({
-                url: this.composerMountUrl+'/_rp/' + this.ids.mountId + './keepalive',
+                url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
                 success: function () {
                     //Do nothing
                 }
@@ -163,11 +163,16 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
             var me = this;
             Ext.Ajax.request({
-                url: this.composerMountUrl,
+                url: me.composerRestMountUrl+'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
                 success: function () {
                     var iFrame = Ext.getCmp('Iframe');
                     iFrame.setSrc(me.composerMountUrl+me.renderHostSubMountPath+"?"+me.renderHostParameterName+"="+me.renderHost);
                 },
+                failure: function(result, request) {
+                    // try anyway to give info about what is going on
+                    var iFrame = Ext.getCmp('Iframe');
+                    iFrame.setSrc(me.composerMountUrl+me.renderHostSubMountPath+"?"+me.renderHostParameterName+"="+me.renderHost);
+                }
             });
         }, this, {single: true});
     },
@@ -303,7 +308,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     createToolkitStore : function(mountId) {
         return new Hippo.App.ToolkitStore({
             mountId : mountId,
-            baseUrlPath : this.composerMountUrl
+            composerRestMountUrl : this.composerRestMountUrl
         });
     },
 
@@ -312,7 +317,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             rootComponentIdentifier: this.rootComponentIdentifier,
             mountId: mountId,
             pageId: pageId,
-            baseUrlPath: this.composerMountUrl,
+            composerRestMountUrl: this.composerRestMountUrl,
             listeners: {
                 write : {
                     fn: function(store, action, result, res, records) {
@@ -462,7 +467,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     xtype:'h_properties_panel',
                     region: 'center',
                     split: true,
-                    baseUrlPath: this.composerMountUrl,
+                    composerRestMountUrl: this.composerRestMountUrl,
                     mountId: mountId
                 }
             ]
@@ -662,11 +667,10 @@ Hippo.App.RestStore = Ext.extend(Ext.data.Store, {
 Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
 
     constructor : function(config) {
-        var baseUrlPath = config.baseUrlPath;
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : baseUrlPath+'/_rp/' + config.mountId + './toolkit'
+                read     : config.composerRestMountUrl + config.mountId + './toolkit'
                 ,create  : '#'
                 ,update  : '#'
                 ,destroy : '#'
@@ -689,11 +693,11 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
 
     constructor : function(config) {
 
-        var baseUrlPath = config.baseUrlPath;
+        var composerRestMountUrl = config.composerRestMountUrl;
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : baseUrlPath+'/_rp/' + config.mountId + './pagemodel/'+config.pageId+"/"
+                read     : composerRestMountUrl + config.mountId + './pagemodel/'+config.pageId+"/"
                 ,create  : '#' // see beforewrite
                 ,update  : '#'
                 ,destroy : '#'
@@ -711,15 +715,15 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './create/' + prototypeId, method: 'POST'});
+                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './create/' + prototypeId, method: 'POST'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
                             var id = rs.get('id');
-                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + id + './update', method: 'POST'});
+                            proxy.setApi(action, {url: composerRestMountUrl + id + './update', method: 'POST'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: baseUrlPath + '/_rp/' + parentId + './delete', method: 'GET'});
+                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete', method: 'GET'});
                         }
                     }
                 },

@@ -25,6 +25,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
@@ -74,10 +75,14 @@ public class ChannelManagerPerspective extends Perspective {
         return new StringResourceModel("perspective-title", this, new Model<String>("Channel Manager"));
     }
 
-
     @Override
     public ResourceReference getIcon(IconSize type) {
         return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
-
     }
+
+    @Override
+    public IPluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
 }

@@ -41,7 +41,10 @@ public class PageEditor extends ExtComponent {
     public Boolean debug = false;
 
     @ExtProperty
-    public String composerMountUrl = "/site/manager";
+    public String composerMountUrl = "/site/";
+
+    @ExtProperty
+    public String composerRestMountUrl = "/site/_rp/";
 
     @ExtProperty
     public String renderHostSubMountPath = "";
@@ -54,7 +57,8 @@ public class PageEditor extends ExtComponent {
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
-        this.composerMountUrl = config.getString("composerMountUrl", "/site/manager");
+        this.composerMountUrl = config.getString("composerMountUrl", "/site");
+        this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
@@ -102,4 +106,21 @@ public class PageEditor extends ExtComponent {
             ));
         }
     }
+
+    public String getRenderHost() {
+        return renderHost;
+    }
+
+    public void setRenderHost(final String renderHost) {
+        this.renderHost = renderHost;
+    }
+
+    public String getRenderHostSubMountPath() {
+        return renderHostSubMountPath;
+    }
+
+    public void setRenderHostSubMountPath(final String renderHostSubMountPath) {
+        this.renderHostSubMountPath = renderHostSubMountPath;
+    }
+
 }
