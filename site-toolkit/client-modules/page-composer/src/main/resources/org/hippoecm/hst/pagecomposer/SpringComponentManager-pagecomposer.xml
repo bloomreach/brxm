@@ -65,6 +65,11 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.KeepAlive"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource"/>
           </constructor-arg>
         </bean>
@@ -103,45 +108,6 @@
               <ref bean="jcrSessionStatefulConcurrencyValve"/>
               <ref bean="noCacheResponseHeadersValve"/>
               <ref bean="jaxrsHstConfigServiceValve"/>
-            </list>
-          </property>
-          <property name="postInvokingValves">
-            <list>
-              <ref bean="cleanupValve"/>
-            </list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject">
-      <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines"/>
-        <property name="propertyPath" value="pipelines"/>
-      </bean>
-    </property>
-    <property name="targetMethod" value="put"/>
-    <property name="arguments">
-      <list>
-        <value>ComposerPreviewPipeline</value>
-        <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-          <property name="preInvokingValves">
-            <list>
-              <ref bean="initializationValve"/>
-            </list>
-          </property>
-          <property name="invokingValves">
-            <list>
-              <ref bean="contextResolvingValve"/>
-              <ref bean="localizationValve"/>
-              <ref bean="cmsSecurityValve"/>
-              <ref bean="jcrSessionStatefulConcurrencyValve"/>
-              <ref bean="siteMenusResolvingValve"/>
-              <ref bean="actionValve"/>
-              <ref bean="resourceServingValve"/>
-              <ref bean="aggregationValve"/>
             </list>
           </property>
           <property name="postInvokingValves">

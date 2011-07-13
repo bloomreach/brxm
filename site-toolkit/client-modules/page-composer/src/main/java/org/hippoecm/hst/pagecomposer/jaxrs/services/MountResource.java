@@ -190,15 +190,6 @@ public class MountResource extends AbstractConfigResource {
         return ok("Document list", documentLocations);
     }
 
-    @GET
-    @Path("/keepalive/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response keepAlive(@Context HttpServletRequest servletRequest,
-                              @Context HttpServletResponse servletResponse) {
-        HttpSession session = servletRequest.getSession(false);
-        return ok("Keepalive successful", null);
-    }
-
     private HstSite getEditingHstSite(final HstRequestContext requestContext) {
         final Mount mount = getEditingHstMount(requestContext);
         if (mount == null) {
