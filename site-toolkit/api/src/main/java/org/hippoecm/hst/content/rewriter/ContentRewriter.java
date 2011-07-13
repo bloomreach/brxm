@@ -30,18 +30,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface ContentRewriter<T> {
     
     /**
-     * @deprecated Use {@link #rewrite(Object, Node, HstRequestContext)} instead.
-     * Rewrites the content of the content node.
-     * @param <T>
-     * @param content content object. It can be type of String or whatever, depending on the implementation and the context.
-     * @param contentNode content node
-     * @param request
-     * @param response
-     * @return
-     */
-    T rewrite(T content, Node contentNode, HstRequest request, HstResponse response);
-    
-    /**
      * Rewrites the content of the content node.
      * @param content content object. It can be type of String or whatever, depending on the implementation and the context.
      * @param contentNode content node

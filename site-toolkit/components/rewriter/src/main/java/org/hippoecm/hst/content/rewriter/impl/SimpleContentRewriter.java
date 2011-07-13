@@ -58,14 +58,6 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         
     }
     
-    /**
-     * @deprecated
-     */
-    @Override
-    public String rewrite(String html, Node node, HstRequest request, HstResponse response) {
-        return rewrite(html, node, request.getRequestContext());
-    }
-    
     @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext) {
         return rewrite(html, node, requestContext, (Mount)null);

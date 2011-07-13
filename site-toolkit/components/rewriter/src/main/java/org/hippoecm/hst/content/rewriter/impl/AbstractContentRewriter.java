@@ -38,13 +38,6 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
         
     }
     
-    /**
-     * @deprecated Use {@link #rewrite(Object, Node, HstRequestContext)} instead.
-     */
-    public T rewrite(T content, Node contentNode, HstRequest request, HstResponse response) {
-        return null;
-    }
-
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext) {
         return null;
     }
