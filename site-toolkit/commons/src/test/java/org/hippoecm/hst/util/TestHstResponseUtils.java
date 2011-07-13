@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -31,6 +32,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,28 +58,24 @@ public class TestHstResponseUtils {
         HstRequest request = createMock(HstRequest.class);
         HstResponse response = createMock(HstResponse.class);
         HstRequestContext requestContext = createMock(HstRequestContext.class);
+        ResolvedMount resolvedMount = createMock(ResolvedMount.class); 
+        Mount mount = createMock(Mount.class); 
         HstLinkCreator linkCreator = createMock(HstLinkCreator.class);
-        ResolvedSiteMapItem resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
-        HstSiteMapItem siteMapItem = createMock(HstSiteMapItem.class);
-        HstSiteMap siteMap = createMock(HstSiteMap.class);
-        HstSite site = createMock(HstSite.class);
+        
         HstLink link = createMock(HstLink.class);
         
-        expect(request.getRequestContext()).andReturn(requestContext);
-        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getHstSiteMapItem()).andReturn(siteMapItem);
-        expect(siteMapItem.getHstSiteMap()).andReturn(siteMap);
-        expect(siteMap.getSite()).andReturn(site);
-        expect(requestContext.getHstLinkCreator()).andReturn(linkCreator);
-        expect(linkCreator.create(path, site)).andReturn(link);
-        expect(link.toUrlForm(request, response, false)).andReturn(expectedUrlWithoutQueryParams);
+        expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();       
+        expect(requestContext.getHstLinkCreator()).andReturn(linkCreator).anyTimes();
+        expect(linkCreator.create(path, mount)).andReturn(link).anyTimes();
+        expect(link.toUrlForm(requestContext, false)).andReturn(expectedUrlWithoutQueryParams).anyTimes();
         response.sendRedirect(expectedUrlWithoutQueryParams);
         
         replay(request);
         replay(requestContext);
-        replay(resolvedSiteMapItem);
-        replay(siteMapItem);
-        replay(siteMap);
+        replay(resolvedMount);
+        replay(mount);
         replay(linkCreator);
         replay(link);
         replay(response);
@@ -91,10 +89,10 @@ public class TestHstResponseUtils {
         HstResponse response = createMock(HstResponse.class);
         HstRequestContext requestContext = createMock(HstRequestContext.class);
         HstLinkCreator linkCreator = createMock(HstLinkCreator.class);
-        ResolvedSiteMapItem resolvedSiteMapItem = createMock(ResolvedSiteMapItem.class);
-        HstSiteMapItem siteMapItem = createMock(HstSiteMapItem.class);
-        HstSiteMap siteMap = createMock(HstSiteMap.class);
-        HstSite site = createMock(HstSite.class);
+        
+        ResolvedMount resolvedMount = createMock(ResolvedMount.class); 
+        Mount mount = createMock(Mount.class); 
+        
         HstLink link = createMock(HstLink.class);
         
         Map<String, String []> queryParams = new HashMap<String, String []>();
@@ -109,27 +107,23 @@ public class TestHstResponseUtils {
         }
         expectedUrl = expectedUrl.substring(0, expectedUrl.length() - 1); // remove ending '&';
         
-        expect(request.getRequestContext()).andReturn(requestContext);
-        expect(requestContext.getResolvedSiteMapItem()).andReturn(resolvedSiteMapItem);
-        expect(resolvedSiteMapItem.getHstSiteMapItem()).andReturn(siteMapItem);
-        expect(siteMapItem.getHstSiteMap()).andReturn(siteMap);
-        expect(siteMap.getSite()).andReturn(site);
-        expect(requestContext.getHstLinkCreator()).andReturn(linkCreator);
-        expect(linkCreator.create(path, site)).andReturn(link);
-        expect(link.toUrlForm(request, response, false)).andReturn(expectedUrlWithoutQueryParams);
-        expect(response.getCharacterEncoding()).andReturn(null);
+        expect(request.getRequestContext()).andReturn(requestContext).anyTimes();
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+        expect(requestContext.getHstLinkCreator()).andReturn(linkCreator).anyTimes();
+        expect(linkCreator.create(path, mount)).andReturn(link).anyTimes();
+        expect(link.toUrlForm(requestContext, false)).andReturn(expectedUrlWithoutQueryParams).anyTimes();
+        expect(response.getCharacterEncoding()).andReturn(null).anyTimes();
         response.sendRedirect(expectedUrl);
         
         replay(request);
         replay(requestContext);
-        replay(resolvedSiteMapItem);
-        replay(siteMapItem);
-        replay(siteMap);
+        replay(resolvedMount);
+        replay(mount);
         replay(linkCreator);
         replay(link);
         replay(response);
         
         HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
     }
-    
 }

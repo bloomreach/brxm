@@ -57,15 +57,7 @@ public class MockHstLink implements HstLink {
         this.containerResource = containerResource;
     }
 
-    public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
     public String[] getPathElements() {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public HstSite getHstSite() {
         throw new UnsupportedOperationException("Not implemented");
     }
 

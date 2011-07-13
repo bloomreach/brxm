@@ -209,90 +209,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return create(siteMapItem);
     }
 
-    
-    /**
-     * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will
-     * rewrite the link wrt hippo:handle, because a handle is the umbrella of a document.
-     * 
-     * If the uuid cannot be found, we return null
-     * 
-     * {@inheritDoc}
-     */
-    @Deprecated
-    public HstLink create(String uuid, Session session, ResolvedSiteMapItem resolvedSiteMapItem) {
-        try {
-            Node node = session.getNodeByIdentifier(uuid);
-            return create(node, resolvedSiteMapItem);
-        } catch (ItemNotFoundException e) {
-            log.warn("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException Cannot create a HstLink, return null", uuid);
-        } 
-        return null;
-    }
-    
-    @Deprecated
-    public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
-        return linkResolver.resolve();
-    }
-
-    @Deprecated
-    public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
-            boolean fallback) {
-        return this.create(node, resolvedSiteMapItem, preferredItem, fallback, false);
-    }
-    
-    @Deprecated
-    public HstLink create(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem,
-            boolean fallback, boolean navigationStateful) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
-        linkResolver.preferredItem = preferredItem;
-        linkResolver.fallback = fallback;
-        linkResolver.navigationStateful = navigationStateful;
-        return linkResolver.resolve();
-    }
-
-    @Deprecated
-    public HstLink create(String path, HstSite hstSite) {
-        return create(path, hstSite.getMount());
-    }
-
-    @Deprecated
-    public HstLink create(String path, HstSite hstSite, boolean containerResource) {
-        return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), hstSite.getMount(), containerResource));
-    }
-    
-    @Deprecated
-    public HstLink create(HstSite hstSite, String toSiteMapItemId) {
-        HstSiteMapItem siteMapItem = hstSite.getSiteMap().getSiteMapItemById(toSiteMapItemId);
-
-        if (siteMapItem == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("No sitemap item found for id '{}' within Site '{}'. Cannot create link.", toSiteMapItemId,
-                        hstSite.getName());
-            }
-            return null;
-        }
-        
-        return postProcess(new HstLinkImpl(getPath(siteMapItem), hstSite.getMount()));
-    }
-
-    @Deprecated
-    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem) {
-        return this.createCanonical(node, resolvedSiteMapItem, null);
-    }
-
-    @Deprecated
-    public HstLink createCanonical(Node node, ResolvedSiteMapItem resolvedSiteMapItem, HstSiteMapItem preferredItem) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, resolvedSiteMapItem);
-        linkResolver.canonicalLink = true;
-        linkResolver.preferredItem = preferredItem;
-        // when no canonical can be found for the preferred item, we fallback to linkrewriting without the canonical 
-        linkResolver.fallback = true;
-        return linkResolver.resolve();
-    } 
-    
     private HstLink postProcess(HstLink link) {
         if(linkProcessor != null) {
             link = linkProcessor.postProcess(link);
@@ -392,17 +308,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             this.mount = requestContext.getResolvedMount().getMount();
         }
         
-        /**
-         * Create a HstLinkResolver instance with the current context <code>resolvedSiteMapItem</code>. The {@link Mount} is taken from this context
-         * @param node
-         * @param resolvedSiteMapItem
-         * @deprecated Use {@link #HstLinkResolver(Node, HstRequestContext)} instead
-         */
-        HstLinkResolver(Node node, ResolvedSiteMapItem resolvedSiteMapItem){
-            this.node = node;
-            this.resolvedSiteMapItem = resolvedSiteMapItem;
-            this.mount = resolvedSiteMapItem.getResolvedMount().getMount();
-        }
         
         /**
          * Create a HstLinkResolver instance for creating a link in this {@link Mount}. We do not take into account the current context from {@link ResolvedSiteMapItem}

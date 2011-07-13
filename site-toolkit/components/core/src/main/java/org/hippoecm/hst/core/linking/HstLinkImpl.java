@@ -16,9 +16,6 @@
 package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -48,34 +45,10 @@ public class HstLinkImpl implements HstLink {
         this.containerResource = containerResource;
     }
     
-    
-    /**
-     * @deprecated use {@link HstLinkImpl(String, Mount)} instead
-     */
-    @Deprecated
-    public HstLinkImpl(String path, HstSite hstSite){
-         this(path, hstSite,false);
-    }
-    
-    /**
-     * @deprecated use {@link HstLinkImpl(String, Mount, boolean)} instead
-     */
-    @Deprecated
-    public HstLinkImpl(String path, HstSite hstSite, boolean containerResource) {
-        this.path = PathUtils.normalizePath(path);
-        this.mount = hstSite.getMount();
-        this.containerResource = containerResource;
-    }
-    
     public Mount getMount() {
         return mount;
     }
     
-    @Deprecated
-    public HstSite getHstSite() {
-        return mount.getHstSite();
-    }
-
     public String getPath() {
         return this.path;
     }
@@ -208,14 +181,6 @@ public class HstLinkImpl implements HstLink {
         return urlString;
     }
     
-    /**
-     * @deprecated use {@link #toUrlForm(HstRequestContext, boolean)} instead
-     */
-    @Deprecated
-    public String toUrlForm(HstRequest request, HstResponse response, boolean external) {
-        return toUrlForm(request.getRequestContext(), external);
-    }
-
     public boolean isNotFound() {
         return notFound;
     }

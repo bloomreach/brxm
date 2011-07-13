@@ -73,14 +73,6 @@ public interface HstLink {
     void setContainerResource(boolean containerResource);
     
     /**
-     * @param request
-     * @param external if true, the returned url is external, in other words including http/https etc
-     * @return the url form of this HstLink, which is a url
-     * @deprecated use {@link #toUrlForm(HstRequestContext, boolean)} instead
-     */
-    String toUrlForm(HstRequest request, HstResponse response, boolean external);
-    
-    /**
      * @param requestContext
      * @param external if true, the returned url is external, in other words including http/https etc
      * @return the url form of this HstLink, which is a url
@@ -91,16 +83,6 @@ public interface HstLink {
      * @return the path elements of this HstLink, which is the {@link #getPath()} splitted on slashes
      */
     String[] getPathElements();
-    
-    
-    /**
-     * @return the HstSite that can represent this link. This might be an HstSite which is a different one then the
-     * HstSite the link was created in. This could result in a cross-domain (different hostname) link being created, depending
-     * on the backing {@link org.hippoecm.hst.configuration.hosting.VirtualHost}. If no HstSite is set, <code>null</code> can be returned
-     * @deprecated use {@link #getMount} instead
-     */
-    @Deprecated
-    HstSite getHstSite();
     
     /**
      * @return the {@link Mount} that can represent this link. This might be an  {@link Mount} which is a different one then the

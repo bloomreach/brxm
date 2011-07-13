@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -74,15 +73,14 @@ public class HstResponseUtils {
     public static void sendRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams, String characterEncoding) {
         HstRequestContext requestContext = request.getRequestContext();
         HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
-        HstSiteMap siteMap = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-        
-        HstLink link = linkCreator.create(path, siteMap.getSite());
+       
+        HstLink link = linkCreator.create(path, requestContext.getResolvedMount().getMount());
         
         if (link == null) {
             throw new HstComponentException("Can not redirect.");
         }
         
-        String urlString = link.toUrlForm(request, response, false);
+        String urlString = link.toUrlForm(request.getRequestContext(), false);
         
         if (urlString == null) {
             throw new HstComponentException("Can not redirect.");

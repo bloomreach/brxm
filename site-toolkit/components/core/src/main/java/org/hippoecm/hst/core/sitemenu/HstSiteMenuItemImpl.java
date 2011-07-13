@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.hippoecm.hst.configuration.site.HstSite;
+import org.apache.wicket.RequestContext;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -38,16 +39,15 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     private HstLinkCreator linkCreator;
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration;
-    private HstSite hstSite;
     private String hstSiteMapItemPath;
     private String externalLink;
+    private Mount mount;
     
     
     public HstSiteMenuItemImpl(HstSiteMenu hstSiteMenu, HstSiteMenuItem parent, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
         this.hstSiteMenuItemConfiguration = hstSiteMenuItemConfiguration;
-        this.hstSite = hstSiteMenuItemConfiguration.getHstSiteMenuConfiguration().getSiteMenusConfiguration().getSite();
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.externalLink = hstSiteMenuItemConfiguration.getExternalLink();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
@@ -55,6 +55,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         this.depth = hstSiteMenuItemConfiguration.getDepth();
         this.repositoryBased = hstSiteMenuItemConfiguration.isRepositoryBased();
         this.properties = hstSiteMenuItemConfiguration.getProperties();
+        this.mount = hstRequestContext.getResolvedMount().getMount();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
         }
@@ -94,10 +95,10 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
 
     // laze loaded
     public HstLink getHstLink() {
-        if(this.hstSiteMapItemPath == null) {
+        if(hstSiteMapItemPath == null) {
             return null;
         }
-        return linkCreator.create(this.hstSiteMapItemPath, this.hstSite);
+        return linkCreator.create(hstSiteMapItemPath, mount);
     }
     
     public String getExternalLink() {
