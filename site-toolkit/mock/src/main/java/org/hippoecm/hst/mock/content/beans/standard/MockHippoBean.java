@@ -163,4 +163,9 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supproted yet");
     }
 
+    @Override
+    public String getCanonicalPath() {
+        throw new UnsupportedOperationException("Not supproted yet");
+    }
+
 }
