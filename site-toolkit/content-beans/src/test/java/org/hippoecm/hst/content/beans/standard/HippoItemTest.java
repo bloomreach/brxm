@@ -69,8 +69,8 @@ public class HippoItemTest {
         HippoItem item2 = new HippoItem();
         item2.valueProvider = mockValueProvider2;
 
-        expect(mockValueProvider1.getPath()).andReturn("/content/documents/1");
-        expect(mockValueProvider2.getPath()).andReturn("/content/documents/2");
+        expect(mockValueProvider1.getPath()).andReturn("/content/documents/1").anyTimes();
+        expect(mockValueProvider2.getPath()).andReturn("/content/documents/2").anyTimes();
 
         replay(mockValueProvider1, mockValueProvider2);
 
@@ -90,8 +90,8 @@ public class HippoItemTest {
         HippoItem item2 = new HippoItem();
         item2.valueProvider = mockValueProvider2;
 
-        expect(mockValueProvider1.getPath()).andReturn("/content/documents");
-        expect(mockValueProvider2.getPath()).andReturn("/content/documents");
+        expect(mockValueProvider1.getPath()).andReturn("/content/documents").anyTimes();
+        expect(mockValueProvider2.getPath()).andReturn("/content/documents").anyTimes();
 
         replay(mockValueProvider1, mockValueProvider2);
 
