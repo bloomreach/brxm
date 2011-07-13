@@ -76,10 +76,6 @@ public class GenericHstComponent implements HstComponent {
         }
     }
     
-    public ServletContext getServletContext() {
-        return this.servletContext;
-    }
-    
     protected ComponentConfiguration getComponentConfiguration() {
         return this.componentConfig;
     }

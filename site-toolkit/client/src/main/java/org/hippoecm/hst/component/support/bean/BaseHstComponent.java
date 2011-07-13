@@ -96,12 +96,15 @@ public class BaseHstComponent extends GenericHstComponent {
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
     protected HstQueryManagerFactory hstQueryManagerFactory;
+    
+    private ServletContext servletContext;
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
         if (!this.beansInitialized) {
             initBeansObjects() ;
         }
+        this.servletContext = servletContext;
     }
 
     /**
@@ -396,7 +399,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return the client ComponentManager or <code>null</code> if none configured 
      */
     public ComponentManager getDefaultClientComponentManager(){
-        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(getServletContext());
+        ComponentManager clientComponentManager = HstFilter.getClientComponentManager(servletContext);
         if(clientComponentManager == null) {
             log.warn("Cannot get a client component manager from servlet context for attr name '{}'", HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
         }
@@ -480,12 +483,12 @@ public class BaseHstComponent extends GenericHstComponent {
             
             if (objectConverterSharable) {
                 
-                objectConverter = (ObjectConverter) getServletContext().getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
+                objectConverter = (ObjectConverter) servletContext.getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
                 
                 if (objectConverter == null) {
                     List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
                     objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-                    getServletContext().setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
+                    servletContext.setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
                 }
                 
             } else {
@@ -532,15 +535,15 @@ public class BaseHstComponent extends GenericHstComponent {
     private List<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = null;
         
-        String param = getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
+        String param = servletContext.getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
         String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);
         
         try {
             if (ocmAnnotatedClassesResourcePath.startsWith("classpath*:")) {
-                ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(getServletContext());
+                ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(servletContext);
                 annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
             } else {
-                URL xmlConfURL = getServletContext().getResource(ocmAnnotatedClassesResourcePath);
+                URL xmlConfURL = servletContext.getResource(ocmAnnotatedClassesResourcePath);
                 if (xmlConfURL == null) {
                     throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
                 }

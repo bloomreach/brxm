@@ -72,10 +72,4 @@ public interface HstComponent {
      */
     void destroy() throws HstComponentException;
     
-    /**
-     * @return Retrieves the servletContext to which this HstComponent is bound
-     * @deprecated this method should not be part of the api. The ServletContext can be accessed through the implementation classes if needed
-     */
-    @Deprecated
-    ServletContext getServletContext();
 }

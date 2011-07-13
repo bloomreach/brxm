@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
@@ -28,6 +29,7 @@ import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +115,13 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
      */
     public static final String DEFAULT_SHARED_REQUEST_ATTRIBUTES_SESSION_ATTRIBUTE_NAME_PREFIX = SimpleDispatcherHstComponent.class.getName() + ".shared.request.attributes-";
     
+    
+    private ServletContext servletContext;
+
+    public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
+        super.init(servletContext, componentConfig);
+        this.servletContext = servletContext;
+    }
     
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
@@ -207,7 +216,7 @@ public class SimpleDispatcherHstComponent extends GenericHstComponent {
     protected void doDispatch(String dispatchPath, HstRequest request, HstResponse response) throws HstComponentException {
         if (dispatchPath != null) {
             try {
-                getServletContext().getRequestDispatcher(dispatchPath).include(request, response);
+                servletContext.getRequestDispatcher(dispatchPath).include(request, response);
             } catch (ServletException e) {
                 throw new HstComponentException(e);
             } catch (IOException e) {

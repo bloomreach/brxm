@@ -90,6 +90,8 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     
     protected AbstractApplicationContext delegatedBeanApplicationContext;
     protected HstComponent delegatedBean;
+
+    private ServletContext servletContext; 
     
     @Override
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
@@ -106,6 +108,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
         if (param != null) {
             contextNameSeparator = param;
         }
+        this.servletContext = servletContext;
     }
 
     @Override
@@ -164,7 +167,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             }
             
             boolean beanFoundFromBeanFactory = false;
-            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+            BeanFactory beanFactory = WebApplicationContextUtils.getWebApplicationContext(servletContext);
             
             if (beanFactory != null) {
                 String contextName = null;
@@ -194,7 +197,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
             ComponentManager componentManager = null;
             
             if (delegatedBean == null) {
-                componentManager = HstFilter.getClientComponentManager(getServletContext());
+                componentManager = HstFilter.getClientComponentManager(servletContext);
                 
                 if (componentManager != null) {
                     delegatedBean = componentManager.getComponent(beanName);
@@ -213,7 +216,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                 }
             }
 
-            delegatedBean.init(getServletContext(), getComponentConfiguration());
+            delegatedBean.init(servletContext, getComponentConfiguration());
             
             if (beanFoundFromBeanFactory && beanFactory instanceof AbstractApplicationContext) {
                 delegatedBeanApplicationContext = (AbstractApplicationContext) beanFactory;
