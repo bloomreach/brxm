@@ -112,7 +112,6 @@ public class ChannelManagerImpl implements ChannelManager {
     private void populateChannels(Node node) throws RepositoryException {
         NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
-            Channel channel = null;
             Node currNode = nodes.nextNode();
 
             //Get the channels from the child node.
@@ -135,6 +134,8 @@ public class ChannelManagerImpl implements ChannelManager {
                     continue;
                 }
             }
+
+            Channel channel;
             if (channels.containsKey(id)) {
                 channel = channels.get(id);
                 if (!channel.getBlueprintId().equals(bluePrintId)) {
@@ -151,8 +152,12 @@ public class ChannelManagerImpl implements ChannelManager {
             if (currNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 Node propertiesNode = currNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
                 BlueprintService blueprint = blueprints.get(bluePrintId);
-                Map<String, Object> channelProperties = channel.getProperties();
-                channelProperties.putAll(blueprint.loadChannelProperties(propertiesNode));
+                if (blueprint != null) {
+                    Map<String, Object> channelProperties = channel.getProperties();
+                    channelProperties.putAll(blueprint.loadChannelProperties(propertiesNode));
+                } else {
+                    log.warn("Unknown blueprint id '{}' found on node '{}'. Properties of this channel will not be loaded.", bluePrintId, currNode.getPath());
+                }
             }
 
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
@@ -228,8 +233,6 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     protected Session getSession(boolean writable) throws RepositoryException {
-        javax.jcr.Session session = null;
-
         Credentials credentials = this.credentials;
         if (writable) {
             Subject subject = HstSubject.getSubject(null);
@@ -244,6 +247,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 throw new LoginException("No subject available to obtain writable session");
             }
         }
+
+        javax.jcr.Session session;
+
         if (credentials == null) {
             session = this.repository.login();
         } else {
@@ -340,8 +346,14 @@ public class ChannelManagerImpl implements ChannelManager {
         load();
         if (channelId != null && channels.containsKey(channelId)) {
             Channel channel = channels.get(channelId);
-            Blueprint bp = blueprints.get(channel.getBlueprintId());
-            if (bp.getChannelInfoClass() != null) {
+            String blueprintId = channel.getBlueprintId();
+            Blueprint bp = blueprints.get(blueprintId);
+
+            if (bp == null) {
+                log.warn("No blueprint found with id '{}' for channel '{}'. The channel should have a blueprint with a channel info class in order to use the channel info object.", blueprintId, channelId);
+            } else if (bp.getChannelInfoClass() == null) {
+                log.warn("No channel info class specified for blueprint '{}' of channel '{}'. The channel should have a blueprint with a channel info class in order to use the channel info object.", blueprintId, channelId);
+            } else {
                 return (T) ChannelUtils.getChannelInfo(channel.getProperties(), bp.getChannelInfoClass());
             }
         }
@@ -542,8 +554,8 @@ public class ChannelManagerImpl implements ChannelManager {
         // resolve mount
         mount = mount.getNode("hst:root");
         String[] mountPathEls = mountPath.split("/");
-        for (int i = 0; i < mountPathEls.length; i++) {
-            mount = mount.getNode(mountPathEls[i]);
+        for (String mountPathElement : mountPathEls) {
+            mount = mount.getNode(mountPathElement);
         }
 
         Node channelPropsNode;
