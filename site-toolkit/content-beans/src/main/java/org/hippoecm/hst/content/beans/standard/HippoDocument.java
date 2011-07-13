@@ -37,7 +37,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
     
     private String canonicalHandleUUID;
-
+    private javax.jcr.Node canonicalHandleNode;
 
     private boolean availableTranslationsBeanMappingClassInitialized;
     private HippoAvailableTranslationsBean availableTranslationsBeanMappingClass;
@@ -73,10 +73,32 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         }
     }
 
+    @Override
     public String getCanonicalHandleUUID() {
-        if(canonicalHandleUUID != null) {
-            return canonicalHandleUUID;
+        try {
+            return (getCanonicalHandleNode() == null) ? null : getCanonicalHandleNode().getIdentifier();
+        } catch (RepositoryException e) {
+            log.error("Cannot get handle uuid for node '"+getPath()+"'. Return null", e);
+            return null;
         }
+    }
+    
+
+    @Override
+    public String getCanonicalHandlePath() {
+        try {
+            return (getCanonicalHandleNode() == null) ? null : getCanonicalHandleNode().getPath();
+        } catch (RepositoryException e) {
+            log.error("Cannot get handle path for node '"+getPath()+"'. Return null", e);
+            return null;
+        }
+    }
+    
+    private javax.jcr.Node getCanonicalHandleNode() {
+        if(canonicalHandleNode != null) {
+            return canonicalHandleNode;
+        }
+        
         if(this.getNode() == null) {
             log.warn("Cannot get handle uuid for detached node '{}'", this.getPath());
             return null;
@@ -89,12 +111,11 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
                 log.error("We cannot get the canonical handle uuid for a document that does not have a canonical version. Node '{}'. Return null", getNode().getPath());
                 return null;
             }
-            javax.jcr.Node handle = canonical.getParent();
-            canonicalHandleUUID =  handle.getIdentifier();
+            canonicalHandleNode = canonical.getParent();
         } catch (RepositoryException e) {
             log.error("Cannot get handle uuid for node '"+this.getPath()+"'", e);
         }
-        return canonicalHandleUUID;
+        return canonicalHandleNode;
     }
     
     public String getLocaleString() {
@@ -153,5 +174,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         }
         return super.equals(obj);
     }
+
 
 }

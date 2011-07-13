@@ -62,10 +62,38 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
     String getPath();
     
     /**
-     * @return the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> in case of any exception or when the jcr node is detached.
-     * For {@link HippoDocumentBean}'s, the uuid of the handle might be more valuable, which you can get with {@link HippoDocumentBean#getCanonicalHandleUUID()}. 
+     * Returns the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> when 
+     * <p>
+     * <ul>
+     *  <li>there is no canonical node (for example this might be the case for faceted navigation folders)</li>
+     *  <li>the jcr node is detached</li>
+     *  <li>a repository exception happened</li>
+     * </ul>
+     * </p>
+     * <p>
+     * For {@link HippoDocumentBean}'s, the uuid of the handle might be more valuable, which you can get with {@link HippoDocumentBean#getCanonicalHandleUUID()}.
+     * </p> 
+     * @see HippoDocumentBean#getCanonicalHandleUUID()
+     * @return the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> 
      */
     String getCanonicalUUID();
+    
+    /**
+     * Returns the jcr path of the backing canonical (physical) jcr node or <code>null</code> when 
+     * <p>
+     * <ul>
+     *  <li>there is no canonical node (for example this might be the case for faceted navigation folders)</li>
+     *  <li>the jcr node is detached</li>
+     *  <li>a repository exception happened</li>
+     * </ul>
+     * </p>
+     * <p>
+     * For {@link HippoDocumentBean}'s, the uuid of the handle might be more valuable, which you can get with {@link HippoDocumentBean#getCanonicalHandleUUID()}.
+     * </p> 
+     * @see HippoDocumentBean#getCanonicalHandlePath()
+     * @return the jcr path of the backing canonical (physical) jcr node or <code>null</code> 
+     */
+    String getCanonicalPath();
 
     /**
      * Same as {@link #getProperty(String)}, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language

@@ -46,9 +46,7 @@ public class HippoItem implements HippoBean {
  
     private static Logger log = LoggerFactory.getLogger(HippoItem.class);
 
-    protected String canonicalId;
     protected transient Node node;
-    protected String path;
     protected String comparePath;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
@@ -88,34 +86,17 @@ public class HippoItem implements HippoBean {
     }
 
     public String getPath() {
-        if (this.path == null && valueProvider != null) {
-            this.path = valueProvider.getPath();
-        }
-        return this.path;
+        return (valueProvider == null) ? null : valueProvider.getPath();
     }
 
+    @Override
     public String getCanonicalUUID() {
-        if (this.canonicalId != null) {
-            return canonicalId;
-        }
-        if (this.node == null) {
-            log.warn("Cannot get uuid for detached node '{}'", this.getPath());
-            return null;
-        }
-        try {
-            javax.jcr.Node canonicalNode;
-            if (this.node.hasProperty(HippoNodeType.HIPPO_UUID)) {
-                this.canonicalId = this.node.getProperty(HippoNodeType.HIPPO_UUID).getString();
-            } else if (this.node.isNodeType("mix:referenceable")) {
-                this.canonicalId = this.node.getIdentifier();
-            } else if( (canonicalNode = ((HippoNode)node).getCanonicalNode()) != null) {
-                canonicalId = canonicalNode.getIdentifier();
-            } 
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException while trying to get canonical uuid for '" + this.getPath() + "'", e);
-        }
-        return this.canonicalId;
+        return getValueProvider().getIdentifier();
+    }
 
+    @Override
+    public String getCanonicalPath() {
+        return getValueProvider().getCanonicalPath();
     }
 
     /**
@@ -627,9 +608,6 @@ public class HippoItem implements HippoBean {
      * Detach the jcr Node. Already loaded properties and variables are still available. 
      */
     public void detach() {
-        if (this.path == null) {
-            this.path = valueProvider.getPath();
-        }
         this.valueProvider.detach();
         this.node = null;
         this.detached = true;
@@ -640,13 +618,17 @@ public class HippoItem implements HippoBean {
      * @param session
      */
     public void attach(Session session) {
+        if(getPath() == null) {
+            log.error("Unable to attach HippoBean again since getPath() is null");
+            return;
+        }
         try {
-            if (session.itemExists(this.path)) {
-                Item item = session.getItem(this.path);
+            if (session.itemExists(getPath())) {
+                Item item = session.getItem(getPath());
                 if (item instanceof Node) {
                     this.valueProvider = new JCRValueProviderImpl((Node) item);
                 } else {
-                    log.warn("Cannot attach an item that is not a jcr property: '{}'", this.path);
+                    log.warn("Cannot attach an item that is not a jcr property: '{}'", getPath());
                 }
             }
         } catch (RepositoryException e) {

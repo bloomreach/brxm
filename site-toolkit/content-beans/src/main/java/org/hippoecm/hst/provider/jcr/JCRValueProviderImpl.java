@@ -611,17 +611,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             log.warn("Jcr Node is detatched. Cannot get identifier");
             return;
         } 
-       
         if(jcrNode instanceof HippoNode) {
             try {
                 Node canonical = ((HippoNode)jcrNode).getCanonicalNode();
                 if(canonical != null) {
-                    if(canonical.isNodeType("mix:referenceable")) {
-                        this.identifier = canonical.getIdentifier();
-                    } else {
-                        log.info("We take as the identifier of a node that is not mix:referenceable the canonical path");
-                        this.identifier = canonical.getPath();
-                    }
+                    this.identifier = canonical.getIdentifier();
                 } else {
                     log.warn("Cannot get an identifier for a virtual only node '{}'", jcrNode.getPath());
                 }

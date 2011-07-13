@@ -25,10 +25,33 @@ import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.No
 public interface HippoDocumentBean extends HippoBean, HippoTranslated {
 
     /**
-     * 
-     * @return the uuid of the canonical handle (the physical node) and <code>null</code> if some exception happened
+     * Returns the jcr uuid of the backing canonical <b>handle</b>  jcr node or <code>null</code> when 
+     * <p>
+     * <ul>
+     *  <li>there is no canonical node</li>
+     *  <li>the jcr node is detached</li>
+     *  <li>a repository exception happened</li>
+     * </ul>
+     * </p>
+     * @see HippoBean#getCanonicalUUID()
+     * @return the uuid of the canonical handle or <code>null</code>
      */
     String getCanonicalHandleUUID();
+    
+    /**
+     * Returns the jcr path of the backing canonical <b>handle</b> jcr node or <code>null</code> when 
+     * <p>
+     * <ul>
+     *  <li>there is no canonical node</li>
+     *  <li>the jcr node is detached</li>
+     *  <li>a repository exception happened</li>
+     * </ul>
+     * </p>
+     * @see HippoBean#getCanonicalPath()
+     * @return the jcr path of the canonical handle or <code>null</code>
+     */
+    String getCanonicalHandlePath();
+    
     
     /**
      * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
