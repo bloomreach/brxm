@@ -428,14 +428,6 @@ public class HstLinkTag extends ParamContainerTag {
         this.canonical = canonical;
     }
     
-    /**
-     * @deprecated use {@link #setNavigationStateful(boolean)} instead
-     */
-    @Deprecated
-    public void setContextRelative(boolean navigationStateful) {
-        this.navigationStateful = navigationStateful;
-    }
-    
     public void setNavigationStateful(boolean navigationStateful) {
         this.navigationStateful = navigationStateful;
     }

@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<hst:head-contribution keyHint="title"><title>Faceted Navigation Add Products</title></hst:head-contribution>
+<hst:headContribution keyHint="title"><title>Faceted Navigation Add Products</title></hst:headContribution>
 
 <div id="yui-u">
     <h1>Add Sample Products</h1>

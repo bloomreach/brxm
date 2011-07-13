@@ -34,8 +34,8 @@
   <hst:attribute name="type" value="text/css" />
   <hst:attribute name="href" value="${demoSiteCssHref}" />
 </hst:element>
-<hst:head-contribution keyHint="yuiResetFontsGridCss" element="${yuiResetFontsGridCss}" />
-<hst:head-contribution keyHint="demoSiteCss" element="${demoSiteCss}" />
+<hst:headContribution keyHint="yuiResetFontsGridCss" element="${yuiResetFontsGridCss}" />
+<hst:headContribution keyHint="demoSiteCss" element="${demoSiteCss}" />
 
 <hst:link var="destination" path="/" />
 

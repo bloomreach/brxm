@@ -22,12 +22,12 @@
 
 <hst:defineObjects/>
 
-<hst:head-contribution keyHint="title"><title>${document.title}</title></hst:head-contribution>
+<hst:headContribution keyHint="title"><title>${document.title}</title></hst:headContribution>
 <hst:element name="script" var="yui3Elem">
     <hst:attribute name="type" value="text/javascript"/>
     <hst:attribute name="src" value="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"/>
 </hst:element>
-<hst:head-contribution keyHint="yui3" element="${yui3Elem}"/>
+<hst:headContribution keyHint="yui3" element="${yui3Elem}"/>
 
 <style type="text/css">
     .form_error {

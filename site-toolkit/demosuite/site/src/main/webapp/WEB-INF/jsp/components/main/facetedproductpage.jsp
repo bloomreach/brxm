@@ -20,7 +20,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hst:head-contribution keyHint="title"><title>${document.title}</title></hst:head-contribution>
+<hst:headContribution keyHint="title"><title>${document.title}</title></hst:headContribution>
 
 <div class="yui-u">
   

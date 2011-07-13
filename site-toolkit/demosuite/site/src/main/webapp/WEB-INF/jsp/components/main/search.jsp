@@ -31,11 +31,11 @@
       <c:when test="${isError}">
         <h1><fmt:message key="key.page.notfound"/></h1>
         <p><fmt:message key="key.page.notfound.message"/></p>
-        <hst:head-contribution keyHint="title"><title>Page not found</title></hst:head-contribution>
+        <hst:headContribution keyHint="title"><title>Page not found</title></hst:headContribution>
       </c:when>
       <c:otherwise>
        <h1>Search</h1>
-       <hst:head-contribution keyHint="title"><title><fmt:message key="key.search"/></title></hst:head-contribution>
+       <hst:headContribution keyHint="title"><title><fmt:message key="key.search"/></title></hst:headContribution>
       </c:otherwise>
     </c:choose>    
 

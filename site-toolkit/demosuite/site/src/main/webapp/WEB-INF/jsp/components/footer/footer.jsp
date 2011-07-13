@@ -22,7 +22,7 @@
   <hst:attribute name="type" value="text/javascript" />
   <hst:attribute name="src" value="${simpleiopath}" />
 </hst:element>
-<hst:head-contribution keyHint="simpleio" element="${simpleio}" />
+<hst:headContribution keyHint="simpleio" element="${simpleio}" />
 
 <div id="ft">
   <p>

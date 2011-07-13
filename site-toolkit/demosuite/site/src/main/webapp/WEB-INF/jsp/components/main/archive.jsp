@@ -25,7 +25,7 @@
 <c:set var="firstpage" value="${searchResults.startPage}"/>
 <c:set var="lastpage" value="${searchResults.endPage}"/>
 
-<hst:head-contribution keyHint="title"><title>Archive</title></hst:head-contribution>
+<hst:headContribution keyHint="title"><title>Archive</title></hst:headContribution>
 
 <div id="yui-u">
         <h1>Archive</h1>
