@@ -184,14 +184,6 @@ public class HstSiteService implements HstSite {
         return siteMapItemHandlersConfigurationService;
     }
     
-    public String getContentPath() {
-        return contentPath;
-    }
-    
-    public String getCanonicalContentPath() {
-        return canonicalContentPath;
-    }
-
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
     }

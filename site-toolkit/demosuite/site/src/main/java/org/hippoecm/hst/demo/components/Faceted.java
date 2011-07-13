@@ -77,7 +77,7 @@ public class Faceted extends AbstractFacetedComponnent {
         Session writableSession = null;
         try {
             writableSession = this.getPersistableSession(request);
-            String rootByPath = this.getHstSite(request).getCanonicalContentPath();
+            String rootByPath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
             rootByPath = PathUtils.normalizePath(rootByPath);
             String numberStr = request.getParameter("number");
             int number = Integer.parseInt(numberStr);

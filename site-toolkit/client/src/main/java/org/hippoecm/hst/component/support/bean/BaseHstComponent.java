@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -48,6 +47,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
@@ -87,7 +87,6 @@ public class BaseHstComponent extends GenericHstComponent {
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
     public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
     public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
-    private static final String COMPOSERMODE_NAME_TYPE = "composermode";
     
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
         "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
@@ -205,6 +204,14 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public HstSite getHstSite(HstRequest request){
         return request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSite();
+    }
+
+    public ResolvedMount getResolvedMount(HstRequest request){
+        return request.getRequestContext().getResolvedMount();
+    }
+    
+    public Mount getMount(HstRequest request){
+        return getResolvedMount(request).getMount();
     }
     
     /**

@@ -40,24 +40,6 @@ public interface HstSite {
     String getName();
 
     /**
-     * Returns the absolute content path for this <code>HstSite</code> 
-     * @return The absolute content path for this <code>HstSite</code>
-     * @deprecated Use {@link Mount#getContentPath()}
-     */
-    @Deprecated
-    String getContentPath();
-    
-    /**
-     * Returns the absolute canonical content path for this <code>HstSite</code>
-     * 
-     * This path differs from {@link #getContentPath()} when the {@link #getContentPath()} points to a mirror node.
-     * @return The absolute absolute content path for this <code>HstSite</code>
-     * @deprecated Use {@link Mount#getCanonicalContentPath()}
-     */
-    @Deprecated
-    String getCanonicalContentPath();
-    
-    /**
      * Returns the identifier of the backing canonical configuration node of the  HstSite.
      * 
      * @return the identifier of the backing HstSite
