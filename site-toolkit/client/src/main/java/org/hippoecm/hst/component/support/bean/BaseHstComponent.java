@@ -101,10 +101,10 @@ public class BaseHstComponent extends GenericHstComponent {
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
+        this.servletContext = servletContext;
         if (!this.beansInitialized) {
             initBeansObjects() ;
         }
-        this.servletContext = servletContext;
     }
 
     /**

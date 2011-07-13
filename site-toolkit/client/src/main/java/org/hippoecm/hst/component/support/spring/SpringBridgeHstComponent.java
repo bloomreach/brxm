@@ -96,7 +96,8 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     @Override
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
-        
+
+        this.servletContext = servletContext;
         String param = servletContext.getInitParameter("hst-spring-delegated-bean-param-name");
         
         if (param != null) {
@@ -108,7 +109,6 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
         if (param != null) {
             contextNameSeparator = param;
         }
-        this.servletContext = servletContext;
     }
 
     @Override
