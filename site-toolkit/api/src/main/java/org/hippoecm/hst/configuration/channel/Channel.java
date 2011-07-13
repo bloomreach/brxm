@@ -27,6 +27,8 @@ public class Channel implements Serializable {
     private final String id;
 
     private String title;
+    private String hostname;
+    private String subMountPath; // TODO find proper name
     private String url; //Probably not needed for all channels ?
     private String type; //Channel type - preview/live.
     private String hstConfigPath;
@@ -109,6 +111,22 @@ public class Channel implements Serializable {
 
     public void setComposerModeEnabled(final boolean composerModeEnabled) {
         this.composerModeEnabled = composerModeEnabled;
+    }
+
+    public void setHostname(final String hostname) {
+        this.hostname = hostname;
+    }
+
+    public String getHostname() {
+        return this.hostname;
+    }
+
+    public void setSubMountPath(final String subMountPath) {
+        this.subMountPath = subMountPath;
+    }
+
+    public String getSubMountPath() {
+        return this.subMountPath;
     }
 
     public Map<String, Object> getProperties() {

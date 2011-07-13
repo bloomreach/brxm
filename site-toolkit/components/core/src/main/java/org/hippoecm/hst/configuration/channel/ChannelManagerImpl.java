@@ -146,8 +146,7 @@ public class ChannelManagerImpl implements ChannelManager {
                 channels.put(id, channel);
             }
 
-            String url = getUrlFor(currNode);
-            channel.setUrl(url);
+            setUrlFor(currNode, channel);
 
             if (currNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 Node propertiesNode = currNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
@@ -176,7 +175,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private String getUrlFor(final Node currNode) throws RepositoryException {
+    private void setUrlFor(final Node currNode, final Channel channel) throws RepositoryException {
         StringBuilder mountBuilder = new StringBuilder();
         Node ancestor = currNode;
         while (!ancestor.isNodeType("hst:virtualhostgroup")) {
@@ -188,6 +187,7 @@ public class ChannelManagerImpl implements ChannelManager {
             mountBuilder.insert(0, "/");
             ancestor = ancestor.getParent();
         }
+        channel.setSubMountPath(mountBuilder.toString());
         boolean firstHost = true;
         StringBuilder hostBuilder = new StringBuilder();
         while (!ancestor.isNodeType("hst:virtualhostgroup")) {
@@ -199,7 +199,8 @@ public class ChannelManagerImpl implements ChannelManager {
             hostBuilder.append(ancestor.getName());
             ancestor = ancestor.getParent();
         }
-        return "http://" + hostBuilder.toString() + mountBuilder.toString();
+        channel.setHostname(hostBuilder.toString());
+        channel.setUrl("http://" + hostBuilder.toString() + mountBuilder.toString());
     }
 
     private void load() throws ChannelException {
