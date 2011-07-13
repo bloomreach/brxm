@@ -60,7 +60,7 @@ public class WrapperElementUtils
         
         if (textContent != null)
         {
-            writer.write(encode(textContent));
+            writer.write(XmlUtils.encode(textContent));
         }
         
         if (contentBuffer != null) {
@@ -79,7 +79,7 @@ public class WrapperElementUtils
             writer.write(' ');
             writer.write(entry.getKey());
             writer.write("=\"");
-            writer.write(encode(entry.getValue()));
+            writer.write(XmlUtils.encode(entry.getValue()));
             writer.write("\"");
         }
         
@@ -114,7 +114,7 @@ public class WrapperElementUtils
         
         if (textContent != null)
         {
-            writer.write(encode(textContent));
+            writer.write(XmlUtils.encode(textContent));
         }
         
         writer.flush();
@@ -125,13 +125,6 @@ public class WrapperElementUtils
         }
         
         writeWrapperElementEnd(out, wrapperElement);
-    }
-    
-    /**
-     * @deprecated Use {@link XmlUtils#encode(String)}.
-     */
-    public static String encode(String value) {
-        return XmlUtils.encode(value);
     }
     
 }
