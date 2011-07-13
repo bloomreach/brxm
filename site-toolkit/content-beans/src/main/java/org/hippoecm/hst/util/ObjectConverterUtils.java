@@ -43,7 +43,6 @@ import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImage;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoImage;
 import org.hippoecm.hst.content.beans.standard.HippoMirror;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 import org.hippoecm.hst.content.beans.standard.HippoStdPubWfRequest;
@@ -79,7 +78,6 @@ public class ObjectConverterUtils {
         HippoResource.class,
         HippoStdPubWfRequest.class,
         HippoAsset.class,
-        HippoImage.class,
         HippoGalleryImageSet.class,
         HippoGalleryImage.class,
         HippoTranslation.class,
