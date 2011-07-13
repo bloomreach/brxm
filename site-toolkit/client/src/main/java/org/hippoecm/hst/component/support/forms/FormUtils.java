@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,31 +22,26 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 
- * @deprecated use static methods in FormUtils instead
- */
-@Deprecated
-public class BaseFormHstComponent extends BaseHstComponent{
-
-    static Logger log = LoggerFactory.getLogger(BaseFormHstComponent.class);
+public class FormUtils {
+    
+    static Logger log = LoggerFactory.getLogger(FormUtils.class);
 
     public final static String DEFAULT_UUID_NAME = "u_u_i_d";
     public final static String DEFAULT_STORED_FORMS_LOCATION = "formdata";
@@ -60,18 +55,10 @@ public class BaseFormHstComponent extends BaseHstComponent{
     public static final String HST_FORM_FIELD_MESSAGES = "hst:formfieldmessages";
     public static final String HST_FORM_FIELD_NAME = "hst:formfieldname";
 
-    public final static String DEFAULT_WRITABLE_USERNAME_PROPERTY = "writable.repository.user.name";
-    public final static String DEFAULT_WRITABLE_PASSWORD_PROPERTY = "writable.repository.password";
     public static final String HST_SEALED = "hst:sealed";
 
-
-    @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        super.doAction(request, response);
-        // remove the uuid from the renderparameter again
-        response.setRenderParameter(DEFAULT_UUID_NAME, (String)null);
-    }
-
+    private final static Object mutex = new Object();
+    
     /**
      * This method tries to repopulate an earlier posted form that was stored in the repository.
      *
@@ -79,10 +66,8 @@ public class BaseFormHstComponent extends BaseHstComponent{
      *
      * @param request the current hstRequest
      * @param formMap the formMap that will be populated
-     * @deprecated use {@link FormUtils#populate(HstRequest, FormMap)} instead
      */
-    @Deprecated
-    protected void populate(HstRequest request, FormMap formMap){
+    public static void populate(HstRequest request, FormMap formMap) {
         if(formMap == null) {
             log.warn("FormMap is null so can not be populated");
             return;
@@ -154,42 +139,24 @@ public class BaseFormHstComponent extends BaseHstComponent{
      * @param formMap the form names + values to temporarily store
      * @param storeFormResult an object to store some result of the data persisting, for example the uuid of the created node
      * @throws HstComponentException when the storing of the formdata fails
-     * @deprecated use {@link FormUtils#persistFormMap(HstRequest, HstResponse, FormMap, StoreFormResult) instead
      */
-    @Deprecated
 
-    protected void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException {
-            Session impersonated = null;
+    public static void persistFormMap(HstRequest request, HstResponse response, FormMap formMap, StoreFormResult storeFormResult) throws HstComponentException {
+            Session session = null;
             try {
-                Session session = request.getRequestContext().getSession();
-                String writableUserProperty = getWritableUserName();
-                String writablePasswordProperty = getWritablePassword();
-                ContainerConfiguration config = request.getRequestContext().getContainerConfiguration();
-
-                String username = config.getString(writableUserProperty);
-                String password = config.getString(writablePasswordProperty);
-                if(username == null || password == null) {
-                    log.error("Cannot retrieve a writable user for '{}' and '{}'",writableUserProperty, writablePasswordProperty);
-                    return;
-                }
-                try {
-                    impersonated = session.impersonate(new SimpleCredentials(username, password.toCharArray()));
-                } catch (RepositoryException e){
-                    log.error("Cannot impersonate a session with '{}' and '{}'", username, password);
-                    return;
-                }
-
-                Node rootNode = impersonated.getRootNode();
+                session = getWritableSession();
+                Node rootNode = session.getRootNode();
                 Node formData;
-                if(!rootNode.hasNode(getFormDataNodeName())) {
-                    formData = rootNode.addNode(getFormDataNodeName(), DEFAULT_FORMDATA_CONTAINER);
-                    addInitialStructure(formData);
+                if(!rootNode.hasNode(DEFAULT_STORED_FORMS_LOCATION)) {
+                    synchronized (mutex) {
+                        formData = rootNode.addNode(DEFAULT_STORED_FORMS_LOCATION, DEFAULT_FORMDATA_CONTAINER);
+                        addInitialStructure(formData);
+                    }
                 } else {
-                    formData = rootNode.getNode(getFormDataNodeName());
+                    formData = rootNode.getNode(DEFAULT_STORED_FORMS_LOCATION);
                 }
-
                 Node randomNode = createRandomNode(formData);
-                Node postedFormDataNode = randomNode.addNode("tick_"+System.currentTimeMillis(), getFormDataNodeType() );
+                Node postedFormDataNode = randomNode.addNode("tick_"+System.currentTimeMillis(), DEFAULT_FORMDATA_TYPE );
                 postedFormDataNode.setProperty(HST_CREATIONTIME, Calendar.getInstance());
                 postedFormDataNode.setProperty(HST_SEALED, formMap.isSealed());
                 // if there is a previously stored node of this form, set this uuid as predecessor
@@ -213,8 +180,8 @@ public class BaseFormHstComponent extends BaseHstComponent{
                         fieldNode.setProperty(HST_FORM_FIELD_MESSAGES, messages.toArray(new String[messages.size()]));
                     }
                 }
-                impersonated.save();
-                response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getUUID());
+                session.save();
+                response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getIdentifier());
                 if(storeFormResult != null) {
                     storeFormResult.populateResult(postedFormDataNode);
                 }
@@ -223,60 +190,14 @@ public class BaseFormHstComponent extends BaseHstComponent{
             } catch (RepositoryException e) {
                throw new HstComponentException("RepositoryException during storing form data: ", e);
             } finally {
-                if(impersonated != null) {
-                    impersonated.logout();
+                if(session != null) {
+                    session.logout();
                 }
             }
     }
 
-    /**
-     * If you have a different property for you writable user instead of the default {@link #DEFAULT_WRITABLE_PASSWORD_PROPERTY}, then override
-     * this method
-     * @return the property name of the password of a writable user
-     * @deprecated 
-     */
-    @Deprecated
-    protected String getWritablePassword() {
-        return DEFAULT_WRITABLE_PASSWORD_PROPERTY;
-    }
 
-    /**
-     * If you have a different property for you writable user instead of the default {@link #DEFAULT_WRITABLE_USERNAME_PROPERTY}, then override
-     * this method
-     * @return the property name of the username of a writable user
-     * @deprecated 
-     */
-    @Deprecated
-    protected String getWritableUserName() {
-        return DEFAULT_WRITABLE_USERNAME_PROPERTY;
-    }
-
-    /**
-     * Override this method if you need a different location for storing form data
-     * @return default repository location for stored nodes
-     * @deprecated 
-     */
-    @Deprecated
-    protected String getFormDataNodeName(){
-        return DEFAULT_STORED_FORMS_LOCATION;
-    }
-
-    /**
-     * Override this method if you need a different node type
-     * @return default node type to store form data
-     * @deprecated 
-     */
-    @Deprecated
-    protected String getFormDataNodeType(){
-        return DEFAULT_FORMDATA_TYPE;
-    }
-
-    /**
-     * 
-     * @deprecated 
-     */
-    @Deprecated
-    private void addInitialStructure(Node formData) throws RepositoryException {
+    private static void addInitialStructure(Node formData) throws RepositoryException {
         char a = 'a';
         for(int i = 0; i < 26 ; i ++) {
           Node letter =  formData.addNode(Character.toString((char)(a+i)), DEFAULT_FORMDATA_CONTAINER);
@@ -286,12 +207,7 @@ public class BaseFormHstComponent extends BaseHstComponent{
         }
     }
 
-    /**
-     * 
-     * @deprecated 
-     */
-    @Deprecated
-    private Node createRandomNode(Node formData)throws RepositoryException {
+    private static Node createRandomNode(Node formData)throws RepositoryException {
         Node result = formData;
         char a = 'a';
         Random rand = new Random();
@@ -313,12 +229,29 @@ public class BaseFormHstComponent extends BaseHstComponent{
      *
      * @param uuid uuid to validate
      * @throws IllegalArgumentException thrown on invalid uuid
-     * 
-     * @deprecated 
      */
-    @Deprecated
-    private void validateId(final String uuid) throws IllegalArgumentException {
+    public static void validateId(final String uuid) throws IllegalArgumentException {
         UUID.fromString(uuid);
+    }
+    
+    public static Session getWritableSession() throws RepositoryException {
+        if (HstServices.isAvailable()) {
+            Credentials defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".writable");
+            Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+            Session session = null;
+            if (repository != null) {
+                if (defaultCredentials != null) {
+                    session = repository.login(defaultCredentials);
+                } else {
+                    session = repository.login();
+                }
+            }
+            return session;
+        } else {
+            throw new HstComponentException("Can not get a writable sessions because HstServices are not available");
+        }
+        
+        
     }
 
 }

@@ -226,7 +226,6 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                 }
             }
         }
-        
         return delegatedBean;
     }
 

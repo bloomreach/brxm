@@ -17,8 +17,9 @@ package org.hippoecm.hst.demo.spring;
 
 import java.io.IOException;
 
-import org.hippoecm.hst.component.support.forms.BaseFormHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.component.support.forms.FormMap;
+import org.hippoecm.hst.component.support.forms.FormUtils;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 
-public class ContactSpring extends BaseFormHstComponent {
+public class ContactSpring extends BaseHstComponent {
     
     static Logger log = LoggerFactory.getLogger(ContactSpring.class);
     
@@ -51,7 +52,7 @@ public class ContactSpring extends BaseFormHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         FormMap formMap = new FormMap();
-        super.populate(request, formMap);
+        FormUtils.populate(request, formMap);
         request.setAttribute("form", formMap);
     }
 
@@ -61,7 +62,7 @@ public class ContactSpring extends BaseFormHstComponent {
         FormMap formMap = new FormMap(request, formFields);
         
         if(request.getParameter("prev") != null && request.getParameter("previous") != null) {
-            response.setRenderParameter(DEFAULT_UUID_NAME, request.getParameter("previous"));
+            response.setRenderParameter(FormUtils.DEFAULT_UUID_NAME, request.getParameter("previous"));
             return;
         }
         // Do a really simple validation: 
@@ -89,7 +90,7 @@ public class ContactSpring extends BaseFormHstComponent {
         } else {
             // validation failed. Persist form map, and add possible error messages to the formMap
             formMap.addMessage("email", "Email address must contain '@'");
-            super.persistFormMap(request, response, formMap, null);
+            FormUtils.persistFormMap(request, response, formMap, null);
         }
     }
     

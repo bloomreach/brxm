@@ -15,18 +15,18 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import org.hippoecm.hst.component.support.forms.BaseFormHstComponent;
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.component.support.forms.FormField;
 import org.hippoecm.hst.component.support.forms.FormMap;
+import org.hippoecm.hst.component.support.forms.FormUtils;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstForm extends BaseFormHstComponent {
+public class HstForm extends BaseHstComponent {
 
-    @SuppressWarnings({"UnusedDeclaration"})
     private static Logger log = LoggerFactory.getLogger(HstForm.class);
     private static final String[] DEFINED_FORM_FIELDS = {"name", "email", "textarea", "checkbox"};
 
@@ -45,14 +45,14 @@ public class HstForm extends BaseFormHstComponent {
             log.info("Sealing data. this data cannot be read within doBefore anymore");
             formMap.setSealed(true);
         }
-        super.persistFormMap(request, response, formMap, null);
+        FormUtils.persistFormMap(request, response, formMap, null);
     }
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         FormMap formMap = new FormMap();
-        super.populate(request, formMap);
+        FormUtils.populate(request, formMap);
         request.setAttribute("form", formMap);
     }
 

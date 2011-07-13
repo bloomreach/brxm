@@ -257,6 +257,7 @@ client/src/main/java/org/hippoecm/hst/component/support/bean/BaseHstComponent.ja
 client/src/main/java/org/hippoecm/hst/component/support/forms/BaseFormHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormField.java -text
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormMap.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/component/support/forms/FormUtils.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/StoreFormResult.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/portlet/GenericPortletPrefsEditor.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/spring/SpringBridgeHstComponent.java svneol=native#text/plain

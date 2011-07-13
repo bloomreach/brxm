@@ -27,7 +27,7 @@ public class StoreFormResult {
     private String uuid;
 
     public void populateResult(Node postedFormDataNode) throws RepositoryException {
-        this.uuid = postedFormDataNode.getUUID();
+        this.uuid = postedFormDataNode.getIdentifier();
     }
 
     public String getUuid() {
