@@ -205,48 +205,13 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
     }
     
-    /**
-     * @deprecated
-     * @param path
-     * @param node
-     * @param request
-     * @param response
-     * @return
-     */
-    protected HstLink getDocumentLink(String path, Node node, HstRequest request, HstResponse response) {
-        return getDocumentLink(path, node, request.getRequestContext(), null);
-    }
-    
     protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
     }
     
-    /**
-     * @deprecated
-     * @param path
-     * @param node
-     * @param request
-     * @param response
-     * @return
-     */
-    protected HstLink getBinaryLink(String path, Node node, HstRequest request, HstResponse response) {
-        return getBinaryLink(path, node, request.getRequestContext(), null);
-    }
     
     protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
-    }
-    
-    /**
-     * @deprecated
-     * @param path
-     * @param node
-     * @param request
-     * @param response
-     * @return
-     */
-    protected HstLink getLink(String path, Node node, HstRequest request, HstResponse response) {
-        return getLink(path, node, request.getRequestContext(), null);
     }
     
     protected HstLink getLink(String path, Node node, HstRequestContext reqContext, Mount targetMount) {
