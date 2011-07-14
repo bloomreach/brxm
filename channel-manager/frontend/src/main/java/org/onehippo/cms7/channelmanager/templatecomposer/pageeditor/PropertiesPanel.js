@@ -154,7 +154,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
-                        url: this.composerRestMountUrl + this.mountId + './documents/',
+                        url: this.composerRestMountUrl + this.mountId + './documents/'+ property.get('docType'),
                         fields:['path']
                     });
 
