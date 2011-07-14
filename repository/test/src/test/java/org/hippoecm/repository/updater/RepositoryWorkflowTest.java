@@ -124,7 +124,7 @@ public class RepositoryWorkflowTest extends TestCase {
         }
     }
 
-    @Ignore
+    @Test
     public void testCustomFolderUpdate() throws Exception {
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         Workflow wf = wfmgr.getWorkflow("internal", session.getRootNode());
@@ -139,7 +139,7 @@ public class RepositoryWorkflowTest extends TestCase {
         flush();
         session.getRootNode().getNode("test").addNode("folder", "testUpdateModel:folder").addMixin("hippo:harddocument");
         session.save();
-        buildDepth2(session.getRootNode().getNode("test/folder"), 150, 150,3, 3,4);
+        buildDepth2(session.getRootNode().getNode("test/folder"), 3, 150,3, 3,4);
         session.save();
         getWorkflow().updateModel("testUpdateModel", cnd3);
         flush();
