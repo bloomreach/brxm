@@ -397,11 +397,7 @@ public class HstFilter implements Filter {
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     	catch (Exception e) {
-    	    if(logger.isDebugEnabled()) {
-                logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
-            } else {
-                logger.warn("Fatal error encountered while processing request '{}': '{}'" , req.getRequestURI(),  e.toString());
-            }
+            logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
     	finally {

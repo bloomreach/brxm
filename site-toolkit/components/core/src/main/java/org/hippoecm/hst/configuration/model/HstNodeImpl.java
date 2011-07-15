@@ -57,6 +57,11 @@ public class HstNodeImpl implements HstNode {
      */
     private String nodeTypeName;
     
+    /**
+     * When true, this JCRValueProvider is out of date and needs to be reloaded
+     */
+    private boolean stale = false;
+    
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
         this.parent = parent;
         try {
@@ -68,7 +73,8 @@ public class HstNodeImpl implements HstNode {
         } catch (RepositoryException e) {
            throw new HstNodeException(e);
         }
-        // detach the backing jcr node now we are done.                     
+        // detach the backing jcr node now we are done.       
+        stale = false;
         provider.detach();
     }
 
@@ -105,6 +111,7 @@ public class HstNodeImpl implements HstNode {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getValueProvider()
      */
+    @Override
     public ValueProvider getValueProvider(){
         return this.provider;
     }
@@ -117,6 +124,7 @@ public class HstNodeImpl implements HstNode {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getNode(java.lang.String)
      */
+    @Override
     public HstNode getNode(String relPath) throws IllegalArgumentException{
         if(relPath == null || "".equals(relPath) || relPath.startsWith("/")) {
             throw new IllegalArgumentException("Not a valid relPath '"+relPath+"'");
@@ -125,7 +133,7 @@ public class HstNodeImpl implements HstNode {
         String[] args = relPath.split("/");
         HstNode child = children.get(args[0]);
         if(args.length > 1 && child != null) {
-            relPath = relPath.substring(relPath.indexOf("/"));
+            relPath = relPath.substring(relPath.indexOf("/") + 1);
             return child.getNode(relPath);
         }
         
@@ -134,14 +142,21 @@ public class HstNodeImpl implements HstNode {
         }
         return child;
     }
-    
+
+    @Override
     public void addNode(String name, HstNode hstNode)  {
         children.put(name, hstNode);
+    }
+
+    @Override
+    public void removeNode(String name)  {
+        children.remove(name);
     }
 
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getNodes()
      */
+    @Override
     public List<HstNode> getNodes()  {
         return new ArrayList<HstNode>(children.values());
     }
@@ -149,6 +164,7 @@ public class HstNodeImpl implements HstNode {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getNodes(java.lang.String)
      */
+    @Override
     public List<HstNode> getNodes(String configNodeTypeName)  {
         if(configNodeTypeName == null) {
             throw new IllegalArgumentException("configNodeTypeName is not allowed to be null");
@@ -165,6 +181,7 @@ public class HstNodeImpl implements HstNode {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getNodeTypeName()
      */
+    @Override
     public String getNodeTypeName() {
         return nodeTypeName;
     }
@@ -172,9 +189,26 @@ public class HstNodeImpl implements HstNode {
     /* (non-Javadoc)
      * @see org.hippoecm.hst.configuration.model.HstNode#getParent()
      */
+    @Override
     public HstNode getParent()  {
         return parent;
     }
- 
 
+    @Override
+    public void markStale() {
+        stale = true;
+    }
+
+    @Override
+    public boolean isStale() {
+        return stale;
+    }
+
+    @Override
+    public void setJCRValueProvider(JCRValueProvider valueProvider) {
+        this.provider = valueProvider;
+        provider.detach();
+        stale = false;
+    }
+    
 }

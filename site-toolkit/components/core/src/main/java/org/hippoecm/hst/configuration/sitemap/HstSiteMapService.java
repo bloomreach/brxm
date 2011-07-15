@@ -95,7 +95,7 @@ public class HstSiteMapService implements HstSiteMap {
         if(hstSiteMapItem.getRefId() != null) {
             HstSiteMapItem prevValue =  siteMapDescendantsByRefId.put(hstSiteMapItem.getRefId(), hstSiteMapItem);
             if(prevValue != null) {
-                log.error("HstSiteMapItem with already existing refId encountered. Not allowed to have duplicate refId's within one HstSiteMap. Duplicate refId = '{}' for HstSiteMapItem with id='{}'. Previous HstSiteMapItem with same refId is replaced.",hstSiteMapItem.getRefId(), hstSiteMapItem.getId());
+                log.warn("HstSiteMapItem with already existing refId encountered. Not allowed to have duplicate refId's within one HstSiteMap. Duplicate refId = '{}' for HstSiteMapItem with id='{}'. Previous HstSiteMapItem with same refId is replaced.",hstSiteMapItem.getRefId(), hstSiteMapItem.getId());
             }
         }
         for(HstSiteMapItem child : hstSiteMapItem.getChildren()) {

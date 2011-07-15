@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.model;
 import java.util.List;
 
 import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 
 public interface HstNode {
 
@@ -52,5 +53,34 @@ public interface HstNode {
      * @return the parent of this <code>{@link HstNode}</code> or <code>null</code> when there is no parent.
      */
     HstNode getParent();
+    
+    /**
+     * add a child hstNode with <code>name</code>
+     * @param name
+     * @param hstNode
+     */
+    void addNode(String name, HstNode hstNode);
+    
+    /**
+     * removes child node with <code>name</code> and does nothing if not present
+     * @param name
+     */
+    void removeNode(String name);
+    
+    /**
+     * sets the new valueProvider
+     * @param valueProvider
+     */
+    void setJCRValueProvider(JCRValueProvider valueProvider);
+    
+    /**
+     * marks the HstNode as stale: The JCRValueProvider is out-of-date
+     */
+    void markStale();
+    
+    /**
+     * @return <code>true</code> when this HstNode is stale
+     */
+    boolean isStale();
 
 }
