@@ -73,7 +73,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     protected final static Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
-    static WeakHashMap<Session, Set<EventListenerDecorator>> listeners = new WeakHashMap<Session, Set<EventListenerDecorator>>();
+    private static final WeakHashMap<Session, Set<EventListenerDecorator>> listeners = new WeakHashMap<Session, Set<EventListenerDecorator>>();
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;
