@@ -235,6 +235,7 @@ public class HstManagerImpl implements HstManager {
                             if(path.length() == 0) {
                                 node = virtualHostsNode;
                             } else {
+                                path = path.substring(1);
                                 node = virtualHostsNode.getNode(path);
                             }
                              
