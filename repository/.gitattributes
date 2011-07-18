@@ -44,6 +44,7 @@ config/src/main/resources/domain-defaultread.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-defaultwrite.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-hippodocuments.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-hippofolders.xml -text svneol=unset#text/plain
+config/src/main/resources/domain-hippomodules.xml -text
 config/src/main/resources/domain-hipporequests.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow.xml -text svneol=unset#text/plain
 config/src/main/resources/embedded-workflows.xml -text
@@ -211,6 +212,8 @@ export/src/main/java/org/hippoecm/repository/export/NamespaceInstruction.java -t
 export/src/main/java/org/hippoecm/repository/export/NamespaceInstructionImpl.java -text
 export/src/main/java/org/hippoecm/repository/export/NodetypesResourceInstruction.java -text
 export/src/main/java/org/hippoecm/repository/export/ResourceInstruction.java -text
+export/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
+export/src/main/resources/hippoecm-extension.xml -text
 export/src/test/java/org/hippoecm/repository/export/LocationMapperTest.java -text
 /jackrabbit.patch -text
 jca/pom.xml svneol=native#text/plain
