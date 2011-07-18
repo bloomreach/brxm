@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
@@ -68,19 +69,20 @@ public class RootPlugin extends TabsPlugin {
 
         String[] browsers = config.getStringArray("browsers");
         List<StylesheetConfiguration> configurations = new ArrayList<StylesheetConfiguration>(browsers.length);
-        for (int i = 0; i < browsers.length; i++) {
-            if (config.containsKey(browsers[i])) {
-                IPluginConfig browserConf = config.getPluginConfig(browsers[i]);
+        for (String browserName : browsers) {
+            if (config.containsKey(browserName)) {
+                IPluginConfig browserConf = config.getPluginConfig(browserName);
                 String ua = browserConf.getString("user.agent", "unsupported").toUpperCase();
                 Browser browser = new Browser(UserAgent.valueOf(ua), browserConf.getInt("major.version", -1),
                         browserConf.getInt("minor.version", -1));
 
                 configurations.add(new StylesheetConfiguration(browser, browserConf.getStringArray("stylesheets")));
             } else {
-                log.warn("Browser " + browsers[i] + " listed, but no configuration is provided");
+                log.warn("Browser " + browserName + " listed, but no configuration is provided");
             }
         }
         add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
+        add(new ExtHippoThemeBehavior());
 
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.SMALL);
