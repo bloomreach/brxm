@@ -394,7 +394,11 @@ public class VirtualHostsService implements VirtualHosts {
 
 
     public List<Mount> getMountsByHostGroup(String hostGroupName) {
-        return Collections.unmodifiableList(mountByHostGroup.get(hostGroupName));
+        List<Mount> l = mountByHostGroup.get(hostGroupName);
+        if(l == null) {
+            l = Collections.emptyList();
+        }
+        return Collections.unmodifiableList(l);
     }
     
     /**
