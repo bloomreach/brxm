@@ -36,4 +36,6 @@ public interface HstPropertyDefinition {
 
     List<Annotation> getAnnotations();
 
+    <T extends Annotation> T getAnnotation(Class<T> annotationClass);
+
 }

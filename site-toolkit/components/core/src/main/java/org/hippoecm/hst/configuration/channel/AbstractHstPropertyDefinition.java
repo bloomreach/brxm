@@ -56,4 +56,9 @@ public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
     public List<Annotation> getAnnotations() {
         return Collections.emptyList();
     }
+
+    @Override
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        return null;
+    }
 }
