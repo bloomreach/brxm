@@ -35,12 +35,12 @@ public class NodePickerControllerSettings implements IClusterable {
     private static final String SELECTION_SERVICE_KEY = "wicket.model";
     private static final String FOLDER_SERVICE_KEY = "model.folder";
 
-    private static final String BASE_UUID = "base.uuid";
-    private static final String SELECTABLE_NODETYPES = "nodetypes";
+    public static final String BASE_UUID = "base.uuid";
+    public static final String SELECTABLE_NODETYPES = "nodetypes";
 
-    private static final String LAST_VISITED_KEY = "last.visited.key";
-    private static final String LAST_VISITED_ENABLED = "last.visited.enabled";
-    private static final String LAST_VISITED_NODETYPES = "last.visited.nodetypes";
+    public static final String LAST_VISITED_KEY = "last.visited.key";
+    public static final String LAST_VISITED_ENABLED = "last.visited.enabled";
+    public static final String LAST_VISITED_NODETYPES = "last.visited.nodetypes";
 
     private String clusterName;
     private IPluginConfig clusterOptions;
