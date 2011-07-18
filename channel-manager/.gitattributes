@@ -23,6 +23,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.ja
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelPropertiesPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWidget.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWidget.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWidget.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/InlinePreviewImage.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text

@@ -19,20 +19,16 @@ package org.onehippo.cms7.channelmanager;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
@@ -41,7 +37,6 @@ import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
  * @author Vijay Kiran
  */
 public class ChannelManagerPerspective extends Perspective {
-    private static final Logger log = LoggerFactory.getLogger(ChannelManagerPerspective.class);
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -52,7 +47,7 @@ public class ChannelManagerPerspective extends Perspective {
             add(new WireframeBehavior(wfSettings));
         }
 
-        RootPanel rootPanel = new RootPanel("channel-root");
+        RootPanel rootPanel = new RootPanel(context, "channel-root");
         add(rootPanel);
     }
 

@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -36,14 +38,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.components.HstValueType;
+import org.hippoecm.hst.configuration.components.ImageSetLink;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
@@ -69,7 +73,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     private Channel channel;
 
-    public ChannelPropertiesPanel() {
+    public ChannelPropertiesPanel(final IPluginContext context) {
         super();
 
         final WebMarkupContainer container = new WebMarkupContainer("container");
@@ -89,35 +93,26 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             @Override
             protected void populateItem(final ListItem<String> item) {
                 final String key = item.getModelObject();
-                final Map<String, Object> properties = channel.getProperties();
+                HstPropertyDefinition propDef = getPropertyDefinition(key);
+
+                if (propDef == null) {
+                    log.warn("Ignoring property '{}': no definition found");
+                    return;
+                }
+
                 item.add(new Label("key", key));
-                item.add(new TextFieldWidget("value", new IModel<String>() {
 
-                    @Override
-                    public String getObject() {
-                        Object value = properties.get(key);
-                        if (value == null) {
-                            return null;
-                        }
-                        return value.toString();
-                    }
+                HstValueType propType = propDef.getValueType();
+                ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
 
-                    @Override
-                    public void setObject(final String object) {
-                        Blueprint bp = getBlueprint();
-                        for (HstPropertyDefinition def : bp.getPropertyDefinitions()) {
-                            if (def.getName().equals(key)) {
-                                properties.put(key, def.getValueType().from(object));
-                                return;
-                            }
-                        }
-                        log.warn("Could not find definition for key '" + key + "'");
-                    }
-
-                    @Override
-                    public void detach() {
-                    }
-                }));
+                if (imageSetLink != null && propType.equals(HstValueType.STRING)) {
+                    IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
+                    item.add(new ImageSetFieldWidget(context, "value", imageSetLink, model));
+                } else if (propType.equals(HstValueType.BOOLEAN)) {
+                    item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
+                } else {
+                    item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
+                }
             }
         });
         container.setOutputMarkupId(true);
@@ -231,8 +226,135 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
     }
 
+    private HstPropertyDefinition getPropertyDefinition(String propertyName) {
+        for (HstPropertyDefinition definition : getBlueprint().getPropertyDefinitions()) {
+            if (definition.getName().equals(propertyName)) {
+                return definition;
+            }
+        }
+        log.warn("Could not find definition for property '" + propertyName + "'");
+        return null;
+    }
+
     @Override
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
     }
+
+    /**
+     * Abstract model that can store a string in a map under a certain key.
+     *
+     * @param <T> the type of the model's object
+     */
+    private abstract class AbstractPropertiesModel<T> implements IModel<T> {
+
+        protected final Map<String, Object> properties;
+        protected final String key;
+
+        AbstractPropertiesModel(final Map<String, Object> properties, final String key) {
+            this.properties = properties;
+            this.key = key;
+        }
+
+        protected void setObjectFromString(final String s) {
+            HstPropertyDefinition def = getPropertyDefinition(key);
+            if (def != null) {
+                properties.put(key, def.getValueType().from(s));
+            }
+        }
+
+        @Override
+        public void detach() {
+        }
+
+    }
+
+    /**
+     * Model that stores a string in a map under a certain key.
+     */
+    private class StringModel extends AbstractPropertiesModel<String> implements IModel<String> {
+
+        StringModel(final Map<String, Object> properties, final String key) {
+            super(properties, key);
+        }
+
+        @Override
+        public String getObject() {
+            Object value = properties.get(key);
+            return value == null ? null : value.toString();
+        }
+
+        @Override
+        public void setObject(String s) {
+            setObjectFromString(s);
+        }
+
+    }
+
+    /**
+     * Model that converts Booleans to strings and stores the strings.
+     */
+    private class BooleanModel extends AbstractPropertiesModel<Boolean> implements IModel<Boolean> {
+
+        BooleanModel(final Map<String, Object> properties, final String key) {
+            super(properties, key);
+        }
+
+        @Override
+        public Boolean getObject() {
+            Object value = properties.get(key);
+            return value == null ? null : Boolean.valueOf(value.toString());
+        }
+
+        @Override
+        public void setObject(final Boolean b) {
+            setObjectFromString(b.toString());
+        }
+
+    }
+
+    /**
+     * Model that converts JCR UUIDs to JCR paths and stores the paths.
+     */
+    private class UuidFromPathModel extends AbstractPropertiesModel<String> implements IModel<String> {
+
+        UuidFromPathModel(final Map<String, Object> properties, final String key) {
+            super(properties, key);
+        }
+
+        @Override
+        public String getObject() {
+            final Object path = properties.get(key);
+
+            if (path != null) {
+                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                try {
+                    Node node = session.getNode(path.toString());
+                    return node.getIdentifier();
+                } catch (RepositoryException e) {
+                    log.warn("Cannot retrieve UUID from '" + path + "'", e);
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        public void setObject(final String uuid) {
+            if (uuid == null) {
+                setObjectFromString(null);
+            } else {
+                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+
+                try {
+                    Node node = session.getNodeByIdentifier(uuid);
+                    setObjectFromString(node.getPath());
+                } catch (RepositoryException e) {
+                    log.warn("Cannot retrieve node with UUID '" + uuid + "'", e);
+                }
+            }
+        }
+
+    }
+
 }

@@ -13,45 +13,43 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.onehippo.cms7.channelmanager;
 
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
-import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
-    private ChannelGridPanel channelPanel;
 
-    public RootPanel(String id) {
+    public RootPanel(final IPluginContext context, String id) {
         super(id);
 
         add(new ChannelManagerResourceBehaviour());
 
-        channelPanel = new ChannelGridPanel();
+        ChannelGridPanel channelPanel = new ChannelGridPanel();
         channelPanel.setRegion(BorderLayout.Region.CENTER);
         add(channelPanel);
 
         //Use the same store variable as the grid panel, no need to create another store.
         this.channelStore = channelPanel.getStore();
 
-        ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel();
+        ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         add(channelPropertiesPanel);
 
