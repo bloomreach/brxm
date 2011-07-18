@@ -242,8 +242,9 @@ public class HstNodeImpl implements HstNode {
      * @param inheritedNode
      */
     protected void addDescendantHstNodeCopy(String nodeName, HstNodeImpl nodeToCopyAndAdd) {
-        HstNode deepCopy = new HstNodeImpl(nodeToCopyAndAdd);
-        addNode(nodeName, deepCopy);
+        HstNodeImpl copy = new HstNodeImpl(nodeToCopyAndAdd);
+        copy.parent = this;
+        addNode(nodeName, copy);
     }
     
 }
