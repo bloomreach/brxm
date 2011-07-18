@@ -28,9 +28,9 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
   
     public HstSiteConfigurationRootNodeImpl(Node jcrNode, HstNode parent, HstManagerImpl hstManagerImpl) throws HstNodeException {
         super(jcrNode, parent, true);
-      
+       
         // Load all the explicitly inherited hst:configuration nodes.
-        try {
+        try {  
             if(jcrNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
                 if(jcrNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
                    String[] inherits = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM);
@@ -72,7 +72,7 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
             }
             if(!jcrNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
                 // Load the implicitly inherited hst:configuration nodes: When there is a hst:configuration node that is called 'hst:default' then we need to merge this.
-                HstSiteConfigurationRootNodeImpl hstDefaultConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(HstNodeTypes.NODENAME_HST_HSTDEFAULT);
+                HstSiteConfigurationRootNodeImpl hstDefaultConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(jcrNode.getPath());
                 if(hstDefaultConfig == null) {
                     // not yet loaded, load now, then merge
                     if(jcrNode.getParent().hasNode(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
@@ -125,14 +125,14 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
         
         HstNode hstNode = getNode(nodeName);
         if(hstNode == null) {
-            // inherit the node from inheritedConfig
-            this.addNode(nodeName, inheritedNode);
+            // inherit the node from inheritedConfig. 
+            this.addDescendantHstNodeCopy(nodeName, (HstNodeImpl)inheritedNode);
         } else {
             // add the direct children that are in the inheritedConfig but not in the current.
             for(HstNode inheritedChild : inheritedNode.getNodes()) {
                 if(hstNode.getNode(inheritedChild.getValueProvider().getName()) == null) {
                     // inherit the child node.
-                    ((HstNodeImpl)hstNode).addNode(inheritedChild.getValueProvider().getName(), inheritedChild);
+                    ((HstNodeImpl)hstNode).addDescendantHstNodeCopy(inheritedChild.getValueProvider().getName(), (HstNodeImpl)inheritedChild);
                 }
             }
         }

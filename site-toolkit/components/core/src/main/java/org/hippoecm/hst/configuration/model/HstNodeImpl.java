@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010 - 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 package org.hippoecm.hst.configuration.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -48,9 +48,9 @@ public class HstNodeImpl implements HstNode {
     private JCRValueProvider provider;
     
     /**
-     * We use a LinkedHashMap because insertion order does matter. This map can be used and modified concurrently
+     * We use a LinkedHashMap because insertion order does matter. 
      */
-    private Map<String, HstNode> children = Collections.synchronizedMap(new LinkedHashMap<String, HstNode>()); 
+    private Map<String, HstNode> children = new LinkedHashMap<String, HstNode>(); 
     
     /**
      * The primary node type name
@@ -76,6 +76,28 @@ public class HstNodeImpl implements HstNode {
         // detach the backing jcr node now we are done.       
         stale = false;
         provider.detach();
+    }
+
+    /**
+     * This is a copy constructor. A copy of inheritedNode is created
+     * 
+     * Note: This deep copy does NOT copy the parent field, as this constructor is used to copy descendant structures. 
+     * Also it does not make a kind of clone of the JCRValueProvider: that one is still shared.
+     * 
+     * It is something between a deep and shallow copy: The descendant are copied
+     * 
+     * @param inheritedNode
+     */
+    private HstNodeImpl(HstNodeImpl inheritedNode) {
+       
+       provider = inheritedNode.provider;
+       nodeTypeName = inheritedNode.nodeTypeName;
+       stale = inheritedNode.stale;
+       children = new LinkedHashMap<String, HstNode>();
+       for(Entry<String, HstNode> entry : inheritedNode.children.entrySet()) {
+           children.put(entry.getKey(), new HstNodeImpl((HstNodeImpl)entry.getValue()));
+       }
+
     }
 
     protected void loadChilds(Node jcrNode, HstNode parent) throws RepositoryException {
@@ -209,6 +231,19 @@ public class HstNodeImpl implements HstNode {
         this.provider = valueProvider;
         provider.detach();
         stale = false;
+    }
+    
+
+    /**
+     * Adds the node to first copy and then to add. 
+     * It is something between a deep and shallow copy: The descendant are copied, but not the parent. Also, the 
+     * JCRValueProvider of the copied descendants are shared
+     * @param nodeName
+     * @param inheritedNode
+     */
+    protected void addDescendantHstNodeCopy(String nodeName, HstNodeImpl nodeToCopyAndAdd) {
+        HstNode deepCopy = new HstNodeImpl(nodeToCopyAndAdd);
+        addNode(nodeName, deepCopy);
     }
     
 }
