@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -534,29 +536,38 @@ public class ChannelManagerImpl implements ChannelManager {
             throw new ChannelException("Cannot change channel to new blue print");
         }
 
-        String tmp = channel.getUrl();
-        if (!tmp.startsWith("http://")) {
-            throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
-        }
-        tmp = tmp.substring("http://".length());
+        URI channelUri = getChannelUri(channel);
 
-        String mountPath = "";
-        if (tmp.indexOf('/') >= 0) {
-            mountPath = tmp.substring(tmp.indexOf('/') + 1);
+        if (!"http".equals(channelUri.getScheme())) {
+            throw new ChannelException("Illegal channel URL scheme: '" + channelUri.getScheme()
+                    + "'. Only 'http' is currently supported");
         }
 
         // resolve virtual host
+        final String host = channelUri.getHost();
+        if (host == null) {
+            throw new ChannelException("Channel URL does not contain a host. Cannot determine virtual host of the channel");
+        }
+        final String[] elements = host.split("[.]");
         Node mount = configRoot.getNode("hst:hosts/" + hostGroup);
-        String[] elements = tmp.substring(0, tmp.indexOf('/')).split("[.]");
         for (int i = elements.length - 1; i >= 0; i--) {
             mount = mount.getNode(elements[i]);
         }
 
         // resolve mount
-        mount = mount.getNode("hst:root");
-        String[] mountPathEls = mountPath.split("/");
-        for (String mountPathElement : mountPathEls) {
-            mount = mount.getNode(mountPathElement);
+        if (mount.hasNode("hst:root")) {
+            mount = mount.getNode("hst:root");
+        } else {
+            throw new ChannelException("Virtual host '" + mount.getPath() + "' does not have a child node 'hst:root'");
+        }
+        final String path = channelUri.getPath();
+        if (path != null) {
+            String[] mountPathEls = path.split("/");
+            for (String mountPathElement : mountPathEls) {
+                if (!mountPathElement.isEmpty()) {
+                    mount = mount.getNode(mountPathElement);
+                }
+            }
         }
 
         Node channelPropsNode;
@@ -567,6 +578,14 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         ChannelPropertyMapper.saveProperties(channelPropsNode, bps.getPropertyDefinitions(), channel.getProperties());
+    }
+
+    private URI getChannelUri(final Channel channel) throws ChannelException {
+        try {
+            return new URI(channel.getUrl());
+        } catch (URISyntaxException e) {
+            throw new ChannelException("Invalid channel URL: '" + channel.getUrl() + "'");
+        }
     }
 
 }
