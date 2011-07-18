@@ -165,14 +165,15 @@ public class HstManagerImpl implements HstManager {
     
     public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
         return siteMapItemHandlerFactory;
-    }
+    } 
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
+         
         if (virtualHosts == null) {
             synchronized(this) {
                 if (virtualHosts == null) {
                     buildSites();
-                }
+                } 
             }
         }
         
@@ -208,40 +209,41 @@ public class HstManagerImpl implements HstManager {
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
                     
-                    Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE);
-                  
+
                     Set<String> loadNodes = new HashSet<String>();
-                    
                     int pathLengthHstHostNode = (rootPath + "/hst:hosts").length();
-                    for(HstEvent event : events) {
-                        if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
-                            if(event.jcrEventType == Event.NODE_REMOVED) {
-                                HstNode node = virtualHostsNode.getNode(event.path.substring(pathLengthHstHostNode +1));
-                                if(node != null) {
-                                    node.getParent().removeNode(node.getValueProvider().getName());
-                                }
-                            } else if(event.jcrEventType == Event.NODE_ADDED) {
-                                loadNodes.add(event.path);
-                            } else if(event.jcrEventType == Event.NODE_MOVED) {
-                                log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                            } 
-                        } else {
-                            // PROPERTY EVENT : we mark the HstNode as stale
-                            String path = event.path.substring(pathLengthHstHostNode);
-                            HstNode node;
-                            if(path.length() == 0) {
-                                node = virtualHostsNode;
+                    if(configChangeEventMap != null) {
+                        Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE);
+                      
+                        for(HstEvent event : events) {
+                            if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
+                                if(event.jcrEventType == Event.NODE_REMOVED) {
+                                    HstNode node = virtualHostsNode.getNode(event.path.substring(pathLengthHstHostNode +1));
+                                    if(node != null) {
+                                        node.getParent().removeNode(node.getValueProvider().getName());
+                                    }
+                                } else if(event.jcrEventType == Event.NODE_ADDED) {
+                                    loadNodes.add(event.path);
+                                } else if(event.jcrEventType == Event.NODE_MOVED) {
+                                    log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                } 
                             } else {
-                                path = path.substring(1);
-                                node = virtualHostsNode.getNode(path);
-                            }
-                             
-                            if(node != null) {
-                                ((HstNodeImpl)node).markStale(); 
+                                // PROPERTY EVENT : we mark the HstNode as stale
+                                String path = event.path.substring(pathLengthHstHostNode);
+                                HstNode node;
+                                if(path.length() == 0) {
+                                    node = virtualHostsNode;
+                                } else {
+                                    path = path.substring(1);
+                                    node = virtualHostsNode.getNode(path);
+                                }
+                                 
+                                if(node != null) {
+                                    ((HstNodeImpl)node).markStale(); 
+                                }
                             }
                         }
                     }
-                    
                     
                     if(virtualHostsNode.getNodes().isEmpty()) {
                         // just reload everything
@@ -297,35 +299,38 @@ public class HstManagerImpl implements HstManager {
                     hstComponentsConfigurationChanged = true;
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
-                    Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
-                    if(events.size() > 0) {
-                        hstComponentsConfigurationChanged = true;
-                    }
-                    
+
                     Set<String> loadNodes = new HashSet<String>();
-                      
-                    for(HstEvent event : events) {
-                        if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
-                            if(event.jcrEventType == Event.NODE_REMOVED) {
+                    if(configChangeEventMap != null) {
+                        Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
+                        if(events.size() > 0) {
+                            hstComponentsConfigurationChanged = true;
+                        }
+                        
+                          
+                        for(HstEvent event : events) {
+                            if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
+                                if(event.jcrEventType == Event.NODE_REMOVED) {
+                                    HstNode node = getConfigurationNodeForPath(event.path);
+                                    if(node != null) {
+                                        if(node.getParent() != null) {
+                                            node.getParent().removeNode(node.getValueProvider().getName());
+                                        } else {
+                                            // we are a root
+                                            configurationRootNodes.remove(event.path);
+                                        }
+                                    }
+                                } else if(event.jcrEventType == Event.NODE_ADDED) {
+                                    loadNodes.add(event.path);
+                                } else if(event.jcrEventType == Event.NODE_MOVED) {
+                                    log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                } 
+                            } else {
+                                // PROPERTY EVENT : we mark the HstNode as stale
                                 HstNode node = getConfigurationNodeForPath(event.path);
                                 if(node != null) {
-                                    if(node.getParent() != null) {
-                                        node.getParent().removeNode(node.getValueProvider().getName());
-                                    } else {
-                                        // we are a root
-                                        configurationRootNodes.remove(event.path);
-                                    }
+                                    ((HstNodeImpl)node).markStale(); 
                                 }
-                            } else if(event.jcrEventType == Event.NODE_ADDED) {
-                                loadNodes.add(event.path);
-                            } else if(event.jcrEventType == Event.NODE_MOVED) {
-                                log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                            } 
-                        } else {
-                            // PROPERTY EVENT : we mark the HstNode as stale
-                            HstNode node = getConfigurationNodeForPath(event.path);
-                            if(node != null) {
-                                ((HstNodeImpl)node).markStale(); 
                             }
                         }
                     }
@@ -384,44 +389,44 @@ public class HstManagerImpl implements HstManager {
                 loadAllSiteNodes(session);
             } else {
                 // do finegrained reloading, removing and loading of previously loaded nodes that changed.
-                Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE);
-
                 Set<String> loadNodes = new HashSet<String>();
-
-                for (HstEvent event : events) {
-                    if (event.eventType == HstEvent.EventType.NODE_EVENT 
-                            || event.eventType == HstEvent.EventType.PROP_EVENT) {
-                        if (event.jcrEventType == Event.NODE_REMOVED) {
-                            String[] elems = event.path.split("/");
-                            // check if it is a node of types hst:sites : in this case, we'll reload all sites
-                            if (elems.length == rootPathDepth + 1) {
-                                // change in hst:sites. clear all siteRootNodes
-                                siteRootNodes.clear();
-                                break;
-                            } else {
-                                StringBuilder path2Remove = new StringBuilder();
-                                for (int i = 1; i <= rootPathDepth + 1; i++) {
-                                    path2Remove.append("/").append(elems[i]);
+                if(configChangeEventMap != null) {
+                    Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE);
+                    for (HstEvent event : events) {
+                        if (event.eventType == HstEvent.EventType.NODE_EVENT 
+                                || event.eventType == HstEvent.EventType.PROP_EVENT) {
+                            if (event.jcrEventType == Event.NODE_REMOVED) {
+                                String[] elems = event.path.split("/");
+                                // check if it is a node of types hst:sites : in this case, we'll reload all sites
+                                if (elems.length == rootPathDepth + 1) {
+                                    // change in hst:sites. clear all siteRootNodes
+                                    siteRootNodes.clear();
+                                    break;
+                                } else {
+                                    StringBuilder path2Remove = new StringBuilder();
+                                    for (int i = 1; i <= rootPathDepth + 1; i++) {
+                                        path2Remove.append("/").append(elems[i]);
+                                    }
+                                    siteRootNodes.remove(path2Remove.toString());
                                 }
-                                siteRootNodes.remove(path2Remove.toString());
+     
+                            } else if (event.jcrEventType == Event.NODE_MOVED) {
+                                log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                            } else {
+                                // if a node was not removed, we will reload the hst:site, also for property changes
+                                String[] elems = event.path.split("/");
+                                if (elems.length == rootPathDepth + 1) {
+                                    // change in hst:sites. clear all siteRootNodes
+                                    siteRootNodes.clear();
+                                    break;
+                                }
+                                StringBuilder pathLoad = new StringBuilder();
+                                for (int i = 1; i <= rootPathDepth + 1; i++) {
+                                    pathLoad.append("/").append(elems[i]);
+                                }
+                                loadNodes.add(pathLoad.toString());
+    
                             }
- 
-                        } else if (event.jcrEventType == Event.NODE_MOVED) {
-                            log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                        } else {
-                            // if a node was not removed, we will reload the hst:site, also for property changes
-                            String[] elems = event.path.split("/");
-                            if (elems.length == rootPathDepth + 1) {
-                                // change in hst:sites. clear all siteRootNodes
-                                siteRootNodes.clear();
-                                break;
-                            }
-                            StringBuilder pathLoad = new StringBuilder();
-                            for (int i = 1; i <= rootPathDepth + 1; i++) {
-                                pathLoad.append("/").append(elems[i]);
-                            }
-                            loadNodes.add(pathLoad.toString());
-
                         }
                     }
                 }
