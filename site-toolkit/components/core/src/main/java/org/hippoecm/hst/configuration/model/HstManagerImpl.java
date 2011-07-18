@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
@@ -68,13 +67,14 @@ public class HstManagerImpl implements HstManager {
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     
     /**
-     * This is a temporal cache only used during building the hst config model: When all the backing HstNode's for 
-     * hst:pages, hst:components, hst:catalog and hst:templates, then, the HstComponentsConfiguration object can be shared between different Mounts.
+     * This is a {@link HstComponentsConfigurationService} instance cache : When all the backing HstNode's for 
+     * hst:pages, hst:components, hst:catalog and hst:templates, then, the HstComponentsConfiguration object can be shared between different Mounts. 
      * The key is the Set of all HstNode path's directly below the components, pages, catalog and templates : The path uniquely defines the HstNode
      * and there is only inheritance on the nodes directly below components, pages, catalog and templates: Since no fine-grained inheritance, these
      * HstNode's identify uniqueness 
+     * Also this cache is reused when a configuration change did not impact HstComponentsConfiguration's at all
      */
-    private Map<Set<String>, HstComponentsConfigurationService> tmpHstComponentsConfigurationInstanceCache;
+    private Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();;
     
     
     /**
@@ -172,9 +172,6 @@ public class HstManagerImpl implements HstManager {
             synchronized(this) {
                 if (virtualHosts == null) {
                     buildSites();
-                    // when we have a new virtualhosts object, clear all registries
-                    componentRegistry.unregisterAllComponents();
-                    siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
                 }
             }
         }
@@ -293,12 +290,17 @@ public class HstManagerImpl implements HstManager {
             } 
   
             // get all the root hst configuration nodes
+            boolean hstComponentsConfigurationChanged = false;
             { 
                 if(configurationRootNodes.isEmpty()) {
                     loadAllConfigurationNodes(session);
+                    hstComponentsConfigurationChanged = true;
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
                     Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
+                    if(events.size() > 0) {
+                        hstComponentsConfigurationChanged = true;
+                    }
                     
                     Set<String> loadNodes = new HashSet<String>();
                       
@@ -369,7 +371,14 @@ public class HstManagerImpl implements HstManager {
                     
                 }
             }
-             
+            // when there was a change or total reload, empty the cache
+            if(hstComponentsConfigurationChanged) {
+                hstComponentsConfigurationInstanceCache.clear();
+                // since hst config changed, also unregister component registry
+                componentRegistry.unregisterAllComponents();
+            }
+            
+            
             // get all the hst:site's 
             if (siteRootNodes.isEmpty()) {
                 loadAllSiteNodes(session);
@@ -452,14 +461,12 @@ public class HstManagerImpl implements HstManager {
         }
             
         try {
-            tmpHstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();
-            
+            // unregister all existing siteMapItemHandlers first
+            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
             this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {
-            // we are finished with rebuild the hst model: Set the temporary cache to null. 
-            tmpHstComponentsConfigurationInstanceCache = null;
             // clear the StringPool as it is not needed any more
             StringPool.clear();
             configChangeEventMap = null;
@@ -660,7 +667,7 @@ public class HstManagerImpl implements HstManager {
             virtualHosts = null;
             clearAll = true;
         }
-    }
+    } 
     
     public Map<String, HstSiteRootNode> getHstSiteRootNodes(){
         return siteRootNodes;
@@ -674,8 +681,11 @@ public class HstManagerImpl implements HstManager {
         return commonCatalog;
     }
     
-    public Map<Set<String>, HstComponentsConfigurationService> getTmpHstComponentsConfigurationInstanceCache() {
-        return tmpHstComponentsConfigurationInstanceCache;
+    /**
+     * @return the hstComponentsConfigurationInstanceCache. This {@link Map} is never <code>null</code> 
+     */
+    public Map<Set<String>, HstComponentsConfigurationService> getHstComponentsConfigurationInstanceCache() {
+        return hstComponentsConfigurationInstanceCache;
     }
 
     public String getPathSuffixDelimiter() {

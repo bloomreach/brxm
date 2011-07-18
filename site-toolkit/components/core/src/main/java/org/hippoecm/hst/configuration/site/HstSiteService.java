@@ -71,31 +71,27 @@ public class HstSiteService implements HstSite {
         }
         init(configurationNode, hstManager);
     }
-
-    
+ 
+     
     private void init(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
-        // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
+       // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
       
-        // the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
-        Set<String> cachekey = computeCacheKey(configurationNode);
-        Map<Set<String>, HstComponentsConfigurationService> tmpHstComponentsConfigurationInstanceCache = hstManager.getTmpHstComponentsConfigurationInstanceCache();
-        if(tmpHstComponentsConfigurationInstanceCache == null) {
-            throw new ServiceException("During initialization, the hstManager#getTmpHstComponentsConfigurationInstanceCache() should return a non null cache");
-        }
+       // the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
+       Set<String> cachekey = computeCacheKey(configurationNode);
+       Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = hstManager.getHstComponentsConfigurationInstanceCache();
        
-       HstComponentsConfigurationService prevLoaded =  tmpHstComponentsConfigurationInstanceCache.get(cachekey);
+       HstComponentsConfigurationService prevLoaded =  hstComponentsConfigurationInstanceCache.get(cachekey);
        if(prevLoaded == null) {
            componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstManager); 
-           tmpHstComponentsConfigurationInstanceCache.put(cachekey, componentsConfigurationService);
+           hstComponentsConfigurationInstanceCache.put(cachekey, componentsConfigurationService);
        } else {
-           log.info("Reusing existing HstComponentsConfiguration because exact same configuration. We do not build HstComponentsConfiguration for '{}' but use existing version.", configurationNode.getValueProvider().getPath());
+           log.debug("Reusing existing HstComponentsConfiguration because exact same configuration. We do not build HstComponentsConfiguration for '{}' but use existing version.", configurationNode.getValueProvider().getPath());
            componentsConfigurationService = prevLoaded; 
        }
        
        // sitemapitem handlers
        
        HstNode sitemapItemHandlersNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
-       
        if(sitemapItemHandlersNode != null) {
            log.info("Found a '{}' configuration. Initialize sitemap item handlers service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
            try {
