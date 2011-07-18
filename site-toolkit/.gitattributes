@@ -627,6 +627,7 @@ components/security/src/main/java/org/hippoecm/hst/security/impl/HippoAuthentica
 components/security/src/main/java/org/hippoecm/hst/security/impl/JcrAuthenticationProvider.java -text
 components/security/src/main/java/org/hippoecm/hst/security/impl/PassiveCallbackHandler.java -text
 components/security/src/main/java/org/hippoecm/hst/security/servlet/LoginServlet.java -text
+components/security/src/main/resources/META-INF/hst/security/skin/images/headerBack.png -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/hippo-cms.ico -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/loginback.png -text
 components/security/src/main/resources/META-INF/hst/security/skin/images/loginbottom.png -text
