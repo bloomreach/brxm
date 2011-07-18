@@ -43,6 +43,11 @@
       <artifactId>hippo-repository-modules</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-wfdropbox</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- test -->
     <dependency>

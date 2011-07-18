@@ -57,6 +57,7 @@
     <module>modules</module>
     <module>upgrade</module>
     <module>utilities</module>
+    <module>wfdropbox</module>
     <module>test</module>
     <module>builtin</module>
     <module>ldap</module>
