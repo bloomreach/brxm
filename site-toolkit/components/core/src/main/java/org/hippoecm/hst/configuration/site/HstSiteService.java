@@ -49,8 +49,6 @@ public class HstSiteService implements HstSite {
     private HstComponentsConfigurationService componentsConfigurationService;
     private HstSiteMenusConfiguration siteMenusConfigurations;
     private String name;
-    private String contentPath;
-    private String canonicalContentPath;
     private String canonicalIdentifier;
     private String configurationPath;
     private LocationMapTree locationMapTree;
@@ -63,8 +61,6 @@ public class HstSiteService implements HstSite {
     public HstSiteService(HstSiteRootNode site, Mount mount, HstManagerImpl hstManager) throws ServiceException{
         name = site.getValueProvider().getName();
         this.mount = mount;
-        contentPath = site.getContentPath();
-        canonicalContentPath = site.getCanonicalContentPath();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = site.getConfigurationPath();
         
