@@ -21,11 +21,11 @@ import java.lang.reflect.Method;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Invoker;
-import org.hippoecm.hst.configuration.components.EmptyPropertyEditor;
-import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.proxy.ProxyFactory;
 
@@ -44,8 +44,9 @@ public class ParameterUtils {
      * 
      * The parameter map used has inherited parameters from ancestor components, which have precedence over child components) 
      * 
-     * @param name
-     * @param request
+     * @param component the HST component with a ParameterInfo annotation
+     * @param componentConfig the HST component configuration
+     * @param request the HST request
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
     @SuppressWarnings("unchecked")
@@ -55,81 +56,152 @@ public class ParameterUtils {
         if (parametersInfo != null) {
             return parametersInfo;
         }
-        
-        ParametersInfo anno = component.getClass().getAnnotation(ParametersInfo.class);
-        
-        if (anno == null) {
-            throw new IllegalArgumentException("The component does not have ParametersInfo annotation.");
-        }
-        
-        Class<?> parametersInfoType = anno.type();
-        
-        if (!parametersInfoType.isInterface()) {
-            throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
-        }
-        
-        ProxyFactory factory = new ProxyFactory();
-        
-        Invoker invoker = new Invoker() {
-            
-            public Object invoke(Object object, Method method, Object[] args) throws Throwable {
-                String methodName = method.getName();
-                
-                boolean isGetter = false;
-                boolean isSetter = false;
-                
-                if (methodName.startsWith("get") && (args == null || args.length == 0)) {
-                    isGetter = true;
-                } else if (methodName.startsWith("is") && (args == null || args.length == 0)) {
-                    isGetter = true;
-                } else if (methodName.startsWith("set") && (args != null && args.length == 1)) {
-                    isSetter = true;
-                } else {
-                    return null;
-                }
-                
-                Parameter panno = method.getAnnotation(Parameter.class);
-                String parameterName = panno.name();
-                
-                if (StringUtils.isBlank(parameterName)) {
-                    throw new IllegalArgumentException("The parameter name is empty.");
-                }
-                
-                Class<?> returnType = method.getReturnType();
-                Class<? extends PropertyEditor> customEditorType = panno.customEditor();
-                
-                if (isSetter) {
-                    throw new UnsupportedOperationException("Setter method is not supported.");
-                } else if (isGetter) {
-                    String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
-                    
-                    if (parameterValue == null || "".equals(parameterValue)) {
-                        // when the parameter value is null or an empty string we return the default value from the annotation
-                        parameterValue = panno.defaultValue();
-                    }
-                    
-                    if (parameterValue == null) {
-                        return null;
-                    }
-                    
-                    if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
-                        return ConvertUtils.convert(parameterValue, returnType);
-                    } else {
-                        PropertyEditor customEditor = customEditorType.newInstance();
-                        customEditor.setAsText(parameterValue);
-                        return customEditor.getValue();
-                    }
-                }
-                
-                return null;
+
+        Class<?> parametersInfoType;
+        Invoker invoker;
+
+        // first, try the new ParametersInfo annotation
+        ParametersInfo annotation = component.getClass().getAnnotation(ParametersInfo.class);
+        if (annotation != null) {
+            parametersInfoType = annotation.type();
+
+            if (!parametersInfoType.isInterface()) {
+                throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
             }
-        };
-        
+
+            invoker = new ParameterInfoInvoker(componentConfig, request);
+        } else {
+            // second, try the old ParametersInfo annotation
+            org.hippoecm.hst.configuration.components.ParametersInfo oldAnnotation = component.getClass().getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
+            if (oldAnnotation == null) {
+                throw new IllegalArgumentException("The component does not have a ParametersInfo annotation.");
+            }
+
+            parametersInfoType = oldAnnotation.type();
+
+            if (!parametersInfoType.isInterface()) {
+                throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
+            }
+
+            invoker = new OldParameterInfoInvoker(componentConfig, request);
+        }
+
+        ProxyFactory factory = new ProxyFactory();
         parametersInfo = (T) factory.createInvokerProxy(invoker, new Class [] { parametersInfoType });
         
         request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
         
         return parametersInfo;
     }
-    
+
+    private static class ParameterInfoInvoker implements Invoker {
+
+        private final ComponentConfiguration componentConfig;
+        private final HstRequest request;
+
+        ParameterInfoInvoker(final ComponentConfiguration componentConfig, HstRequest request) {
+            this.componentConfig = componentConfig;
+            this.request = request;
+        }
+
+        @Override
+        public Object invoke(Object object, Method method, Object[] args) throws Throwable {
+            if (isSetter(method, args)) {
+                throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
+            }
+
+            if (!isGetter(method, args)) {
+                return null;
+            }
+
+            Parameter parameterAnnotation = method.getAnnotation(Parameter.class);
+
+            String parameterName = parameterAnnotation.name();
+            if (StringUtils.isBlank(parameterName)) {
+                throw new IllegalArgumentException("The parameter name is empty.");
+            }
+
+            String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
+            if (parameterValue == null || "".equals(parameterValue)) {
+                // when the parameter value is null or an empty string we return the default value from the annotation
+                parameterValue = parameterAnnotation.defaultValue();
+            }
+            if (parameterValue == null) {
+                return null;
+            }
+
+            Class<? extends PropertyEditor> customEditorType = parameterAnnotation.customEditor();
+            Class<?> returnType = method.getReturnType();
+
+            if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
+                return ConvertUtils.convert(parameterValue, returnType);
+            } else {
+                PropertyEditor customEditor = customEditorType.newInstance();
+                customEditor.setAsText(parameterValue);
+                return customEditor.getValue();
+            }
+        }
+    }
+
+    private static class OldParameterInfoInvoker implements Invoker {
+
+        private final ComponentConfiguration componentConfig;
+        private final HstRequest request;
+
+        OldParameterInfoInvoker(final ComponentConfiguration componentConfig, HstRequest request) {
+            this.componentConfig = componentConfig;
+            this.request = request;
+        }
+
+        @Override
+        public Object invoke(Object object, Method method, Object[] args) throws Throwable {
+            if (isSetter(method, args)) {
+                throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
+            }
+
+            if (!isGetter(method, args)) {
+                return null;
+            }
+
+            org.hippoecm.hst.configuration.components.Parameter parameterAnnotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
+
+            String parameterName = parameterAnnotation.name();
+            if (StringUtils.isBlank(parameterName)) {
+                throw new IllegalArgumentException("The parameter name is empty.");
+            }
+
+            String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
+            if (parameterValue == null || "".equals(parameterValue)) {
+                // when the parameter value is null or an empty string we return the default value from the annotation
+                parameterValue = parameterAnnotation.defaultValue();
+            }
+            if (parameterValue == null) {
+                return null;
+            }
+
+            Class<? extends PropertyEditor> customEditorType = parameterAnnotation.customEditor();
+            Class<?> returnType = method.getReturnType();
+
+            if (customEditorType == null || customEditorType == org.hippoecm.hst.configuration.components.EmptyPropertyEditor.class) {
+                return ConvertUtils.convert(parameterValue, returnType);
+            } else {
+                PropertyEditor customEditor = customEditorType.newInstance();
+                customEditor.setAsText(parameterValue);
+                return customEditor.getValue();
+            }
+        }
+    }
+
+    private static final boolean isGetter(final Method method, final Object[] args) {
+        if (args == null || args.length == 0) {
+            final String methodName = method.getName();
+            return methodName.startsWith("get") || methodName.startsWith("is");
+        }
+        return false;
+    }
+
+    private static final boolean isSetter(final Method method, final Object[] args) {
+        return (args != null && args.length == 1) && method.getName().startsWith("set");
+    }
+
 }
