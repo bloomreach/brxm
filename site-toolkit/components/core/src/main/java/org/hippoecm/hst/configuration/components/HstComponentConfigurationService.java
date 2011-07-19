@@ -53,8 +53,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String componentClassName;
 
-    private boolean hasClassNameConfigured;
-    
     private String hstTemplate;
     
     private String hstResourceTemplate;
@@ -144,10 +142,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.name = StringPool.get(node.getValueProvider().getName());
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
-        if (componentClassName != null) {
-            this.hasClassNameConfigured = true;
-        }
-      
+
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
         
         if(referenceComponent != null) {
@@ -403,7 +398,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     referencedComp.populateComponentReferences(rootComponentConfigurations, populated);
                 }
                 // get all properties that are null from the referenced component:
-                if (!this.hasClassNameConfigured) {
+                if (this.componentClassName == null) {
                     this.componentClassName = referencedComp.componentClassName;
                 }
                 if (this.name == null) {
@@ -472,7 +467,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         // populate child component if not yet happened
                         childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                     }
-                    
+                     
                     if (this.childConfByName.get(childToMerge.name) != null) {
                         // we have an overlay again because we have a component with the same name
                         // first populate it
@@ -502,7 +497,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             		"components. Cannot merge '"+childToMerge.getId()+"' and '"+this.getId()+"' because at least one of them is a Container component. Fix configuration.");
         }
         
-        if (!this.hasClassNameConfigured) {
+        if (this.componentClassName == null) {
             this.componentClassName = childToMerge.componentClassName;
         }
         if (this.hstTemplate == null) {
