@@ -621,8 +621,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * 
      * The parameter map used has inherited parameters from ancestor components, which have precedence over child components) 
      * 
-     * @param name
-     * @param request
+     * @param request the HST request
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
     protected <T> T getParametersInfo(final HstRequest request) {
