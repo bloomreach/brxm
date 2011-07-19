@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
 import org.junit.Test;

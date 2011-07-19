@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.components.HstValueType;
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.HstValueType;
+import org.hippoecm.hst.core.parameters.Parameter;
 
 public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefinition {
 
@@ -29,10 +29,18 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
 
     public AnnotationHstPropertyDefinition(Parameter propAnnotation, Class<?> returnType, Annotation[] annotations) {
         super(propAnnotation.name());
+        init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
+    }
 
+    public AnnotationHstPropertyDefinition(org.hippoecm.hst.configuration.components.Parameter propAnnotation, Class<?> returnType, Annotation[] annotations) {
+        super(propAnnotation.name());
+        init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
+    }
+
+    private void init(Annotation propAnnotation,Class<?> returnType, Annotation[] annotations, boolean required, String defaultValue) {
         type = getHstType(returnType);
-        required = propAnnotation.required();
-        defaultValue = propAnnotation.defaultValue();
+        this.required = required;
+        this.defaultValue = defaultValue;
 
         for (Annotation annotation : annotations) {
             if (annotation == propAnnotation) {

@@ -19,7 +19,7 @@ package org.hippoecm.hst.configuration.channel;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.components.HstValueType;
+import org.hippoecm.hst.core.parameters.HstValueType;
 
 /**
  * Definition of a Channel Property.

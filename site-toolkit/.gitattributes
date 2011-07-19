@@ -5,16 +5,11 @@ api/src/main/java/org/hippoecm/hst/cache/CacheElement.java -text
 api/src/main/java/org/hippoecm/hst/cache/HstCache.java -text
 api/src/main/java/org/hippoecm/hst/configuration/HstNodeTypes.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/channel/HstPropertyDefinition.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/Color.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/DocumentLink.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/EmptyPropertyEditor.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentInfo.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfiguration.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/configuration/components/HstValueType.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/ImageSetLink.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/Parameter.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/ParameterType.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/ParametersInfo.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/MatchException.java -text svneol=unset#text/plain
@@ -170,6 +165,14 @@ api/src/main/java/org/hippoecm/hst/core/linking/ResourceContainer.java svneol=na
 api/src/main/java/org/hippoecm/hst/core/linking/ResourceLocationResolver.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/linking/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/parameters/Color.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/DocumentLink.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/EmptyPropertyEditor.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/HstValueType.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/ImageSetLink.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/Parameter.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/ParametersInfo.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ContextCredentialsProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/HstPortalRequestContext.java svneol=native#text/plain
@@ -235,6 +238,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/m
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/Document.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ExtResponseRepresentation.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/OldParametersInfoProcessor.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PageModelRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessor.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/PostRepresentation.java -text
@@ -250,6 +254,7 @@ client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/Sp
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ol.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/table.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ul.ftl -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/OldParametersInfoProcessorTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorTest.java -text
 client-modules/pom.xml -text svneol=unset#text/plain
 client/pom.xml svneol=native#text/plain

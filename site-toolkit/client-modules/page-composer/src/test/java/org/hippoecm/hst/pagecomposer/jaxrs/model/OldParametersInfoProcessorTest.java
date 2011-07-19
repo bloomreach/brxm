@@ -17,65 +17,48 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
-import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.ImageSetLink;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
-public class ParametersInfoProcessorTest {
+public class OldParametersInfoProcessorTest {
 
-    static interface NewstyleInterface {
-        @Parameter(name="color", defaultValue = "blue")
-        @Color
+    static interface OldstyleInterface {
+        @Parameter(name="color", typeHint = ComponentWrapper.ParameterType.COLOR)
         String getColor();
 
-        @Parameter(name="documentLocation")
-        @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
+        @Parameter(name="documentLocation", typeHint = ComponentWrapper.ParameterType.DOCUMENT, docLocation = "/content", docType = "hst:testdocument")
         String getDocumentLocation();
 
-        @Parameter(name="image", defaultValue = "/content/gallery/default.png")
-        @ImageSetLink
-        String getImage();
-
-        @Parameter(name="start")
-        Date getStart();
+        @Parameter(name="start", typeHint = ComponentWrapper.ParameterType.DATE)
+        String getDate();
     }
-    @ParametersInfo(type=NewstyleInterface.class)
-    static class NewstyleContainer {
+    @ParametersInfo(type=OldstyleInterface.class)
+    static class OldstyleContainer {
     }
 
     @Test
-    public void additionalAnnotationBasedProcessing() {
-        ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<Property> properties = ParametersInfoProcessor.getProperties(parameterInfo);
-        assertEquals(4, properties.size());
+    public void backwardsCompatibleProcessing() {
+        ParametersInfo parameterInfo = OldstyleContainer.class.getAnnotation(ParametersInfo.class);
+        List<Property> properties = OldParametersInfoProcessor.getProperties(parameterInfo);
+        assertEquals(3, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
         Property colorProperty = properties.get(0);
         assertEquals("colorfield", colorProperty.getType());
-        assertEquals("blue", colorProperty.getDefaultValue());
-        assertEquals("blue", colorProperty.getValue());
 
         Property docLocProperty = properties.get(1);
         assertEquals("/content", docLocProperty.getDocLocation());
         assertEquals("combo", docLocProperty.getType());
         assertEquals("hst:testdocument", docLocProperty.getDocType());
 
-        Property imageProperty = properties.get(2);
-        assertEquals("textfield", imageProperty.getType());
-        assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
-        assertEquals("/content/gallery/default.png", imageProperty.getValue());
-
-        Property startProperty = properties.get(3);
+        Property startProperty = properties.get(2);
         assertEquals("datefield", startProperty.getType());
     }
 

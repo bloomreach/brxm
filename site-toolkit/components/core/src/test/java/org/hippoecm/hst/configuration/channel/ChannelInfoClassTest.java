@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.components.Color;
-import org.hippoecm.hst.configuration.components.HstValueType;
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.HstValueType;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

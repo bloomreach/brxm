@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.components;
+package org.hippoecm.hst.core.parameters;
 
 import java.util.Date;
 

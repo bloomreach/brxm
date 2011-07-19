@@ -23,8 +23,16 @@ import java.lang.annotation.Target;
 
 import org.hippoecm.hst.core.component.HstComponent;
 
+
+/**
+ * Annotation indicating that a getter method returns the value of an HST component parameter.
+ *
+ * @see {@link ParametersInfo}
+ * @deprecated Since HST version 2.23.02 replaced by {@link org.hippoecm.hst.core.parameters.Parameter}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
+@Deprecated
 public @interface Parameter {
     
     /**
@@ -65,34 +73,30 @@ public @interface Parameter {
      * Note that this is a typeHint for for example the template composer. Thus it does influence the actual return type of the getter method that 
      * is used for the Parameter annotation.
      * @deprecated use the method return type for the storage type, add additional annotations
-     *             like {@link DocumentLink} or {@link Color} for more detailed information
+     *             like {@link org.hippoecm.hst.core.parameters.DocumentLink} or {@link org.hippoecm.hst.core.parameters.Color} for more detailed information
      */
-    @Deprecated
     String typeHint() default "";
 
     /**
      * Specifies the node type of the document to be searched for.
      * @return the document type String
      *
-     * @deprecated see {@link DocumentLink}
+     * @deprecated see {@link org.hippoecm.hst.core.parameters.DocumentLink}
      */
-    @Deprecated
     String docType() default ""; //Document type is only used when a DOCUMENT type is used.
 
     /**
      * @return  specifies whether to show a link to create a new document of the type as specified by the docType
      *
-     * @deprecated see {@link DocumentLink}
+     * @deprecated see {@link org.hippoecm.hst.core.parameters.DocumentLink}
      */
-    @Deprecated
     boolean allowCreation() default false;
 
     /**
      * @return the relative path of the folder where the document is created
      *
-     * @deprecated see {@link DocumentLink}
+     * @deprecated see {@link org.hippoecm.hst.core.parameters.DocumentLink}
      */
-    @Deprecated
     String docLocation() default "";
     
 }

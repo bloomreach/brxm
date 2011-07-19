@@ -13,16 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.components;
-
-import java.beans.PropertyEditor;
 
 /**
- * Marker interface for what does not support a custom property editor
- *
- * @deprecated Since HST version 2.23.02, replaced by {@link org.hippoecm.hst.core.parameters.EmptyPropertyEditor}
+ * The org.hippoecm.hst.core.parameters package defines meta-information about parameters of HST components and
+ * channels.
  */
-@Deprecated
-public interface EmptyPropertyEditor extends PropertyEditor {
+package org.hippoecm.hst.core.parameters;
 
-}

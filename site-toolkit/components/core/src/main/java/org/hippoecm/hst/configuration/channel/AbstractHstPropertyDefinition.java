@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.components.HstValueType;
+import org.hippoecm.hst.core.parameters.HstValueType;
 
 public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
     protected final String name;

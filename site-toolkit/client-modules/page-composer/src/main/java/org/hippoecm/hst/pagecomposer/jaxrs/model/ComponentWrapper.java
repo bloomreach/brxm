@@ -25,8 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.configuration.components.ParametersInfo;
-
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 
 /**
  * Component node wrapper that will be mapped automatically by the JAXRS (Jettison or JAXB) for generating the JSON/XML
@@ -51,6 +50,7 @@ public class ComponentWrapper {
      */
     public ComponentWrapper(Node node) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
+
         //Get the parameter names and values from the component node.
         if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
             hstParameters = new HashMap<String, String>();
@@ -70,16 +70,20 @@ public class ComponentWrapper {
         if (componentClassName != null) {
             Class componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                ParametersInfo parameterInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                properties = ParametersInfoProcessor.getProperties(parameterInfo);
-                if (hstParameters != null) {
-                    for (Property prop : properties) {
-                        if (hstParameters.get(prop.getName()) != null) {
-                            prop.setValue(hstParameters.get(prop.getName()));
-                        }
+                // parse new style ParametersInfo
+                ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                properties = ParametersInfoProcessor.getProperties(parametersInfo);
+            } else if (componentClass.isAnnotationPresent(org.hippoecm.hst.configuration.components.ParametersInfo.class)) {
+                // parse deprecated old style ParametersInfo
+                org.hippoecm.hst.configuration.components.ParametersInfo parameterInfo = (org.hippoecm.hst.configuration.components.ParametersInfo) componentClass.getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
+                properties = OldParametersInfoProcessor.getProperties(parameterInfo);
+            }
+            if (hstParameters != null) {
+                for (Property prop : properties) {
+                    if (hstParameters.get(prop.getName()) != null) {
+                        prop.setValue(hstParameters.get(prop.getName()));
                     }
                 }
-
             }
         }
         this.success = true;
@@ -99,6 +103,23 @@ public class ComponentWrapper {
 
     public void setSuccess(Boolean success) {
         this.success = success;
+    }
+
+    /**
+     * ParameterType used to provide a hint to the template composer about the type of the parameter.
+     * This is just a convenience interface that provides some constants for the field types.
+     *
+     * @deprecated From HST version 2.23.01, the type of a parameter is determined from the return type of the
+     * annotated getter method and (possibly) additional annotations in the package {@link org.hippoecm.hst.core.parameters}
+     */
+    @Deprecated
+    public static interface ParameterType {
+        String STRING = "STRING";
+        String NUMBER = "NUMBER";
+        String BOOLEAN = "BOOLEAN";
+        String DATE = "DATE";
+        String COLOR = "COLOR";
+        String DOCUMENT = "DOCUMENT";
     }
 
 }

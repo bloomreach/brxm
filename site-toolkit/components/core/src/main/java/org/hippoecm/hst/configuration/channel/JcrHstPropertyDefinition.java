@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.hippoecm.hst.configuration.components.HstValueType;
+import org.hippoecm.hst.core.parameters.HstValueType;
 
 public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinition {
 

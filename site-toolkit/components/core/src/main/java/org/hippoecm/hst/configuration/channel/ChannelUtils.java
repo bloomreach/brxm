@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Invoker;
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.proxy.ProxyFactory;
 
 public class ChannelUtils {

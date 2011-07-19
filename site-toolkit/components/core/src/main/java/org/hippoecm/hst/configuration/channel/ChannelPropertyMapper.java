@@ -29,7 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
-import org.hippoecm.hst.configuration.components.HstValueType;
+import org.hippoecm.hst.core.parameters.HstValueType;
 
 public class ChannelPropertyMapper {
 

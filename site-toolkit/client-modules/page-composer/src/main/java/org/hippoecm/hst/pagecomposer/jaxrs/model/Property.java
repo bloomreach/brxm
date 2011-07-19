@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.configuration.components.ParameterType;
-
-public class Property {
+class Property {
     private String name;
     private String value;
     private String type;
@@ -33,7 +31,7 @@ public class Property {
     Property() {
         name = "";
         value = "";
-        type = ParameterType.STRING;
+        type = ComponentWrapper.ParameterType.STRING;
         label = "";
         defaultValue = "";
         description = "";
@@ -43,95 +41,95 @@ public class Property {
         docLocation = "";
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
-    public String getValue() {
+    String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    void setValue(String value) {
         this.value = value;
     }
 
-    public String getType() {
+    String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        if (type.equals(ParameterType.DATE)) {
+    void setType(String type) {
+        if (type.equals(ComponentWrapper.ParameterType.DATE)) {
             this.type = "datefield";
-        } else if (type.equals(ParameterType.BOOLEAN)) {
+        } else if (type.equals(ComponentWrapper.ParameterType.BOOLEAN)) {
             this.type = "checkbox";
-        } else if (type.equals(ParameterType.NUMBER)) {
+        } else if (type.equals(ComponentWrapper.ParameterType.NUMBER)) {
             this.type = "numberfield";
-        } else if (type.equals(ParameterType.DOCUMENT)) {
+        } else if (type.equals(ComponentWrapper.ParameterType.DOCUMENT)) {
             this.type = "combo";
-        } else if (type.equals(ParameterType.COLOR)) {
+        } else if (type.equals(ComponentWrapper.ParameterType.COLOR)) {
             this.type = "colorfield";
         } else {
             this.type = "textfield";
         }
     }
 
-    public String getLabel() {
+    String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 
-    public String getDefaultValue() {
+    String getDefaultValue() {
         return defaultValue;
     }
 
-    public void setDefaultValue(String defaultValue) {
+    void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
-    public boolean isRequired() {
+    boolean isRequired() {
         return required;
     }
 
-    public void setRequired(boolean required) {
+    void setRequired(boolean required) {
         this.required = required;
     }
 
-    public void setDocType(final String docType) {
+    void setDocType(final String docType) {
         this.docType = docType;
     }
 
-    public String getDocType() {
+    String getDocType() {
         return this.docType;
     }
 
-    public boolean isAllowCreation() {
+    boolean isAllowCreation() {
         return allowCreation;
     }
 
-    public void setAllowCreation(boolean allowCreation) {
+    void setAllowCreation(boolean allowCreation) {
         this.allowCreation = allowCreation;
     }
 
-    public String getDocLocation() {
+    String getDocLocation() {
         return docLocation;
     }
 
-    public void setDocLocation(String docLocation) {
+    void setDocLocation(String docLocation) {
         this.docLocation = docLocation;
     }
 

@@ -19,18 +19,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Parameter;
 
 public class ChannelInfoClassProcessor {
 
     public static List<HstPropertyDefinition> getProperties(Class<?> channelInfoClass) {
         List<HstPropertyDefinition> properties = new ArrayList<HstPropertyDefinition>();
-        Method[] methods = channelInfoClass.getMethods();
-        for (Method method : methods) {
+        for (Method method : channelInfoClass.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
+                // new style annotations
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
-
                 HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
+                properties.add(prop);
+            } else if (method.isAnnotationPresent(org.hippoecm.hst.configuration.components.Parameter.class)) {
+                // old style annotations
+                org.hippoecm.hst.configuration.components.Parameter oldPropAnnotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
+                HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(oldPropAnnotation, method.getReturnType(), method.getAnnotations());
                 properties.add(prop);
             }
         }

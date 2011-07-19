@@ -21,21 +21,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.components.Color;
-import org.hippoecm.hst.configuration.components.DocumentLink;
-import org.hippoecm.hst.configuration.components.Parameter;
-import org.hippoecm.hst.configuration.components.ParameterType;
-import org.hippoecm.hst.configuration.components.ParametersInfo;
+import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 
 public class ParametersInfoProcessor {
 
     public static List<Property> getProperties(ParametersInfo parameterInfo) {
-        List<Property> properties = new ArrayList<Property>();
-        Method[] methods = parameterInfo.type().getMethods();
-        for (Method method : methods) {
+        final List<Property> properties = new ArrayList<Property>();
+
+        final Class classType = parameterInfo.type();
+        if (classType == null) {
+            return properties;
+        }
+
+        for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
-                Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                Property prop = new Property();
+                final Parameter propAnnotation = method.getAnnotation(Parameter.class);
+                final Property prop = new Property();
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());
@@ -46,55 +50,50 @@ public class ParametersInfoProcessor {
                     prop.setLabel(propAnnotation.displayName());
                 }
 
-                boolean hasType = false;
+                String type = null;
 
-                // Backwards compatible type processing
-                String type = propAnnotation.typeHint();
-                if (!"".equals(type)) {
-                    hasType = true;
-                }
-                if (ParameterType.DOCUMENT.equals(type)) {
-                    prop.setDocType(propAnnotation.docType());
-                    prop.setDocLocation(propAnnotation.docLocation());
-                    prop.setAllowCreation(propAnnotation.allowCreation());
-                }
-
-                Annotation[] annotations = method.getAnnotations();
-                for (Annotation annotation : annotations) {
+                for (Annotation annotation : method.getAnnotations()) {
                     if (annotation == propAnnotation) {
                         continue;
                     }
                     if (annotation.annotationType() == DocumentLink.class) {
-                        type = ParameterType.DOCUMENT;
-                        hasType = true;
+                        type = ComponentWrapper.ParameterType.DOCUMENT;
                         DocumentLink documentLink = (DocumentLink) annotation;
                         prop.setDocType(documentLink.docType());
                         prop.setDocLocation(documentLink.docLocation());
                         prop.setAllowCreation(documentLink.allowCreation());
                     } else if (annotation.annotationType() == Color.class) {
-                        type = ParameterType.COLOR;
-                        hasType = true;
+                        type = ComponentWrapper.ParameterType.COLOR;
                     }
                 }
-                if (!hasType) {
-                    Class<?> returnType = method.getReturnType();
-                    if (returnType == Date.class) {
-                        type = ParameterType.DATE;
-                    } else if (returnType == Long.class || returnType == Integer.class) {
-                        type = ParameterType.NUMBER;
-                    } else if (returnType == Boolean.class) {
-                        type = ParameterType.BOOLEAN;
-                    } else if (returnType == String.class) {
-                        type = ParameterType.STRING;
-                    }
+
+                if (type == null) {
+                    type = getReturnType(method);
                 }
                 prop.setType(type);
 
-                //Set the value to be default value before setting it with original value
+                // Set the value to be default value before setting it with original value
                 prop.setValue(propAnnotation.defaultValue());
                 properties.add(prop);
             }
         }
+
         return properties;
     }
+
+    private static String getReturnType(final Method method) {
+        Class<?> returnType = method.getReturnType();
+        if (returnType == Date.class) {
+            return ComponentWrapper.ParameterType.DATE;
+        } else if (returnType == Long.class || returnType == Integer.class) {
+            return ComponentWrapper.ParameterType.NUMBER;
+        } else if (returnType == Boolean.class) {
+            return ComponentWrapper.ParameterType.BOOLEAN;
+        } else if (returnType == String.class) {
+            return ComponentWrapper.ParameterType.STRING;
+        } else {
+            return "UNKNOWN";
+        }
+    }
+
 }
