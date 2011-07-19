@@ -31,7 +31,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
-import org.hippoecm.hst.configuration.components.ImageSetLink;
+import org.hippoecm.hst.core.parameters.ImageSetLink;
 
 /**
  * Renders a widget to select an image. The given model is used to store the UUID of the selected image. The selected
