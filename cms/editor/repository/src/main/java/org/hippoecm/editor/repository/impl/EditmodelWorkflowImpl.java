@@ -93,12 +93,14 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             }
             String ntName = subject.getParent().getName() + ":" + subject.getName();
             NodeTypeManager ntMgr = subject.getSession().getWorkspace().getNodeTypeManager();
-            if (!ntMgr.hasNodeType(ntName)) {
-                return false;
-            }
-            NodeType type = ntMgr.getNodeType(ntName);
-            if (!type.isNodeType(HippoStdNodeType.NT_RELAXED)) {
-                return false;
+            if (current != null) {
+                if (!ntMgr.hasNodeType(ntName)) {
+                    return false;
+                }
+                NodeType type = ntMgr.getNodeType(ntName);
+                if (!type.isNodeType(HippoStdNodeType.NT_RELAXED)) {
+                    return false;
+                }
             }
             return true;
         }
