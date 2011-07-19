@@ -119,7 +119,7 @@
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
     <wicket.version>1.4.17</wicket.version>
-    <wicket-extjs.version>0.9</wicket-extjs.version>
+    <wicket-extjs.version>0.10-SNAPSHOT</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
 
     <joda-time.version>1.6</joda-time.version>
@@ -127,6 +127,8 @@
     <jackrabbit.version>2.2.5-h4</jackrabbit.version>
     <htmlcleaner.version>1.02.05</htmlcleaner.version>
     <xerces.xercesImpl.version>2.8.1</xerces.xercesImpl.version>
+
+    <sonar.l10n.locales>nl,fr,it</sonar.l10n.locales>
   </properties>
 
   <!-- 
