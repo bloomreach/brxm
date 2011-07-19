@@ -105,7 +105,6 @@
           <property name="invokingValves">
             <list>
               <ref bean="cmsSecurityValve"/>
-              <ref bean="jcrSessionStatefulConcurrencyValve"/>
               <ref bean="noCacheResponseHeadersValve"/>
               <ref bean="jaxrsHstConfigServiceValve"/>
             </list>
