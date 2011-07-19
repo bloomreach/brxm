@@ -22,6 +22,7 @@ public interface HstNodeTypes {
     
     public final static String NODETYPE_HST_SITES = "hst:sites";
     public final static String NODETYPE_HST_SITE = "hst:site";
+    public final static String NODETYPE_HST_CONFIGURATIONS = "hst:configurations";
     public final static String NODETYPE_HST_CONFIGURATION = "hst:configuration";
     public final static String NODETYPE_HST_SITEMAP = "hst:sitemap";
     public final static String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";

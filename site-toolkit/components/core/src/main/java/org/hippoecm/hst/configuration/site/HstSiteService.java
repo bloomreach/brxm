@@ -64,7 +64,7 @@ public class HstSiteService implements HstSite {
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = site.getConfigurationPath();
         
-        HstNode configurationNode = hstManager.getConfigurationRootNodes().get(configurationPath);
+        HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
         
         if(configurationNode == null) {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );

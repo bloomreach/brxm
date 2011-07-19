@@ -98,9 +98,17 @@ public class HstManagerImpl implements HstManager {
     private HstNode commonCatalog;
 
     /**
-     * The map of all configurationRootNodes where the key is the path to the configuration
+     * The map of all configurationRootNodes where the key is the path to the configuration: This is the non enhanced map: in other words,
+     * no hstconfiguration inheritance is accounted for. This is the plain hierarchical jcr tree translation to HstNode tree
      */
     private Map<String, HstNode> configurationRootNodes = new HashMap<String, HstNode>();
+    
+    /**
+     * The enhanced version of configurationRootNodes : During enhancing, the inheritance (hst:inheritsfrom) is resolved. Note
+     * that the original HstNode's in configurationRootNodes are not changed. Thus, all HstNode's in configurationRootNodes are 
+     * first copied to new instances. The backing provider is allowed to be the same instance still.
+     */
+    private Map<String, HstNode> enhancedConfigurationRootNodes = new HashMap<String, HstNode>();
 
     /**
      * The map of all site nodes where the key is the path
@@ -354,7 +362,7 @@ public class HstManagerImpl implements HstManager {
                                 if(path.split("/").length == rootPathDepth + 2) {
                                     // this is a rootConfigurationNode. load it now. It can also already been removed
                                     if(session.nodeExists(path)) {
-                                        HstNode hstNode = new HstSiteConfigurationRootNodeImpl(session.getNode(path), null, this);
+                                        HstNode hstNode = new HstNodeImpl(session.getNode(path), null, true);
                                         configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
                                     }
                                 } else {
@@ -468,17 +476,28 @@ public class HstManagerImpl implements HstManager {
         try {
             // unregister all existing siteMapItemHandlers first
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+            enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
             this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {
             // clear the StringPool as it is not needed any more
             StringPool.clear();
+            enhancedConfigurationRootNodes.clear();
             configChangeEventMap = null;
             clearAll = false;
         }
+    } 
+       
+    private Map<String, HstNode> enhanceHstConfigurationNodes(Map<String, HstNode> nodes) {
+        Map<String, HstNode> enhanced = new HashMap<String, HstNode>();
+        for(HstNode node : nodes.values()) {
+            HstNode enhancedNode = new HstSiteConfigurationRootNodeImpl((HstNodeImpl)node, nodes, rootPath);
+            enhanced.put(enhancedNode.getValueProvider().getPath(), enhancedNode);
+        }
+        return enhanced;
     }
-      
+ 
     private void traverseAndReloadIfNeeded(HstNode node, Session session) throws RepositoryException {
        if(node.isStale()) {
            if(session.nodeExists(node.getValueProvider().getPath())) {
@@ -531,21 +550,13 @@ public class HstManagerImpl implements HstManager {
         NodeIterator configurationRootJcrNodes = configurationsNode.getNodes();
         while(configurationRootJcrNodes.hasNext()) {
             Node configurationRootNode = configurationRootJcrNodes.nextNode();
-            if(configurationRootNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
-                // the hstdefault is only meant for 'implicit inheriting'. We can skip it here
-            } else {
-                if(configurationRootNodes.containsKey(configurationRootNode.getPath())) {
-                    // already loaded, for example because inherited configs can already be loaded through HstSiteConfigurationRootNodeImpl
-                    continue;
-                }
+            if(configurationRootNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
                 try {
-                    HstNode hstNode = new HstSiteConfigurationRootNodeImpl(configurationRootNode, null, this);
+                    HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
                     configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
-                   
                 } catch (HstNodeException e) {
                     log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
-                }
-                
+                } 
             }
         }
     }
@@ -678,8 +689,8 @@ public class HstManagerImpl implements HstManager {
         return siteRootNodes;
     }
 
-    public Map<String, HstNode> getConfigurationRootNodes() {
-        return configurationRootNodes;
+    public Map<String, HstNode> getEnhancedConfigurationRootNodes() {
+        return enhancedConfigurationRootNodes;
     }
     
     public HstNode getCommonCatalog(){

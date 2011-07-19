@@ -88,16 +88,16 @@ public class HstNodeImpl implements HstNode {
      * 
      * @param inheritedNode
      */
-    private HstNodeImpl(HstNodeImpl inheritedNode) {
+    public HstNodeImpl(HstNodeImpl inheritedNode, HstNode parent) {
        
        provider = inheritedNode.provider;
        nodeTypeName = inheritedNode.nodeTypeName;
        stale = inheritedNode.stale;
+       this.parent = parent;
        children = new LinkedHashMap<String, HstNode>();
        for(Entry<String, HstNode> entry : inheritedNode.children.entrySet()) {
-           children.put(entry.getKey(), new HstNodeImpl((HstNodeImpl)entry.getValue()));
+           children.put(entry.getKey(), new HstNodeImpl((HstNodeImpl)entry.getValue(), this));
        }
-
     }
 
     protected void loadChilds(Node jcrNode, HstNode parent) throws RepositoryException {
@@ -242,8 +242,7 @@ public class HstNodeImpl implements HstNode {
      * @param inheritedNode
      */
     protected void addDescendantHstNodeCopy(String nodeName, HstNodeImpl nodeToCopyAndAdd) {
-        HstNodeImpl copy = new HstNodeImpl(nodeToCopyAndAdd);
-        copy.parent = this;
+        HstNodeImpl copy = new HstNodeImpl(nodeToCopyAndAdd, this);
         addNode(nodeName, copy);
     }
     

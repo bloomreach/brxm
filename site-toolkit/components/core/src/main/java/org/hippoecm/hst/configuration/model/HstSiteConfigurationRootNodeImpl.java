@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
+import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.slf4j.LoggerFactory;
@@ -26,83 +24,48 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstNodeImpl.class);
   
-    public HstSiteConfigurationRootNodeImpl(Node jcrNode, HstNode parent, HstManagerImpl hstManagerImpl) throws HstNodeException {
-        super(jcrNode, parent, true);
-       
+    public HstSiteConfigurationRootNodeImpl(HstNodeImpl configurationRootNode, Map<String, HstNode> configurationRootNodes, String rootPath) {
+        super(configurationRootNode, null);
+         
         // Load all the explicitly inherited hst:configuration nodes.
-        try {  
-            if(jcrNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
-                if(jcrNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                   String[] inherits = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM);
-                   for(String inheritPath : inherits) {
-                       try {
-                           Node inheritNode = jcrNode.getNode(inheritPath);
-                           if(inheritNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                               // mark the loaded childs as inherited, hence 'true'
-                               if(inheritNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
-                                   log.error("Skipping inheritfrom property for configuration node '{}' because this node is already inherit. Not allowed to inherit again", inheritNode.getPath());
-                               } else {
-                                   HstSiteConfigurationRootNodeImpl inheritedConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(inheritNode.getPath());
-                                   if(inheritedConfig == null) {
-                                       // not yet loaded, load now, then merge
-                                       try {
-                                           inheritedConfig = new HstSiteConfigurationRootNodeImpl(inheritNode, null, hstManagerImpl);
-                                           // store the loaded inherited config, otherwise it will be reloaded over and over
-                                           hstManagerImpl.getConfigurationRootNodes().put(inheritNode.getPath(), inheritedConfig);
-                                       } catch (HstNodeException e) {
-                                           log.error("Incorrect configured inherited configuration at '{}'. Cannot load inherited config. Skip this inherit", inheritNode.getPath());
-                                       }
-                                   }
-                                   if(inheritedConfig != null) {
-                                       merge(inheritedConfig);
-                                   } else {
-                                       log.error("Inherited configuration as '{}' is not loaded correctly. Cannot inherit", inheritNode.getPath());
-                                   }
-                               }
-                           } else {
-                               log.error("Relative inherit path '{}' for node '{}' does not point to a node of type '"+HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM+"'. Fix this path.", inheritPath, getValueProvider().getPath());
-                           }
-                        } catch (PathNotFoundException e) {
-                            log.error("Relative inherit path '"+inheritPath+"' for node '"+getValueProvider().getPath()+"' can not be found. Fix the inheritsfrom path.");
-                        }
+        if(configurationRootNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
+            if(HstNodeTypes.NODETYPE_HST_CONFIGURATION.equals(configurationRootNode.getNodeTypeName())) {
+               String[] inherits = getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM);
+               for(String inheritPath : inherits) {
+                   if(!inheritPath.startsWith("../")) {
+                       log.warn("hst:inheritsfrom property must start with ../ but this is not the case for '{}'. We skip this inherit", configurationRootNode.getValueProvider().getPath());
+                       continue;
                    }
-                } else {
-                    log.info("Found the property '{}' on node '{}' but the property only inherits when configured on nodes of type 'hst:configuration'", HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, jcrNode.getPath());
-                }
+                   String hstConfigsRelPath = inheritPath.substring(3);
+                   HstNode inheritConfig = configurationRootNodes.get(rootPath + "/" + HstNodeTypes.NODETYPE_HST_CONFIGURATIONS + "/" + hstConfigsRelPath);
+                   if(inheritConfig != null && HstNodeTypes.NODETYPE_HST_CONFIGURATION.equals(inheritConfig.getNodeTypeName())) {
+                       // mark the loaded childs as inherited, hence 'true'
+                       if(inheritConfig.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM)) {
+                           log.error("Skipping inheritfrom property for configuration node '{}' because this node is already inherit. Not allowed to inherit again", inheritConfig.getValueProvider().getPath());
+                       } else {
+                          merge((HstNodeImpl)inheritConfig);
+                       }
+                   } else {
+                       log.error("Relative inherit path '{}' for node '{}' does not point to a node of type or does not exist. '"+HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM+"'. Fix this path.", inheritPath, getValueProvider().getPath());
+                   }
+               }
+            } else {
+                log.info("Found the property '{}' on node '{}' but the property only inherits when configured on nodes of type 'hst:configuration'", HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, configurationRootNode.getValueProvider().getPath());
             }
-            if(!jcrNode.getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
-                // Load the implicitly inherited hst:configuration nodes: When there is a hst:configuration node that is called 'hst:default' then we need to merge this.
-                HstSiteConfigurationRootNodeImpl hstDefaultConfig = (HstSiteConfigurationRootNodeImpl)hstManagerImpl.getConfigurationRootNodes().get(jcrNode.getPath());
-                if(hstDefaultConfig == null) {
-                    // not yet loaded, load now, then merge
-                    if(jcrNode.getParent().hasNode(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
-                        Node hstDefaultNode = jcrNode.getParent().getNode(HstNodeTypes.NODENAME_HST_HSTDEFAULT);
-                        try {
-                            hstDefaultConfig = new HstSiteConfigurationRootNodeImpl(hstDefaultNode, null, hstManagerImpl);
-                        } 
-                        catch (HstNodeException e) {
-                            log.error("Incorrect configured hst default configuration at '{}'. Cannot load hstdefault config", hstDefaultNode.getPath());
-                        }
-                        // store the loaded inherited config, otherwise it will be reloaded over and over
-                        hstManagerImpl.getConfigurationRootNodes().put(hstDefaultNode.getPath(), hstDefaultConfig);
-                    } else {
-                        log.info("There is no default configuration node at '{}'. Skip hstdefault configuration", jcrNode.getParent().getPath() + "/"+ HstNodeTypes.NODENAME_HST_HSTDEFAULT);
-                    }
-                }
-                if(hstDefaultConfig != null) {
-                    merge(hstDefaultConfig);
-                } else {
-                    log.info("There is no hstDefaultConfig to merge");
-                }
-            }
-        } catch (RepositoryException e) {
-            throw new HstNodeException(e);
         }
-        
-        
+        if(!configurationRootNode.getValueProvider().getName().equals(HstNodeTypes.NODENAME_HST_HSTDEFAULT)) {
+            // Load the implicitly inherited hst:default hst:configuration nodes
+            HstNode hstDefaultConfig = configurationRootNodes.get(rootPath + "/" + HstNodeTypes.NODETYPE_HST_CONFIGURATIONS + "/"+ HstNodeTypes.NODENAME_HST_HSTDEFAULT);
+            if(hstDefaultConfig == null) {
+                log.info("There is no hstDefaultConfig to merge");
+            } else {
+                merge((HstNodeImpl)hstDefaultConfig);
+            } 
+        }
     }
 
-    private void merge(HstSiteConfigurationRootNodeImpl inheritedConfig) {
+
+    private void merge(HstNodeImpl inheritedConfig) {
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_CATALOG);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_SITEMENUS);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_SITEMAP);
@@ -116,7 +79,7 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
      * For merging, we now do not worry about 'cloning' the inherited HstNode. This would be a cleaner way to merge, as now a single HstNode instances
      * can below to different configuration. However, as we do not modify the inherited HstNode, it does not matter for now
      */
-    private void merge(HstSiteConfigurationRootNodeImpl inheritedConfig, String nodeName) {
+    private void merge(HstNodeImpl inheritedConfig, String nodeName) {
         HstNode inheritedNode = inheritedConfig.getNode(nodeName);
         if(inheritedNode == null) {
             // inherited node does not have the nodeName, return
