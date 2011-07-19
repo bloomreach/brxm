@@ -65,7 +65,6 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 final public class UpdaterNode extends UpdaterItem implements Node {
@@ -687,10 +686,15 @@ final public class UpdaterNode extends UpdaterItem implements Node {
             }
             if (tail == srcNode) {
                 tail = srcNode.predecessor;
+            } else {
+                srcNode.successor.predecessor = srcNode.predecessor;
             }
             srcNode.predecessor.successor = srcNode.successor;
-            srcNode.successor.predecessor = srcNode.predecessor;
+
             srcNode.predecessor = destNode.predecessor;
+            if (destNode.predecessor != null) {
+                destNode.predecessor.successor = srcNode;
+            }
             srcNode.successor = destNode;
             destNode.predecessor = srcNode;
 

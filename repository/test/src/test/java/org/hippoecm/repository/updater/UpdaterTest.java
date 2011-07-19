@@ -15,26 +15,24 @@
  */
 package org.hippoecm.repository.updater;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
-import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class UpdaterTest extends TestCase {
     @SuppressWarnings("unused")
@@ -84,6 +82,38 @@ public class UpdaterTest extends TestCase {
         list.add(module);
         Modules modules = new Modules(list);
         UpdaterEngine.migrate(session, modules);
+    }
+
+    @Test
+    public void testReorder() throws RepositoryException {
+        Node testNode = session.getNode("/test");
+        testNode.addNode("a");
+        testNode.addNode("b");
+        session.save();
+
+        UpdaterSession us = new UpdaterSession(session);
+        Node updaterTestNode = us.getRootNode().getNode("test");
+        updaterTestNode.orderBefore("b", "a");
+
+        us.commit();
+
+        List<String> names = new LinkedList<String>();
+        for (javax.jcr.NodeIterator ni = testNode.getNodes(); ni.hasNext(); ) {
+            Node node = ni.nextNode();
+            names.add(node.getName());
+        }
+        assertTrue("nodes have not been reordered", names.indexOf("b") < names.indexOf("a"));
+
+        updaterTestNode = us.getRootNode().getNode("test");
+        updaterTestNode.orderBefore("b", null);
+        us.commit();
+
+        names.clear();
+        for (javax.jcr.NodeIterator ni = testNode.getNodes(); ni.hasNext(); ) {
+            Node node = ni.nextNode();
+            names.add(node.getName());
+        }
+        assertEquals("node was not moved to end", names.size() - 1, names.indexOf("b"));
     }
 
     @Test
