@@ -1431,6 +1431,8 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/reset/ResetDial
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/reset/ResetDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialogLink.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialogLink.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.java -text svneol=unset#text/plain

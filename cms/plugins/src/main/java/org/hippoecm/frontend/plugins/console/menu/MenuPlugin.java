@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
+import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -82,14 +83,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
                 return new SaveDialog();
             }
         };
-        saveDialogLink = new DialogLink("save-dialog", new Model<String>() {
-            @Override
-            public String getObject() {
-                final String message = "Write changes to repository";
-                return hasSessionChanges() ? message + "*" : message;
-            }
-        }, dialogFactory, dialogService);
-        saveDialogLink.setOutputMarkupId(true);
+        saveDialogLink = new SaveDialogLink("save-dialog", new Model<String>("Write changes to repository"), dialogFactory, dialogService);
         add(saveDialogLink);
 
         dialogFactory = new IDialogFactory() {
@@ -142,16 +136,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
     public void render(PluginRequestTarget target) {
         super.render(target);
         if (target != null) {
-            target.addComponent(saveDialogLink);
-        }
-    }
-
-    private boolean hasSessionChanges() {
-        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-        try {
-            return session.hasPendingChanges();
-        } catch (RepositoryException e) {
-            return false;
+            target.addComponent(saveDialogLink.get("dialog-link:dialog-link-text-extended"));
         }
     }
 
