@@ -68,6 +68,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 Hippo.ChannelManager.ChannelFormPanel.superclass.initComponent.apply(this, arguments);
                 this.addEvents('channel-created');
                 this.on('beforeshow', function () {
+                    this.getForm().reset();
                     var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
                      Ext.getCmp('blueprintId').setValue(blueprint.id);
                 }, this);
