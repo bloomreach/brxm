@@ -47,6 +47,10 @@ public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
         return defaultValue;
     }
 
+    void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     @Override
     public boolean isRequired() {
         return required;

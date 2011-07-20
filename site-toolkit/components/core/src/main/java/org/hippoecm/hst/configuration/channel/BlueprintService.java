@@ -35,9 +35,8 @@ public class BlueprintService implements Blueprint {
     private final String name;
     private final String description;
     private final String path;
-    private final Map<HstPropertyDefinition, Object> defaultValues;
+    private final List<HstPropertyDefinition> properties;
     private final Class<?> channelInfoClass;
-    private final Map<String, HstPropertyDefinition> properties = new HashMap<String, HstPropertyDefinition>();
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -67,10 +66,22 @@ public class BlueprintService implements Blueprint {
         }
         channelInfoClass = clazz;
 
-        if (bluePrint.hasNode("hst:defaultchannelinfo")) {
-            defaultValues = ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), getPropertyDefinitions());
+        if (channelInfoClass != null) {
+            properties = ChannelInfoClassProcessor.getProperties(channelInfoClass);
+            if (bluePrint.hasNode("hst:defaultchannelinfo")) {
+                Map<HstPropertyDefinition, Object> values =
+                        ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), properties);
+                for (HstPropertyDefinition def : properties) {
+                    if ((def instanceof AbstractHstPropertyDefinition) && values.get(def) != null) {
+                        Object value = values.get(def);
+                        AbstractHstPropertyDefinition ahpd = (AbstractHstPropertyDefinition) def;
+                        ahpd.setDefaultValue(value);
+                    }
+                }
+            }
         } else {
-            defaultValues = Collections.emptyMap();
+            properties = Collections.emptyList();
+
         }
     }
 
@@ -95,11 +106,7 @@ public class BlueprintService implements Blueprint {
     }
 
     public List<HstPropertyDefinition> getPropertyDefinitions() {
-        Class<?> channelInfoClass = getChannelInfoClass();
-        if (channelInfoClass != null) {
-            return ChannelInfoClassProcessor.getProperties(channelInfoClass);
-        }
-        return Collections.emptyList();
+        return Collections.unmodifiableList(properties);
     }
 
     public Node getNode(final Session session) throws RepositoryException {

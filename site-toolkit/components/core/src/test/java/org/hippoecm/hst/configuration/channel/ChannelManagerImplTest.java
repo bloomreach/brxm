@@ -25,6 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.After;
@@ -95,22 +97,37 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey(channel.getId()));
     }
-/*
+
+    public static interface TestInfoClass {
+        @Parameter(name="getme", defaultValue = "aap")
+        String getGetme();
+    }
 
     @Test
-    public void ChannelProperties() throws ChannelException, RepositoryException {
-        final ChannelManagerImpl manager = createManager();
+    public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException {
+        Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
+        testNode.addNode("hst:hosts").addNode("dev-internal", "hst:virtualhostgroup");
 
-        final List<Blueprint> bluePrints = manager.getBlueprints();
-        assertEquals(1, bluePrints.size());
+        Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, "hst:blueprints");
+        Node bp = bpFolder.addNode("test-bp", "hst:blueprint");
+        bp.setProperty("hst:channelinfoclass", TestInfoClass.class.getName());
+        Node defaultChannelInfo = bp.addNode("hst:defaultchannelinfo", "hst:channelinfo");
+        defaultChannelInfo.setProperty("getme", "noot");
+        getSession().save();
+
+        final ChannelManagerImpl manager = createManager();
+        manager.setRootPath(testNode.getPath());
+
+        final Channel channel = manager.createChannel("test-bp");
+        channel.setUrl("http://localhost/test");
+        Map<String, Object> properties = channel.getProperties();
+        assertTrue(properties.containsKey("getme"));
+        assertEquals("noot", properties.get("getme"));
 
         asAdmin(new PrivilegedAction<ChannelException>() {
             @Override
             public ChannelException run() {
                 try {
-                    Channel channel = manager.createChannel(bluePrints.get(0).getId());
-                    channel.setUrl("http://myhost/mychannel");
-                    channel.setContentRoot("/content/documents");
                     manager.save(channel);
                 } catch (ChannelException ce) {
                     return ce;
@@ -118,11 +135,9 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                 return null;
             }
         });
-
-        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
-        assertTrue(node.hasNode("myhost/hst:root/mychannel"));
+        TestInfoClass channelInfo = manager.getChannelInfo(channel.getId());
+        assertEquals("noot", channelInfo.getGetme());
     }
-*/
 
     private <T extends Exception> void asAdmin(PrivilegedAction<T> action) throws T {
         T ce = HstSubject.doAs(createSubject(), action);

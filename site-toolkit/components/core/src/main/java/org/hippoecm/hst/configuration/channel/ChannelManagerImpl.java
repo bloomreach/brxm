@@ -277,21 +277,18 @@ public class ChannelManagerImpl implements ChannelManager {
     public synchronized Channel createChannel(final String blueprintId) throws ChannelException {
         load();
         if (!blueprints.containsKey(blueprintId)) {
-            throw new ChannelException("Blue print id " + blueprintId + " is not valid");
+            throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
         }
-        Channel channel = new Channel(blueprintId, nextChannelId());/*
+        Channel channel = new Channel(blueprintId, nextChannelId());
+        Map<String, Object> properties = channel.getProperties();
+
         BlueprintService blueprint = blueprints.get(blueprintId);
         List<HstPropertyDefinition> propertyDefinitions = blueprint.getPropertyDefinitions();
-        Map<HstPropertyDefinition, Object> defaultValues = blueprint.getDefaultValues();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition hpd : propertyDefinitions) {
-                if (defaultValues.containsKey(hpd)) {
-                    channel.loadProperties().put(hpd, defaultValues.get(hpd));
-                } else {
-                    channel.loadProperties().put(hpd, hpd.getDefaultValue());
-                }
+                properties.put(hpd.getName(), hpd.getDefaultValue());
             }
-        }*/
+        }
         return channel;
     }
 
@@ -374,6 +371,9 @@ public class ChannelManagerImpl implements ChannelManager {
         Node blueprintNode = bps.getNode(session);
 
         String tmp = channel.getUrl();
+        if (tmp == null) {
+            throw new ChannelException("No URL specified");
+        }
         if (!tmp.startsWith("http://")) {
             throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
         }
