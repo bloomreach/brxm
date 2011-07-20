@@ -48,12 +48,14 @@ public @interface ImageSetLink {
     String pickerConfiguration() default "cms-pickers/images";
 
     /**
-     * The initial UUID to use in the CMS image picker if no UUID is selected yet. Use the UUID of a folder to initially
-     * open the image picker dialog that folder. Use the UUID of an image set handle to preselect that image set.
+     * The initial path to use in the CMS image picker if nothing has been selected yet. Use the path to a folder
+     * to initially open the image picker dialog in that folder. Use the path to the handle of an image set to
+     * preselect that image set.
      *
-     * @return the initial UUID to use in the CMS image picker.
+     * @return the initial path to use in the CMS image picker, or an empty string if the default initial path of
+     * the image picker should be used.
      */
-    String pickerInitialUuid() default "";
+    String pickerInitialPath() default "";
 
     /**
      * Whether the image picker remembers the last visited folder and image. The default is 'true'.
