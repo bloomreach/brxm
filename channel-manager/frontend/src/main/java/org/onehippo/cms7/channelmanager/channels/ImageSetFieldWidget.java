@@ -15,6 +15,11 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,7 +36,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.core.parameters.ImageSetLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Renders a widget to select an image. The given model is used to store the UUID of the selected image. The selected
@@ -45,6 +53,8 @@ public class ImageSetFieldWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
+    private final Logger log = LoggerFactory.getLogger(ImageSetFieldWidget.class);
+
     private IModel<String> model;
     private InlinePreviewImage previewImage;
     private AjaxLink<Void> remove;
@@ -56,9 +66,23 @@ public class ImageSetFieldWidget extends Panel {
 
         JavaPluginConfig pickerConfig = new JavaPluginConfig();
         pickerConfig.put("cluster.name", imageSetLink.pickerConfiguration());
-        pickerConfig.put(NodePickerControllerSettings.BASE_UUID, imageSetLink.pickerInitialUuid());
         pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(imageSetLink.pickerRemembersLastVisited()));
         pickerConfig.put(NodePickerControllerSettings.SELECTABLE_NODETYPES, imageSetLink.pickerSelectableNodeTypes());
+
+        String pickerInitialPath = imageSetLink.pickerInitialPath();
+        if (pickerInitialPath != null && !"".equals(pickerInitialPath)) {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            try {
+                Node node = session.getNode(pickerInitialPath);
+                pickerConfig.put(NodePickerControllerSettings.BASE_UUID, node.getIdentifier());
+            } catch (PathNotFoundException e) {
+                log.warn("Initial image picker path not found: '{}'. Using the default initial path of '{}' instead.",
+                        pickerInitialPath, imageSetLink.pickerConfiguration());
+            } catch (RepositoryException e) {
+                log.error("Could not retrieve the UUID of initial image picker path node '" + pickerInitialPath
+                        + "'. Using the default initial path of '" + imageSetLink.pickerConfiguration() + "' instead.", e);
+            }
+        }
 
         IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, model);
         IModel<String> selectLabelModel = new StringResourceModel("imageset.select", this, null);
