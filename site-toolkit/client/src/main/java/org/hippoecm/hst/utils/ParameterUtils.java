@@ -83,7 +83,7 @@ public class ParameterUtils {
                 throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
             }
 
-            invoker = new OldParameterInfoInvoker(componentConfig, request);
+            invoker = new DeprecatedParameterInfoInvoker(componentConfig, request);
         }
 
         ProxyFactory factory = new ProxyFactory();
@@ -143,12 +143,20 @@ public class ParameterUtils {
         }
     }
 
-    private static class OldParameterInfoInvoker implements Invoker {
+    /**
+     * @deprecated 
+     */
+    @Deprecated
+    private static class DeprecatedParameterInfoInvoker implements Invoker {
 
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
 
-        OldParameterInfoInvoker(final ComponentConfiguration componentConfig, HstRequest request) {
+        /**
+         * @deprecated 
+         */
+        @Deprecated
+        DeprecatedParameterInfoInvoker(final ComponentConfiguration componentConfig, HstRequest request) {
             this.componentConfig = componentConfig;
             this.request = request;
         }
