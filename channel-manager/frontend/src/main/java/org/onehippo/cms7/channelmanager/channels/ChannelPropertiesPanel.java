@@ -46,6 +46,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetLink;
 import org.hippoecm.hst.security.HstSubject;
@@ -103,16 +104,31 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 item.add(new Label("key", key));
 
                 HstValueType propType = propDef.getValueType();
-                ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
 
+                // render an image set field?
+                ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
                 if (imageSetLink != null && propType.equals(HstValueType.STRING)) {
                     IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
                     item.add(new ImageSetFieldWidget(context, "value", imageSetLink, model));
-                } else if (propType.equals(HstValueType.BOOLEAN)) {
-                    item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
-                } else {
-                    item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
+                    return;
                 }
+
+                // render a drop-down list?
+                DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
+                if (dropDownList != null) {
+                    IModel<String> model = new StringModel(channel.getProperties(), key);
+                    item.add(new DropDownListWidget("value", dropDownList, model));
+                    return;
+                }
+
+                // render a boolean field?
+                if (propType.equals(HstValueType.BOOLEAN)) {
+                    item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
+                    return;
+                }
+
+                // default: render a text field
+                item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
             }
         });
         container.setOutputMarkupId(true);
