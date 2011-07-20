@@ -40,6 +40,7 @@
     <hippo.cms.version>2.21.02-SNAPSHOT</hippo.cms.version>
     <hippo.addon-publication-workflow.version>2.21.02-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-faceteddate.version>2.21.02-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-brokenlinks.version>1.01.00-SNAPSHOT</hippo.addon-brokenlinks.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
