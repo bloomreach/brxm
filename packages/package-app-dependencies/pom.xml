@@ -59,7 +59,6 @@
       <artifactId>hippo-addon-wfdropbox</artifactId>
       <version>${hippo.repository.version}</version>
     </dependency>
-   </dependencies>
 
     <!-- Publication workflow -->
     <dependency>
