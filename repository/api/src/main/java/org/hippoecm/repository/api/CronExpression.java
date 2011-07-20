@@ -21,4 +21,8 @@ public class CronExpression {
     public CronExpression(String cron) {
         this.cron = cron;
     }
+    
+    public String toString() {
+        return cron;
+    }
 }

@@ -27,6 +27,10 @@ public class CronSchedulerInvocationModule extends AbstractSchedulerInvocationMo
 
     private String cronExpression;
 
+    public CronSchedulerInvocationModule(String cronExpression) {
+        this.cronExpression = cronExpression;
+    }
+
     public CronSchedulerInvocationModule(CronExpression cronExpression) {
         this.cronExpression = cronExpression.getCronExpression();
     }

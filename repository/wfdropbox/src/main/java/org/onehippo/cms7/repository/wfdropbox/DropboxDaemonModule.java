@@ -89,12 +89,18 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
     }
 
     public void run() {
+        if (log.isDebugEnabled()) {
+            log.debug("started thread workflow dropbox entries");
+        }
         try {
             Thread.sleep(initialDelay);
         } catch (InterruptedException ex) {
             if (shutdown) {
                 return;
             }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("started monitoring workflow dropbox entries");
         }
         Set<String> nodeIds = new TreeSet<String>();
         while (!shutdown) {
@@ -105,7 +111,11 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
                     Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [wfdropbox:call]", Query.JCR_SQL2);
                     QueryResult result = query.execute();
                     for (NodeIterator nodeIter = result.getNodes(); nodeIter.hasNext();) {
-                        nodeIds.add(nodeIter.nextNode().getIdentifier());
+                        Node found = nodeIter.nextNode();
+                        if (log.isDebugEnabled()) {
+                            log.debug("found entry "+found.getIdentifier()+" "+found.getPath());
+                        }
+                        nodeIds.add(found.getIdentifier());
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -117,11 +127,20 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
                 synchronized (session) {
                     try {
                         Node node = session.getNodeByIdentifier(nodeId);
-                        run(node);
-                        if (node.isNodeType("wfdropbox:node")) {
-                            node.remove();
+                        if (run(node)) {
+                            if (node.isNodeType("wfdropbox:node")) {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("finishing entry "+node.getIdentifier()+" by removing node");
+                                }
+                                node.remove();
+                            } else {
+                                if (log.isDebugEnabled()) {
+                                    log.debug("finishing entry "+node.getIdentifier()+" by removing mixin");
+                                }
+                                node.removeMixin("wfdropbox:call");
+                            }
                         } else {
-                            node.removeMixin("wfdropbox:call");
+                            log.warn("unable to execute "+node.getPath());
                         }
                         session.save();
                     } catch (WorkflowException ex) {
@@ -145,7 +164,10 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
         }
     }
 
-    void run(Node node) throws RepositoryException, WorkflowException, MappingException, RemoteException {
+    boolean run(Node node) throws RepositoryException, WorkflowException, MappingException, RemoteException {
+        if (log.isDebugEnabled()) {
+            log.debug("found entry "+node.getIdentifier()+" "+node.getPath());
+        }
         Node documentNode = node;
         if (node.hasProperty("wfdropbox:alternate")) {
             documentNode = node.getProperty("wfdropbox:alternate").getNode();
@@ -178,10 +200,21 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
         Object[] actualArguments = null;
         Method method = null;
         for (Method wfMethod : wf.getClass().getMethods()) {
-            if (!wfMethod.getName().equals(node.getProperty("wfdropbox:method").getString()))
+            if (!wfMethod.getName().equals(node.getProperty("wfdropbox:method").getString())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("rejected method "+wfMethod+" because mismatch name (not "+node.getProperty("wfdropbox:method").getString()+")");
+                }
                 continue;
-            if (workflowClass != null && wfMethod.getDeclaringClass() != workflowMatch)
+            }
+            if (workflowClass != null && !workflowMatch.isAssignableFrom(wfMethod.getDeclaringClass())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("rejected method "+wfMethod+" because mismatch declaring class ("+wfMethod.getDeclaringClass().getName()+" is not "+workflowMatch+") ");
+                    for (Class interfaceClass : wfMethod.getDeclaringClass().getInterfaces()) {
+                        log.debug("  declaring class implemented interface "+interfaceClass.getName());
+                    }
+                }
                 continue;
+            }
 
             formalArguments = wfMethod.getParameterTypes(); // fallback
             NodeIterator argumentsNodesIter = node.getNode("wfdropbox:arguments").getNodes();
@@ -194,11 +227,22 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
                 idx = 0;
                 for (Class formalParameter : wfMethod.getParameterTypes()) {
                     if (!formalParameter.equals(formalArguments[idx])) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("mismatch formal parameter expected "+formalArguments[idx].getName()+" got "+formalParameter.getName());
+                    }
                         break;
                     }
                     ++idx;
                 }
+                if (idx != wfMethod.getParameterTypes().length || wfMethod.getParameterTypes().length != formalArguments.length) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("rejected method "+wfMethod+" because of mismatch on formal arguments "+idx+" "+wfMethod.getParameterTypes().length+" "+formalArguments.length);
+                    }
+                    continue;
+                }
             } catch (ClassNotFoundException ex) {
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                break;
             }
 
             actualArguments = new Object[formalArguments.length];
@@ -246,16 +290,25 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
                 log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
-        try {
-            method.invoke(wf, actualArguments);
-        } catch (IllegalAccessException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } catch (IllegalArgumentException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } catch (InvocationTargetException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } catch (SecurityException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        if (method != null) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("invoking workflow for entry "+method.getName()+" on object "+wf);
+                }
+                method.invoke(wf, actualArguments);
+                return true;
+            } catch (IllegalAccessException ex) {
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (IllegalArgumentException ex) {
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (InvocationTargetException ex) {
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (SecurityException ex) {
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            }
+        } else {
+            log.error("No suitable workflow method found");
         }
+        return false;
     }
 }

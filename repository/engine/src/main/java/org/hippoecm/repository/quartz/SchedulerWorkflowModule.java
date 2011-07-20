@@ -1,12 +1,12 @@
 package org.hippoecm.repository.quartz;
 
 import java.util.Date;
+import org.hippoecm.repository.api.CronExpression;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModuleFactory;
 import org.hippoecm.repository.ext.WorkflowManagerModule;
 import org.hippoecm.repository.ext.WorkflowManagerRegister;
 import org.hippoecm.repository.quartz.CronSchedulerInvocationModule;
-import org.quartz.CronExpression;
 
 public class SchedulerWorkflowModule implements WorkflowManagerModule {
     public SchedulerWorkflowModule() {
@@ -23,7 +23,7 @@ public class SchedulerWorkflowModule implements WorkflowManagerModule {
         register.bind(CronExpression.class, new WorkflowInvocationHandlerModuleFactory<CronExpression>() {
             @Override
             public WorkflowInvocationHandlerModule createInvocationHandler(CronExpression cronExpression) {
-                return new CronSchedulerInvocationModule(cronExpression);
+                return new CronSchedulerInvocationModule(cronExpression.toString());
             }
         });
     }
