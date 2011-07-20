@@ -15,10 +15,16 @@
  */
 package org.hippoecm.hst.util;
 
+import java.util.UUID;
+
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * NodeUtils
@@ -27,31 +33,46 @@ import org.hippoecm.repository.api.HippoNode;
  */
 public class NodeUtils {
     
+
+    private static final Logger log = LoggerFactory.getLogger(NodeUtils.class);
+    
+    
     /**
-     * Get the most accurate and complete version available of the information
-     * represented in the current node if available.
+     * Returns the canonical version of this node, and <code>null</code> when there is no canonical node
      * 
      * @param node
-     * @param defaultNode
-     * @return the node with the most accurate representation of this node if available.
-     * @throws java.lang.IllegalArgumentException when canonical node is not found for the node.
+     * @return  the canonical version of this node, and <code>null</code> when there is no canonical node.
      * @throws java.lang.RuntimeException when the repository throws a general repository exception
      */
     public static Node getCanonicalNode(Node node) {
-        return getCanonicalNode(node, null);
+        if(node instanceof HippoNode) {
+            HippoNode hnode = (HippoNode)node;
+            try {
+                Node canonical = hnode.getCanonicalNode();
+                if(canonical == null) {
+                    log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
+                            "virtual node. Return null", node.getPath());
+                }
+                return canonical;
+            } catch (RepositoryException e) {
+                log.error("Repository exception while fetching canonical node. Return null" , e);
+                throw new RuntimeException(e);
+            }
+        } 
+        return node;
     }
     
+   
     /**
-     * Get the most accurate and complete version available of the information
-     * represented in the current node if available.
-     * Otherwise, returns the defaultNode instead of throwing an exception.
+     * Returns the canonical version of this node, and <code>defaultNode</code> when there is no canonical node
      * 
      * @param node
      * @param defaultNode
-     * @return the node with the most accurate representation of this node if available. Otherwise returns the defaultNode.
-     * @throws java.lang.IllegalArgumentException when canonical node is not found for the node.
+     * @return  the canonical version of this node, and <code>defaultNode</code> when there is no canonical node.
      * @throws java.lang.RuntimeException when the repository throws a general repository exception
+     * @deprecated use {@link #getCanonicalNode(Node)} instead
      */
+    @Deprecated
     public static Node getCanonicalNode(Node node, Node defaultNode) {
         if (node == null) {
             throw new IllegalArgumentException("Node should be not null in finding canonical node.");
@@ -63,8 +84,9 @@ public class NodeUtils {
             try {
                 canonicalNode = ((HippoNode) node).getCanonicalNode();
                 
-                if (canonicalNode == null) {
-                    throw new IllegalArgumentException("No canonical node found for '" + node.getPath() + "'");
+                if(canonicalNode == null) {
+                    log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
+                            "virtual node. Return null", node.getPath());
                 }
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);
@@ -72,5 +94,43 @@ public class NodeUtils {
         }
         
         return (canonicalNode != null ? canonicalNode : defaultNode);
+    }
+    
+    /**
+     * 
+     * @param mirrorNode
+     * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
+     */
+    public static Node getDeref(Node mirrorNode) {
+        String docBaseUUID = null;
+        try {
+            if(!mirrorNode.isNodeType(HippoNodeType.NT_FACETSELECT) && !mirrorNode.isNodeType(HippoNodeType.NT_MIRROR)) {
+                log.info("Cannot deref a node that is not of (sub)type '{}' or '{}'. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
+                return null;
+            }
+            // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
+            docBaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            
+            // test whether docBaseUUID can be parsed as a uuid
+            try {
+                UUID.fromString(docBaseUUID);
+            } catch(IllegalArgumentException e) {
+                log.warn("Docbase cannot be parsed to a valid uuid. Return null");
+                return null;
+            }
+            return mirrorNode.getSession().getNodeByIdentifier(docBaseUUID);
+        } catch (ItemNotFoundException e) {
+            String path = null;
+            try {
+                path = mirrorNode.getPath();
+            } catch (RepositoryException e1) {
+                log.error("RepositoryException, cannot return deferenced node: {}", e1);
+            }
+            log.info("ItemNotFoundException, cannot return deferenced node because docbase uuid '{}' cannot be found. The docbase property is at '{}/hippo:docbase'. Return null", docBaseUUID, path);
+        } catch (RepositoryException e) {
+            log.error("RepositoryException, cannot return deferenced node: {}", e);
+        }
+        
+        return null;
     }
 }

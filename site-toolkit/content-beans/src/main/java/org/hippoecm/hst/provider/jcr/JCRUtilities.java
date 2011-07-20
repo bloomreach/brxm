@@ -21,15 +21,24 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use {@link NodeUtils} instead
+ */
+@Deprecated
 public class JCRUtilities {
 
     private static final Logger log = LoggerFactory.getLogger(JCRUtilities.class);
     
+    /**
+     * @deprecated use {@link NodeUtils#getCanonicalNode(Node)} instead
+     */
+    @Deprecated
     public static Node getCanonical(Node n) {
         if(n instanceof HippoNode) {
             HippoNode hnode = (HippoNode)n;
@@ -53,7 +62,9 @@ public class JCRUtilities {
      * 
      * @param mirrorNode
      * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
+     * @deprecated use {@link NodeUtils#getDeref(Node)} instead
      */
+    @Deprecated
     public static Node getDeref(Node mirrorNode) {
         String docBaseUUID = null;
         try {

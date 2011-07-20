@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.provider.jcr.JCRUtilities;
+import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -338,7 +339,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             if(!navigationStateful) {
                 // not context relative, so we try to compute a link wrt the canonical location of the jcr node. If the canonical location is null (virtual only nodes)
                 // we'll continue with the non canonical node
-                canonicalNode = JCRUtilities.getCanonical(node);
+                canonicalNode = NodeUtils.getCanonicalNode(node);
             }
             
             try {
@@ -371,7 +372,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                     nodePath = node.getPath(); 
                     if(!navigationStateful && (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR))) {
-                        node = JCRUtilities.getDeref(node);
+                        node = NodeUtils.getDeref(node);
                         if( node == null ) {
                             log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
                             return pageNotFoundLink(mount);

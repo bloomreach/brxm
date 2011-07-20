@@ -254,7 +254,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         // this is always the canonical
                         curNode = session.getNodeByIdentifier(docbaseUuid);
                     } else {
-                        curNode = NodeUtils.getCanonicalNode(curNode, curNode);
+                        curNode = getCanonicalNode(curNode);
                     }
                 }
             }
@@ -270,7 +270,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     protected String createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
             throws ObjectBeanPersistenceException {
         try {
-            folderNode = NodeUtils.getCanonicalNode(folderNode, folderNode);
+            folderNode = getCanonicalNode(folderNode);
             Workflow wf = getWorkflow(folderNodeWorkflowCategory, folderNode);
 
             if (wf instanceof FolderWorkflow) {
@@ -325,6 +325,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
     }
 
+    
     /**
      * Updates the content node which is mapped to the object.
      * <P>
@@ -347,7 +348,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 try {
                     HippoBean contentBean = (HippoBean) content;
                     Node contentNode = contentBean.getNode();
-                    contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
+                    contentNode = getCanonicalNode(contentNode);
                     binder = contentNodeBinders.get(contentNode.getPrimaryNodeType().getName());
                 } catch (Exception e) {
                     throw new ObjectBeanPersistenceException(e);
@@ -385,7 +386,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 HippoBean contentBean = (HippoBean) content;
                 Node contentNode = contentBean.getNode();
                 path = contentNode.getPath();
-                contentNode = NodeUtils.getCanonicalNode(contentNode, contentNode);
+                contentNode = getCanonicalNode(contentNode);
                 Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
                 if (wf != null) {
@@ -456,7 +457,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         try {
             HippoBean beanToRemove = (HippoBean) content;
             
-            Node canonicalNodeToRemove = NodeUtils.getCanonicalNode(beanToRemove.getNode());
+            Node canonicalNodeToRemove = getCanonicalNode(beanToRemove.getNode());
             
             if(beanToRemove instanceof HippoDocumentBean) {
                 canonicalNodeToRemove = canonicalNodeToRemove.getParent();
@@ -654,4 +655,12 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         return null;
     }
     
+    private Node getCanonicalNode(Node folderNode) throws ObjectBeanPersistenceException {
+        folderNode = NodeUtils.getCanonicalNode(folderNode);
+        if(folderNode == null) {
+            throw new ObjectBeanPersistenceException("Cannot perform workflow on a node that does not have a canonical version");
+        }
+        return folderNode;
+    }
+
 }

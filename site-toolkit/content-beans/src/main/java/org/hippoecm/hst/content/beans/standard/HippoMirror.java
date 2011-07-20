@@ -19,7 +19,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.provider.jcr.JCRUtilities;
+import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
             referencedWrapper = new BeanWrapper<HippoBean>(null);
             return null;
         }
-        javax.jcr.Node deref = JCRUtilities.getDeref(this.getNode());
+        javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
         if(deref == null) {
             // no logging needed, JCRUtilities already does this
             referencedWrapper = new BeanWrapper<HippoBean>(null);
@@ -111,7 +111,7 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
             derefWrapper = new BeanWrapper<HippoBean>(null);
             return null;
         }
-        javax.jcr.Node deref = JCRUtilities.getDeref(this.getNode());
+        javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
         if(deref == null) {
             log.warn("Can not dereference this HippoMirror ('{}') because cannot find the node the mirror is pointing to. Return null", this.getPath());
             derefWrapper = new BeanWrapper<HippoBean>(null);
