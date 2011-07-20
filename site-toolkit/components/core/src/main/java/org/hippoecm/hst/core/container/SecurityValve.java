@@ -64,7 +64,7 @@ public class SecurityValve extends AbstractValve {
         HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        
+         
         // first check whether there is a cms single sign on required already
         if(servletRequest.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED) != null && Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED))) {
             log.debug("CMS single sign on is required.");
@@ -82,7 +82,7 @@ public class SecurityValve extends AbstractValve {
             } 
         }
         
-        
+         
         boolean accessAllowed = false;
         boolean authenticationRequired = false;
         ContainerSecurityException securityException = null;
@@ -103,9 +103,10 @@ public class SecurityValve extends AbstractValve {
             HstLink destinationLink = null;
             String formLoginPage = resolvedMount.getFormLoginPage();
             
+
+            Mount destLinkMount = resolvedMount.getMount();
+            
             try {
-                Mount destLinkMount = resolvedMount.getMount();
-                
                 if (!destLinkMount.isSite()) {
                     Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
                     
@@ -129,33 +130,31 @@ public class SecurityValve extends AbstractValve {
                 }
             }
             
-            if (authenticationRequired) {
-                if (!StringUtils.isBlank(formLoginPage)) {
-                    try {
-                        HttpSession httpSession = servletRequest.getSession(true);
-                        httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
-                        httpSession.setAttribute(SECURITY_EXCEPTION_ATTR_NAME, securityException);
-                        servletResponse.sendRedirect(servletResponse.encodeURL(servletRequest.getContextPath() + formLoginPage));
-                        return;
-                    } catch (IOException ioe) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Failed to redirect to form login page. " + formLoginPage, ioe);
-                        } else if (log.isWarnEnabled()) {
-                            log.warn("Failed to redirect to form login page. " + formLoginPage + ". {}", ioe.toString());
-                        }
+            if (authenticationRequired && !StringUtils.isBlank(formLoginPage)) {
+                try {
+                    HttpSession httpSession = servletRequest.getSession(true);
+                    httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
+                    httpSession.setAttribute(SECURITY_EXCEPTION_ATTR_NAME, securityException);
+                    String formLoginURL = requestContext.getHstLinkCreator().create(formLoginPage, destLinkMount).toUrlForm(requestContext, true);
+                    servletResponse.sendRedirect(formLoginURL);
+                    return;
+                } catch (IOException ioe) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to redirect to form login page. " + formLoginPage, ioe);
+                    } else if (log.isWarnEnabled()) {
+                        log.warn("Failed to redirect to form login page. " + formLoginPage + ". {}", ioe.toString());
                     }
                 }
             }
             
             try {
-                HttpSession httpSession = servletRequest.getSession(resolvedMount.isSessionStateful());
-                
-                if (httpSession != null) {
-                    httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, false));
-                    httpSession.setAttribute(SECURITY_EXCEPTION_ATTR_NAME, securityException);
+                servletRequest.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
+                if(authenticationRequired) {
+                    servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, (securityException != null ? securityException.getLocalizedMessage() : null));
+                } else {
+                    // forbidden thus 403
+                    servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, (securityException != null ? securityException.getLocalizedMessage() : null));
                 }
-                
-                servletResponse.sendError(403, (securityException != null ? securityException.getLocalizedMessage() : null));
                 return;
             } catch (IOException ioe) {
                 if (log.isDebugEnabled()) {
@@ -259,8 +258,7 @@ public class SecurityValve extends AbstractValve {
             if (log.isDebugEnabled()) {
                 log.debug("The user is not assigned to roles, {}", roles);
             }
-        }
-        
+        }   
         throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }
     

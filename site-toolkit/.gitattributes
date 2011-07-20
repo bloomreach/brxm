@@ -895,6 +895,7 @@ demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svne
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
 demosuite/site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
+demosuite/site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage401.jsp -text svneol=unset#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage403.jsp -text
 demosuite/site/src/main/webapp/WEB-INF/jsp/errorpages/component-error-page.jsp svneol=native#text/plain
 demosuite/site/src/main/webapp/WEB-INF/jsp/spring/contactspring.jsp -text
