@@ -29,8 +29,8 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -77,13 +77,19 @@ public interface HstMutableRequestContext extends HstRequestContext {
     /**
      * Sets the preferred locale associated with this request.
      * @param locale The preferred locale associated with this request.
+     * @deprecated we set the locales not any more on the request. 
+     * and HSTTWO-1665
      */
+    @Deprecated 
     public void setPreferredLocale(Locale locale);
     
     /**
      * Sets the locales assocaited with this request.
      * @param locales
+     * @deprecated we set the locales not any more on the request. 
+     * and HSTTWO-1665
      */
+    @Deprecated 
     public void setLocales(List<Locale> locales);
     
     /**

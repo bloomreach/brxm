@@ -224,13 +224,19 @@ public interface HstRequestContext {
      * Gets the preferred locale associated with this request.
      *
      * @return The preferred locale associated with this request.
+     * @deprecated we set the locales not any more on the request.
+     * and HSTTWO-1665
      */
+    @Deprecated 
     Locale getPreferredLocale();
     
     /**
      * Returns an Enumeration of Locale objects
      * @return The locale associated with this request.
+     * @deprecated we set the locales not any more on the request.
+     * and HSTTWO-1665
      */
+    @Deprecated 
     Enumeration<Locale> getLocales();
     
     /**
