@@ -28,7 +28,7 @@ public class DialogLink extends Panel {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    private AjaxLink link;
+    protected AjaxLink link;
 
     public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
         this(id, linktext, new DialogAction(dialogFactory, dialogService));
