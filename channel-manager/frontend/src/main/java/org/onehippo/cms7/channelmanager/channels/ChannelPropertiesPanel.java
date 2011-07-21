@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -32,6 +33,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
@@ -74,6 +76,46 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     private Channel channel;
 
+    private class ChannelResourceModel extends LoadableDetachableModel<String> {
+
+        private final String key;
+
+        public ChannelResourceModel(String key) {
+            this.key = key;
+        }
+
+        @Override
+        protected String load() {
+            ResourceBundle bundle = getResources();
+            if (bundle != null) {
+                return bundle.getString(key);
+            }
+            return null;
+        }
+    }
+
+    private class ChannelChoiceRenderer implements IChoiceRenderer<String> {
+        private final String key;
+
+        public ChannelChoiceRenderer(final String key) {
+            this.key = key;
+        }
+
+        @Override
+        public Object getDisplayValue(final String object) {
+            ResourceBundle resources = getResources();
+            if (resources != null) {
+                return resources.getString(key + "/" + object);
+            }
+            return null;
+        }
+
+        @Override
+        public String getIdValue(final String object, final int index) {
+            return object;
+        }
+    }
+
     public ChannelPropertiesPanel(final IPluginContext context) {
         super();
 
@@ -101,7 +143,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                     return;
                 }
 
-                item.add(new Label("key", key));
+                item.add(new Label("key", new ChannelResourceModel(key)));
 
                 HstValueType propType = propDef.getValueType();
 
@@ -117,7 +159,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
                 if (dropDownList != null) {
                     IModel<String> model = new StringModel(channel.getProperties(), key);
-                    item.add(new DropDownListWidget("value", dropDownList, model));
+                    item.add(new DropDownListWidget("value", dropDownList, model, new ChannelChoiceRenderer(key)));
                     return;
                 }
 
@@ -170,6 +212,15 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 save();
             }
         });
+    }
+
+    private ResourceBundle getResources() {
+        try {
+            return getChannelManager().getBlueprint(channel.getBlueprintId()).getResourceBundle(getSession().getLocale());
+        } catch (ChannelException e) {
+            log.error("Could not find blueprint", e);
+            return null;
+        }
     }
 
     private void save() {

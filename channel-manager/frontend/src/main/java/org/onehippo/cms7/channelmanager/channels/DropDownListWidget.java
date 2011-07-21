@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.hst.core.parameters.DropDownList;
@@ -33,11 +34,11 @@ public class DropDownListWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public DropDownListWidget(final String id, final DropDownList dropDownList, final IModel<String> model) {
+    public DropDownListWidget(final String id, final DropDownList dropDownList, final IModel<String> model, IChoiceRenderer<String> renderer) {
         super(id);
 
         List<String> options = Arrays.asList(dropDownList.value());
-        final DropDownChoice<String> dropDown = new DropDownChoice("dropdownlist", model, options);
+        final DropDownChoice<String> dropDown = new DropDownChoice("dropdownlist", model, options, renderer);
 
         if (options.contains(null)) {
             dropDown.setNullValid(true);
