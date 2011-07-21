@@ -44,6 +44,7 @@
     <hippo.addon-hst-configuration-editor.version>1.08.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>1.01.02-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>1.01.02-SNAPSHOT</hippo.addon-google-analytics.version>
+    <hippo.addon-brokenlinks.version>1.01.00-SNAPSHOT</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.21.02-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.23.02-SNAPSHOT</hippo.hst.version>
 
@@ -500,6 +501,21 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-google-analytics-hst</artifactId>
         <version>${hippo.addon-google-analytics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-brokenlinks-frontend</artifactId>
+        <version>${hippo.addon-brokenlinks.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-brokenlinks-repository</artifactId>
+        <version>${hippo.addon-brokenlinks.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-brokenlinks-common</artifactId>
+        <version>${hippo.addon-brokenlinks.version}</version>
       </dependency>
 
       <!-- All Hippo Packages artifacts -->
