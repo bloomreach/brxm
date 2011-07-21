@@ -23,6 +23,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
 
 /**
  * Adds Javascript to the Wicket AJAX request target that opens a URL in a popup window. If the current Wicket
@@ -34,28 +35,18 @@ public class AjaxPopupService extends Plugin implements IPopupService {
 
     public AjaxPopupService(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        final String serviceId = config.getString("service.id", IPopupService.DEFAULT_SERVICE_ID);
-        context.registerService(this, serviceId);
+        final String name = config.getString(SERVICE_ID, IPopupService.class.getName());
+        context.registerService(this, name);
     }
 
     @Override
-    public void openPopupWindow(final String url) {
+    public void openPopupWindow(final PopupSettings popupSettings, final String url) {
         if (url == null) {
             return;
         }
-
         IRequestTarget target = RequestCycle.get().getRequestTarget();
-
         if(target instanceof AjaxRequestTarget) {
             AjaxRequestTarget ajax = (AjaxRequestTarget) target;
-
-            PopupSettings popupSettings = new PopupSettings(
-                    PopupSettings.RESIZABLE
-                    | PopupSettings.SCROLLBARS
-                    | PopupSettings.LOCATION_BAR
-                    | PopupSettings.MENU_BAR
-                    | PopupSettings.TOOL_BAR);
 
             popupSettings.setTarget("'" + url + "'");
 

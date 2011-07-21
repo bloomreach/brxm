@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.link.PopupSettings;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
@@ -26,8 +27,8 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
 import org.hippoecm.frontend.service.documenturl.IDocumentUrlService;
-import org.hippoecm.frontend.service.popup.IPopupService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
@@ -50,13 +51,8 @@ public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
     public WebsiteActionsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
-        final String popupServiceId = config.getString(CONFIG_POPUP_SERVICE_ID, IPopupService.DEFAULT_SERVICE_ID);
-        popupService = context.getService(popupServiceId, IPopupService.class);
-        if (popupService == null) {
-            throw new IllegalStateException("No popup service configured for the website actions plugin. "
-                    + "Please set the configuration property " + CONFIG_POPUP_SERVICE_ID);
-        }
+
+        popupService = context.getService(IPopupService.class.getName(), IPopupService.class);
 
         final String previewSiteDocumentUrlServiceId = config.getString(CONFIG_PREVIEW_DOCUMENT_URL_SERVICE_ID, IDocumentUrlService.DEFAULT_SERVICE_ID);
         previewDocumentUrlService = context.getService(previewSiteDocumentUrlServiceId, IDocumentUrlService.class);
@@ -97,7 +93,7 @@ public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
             @Override
             protected void invoke() {
-                popupService.openPopupWindow(documentUrl);
+                popupService.openPopupWindow(new PopupSettings(IPopupService.DEFAULT_POPUP_SETTINGS), documentUrl);
             }
             
         });

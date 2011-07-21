@@ -96,9 +96,6 @@
       <sv:property sv:name="live.document.url.service.id" sv:type="String">
         <sv:value>live.site.document.url.service</sv:value>
       </sv:property>
-      <sv:property sv:name="popup.service.id" sv:type="String">
-        <sv:value>ajax.popup.service</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

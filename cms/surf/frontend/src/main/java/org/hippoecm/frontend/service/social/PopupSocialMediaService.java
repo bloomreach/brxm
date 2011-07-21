@@ -21,7 +21,7 @@ import java.util.List;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.popup.IPopupService;
+import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
 
 /**
  * Provides access to social media by opening medium-specific URLs in a popup window.
@@ -43,8 +43,7 @@ public class PopupSocialMediaService extends Plugin implements ISocialMediaServi
     public PopupSocialMediaService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final String popupServiceId = config.getString(CONFIG_POPUP_SERVICE_ID, IPopupService.DEFAULT_SERVICE_ID);
-        popupService = context.getService(popupServiceId, IPopupService.class);
+        popupService = context.getService(IPopupService.class.getName(), IPopupService.class);
         if (popupService == null) {
             throw new IllegalStateException("No popup service configured for the social service plugin. "
                     + "Please set the configuration property " + CONFIG_POPUP_SERVICE_ID);

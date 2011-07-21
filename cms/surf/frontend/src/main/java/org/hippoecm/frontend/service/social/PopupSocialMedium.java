@@ -2,7 +2,8 @@ package org.hippoecm.frontend.service.social;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ResourceReference;
-import org.hippoecm.frontend.service.popup.IPopupService;
+import org.apache.wicket.markup.html.link.PopupSettings;
+import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
 
 /**
  * Provides access to a social medium. URLs are shared by opening a medium-specific URL in a popup window.
@@ -26,7 +27,7 @@ public class PopupSocialMedium implements ISocialMedium {
 
     @Override
     public void shareUrl(final String url) {
-        popupService.openPopupWindow(shareUrlPrefix + url);
+        popupService.openPopupWindow(new PopupSettings(IPopupService.DEFAULT_POPUP_SETTINGS), shareUrlPrefix + url);
     }
 
     @Override

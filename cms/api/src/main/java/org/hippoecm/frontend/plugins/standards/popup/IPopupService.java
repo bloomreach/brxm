@@ -13,22 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service.popup;
+package org.hippoecm.frontend.plugins.standards.popup;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.markup.html.link.PopupSettings;
 
 /**
  * Opens a popup window for a URL.
  */
 public interface IPopupService extends IClusterable {
 
-    public static final String DEFAULT_SERVICE_ID = "default.popup.service";
+    final static int DEFAULT_POPUP_SETTINGS =
+                    PopupSettings.RESIZABLE
+                    | PopupSettings.SCROLLBARS
+                    | PopupSettings.LOCATION_BAR
+                    | PopupSettings.MENU_BAR
+                    | PopupSettings.TOOL_BAR;
 
     /**
      * Opens a popup window for a URL.
      *
+     * @param popupSettings
+     *
      * @param url the URL to open
      */
-    public void openPopupWindow(String url);
+    public void openPopupWindow(PopupSettings popupSettings, String url);
 
 }

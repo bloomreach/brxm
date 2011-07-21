@@ -15,18 +15,6 @@
   limitations under the License.
 -->
 <sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-
-  <sv:node sv:name="ajaxPopupService">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.popup.AjaxPopupService</sv:value>
-    </sv:property>
-    <sv:property sv:name="service.id" sv:type="String">
-      <sv:value>ajax.popup.service</sv:value>
-    </sv:property>
-  </sv:node>
   
   <sv:node sv:name="previewSiteDocumentUrlService">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -91,9 +79,6 @@
     </sv:property>
     <sv:property sv:name="service.id" sv:type="String">
       <sv:value>popup.social.media.service</sv:value>
-    </sv:property>
-    <sv:property sv:name="popup.service.id" sv:type="String">
-      <sv:value>ajax.popup.service</sv:value>
     </sv:property>
   </sv:node>
 
