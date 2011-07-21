@@ -31,10 +31,10 @@ int autoRedirectSeconds = 2;
 
 %>
 
-<hst:link var="loginFormUrl" path="/login/form" mount="site" external="true">
+<hst:link var="loginFormUrl" path="/login/form" mount="site" >
   <hst:param name="destination" value="<%=destination%>" />
 </hst:link>
-<hst:link var="loginProxyUrl" path="/login/proxy" mount="site"  external="true">
+<hst:link var="loginProxyUrl" path="/login/proxy" mount="site" >
   <hst:param name="destination" value="<%=destination%>" />
 </hst:link>
 
