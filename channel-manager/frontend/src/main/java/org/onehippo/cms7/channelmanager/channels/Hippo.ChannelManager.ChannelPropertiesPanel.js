@@ -35,12 +35,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             hideCollapseTool: true,
             disabled: true,
             title: ' ',
-            split: true,
-            tbar: [{
-                text: "Save",
-                handler: me.saveChannel,
-                scope: me
-            }]
+            split: true
         });
 
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
@@ -58,10 +53,6 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
     hidePanel: function() {
         this.disable();
         this.collapse();
-    },
-
-    saveChannel: function() {
-        this.fireEvent('save');
     },
 
     isShown: function() {
