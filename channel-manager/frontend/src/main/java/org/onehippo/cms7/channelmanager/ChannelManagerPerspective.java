@@ -19,6 +19,7 @@ package org.onehippo.cms7.channelmanager;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -46,6 +47,8 @@ public class ChannelManagerPerspective extends Perspective {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
+
+        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
         RootPanel rootPanel = new RootPanel(context, "channel-root");
         add(rootPanel);

@@ -1,0 +1,4 @@
+.channel-manager .channel-properties { margin: 5px; }
+.channel-manager .channel-properties tr > td { padding: 0 10px 6px 0; }
+.channel-manager .channel-properties a.channel-button, .channel-manager .channel-properties .channel-button > a { background-color: #f2f2f2; border: 1px solid #999; padding: 2px; margin-right: 4px; }
+.channel-manager .channel-properties a.channel-button:hover, .channel-manager .channel-properties .channel-button > a:hover { background-color: #fff6e0 }

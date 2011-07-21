@@ -1,5 +1,6 @@
 * text=auto !eol
 frontend/pom.xml eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.properties -text

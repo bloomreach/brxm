@@ -131,12 +131,8 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
             }
         });
-        container.setOutputMarkupId(true);
-        ExtBoxComponent box = new ExtBoxComponent();
-        box.add(container);
-        add(box);
 
-        add(new ExtButton(new Model<String>("Channel")) {
+        container.add(new ExtButton("open-channel-button", new Model<String>("Open Channel")) {
             @Override
             protected void onClick(final AjaxRequestTarget target) {
                 super.onClick(target);
@@ -146,6 +142,11 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 templateComposerPerspective.focus(target, channel.getHostname(), channel.getSubMountPath());
             }
         });
+
+        container.setOutputMarkupId(true);
+        ExtBoxComponent box = new ExtBoxComponent();
+        box.add(container);
+        add(box);
 
         addEventListener("selectchannel", new ExtEventListener() {
             @Override

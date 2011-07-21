@@ -22,10 +22,18 @@
     </div>
     <div yui:id="template-composer-perspective-center">
       <div yui:id="template-composer-perspective-center-body">
-        <div wicket:id="channel-root">
-          <ul wicket:id="container">
-            <li wicket:id="properties"><span wicket:id="key">key</span>: <span wicket:id="value">value</span></li>
-          </ul>
+        <div class="channel-manager" wicket:id="channel-root">
+          <div class="channel-properties" wicket:id="container">
+            <table >
+              <tbody wicket:id="properties">
+                <tr>
+                  <td class="key"><span wicket:id="key">key</span></td>
+                  <td class="value"><span wicket:id="value">value</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <span wicket:id="open-channel-button"/>
+          </div>
         </div>
       </div>
     </div>
