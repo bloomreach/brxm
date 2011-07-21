@@ -63,7 +63,12 @@ public class ChannelUtils {
                 if (isSetter) {
                     throw new UnsupportedOperationException("Setter method is not supported.");
                 } else {
-                    return values.get(parameterName);
+                    Object parameterValue = values.get(parameterName);
+                    if (parameterValue == null || "".equals(parameterValue)) {
+                        // when the parameter value is null or an empty string we return the default value from the annotation
+                        return panno.defaultValue();
+                    }
+                    return parameterValue;
                 }
             }
         };
