@@ -18,7 +18,9 @@ package org.hippoecm.hst.configuration.channel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -35,8 +37,9 @@ public class BlueprintService implements Blueprint {
     private final String name;
     private final String description;
     private final String path;
-    private final List<HstPropertyDefinition> properties;
+
     private final Class<?> channelInfoClass;
+    private final List<HstPropertyDefinition> properties;
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -69,8 +72,7 @@ public class BlueprintService implements Blueprint {
         if (channelInfoClass != null) {
             properties = ChannelInfoClassProcessor.getProperties(channelInfoClass);
             if (bluePrint.hasNode("hst:defaultchannelinfo")) {
-                Map<HstPropertyDefinition, Object> values =
-                        ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), properties);
+                Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), properties);
                 for (HstPropertyDefinition def : properties) {
                     if ((def instanceof AbstractHstPropertyDefinition) && values.get(def) != null) {
                         Object value = values.get(def);
@@ -81,7 +83,6 @@ public class BlueprintService implements Blueprint {
             }
         } else {
             properties = Collections.emptyList();
-
         }
     }
 
@@ -107,6 +108,14 @@ public class BlueprintService implements Blueprint {
 
     public List<HstPropertyDefinition> getPropertyDefinitions() {
         return Collections.unmodifiableList(properties);
+    }
+
+    @Override
+    public ResourceBundle getResourceBundle(Locale locale) {
+        if (channelInfoClass != null) {
+            return ResourceBundle.getBundle(channelInfoClass.getName(), locale);
+        }
+        return null;
     }
 
     public Node getNode(final Session session) throws RepositoryException {
