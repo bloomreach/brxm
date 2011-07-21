@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+Ext.QuickTips.init();
 Ext.namespace('Hippo.ChannelManager');
 
 /**
@@ -54,7 +55,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textfield',
                             fieldLabel: 'Domain',
                             id: 'domain',
-                            allowBlank: false
+                            allowBlank: false,
+                            vtype: 'url'
                         },
                         {
                             xtype: 'textarea',
@@ -106,7 +108,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                                 }
                             });
                 } else {
-                    //Do nothing, the invalid fields will be highlighted automatically.
+
                 }
             }
         });
