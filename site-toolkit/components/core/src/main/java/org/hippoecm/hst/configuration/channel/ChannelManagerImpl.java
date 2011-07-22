@@ -400,11 +400,17 @@ public class ChannelManagerImpl implements ChannelManager {
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
             Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE), configRoot.getNode(sites), channel.getId());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
+            channel.setHstMountPoint(siteNode.getPath());
+
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 if (blueprintNode.hasNode("hst:configuration")) {
                     siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode("hst:configurations").getPath() + "/" + channel.getId());
                 } else {
-                    siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).remove();
+                    // reuse the configuration path specified in the hst:site node, if it exists
+                    String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+                    if (!jcrSession.nodeExists(configurationPath)) {
+                        throw new ChannelException("The hst:site node in blueprint '{}' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
+                    }
                 }
                 channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             }
