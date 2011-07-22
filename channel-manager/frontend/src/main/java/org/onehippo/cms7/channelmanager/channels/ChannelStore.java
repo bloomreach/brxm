@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
+import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.plugins.frontend.HstEditorConfigurationUtil;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
@@ -131,8 +133,28 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             HstSubject.clearSubject();
         }
 
-        // removed cached channels so they will be reloaded the next time
+        // removed the old cached channels to force a refresh
         this.channels = null;
+
+        // reload the saved channel to get its mount properties
+        Map<String, Channel> newChannels = getChannels();
+        Channel savedChannel = newChannels.get(newChannel.getId());
+        if (savedChannel == null) {
+            String errorMsg = "Channel '" + newChannel.getId() + "' was saved but could not be retrieved again. The channel has NOT been added to the HST Configuration Editor.";
+            log.error(errorMsg);
+            return createdRecordResult(false, errorMsg);
+        }
+
+        // add the new channel to the HST configuration editor
+        try {
+            HstEditorConfigurationUtil.createHstEditorConfiguration(savedChannel.getId(), savedChannel.getName(),
+                    savedChannel.getHstMountPoint());
+        } catch (RepositoryException e) {
+            String errorMsg = "Could not add channel '" + savedChannel.getName() + "' with ID '" + savedChannel.getId()
+                    + "' to the HST Configuration Editor";
+            log.error(errorMsg, e);
+            return createdRecordResult(false, errorMsg + ": " + e.getMessage());
+        }
 
         return createdRecordResult(true, "");
     }
