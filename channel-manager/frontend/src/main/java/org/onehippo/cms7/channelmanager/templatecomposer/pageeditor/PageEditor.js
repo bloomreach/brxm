@@ -238,7 +238,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     initializeIFrameHead : function(frm, cssSources, javascriptSources) {
         var pageEditor = this;
-        var cache = [];
 
         var requestContents = function(queue, processResponseCallback, queueEmptyCallback) {
             if (queue.length == 0) {
@@ -246,22 +245,18 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 return;
             }
             var src = queue.shift();
-            if (typeof cache[src] !== 'undefined') {
-                processResponseCallback(src, cache[src]);
-            } else {
-                Ext.Ajax.request({
-                    url : src,
-                    method : 'GET',
-                    success : function(result, request) {
-                        processResponseCallback(src, result.responseText);
-                        cache[src] = result.responseText;
-                        requestContents(queue, processResponseCallback, queueEmptyCallback);
-                    },
-                    failure : function(result, request) {
-                        Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
-                    }
-                });
-            }
+            Ext.Ajax.request({
+                url : src,
+                method : 'GET',
+                success : function(result, request) {
+                    processResponseCallback(src, result.responseText);
+                    cache[src] = result.responseText;
+                    requestContents(queue, processResponseCallback, queueEmptyCallback);
+                },
+                failure : function(result, request) {
+                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
+                }
+            });
         };
 
         var processCssHeadContribution = function(src, responseText) {
