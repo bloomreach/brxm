@@ -38,6 +38,12 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             }
         };
 
+       // recalculate the ExtJs layout when the YUI layout manager fires a resize event
+        this.on('afterlayout', function(portal, layout) {
+            var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
+            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.doLayout, true);
+        }, this, {single: true});
+
         Ext.apply(this, Ext.apply(this.initialConfig, config));
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
