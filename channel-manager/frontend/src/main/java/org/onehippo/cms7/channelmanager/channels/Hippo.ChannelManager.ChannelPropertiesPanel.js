@@ -41,13 +41,14 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
     },
 
-    showPanel: function(title) {
+    showPanel: function(channelId, channelName) {
         this.expand();
         this.enable();
-        if (title) {
-            this.setTitle(title);
+        if (channelName) {
+            this.setTitle(channelName);
         }
-        this.fireEvent('selectchannel', title);
+        console.log("Show panel, select channel id " + channelId);
+        this.fireEvent('selectchannel', channelId);
     },
 
     hidePanel: function() {

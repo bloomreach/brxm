@@ -26,7 +26,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
         this.store = config.store;
         this.columns = config.columns;
-        this.selectedChannel = null;
+        this.selectedChannelId = null;
 
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
@@ -47,7 +47,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     {
                         header: 'Channel Name',
                         width: 20,
-                        dataIndex: 'title',
+                        dataIndex: 'name',
                         sortable: true,
                         scope: self
                     }
@@ -82,7 +82,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
         this.store.load({
             callback: function() {
-                this.selectChannel(this.selectedChannel);
+                this.selectChannel(this.selectedChannelId);
                 this.getView().focusEl.focus();
             },
             scope: this
@@ -90,9 +90,10 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         this.addEvents('add-channel');
     },
 
-    // Selects the row of the channel with this title. If no such channel exists, the selection will be cleared.
-    selectChannel: function(title) {
-        var index = this.store.find('title', title)
+    // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.
+    selectChannel: function(channelId) {
+        console.log("SELECT CHANNEL ID " + channelId);
+        var index = this.store.find('id', channelId)
         this.selectRow(index);
     },
 
@@ -114,7 +115,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         var state = Hippo.ChannelManager.ChannelGridPanel.superclass.getState.call(this);
         var selectedRecord = this.getSelectionModel().getSelected();
         if (selectedRecord) {
-            state.selected = selectedRecord.get('title');
+            state.selected = selectedRecord.get('id');
         }
         return state;
     },
@@ -123,7 +124,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     // been loaded.
     applyState: function(state) {
         if (state.selected) {
-            this.selectedChannel = state.selected;
+            this.selectedChannelId = state.selected;
         }
     }
 

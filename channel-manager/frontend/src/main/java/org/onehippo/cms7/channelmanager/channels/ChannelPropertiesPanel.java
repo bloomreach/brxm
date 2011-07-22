@@ -194,10 +194,10 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
                 if (parameters.containsKey("channelId")) {
-                    JSONArray channels = parameters.get("channelId");
-                    if (channels.length() > 0) {
+                    JSONArray channelId = parameters.get("channelId");
+                    if (channelId.length() > 0) {
                         try {
-                            channel = getChannel((String) channels.get(0));
+                            channel = getChannel((String) channelId.get(0));
                         } catch (JSONException e) {
                             log.error("Invalid JSON", e);
                         }

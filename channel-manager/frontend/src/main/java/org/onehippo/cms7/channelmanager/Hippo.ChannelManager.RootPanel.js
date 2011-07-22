@@ -64,7 +64,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.selectedRow = -1;
         this.gridPanel.getSelectionModel().on('beforerowselect', function(sm, rowIndex, keepExisting, record) {
             this.selectedRow = rowIndex;
-            this.propertiesPanel.showPanel(record.get('title'));
+            this.propertiesPanel.showPanel(record.get('id'), record.get('name'));
         }, this);
         this.gridPanel.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
             this.gridPanel.selectedRow = -1;
@@ -81,7 +81,8 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.gridPanel.on('keydown', function(event) {
             switch (event.keyCode) {
                 case 13: // ENTER
-                    this.propertiesPanel.showPanel(this.gridPanel.getSelectionModel().getSelected().get('title'));
+                    var selectedRecord = this.gridPanel.getSelectionModel().getSelected();
+                    this.propertiesPanel.showPanel(selectedRecord.get('id'), selectedRecord.get('name'));
                     break;
                 case 27: // ESC
                     if (this.propertiesPanel.isShown()) {

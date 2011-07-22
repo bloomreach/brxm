@@ -53,8 +53,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                         },
                         {
                             xtype: 'textfield',
-                            fieldLabel: 'Domain',
-                            id: 'domain',
+                            fieldLabel: 'URL',
+                            id: 'url',
                             allowBlank: false,
                             vtype: 'url'
                         },

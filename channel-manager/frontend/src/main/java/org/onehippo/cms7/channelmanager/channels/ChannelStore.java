@@ -64,7 +64,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         //JsonStore
         final JSONObject props = super.getProperties();
         Map<String, String> sortInfo = new HashMap<String, String>();
-        sortInfo.put("field", "title");
+        sortInfo.put("field", "name");
         sortInfo.put("direction", "ASC");
         Map<String, String> baseParams = new HashMap<String, String>();
         baseParams.put("xaction", "read");
@@ -82,7 +82,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         JSONArray data = new JSONArray();
         for (Channel channel : getChannels().values()) {
             JSONObject object = new JSONObject();
-            object.put("title", channel.getId());
+            object.put("id", channel.getId());
+            object.put("name", channel.getName());
             object.put("contentRoot", channel.getContentRoot());
             data.put(object);
         }
@@ -91,37 +92,52 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     @Override
     protected JSONObject createRecord(JSONObject record) throws JSONException {
-
         final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        final Channel c = new Channel(record.getString("blueprintId"), "mobile-french-channel");
-        c.setTitle(record.getString("name"));
-        c.setUrl(record.getString("domain"));
 
-        // FIXME: move boilerplate to CMS engine
+        // create new channel
+        final String blueprintId = record.getString("blueprintId");
+        final Channel newChannel;
+        try {
+            newChannel = channelManager.createChannel(blueprintId);
+        } catch (ChannelException e) {
+            final String errorMsg = "Could not create new channel with blueprint '" + blueprintId + "'";
+            log.warn(errorMsg, e);
+            return createdRecordResult(false, errorMsg + ": " + e.getMessage());
+        }
+
+        // set channel parameters
+        newChannel.setName(record.getString("name"));
+        newChannel.setUrl(record.getString("url"));
+
+        // save channel (FIXME: move boilerplate to CMS engine)
         UserSession session = (UserSession) org.apache.wicket.Session.get();
         Credentials credentials = session.getCredentials().getJcrCredentials();
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
-        boolean success = true;
 
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                         public Void run() throws ChannelException {
-                            channelManager.save(c);
+                            channelManager.save(newChannel);
                             return null;
                         }
                     }, null);
         } catch (PrivilegedActionException e) {
-            log.error("Unable to save channel" + e.getException().getMessage(), e.getException());
-            success = false;
+            final String errorMsg = "Could not save channel '" + newChannel.getName() + "'";
+            log.error(errorMsg, e.getException());
+            return createdRecordResult(false, errorMsg + ": " + e.getException().getMessage());
         } finally {
             HstSubject.clearSubject();
-
         }
 
+        return createdRecordResult(true, "");
+    }
+
+    private JSONObject createdRecordResult(boolean success, String message) throws JSONException {
         final JSONObject result = new JSONObject();
         result.put("success", success);
+        result.put("msg", message);
         return result;
     }
 
