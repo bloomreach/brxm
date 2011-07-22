@@ -159,6 +159,7 @@
 
 
 [hst:channelinfo]
+- hst:name (string)
 - * (string)
 - * (string) multiple
 - * (boolean)

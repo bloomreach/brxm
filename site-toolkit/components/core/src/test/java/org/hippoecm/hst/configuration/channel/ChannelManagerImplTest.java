@@ -33,6 +33,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
@@ -64,6 +65,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         Channel channel = channels.values().iterator().next();
         assertEquals("testchannel", channel.getId());
+        assertEquals("Test Channel", channel.getName());
         assertEquals(Channel.UNKNOWN_BLUEPRINT, channel.getBlueprintId());
     }
 
@@ -96,6 +98,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey(channel.getId()));
+        assertNull(channel.getName());
     }
 
     public static interface TestInfoClass {

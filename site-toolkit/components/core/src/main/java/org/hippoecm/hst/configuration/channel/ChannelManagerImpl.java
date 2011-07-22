@@ -18,6 +18,7 @@ package org.hippoecm.hst.configuration.channel;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.repository.api.HippoNode;
@@ -152,6 +154,11 @@ public class ChannelManagerImpl implements ChannelManager {
 
             if (currNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 Node propertiesNode = currNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+
+                if (propertiesNode.hasProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME)) {
+                    channel.setName(propertiesNode.getProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME).getString());
+                }
+
                 BlueprintService blueprint = blueprints.get(bluePrintId);
                 if (blueprint != null) {
                     Map<String, Object> channelProperties = channel.getProperties();
@@ -180,8 +187,8 @@ public class ChannelManagerImpl implements ChannelManager {
     private void setUrlFor(final Node currNode, final Channel channel) throws RepositoryException {
         StringBuilder mountBuilder = new StringBuilder();
         Node ancestor = currNode;
-        while (!ancestor.isNodeType("hst:virtualhostgroup")) {
-            if ("hst:root".equals(ancestor.getName())) {
+        while (!ancestor.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP)) {
+            if (HstNodeTypes.MOUNT_HST_ROOTNAME.equals(ancestor.getName())) {
                 ancestor = ancestor.getParent();
                 break;
             }
@@ -192,7 +199,7 @@ public class ChannelManagerImpl implements ChannelManager {
         channel.setSubMountPath(mountBuilder.toString());
         boolean firstHost = true;
         StringBuilder hostBuilder = new StringBuilder();
-        while (!ancestor.isNodeType("hst:virtualhostgroup")) {
+        while (!ancestor.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP)) {
             if (firstHost) {
                 firstHost = false;
             } else {
@@ -370,26 +377,11 @@ public class ChannelManagerImpl implements ChannelManager {
     private void createChannel(Node configRoot, BlueprintService bps, Session session, final Channel channel) throws ChannelException, RepositoryException {
         Node blueprintNode = bps.getNode(session);
 
-        String tmp = channel.getUrl();
-        if (tmp == null) {
-            throw new ChannelException("No URL specified");
-        }
-        if (!tmp.startsWith("http://")) {
-            throw new ChannelException("URL does not start with 'http://'.  No other protocol is currently supported");
-        }
-        tmp = tmp.substring("http://".length());
-
-        String mountPath = "";
-        if (tmp.indexOf('/') >= 0) {
-            mountPath = tmp.substring(tmp.indexOf('/') + 1);
-            while (mountPath.lastIndexOf('/') == mountPath.length() - 1) {
-                mountPath = mountPath.substring(0, mountPath.lastIndexOf('/'));
-            }
-        }
-        Node parent = createVirtualHost(configRoot, tmp);
+        URI channelUri = getChannelUri(channel);
+        Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
         // create mount
-        Node mount = createMount(parent, blueprintNode, mountPath);
+        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
         mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID, channel.getId());
         mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_BLUEPRINTID, channel.getBlueprintId());
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
@@ -402,6 +394,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
         Node channelPropsNode = mount.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
         bps.saveChannelProperties(channelPropsNode, channel.getProperties());
+        channelPropsNode.setProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME, channel.getName());
 
         Session jcrSession = configRoot.getSession();
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
@@ -416,9 +409,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             }
 
-            Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-            if (channel.getContentRoot() != null) {
-                String contentRootPath = channel.getContentRoot();
+            final String contentRootPath = channel.getContentRoot();
+            if (contentRootPath != null) {
+                final Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 if (jcrSession.itemExists(contentRootPath)) {
                     contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
                 } else {
@@ -434,47 +427,46 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private Node createMount(Node parent, final Node blueprintNode, final String mountPath) throws RepositoryException {
-        Node mount;
-        String[] mountPathEls = mountPath.split("/");
-        String name = "hst:root";
-        if (mountPathEls.length > 0) {
-            if (parent.hasNode("hst:root")) {
-                parent = parent.getNode("hst:root");
-            } else {
-                parent = parent.addNode("hst:root", "hst:mount");
-            }
-            for (int i = 0; i < mountPathEls.length - 1; i++) {
-                if (parent.hasNode(mountPathEls[i])) {
-                    parent = parent.getNode(mountPathEls[i]);
-                } else {
-                    parent = parent.addNode(mountPathEls[i], "hst:mount");
-                }
-            }
-            name = mountPathEls[mountPathEls.length - 1];
+    private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath) throws RepositoryException {
+        ArrayList<String> mountPathElements = new ArrayList<String>();
+        mountPathElements.add(HstNodeTypes.MOUNT_HST_ROOTNAME);
+        mountPathElements.addAll(Arrays.asList(StringUtils.split(mountPath, '/')));
+
+        Node mount = virtualHost;
+
+        for (int i = 0; i < mountPathElements.size() - 1; i++) {
+            mount = getOrAddNode(mount, mountPathElements.get(i), HstNodeTypes.NODETYPE_HST_MOUNT);
         }
+
+        String lastMountPathElementName = mountPathElements.get(mountPathElements.size() - 1);
+
         if (blueprintNode.hasNode("hst:mount")) {
-            mount = copyNodes(blueprintNode.getNode("hst:mount"), parent, name);
+            mount = copyNodes(blueprintNode.getNode("hst:mount"), mount, lastMountPathElementName);
         } else {
-            mount = parent.addNode(name, "hst:mount");
+            mount = mount.addNode(lastMountPathElementName, HstNodeTypes.NODETYPE_HST_MOUNT);
         }
+
         return mount;
     }
 
-    private Node createVirtualHost(final Node configRoot, final String tmp) throws RepositoryException {
-        String domainEls = tmp.substring(0, tmp.indexOf('/'));
+    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException {
+        final String[] elements = hostName.split("[.]");
 
-        // create virtual host
-        Node parent = configRoot.getNode("hst:hosts/" + hostGroup);
-        String[] elements = domainEls.split("[.]");
+        Node mount = configRoot.getNode("hst:hosts/" + hostGroup);
+
         for (int i = elements.length - 1; i >= 0; i--) {
-            if (parent.hasNode(elements[i])) {
-                parent = parent.getNode(elements[i]);
-            } else {
-                parent = parent.addNode(elements[i], "hst:virtualhost");
-            }
+            mount = getOrAddNode(mount, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
         }
-        return parent;
+
+        return mount;
+    }
+
+    private static Node getOrAddNode(Node parent, String nodeName, String nodeType) throws RepositoryException {
+        if (parent.hasNode(nodeName)) {
+            return parent.getNode(nodeName);
+        } else {
+            return parent.addNode(nodeName, nodeType);
+        }
     }
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
@@ -537,28 +529,15 @@ public class ChannelManagerImpl implements ChannelManager {
         }
 
         URI channelUri = getChannelUri(channel);
-
-        if (!"http".equals(channelUri.getScheme())) {
-            throw new ChannelException("Illegal channel URL scheme: '" + channelUri.getScheme()
-                    + "'. Only 'http' is currently supported");
-        }
-
-        // resolve virtual host
-        final String host = channelUri.getHost();
-        if (host == null) {
-            throw new ChannelException("Channel URL does not contain a host. Cannot determine virtual host of the channel");
-        }
-        final String[] elements = host.split("[.]");
-        Node mount = configRoot.getNode("hst:hosts/" + hostGroup);
-        for (int i = elements.length - 1; i >= 0; i--) {
-            mount = mount.getNode(elements[i]);
-        }
+        Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
         // resolve mount
-        if (mount.hasNode("hst:root")) {
-            mount = mount.getNode("hst:root");
+        Node mount;
+        if (virtualHost.hasNode(HstNodeTypes.MOUNT_HST_ROOTNAME)) {
+            mount = virtualHost.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         } else {
-            throw new ChannelException("Virtual host '" + mount.getPath() + "' does not have a child node 'hst:root'");
+            throw new ChannelException("Virtual host '" + virtualHost.getPath() + "' does not have a child node '"
+                    + HstNodeTypes.MOUNT_HST_ROOTNAME + "'");
         }
         final String path = channelUri.getPath();
         if (path != null) {
@@ -577,15 +556,37 @@ public class ChannelManagerImpl implements ChannelManager {
             channelPropsNode = mount.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
         }
 
+        channelPropsNode.setProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME, channel.getName());
         ChannelPropertyMapper.saveProperties(channelPropsNode, bps.getPropertyDefinitions(), channel.getProperties());
     }
 
+    /**
+     * Returns the channel's URL is a URI object. The returned URI has a supported scheme and a host name.
+     *
+     * @param channel the channel
+     * @return the validated URI of the channel
+     * @throws ChannelException if the channel URL is not a valid URI, does not have a supported scheme or does not
+     * contain a host name.
+     */
     private URI getChannelUri(final Channel channel) throws ChannelException {
+        URI uri;
+
         try {
-            return new URI(channel.getUrl());
+            uri = new URI(channel.getUrl());
         } catch (URISyntaxException e) {
             throw new ChannelException("Invalid channel URL: '" + channel.getUrl() + "'");
         }
+
+        if (!"http".equals(uri.getScheme())) {
+            throw new ChannelException("Illegal channel URL scheme: '" + uri.getScheme()
+                    + "'. Only 'http' is currently supported");
+        }
+
+        if (StringUtils.isBlank(uri.getHost())) {
+            throw new ChannelException("Channel URL '" + uri + "' does not contain a host name");
+        }
+
+        return uri;
     }
 
 }

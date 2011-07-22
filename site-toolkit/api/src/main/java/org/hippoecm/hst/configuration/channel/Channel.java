@@ -26,7 +26,7 @@ public class Channel implements Serializable {
     private final String bluePrintId;
     private final String id;
 
-    private String title;
+    private String name;
     private String hostname;
     private String subMountPath; // TODO find proper name
     private String url; //Probably not needed for all channels ?
@@ -39,6 +39,9 @@ public class Channel implements Serializable {
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
      * to guarantee uniqueness of the id.
+     *
+     * @param bluePrintId the ID of the channel's blueprint
+     * @param id the unique ID of this channel
      */
     public Channel(String bluePrintId, String id) {
         this.bluePrintId = bluePrintId;
@@ -46,13 +49,17 @@ public class Channel implements Serializable {
     }
 
     /**
-     * The Blue Print ID for this channel, or {@value #UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
-     * @return Blue Print ID
+     * The Blueprint ID for this channel, or {@value #UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
+     *
+     * @return the blueprint ID of this channel.
      */
     public String getBlueprintId() {
         return bluePrintId != null ? bluePrintId : UNKNOWN_BLUEPRINT;
     }
 
+    /**
+     * @return the unique ID of this channel
+     */
     public String getId() {
         return id;
     }
@@ -73,21 +80,31 @@ public class Channel implements Serializable {
         this.hstConfigPath = hstConfigPath;
     }
 
-    public String getTitle() {
-        return this.title;
+    /**
+     * @return the human-readable name of this channel, or null if this channel does not have a name.
+     */
+    public String getName() {
+        return this.name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    /**
+     * Sets the human-readable name of this channel.
+     *
+     * @param name the new name of this channel
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
+    /**
+     * @return the fully qualified URL of this channel.
+     */
     public String getUrl() {
         return url;
     }
 
     /**
-     *
-     * @param url
+     * @param url the fully qualified URL of this channel.
      */
     public void setUrl(String url) {
         this.url = url;
@@ -153,7 +170,7 @@ public class Channel implements Serializable {
         return "Channel{" +
                 "id=" + id +
                 ", bluePrint=" + bluePrintId +
-                ", title='" + title + '\'' +
+                ", title='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", type='" + type + '\'' +
                 ", hstConfigPath='" + hstConfigPath + '\'' +

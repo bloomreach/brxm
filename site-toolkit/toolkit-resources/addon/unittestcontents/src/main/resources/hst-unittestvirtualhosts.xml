@@ -71,9 +71,17 @@
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:unittestsites/unittestproject-live</sv:value>
             </sv:property>
-              <sv:property sv:name="hst:channelid" sv:type="String">
-                <sv:value>testchannel</sv:value>
+            <sv:property sv:name="hst:channelid" sv:type="String">
+              <sv:value>testchannel</sv:value>
+            </sv:property>
+            <sv:node sv:name="hst:channelinfo">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                 <sv:value>hst:channelinfo</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:name" sv:type="String">
+                 <sv:value>Test Channel</sv:value>
+              </sv:property>
+            </sv:node>
             <sv:node sv:name="examplecontextpathonly">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                  <sv:value>hst:mount</sv:value>

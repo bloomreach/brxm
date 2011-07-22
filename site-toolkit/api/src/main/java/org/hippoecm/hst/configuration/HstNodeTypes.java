@@ -145,4 +145,6 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_CHANNELINFO = "hst:channelinfo";
     public final static String NODENAME_HST_BLUEPRINT_SITE = "hst:site";
 
+    public final static String CHANNELINFO_PROPERTY_NAME = "hst:name";
+
 }
