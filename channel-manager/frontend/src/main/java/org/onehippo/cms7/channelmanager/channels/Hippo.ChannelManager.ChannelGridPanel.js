@@ -40,6 +40,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             stateful: true,
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'selectionchange' ],
+            title: 'Channel Manager',
 
             colModel: new Ext.grid.ColumnModel({
                 columns: [
@@ -49,6 +50,22 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                         dataIndex: 'title',
                         sortable: true,
                         scope: self
+                    }
+                ]
+            }),
+
+            tbar: new Ext.Toolbar({
+                layout: 'hbox',
+                layoutConfig: {
+                    pack: 'center'
+                },
+                items: [
+                    {
+                        text: "Add Channel",
+                        handler: function() {
+                            this.fireEvent('add-channel');
+                        },
+                        scope: this
                     }
                 ]
             }),
@@ -70,6 +87,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             scope: this
         });
+        this.addEvents('add-channel');
     },
 
     // Selects the row of the channel with this title. If no such channel exists, the selection will be cleared.

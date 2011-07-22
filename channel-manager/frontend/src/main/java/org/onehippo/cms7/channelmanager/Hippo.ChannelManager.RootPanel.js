@@ -33,14 +33,6 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         var config = {
             layout: 'border',
             height: 900,
-            title: "Channel Manager",
-            tbar: [
-                {
-                    text: "New Channel",
-                    handler: me.openChannelWizard,
-                    scope: me
-                }
-            ],
             viewConfig: {
                 forceFit: true
             }
@@ -60,6 +52,9 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.propertiesPanel = Ext.getCmp('channel-properties-panel');
 
         // register channel creation events
+        this.gridPanel.on('add-channel', function() {
+            this.win.show();
+        }, this);
         this.formPanel.on('channel-created', function() {
             this.win.hide();
             this.channelStore.reload();
@@ -86,7 +81,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.gridPanel.on('keydown', function(event) {
             switch (event.keyCode) {
                 case 13: // ENTER
-                    this.propertiesPanel.showPanel();
+                    this.propertiesPanel.showPanel(this.gridPanel.getSelectionModel().getSelected().get('title'));
                     break;
                 case 27: // ESC
                     if (this.propertiesPanel.isShown()) {
@@ -97,12 +92,8 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                     break;
             }
         }, this);
-
-    },
-
-    openChannelWizard:function() {
-        this.win.show();
     }
+
 });
 
 Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);
