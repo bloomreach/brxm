@@ -34,6 +34,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         };
 
         this.pageModelFacade = null;
+        this.previewMode = false;
 
         this.initUI(config);
 
@@ -53,6 +54,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initUI : function(config) {
+        Ext.Msg.wait("Loading...");
         Ext.apply(config, { items :
             [
                 {
@@ -63,18 +65,30 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
-                            text: 'Template Composer',
+                            text: 'Edit',
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
                             enableToggle: true,
-                            pressed: true,
+                            toggleGroup : 'composerMode',
+                            pressed: !this.previewMode,
+                            allowDepress: false,
                             width: 150,
                             listeners: {
-                                'click': {
-                                    fn: this.toggleConfigWindow,
+                                'toggle': {
+                                    fn : this.togglePreviewMode,
                                     scope: this
                                 }
                             }
+                        },
+                        {
+                            text: 'Preview',
+                            iconCls: 'title-button',
+                            id: 'pagePreviewButton',
+                            enableToggle: true,
+                            toggleGroup : 'composerMode',
+                            pressed: this.previewMode,
+                            allowDepress: false,
+                            width: 150
                         }
                     ],
                     listeners: {
@@ -177,15 +191,23 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         }, this, {single: true});
     },
 
-    toggleConfigWindow: function () {
-        var iframe = Ext.getCmp('Iframe');
-        iframe.sendMessage({}, 'toggle');
-        if (!this.mainWindow.isVisible()) {
-            this.mainWindow.show('pageComposerButton');
-          
-          
+    togglePreviewMode: function () {
+        if (this.previewMode && !this.iframeInitialized && this.iframeDOMReady) {
+            this.previewMode = !this.previewMode;
+            this.initializeIFrameHead(this.frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
         } else {
-            this.mainWindow.hide('pageComposerButton');
+            this.previewMode = !this.previewMode;
+            if (this.iframeInitialized) {
+                var iframe = Ext.getCmp('Iframe');
+                iframe.sendMessage({}, 'toggle');
+            }
+            if (this.mainWindow) {
+                if (!this.mainWindow.isVisible()) {
+                    this.mainWindow.show('pageComposerButton');
+                } else {
+                    this.mainWindow.hide('pageComposerButton');
+                }
+            }
         }
     },
 
@@ -196,35 +218,50 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     onIframeDOMReady : function(frm) {
-        // clone arrays with concat()
-        this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
+        if (!this.previewMode && !Ext.Msg.isVisible()) {
+            Ext.Msg.wait('Loading...');
+        }
+        console.log('onIframeDOMReady');
+        this.frm = frm;
+        this.iframeInitialized = false;
+        if (!this.previewMode) {
+            // clone arrays with concat()
+            this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
+        }
+        this.iframeDOMReady = true;
     },
 
     onIFrameHeadInitialized : function(frm) {
         // send init call to iframe app
-        frm.execScript('Hippo.PageComposer.Main.init(' + Hippo.App.Main.debug + ')', true);
-        Ext.Msg.hide();
+        frm.execScript('Hippo.PageComposer.Main.init(' + Hippo.App.Main.debug + ','+this.previewMode+')', true);
     },
 
     initializeIFrameHead : function(frm, cssSources, javascriptSources) {
         var pageEditor = this;
+        var cache = [];
+
         var requestContents = function(queue, processResponseCallback, queueEmptyCallback) {
             if (queue.length == 0) {
                 queueEmptyCallback();
                 return;
             }
             var src = queue.shift();
-            Ext.Ajax.request({
-                url : src,
-                method : 'GET',
-                success : function(result, request) {
-                    processResponseCallback(src, result.responseText);
-                    requestContents(queue, processResponseCallback, queueEmptyCallback);
-                },
-                failure : function(result, request) {
-                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
-                }
-            });
+            if (typeof cache[src] !== 'undefined') {
+                processResponseCallback(src, cache[src]);
+            } else {
+                Ext.Ajax.request({
+                    url : src,
+                    method : 'GET',
+                    success : function(result, request) {
+                        processResponseCallback(src, result.responseText);
+                        cache[src] = result.responseText;
+                        requestContents(queue, processResponseCallback, queueEmptyCallback);
+                    },
+                    failure : function(result, request) {
+                        Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
+                    }
+                });
+            }
         };
 
         var processCssHeadContribution = function(src, responseText) {
@@ -265,7 +302,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         );
     },
 
-    onIframeAppLoaded : function(data) {
+    onIFrameAfterInit : function(data) {
         var pageId = data.pageId;
         var mountId = data.mountId;
 
@@ -282,8 +319,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         }
 
         if (!this.mainWindow) {
-            var win = this.mainWindow = this.createMainWindow(mountId);
-            win.show();
+            this.mainWindow = this.createMainWindow(this.ids.mountId);
+            this.mainWindow.show();
         } else {
             if (mountId != this.ids.mountId) {
                 var grid = Ext.getCmp('ToolkitGrid');
@@ -292,6 +329,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             if (pageId != this.ids.page) {
                 var grid = Ext.getCmp('PageModelGrid');
                 grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
+            }
+            if (!this.mainWindow.isVisible()) {
+                this.mainWindow.show('pageComposerButton');
             }
         }
 
@@ -303,6 +343,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             interval: 60000,
             scope: this
         });
+
+        this.iframeInitialized = true;
+        Ext.Msg.hide();
     },
 
     createToolkitStore : function(mountId) {
@@ -626,8 +669,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 this.handleReceivedItem(msg.data.id, msg.data.element);
             } else if (msg.tag == 'remove') {
                 this.removeByElement(msg.data.element);
-            } else if (msg.tag == 'onappload') {
-                this.onIframeAppLoaded(msg.data);
+            } else if (msg.tag == 'afterinit') {
+                this.onIFrameAfterInit(msg.data);
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
             }
@@ -706,7 +749,9 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
             listeners : {
                 beforeload: {
                     fn: function (store, options) {
-                        Ext.Msg.wait("Loading page ...");
+                        if (!Ext.Msg.isVisible()) {
+                            Ext.Msg.wait("Loading page ...");
+                        }
                     }
                 },
                 beforewrite : {

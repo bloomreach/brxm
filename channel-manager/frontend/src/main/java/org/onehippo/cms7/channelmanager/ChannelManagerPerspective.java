@@ -48,7 +48,7 @@ public class ChannelManagerPerspective extends Perspective {
             add(new WireframeBehavior(wfSettings));
         }
 
-        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
+        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css", true));
 
         RootPanel rootPanel = new RootPanel(context, "channel-root");
         add(rootPanel);

@@ -18,12 +18,12 @@ jQuery.noConflict();
 
     $.namespace('Hippo.PageComposer.UI');
 
-    Hippo.PageComposer.UI.Manager = function() {
+    Hippo.PageComposer.UI.Manager = function(preview) {
         this.current = null;
         this.containers = {};
         this.dropIndicator = null;
         this.syncRequested = false;
-
+        this.preview = preview;
         this.init();
     };
 
@@ -33,6 +33,9 @@ jQuery.noConflict();
         init: function() {
 
             this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
+            if (this.preview) {
+                this.overlay.hide();
+            }
 
             //do try/catch because else errors will disappear
             try {

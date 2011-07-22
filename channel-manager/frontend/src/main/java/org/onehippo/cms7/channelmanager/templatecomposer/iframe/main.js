@@ -25,15 +25,18 @@ jQuery.noConflict();
 
     Main.prototype = {
 
-        init: function(debug) {
+        init: function(debug, preview) {
             this.debug = debug;
 
-            var manager = new Hippo.PageComposer.UI.Manager();
+            var manager = new Hippo.PageComposer.UI.Manager(preview);
 
-           onhostmessage(function(msg){
-             manager.getOverlay().toggle();
-             return false;
-           }, this, false, 'toggle');
+            onhostmessage(function(msg) {
+                manager.getOverlay().toggle();
+                $('.empty-container-placeholder').toggle();
+                manager.requestSync();
+                manager.sync();
+                return false;
+            }, this, false, 'toggle');
 
             //register to listen to iframe-messages
             onhostmessage(function(msg) {
@@ -81,11 +84,13 @@ jQuery.noConflict();
             this.manager = manager;
 
             $.head(document.location.href, function(headers) {
-                sendMessage({
-                    siteId: headers['HST-Site-Id'],
-                    pageId: headers['HST-Page-Id'],
-                    mountId: headers['HST-Mount-Id']},
-                'onappload');
+                window.setTimeout(function() {
+                    sendMessage({
+                        siteId: headers['HST-Site-Id'],
+                        pageId: headers['HST-Page-Id'],
+                        mountId: headers['HST-Mount-Id']},
+                    'afterinit');
+                }, 1);
             });
         },
 
