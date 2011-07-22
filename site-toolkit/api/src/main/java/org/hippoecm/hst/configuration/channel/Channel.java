@@ -31,6 +31,8 @@ public class Channel implements Serializable {
     private String subMountPath; // TODO find proper name
     private String url; //Probably not needed for all channels ?
     private String type; //Channel type - preview/live.
+
+    private String hstMountPoint;
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
@@ -70,6 +72,14 @@ public class Channel implements Serializable {
 
     public void setContentRoot(String contentRoot) {
         this.contentRoot = contentRoot;
+    }
+
+    public String getHstMountPoint() {
+        return hstMountPoint;
+    }
+
+    public void setHstMountPoint(final String hstMountPoint) {
+        this.hstMountPoint = hstMountPoint;
     }
 
     public String getHstConfigPath() {
