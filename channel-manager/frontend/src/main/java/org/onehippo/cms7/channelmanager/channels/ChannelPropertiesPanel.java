@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -392,15 +393,18 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
         @Override
         public String getObject() {
-            final Object path = properties.get(key);
+            final Object pathObj = properties.get(key);
 
-            if (path != null) {
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                try {
-                    Node node = session.getNode(path.toString());
-                    return node.getIdentifier();
-                } catch (RepositoryException e) {
-                    log.warn("Cannot retrieve UUID from '" + path + "'", e);
+            if (pathObj != null) {
+                final String path = pathObj.toString();
+                if (StringUtils.isNotEmpty(path)) {
+                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                    try {
+                        Node node = session.getNode(path);
+                        return node.getIdentifier();
+                    } catch (RepositoryException e) {
+                        log.warn("Cannot retrieve UUID from '" + path + "'", e);
+                    }
                 }
             }
 
