@@ -131,6 +131,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             HstSubject.clearSubject();
         }
 
+        // removed cached channels so they will be reloaded the next time
+        this.channels = null;
+
         return createdRecordResult(true, "");
     }
 
