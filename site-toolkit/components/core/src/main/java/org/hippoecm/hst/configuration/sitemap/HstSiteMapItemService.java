@@ -127,16 +127,15 @@ public class HstSiteMapItemService implements HstSiteMapItem {
       
         this.qualifiedId = nodePath;
         
-        // the id is the relative path below the root sitemap node. Find the root sitemap node for the current HstNode.
-        // and take the path after it as id. Note that you cannot take the same sitemap root node path every time, as due to inheritance,
-        // the HstNode can come from a different root sitemap node
-    
-        HstNode rootSiteMapNode = node;
-        while(rootSiteMapNode.getParent().getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
-            rootSiteMapNode = rootSiteMapNode.getParent();
+        // the id is the relative path below the root sitemap node. You cannot do a substring on the value provider getPath because due to inheritance
+        // there can be completely different paths for the root sitemap node that for the inherited sitemap items.
+        HstNode crNode = node;
+        StringBuilder idBuilder = new StringBuilder("/").append(crNode.getValueProvider().getName());
+        while(crNode.getParent().getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
+            crNode = crNode.getParent();
+            idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
-        rootSiteMapNode =  rootSiteMapNode.getParent();;
-        this.id = nodePath.substring(rootSiteMapNode.getValueProvider().getPath().length() + 1);
+        this.id = idBuilder.toString();
         
         // currently, the value is always the nodename
         this.value = StringPool.get(node.getValueProvider().getName());
