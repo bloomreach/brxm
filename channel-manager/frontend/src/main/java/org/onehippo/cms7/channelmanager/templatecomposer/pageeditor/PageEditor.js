@@ -250,7 +250,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 method : 'GET',
                 success : function(result, request) {
                     processResponseCallback(src, result.responseText);
-                    cache[src] = result.responseText;
                     requestContents(queue, processResponseCallback, queueEmptyCallback);
                 },
                 failure : function(result, request) {
