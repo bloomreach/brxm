@@ -135,7 +135,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             crNode = crNode.getParent();
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
-        this.id = idBuilder.toString();
+        // we take substring(1) to remove the first slash 
+        this.id = idBuilder.toString().substring(1);
         
         // currently, the value is always the nodename
         this.value = StringPool.get(node.getValueProvider().getName());
