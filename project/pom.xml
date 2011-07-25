@@ -39,35 +39,35 @@
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
-    <servlet-api.version>2.4</servlet-api.version>
+    <servlet-api.version>2.5</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <jdo2.api.version>2.3-eb</jdo2.api.version>
     <jta.version>1.1</jta.version>
     <mail.version>1.4.3</mail.version>
-    <slf4j.version>1.5.6</slf4j.version>
-    <log4j.version>1.2.14</log4j.version>
+    <slf4j.version>1.6.1</slf4j.version>
+    <log4j.version>1.2.16</log4j.version>
     
-    <maven.plugin.antrun.version>1.3</maven.plugin.antrun.version>
+    <maven.plugin.antrun.version>1.6</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
-    <maven.plugin.buildnumber.version>1.0-beta-4</maven.plugin.buildnumber.version>
+    <maven.plugin.buildnumber.version>1.0</maven.plugin.buildnumber.version>
     <maven.plugin.cargo.version>1.1.0-r2872</maven.plugin.cargo.version>
-    <maven.plugin.changes.version>2.3</maven.plugin.changes.version>
-    <maven.plugin.changelog.version>2.1</maven.plugin.changelog.version>
+    <maven.plugin.changes.version>2.6</maven.plugin.changes.version>
+    <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.4.1</maven.plugin.clean.version>
     <maven.plugin.compiler.version>2.3.2</maven.plugin.compiler.version>
-    <maven.plugin.deploy.version>2.5</maven.plugin.deploy.version>
+    <maven.plugin.deploy.version>2.6</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.8</maven.plugin.eclipse.version>
-    <maven.plugin.install.version>2.3</maven.plugin.install.version>
+    <maven.plugin.install.version>2.3.1</maven.plugin.install.version>
     <maven.plugin.jar.version>2.3.1</maven.plugin.jar.version>
-    <maven.plugin.javadoc.version>2.7</maven.plugin.javadoc.version>
+    <maven.plugin.javadoc.version>2.8</maven.plugin.javadoc.version>
     <maven.plugin.jrebel.version>1.0.7</maven.plugin.jrebel.version>
-    <maven.plugin.project-info.version>2.1.2</maven.plugin.project-info.version>
-    <maven.plugin.release.version>2.1</maven.plugin.release.version>
-    <maven.plugin.remote-resources.version>1.1</maven.plugin.remote-resources.version>
-    <maven.plugin.resources.version>2.4</maven.plugin.resources.version>
+    <maven.plugin.project-info.version>2.4</maven.plugin.project-info.version>
+    <maven.plugin.release.version>2.2</maven.plugin.release.version>
+    <maven.plugin.remote-resources.version>1.2.1</maven.plugin.remote-resources.version>
+    <maven.plugin.resources.version>2.5</maven.plugin.resources.version>
     <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
-    <maven.plugin.surefire.version>2.5</maven.plugin.surefire.version>
-    <maven.plugin.surefire-report.version>2.8</maven.plugin.surefire-report.version>
+    <maven.plugin.surefire.version>2.9</maven.plugin.surefire.version>
+    <maven.plugin.surefire-report.version>2.9</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
     
