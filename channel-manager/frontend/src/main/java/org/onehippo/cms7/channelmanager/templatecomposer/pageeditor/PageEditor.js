@@ -196,18 +196,21 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             this.previewMode = !this.previewMode;
             this.initializeIFrameHead(this.frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
         } else {
-            this.previewMode = !this.previewMode;
-            if (this.iframeInitialized) {
+            var self = this;
+            var toggleInterval = window.setInterval(function() {
+                if (!self.iframeInitialized || typeof self.mainWindow === 'undefined') {
+                    return;
+                }
+                window.clearInterval(toggleInterval);
                 var iframe = Ext.getCmp('Iframe');
                 iframe.sendMessage({}, 'toggle');
-            }
-            if (this.mainWindow) {
-                if (!this.mainWindow.isVisible()) {
-                    this.mainWindow.show('pageComposerButton');
+                if (self.previewMode) {
+                    self.mainWindow.show('pageComposerButton');
                 } else {
-                    this.mainWindow.hide('pageComposerButton');
+                    self.mainWindow.hide('pageComposerButton');
                 }
-            }
+                self.previewMode = !self.previewMode;
+            }, 10);
         }
     },
 
