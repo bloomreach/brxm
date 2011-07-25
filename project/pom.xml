@@ -50,7 +50,7 @@
     <maven.plugin.antrun.version>1.6</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.0</maven.plugin.buildnumber.version>
-    <maven.plugin.cargo.version>1.1.0-r2872</maven.plugin.cargo.version>
+    <maven.plugin.cargo.version>1.1.1</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.6</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.4.1</maven.plugin.clean.version>
@@ -928,15 +928,14 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <executions>
               <execution>
-                <id>cargo-start</id>
+                <id>cargo-run</id>
                 <phase>validate</phase>
                 <goals>
-                  <goal>start</goal>
+                  <goal>run</goal>
                 </goals>
               </execution>
             </executions>
             <configuration>
-              <wait>true</wait>
               <configuration>
                 <home>${project.build.directory}/tomcat${cargo.tomcat.major.version}x</home>
                 <properties>
