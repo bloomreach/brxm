@@ -224,7 +224,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         if (!this.previewMode && !Ext.Msg.isVisible()) {
             Ext.Msg.wait('Loading...');
         }
-        console.log('onIframeDOMReady');
         this.frm = frm;
         this.iframeInitialized = false;
         if (!this.previewMode) {
