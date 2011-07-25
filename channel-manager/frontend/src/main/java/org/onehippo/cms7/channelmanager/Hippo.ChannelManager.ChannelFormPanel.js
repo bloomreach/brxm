@@ -81,7 +81,6 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 var form = this.getForm();
                 var panel = this;
                 if (form.isValid()) {
-                    console.log(form.getValues());
                     form.submit({
                                 params: {
                                     xaction: 'create',
@@ -90,7 +89,6 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
 
                                 success: function(form, action) {
                                     //Event to hide the window & rerender the channels panel
-                                    console.log(action);
                                     panel.fireEvent('channel-created');
                                 },
                                 failure: function(form, action) {

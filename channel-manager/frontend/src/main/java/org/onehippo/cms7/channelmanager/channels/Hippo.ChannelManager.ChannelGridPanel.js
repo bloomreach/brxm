@@ -39,7 +39,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 forceFit: true
             },
             stateful: true,
-            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'selectionchange' ],
+            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'savestate' ],
             title: 'Channel Manager',
 
             colModel: new Ext.grid.ColumnModel({
@@ -82,32 +82,81 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
         this.store.load({
             callback: function() {
-                this.selectChannel(this.selectedChannelId);
-                this.getView().focusEl.focus();
+                if (this.selectChannel(this.selectedChannelId)) {
+                    this.getView().focusEl.focus();
+                } else {
+                    this.selectedChannelId = null;
+                }
             },
             scope: this
         });
-        this.addEvents('add-channel');
+        this.addEvents('add-channel', 'channel-selected', 'channel-deselected', 'savestate');
+
+        var sm = this.getSelectionModel();
+        sm.on('rowselect', function() {
+            this.fireEvent('savestate');
+        }, this);
+        sm.on('rowdeselect', function() {
+            this.fireEvent('savestate');
+        }, this);
+
+        // ensure that we do not create a channel-deselected event quickly followed by a channel-selected event when
+        // up or down is used to navigate to the next row, since this may ruin animations of components that listen
+        // to these events
+        this.isSelectingRow = true;
+        sm.on('beforerowselect', function() {
+            this.isSelectingRow = true;
+            return true;
+        }, this);
+        sm.on('rowdeselect', function(sm) {
+            if (!this.isSelectingRow) {
+                this.fireEvent('channel-deselected');
+            }
+        }, this);
+        sm.on('rowselect', function(sm, rowIndex, record) {
+            this.isSelectingRow = false;
+            this.fireEvent('channel-selected', record.get('id'), record.get('name'));
+        }, this);
+
+        // register keyboard navigation
+        this.on('keydown', function(event) {
+            switch (event.keyCode) {
+                case 13: // ENTER
+                    var selectedRecord = this.getSelectionModel().getSelected();
+                    if (selectedRecord) {
+                        this.selectChannel(selectedRecord.get('id'));
+                    }
+                    break;
+                case 27: // ESC
+                    this.fireEvent('channel-deselected');
+                    break;
+            }
+        }, this);
     },
 
     // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.
+    // This method call selectRow(index);
+    // Returns true if the channel was selected, false if not (e.g. because the channel does not exist)
     selectChannel: function(channelId) {
-        console.log("SELECT CHANNEL ID " + channelId);
-        var index = this.store.find('id', channelId)
+        var index = this.store.findExact('id', channelId);
         this.selectRow(index);
+        return index >= 0;
     },
 
     // Selects the row with this index (0-based). A negative index clears the selection.
+    // Fires a channel-selected event when a channel is selected, otherwise fires a channel-deselected event.
     selectRow: function(index) {
+        var model = this.getSelectionModel();
         if (index >= 0) {
-            this.getSelectionModel().selectRow(index);
+            model.selectRow(index);
             this.getView().focusRow(index);
-            return;
         } else {
-            // clear existing selection and fire the selectionchange event to force a state update
-            this.getSelectionModel().clearSelections();
-            this.fireEvent('selectionchange', this);
+            model.clearSelections();
         }
+    },
+
+    isChannelSelected: function() {
+        return this.getSelectionModel().hasSelection();
     },
 
     // Returns the title of the currently selected channel
@@ -116,6 +165,9 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         var selectedRecord = this.getSelectionModel().getSelected();
         if (selectedRecord) {
             state.selected = selectedRecord.get('id');
+        } else {
+            // remove any old value
+            delete state.selected;
         }
         return state;
     },

@@ -67,36 +67,14 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         // register properties panel events
-        this.selectedRow = -1;
-        this.gridPanel.getSelectionModel().on('beforerowselect', function(sm, rowIndex, keepExisting, record) {
-            this.selectedRow = rowIndex;
-            this.propertiesPanel.showPanel(record.get('id'), record.get('name'));
+        this.gridPanel.on('channel-selected', function(channelId, channelName) {
+            this.propertiesPanel.showPanel(channelId, channelName);
         }, this);
-        this.gridPanel.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
-            this.gridPanel.selectedRow = -1;
-            this.gridPanel.fireEvent('selectionchange')
-        }, this);
-        this.gridPanel.getSelectionModel().on('rowdeselect', function(sm) {
-            if (this.gridPanel.selectedRow >= 0) {
+        this.gridPanel.on('channel-deselected', function(sm) {
+            if (this.propertiesPanel.isShown()) {
                 this.propertiesPanel.hidePanel();
-                this.gridPanel.fireEvent('selectionchange')
-            }
-        }, this);
-
-        // register keyboard navigation
-        this.gridPanel.on('keydown', function(event) {
-            switch (event.keyCode) {
-                case 13: // ENTER
-                    var selectedRecord = this.gridPanel.getSelectionModel().getSelected();
-                    this.propertiesPanel.showPanel(selectedRecord.get('id'), selectedRecord.get('name'));
-                    break;
-                case 27: // ESC
-                    if (this.propertiesPanel.isShown()) {
-                        this.propertiesPanel.hidePanel();
-                    } else {
-                        this.gridPanel.selectChannel(null);
-                    }
-                    break;
+            } else {
+                this.gridPanel.selectRow(-1);
             }
         }, this);
     }

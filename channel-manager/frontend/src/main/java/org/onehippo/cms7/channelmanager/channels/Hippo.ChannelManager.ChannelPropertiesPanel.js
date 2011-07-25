@@ -35,7 +35,10 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             hideCollapseTool: true,
             disabled: true,
             title: ' ',
-            split: true
+            split: true,
+            // do not save the 'collapsed' state of this panel; that is managed by the Root panel depending on whether
+            // a channel is selected or not
+            stateful: false
         });
 
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
@@ -47,7 +50,6 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         if (channelName) {
             this.setTitle(channelName);
         }
-        console.log("Show panel, select channel id " + channelId);
         this.fireEvent('selectchannel', channelId);
     },
 
