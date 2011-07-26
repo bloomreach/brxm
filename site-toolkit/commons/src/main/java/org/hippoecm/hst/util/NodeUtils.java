@@ -21,10 +21,9 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * NodeUtils
@@ -32,11 +31,8 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 public class NodeUtils {
-    
 
-    private static final Logger log = LoggerFactory.getLogger(NodeUtils.class);
-    
-    
+    private static final String LOGGER_CATEGORY_NAME = NodeUtils.class.getName();
     /**
      * Returns the canonical version of this node, and <code>null</code> when there is no canonical node
      * 
@@ -50,12 +46,12 @@ public class NodeUtils {
             try {
                 Node canonical = hnode.getCanonicalNode();
                 if(canonical == null) {
-                    log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
+                    HstServices.getLogger(LOGGER_CATEGORY_NAME).debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
                             "virtual node. Return null", node.getPath());
                 }
                 return canonical;
             } catch (RepositoryException e) {
-                log.error("Repository exception while fetching canonical node. Return null" , e);
+                HstServices.getLogger(LOGGER_CATEGORY_NAME).error("Repository exception while fetching canonical node. Return null" , e);
                 throw new RuntimeException(e);
             }
         } 
@@ -85,7 +81,7 @@ public class NodeUtils {
                 canonicalNode = ((HippoNode) node).getCanonicalNode();
                 
                 if(canonicalNode == null) {
-                    log.debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
+                    HstServices.getLogger(LOGGER_CATEGORY_NAME).debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
                             "virtual node. Return null", node.getPath());
                 }
             } catch (RepositoryException e) {
@@ -105,7 +101,7 @@ public class NodeUtils {
         String docBaseUUID = null;
         try {
             if(!mirrorNode.isNodeType(HippoNodeType.NT_FACETSELECT) && !mirrorNode.isNodeType(HippoNodeType.NT_MIRROR)) {
-                log.info("Cannot deref a node that is not of (sub)type '{}' or '{}'. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
+                HstServices.getLogger(LOGGER_CATEGORY_NAME).info("Cannot deref a node that is not of (sub)type '{}' or '{}'. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
                 return null;
             }
             // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
@@ -115,7 +111,7 @@ public class NodeUtils {
             try {
                 UUID.fromString(docBaseUUID);
             } catch(IllegalArgumentException e) {
-                log.warn("Docbase cannot be parsed to a valid uuid. Return null");
+                HstServices.getLogger(LOGGER_CATEGORY_NAME).warn("Docbase cannot be parsed to a valid uuid. Return null");
                 return null;
             }
             return mirrorNode.getSession().getNodeByIdentifier(docBaseUUID);
@@ -124,11 +120,11 @@ public class NodeUtils {
             try {
                 path = mirrorNode.getPath();
             } catch (RepositoryException e1) {
-                log.error("RepositoryException, cannot return deferenced node: {}", e1);
+                HstServices.getLogger(LOGGER_CATEGORY_NAME).error("RepositoryException, cannot return deferenced node: {}", e1);
             }
-            log.info("ItemNotFoundException, cannot return deferenced node because docbase uuid '{}' cannot be found. The docbase property is at '{}/hippo:docbase'. Return null", docBaseUUID, path);
+            HstServices.getLogger(LOGGER_CATEGORY_NAME).info("ItemNotFoundException, cannot return deferenced node because docbase uuid '{}' cannot be found. The docbase property is at '{}/hippo:docbase'. Return null", docBaseUUID, path);
         } catch (RepositoryException e) {
-            log.error("RepositoryException, cannot return deferenced node: {}", e);
+            HstServices.getLogger(LOGGER_CATEGORY_NAME).error("RepositoryException, cannot return deferenced node: {}", e);
         }
         
         return null;
