@@ -21,6 +21,8 @@ import java.util.Map;
 
 public class Channel implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     public final static String UNKNOWN_BLUEPRINT = "<unknown-blueprint>";
 
     private final String bluePrintId;
