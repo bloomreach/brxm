@@ -78,7 +78,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, bluePrints.size());
 
         final Channel channel = manager.createChannel(bluePrints.get(0).getId());
-        channel.setUrl("http://myhost/mychannel");
+        channel.setUrl("http://myhost");
         channel.setContentRoot("/content/documents");
         asAdmin(new PrivilegedAction<ChannelException>() {
             @Override
@@ -93,12 +93,34 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         });
         Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
 
-        assertTrue(node.hasNode("myhost/hst:root/mychannel"));
+        assertTrue(node.hasNode("myhost/hst:root"));
 
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey(channel.getId()));
         assertNull(channel.getName());
+    }
+
+    @Test(expected = MountNotFoundException.class)
+    public void AncestorMountsMustExist() throws ChannelException, RepositoryException {
+        final ChannelManagerImpl manager = createManager();
+
+        final List<Blueprint> bluePrints = manager.getBlueprints();
+        assertEquals(1, bluePrints.size());
+
+        final Channel channel = manager.createChannel(bluePrints.get(0).getId());
+        channel.setUrl("http://myhost/newmount");
+        asAdmin(new PrivilegedAction<ChannelException>() {
+            @Override
+            public ChannelException run() {
+                try {
+                    manager.save(channel);
+                } catch (ChannelException ce) {
+                    return ce;
+                }
+                return null;
+            }
+        });
     }
 
     public static interface TestInfoClass {
@@ -122,7 +144,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         manager.setRootPath(testNode.getPath());
 
         final Channel channel = manager.createChannel("test-bp");
-        channel.setUrl("http://localhost/test");
+        channel.setUrl("http://localhost");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));

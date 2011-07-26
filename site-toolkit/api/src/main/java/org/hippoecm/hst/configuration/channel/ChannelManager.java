@@ -39,15 +39,18 @@ public interface ChannelManager {
     Channel createChannel(String blueprintId) throws ChannelException;
 
     /**
-     * Persist a channel; will create the mounts, sites and configuration when the channel is new,
-     * when the channel already exists, only the properties may have changed.
+     * Persist a channel; will create the mounts, sites and configuration when the channel is new. When the channel
+     * already exists, only the properties may have changed. If the URL path of the new channel is not empty, all
+     * path-steps except the last one should already map to an existing mount.
      * <p>
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
      * to persist the channel.
      * </p>
      *
-     * @param channel
-     * @throws ChannelException
+     * @param channel the channel to persist
+     * @throws MountNotFoundException when all but the last path-step in the URL path of a new channel
+     * do not map to existing mounts, or the URL path of an existing channel does not map to an existing mount.
+     * @throws ChannelException when the channel could not be persisted.
      */
     void save(Channel channel) throws ChannelException;
 

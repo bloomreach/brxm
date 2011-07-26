@@ -433,7 +433,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath) throws RepositoryException {
+    private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath) throws MountNotFoundException, RepositoryException {
         ArrayList<String> mountPathElements = new ArrayList<String>();
         mountPathElements.add(HstNodeTypes.MOUNT_HST_ROOTNAME);
         mountPathElements.addAll(Arrays.asList(StringUtils.split(mountPath, '/')));
@@ -441,7 +441,12 @@ public class ChannelManagerImpl implements ChannelManager {
         Node mount = virtualHost;
 
         for (int i = 0; i < mountPathElements.size() - 1; i++) {
-            mount = getOrAddNode(mount, mountPathElements.get(i), HstNodeTypes.NODETYPE_HST_MOUNT);
+            String mountPathElement = mountPathElements.get(i);
+            if (mount.hasNode(mountPathElement)) {
+                mount = mount.getNode(mountPathElement);
+            } else {
+                throw new MountNotFoundException(mount.getPath() + "/" + mountPathElement);
+            }
         }
 
         String lastMountPathElementName = mountPathElements.get(mountPathElements.size() - 1);
@@ -542,15 +547,15 @@ public class ChannelManagerImpl implements ChannelManager {
         if (virtualHost.hasNode(HstNodeTypes.MOUNT_HST_ROOTNAME)) {
             mount = virtualHost.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         } else {
-            throw new ChannelException("Virtual host '" + virtualHost.getPath() + "' does not have a child node '"
-                    + HstNodeTypes.MOUNT_HST_ROOTNAME + "'");
+            throw new MountNotFoundException(virtualHost.getPath() + "/" + HstNodeTypes.MOUNT_HST_ROOTNAME);
         }
         final String path = channelUri.getPath();
         if (path != null) {
-            String[] mountPathEls = path.split("/");
-            for (String mountPathElement : mountPathEls) {
-                if (!mountPathElement.isEmpty()) {
+            for (String mountPathElement : StringUtils.split(path, '/')) {
+                if (mount.hasNode(mountPathElement)) {
                     mount = mount.getNode(mountPathElement);
+                } else {
+                    throw new MountNotFoundException(mount.getPath() + "/" + mountPathElement);
                 }
             }
         }
