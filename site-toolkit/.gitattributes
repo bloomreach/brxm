@@ -169,6 +169,8 @@ api/src/main/java/org/hippoecm/hst/core/parameters/Color.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/DocumentLink.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/DropDownList.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/EmptyPropertyEditor.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/FieldGroup.java -text
+api/src/main/java/org/hippoecm/hst/core/parameters/FieldGroupList.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/HstValueType.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/ImageSetLink.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/Parameter.java -text
