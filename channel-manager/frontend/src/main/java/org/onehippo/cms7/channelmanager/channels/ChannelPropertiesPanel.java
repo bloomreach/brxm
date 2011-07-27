@@ -18,7 +18,7 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +50,8 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetLink;
 import org.hippoecm.hst.security.HstSubject;
@@ -75,6 +77,8 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     public static final String CHANNEL_PROPERTIES_PANEL_JS = "Hippo.ChannelManager.ChannelPropertiesPanel.js";
 
+    private static final FieldGroup[] ZERO_FIELD_GROUPS = new FieldGroup[0];
+
     private Channel channel;
 
     private class ChannelResourceModel extends LoadableDetachableModel<String> {
@@ -87,9 +91,11 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
         @Override
         protected String load() {
-            ResourceBundle bundle = getResources();
-            if (bundle != null) {
-                return bundle.getString(key);
+            if (StringUtils.isNotEmpty(key)) {
+                ResourceBundle bundle = getResources();
+                if (bundle != null) {
+                    return bundle.getString(key);
+                }
             }
             return null;
         }
@@ -121,57 +127,74 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         super();
 
         final WebMarkupContainer container = new WebMarkupContainer("container");
-        container.add(new ListView<String>("properties", new LoadableDetachableModel<List<String>>() {
-
+        container.add(new ListView<FieldGroup>("fieldgroups", new LoadableDetachableModel<List<FieldGroup>>() {
             @Override
-            protected List<String> load() {
-                if (channel == null) {
-                    return Collections.emptyList();
-                } else {
-                    return new ArrayList<String>(channel.getProperties().keySet());
-                }
+            protected List<FieldGroup> load() {
+                return Arrays.asList(getFieldGroups());
             }
-
         }) {
-
             @Override
-            protected void populateItem(final ListItem<String> item) {
-                final String key = item.getModelObject();
-                HstPropertyDefinition propDef = getPropertyDefinition(key);
+            protected void populateItem(final ListItem<FieldGroup> item) {
+                final FieldGroup fieldGroup = item.getModelObject();
 
-                if (propDef == null) {
-                    log.warn("Ignoring property '{}': no definition found");
-                    return;
-                }
+                item.add(new Label("fieldgrouptitle", new ChannelResourceModel(fieldGroup.titleKey())) {
+                    @Override
+                    public boolean isVisible() {
+                        return getModelObject() != null;
+                    }
+                });
 
-                item.add(new Label("key", new ChannelResourceModel(key)));
+                item.add(new ListView<String>("properties", new LoadableDetachableModel<List<String>>() {
+                    @Override
+                    protected List<String> load() {
+                        if (channel == null) {
+                            return Collections.emptyList();
+                        } else {
+                            return Arrays.asList(fieldGroup.value());
+                        }
+                    }
 
-                HstValueType propType = propDef.getValueType();
+                }) {
+                    @Override
+                    protected void populateItem(final ListItem<String> item) {
+                        final String key = item.getModelObject();
+                        HstPropertyDefinition propDef = getPropertyDefinition(key);
 
-                // render an image set field?
-                ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
-                if (imageSetLink != null && propType.equals(HstValueType.STRING)) {
-                    IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
-                    item.add(new ImageSetFieldWidget(context, "value", imageSetLink, model));
-                    return;
-                }
+                        if (propDef == null) {
+                            log.warn("Ignoring property '{}': no definition found");
+                            return;
+                        }
 
-                // render a drop-down list?
-                DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
-                if (dropDownList != null) {
-                    IModel<String> model = new StringModel(channel.getProperties(), key);
-                    item.add(new DropDownListWidget("value", dropDownList, model, new ChannelChoiceRenderer(key)));
-                    return;
-                }
+                        item.add(new Label("key", new ChannelResourceModel(key)));
 
-                // render a boolean field?
-                if (propType.equals(HstValueType.BOOLEAN)) {
-                    item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
-                    return;
-                }
+                        HstValueType propType = propDef.getValueType();
 
-                // default: render a text field
-                item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
+                        // render an image set field?
+                        ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
+                        if (imageSetLink != null && propType.equals(HstValueType.STRING)) {
+                            IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
+                            item.add(new ImageSetFieldWidget(context, "value", imageSetLink, model));
+                            return;
+                        }
+
+                        // render a drop-down list?
+                        DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
+                        if (dropDownList != null) {
+                            IModel<String> model = new StringModel(channel.getProperties(), key);
+                            item.add(new DropDownListWidget("value", dropDownList, model, new ChannelChoiceRenderer(key)));
+                            return;
+                        }
+
+                        // render a boolean field?
+                        if (propType.equals(HstValueType.BOOLEAN)) {
+                            item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
+                            return;
+                        }
+
+                        // default: render a text field
+                        item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
+                    }
+                });
             }
         });
 
@@ -270,6 +293,39 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return getChannelManager().getBlueprint(channel.getBlueprintId());
         } catch (ChannelException e) {
             throw new RuntimeException("Unable to get the channels from Channel Manager", e);
+        }
+    }
+
+    private FieldGroup[] getFieldGroups() {
+        Blueprint blueprint = getBlueprint();
+        if (blueprint == null) {
+            return ZERO_FIELD_GROUPS;
+        }
+
+        Class<?> channelInfoClass = blueprint.getChannelInfoClass();
+        if (channelInfoClass == null) {
+            log.info("Blueprint '{}' has no channel info class: no channel properties will be shown", blueprint.getId());
+            return ZERO_FIELD_GROUPS;
+        }
+
+        FieldGroupList fieldGroupList = channelInfoClass.getAnnotation(FieldGroupList.class);
+
+        if (fieldGroupList != null) {
+            FieldGroup[] result = fieldGroupList.value();
+            if (result == null) {
+                log.warn("Channel info class '{}' contains a '{}' annotation with a null value: no channel properties will be shown",
+                        channelInfoClass.getName(), FieldGroupList.class.getName());
+                return ZERO_FIELD_GROUPS;
+            } else if (result.length == 0) {
+                log.warn("Channel info class '{}' does not contain any '{}' annotations: no channel properties will be shown",
+                        channelInfoClass.getName(), FieldGroup.class.getName());
+                return ZERO_FIELD_GROUPS;
+            }
+            return result;
+        } else {
+            log.warn("Channel info class '{}' does not have a '{}' annotation: no channel properties will be shown",
+                    channelInfoClass.getName(), FieldGroupList.class.getName());
+            return ZERO_FIELD_GROUPS;
         }
     }
 

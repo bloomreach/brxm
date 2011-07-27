@@ -24,13 +24,22 @@
       <div yui:id="template-composer-perspective-center-body">
         <div class="channel-manager" wicket:id="channel-root">
           <div class="channel-properties" wicket:id="container">
-            <table >
-              <tbody wicket:id="properties">
-                <tr>
-                  <td class="key"><span wicket:id="key">key</span></td>
-                  <td class="value"><span wicket:id="value">value</span></td>
-                </tr>
-              </tbody>
+            <table>
+              <wicket:container wicket:id="fieldgroups">
+                <tbody class="fieldgroup">
+                  <wicket:enclosure child="fieldgrouptitle">
+                    <tr>
+                      <td class="fieldgrouptitle" colspan="2"><span wicket:id="fieldgrouptitle">Field group title</span></td>
+                    </tr>
+                  </wicket:enclosure>
+                  <wicket:container wicket:id="properties">
+                    <tr>
+                      <td class="key"><span wicket:id="key">key</span></td>
+                      <td class="value"><span wicket:id="value">value</span></td>
+                    </tr>
+                  </wicket:container>
+                </tbody>
+              </wicket:container>
             </table>
             <span wicket:id="open-channel-button"/>
           </div>
