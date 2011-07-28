@@ -1,5 +1,5 @@
 * text=auto !eol
-/WICKET-3927.patch -text
+/WICKET-3927_2.patch -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.html -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlugin.java -text
