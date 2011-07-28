@@ -41,7 +41,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        Node internalHostGroup = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
+        Node internalHostGroup = getSession().getNode("/hst:hst/hst:hosts/dev-local");
         if (internalHostGroup.hasNode("myhost")) {
             internalHostGroup.getNode("myhost").remove();
         }
@@ -56,7 +56,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void ChannelsAreReadCorrectly() throws ChannelException, RepositoryException {
+    public void channelsAreReadCorrectly() throws ChannelException, RepositoryException {
         ChannelManagerImpl manager = createManager();
 
         Map<String, Channel> channels = manager.getChannels();
@@ -70,7 +70,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void ChannelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
+    public void channelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
         final ChannelManagerImpl manager = createManager();
         int numberOfChannels = manager.getChannels().size();
 
@@ -91,7 +91,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                 return null;
             }
         });
-        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-internal");
+        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-local");
 
         assertTrue(node.hasNode("myhost/hst:root"));
 
@@ -102,7 +102,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test(expected = MountNotFoundException.class)
-    public void AncestorMountsMustExist() throws ChannelException, RepositoryException {
+    public void ancestorMountsMustExist() throws ChannelException, RepositoryException {
         final ChannelManagerImpl manager = createManager();
 
         final List<Blueprint> bluePrints = manager.getBlueprints();
@@ -131,7 +131,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Test
     public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException {
         Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
-        testNode.addNode("hst:hosts").addNode("dev-internal", "hst:virtualhostgroup");
+        testNode.addNode("hst:hosts").addNode("dev-local", "hst:virtualhostgroup");
 
         Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, "hst:blueprints");
         Node bp = bpFolder.addNode("test-bp", "hst:blueprint");
@@ -184,7 +184,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         manager.setRepository(getRepository());
         // FIXME: use readonly credentials
         manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
-        manager.setHostGroup("dev-internal");
+        manager.setHostGroup("dev-local");
         manager.setSites("hst:unittestsites");
         return manager;
     }

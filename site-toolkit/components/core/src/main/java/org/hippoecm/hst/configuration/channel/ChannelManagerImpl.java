@@ -97,11 +97,13 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private void loadChannels(final Node configNode) throws RepositoryException {
-        Node virtualHosts = configNode.getNode("hst:hosts/" + hostGroup);
-        NodeIterator rootChannelNodes = virtualHosts.getNodes();
-        while (rootChannelNodes.hasNext()) {
-            Node hgNode = rootChannelNodes.nextNode();
-            populateChannels(hgNode);
+        if (configNode.hasNode("hst:hosts/" + hostGroup)) {
+            Node virtualHosts = configNode.getNode("hst:hosts/" + hostGroup);
+            NodeIterator rootChannelNodes = virtualHosts.getNodes();
+            while (rootChannelNodes.hasNext()) {
+                Node hgNode = rootChannelNodes.nextNode();
+                populateChannels(hgNode);
+            }
         }
     }
 

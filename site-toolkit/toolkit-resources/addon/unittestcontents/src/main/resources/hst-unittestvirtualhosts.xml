@@ -56,11 +56,11 @@
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>127.0.0.1</sv:value>
     </sv:property>
-    <sv:node sv:name="dev-internal">
+    <sv:node sv:name="dev-local">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
-      <sv:node sv:name="127.0.0.1">
+      <sv:node sv:name="localhost">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:virtualhost</sv:value>
           </sv:property>
@@ -152,64 +152,6 @@
           </sv:node>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="dev-local">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:virtualhostgroup</sv:value>
-      </sv:property>
-      <sv:node sv:name="localhost">
-           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hst:virtualhost</sv:value>
-          </sv:property>
-          <sv:node sv:name="hst:root">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:mount</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/hst:hst/hst:unittestsites/unittestproject-live</sv:value>
-            </sv:property>
-            <sv:node sv:name="preview">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hst:mount</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:type" sv:type="String">
-                <sv:value>preview</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:mountpoint" sv:type="String">
-                <sv:value>/hst:hst/hst:unittestsites/unittestproject-preview</sv:value>
-              </sv:property>
-              <sv:node sv:name="custompipeline">
-                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:mount</sv:value>
-                  </sv:property>
-                  <sv:property sv:name="hst:type" sv:type="String">
-                      <sv:value>preview</sv:value>
-                  </sv:property>
-                  <!-- mountpoint inherited here from parent  -->
-                  
-                  <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                    <sv:value>CustomPipeline</sv:value>
-                  </sv:property>
-              </sv:node>
-              
-              <sv:node sv:name="services">
-                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                      <sv:value>hst:mount</sv:value>
-                  </sv:property>
-                  <sv:property sv:name="hst:type" sv:type="String">
-                      <sv:value>preview</sv:value>
-                  </sv:property>
-                  <!-- we indicate the this restful service is not using a HstSite. It does however inherit the hst:mountpoint path which can be used -->
-                  <sv:property sv:name="hst:ismapped" sv:type="Boolean">
-                    <sv:value>false</sv:value>
-                  </sv:property>
-                  <sv:property sv:name="hst:namedpipeline" sv:type="String">
-                    <sv:value>JaxrsPipeline</sv:value>
-                  </sv:property>
-              </sv:node>
-           </sv:node>
-          </sv:node>
-        </sv:node>
-      </sv:node>
     <sv:node sv:name="acct">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
