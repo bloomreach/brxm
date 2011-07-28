@@ -192,7 +192,7 @@ public class LocationMapResolver {
         String resolvedPath = (String)pp.resolveProperty("parameterizedPath", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
         if(resolvedPath == null) {
             if(!isSubResolver) {
-                log.warn("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
+                log.debug("Unable to resolve '{}'. Return null", ((HstSiteMapItemService)matchingSiteMapItem).getParameterizedPath());
             }
             return null;
         }

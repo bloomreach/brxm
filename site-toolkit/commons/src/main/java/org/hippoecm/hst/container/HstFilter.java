@@ -16,11 +16,14 @@
 package org.hippoecm.hst.container;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.Filter;
@@ -306,25 +309,7 @@ public class HstFilter implements Filter {
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
                  * a URL for the uuid, and send a browser redirect to this URL. 
                  */
-                final String jcrUuid = getJcrUuidParameter(req, logger);
-                if (jcrUuid == null) {
-                    sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
-                    return;
-                }
-                final String mountType = getTypeParameter(req, logger);
-
-                final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
-                final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, vHosts);
-                if (mount != null) {
-                    requestContext.setResolvedMount(mount);
-                } else {
-                    throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
-                }
-
-                ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/" + PATH_PREFIX_UUID_REDIRECT);
-                setMountPathAsServletPath(containerRequest, requestContext, mount, res);
-
-                sendRedirectToUuidUrl(req, res, requestContext, jcrUuid, logger);
+                sendRedirectToUuidUrl(req, res, requestContext, resolvedVirtualHost, containerRequest, hostName, logger);
                 return;
             } else {
                 
@@ -444,37 +429,62 @@ public class HstFilter implements Filter {
 
     /**
      * Finds a resolved mount of the correct type ('preview' or 'live') for a host in a host group in the given
-     * virtual host. If multiple mounts are of the same type, the one with the fewest types is picked.
-     * These mounts are in general the most generic ones.
+     * virtual host. We take as Mount the mount that has the closest content path {@link Mount#getCanonicalContentPath()}
+     * to the <code>nodePath</code>. If multiple {@link Mount}'s have an equally well suited {@link Mount#getCanonicalContentPath()}, 
+     * we pick the mount  with the fewest types is picked. These mounts are in general the most generic ones. If multiple 
+     * {@link Mount}'s have equally well suited {@link Mount#getCanonicalContentPath()} and equal number of types, we pick one at random
      *
      * @param containerRequest current request
      * @param type the mount type
      * @param hostName name of the host to match
+     * @param nodePath the jcr nodePath of the document for which to get a {@link ResolvedMount}
      *
      * @return the resolved mount of the given type
      *
      * @throws org.hippoecm.hst.core.container.RepositoryNotAvailableException
      * @throws org.hippoecm.hst.configuration.hosting.MatchException when no matching mount could be found for the given host and type.
      */
-    private ResolvedMount getMountForType(HstContainerRequest containerRequest, String type, String hostName, String hostGroupName, VirtualHosts vHosts) throws RepositoryNotAvailableException {
+    private ResolvedMount getMountForType(HstContainerRequest containerRequest, String type, String hostName, String hostGroupName, VirtualHosts vHosts, String nodePath) throws RepositoryNotAvailableException {
         List<Mount> mounts = vHosts.getMountsByHostGroup(hostGroupName);
         if (mounts == null) {
             throw new MatchException("No mounts found for host '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
         }
-
-        String requestPath = null;
-        int typeCount = Integer.MAX_VALUE;
+     
+        List<Mount> candidateMounts = new ArrayList<Mount>();
+        int bestPathLength = 0;
         for (Mount mount : mounts) {
-            if (mount.getType().equals(type) && mount.getTypes().size() < typeCount) {
-                typeCount = mount.getTypes().size();
-                requestPath = mount.getMountPath();
+            if(!mount.isMapped()) {
+                // not a sitemap 
+                continue;
+            }
+            if (mount.getType().equals(type) && (nodePath.startsWith(mount.getCanonicalContentPath() + "/") || nodePath.equals(mount.getCanonicalContentPath()))) {
+                if(mount.getCanonicalContentPath().length() == bestPathLength) {
+                    // Equally well as already found ones. Add to candidateMounts
+                    candidateMounts.add(mount);
+                } else if (mount.getCanonicalContentPath().length() > bestPathLength) {
+                    // this is a better one than the ones already found. Clear the candidateMounts first
+                    candidateMounts.clear();
+                    candidateMounts.add(mount);
+                    bestPathLength = mount.getCanonicalContentPath().length();
+                } else {
+                    // ignore, we already have a better mount
+                }
             }
         }
-        if (requestPath == null) {
-            throw new MatchException("There is no mount of type '" + type + "' in the host group for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
+        
+        if(candidateMounts.isEmpty()) {
+            throw new MatchException("There is no mount of type '" + type + "' in the host group for '" + hostName + "' and '" + containerRequest.getRequestURL() + "' that can create a link for a document with path '"+nodePath+"'");
         }
-
-        return vHosts.matchMount(hostName, containerRequest.getContextPath(), requestPath);
+        
+        Mount bestMount = candidateMounts.get(0);
+        int typeCount = Integer.MAX_VALUE;
+        for (Mount mount : candidateMounts) {
+            if (mount.getTypes().size() < typeCount) {
+                typeCount = mount.getTypes().size();
+                bestMount = mount;
+            }
+        }
+        return vHosts.matchMount(hostName, containerRequest.getContextPath(), bestMount.getMountPath());
     }
 
     /**
@@ -511,11 +521,21 @@ public class HstFilter implements Filter {
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
      */
-    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, String jcrUuid, Logger logger) throws RepositoryException, IOException {
+    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, 
+            ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName, Logger logger) throws RepositoryNotAvailableException, RepositoryException, IOException {
+         
+        final String jcrUuid = getJcrUuidParameter(req, logger);
+        if (jcrUuid == null) {
+            sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         
         Session session = null;
         try {
-            session = requestContext.getSession();
+            Credentials configReaderCreds = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+            Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+            session = repository.login(configReaderCreds);
+           
             Node node = null;
             try {
                 node = session.getNodeByIdentifier(jcrUuid);
@@ -525,6 +545,20 @@ public class HstFilter implements Filter {
                 return;
             }
     
+            final String mountType = getTypeParameter(req, logger);
+    
+            final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
+            final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, resolvedVirtualHost.getVirtualHost().getVirtualHosts(), node.getPath());
+            if (mount != null) {
+                requestContext.setResolvedMount(mount);
+            } else {
+                throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
+            }
+    
+            ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/" + PATH_PREFIX_UUID_REDIRECT);
+            setMountPathAsServletPath(containerRequest, requestContext, mount, res);
+
+            
             final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
             if (linkCreator == null) {
                 logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
@@ -533,7 +567,7 @@ public class HstFilter implements Filter {
             }
     
             requestContext.setURLFactory(hstSitesManager.getUrlFactory());
-            final HstLink link = linkCreator.create(node, requestContext, null, true, false);
+            final HstLink link = linkCreator.create(node, requestContext);
             if (link == null) {
                 logger.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
