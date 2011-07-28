@@ -324,6 +324,7 @@ ul.x-tab-strip-bottom {
 .x-btn button{
     font:normal 11px tahoma, arial, helvetica, sans-serif;
     color:#333;
+    padding: 0;
 }
 
 .x-btn em {
@@ -444,7 +445,8 @@ ul.x-tab-strip-bottom {
 }
 
 .x-toolbar .xtb-sep {
-	background-image: url(images/grid/grid-split.gif);
+    background-image: url(images/grid/grid-split.gif);
+    margin-top: 4px;
 }
 
 .x-tbar-page-first{
