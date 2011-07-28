@@ -38,7 +38,7 @@ import javax.naming.spi.ObjectFactory;
  *   &lt;Resource name="jcr/repository" auth="Container"
  *             type="javax.jcr.Repository"
  *             factory="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepositoryFactory"
- *             repositoryAddress="rmi://127.0.0.1:1099/hipporepository"
+ *             repositoryAddress="rmi://localhost:1099/hipporepository"
  *             defaultCredentialsUserID="admin"
  *             defaultCredentialsPassword="admin"
  *             readOnly="false"

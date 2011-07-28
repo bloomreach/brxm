@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *   &lt;Resource name="jcr/repository" auth="Container"
  *             type="javax.jcr.Repository"
  *             factory="org.hippoecm.hst.core.jcr.pool.MultiplePoolingRepositoryFactory"
- *             repositoryAddress="rmi://127.0.0.1:1099/hipporepository, rmi://127.0.0.1:1099/hipporepository"
+ *             repositoryAddress="rmi://localhost:1099/hipporepository, rmi://localhost:1099/hipporepository"
  *             defaultCredentialsUserID="admin, editor"
  *             defaultCredentialsPassword="admin, editor"
  *             readOnly="false, false"

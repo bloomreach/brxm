@@ -51,7 +51,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testDefaultHost(){
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                assertTrue("Expected from the hst testcontents default hostname to be 127.0.0.1. ", "127.0.0.1".equals(vhosts.getDefaultHostName()));
+                assertTrue("Expected from the hst testcontents default hostname to be localhost. ", "localhost".equals(vhosts.getDefaultHostName()));
                 
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
@@ -72,8 +72,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/news/2009");
             request.setContextPath("");
             try {
@@ -104,8 +104,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/preview/news/2009");
             request.setContextPath("");
             try {
@@ -134,8 +134,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/preview/news/2009");
             request.setContextPath("/site");
             try {
@@ -161,8 +161,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setContextPath("/site");
             request.setRequestURI("/site/news/2009");
             request.setContextPath("/site");
@@ -193,8 +193,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setContextPath("/site");
             request.setRequestURI("/site/preview/news/2009");
             try {
@@ -228,8 +228,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/site/preview/custompipeline/news/2009");
             request.setContextPath("/site");
             try {
@@ -266,8 +266,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest requestCustom = new MockHttpServletRequest();
             requestCustom.setLocalPort(8081);
             requestCustom.setScheme("http");
-            requestCustom.setServerName("127.0.0.1");
-            requestCustom.addHeader("Host", "127.0.0.1");
+            requestCustom.setServerName("localhost");
+            requestCustom.addHeader("Host", "localhost");
             requestCustom.setRequestURI("/site/preview/custompipeline/pipelines/custom");
             requestCustom.setContextPath("/site");
 
@@ -275,8 +275,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             
             requestGeneral.setLocalPort(8081);
             requestGeneral.setScheme("http");
-            requestGeneral.setServerName("127.0.0.1");
-            requestGeneral.addHeader("Host", "127.0.0.1");
+            requestGeneral.setServerName("localhost");
+            requestGeneral.addHeader("Host", "localhost");
             requestGeneral.setRequestURI("/site/preview/custompipeline/pipelines/general");
             requestGeneral.setContextPath("/site");
             
@@ -318,8 +318,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/site");
             request.setContextPath("/site");
             try {
@@ -345,8 +345,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/site/preview/x/y/z/a/b/c");
             request.setContextPath("/site");
             try {
@@ -374,8 +374,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/site/preview/services");
             request.setContextPath("/site");
             try {
@@ -405,10 +405,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
+            request.setServerName("localhost");
             request.setServerPort(8180);
             // the port is part of the Host header
-            request.addHeader("Host", "127.0.0.1:7979");
+            request.addHeader("Host", "localhost:7979");
             request.setRequestURI("/site/home");
             request.setContextPath("/site");
             try {
@@ -443,10 +443,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
+            request.setServerName("localhost");
             request.setServerPort(8180);
             // the port is part of the Host header
-            request.addHeader("Host", "127.0.0.1:8081");
+            request.addHeader("Host", "localhost:8081");
             request.setRequestURI("/site/home");
             request.setContextPath("/site");
             try {
@@ -472,11 +472,11 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         }
         
         /*
-         * We now test a match on a Mount at 127.0.0.1/hst:root/examplecontextpathonly  that has configured: 
+         * We now test a match on a Mount at localhost/hst:root/examplecontextpathonly  that has configured: 
          * 
          * hst:onlyforcontextpath = /mycontextpath
          *  
-         * This means, that for a request uri like '127.0.0.1/hst:root/examplecontextpathonly/home' that in case:
+         * This means, that for a request uri like 'localhost/hst:root/examplecontextpathonly/home' that in case:
          * 
          * 1) The contextPath is '/mycontextpath' it should match this Mount
          * 2) the contextPath is different than  '/mycontextpath': it should default back to the hst:root Mount
@@ -489,10 +489,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
+            request.setServerName("localhost");
             request.setServerPort(8180);
             // the port is part of the Host header
-            request.addHeader("Host", "127.0.0.1");
+            request.addHeader("Host", "localhost");
             
             // hst:onlyforcontextpath = /mycontextpath so we start with correct context path
             request.setRequestURI("/mycontextpath/examplecontextpathonly/home");

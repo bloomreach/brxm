@@ -70,8 +70,8 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_nooptest");
             request.setContextPath("");
             
@@ -163,8 +163,8 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_nooptest/foo");
             request.setContextPath("");
             try {
@@ -203,8 +203,8 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/multiplehandler_example/foo/bar");
             request.setContextPath("");
             try {
@@ -272,8 +272,8 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_browser_redirecttest");
             request.setContextPath("");
             
@@ -327,8 +327,8 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setScheme("http");
-            request.setServerName("127.0.0.1");
-            request.addHeader("Host", "127.0.0.1");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
             request.setRequestURI("/handler_sitemapitem_redirecttest"); 
             request.setContextPath("");
             try {
