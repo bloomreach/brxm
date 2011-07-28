@@ -50,7 +50,7 @@ public class ChannelManagerPerspective extends Perspective {
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css", true));
 
-        RootPanel rootPanel = new RootPanel(context, "channel-root");
+        RootPanel rootPanel = new RootPanel(context, config, "channel-root");
         add(rootPanel);
     }
 

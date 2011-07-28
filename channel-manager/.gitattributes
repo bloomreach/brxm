@@ -19,6 +19,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
@@ -30,6 +31,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ImageSetFieldWidget.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/InlinePreviewImage.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
@@ -54,6 +56,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/jsonp/jsonp.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
+frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
 /pom.xml eol=lf
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf

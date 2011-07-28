@@ -48,6 +48,10 @@ import org.wicketstuff.js.ext.util.ExtClass;
 @ExtClass("Hippo.ChannelManager.ChannelStore")
 public class ChannelStore extends ExtGroupingStore<Object> {
 
+    public static enum SortOrder { ascending, descending }
+
+    static final String CHANNEL_ID = "channelId";
+
     /**
      * The first serialized version of this source. Version {@value}.
      */
@@ -56,8 +60,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
     private transient Map<String, Channel> channels;
 
-    public ChannelStore(List<ExtField> fields) {
+    private String sortFieldName;
+    private SortOrder sortOrder;
+
+    public ChannelStore(List<ExtField> fields, String sortFieldName, SortOrder sortOrder) {
         super(fields);
+        this.sortFieldName = sortFieldName;
+        this.sortOrder = sortOrder;
     }
 
     @Override
@@ -65,12 +74,16 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         //Need the sortinfo and xaction params since we are using GroupingStore instead of
         //JsonStore
         final JSONObject props = super.getProperties();
-        Map<String, String> sortInfo = new HashMap<String, String>();
-        sortInfo.put("field", "name");
-        sortInfo.put("direction", "ASC");
-        Map<String, String> baseParams = new HashMap<String, String>();
+
+        final Map<String, String> sortInfo = new HashMap<String, String>();
+        sortInfo.put("field", this.sortFieldName);
+        sortInfo.put("direction", this.sortOrder.equals(SortOrder.ascending) ? "ASC" : "DESC");
+        props.put("sortInfo", sortInfo);
+
+        final Map<String, String> baseParams = new HashMap<String, String>();
         baseParams.put("xaction", "read");
         props.put("baseParams", baseParams);
+
         return props;
     }
 
@@ -82,13 +95,20 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
+
         for (Channel channel : getChannels().values()) {
             JSONObject object = new JSONObject();
-            object.put("id", channel.getId());
-            object.put("name", channel.getName());
-            object.put("contentRoot", channel.getContentRoot());
+            for (ExtField field : getFields()) {
+                String fieldName = field.getName();
+                if (fieldName.equals(CHANNEL_ID)) {
+                    fieldName = "id";
+                }
+                final String fieldValue = ReflectionUtil.getStringValue(channel, fieldName);
+                object.put(field.getName(), fieldValue);
+            }
             data.put(object);
         }
+
         return data;
     }
 

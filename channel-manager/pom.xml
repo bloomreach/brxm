@@ -21,6 +21,7 @@
     <hippo.repository.version>2.21.01-SNAPSHOT</hippo.repository.version>
     <hippo.addon-hst-configuration-editor.version>1.08.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
+    <junit.version>4.5</junit.version>
   </properties>
 
   <repositories>
@@ -42,7 +43,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>3.8.1</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

@@ -16,6 +16,26 @@
     <sv:value>service.tab</sv:value>
   </sv:property>
 
+  <sv:node sv:name="channel-list">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:pluginconfig</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="columns" sv:type="String">
+      <sv:value>name</sv:value>
+      <sv:value>blueprintId</sv:value>
+      <sv:value>url</sv:value>
+      <sv:value>id</sv:value>
+      <sv:value>contentRoot</sv:value>
+      <sv:value>hstConfigPath</sv:value>
+    </sv:property>
+    <sv:property sv:name="sort.column" sv:type="String">
+      <sv:value>name</sv:value>
+    </sv:property>
+    <sv:property sv:name="sort.order" sv:type="String">
+      <sv:value>ascending</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="layout.wireframe">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>

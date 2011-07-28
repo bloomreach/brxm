@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
@@ -34,26 +35,29 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
 
+    public static final String CONFIG_CHANNEL_LIST = "channel-list";
+
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
 
-    public RootPanel(final IPluginContext context, String id) {
+    public RootPanel(final IPluginContext context, final IPluginConfig config, String id) {
         super(id);
 
         add(new ChannelManagerResourceBehaviour());
 
-        ChannelGridPanel channelPanel = new ChannelGridPanel();
+        final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
+        final ChannelGridPanel channelPanel = new ChannelGridPanel(channelListConfig);
         channelPanel.setRegion(BorderLayout.Region.CENTER);
         add(channelPanel);
 
         //Use the same store variable as the grid panel, no need to create another store.
         this.channelStore = channelPanel.getStore();
 
-        ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context);
+        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         add(channelPropertiesPanel);
 
-        List<ExtField> blueprintFieldList = new ArrayList<ExtField>();
+        final List<ExtField> blueprintFieldList = new ArrayList<ExtField>();
         blueprintFieldList.add(new ExtField("name"));
         blueprintFieldList.add(new ExtField("description"));
         this.blueprintStore = new BlueprintStore(blueprintFieldList);
