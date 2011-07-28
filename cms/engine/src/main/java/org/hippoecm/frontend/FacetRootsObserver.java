@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2009-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -82,8 +83,13 @@ public class FacetRootsObserver {
                 Node node = nodes.nextNode();
                 if (node != null) {
                     String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    String docbase = session.getNodeByUUID(uuid).getPath();
-                    listeners.put(node.getPath(), addFacetSearchListener(obMgr, docbase, node));
+                    try {
+                        String docbase = session.getNodeByIdentifier(uuid).getPath();
+                        listeners.put(node.getPath(), addFacetSearchListener(obMgr, docbase, node));
+                    } catch (ItemNotFoundException e) {
+                        log.warn("The {} property of facet node {} refers to a non-existing UUID '{}'",
+                                new Object[]{HippoNodeType.HIPPO_DOCBASE, node.getPath(), uuid});
+                    }
                 }
             }
         } catch (RepositoryException ex) {
