@@ -360,6 +360,22 @@ if (!YAHOO.hippo.EditorManager) {
                 Xinha.prototype.initSize = function() { /* Nothing */
                 };
 
+                Xinha._stopEvent = function(ev) {
+                    try {
+                        if (typeof ev.preventDefault !== 'undefined') {
+                            ev.preventDefault();
+                        } else {
+                            ev.returnValue = false;
+                        }
+                        if (typeof ev.stopPropagation !== 'undefined') {
+                            ev.stopPropagation();
+                        } else {
+                            ev.cancelBubble = true;
+                        }
+                    } catch(ignore) {
+                    }
+                }
+
                 //Fix for https://issues.onehippo.com/browse/HREPTWO-3990
                 //IE7 can't handle innerHTML without rewriting relative links to absolute links.
                 Xinha.prototype.setHTML = function(html) {
