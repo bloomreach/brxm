@@ -24,7 +24,7 @@ import javax.jcr.ValueFormatException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.hippoecm.hst.util.ForkedISO8601;
+import org.apache.commons.lang.time.DateFormatUtils;
 
 /**
  * @version $Id$
@@ -40,7 +40,7 @@ public class PropertyValue {
     public PropertyValue(Object valueObject) {
         if (valueObject != null) {
             if (valueObject instanceof Calendar) {
-                this.value = ForkedISO8601.format((Calendar) valueObject);
+                this.value = DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format((Calendar) valueObject);
             } 
             else {
                 this.value = valueObject.toString();
@@ -67,7 +67,7 @@ public class PropertyValue {
             value = Double.toString(valueObject.getDouble());
             break;
         case PropertyType.DATE :
-            value = ForkedISO8601.format(valueObject.getDate());
+            value = DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(valueObject.getDate());
             break;
         }
     }
