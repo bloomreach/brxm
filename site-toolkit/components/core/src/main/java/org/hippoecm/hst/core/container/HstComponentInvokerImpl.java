@@ -214,7 +214,11 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                hstResponse.flushBuffer();
              /////// TODO END ////////////////////////////
             } else {
-                invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
+                if (!StringUtils.isBlank(dispatchUrl)) {
+                    invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
+                } else {
+                    log.debug("The dispatch url is blank. Component name: '{}'. Component id: '{}'.", window.getName(), window.getComponentInfo().getId());
+                }
             }
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
