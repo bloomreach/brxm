@@ -576,24 +576,25 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
         String templateRenderPath = null;
-        HstNode template = templateResourceMap.get(getHstTemplate());
-        
-        if (template != null) {
-            ValueProvider valueProvider = template.getValueProvider();
-            
-            if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
-                templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+        if(getHstTemplate()  != null) {
+            HstNode template = templateResourceMap.get(getHstTemplate());
+            if (template != null) {
+                ValueProvider valueProvider = template.getValueProvider();
+                
+                if (valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH)) {
+                    templateRenderPath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+                }
+                
+                if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
+                    templateRenderPath = "jcr:" + valueProvider.getPath();
+                }
+                
+                this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+            } else {
+                log.warn("template '{}' for component '{}' can not be found. This component will not have a renderer.", getHstTemplate(), id);
             }
-            
-            if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
-                templateRenderPath = "jcr:" + valueProvider.getPath();
-            }
-            
-            this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+            this.renderPath = StringPool.get(templateRenderPath);
         }
-        
-        this.renderPath = StringPool.get(templateRenderPath);
-        
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setRenderPath(templateResourceMap);
         }
