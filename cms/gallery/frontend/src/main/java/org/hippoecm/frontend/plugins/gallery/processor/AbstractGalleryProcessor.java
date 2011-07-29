@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ package org.hippoecm.frontend.plugins.gallery.processor;
 
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.editor.type.JcrTypeStore;
+import org.hippoecm.editor.type.PlainJcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
@@ -70,8 +69,8 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         String primaryMimeType = primaryChild.getProperty("jcr:mimeType").getString();
         initGalleryNode(node, stream, primaryMimeType, fileName);
 
-        IStore<ITypeDescriptor> store = new JcrTypeStore();
-        ITypeDescriptor type = null;
+        IStore<ITypeDescriptor> store = new PlainJcrTypeStore(node.getSession());
+        ITypeDescriptor type;
         try {
             type = store.load(node.getPrimaryNodeType().getName());
         } catch (StoreException e) {

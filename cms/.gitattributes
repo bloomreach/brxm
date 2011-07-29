@@ -637,12 +637,14 @@ editor/frontend/src/main/java/org/hippoecm/editor/template/ITemplateLocator.java
 editor/frontend/src/main/java/org/hippoecm/editor/template/ITemplateStore.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/template/JcrTemplateStore.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/template/TemplateLocator.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/editor/type/AbstractJcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrDraftLocator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrDraftStore.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrFieldDescriptor.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeDescriptor.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeLocator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text
+editor/frontend/src/main/java/org/hippoecm/editor/type/PlainJcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PseudoTypeDescriptor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor$EditorWrapper.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor.java -text
