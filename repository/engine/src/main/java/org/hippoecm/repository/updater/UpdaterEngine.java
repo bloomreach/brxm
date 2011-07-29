@@ -29,6 +29,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -1087,31 +1088,47 @@ public class UpdaterEngine {
             return false;
         }
 
-        public NodeIterator iterator(Session session) throws RepositoryException {
-            final Set<Node> collection = new HashSet<Node>();
+        public NodeIterator iterator(final Session session) throws RepositoryException {
             isCollecting = true;
             isExecuting = false;
             //session.getRootNode().accept(this);
             isCollecting = false;
             isExecuting = true;
-            collection.clear();
-            for (NodeTypeIterator iter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes(); iter.hasNext();) {
-                NodeType nodeType = iter.nextNodeType();
-                if (nodeType.getName().startsWith(namespace + ":")) {
-                    Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM " + nodeType.getName(), Query.SQL);
-                    QueryResult result = query.execute();
-                    log.debug("upgrade querying for namespace "+namespace+": "+query.getStatement());
-                    for (NodeIterator nodeIter = result.getNodes(); nodeIter.hasNext();) {
+            final NodeTypeIterator typeIter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes();
+            return new NodeIterator() {
+                Node nextNode;
+                NodeIterator nodeIter = null;
+                int position = 0;
+                private void fetch() {
+                    while (nextNode == null) {
+                        while (nodeIter == null || !nodeIter.hasNext()) {
+                            if (!typeIter.hasNext()) {
+                                return;
+                            }
+                            NodeType nodeType = typeIter.nextNodeType();
+                            if (nodeType.getName().startsWith(namespace + ":")) {
+                                try {
+                                    Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM " + nodeType.getName(), Query.SQL);
+                                    QueryResult result = query.execute();
+                                    log.debug("upgrade querying for namespace " + namespace + ": " + query.getStatement());
+                                    nodeIter = result.getNodes();
+                                } catch (RepositoryException ex) {
+                                    log.debug(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                                }
+                            }
+                        }
                         Node candidate = nodeIter.nextNode();
-                        if (isMatch(candidate)) {
-                            collection.add(candidate);
+                        try {
+                            if (isMatch(candidate)) {
+                                nextNode = candidate;
+                                return;
+                            }
+                        } catch (RepositoryException ex) {
+                            log.debug(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                         }
                     }
                 }
-            }
-            final Iterator<Node> iterator = collection.iterator();
-            return new NodeIterator() {
-                int position = 0;
+ 
                 public Node nextNode() {
                     return (Node) next();
                 }
@@ -1120,17 +1137,20 @@ public class UpdaterEngine {
                         next();
                 }
                 public long getSize() {
-                    return collection.size();
+                    return -1;
                 }
                 public long getPosition() {
                     return position;
                 }
                 public boolean hasNext() {
-                    return iterator.hasNext();
+                    fetch();
+                    return nextNode != null;
                 }
                 public Object next() {
-                    Object object = iterator.next();
+                    fetch();
+                    Object object = nextNode;
                     ++position;
+                    nextNode = null;
                     return object;
                 }
                 public void remove() {
