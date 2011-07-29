@@ -27,8 +27,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.data.EmptyDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -52,7 +54,9 @@ class NodeEditor extends Form {
     private String mixinTypes;
     private PropertyProvider propertyProvider;
     private PropertiesEditor propertiesEditor;
-    private NodeTypesEditor typesEditor;
+    private NodeTypesEditor typesEditor1;
+    private NodeTypesEditor typesEditor2;
+    private NodeTypesEditor typesEditor3;
 
     NodeEditor(String id) {
         super(id);
@@ -65,8 +69,46 @@ class NodeEditor extends Form {
         propertiesEditor = new PropertiesEditor("properties", propertyProvider);
         add(propertiesEditor);
 
-        typesEditor = new NodeTypesEditor("mixintypes", new ArrayList<String>(), null);
-        add(typesEditor);
+        // add toggle icon
+        Image toggleIcon1 = new Image("toggle-icon-1") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected ResourceReference getImageResourceReference() {
+                return new ResourceReference(EditorPlugin.class, "group-expanded.png");
+            }
+        };
+        toggleIcon1.setOutputMarkupId(true);
+        toggleIcon1.setMarkupId("toggle-1");
+        add(toggleIcon1);
+
+        Image toggleIcon2 = new Image("toggle-icon-2") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected ResourceReference getImageResourceReference() {
+                return new ResourceReference(EditorPlugin.class, "group-expanded.png");
+            }
+        };
+        toggleIcon2.setOutputMarkupId(true);
+        toggleIcon2.setMarkupId("toggle-2");
+        add(toggleIcon2);
+
+        Image toggleIcon3 = new Image("toggle-icon-3") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected ResourceReference getImageResourceReference() {
+                return new ResourceReference(EditorPlugin.class, "group-collapsed.png");
+            }
+        };
+        toggleIcon3.setOutputMarkupId(true);
+        toggleIcon3.setMarkupId("toggle-3");
+        add(toggleIcon3);
+
+        typesEditor1 = new NodeTypesEditor("mixintypes1", new ArrayList<String>(), null, 1);
+        typesEditor2 = new NodeTypesEditor("mixintypes2", new ArrayList<String>(), null, 2);
+        typesEditor3 = new NodeTypesEditor("mixintypes3", new ArrayList<String>(), null, 3);
+        add(typesEditor1);
+        add(typesEditor2);
+        add(typesEditor3);
     }
 
     @Override
@@ -84,9 +126,15 @@ class NodeEditor extends Form {
                 for (NodeType nodeType : nodeTypes) {
                     result.add(nodeType.getName());
                 }
-                typesEditor.setModelObject(result);
-                typesEditor.setNodeModel(newModel);
-                typesEditor.setVisible(true);
+                typesEditor1.setModelObject(result);
+                typesEditor1.setNodeModel(newModel);
+                typesEditor1.setVisible(true);
+                typesEditor2.setModelObject(result);
+                typesEditor2.setNodeModel(newModel);
+                typesEditor2.setVisible(true);
+                typesEditor3.setModelObject(result);
+                typesEditor3.setNodeModel(newModel);
+                typesEditor3.setVisible(true);
                 propertiesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
@@ -96,7 +144,9 @@ class NodeEditor extends Form {
                 log.error(e.getMessage());
             }
         } else {
-            typesEditor.setVisible(false);
+            typesEditor1.setVisible(false);
+            typesEditor2.setVisible(false);
+            typesEditor3.setVisible(false);
             propertiesEditor.setVisible(false);
         }
     }

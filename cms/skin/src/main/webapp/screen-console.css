@@ -118,13 +118,16 @@
 .hippo-console-save li.hippo-console-menu-actions-reset a{padding: 5px}
 .hippo-console-save li.hippo-console-menu-actions-reset a:hover{background: red;}
 
-
-
 .hippo-console-editor{padding: 20px;}
 .hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
-.hippo-console-editor strong{color:#666666}
-.hippo-console-editor sup a{color:#32629b}
-.hippo-console-editor textarea {width: 815px}
+.hippo-console-editor strong{color:#666666;}
+.hippo-console-editor sup a{color:#32629b;}
+.hippo-console-editor textarea {width: 815px;}
+.hippo-console-editor h3 {color:#32629B;}
+.hippo-console-editor hr {color:#32629B;background-color: #32629B;border: 0;height: 1px;margin: 0px;}
+
+.editor-types-table td {padding: 0px 4px 4px 0px;}
+.editor-toggle-icon {vertical-align: top;width: 12px;height: 12px;cursor: pointer;}
 
 .hippo-tree-dropdown-icon { background-image: none; }
 .hippo-tree div.wicket-tree div.row{background-image: none; }
@@ -153,7 +156,7 @@ body.hippo-root div.yui-log-container {
   top: 72px;
   right: 10px;
 }
-/* context menu */
+/* context menu test123 */
 .hippo-console-contextmenu {
   background-color: #FFFFFF;
   color: #000000;

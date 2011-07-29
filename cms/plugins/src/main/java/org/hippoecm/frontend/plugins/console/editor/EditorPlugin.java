@@ -19,6 +19,7 @@ import javax.jcr.Node;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.togglebehavior.ToggleBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class EditorPlugin extends RenderPlugin<Node> {
@@ -34,6 +35,7 @@ public class EditorPlugin extends RenderPlugin<Node> {
 
         editor = new NodeEditor("editor");
         add(editor);
+        add(new ToggleBehavior());
     }
 
     @Override
