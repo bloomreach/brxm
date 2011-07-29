@@ -16,12 +16,14 @@
 
 // TODO refactor. These functions should be set up like for example is done in the scroll.js
 function toggleBox(num) {
-    if(document.getElementById('toggle-box-' + num).style.display == 'none') {
+    var box = document.getElementById('toggle-box-' + num);
+    if (box==null) return;
+    if(box.style.display == 'none') {
         showBox(num);
         setCookie("ConsoleToggleBox"+num, 1,30);
         return;
     }
-    if(document.getElementById('toggle-box-' + num).style.display == 'block') {
+    if(box.style.display == 'block') {
         hideBox(num);
         setCookie("ConsoleToggleBox"+num, 0,30);
         return;
@@ -60,11 +62,13 @@ function boxesInit() {
     console.log('boxes init');
     for (var num=1; num <= 4; num++) {
         var openClose = getCookie("ConsoleToggleBox" + num);
+        var box = document.getElementById('toggle-box-' + num);
+        if(box==null) continue;
         if(openClose != null) {
-            if(openClose == 1 && document.getElementById('toggle-box-' + num).style.display == 'none') {
+            if(openClose == 1 && box.style.display == 'none') {
                 showBox(num);
             }
-            if(openClose == 0 && document.getElementById('toggle-box-' + num).style.display == 'block') {
+            if(openClose == 0 && box.style.display == 'block') {
                 hideBox(num);
             }
         }
