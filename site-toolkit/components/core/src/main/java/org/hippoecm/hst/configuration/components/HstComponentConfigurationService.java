@@ -575,8 +575,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
-        String templateRenderPath = null;
         if(getHstTemplate()  != null) {
+            String templateRenderPath = null;
             HstNode template = templateResourceMap.get(getHstTemplate());
             if (template != null) {
                 ValueProvider valueProvider = template.getValueProvider();
@@ -590,10 +590,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 
                 this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
-            } else {
-                log.warn("template '{}' for component '{}' can not be found. This component will not have a renderer.", getHstTemplate(), id);
             }
-            this.renderPath = StringPool.get(templateRenderPath);
+            renderPath = StringPool.get(templateRenderPath);
+            if(renderPath == null) {
+                log.warn("renderer '{}' for component '{}' can not be found. This component will not have a renderer.", getHstTemplate(), id);
+            }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.setRenderPath(templateResourceMap);
