@@ -54,7 +54,7 @@
         <sv:value>http</sv:value>
     </sv:property>
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
-        <sv:value>127.0.0.1</sv:value>
+        <sv:value>localhost</sv:value>
     </sv:property>
     <sv:node sv:name="dev-local">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
