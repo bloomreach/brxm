@@ -29,7 +29,9 @@ import org.hippoecm.hst.configuration.components.ParametersInfo;
  *
  * @see {@link Parameter}
  * @see {@link ParametersInfo}
+ * @deprecated
  */
+@Deprecated
 class OldParametersInfoProcessor {
 
     static List<Property> getProperties(ParametersInfo parameterInfo) {
