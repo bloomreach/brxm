@@ -73,12 +73,13 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
 
     public void execute(Object returnObject) {
         try {
-            if (wfSubject.hasProperty("hipposys:eventconditioncategory")) {
-                if (!wfSubject.getProperty("hipposys:eventconditioncategory").getString().equals(workflowCategory)) {
+            if (wfNode.hasProperty("hipposys:eventconditioncategory")) {
+                if (!wfNode.getProperty("hipposys:eventconditioncategory").getString().equals(workflowCategory)) {
                     return;
                 }
-            } else if (wfSubject.hasProperty("hipposys:eventconditionmethod")) {
-                if (!wfSubject.getProperty("hipposys:eventconditionmethod").getString().equals(workflowMethod)) {
+            }
+            if (wfNode.hasProperty("hipposys:eventconditionmethod")) {
+                if (!wfNode.getProperty("hipposys:eventconditionmethod").getString().equals(workflowMethod)) {
                     return;
                 }
             }
