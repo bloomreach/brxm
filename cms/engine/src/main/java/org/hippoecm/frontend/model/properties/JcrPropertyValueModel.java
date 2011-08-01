@@ -212,7 +212,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                             node.setProperty(name, newValues);
                         }
                     } else {
-                        if (value == null && propDef.isMandatory()) {
+                        if (value == null) {
                             value = createNullValue();
                         }
                         if (!prop.isMultiple()) {
