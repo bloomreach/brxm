@@ -507,6 +507,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_PREVIOUSPASSWORDS = "hipposys:previouspasswords";
+    /**
+     * 
+     */
     final public static String HIPPO_PATH = "hipposysedit:path";
     /**
      * 
