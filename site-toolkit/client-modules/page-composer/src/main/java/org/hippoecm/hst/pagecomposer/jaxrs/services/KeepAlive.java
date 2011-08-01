@@ -25,6 +25,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.pagecomposer.composer.ComposerInfoImpl;
+
 @Path("/rep:root/")
 public class KeepAlive extends AbstractConfigResource {
 
@@ -33,7 +36,15 @@ public class KeepAlive extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response keepAlive(@Context HttpServletRequest servletRequest,
                               @Context HttpServletResponse servletResponse) {
-        HttpSession session = servletRequest.getSession(false);
+        
+        HttpSession session = servletRequest.getSession(true);
+        
+        ComposerInfoImpl composerInfo = (ComposerInfoImpl)session.getAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME);
+        if(composerInfo == null) {
+            composerInfo = new ComposerInfoImpl();
+            session.setAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME, composerInfo);
+        }
+        
         return ok("Keepalive successful", null);
     }
 

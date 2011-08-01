@@ -25,7 +25,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.composer.ComposerInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -294,28 +296,29 @@ public class AggregationValve extends AbstractValve {
                 break;
             }
             
-            // TODO Should we move this post processing to an injectable piece of code of 'generic' post processors
-            // TODO ////////////////////////////////////////////////////////////////////////////
-            Mount mount = request.getRequestContext().getResolvedMount().getMount();
-            if (request.getRequestContext().getRenderHost() != null) {
-             // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
-                if (window == rootWindow) {
-                    rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
-                    rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
-                    rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
-                } else {
-                    HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    Element el = response.createElement("div");
-                    el.setAttribute("class", "componentContentWrapper");
-                    el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
-                    el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
-                    el.setAttribute("hst:type", compConfig.getComponentType().toString());
-                    response.setWrapperElement(el);
-                }
-            } 
-            // TODO ////////////////////////////////////////////////////////////////////////////
+            HttpSession session = request.getSession(false);
+            
+            if(session != null ) {
+                ComposerInfo composerInfo = (ComposerInfo)session.getAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME);
+                if (composerInfo != null) {
+                    Mount mount = request.getRequestContext().getResolvedMount().getMount();
+                    // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
+                    if (window == rootWindow) {
+                        rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
+                        rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
+                        rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
+                    } else if(composerInfo.isInComposerMode(mount.getIdentifier())) {
+                        HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
+                        Element el = response.createElement("div");
+                        el.setAttribute("class", "componentContentWrapper");
+                        el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
+                        el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
+                        el.setAttribute("hst:type", compConfig.getComponentType().toString());
+                        response.setWrapperElement(el);
+                    }
+                } 
+            }
         }
-
     }
     
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
