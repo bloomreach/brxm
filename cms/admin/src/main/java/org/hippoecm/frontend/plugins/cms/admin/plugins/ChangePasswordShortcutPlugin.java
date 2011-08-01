@@ -24,6 +24,8 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -159,6 +161,20 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      */
     private boolean setPassword(char[] password) {
         try {
+            // remember the old password
+            String oldPassword = getUser().getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+            Value[] newValues = null;
+            if (getUser().hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
+                Value[] oldValues = getUser().getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
+                newValues = new Value[oldValues.length+1];
+                System.arraycopy(oldValues, 0, newValues, 1, oldValues.length);
+            }
+            else {
+                newValues = new Value[1];
+            }
+            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
+            getUser().setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
+            // set the new password
             getUser().setProperty(HippoNodeType.HIPPO_PASSWORD, PasswordHelper.getHash(password));
             getUser().save();
             return true;

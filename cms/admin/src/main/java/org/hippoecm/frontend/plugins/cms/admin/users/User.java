@@ -28,6 +28,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
@@ -56,6 +57,7 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_PASSWORD = HippoNodeType.HIPPO_PASSWORD;
     public static final String PROP_PASSKEY = HippoNodeType.HIPPO_PASSKEY;
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
+    public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
 
     private final static String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
@@ -219,7 +221,7 @@ public class User implements Comparable<User>, IClusterable {
                 lastName = p.getString();
             } else if (name.equals(HippoNodeType.HIPPO_ACTIVE)) {
                 active = p.getBoolean();
-            } else if (name.equals(PROP_PASSWORD) || name.equals(PROP_PASSKEY)) {
+            } else if (name.equals(PROP_PASSWORD) || name.equals(PROP_PASSKEY) || name.equals(PROP_PREVIOUSPASSWORDS)) {
                 // do not expose password hash
                 continue;
             } else if (name.equals(PROP_PROVIDER)) {
@@ -352,7 +354,25 @@ public class User implements Comparable<User>, IClusterable {
      * @throws RepositoryException
      */
     public void savePassword(String password) throws RepositoryException {
+        // remember old password
+        if (node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
+            String oldPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+            Value[] newValues = null;
+            if (node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
+                Value[] oldValues = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
+                newValues = new Value[oldValues.length+1];
+                System.arraycopy(oldValues, 0, newValues, 1, oldValues.length);
+            }
+            else {
+                newValues = new Value[1];
+            }
+            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
+            node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
+        }
+        
+        // set new password
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
+        
         node.getSession().save();
     }
 

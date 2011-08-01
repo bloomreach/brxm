@@ -34,6 +34,9 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator_nl.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidationService.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator_nl.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator_nl.properties -text
