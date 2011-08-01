@@ -16,6 +16,32 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/AbstractPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidationService.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl_nl.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationStatus.java -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/RegexpPasswordValidator.java -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png

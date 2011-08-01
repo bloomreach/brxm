@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.admin.plugins;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -31,6 +32,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -39,6 +41,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
+import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -210,6 +214,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         private PasswordWidget currentWidget;
+        
+        private IPasswordValidationService passwordValidationService; 
 
         public Dialog(final IPluginContext context, final IPluginConfig config) {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
@@ -236,6 +242,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                             "new-password-label-again", ChangePasswordShortcutPlugin.this, null));
             checkWidget.setResetPassword(false);
             add(checkWidget);
+            
+            passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
+            
         }
 
         @Override
@@ -255,10 +264,20 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 error(new StringResourceModel("new-password-missing", ChangePasswordShortcutPlugin.this, null)
                 .getString());
                 ok = false;
-            } else if (newPassword.length() < 4) {
-                error(new StringResourceModel("new-password-invalid", ChangePasswordShortcutPlugin.this, null)
-                .getString());
-                ok = false;
+            } else {
+                try {
+                    List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, getUser());
+                    for (PasswordValidationStatus status : statuses) {
+                        if (!status.accepted()) {
+                            error(status.getMessage());
+                            ok = false;
+                        }
+                    }
+                }
+                catch (RepositoryException e) {
+                    log.error("Failure validating password using password validation service", e);
+                    ok = false;
+                }
             }
 
             if (checkPassword == null) {
