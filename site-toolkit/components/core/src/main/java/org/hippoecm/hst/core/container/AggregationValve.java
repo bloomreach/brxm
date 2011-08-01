@@ -309,12 +309,15 @@ public class AggregationValve extends AbstractValve {
                         rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
                     } else if(composerInfo.isInComposerMode(mount.getIdentifier())) {
                         HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                        Element el = response.createElement("div");
-                        el.setAttribute("class", "componentContentWrapper");
-                        el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
-                        el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
-                        el.setAttribute("hst:type", compConfig.getComponentType().toString());
-                        response.setWrapperElement(el);
+                        if(compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT ||
+                           compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
+                            Element el = response.createElement("div");
+                            el.setAttribute("class", "componentContentWrapper");
+                            el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
+                            el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
+                            el.setAttribute("hst:type", compConfig.getComponentType().toString());
+                            response.setWrapperElement(el);
+                        }
                     }
                 } 
             }
