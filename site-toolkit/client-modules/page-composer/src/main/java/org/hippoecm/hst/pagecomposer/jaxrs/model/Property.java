@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-class Property {
+public class Property {
     private String name;
     private String value;
     private String type;
@@ -28,7 +28,7 @@ class Property {
     private boolean allowCreation;
     private String docLocation;
 
-    Property() {
+    public Property() {
         name = "";
         value = "";
         type = ComponentWrapper.ParameterType.STRING;
@@ -41,27 +41,27 @@ class Property {
         docLocation = "";
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    String getValue() {
+    public String getValue() {
         return value;
     }
 
-    void setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    String getType() {
+    public String getType() {
         return type;
     }
 
-    void setType(String type) {
+    public void setType(String type) {
         if (type.equals(ComponentWrapper.ParameterType.DATE)) {
             this.type = "datefield";
         } else if (type.equals(ComponentWrapper.ParameterType.BOOLEAN)) {
@@ -77,59 +77,59 @@ class Property {
         }
     }
 
-    String getLabel() {
+    public String getLabel() {
         return label;
     }
 
-    void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    String getDefaultValue() {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    void setDefaultValue(String defaultValue) {
+    public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    boolean isRequired() {
+    public boolean isRequired() {
         return required;
     }
 
-    void setRequired(boolean required) {
+    public void setRequired(boolean required) {
         this.required = required;
     }
 
-    void setDocType(final String docType) {
+    public void setDocType(final String docType) {
         this.docType = docType;
     }
 
-    String getDocType() {
+    public String getDocType() {
         return this.docType;
     }
 
-    boolean isAllowCreation() {
+    public boolean isAllowCreation() {
         return allowCreation;
     }
 
-    void setAllowCreation(boolean allowCreation) {
+    public void setAllowCreation(boolean allowCreation) {
         this.allowCreation = allowCreation;
     }
 
-    String getDocLocation() {
+    public String getDocLocation() {
         return docLocation;
     }
 
-    void setDocLocation(String docLocation) {
+    public void setDocLocation(String docLocation) {
         this.docLocation = docLocation;
     }
 
