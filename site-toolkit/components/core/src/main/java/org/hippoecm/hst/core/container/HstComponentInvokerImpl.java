@@ -201,26 +201,13 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             
             HstComponentConfiguration compInfo = ((HstComponentConfiguration)window.getComponentInfo());
             Mount mount = hstRequest.getRequestContext().getResolvedMount().getMount();
-            // do not create a http session!!
-            
-            //HttpSession session = hstRequest.getSession(false);
-            //if (session != null 
-            //        && "true".equals(session.getAttribute(ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW_ATTR_NAME))
-            //        && compInfo instanceof HstComponentConfigurationService
-            //        && compInfo.getComponentType() == Type.CONTAINER_ITEM_COMPONENT
-            //        && mount.isOfType(ContainerConstants.COMPOSERMODE)
-            //        && ((HstComponentConfigurationService) compInfo).getDummyContent() != null) {
-               // We are in composermode && composer-template-view && the current component is a container item, and has sample content: hence, we do not render the actual template, but show sample content
-            //   hstResponse.getWriter().append(((HstComponentConfigurationService)compInfo).getDummyContent());
-            //   hstResponse.flushBuffer();
-             /////// TODO END ////////////////////////////
-            //} else {
-                if (!StringUtils.isBlank(dispatchUrl)) {
-                    invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
-                } else {
-                    log.debug("The dispatch url is blank. Component name: '{}'. Component id: '{}'.", window.getName(), window.getComponentInfo().getId());
-                }
-            //}
+            // do not creaHstComponentConfigurationServicete a http session!!
+          
+            if (!StringUtils.isBlank(dispatchUrl)) {
+                invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
+            } else {
+                log.debug("The dispatch url is blank. Component name: '{}'. Component id: '{}'.", window.getName(), window.getComponentInfo().getId());
+            }
         } catch (HstComponentException e) {
             if (this.exceptionThrowable) {
                 throw e;

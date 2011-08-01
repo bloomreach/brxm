@@ -69,7 +69,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
+     * @deprecated unused
      */
+    @Deprecated
     private String dummyContent;
 
     /**
@@ -301,6 +303,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return pageErrorHandlerClassName;
     }
 
+    @Deprecated
     public String getDummyContent(){
         return dummyContent;
     }

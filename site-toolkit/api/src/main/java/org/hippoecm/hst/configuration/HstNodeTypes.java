@@ -62,6 +62,10 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_REFERECENCECOMPONENT =  "hst:referencecomponent";
     public final static String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
     public final static String COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME =  "hst:page_errorhandlerclassname";
+    /**
+     * @deprecated unused
+     */
+    @Deprecated
     public final static String COMPONENT_PROPERTY_DUMMY_CONTENT = "hst:dummycontent";
     public final static String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
 

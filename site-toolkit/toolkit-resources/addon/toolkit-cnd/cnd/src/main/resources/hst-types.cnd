@@ -49,6 +49,7 @@
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
 - hst:referencecomponent(string)
 - hst:xtype (string) mandatory
+// deprecated and unused : do not use
 - hst:dummycontent (string)
 - hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
