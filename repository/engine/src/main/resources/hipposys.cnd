@@ -150,6 +150,7 @@
 - hipposys:firstname (string)
 - hipposys:lastname (string)
 - hipposys:email (string)
+- hipposys:previouspasswords (string) multiple
 
 [hipposys:externaluser] > hipposys:user
 - hipposys:lastsync (date)
