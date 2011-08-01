@@ -18,10 +18,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "document")
-public class Document {
+public class DocumentRepresentation {
     private String path;
 
-    public Document(final String path) {
+    public DocumentRepresentation(final String path) {
         this.path = path;
     }
 

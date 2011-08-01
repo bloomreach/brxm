@@ -45,7 +45,7 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.composer.ComposerInfoImpl;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.Document;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -181,7 +181,7 @@ public class MountResource extends AbstractConfigResource {
             log.error("Could not get the editing mount to get the content path for listing documents.");
             return error("Could not get the editing mount to get the content path for listing documents.");
         }
-        List<Document> documentLocations = new ArrayList<Document>();
+        List<DocumentRepresentation> documentLocations = new ArrayList<DocumentRepresentation>();
         String canonicalContentPath = editingHstMount.getCanonicalContentPath();
         try {
             Session session = requestContext.getSession();
@@ -206,7 +206,7 @@ public class MountResource extends AbstractConfigResource {
                     log.error("Unexpected document path '{}'", docPath);
                     continue;
                 }
-                documentLocations.add(new Document(docPath.substring(canonicalContentPath.length() + 1)));
+                documentLocations.add(new DocumentRepresentation(docPath.substring(canonicalContentPath.length() + 1)));
             }
         } catch (RepositoryException e) {
             log.error("Exception happened while trying to fetch documents of type '" + docType + "'", e);
