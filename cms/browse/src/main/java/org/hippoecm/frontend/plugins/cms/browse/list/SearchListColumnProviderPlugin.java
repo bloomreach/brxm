@@ -27,7 +27,7 @@ public class SearchListColumnProviderPlugin extends AbstractListColumnProviderPl
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(SearchListColumnProviderPlugin.class, "SearchListColumnProviderPlugin.css");
+        return CSSPackageResource.getHeaderContribution(SearchListColumnProviderPlugin.class, "SearchListColumnProviderPlugin.css", true);
     }
 
     @Override

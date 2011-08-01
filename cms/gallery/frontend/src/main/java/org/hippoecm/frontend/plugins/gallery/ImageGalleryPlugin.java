@@ -154,7 +154,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         super.renderHead(container);
 
         ResourceReference cssResourceReference = new ResourceReference(ImageGalleryPlugin.class, IMAGE_GALLERY_CSS);
-        container.getHeaderResponse().renderCSSReference(cssResourceReference);
+        container.getHeaderResponse().renderCSSReference(cssResourceReference, true);
     }
 
     @Override

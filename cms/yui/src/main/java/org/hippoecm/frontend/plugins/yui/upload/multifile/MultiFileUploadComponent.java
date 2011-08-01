@@ -78,7 +78,7 @@ public class MultiFileUploadComponent extends Panel {
         super.renderHead(container);
 
         container.getHeaderResponse().renderCSSReference(
-                new ResourceReference(MultiFileUploadComponent.class, MULTI_FILE_UPLOAD_CSS));
+                new ResourceReference(MultiFileUploadComponent.class, MULTI_FILE_UPLOAD_CSS), true);
     }
 
     public Collection<FileUpload> getUploads() {

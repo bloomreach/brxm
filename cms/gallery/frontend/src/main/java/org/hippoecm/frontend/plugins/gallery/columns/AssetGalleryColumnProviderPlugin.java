@@ -41,7 +41,7 @@ public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProvider
     @Override
     public IHeaderContributor getHeaderContributor() {
         return CSSPackageResource.getHeaderContribution(AssetGalleryColumnProviderPlugin.class,
-                "AssetGalleryStyle.css");
+                "AssetGalleryStyle.css", true);
     }
 
 

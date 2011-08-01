@@ -64,7 +64,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         public Dialog() {
-            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css"));
+            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css", true));
             
             setOkVisible(false);
             setCancelVisible(false);

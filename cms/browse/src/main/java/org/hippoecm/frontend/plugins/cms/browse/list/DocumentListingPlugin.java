@@ -58,7 +58,7 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
 
     @Override
     public void renderHead(HtmlHeaderContainer container) {
-        container.getHeaderResponse().renderCSSReference(new ResourceReference(DocumentListingPlugin.class, DOCUMENT_LISTING_CSS));
+        container.getHeaderResponse().renderCSSReference(new ResourceReference(DocumentListingPlugin.class, DOCUMENT_LISTING_CSS), true);
         super.renderHead(container);
     }
 

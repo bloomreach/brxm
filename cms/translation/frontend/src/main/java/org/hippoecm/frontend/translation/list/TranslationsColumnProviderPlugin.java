@@ -48,7 +48,7 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
     @Override
     public IHeaderContributor getHeaderContributor() {
         return CSSPackageResource.getHeaderContribution(TranslationsColumnProviderPlugin.class,
-                "TranslationColumns.css");
+                "TranslationColumns.css", true);
     }
 
     @Override

@@ -71,7 +71,7 @@ public abstract class PanelPluginPerspective extends Perspective {
             add(new WireframeBehavior(wfSettings));
         }
 
-        add(CSSPackageResource.getHeaderContribution(PanelPluginPerspective.class, "panel-plugin-perspective.css"));
+        add(CSSPackageResource.getHeaderContribution(PanelPluginPerspective.class, "panel-plugin-perspective.css", true));
     }
 
     public void showDialog(IDialogService.Dialog dialog) {

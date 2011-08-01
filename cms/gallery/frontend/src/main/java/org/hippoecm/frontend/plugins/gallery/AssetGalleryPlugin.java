@@ -48,7 +48,7 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         setClassName("asset-gallery-plugin");
         getSettings().setAutoWidthClassName("assetgallery-name");
 
-        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
+        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css", true));
     }
 
     @Override

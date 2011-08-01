@@ -385,7 +385,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     public void renderHead(IHeaderResponse response) {
         final String IMAGE_BROWSER_DIALOG_CSS = "ImageBrowserDialog.css";
         ResourceReference dialogCSS = new ResourceReference(ImageBrowserDialog.class, IMAGE_BROWSER_DIALOG_CSS);
-        response.renderCSSReference(dialogCSS);
+        response.renderCSSReference(dialogCSS, true);
     }
 
     @Override

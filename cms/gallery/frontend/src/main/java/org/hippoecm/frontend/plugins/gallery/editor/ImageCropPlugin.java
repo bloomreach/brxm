@@ -59,7 +59,7 @@ public class ImageCropPlugin extends RenderPlugin {
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css"));
+        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css", true));
 
         String mode = config.getString("mode", "edit");
         final IModel<Node> jcrImageNodeModel = getModel();

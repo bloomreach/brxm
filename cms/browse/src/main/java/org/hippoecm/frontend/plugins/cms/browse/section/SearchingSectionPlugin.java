@@ -170,7 +170,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         });
 
-        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css"));
+        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css", true));
 
         container = new Form("container") {
             private static final long serialVersionUID = 1L;

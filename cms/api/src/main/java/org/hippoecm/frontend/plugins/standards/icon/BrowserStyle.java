@@ -35,7 +35,7 @@ public final class BrowserStyle {
     }
 
     public static HeaderContributor getStyleSheet() {
-        return CSSPackageResource.getHeaderContribution(BrowserStyle.class, "res/style.css");
+        return CSSPackageResource.getHeaderContribution(BrowserStyle.class, "res/style.css", true);
     }
 
     public static ResourceReference getIcon(String customName, String defaultName, IconSize size) {

@@ -211,7 +211,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         }
 
         public void onRenderHead(IHeaderResponse response) {
-            response.renderCSSReference(reference, "screen"); //TODO: find out why screen
+            response.renderCSSReference(reference, "screen", true); //TODO: find out why screen
         }
     }
 

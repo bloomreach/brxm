@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 public final class EditorResources {
 
     public static HeaderContributor getCss() {
-        return CSSPackageResource.getHeaderContribution(EditorResources.class, "editor.css");
+        return CSSPackageResource.getHeaderContribution(EditorResources.class, "editor.css", true);
     }
 
 }

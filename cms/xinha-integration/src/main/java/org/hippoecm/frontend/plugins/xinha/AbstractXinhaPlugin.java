@@ -114,7 +114,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         // dialog functionality for plugins
         add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
 
-        add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "xinha.css"));
+        add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "xinha.css", true));
     }
 
     @Override
@@ -181,7 +181,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             }
         });
         if (IEditor.Mode.COMPARE == mode) {
-            fragment.add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
+            fragment.add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css", true));
         }
         return fragment;
     }

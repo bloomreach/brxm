@@ -69,7 +69,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css"));
+        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css", true));
 
         String mode = config.getString("mode", "edit");
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);

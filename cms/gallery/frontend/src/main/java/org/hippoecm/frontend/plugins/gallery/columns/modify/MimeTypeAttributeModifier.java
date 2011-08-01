@@ -129,7 +129,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
             @Override
             public void bind(Component hostComponent) {
                 hostComponent.add(CSSPackageResource.getHeaderContribution(MimeTypeAttributeModifier.class,
-                        "mimetypes.css"));
+                        "mimetypes.css", true));
             }
         };
     }

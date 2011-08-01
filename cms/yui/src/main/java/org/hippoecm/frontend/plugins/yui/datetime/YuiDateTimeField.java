@@ -138,7 +138,7 @@ public class YuiDateTimeField extends DateTimeField {
             });
         }
 
-        add(CSSPackageResource.getHeaderContribution(YuiDateTimeField.class, "yuidatetime.css"));
+        add(CSSPackageResource.getHeaderContribution(YuiDateTimeField.class, "yuidatetime.css", true));
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates

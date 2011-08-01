@@ -29,7 +29,7 @@ public class AdminPerspective extends PanelPluginPerspective {
 
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin-perspective.css"));
+        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin-perspective.css", true));
     }
 
     @Override

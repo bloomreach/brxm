@@ -345,7 +345,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
         add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
 
-        add(CSSPackageResource.getHeaderContribution(ReorderDialog.class, "reorder.css"));
+        add(CSSPackageResource.getHeaderContribution(ReorderDialog.class, "reorder.css", true));
     }
 
     @Override

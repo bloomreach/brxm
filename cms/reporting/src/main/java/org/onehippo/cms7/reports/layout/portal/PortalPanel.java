@@ -55,7 +55,7 @@ public class PortalPanel extends ExtPanel {
 
         add(new ExtHippoThemeReportingBehavior());
 
-        add(CSSPackageResource.getHeaderContribution(PortalPanel.class, "Hippo.Reports.Portal.css"));
+        add(CSSPackageResource.getHeaderContribution(PortalPanel.class, "Hippo.Reports.Portal.css", true));
         add(JavascriptPackageResource.getHeaderContribution(PortalPanel.class, "Hippo.Reports.Portal.js"));
     }
 

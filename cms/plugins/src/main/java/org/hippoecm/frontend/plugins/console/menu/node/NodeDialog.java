@@ -121,7 +121,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                 return result.iterator();
             }
         };
-        typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css"));
+        typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css", true));
         typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
             @Override
@@ -153,7 +153,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 				return result.iterator();
 			}
         };
-        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css"));
+        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css", true));
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
             @Override

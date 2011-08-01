@@ -57,7 +57,7 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(ImageGalleryColumnProviderPlugin.class, "ImageGalleryStyle.css");
+        return CSSPackageResource.getHeaderContribution(ImageGalleryColumnProviderPlugin.class, "ImageGalleryStyle.css", true);
     }
 
     public List<ListColumn<Node>> getColumns() {
