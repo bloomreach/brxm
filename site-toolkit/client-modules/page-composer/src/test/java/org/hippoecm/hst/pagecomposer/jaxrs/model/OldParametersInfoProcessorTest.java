@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.OldParametersInfoProcessor;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

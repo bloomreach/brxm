@@ -25,6 +25,8 @@ import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.ImageSetLink;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.ParametersInfoProcessor;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

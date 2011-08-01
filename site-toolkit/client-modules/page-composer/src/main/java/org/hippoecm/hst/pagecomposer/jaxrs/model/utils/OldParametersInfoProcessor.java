@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.model;
+package org.hippoecm.hst.pagecomposer.jaxrs.model.utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
 
 /**
  * Process the (deprecated) old-style parameter annotations in the package org.hippoecm.hst.components.
@@ -32,9 +34,9 @@ import org.hippoecm.hst.configuration.components.ParametersInfo;
  * @deprecated
  */
 @Deprecated
-class OldParametersInfoProcessor {
+public class OldParametersInfoProcessor {
 
-    static List<Property> getProperties(ParametersInfo parameterInfo) {
+    public static List<Property> getProperties(ParametersInfo parameterInfo) {
         List<Property> properties = new ArrayList<Property>();
 
         final Class classType = parameterInfo.type();
@@ -45,7 +47,7 @@ class OldParametersInfoProcessor {
         for (Method method : parameterInfo.type().getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                Property prop = new Property();
+                Property prop =  new ComponentWrapper.Property();
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());

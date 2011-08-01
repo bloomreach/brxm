@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.model;
+package org.hippoecm.hst.pagecomposer.jaxrs.model.utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,6 +25,9 @@ import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.ParameterType;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
 
 public class ParametersInfoProcessor {
 
@@ -39,7 +42,7 @@ public class ParametersInfoProcessor {
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                final Property prop = new Property();
+                final Property prop = new ComponentWrapper.Property();
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());
