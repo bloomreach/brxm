@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -37,29 +38,48 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
     private final String key;
     private final Locale locale;
     private final String style;
+    private final Object[] parameters;
 
     public ClassResourceModel(String key, Class<?> clazz) {
-        this(key, clazz, Session.get().getLocale(), Session.get().getStyle());
+        this(key, clazz, null);
+    }
+    
+    public ClassResourceModel(String key, Class<?> clazz, Object[] parameters) {
+        this(key, clazz, Session.get().getLocale(), Session.get().getStyle(), parameters);
     }
 
     public ClassResourceModel(String key, Class<?> clazz, Locale locale, String style) {
+        this(key, clazz, locale, style, null);
+    }
+    
+    public ClassResourceModel(String key, Class<?> clazz, Locale locale, String style, Object[] parameters) {
         this.clazz = clazz;
         this.key = key;
         this.locale = locale;
         this.style = style;
+        this.parameters = parameters;
     } 
     
     @Override
     protected String load() {
         Iterator<IStringResourceLoader> iter = Application.get().getResourceSettings().getStringResourceLoaders()
                 .iterator();
+        String value = null;
         while (iter.hasNext()) {
             IStringResourceLoader loader = iter.next();
-            String value = loader.loadStringResource(clazz, key, locale, style);
+            value = loader.loadStringResource(clazz, key, locale, style);
             if (value != null) {
-                return value;
+                break;
             }
         }
+        if (value != null) {
+            if (parameters != null) {
+                final MessageFormat format = new MessageFormat(value, locale);
+                value = format.format(parameters);
+            }
+            return value;
+        }
+        
         if (Application.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
             throw new RuntimeException("No translation found for " + this);
         } else {
