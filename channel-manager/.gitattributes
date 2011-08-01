@@ -21,6 +21,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DropDownListWidget.html -text
