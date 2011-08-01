@@ -34,7 +34,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         };
 
         this.pageModelFacade = null;
-        this.previewMode = false;
 
         this.initUI(config);
 
@@ -65,12 +64,22 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
+                            text: 'Preview',
+                            iconCls: 'title-button',
+                            id: 'pagePreviewButton',
+                            enableToggle: true,
+                            toggleGroup : 'composerMode',
+                            pressed: config.previewMode,
+                            allowDepress: false,
+                            width: 150
+                        },
+                        {
                             text: 'Edit',
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
                             enableToggle: true,
                             toggleGroup : 'composerMode',
-                            pressed: !this.previewMode,
+                            pressed: !config.previewMode,
                             allowDepress: false,
                             width: 150,
                             listeners: {
@@ -79,16 +88,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                                     scope: this
                                 }
                             }
-                        },
-                        {
-                            text: 'Preview',
-                            iconCls: 'title-button',
-                            id: 'pagePreviewButton',
-                            enableToggle: true,
-                            toggleGroup : 'composerMode',
-                            pressed: this.previewMode,
-                            allowDepress: false,
-                            width: 150
                         }
                     ],
                     listeners: {
@@ -223,6 +222,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     onIframeDOMReady : function(frm) {
         if (!this.previewMode && !Ext.Msg.isVisible()) {
             Ext.Msg.wait('Loading...');
+        }
+        if (this.previewMode) {
+            Ext.Msg.hide();
         }
         this.frm = frm;
         this.iframeInitialized = false;

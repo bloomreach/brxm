@@ -55,12 +55,18 @@ public class PageEditor extends ExtComponent {
     @ExtProperty
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
+    @ExtProperty
+    public Boolean previewMode = true;
+
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
         this.composerMountUrl = config.getString("composerMountUrl", "/site");
         this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
+        if (config.get("previewMode") != null) {
+            this.previewMode = config.getBoolean("previewMode");
+        }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
