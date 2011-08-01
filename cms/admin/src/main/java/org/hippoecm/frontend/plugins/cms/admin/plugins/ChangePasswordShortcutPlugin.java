@@ -265,17 +265,24 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 .getString());
                 ok = false;
             } else {
-                try {
-                    List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, getUser());
-                    for (PasswordValidationStatus status : statuses) {
-                        if (!status.accepted()) {
-                            error(status.getMessage());
-                            ok = false;
+                if (passwordValidationService != null) {
+                    try {
+                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, getUser());
+                        for (PasswordValidationStatus status : statuses) {
+                            if (!status.accepted()) {
+                                error(status.getMessage());
+                                ok = false;
+                            }
                         }
                     }
+                    catch (RepositoryException e) {
+                        log.error("Failure validating password using password validation service", e);
+                        ok = false;
+                    }
                 }
-                catch (RepositoryException e) {
-                    log.error("Failure validating password using password validation service", e);
+                // fallback on pre 7.7 behavior
+                else if (newPassword.length() < 4) {
+                    error(new StringResourceModel("new-password-invalid", ChangePasswordShortcutPlugin.this, null).getString());
                     ok = false;
                 }
             }
