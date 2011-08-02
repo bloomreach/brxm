@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
 import java.util.regex.Pattern;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -32,16 +31,10 @@ public class ContainsNoNamePasswordValidator extends AbstractPasswordValidator i
     }
     
     @Override
-    protected boolean isValid(String password, Node user) throws RepositoryException {
-        String userName = user.getName();
-        String firstName = null;
-        if (user.hasProperty(User.PROP_FIRSTNAME)) {
-            firstName = user.getProperty(User.PROP_FIRSTNAME).getString();
-        }
-        String lastName = null;
-        if (user.hasProperty(User.PROP_LASTNAME)) {
-            lastName = user.getProperty(User.PROP_LASTNAME).getString();
-        }
+    protected boolean isValid(String password, User user) throws RepositoryException {
+        String userName = user.getUsername();
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
         
         boolean valid = true;
         if (userName.length() > 2) {

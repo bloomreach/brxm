@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 
@@ -37,7 +37,7 @@ public abstract class AbstractPasswordValidator implements IPasswordValidator {
     }
     
     @Override
-    public PasswordValidationStatus checkPassword(String password, Node user) throws RepositoryException {
+    public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException {
         PasswordValidationStatus result = null;
         if (isValid(password, user)) {
             result = new PasswordValidationStatus(null, true);
@@ -62,6 +62,6 @@ public abstract class AbstractPasswordValidator implements IPasswordValidator {
         return null;
     }
 
-    protected abstract boolean isValid(String password, Node user) throws RepositoryException;
+    protected abstract boolean isValid(String password, User user) throws RepositoryException;
 
 }

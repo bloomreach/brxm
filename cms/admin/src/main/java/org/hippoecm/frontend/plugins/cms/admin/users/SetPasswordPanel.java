@@ -31,6 +31,7 @@ import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.session.UserSession;
@@ -49,7 +50,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
     private String checkPassword;
     
 
-    public SetPasswordPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+    public SetPasswordPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel model, final IPluginContext context) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
         
@@ -63,7 +64,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
 
         final PasswordTextField passwordField = new PasswordTextField("password", new PropertyModel(this, "password"));
         passwordField.setResetPassword(false);
-        passwordField.add(new PasswordStrengthValidator());
+        passwordField.add(new PasswordStrengthValidator(form, context, model));
         form.add(passwordField);
 
         final PasswordTextField passwordCheckField = new PasswordTextField("password-check", new PropertyModel(this, "checkPassword"));

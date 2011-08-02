@@ -17,13 +17,13 @@ package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public interface IPasswordValidationService extends IClusterable {
 
-    public List<PasswordValidationStatus> checkPassword(String password, Node user) throws RepositoryException;
+    public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException;
     
 }

@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +71,9 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             		"optional password validators. This way, no attempt at creating a new password can succeed.");
         }
     }
-    
+
     @Override
-    public List<PasswordValidationStatus> checkPassword(String password, Node user) throws RepositoryException {
+    public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException {
         List<PasswordValidationStatus> result = new ArrayList<PasswordValidationStatus>(validators.size());
         int strength = 0;
         List<String> optionalValidatorDescriptions = new ArrayList<String>(validators.size());

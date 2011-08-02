@@ -17,12 +17,13 @@ package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
 import java.io.Serializable;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public interface IPasswordValidator extends Serializable {
     
-    public PasswordValidationStatus checkPassword(String password, Node user) throws RepositoryException;
+    public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException;
     
     public boolean isOptional();
     

@@ -37,6 +37,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
@@ -59,7 +60,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
     private DetachableUser userModel = new DetachableUser();
 
-    public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
+    public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
@@ -88,7 +89,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
         final PasswordTextField passwordField = new PasswordTextField("password", new PropertyModel(this, "password"));
         passwordField.setResetPassword(false);
-        passwordField.add(new PasswordStrengthValidator());
+        passwordField.add(new PasswordStrengthValidator(form, context, userModel));
         form.add(passwordField);
 
         final PasswordTextField passwordCheckField = new PasswordTextField("password-check", new PropertyModel(this, "passwordCheck"));

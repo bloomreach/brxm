@@ -64,6 +64,10 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-48.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_fr.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text

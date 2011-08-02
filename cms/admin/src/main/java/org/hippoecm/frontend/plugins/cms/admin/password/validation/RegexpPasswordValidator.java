@@ -17,9 +17,8 @@ package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
 import java.util.regex.Pattern;
 
-import javax.jcr.Node;
-
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public class RegexpPasswordValidator extends AbstractPasswordValidator implements IPasswordValidator {
 
@@ -42,7 +41,7 @@ public class RegexpPasswordValidator extends AbstractPasswordValidator implement
     }
     
     @Override
-    protected boolean isValid(String password, Node user) {
+    protected boolean isValid(String password, User user) {
         return pattern.matcher(password).find();
     }
 

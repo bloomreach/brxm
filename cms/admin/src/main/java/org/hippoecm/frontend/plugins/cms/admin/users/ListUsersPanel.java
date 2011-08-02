@@ -61,7 +61,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
         add(new PanelPluginBreadCrumbLink("create-user", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new CreateUserPanel(componentId, breadCrumbModel);
+                return new CreateUserPanel(componentId, breadCrumbModel, context);
             }
         });
         

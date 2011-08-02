@@ -15,20 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.PasswordHelper;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public class IsNoPreviousPasswordValidator extends AbstractPasswordValidator {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(IsNoPreviousPasswordValidator.class);
 
     private int numberOfPreviousPasswords;
     
@@ -38,21 +32,8 @@ public class IsNoPreviousPasswordValidator extends AbstractPasswordValidator {
     }
 
     @Override
-    protected boolean isValid(String password, Node user) throws RepositoryException {
-        if (user.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
-            Value[] previousPasswords = user.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
-            for (int i = 0; i < previousPasswords.length && i < numberOfPreviousPasswords; i++) {
-                try {
-                    if (PasswordHelper.checkHash(password.toCharArray(), previousPasswords[i].getString())) {
-                        return false;
-                    }
-                }
-                catch (Exception e) {
-                    log.error("Error while checking if password was previously used", e);
-                }
-            }
-        }
-        return true;
+    protected boolean isValid(String password, User user) throws RepositoryException {
+        return !user.isPreviousPassword(password.toCharArray(), numberOfPreviousPasswords);
     }
 
     protected Object[] getDescriptionParameters() {

@@ -114,7 +114,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         PanelPluginBreadCrumbLink password = new PanelPluginBreadCrumbLink("set-user-password", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new SetPasswordPanel(componentId, breadCrumbModel, model);
+                return new SetPasswordPanel(componentId, breadCrumbModel, model, context);
             }
         };
         password.setVisible(!user.isExternal());

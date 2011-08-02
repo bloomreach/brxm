@@ -15,9 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
-import javax.jcr.Node;
-
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public class MinimalLengthPasswordValidator extends AbstractPasswordValidator implements IPasswordValidator {
 
@@ -31,7 +30,7 @@ public class MinimalLengthPasswordValidator extends AbstractPasswordValidator im
     }
 
     @Override
-    protected boolean isValid(String password, Node user) {
+    protected boolean isValid(String password, User user) {
         return password.length() >= minimallength;
     }
     

@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -374,6 +375,49 @@ public class User implements Comparable<User>, IClusterable {
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
         
         node.getSession().save();
+    }
+    
+    public boolean checkPassword(char[] password) {
+        try {
+            return PasswordHelper.checkHash(password, node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString());
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Unknown algorith for password", e);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Unsupported encoding for password", e);
+        } catch (RepositoryException e) {
+            log.error("Error while checking user password", e);
+        }
+        return false;
+    }
+    
+    public boolean isPreviousPassword(char[] password, int numberOfPreviousPasswords) throws RepositoryException {
+        // is current password?
+        if (node != null && node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
+            String currentPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+            try {
+                if (PasswordHelper.checkHash(password, currentPassword)) {
+                    return true;
+                }
+            }
+            catch (Exception e) {
+                log.error("Error while checking if password was previously used", e);
+            }
+        }
+        // is previous password?
+        if (node != null && node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
+            Value[] previousPasswords = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
+            for (int i = 0; i < previousPasswords.length && i < numberOfPreviousPasswords; i++) {
+                try {
+                    if (PasswordHelper.checkHash(password, previousPasswords[i].getString())) {
+                        return true;
+                    }
+                }
+                catch (Exception e) {
+                    log.error("Error while checking if password was previously used", e);
+                }
+            }
+        }
+        return false;
     }
 
     //--------------------- default object -------------------//

@@ -25,7 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -34,7 +33,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -45,6 +43,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -130,7 +129,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      */
     private boolean canChangePassword() {
         try {
-            return !getUser().getPrimaryNodeType().getName().equals(HippoNodeType.NT_EXTERNALUSER);
+            return !getUser().isExternal();
         } catch (RepositoryException e) {
             log.error("Error while checking primary type", e);
             return false;
@@ -143,11 +142,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      */
     private boolean checkPassword(char[] password) {
         try {
-            return PasswordHelper.checkHash(password, getUser().getProperty(HippoNodeType.HIPPO_PASSWORD).getString());
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Unknown algorith for password", e);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unsupported encoding for password", e);
+            return getUser().checkPassword(password);
         } catch (RepositoryException e) {
             log.error("Error while checking user password", e);
         }
@@ -161,34 +156,10 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      */
     private boolean setPassword(char[] password) {
         try {
-            // remember the old password
-            String oldPassword = getUser().getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
-            Value[] newValues = null;
-            if (getUser().hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
-                Value[] oldValues = getUser().getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
-                newValues = new Value[oldValues.length+1];
-                System.arraycopy(oldValues, 0, newValues, 1, oldValues.length);
-            }
-            else {
-                newValues = new Value[1];
-            }
-            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
-            getUser().setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
-            // set the new password
-            getUser().setProperty(HippoNodeType.HIPPO_PASSWORD, PasswordHelper.getHash(password));
-            getUser().save();
+            getUser().savePassword(new String(password));
             return true;
         } catch (RepositoryException e) {
             log.error("Error while setting user password", e);
-            try {
-                getUser().refresh(false);
-            } catch (RepositoryException e1) {
-                log.warn("Error while trying to refresh the user node after a failed save", e);
-            }
-        } catch (IOException e) {
-            log.error("IOError while setting user password", e);
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Unknown algorith for password", e);
         }
         return false;
     }
@@ -217,12 +188,12 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         this.checkPassword = checkPassword;
     }
 
-    private Node getUser() throws RepositoryException {
+    private User getUser() throws RepositoryException {
         Node user = userModel.getNode();
         if (user == null) {
             throw new ItemNotFoundException();
         }
-        return user;
+        return new User(user);
     }
 
     public class Dialog extends AbstractDialog {
@@ -237,6 +208,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
 
             replace(feedback = new FeedbackPanel("feedback"));
+            // FIXME: [UH] Why set output markup id?
             feedback.setOutputMarkupId(true);
 
             currentWidget = new PasswordWidget("current-password", new PropertyModel(ChangePasswordShortcutPlugin.this,
