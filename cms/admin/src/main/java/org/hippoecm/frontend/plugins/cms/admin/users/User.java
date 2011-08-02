@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -59,6 +61,7 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_PASSKEY = HippoNodeType.HIPPO_PASSKEY;
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
     public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
+    public static final String PROP_PASSWORDLASTMODIFIED = HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
 
     private final static String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
@@ -73,6 +76,7 @@ public class User implements Comparable<User>, IClusterable {
     private String lastName;
     private String email;
     private String provider;
+    private Calendar passwordLastModified;
 
     private Map<String, String> properties = new TreeMap<String, String>();
     private transient List<DetachableGroup> externalMemberships;
@@ -193,6 +197,10 @@ public class User implements Comparable<User>, IClusterable {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public Calendar getPasswordLastModified() {
+        return passwordLastModified;
+    }
 
     //----------------------- constructors ---------//
     public User() {
@@ -227,6 +235,8 @@ public class User implements Comparable<User>, IClusterable {
                 continue;
             } else if (name.equals(PROP_PROVIDER)) {
                 provider = p.getString();
+            } else if (name.equals(PROP_PASSWORDLASTMODIFIED)) {
+                passwordLastModified = p.getDate();
             } else {
                 properties.put(name, p.getString());
             }
@@ -370,6 +380,9 @@ public class User implements Comparable<User>, IClusterable {
             newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
             node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
         }
+        
+        // set password last changed date
+        node.setProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED, Calendar.getInstance());
         
         // set new password
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));

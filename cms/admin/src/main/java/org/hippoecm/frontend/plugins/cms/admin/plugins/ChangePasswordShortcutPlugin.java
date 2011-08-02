@@ -15,16 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.plugins;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -47,7 +43,6 @@ import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;

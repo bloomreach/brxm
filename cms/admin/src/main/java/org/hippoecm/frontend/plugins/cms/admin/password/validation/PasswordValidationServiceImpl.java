@@ -35,10 +35,14 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PasswordValidationServiceImpl.class);
     
+    private static final long THREEDAYS = 1000 * 3600 * 24 * 3;
+    
     private List<IPasswordValidator> validators;
     
     // number of optional validators that should pass
     private int requiredStrength;
+    private long maxAge;
+    private long notificationPeriod;
 
     public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,6 +74,8 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             log.error("The value of the property password.strength is larger than the number of available " +
             		"optional password validators. This way, no attempt at creating a new password can succeed.");
         }
+        maxAge = getPluginConfig().getLong("password.maxage", -1l);
+        notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
     }
 
     @Override
@@ -99,5 +105,29 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         }
         return result;
     }
+    
+    public boolean isPasswordExpired(User user) {
+        // -1 means no max age
+        if (maxAge != -1l) {
+            long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
+            if (passwordLastModified + maxAge > System.currentTimeMillis()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public boolean isPasswordAboutToExpire(User user) {
+        // -1 means no max age
+        if (maxAge != -1l) {
+            // -1 means no notification
+            if (notificationPeriod != -1l) {
+                long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
+                if (passwordLastModified + maxAge > System.currentTimeMillis() - notificationPeriod) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
