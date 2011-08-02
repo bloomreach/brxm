@@ -195,9 +195,9 @@ public class Names implements IClusterable {
         counts = new int[size];
         sums = new int[size / 27];
 
-        String prefix = "";
+        StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < width - 1; i++) {
-            prefix += MARKER;
+            prefix.append(MARKER);
         }
 
         Iterator<String> iter = names.iterator();
@@ -205,7 +205,7 @@ public class Names implements IClusterable {
             String name = iter.next();
 
             // prepend N-1 markers to the front, and append one marker to the end
-            name = prefix + name + MARKER;
+            name = prefix.toString() + name + MARKER;
 
             // compile tuples from name
             int len = name.length();
