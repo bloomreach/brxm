@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin.BaseConfiguration;
@@ -70,32 +71,44 @@ public class JsonParser {
             translationPrefix = "";
         }
 
-        String ret = "";
+        final StringBuilder result = new StringBuilder();
+        result.append('{');
+        boolean appended = false;
+
         if (addLabel) {
-            String value = "'"
-                    + new StringResourceModel(translationPrefix + "identifier", component, null)
-                            .getString() + "'";
+            final String value = new StringResourceModel(translationPrefix + "identifier", component, null).getString();
+
             if (reversed) {
-                ret += value + " : ''";
+                append(result, value, StringUtils.EMPTY);
             } else {
-                ret += "'' : " + value;
+                append(result, StringUtils.EMPTY, value);
             }
+            appended = true;
         }
-        for (String key : keys) {
-            if (ret.length() > 0) {
-                ret += ", ";
+        for (final String key : keys) {
+            if (appended) {
+                result.append(", ");
             }
-            String value = "'"
-                    + new StringResourceModel(translationPrefix + key, component, null).getString()
-                    + "'";
-            key = "'" + key + "'";
+            final String value = new StringResourceModel(translationPrefix + key, component, null).getString();
             if (reversed) {
-                ret += value + " : " + key;
+                append(result, value, key);
             } else {
-                ret += key + " : " + value;
+                append(result, key, value);
             }
+            appended = true;
         }
-        return "{" + ret + "}";
+
+        result.append('}');
+
+        return result.toString();
+    }
+
+    private static void append(StringBuilder s, String key, String value) {
+        s.append("'");
+        s.append(key);
+        s.append("' : '");
+        s.append(value);
+        s.append("'");
     }
 
     /**
@@ -104,14 +117,24 @@ public class JsonParser {
      * Example: [{key: 'id', value: 'myId'}, {key: 'index', value: 1}]  
      */
     public static String asKeyValueArray(Map<String, String> properties) {
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
+        ret.append('[');
+        boolean appended = false;
+
         for (String key : properties.keySet()) {
-            if (ret.length() > 0) {
-                ret += ", ";
+            if (appended) {
+                ret.append(", ");
             }
-            ret += "{ key : '" + key + "', value : " + serialize2JS(properties.get(key)) + "}";
+            ret.append("{ key : '");
+            ret.append(key);
+            ret.append("', value : ");
+            ret.append(serialize2JS(properties.get(key)));
+            ret.append("}");
+            appended = true;
         }
-        return "[" + ret + "]";
+
+        ret.append(']');
+        return ret.toString();
     }
 
     /**
@@ -120,17 +143,17 @@ public class JsonParser {
      * Example: ['foo', 'bar', true, 1]
      */
     public static String asArray(List<String> list) {
-        String val = "  [\n";
+        StringBuilder val = new StringBuilder("  [\n");
         for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
-            val += "    ";
-            val += serialize2JS(iter.next());
+            val.append("    ");
+            val.append(serialize2JS(iter.next()));
             if (iter.hasNext()) {
-                val += ",";
+                val.append(',');
             }
-            val += "\n";
+            val.append('\n');
         }
-        val += "  ]";
-        return val;
+        val.append("  ]");
+        return val.toString();
     }
 
     /**
@@ -139,17 +162,17 @@ public class JsonParser {
      * Example: ['config1', 'config2']
      */
     public static String asArray(Set<? extends BaseConfiguration> configs) {
-        String val = "  [\n";
+        StringBuilder val = new StringBuilder("  [\n");
         for (Iterator<? extends BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
-            val += "    ";
-            val += serialize2JS(iter.next().getName());
+            val.append("    ");
+            val.append(serialize2JS(iter.next().getName()));
             if (iter.hasNext()) {
-                val += ",";
+                val.append(',');
             }
-            val += "\n";
+            val.append('\n');
         }
-        val += "  ]";
-        return val;
+        val.append("  ]");
+        return val.toString();
     }
 
     /**

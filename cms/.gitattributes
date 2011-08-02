@@ -2331,6 +2331,9 @@ xinha-integration/src/site/apt/index.apt -text
 xinha-integration/src/site/site.xml svneol=native#text/plain
 xinha-integration/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain
 xinha-integration/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
+xinha-integration/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTest.java -text
+xinha-integration/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.java -text
+xinha-integration/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.properties -text
 xinha-integration/src/test/resources/xinhatest.cnd -text
 xinha-resources/pom.xml svneol=native#text/plain
 xinha-resources/src/main/patches/bugfix/CMS7-5277.patch -text
