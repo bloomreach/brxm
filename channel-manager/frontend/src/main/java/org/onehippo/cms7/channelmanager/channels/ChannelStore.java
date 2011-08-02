@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.plugins.frontend.HstEditorConfigurationUtil;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
@@ -188,15 +190,23 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private Map<String, Channel> getChannels() {
         if (channels == null) {
-            ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-            if (channelManager != null) {
-                try {
-                    channels = channelManager.getChannels();
-                } catch (ChannelException e) {
-                    throw new RuntimeException("Unable to get the channels from Channel Manager", e);
-                }
-            } else {
-                throw new RuntimeException("Unable to get the channels from Channel Manager");
+            // reload channels
+            ComponentManager componentManager = HstServices.getComponentManager();
+            if (componentManager == null) {
+                log.warn("Cannot retrieve channels: HST component manager could not be loaded. Is the site running?");
+                return Collections.emptyMap();
+            }
+
+            ChannelManager channelManager = componentManager.getComponent(ChannelManager.class.getName());
+            if (channelManager == null) {
+                log.error("Cannot retrieve channels: component '{}' not found", ChannelManager.class.getName());
+                return Collections.emptyMap();
+            }
+            try {
+                channels = channelManager.getChannels();
+            } catch (ChannelException e) {
+                log.error("Failed to retrieve channels", e);
+                return Collections.emptyMap();
             }
         }
         return channels;

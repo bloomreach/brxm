@@ -202,10 +202,14 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             @Override
             protected void onClick(final AjaxRequestTarget target) {
                 super.onClick(target);
-                ChannelManagerPerspective channelManagerPerspective = findParent(ChannelManagerPerspective.class);
-                IPluginContext context = channelManagerPerspective.getPluginContext();
-                TemplateComposerPerspective templateComposerPerspective = context.getService(TemplateComposerPerspective.TC_PERSPECTIVE_SERVICE, TemplateComposerPerspective.class);
-                templateComposerPerspective.focus(target, channel.getHostname(), channel.getSubMountPath());
+                if (channel != null) {
+                    ChannelManagerPerspective channelManagerPerspective = findParent(ChannelManagerPerspective.class);
+                    IPluginContext context = channelManagerPerspective.getPluginContext();
+                    TemplateComposerPerspective templateComposerPerspective = context.getService(TemplateComposerPerspective.TC_PERSPECTIVE_SERVICE, TemplateComposerPerspective.class);
+                    templateComposerPerspective.focus(target, channel.getHostname(), channel.getSubMountPath());
+                } else {
+                    log.warn("Cannot open channel: no channel has been selected");
+                }
             }
         });
 

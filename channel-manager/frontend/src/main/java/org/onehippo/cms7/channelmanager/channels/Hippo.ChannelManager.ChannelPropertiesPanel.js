@@ -24,6 +24,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
     constructor: function(config) {
         var self = this;
 
+        this.channelId = null;
         this.resources = config.resources;
 
         Ext.apply(config, {
@@ -45,18 +46,32 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
     },
 
+    initComponent: function() {
+        Hippo.ChannelManager.ChannelPropertiesPanel.superclass.initComponent.apply(this, arguments);
+
+        this.on('beforeexpand', function(self, animate) {
+            return this.channelId != null;
+        }, this);
+    },
+
     showPanel: function(channelId, channelName) {
-        this.expand();
+        this.channelId = channelId;
 
         if (channelName) {
             this.setTitle(channelName);
         }
 
+        this.expand();
         this.fireEvent('selectchannel', channelId);
     },
 
     hidePanel: function() {
         this.collapse();
+    },
+
+    closePanel: function() {
+        this.channelId = null;
+        this.hidePanel();
     },
 
     isShown: function() {

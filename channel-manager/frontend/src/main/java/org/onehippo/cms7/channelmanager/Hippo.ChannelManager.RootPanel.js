@@ -75,6 +75,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                 this.propertiesPanel.hidePanel();
             } else {
                 this.gridPanel.selectRow(-1);
+                this.propertiesPanel.closePanel();
             }
         }, this);
     }
