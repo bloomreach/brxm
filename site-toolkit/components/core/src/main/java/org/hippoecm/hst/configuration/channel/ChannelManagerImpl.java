@@ -48,19 +48,21 @@ import org.slf4j.LoggerFactory;
 
 public class ChannelManagerImpl implements ChannelManager {
 
+    private static final String DEFAULT_HOST_GROUP = "dev-localhost";
+    private static final String DEFAULT_HST_ROOT_PATH = "/hst:hst";
+    private static final String DEFAULT_HST_SITES = "hst:sites";
+
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
-    private String rootPath = "/hst:hst";
+    private String rootPath = DEFAULT_HST_ROOT_PATH;
+    private String hostGroup = DEFAULT_HOST_GROUP;
+    private String sites = DEFAULT_HST_SITES;
 
     private int lastChannelId;
     private Map<String, BlueprintService> blueprints;
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
-
-    private String hostGroup = "dev-localhost";
-
-    private String sites = "hst:sites";
 
     public ChannelManagerImpl() {
     }
