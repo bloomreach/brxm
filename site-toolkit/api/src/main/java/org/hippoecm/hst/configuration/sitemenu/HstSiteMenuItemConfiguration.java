@@ -31,6 +31,13 @@ public interface HstSiteMenuItemConfiguration {
     String getName();
     
     /**
+     * The refid of sitemapitem pointing to a sitemap item.
+     * This cannot point to a sitemap item including wildcards.
+     * @return The refid of sitemapitem that should be able to resolve the link for this sitemenu configuration item
+     */
+    String getSiteMapItemRefId();
+    
+    /**
      * The sitemapitem path can point to a sitemap item that contains wildcards. The sitemapitem path can be for example 'news/2009/may', and
      * the sitemap item which is resolved as the link to this sitemenu item might be 'news/'*'/'*'' 
      * @return the sitemap path that should be able to resolve the link for this sitemenu configuration item

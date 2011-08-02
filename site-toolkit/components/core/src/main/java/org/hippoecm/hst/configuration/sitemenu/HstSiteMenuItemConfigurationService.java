@@ -40,6 +40,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private String name;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
+    private String siteMapItemRefId;
     private String externalLink;
     private int depth;
     private boolean repositoryBased;
@@ -52,18 +53,26 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
         
         this.name = StringPool.get(siteMenuItem.getValueProvider().getName());
-        if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
+        
+        if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
             this.externalLink = StringPool.get(siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK));
-        }else if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
-           // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
-           this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
-           if(siteMapItemPath != null && siteMapItemPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
-                 if(parent == null || parent.getSiteMapItemPath() == null) {
-                     log.error("Cannot use '{}' for a sitemenu item that does not have a parent or a parent without sitemap item path. Used for: '{}'", PARENT_PROPERTY_PLACEHOLDER, name);
-                 } else {
-                     siteMapItemPath = siteMapItemPath.replace(PARENT_PROPERTY_PLACEHOLDER, parent.getSiteMapItemPath());
-                 }
-           }
+        } else if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFID_TO_SITEMAPITEM)) {
+            siteMapItemRefId = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFID_TO_SITEMAPITEM);
+            
+            if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
+                log.warn("The sitemenuitem, '{}' on '{}', is not allowed to have both hst:refidsitemapitem and hst:referencesitemapitem. hst:refidsitemapitem will be used.", name, siteMenuItem.getValueProvider().getPath());
+            }
+        } else if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
+            // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
+            this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
+            
+            if (siteMapItemPath != null && siteMapItemPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
+                if (parent == null || parent.getSiteMapItemPath() == null) {
+                    log.error("Cannot use '{}' for a sitemenu item that does not have a parent or a parent without sitemap item path. Used for: '{}'", PARENT_PROPERTY_PLACEHOLDER, name);
+                } else {
+                    siteMapItemPath = siteMapItemPath.replace(PARENT_PROPERTY_PLACEHOLDER, parent.getSiteMapItemPath());
+                }
+            }
         } else {
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }
@@ -130,6 +139,10 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     public HstSiteMenuConfiguration getHstSiteMenuConfiguration() {
         return this.hstSiteMenuConfiguration;
+    }
+    
+    public String getSiteMapItemRefId() {
+        return this.siteMapItemRefId;
     }
 
     public String getSiteMapItemPath() {

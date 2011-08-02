@@ -22,15 +22,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.util.HstSiteMapUtils;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenuItem {
+    
+    private static Logger log = LoggerFactory.getLogger(HstSiteMenuItemImpl.class);
 
     private HstSiteMenu hstSiteMenu;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
@@ -38,6 +44,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     private HstLinkCreator linkCreator;
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration;
+    private String hstSiteMapItemRefId;
     private String hstSiteMapItemPath;
     private String externalLink;
     private Mount mount;
@@ -47,6 +54,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
         this.hstSiteMenuItemConfiguration = hstSiteMenuItemConfiguration;
+        this.hstSiteMapItemRefId = hstSiteMenuItemConfiguration.getSiteMapItemRefId();
         this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.externalLink = hstSiteMenuItemConfiguration.getExternalLink();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
@@ -61,19 +69,31 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         resolvedSiteMapItem = hstRequestContext.getResolvedSiteMapItem();
         
         String currentPathInfo = resolvedSiteMapItem.getPathInfo();
-        String siteMenuItemToMapPath = PathUtils.normalizePath(hstSiteMenuItemConfiguration.getSiteMapItemPath());
-       
-         if (siteMenuItemToMapPath != null && currentPathInfo != null) {
+        String siteMenuItemToMapPath = null;
+        
+        if (hstSiteMapItemRefId != null) {
+            HstSiteMapItem siteMapItem = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(hstSiteMapItemRefId);
+            if (siteMapItem == null) {
+                log.warn("Could not find HstSiteMapItem for siteMapItemRefId '{}' and mount '{}'. Cannot determine siteMenuItemToMapPath", hstSiteMapItemRefId, mount.getName());
+            } else {
+                siteMenuItemToMapPath = HstSiteMapUtils.getPath(siteMapItem);
+            }
+        } else {
+            siteMenuItemToMapPath = PathUtils.normalizePath(hstSiteMapItemPath);
+        }
+        
+        if (siteMenuItemToMapPath != null && currentPathInfo != null) {
             
-             if (siteMenuItemToMapPath.equals(currentPathInfo)) {
+            if (siteMenuItemToMapPath.equals(currentPathInfo)) {
                 // the current HstSiteMenuItem is selected. Set it to selected, and also set all the ancestors selected
                 this.selected = true;
                 ((HstSiteMenuImpl)hstSiteMenu).setSelectedSiteMenuItem(this);
-             }
+            }
              
-             if(currentPathInfo.startsWith(siteMenuItemToMapPath)) {
+            if(currentPathInfo.startsWith(siteMenuItemToMapPath)) {
                 // check if the match was until a slash, otherwise it is not a sitemenu item we want to expand
                 String sub = currentPathInfo.substring(siteMenuItemToMapPath.length());
+                
                 if("".equals(sub) || sub.startsWith("/")) {
                     // not selected but expand all ancestors
                     this.expanded = true;
@@ -92,12 +112,14 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         return hstSiteMenuItems;
     }
 
-    // laze loaded
     public HstLink getHstLink() {
-        if(hstSiteMapItemPath == null) {
-            return null;
+        if (hstSiteMapItemRefId != null) {
+            return linkCreator.createByRefId(hstSiteMapItemRefId, mount);
+        } else if (hstSiteMapItemPath != null) {
+            return linkCreator.create(hstSiteMapItemPath, mount);
         }
-        return linkCreator.create(hstSiteMapItemPath, mount);
+        
+        return null;
     }
     
     public String getExternalLink() {

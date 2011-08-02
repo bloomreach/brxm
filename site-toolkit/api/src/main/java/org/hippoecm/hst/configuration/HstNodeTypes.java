@@ -89,6 +89,7 @@ public interface HstNodeTypes {
     public final static String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
 
     public final static String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
+    public final static String SITEMENUITEM_PROPERTY_REFID_TO_SITEMAPITEM = "hst:refidsitemapitem";
     public final static String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";
     public final static String SITEMENUITEM_PROPERTY_FOLDERSONLY =  "hst:foldersonly";
     public final static String SITEMENUITEM_PROPERTY_REPOBASED =  "hst:repobased";
