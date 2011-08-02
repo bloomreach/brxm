@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugins.console.menu;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -39,7 +37,6 @@ import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
