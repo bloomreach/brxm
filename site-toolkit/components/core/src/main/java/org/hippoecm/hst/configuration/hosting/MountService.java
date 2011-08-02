@@ -443,6 +443,14 @@ public class MountService implements Mount {
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
             channelId = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELID);
+
+            if (channelId != null) {
+                try {
+                    channelInfo = hstManager.getChannelManager().getChannelInfo(channelId);
+                } catch (ChannelException e) {
+                    log.error("Could not set channel info", e);
+                }
+            }
         }
         
         // check whether there are child Mounts now for this Mount
@@ -458,14 +466,6 @@ public class MountService implements Mount {
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect configured child mount for '"+childMount.getParent()+"'", e);
                 }
-            }
-        }
-
-        if (getChannelId() != null) {
-            try {
-                channelInfo = hstManager.getChannelManager().getChannelInfo(getChannelId());
-            } catch (ChannelException e) {
-                log.error("Could not set channel info", e);
             }
         }
 
