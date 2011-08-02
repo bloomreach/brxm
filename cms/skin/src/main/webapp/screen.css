@@ -1019,7 +1019,6 @@ body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-sin
   background-position: 10px 5px;
   padding-left: 70px;
   min-height: 35px;
-  height: 35px;
   padding-top: 8px;
 }
 
@@ -2085,7 +2084,6 @@ span.down-16 {
 
 li.feedbackPanelERROR {
   margin: 5px;
-  display: inline;
 }
 
 table.hippo-defaultcontent td {
