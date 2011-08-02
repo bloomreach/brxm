@@ -511,6 +511,10 @@ public interface HippoNodeType {
     /**
      * 
      */
+    final public static String HIPPO_PASSWORDLASTMODIFIED = "hipposys:passwordlastmodified";
+    /**
+     * 
+     */
     final public static String HIPPO_PATH = "hipposysedit:path";
     /**
      * 
