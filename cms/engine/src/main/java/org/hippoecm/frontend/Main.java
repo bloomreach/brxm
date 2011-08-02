@@ -16,7 +16,6 @@
 package org.hippoecm.frontend;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -30,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
-import javax.servlet.ServletContext;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
@@ -51,10 +49,6 @@ import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.lang.Bytes;
-import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.UrlResourceStream;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.UserCredentials;

@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.WicketAjaxReference;
