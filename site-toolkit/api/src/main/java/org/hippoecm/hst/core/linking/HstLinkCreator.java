@@ -198,13 +198,19 @@ public interface HstLinkCreator {
     HstLink create(HippoBean bean, HstRequestContext hstRequestContext);
    
     /**
+     * @deprecated use {@link #create(HstSiteMapItem, Mount)} instead
+     */
+    @Deprecated
+    HstLink create(HstSiteMapItem toHstSiteMapItem);
+    
+    /**
      * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument. This is only possible if the sitemap item does not
      * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 
      * If a wildcard is encountered, this method can return <code>null</code>, though this is up to the implementation
      * @param toHstSiteMapItem the {@link HstSiteMapItem} to link to
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
-    HstLink create(HstSiteMapItem toHstSiteMapItem);
+    HstLink create(HstSiteMapItem toHstSiteMapItem, Mount mount);
     
     /**
      * Regardless the current context, create a HstLink to the {@link HstSiteMapItem} for {@link Mount} <code>mount</code>  that has {@link HstSiteMapItem#getRefId()} equal to <code>siteMapItemRefId</code>. 

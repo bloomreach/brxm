@@ -96,8 +96,7 @@ public class ContactSpring extends BaseHstComponent {
     
     private void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
         HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
-        HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-        HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
+        HstLink link = linkCreator.createByRefId(redirectToSiteMapItemId, request.getRequestContext().getResolvedMount().getMount());
 
         StringBuffer url = new StringBuffer();
         

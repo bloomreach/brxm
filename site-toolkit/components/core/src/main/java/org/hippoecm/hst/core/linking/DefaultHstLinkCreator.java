@@ -192,9 +192,16 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), mount, containerResource));
     }
 
-
+    /**
+     * @deprecated use {@link #create(HstSiteMapItem, Mount)} instead
+     */
+    @Deprecated
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
         return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getMount()));
+    }
+    
+    public HstLink create(HstSiteMapItem toHstSiteMapItem, Mount mount) {
+        return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), mount));
     }
 
     public HstLink createByRefId(String siteMapItemRefId, Mount mount) {

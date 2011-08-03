@@ -53,6 +53,10 @@ public class HstSiteService implements HstSite {
     private String configurationPath;
     private LocationMapTree locationMapTree;
     
+    /**
+     * @deprecated the mount should not be an instance of hstSite any more
+     */
+    @Deprecated
     private Mount mount;
     
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
@@ -69,11 +73,11 @@ public class HstSiteService implements HstSite {
         if(configurationNode == null) {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
         }
-        init(configurationNode, hstManager);
+        init(configurationNode, mount, hstManager);
     }
  
      
-    private void init(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
+    private void init(HstNode configurationNode, Mount mount, HstManagerImpl hstManager) throws ServiceException {
        // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
       
        // the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
@@ -108,7 +112,7 @@ public class HstSiteService implements HstSite {
        if(siteMapNode == null) {
            throw new ServiceException("There is no sitemap configured");
        }
-       siteMapService = new HstSiteMapService(this, siteMapNode, siteMapItemHandlersConfigurationService); 
+       siteMapService = new HstSiteMapService(this, siteMapNode, mount, siteMapItemHandlersConfigurationService); 
        
        checkAndLogAccessibleRootComponents();
        
@@ -127,8 +131,12 @@ public class HstSiteService implements HstSite {
        
     }
 
-
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public Mount getMount(){
+        log.warn("getMount on HstSite is deprecated. Fetch the Mount from the HstRequestContext#getResolvedMount instead");
         return this.mount;
     }
 

@@ -119,7 +119,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String extension;
     private String prefix; 
     
-    public HstSiteMapItemService(HstNode node, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
         this.depth = depth;
@@ -234,7 +234,6 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
-            Mount mount = hstSiteMap.getSite().getMount();
             siteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
         }
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
@@ -255,7 +254,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if(this.parentItem != null){
             this.locale = parentItem.getLocale();
         } else {
-            this.locale = hstSiteMap.getSite().getMount().getLocale();
+            this.locale = mount.getLocale();
         }
         locale = StringPool.get(locale);
         
@@ -295,7 +294,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.namedPipeline = parentItem.getNamedPipeline();
         } else {
             // inherit the namedPipeline from the mount (can be null)
-            this.namedPipeline = this.getHstSiteMap().getSite().getMount().getNamedPipeline();
+            this.namedPipeline = mount.getNamedPipeline();
         }
         
         namedPipeline = StringPool.get(namedPipeline);
@@ -303,7 +302,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mount,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {

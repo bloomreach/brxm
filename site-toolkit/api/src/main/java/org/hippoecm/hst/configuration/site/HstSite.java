@@ -76,9 +76,12 @@ public interface HstSite {
      */
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 
+    
     /**
      * @return the {@link Mount} object through which this <code>hstSite</code> is accessible
+     * @deprecated Through the {@link HstRequestContext#getResolvedMount()#getMount()} the {@link Mount} should be accessed
      */
+    @Deprecated
     Mount getMount();
     
 }

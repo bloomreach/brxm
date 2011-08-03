@@ -60,8 +60,7 @@ public class SiteMapItemRedirectView extends RedirectView {
             
             if (resolvedSiteMapItemId != null) {
                 HstLinkCreator linkCreator = hstRequest.getRequestContext().getHstLinkCreator();
-                HstSiteMap siteMap = hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-                HstLink link = linkCreator.create(siteMap.getSiteMapItemById(resolvedSiteMapItemId));
+                HstLink link = linkCreator.createByRefId(resolvedSiteMapItemId, hstRequest.getRequestContext().getResolvedMount().getMount());
     
                 StringBuilder url = new StringBuilder();
                 

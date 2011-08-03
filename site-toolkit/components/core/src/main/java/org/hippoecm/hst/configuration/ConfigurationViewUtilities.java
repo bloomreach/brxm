@@ -37,7 +37,7 @@ public class ConfigurationViewUtilities {
         }
         buf.append("\n").append(indent).append("+Site: ").append(site.getName()).append(" (").append(site.hashCode()).append(")");
         indent = indent + SMALL_INDENT;
-        buf.append("\n").append(indent).append("-Content Path: ").append(site.getMount().getContentPath());
+        buf.append("\n").append(indent).append("-Identifier : ").append(site.getCanonicalIdentifier());
        
         view(buf, indent+SMALL_INDENT, site.getSiteMap()) ;
         
@@ -120,8 +120,5 @@ public class ConfigurationViewUtilities {
         }
     }
     
-//    private static void view(StringBuffer buf, String indent, ResolvedSiteMapItem resolvedSiteMapItem) {
-//        buf.append("\n\n **** TODO *** : String presentation of ResolvedSiteMapItem \n\n");
-//    }
 
 }
