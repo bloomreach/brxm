@@ -83,7 +83,7 @@
               <sv:value>site</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/hst:hst/hst:sites/demosite-live</sv:value>
+              <sv:value>/hst:hst/hst:sites/demosite</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountrest" sv:type="String">
               <sv:value>restapi</sv:value>
@@ -93,7 +93,7 @@
                 <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
-                <sv:value>/hst:hst/hst:sites/demosite_fr-live</sv:value>
+                <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
               </sv:property>
               <sv:property sv:name="hst:locale" sv:type="String">
                  <sv:value>fr_FR</sv:value>
@@ -339,7 +339,7 @@
               <sv:value>hst:mount</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/hst:hst/hst:sites/demosite-test-many-live</sv:value>
+              <sv:value>/hst:hst/hst:sites/demosite-test-many</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
