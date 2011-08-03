@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2009-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.jcr.query.QueryResult;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.feedback.FeedbackMessagesModel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
@@ -202,8 +203,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         public Dialog(final IPluginContext context, final IPluginConfig config) {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
 
-            replace(feedback = new FeedbackPanel("feedback"));
-            // FIXME: [UH] Why set output markup id?
+            replace(feedback = new FeedbackPanel("feedback") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected FeedbackMessagesModel newFeedbackMessagesModel() {
+                    return Dialog.this.getFeedbackMessagesModel();
+                }
+            });
             feedback.setOutputMarkupId(true);
 
             currentWidget = new PasswordWidget("current-password", new PropertyModel(ChangePasswordShortcutPlugin.this,
@@ -309,6 +315,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         public IValueMap getProperties() {
             return SMALL;
         }
+        
+        
     }
 
     public class CannotChangeDialog extends AbstractDialog {
