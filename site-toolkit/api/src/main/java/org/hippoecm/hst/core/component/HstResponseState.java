@@ -23,6 +23,7 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
 /**
@@ -115,6 +116,8 @@ public interface HstResponseState
     void setContentType(String type);
 
     void setLocale(Locale locale);
+
+    Comment createComment(String comment);
     
     Element createElement(String tagName);
 
@@ -123,7 +126,9 @@ public interface HstResponseState
     List<Element> getHeadElements();
     
     boolean containsHeadElement(String keyHint);
-    
+
+    public void addPreambleNode(Comment comment);
+
     void setWrapperElement(Element element);
     
     Element getWrapperElement();

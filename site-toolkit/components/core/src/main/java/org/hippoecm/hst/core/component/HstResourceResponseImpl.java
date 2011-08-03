@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
 /**
@@ -34,7 +35,7 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     
     protected HstComponentWindow componentWindow;
     protected String serveResourcePath;
-    
+
     public HstResourceResponseImpl(HttpServletResponse response, HstComponentWindow componentWindow) {
         super(response);
         this.componentWindow = componentWindow;
@@ -46,6 +47,10 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
 
     public Element createElement(String tagName) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createElement().");
+    }
+
+    public Comment createComment(String comment) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createComment().");
     }
 
     public HstURL createRenderURL() {
@@ -118,6 +123,11 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
 
     public Element getWrapperElement() {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke getWrapperElement().");
+    }
+
+    @Override
+    public void addPreambleNode(final Comment comment) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke addPreambleNode().");
     }
 
     public void setWrapperElement(Element element) {

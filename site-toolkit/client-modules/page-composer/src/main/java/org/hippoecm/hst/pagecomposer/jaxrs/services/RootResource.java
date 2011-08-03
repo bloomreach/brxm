@@ -1,4 +1,4 @@
-/*
+    /*
  *  Copyright 2010 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,33 +19,59 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.pagecomposer.composer.ComposerInfoImpl;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 @Path("/rep:root/")
-public class KeepAliveResource extends AbstractConfigResource {
+public class RootResource extends AbstractConfigResource {
 
     @GET
     @Path("/keepalive/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response keepAlive(@Context HttpServletRequest servletRequest,
                               @Context HttpServletResponse servletResponse) {
-        
+
         HttpSession session = servletRequest.getSession(true);
-        
-        ComposerInfoImpl composerInfo = (ComposerInfoImpl)session.getAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME);
-        if(composerInfo == null) {
-            composerInfo = new ComposerInfoImpl();
-            session.setAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME, composerInfo);
-        }
-        
+
         return ok("Keepalive successful", null);
+    }
+
+    @POST
+    @Path("/composermode/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response composerMode(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        HttpSession session = servletRequest.getSession(false);
+        if (session == null) {
+            return error("Cannot set into composer mode, no httpSession");
+        }
+
+        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
+
+        return ok("Composer-Mode successful", null);
+    }
+
+    @POST
+    @Path("/previewmode/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response previewMode(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        HttpSession session = servletRequest.getSession(false);
+        if (session == null) {
+            return error("Cannot set into composer mode, no httpSession");
+        }
+
+        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
+
+        return ok("Preview-Mode successful", null);
     }
 
 }

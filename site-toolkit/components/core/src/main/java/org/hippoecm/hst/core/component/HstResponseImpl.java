@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
 /**
@@ -48,7 +49,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected Map<String, String []> renderParameters;
     protected HstResponse topParentHstResponse;
     protected String renderPath;
-    
+
     public HstResponseImpl(HttpServletRequest request, HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topParentHstResponse) {
         super(response);
         this.request = request;
@@ -308,6 +309,16 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         
         return element;
     }
+
+    public Comment createComment(String comment) {
+        Comment element = null;
+        if (this.topParentHstResponse != null) {
+            element = this.topParentHstResponse.createComment(comment);
+        } else {
+            element = this.responseState.createComment(comment);
+        }
+        return element;
+    }
     
     public void addHeadElement(Element element, String keyHint) {
         this.responseState.addHeadElement(element, keyHint);
@@ -328,7 +339,11 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         
         return contained;
     }
-    
+
+    public void addPreambleNode(Comment comment) {
+        responseState.addPreambleNode(comment);
+    }
+
     public void setWrapperElement(Element element) {
         responseState.setWrapperElement(element);
     }

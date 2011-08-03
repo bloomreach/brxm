@@ -68,7 +68,7 @@ public class HstServletResponseState extends AbstractHstResponseState
         {
             throw new DOMException((short) 0, "Initialization failure");
         }
-    }    
+    }
 
     protected void setResponseLocale(Locale locale) {
         this.response.setLocale(locale);

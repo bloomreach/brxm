@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.composer.ComposerInfo;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -38,7 +37,7 @@ import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
-import org.w3c.dom.Element;
+import org.w3c.dom.Comment;
 
 /**
  * AggregationValve
@@ -299,24 +298,23 @@ public class AggregationValve extends AbstractValve {
             HttpSession session = request.getSession(false);
             
             if(session != null ) {
-                ComposerInfo composerInfo = (ComposerInfo)session.getAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME);
-                if (composerInfo != null) {
+                Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
+                if (composerMode != null) {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
                     // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
                     if (window == rootWindow) {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
-                    } else if(composerInfo.isInComposerMode(mount.getIdentifier())) {
+                    } else if(Boolean.TRUE.equals(composerMode)) {
                         HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                        if(compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT ||
-                           compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
-                            Element el = response.createElement("div");
-                            el.setAttribute("class", "componentContentWrapper");
-                            el.setAttribute("hst:uuid", compConfig.getCanonicalIdentifier());
-                            el.setAttribute("hst:xtype", compConfig.getXType() == null ? "" : compConfig.getXType());
-                            el.setAttribute("hst:type", compConfig.getComponentType().toString());
-                            response.setWrapperElement(el);
+                        if (compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT ||
+                                compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
+                            // TODO replace by json marshaller
+                            Comment comment = response.createComment("{\"uuid\":\"" + compConfig.getCanonicalIdentifier() +
+                                    "\",\"xtype\":\"" + (compConfig.getXType() == null ? "" : compConfig.getXType()) +
+                                    "\",\"type\":\"" + compConfig.getComponentType().toString() + "\"}");
+                            response.addPreambleNode(comment);
                         }
                     }
                 } 

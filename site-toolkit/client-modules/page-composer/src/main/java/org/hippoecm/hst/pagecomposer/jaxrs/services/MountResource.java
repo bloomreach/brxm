@@ -26,7 +26,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -37,14 +36,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.composer.ComposerInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.composer.ComposerInfoImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
@@ -98,28 +94,6 @@ public class MountResource extends AbstractConfigResource {
         }
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
-    }
-    
-    @POST
-    @Path("/toggle/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response toggle(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
-        final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final Mount editingMount = getEditingHstMount(requestContext);
-        
-        HttpSession session = servletRequest.getSession(false);
-        if(session == null) {
-            return error("Cannot toggle because no httpSession");
-        }
-        
-        ComposerInfoImpl composerInfo = (ComposerInfoImpl)session.getAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME);
-        if(composerInfo == null) {
-            composerInfo = new ComposerInfoImpl();
-            session.setAttribute(ContainerConstants.COMPOSER_INFO_ATTR_NAME, composerInfo);
-        }
-        composerInfo.toggleInComposerMode(editingMount.getIdentifier());        
-        return ok("Toggled successful", null);
     }
 
     /**

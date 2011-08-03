@@ -19,7 +19,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,11 +31,18 @@ import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.WrapperElementUtils;
+import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Temporarily holds the current state of a HST response
@@ -66,6 +75,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected Map<String, List<String>> headers;
     protected List<Cookie> cookies;
     protected List<KeyValue<String, Element>> headElements;
+    protected List<Comment> preambleNodes;
     protected Element wrapperElement;
     protected boolean committed;
     protected boolean hasStatus;
@@ -581,6 +591,13 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         
         return elements;
     }
+
+    public void addPreambleNode(Comment comment) {
+        if (this.preambleNodes == null) {
+            this.preambleNodes = new ArrayList<Comment>();
+        }
+        this.preambleNodes.add(comment);
+    }
     
     public void setWrapperElement(Element element) {
         this.wrapperElement = element;
@@ -696,6 +713,17 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
                     }
+                    if (preambleNodes != null) {
+                        Writer writer;
+                        if (characterEncoding != null) {
+                            writer = new OutputStreamWriter(realOutputStream, characterEncoding);
+                        } else {
+                            writer = new OutputStreamWriter(realOutputStream);
+                        }
+                        for (Node node : preambleNodes) {
+                            writer.write("<!-- "+node.getTextContent()+" -->");
+                        }
+                    }
                     if (wrapperElement == null) {
                         if (len > 0) {
                             realOutputStream.write(byteOutputBuffer.toByteArray(), 0, len);
@@ -710,6 +738,11 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 } else if (printWriter != null) {
                     if (!closed) {
                         printWriter.flush();
+                        if (preambleNodes != null) {
+                            for (Node node : preambleNodes) {
+                                getResponseWriter().write("<!-- " + node.getTextContent() + " -->");
+                            }
+                        }
                         if (wrapperElement == null) {
                             if (charOutputBuffer.getCount() > 0) {
                                 getResponseWriter().write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
@@ -725,6 +758,18 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                     }
                 }
             }
+        }
+    }
+
+    public Comment createComment(String comment) {
+        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        try {
+            docBuilder = dbfac.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            return doc.createComment(comment);
+        } catch (ParserConfigurationException e) {
+            throw new DOMException((short) 0, "Initialization failure");
         }
     }
 

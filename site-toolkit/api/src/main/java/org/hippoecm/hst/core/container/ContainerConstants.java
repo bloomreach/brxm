@@ -124,7 +124,7 @@ public interface ContainerConstants {
     /**
      * 'composer_info' attr type name
      */
-    String COMPOSER_INFO_ATTR_NAME = "org.hippoecm.hst.composer_info";
+    String COMPOSER_MODE_ATTR_NAME = "org.hippoecm.hst.composer_info";
     
     /**
      * The parameter name used in the request to store whether or not all URLs that are created must be fully qualified

@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
 /**
@@ -125,7 +126,15 @@ public interface HstResponse extends HttpServletResponse {
      * @return DOM element with the tagName
      */
     Element createElement(String tagName);
-    
+
+    /**
+     * Creates a comment element
+     *
+     * @param comment the comment text
+     * @return Comment DOM element with the text as content
+     */
+    Comment createComment(String comment);
+
     /**
      * Adds an header element property to the response.
      * If keyHint argument is provided and if a header element 
@@ -317,5 +326,13 @@ public interface HstResponse extends HttpServletResponse {
      * @return
      */
     Element getWrapperElement();
-    
+
+    /**
+     * Add a preamble comment node, which gets rendered at the beginning of the render
+     * window.
+     *
+     * @param comment the comment node
+     */
+    void addPreambleNode(Comment comment);
+
 }
