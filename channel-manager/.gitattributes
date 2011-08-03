@@ -17,6 +17,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspect
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AssetFieldWidget.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AssetFieldWidget.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AssetFieldWidget.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text

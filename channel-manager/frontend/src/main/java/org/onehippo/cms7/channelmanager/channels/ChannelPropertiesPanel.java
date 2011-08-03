@@ -49,6 +49,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.core.parameters.AssetLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
@@ -177,6 +178,14 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                             return;
                         }
 
+                        // render an asset field?
+                        AssetLink assetLink = propDef.getAnnotation(AssetLink.class);
+                        if (assetLink != null && propType.equals(HstValueType.STRING)) {
+                            IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
+                            item.add(new AssetFieldWidget(context, "value", assetLink, model));
+                            return;
+                        }
+
                         // render a drop-down list?
                         DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
                         if (dropDownList != null) {
@@ -256,7 +265,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return;
         }
         // FIXME: move boilerplate to CMS engine
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = (UserSession) Session.get();
         Credentials credentials = session.getCredentials().getJcrCredentials();
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
