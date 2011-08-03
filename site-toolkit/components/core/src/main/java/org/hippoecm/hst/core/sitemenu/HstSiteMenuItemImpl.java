@@ -54,8 +54,6 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         this.hstSiteMenu = hstSiteMenu;
         this.parent = parent;
         this.hstSiteMenuItemConfiguration = hstSiteMenuItemConfiguration;
-        this.hstSiteMapItemRefId = hstSiteMenuItemConfiguration.getSiteMapItemRefId();
-        this.hstSiteMapItemPath = hstSiteMenuItemConfiguration.getSiteMapItemPath();
         this.externalLink = hstSiteMenuItemConfiguration.getExternalLink();
         this.linkCreator = hstRequestContext.getHstLinkCreator();
         this.name = hstSiteMenuItemConfiguration.getName();
@@ -63,36 +61,41 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         this.repositoryBased = hstSiteMenuItemConfiguration.isRepositoryBased();
         this.properties = hstSiteMenuItemConfiguration.getProperties();
         this.mount = hstRequestContext.getResolvedMount().getMount();
+        
+        String siteMapItemRefIdOrPath = PathUtils.normalizePath(hstSiteMenuItemConfiguration.getSiteMapItemPath());
+        HstSiteMapItem siteMapItemByRefId = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(siteMapItemRefIdOrPath);
+        
+        if (siteMapItemByRefId != null) {
+            hstSiteMapItemRefId = siteMapItemRefIdOrPath;
+            hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
+            if (log.isDebugEnabled()) {
+                log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
+            }
+        } else {
+            hstSiteMapItemPath = siteMapItemRefIdOrPath;
+            if (log.isDebugEnabled()) {
+                log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
+            }
+        }
+        
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
         }
         resolvedSiteMapItem = hstRequestContext.getResolvedSiteMapItem();
         
         String currentPathInfo = resolvedSiteMapItem.getPathInfo();
-        String siteMenuItemToMapPath = null;
         
-        if (hstSiteMapItemRefId != null) {
-            HstSiteMapItem siteMapItem = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(hstSiteMapItemRefId);
-            if (siteMapItem == null) {
-                log.warn("Could not find HstSiteMapItem for siteMapItemRefId '{}' and mount '{}'. Cannot determine siteMenuItemToMapPath", hstSiteMapItemRefId, mount.getName());
-            } else {
-                siteMenuItemToMapPath = HstSiteMapUtils.getPath(siteMapItem);
-            }
-        } else {
-            siteMenuItemToMapPath = PathUtils.normalizePath(hstSiteMapItemPath);
-        }
-        
-        if (siteMenuItemToMapPath != null && currentPathInfo != null) {
+        if (hstSiteMapItemPath != null && currentPathInfo != null) {
             
-            if (siteMenuItemToMapPath.equals(currentPathInfo)) {
+            if (hstSiteMapItemPath.equals(currentPathInfo)) {
                 // the current HstSiteMenuItem is selected. Set it to selected, and also set all the ancestors selected
                 this.selected = true;
                 ((HstSiteMenuImpl)hstSiteMenu).setSelectedSiteMenuItem(this);
             }
              
-            if(currentPathInfo.startsWith(siteMenuItemToMapPath)) {
+            if(currentPathInfo.startsWith(hstSiteMapItemPath)) {
                 // check if the match was until a slash, otherwise it is not a sitemenu item we want to expand
-                String sub = currentPathInfo.substring(siteMenuItemToMapPath.length());
+                String sub = currentPathInfo.substring(hstSiteMapItemPath.length());
                 
                 if("".equals(sub) || sub.startsWith("/")) {
                     // not selected but expand all ancestors

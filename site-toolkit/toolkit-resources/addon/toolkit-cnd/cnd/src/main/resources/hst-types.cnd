@@ -112,9 +112,9 @@
 + * (hst:sitemapitem)
 
 [hst:sitemenuitem] > nt:base, mix:referenceable orderable
-// sitemap item by path. This can be a path including wildcards
+// sitemap item by path or by refid. This can be a path including wildcards when setting by path, but this cannot include wildcard when setting by refid.
 - hst:referencesitemapitem (string)
-// sitemap item by refId. This cannot be a sitemap item including wildcards
+// deprecated and unused : do not use
 - hst:refidsitemapitem (string)
 - hst:externallink (string)
 - hst:foldersonly (boolean)
