@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -205,7 +206,8 @@ public class HstLinkTag extends ParamContainerTag {
                            new Object [] { mountAlias, mountType, path });
                    log.warn(logMsg);
                }
-               this.link = reqContext.getHstLinkCreator().create(reqContext.getResolvedMount().getMount().getPageNotFound(), reqContext.getResolvedMount().getMount());
+               Mount requestedMount = reqContext.getResolvedMount().getMount();
+               this.link = reqContext.getHstLinkCreator().create(HstSiteMapUtils.getPath(requestedMount, requestedMount.getPageNotFound()), requestedMount);
            }
        } else {
            mount = reqContext.getResolvedMount().getMount();

@@ -32,7 +32,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.util.HstSiteMapUtils;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -492,14 +492,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             boolean containerResource = false;
             if(!resolverProperties.virtual && nodePath.equals(tryMount.getCanonicalContentPath())) {
                 // the root node of the site. Return the homepage
-                pathInfo = tryMount.getHomePage();
+                pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
             }
             if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getCanonicalContentPath() + "/")) {
                 String relPath = nodePath.substring(tryMount.getCanonicalContentPath().length());
                 pathInfo = resolveToPathInfo(relPath, tryMount, resolverProperties);
             } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) { 
                 // the root node of the site. Return the homepage
-                pathInfo = tryMount.getHomePage();
+                pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
             }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) { 
                 String relPath = nodePath.substring(tryMount.getContentPath().length());
                 pathInfo = resolveToPathInfo(relPath, tryMount, resolverProperties);

@@ -351,6 +351,7 @@ commons/src/main/java/org/hippoecm/hst/util/GenericHttpServletRequestWrapper.jav
 commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/util/HstSiteMapUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/NOOPLogger.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/NodeUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PageErrorUtils.java svneol=native#text/plain
@@ -471,7 +472,6 @@ components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuItemImpl
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManagerImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/DOMUtils.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/util/HstSiteMapUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/core/util/Path.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain

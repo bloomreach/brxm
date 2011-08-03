@@ -99,10 +99,10 @@
                  <sv:value>fr_FR</sv:value>
               </sv:property>
               <sv:property sv:name="hst:homepage" sv:type="String">
-                  <sv:value>accueil</sv:value>
+                  <sv:value>home</sv:value>
               </sv:property>
               <sv:property sv:name="hst:pagenotfound" sv:type="String">
-                  <sv:value>erreur</sv:value>
+                  <sv:value>error</sv:value>
               </sv:property>
             </sv:node>
             <sv:node sv:name="restapi">

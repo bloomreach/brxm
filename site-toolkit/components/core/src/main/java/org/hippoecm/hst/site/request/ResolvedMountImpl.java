@@ -24,6 +24,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public class ResolvedMountImpl implements ResolvedMount{
         
         if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
            log.debug("siteMapPathInfo is '' or '/'. If there is a homepage path configured, we try to map this path to the sitemap");
-           siteMapPathInfo = mount.getHomePage();
+           siteMapPathInfo = HstSiteMapUtils.getPath(mount, mount.getHomePage());
            if(siteMapPathInfo == null || "".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
                log.warn("Mount '{}' for host '{}' does not have a homepage configured and the path info is empty. Cannot map to sitemap item. Return null", getMount().getName(), getResolvedVirtualHost().getResolvedHostName());
                throw new MatchException("No homepage configured and empty path after Mount");
@@ -88,7 +89,7 @@ public class ResolvedMountImpl implements ResolvedMount{
             item = matcher.match(siteMapPathInfo, this);
         } catch(NotFoundException e){
             log.debug("Cannot match '{}'. Try getting the pagenotfound", siteMapPathInfo);
-            String pageNotFound = mount.getPageNotFound();
+            String pageNotFound = HstSiteMapUtils.getPath(mount, mount.getPageNotFound());
             if(pageNotFound == null) {
                 throw new MatchException("There is no pagenotfound configured for '"+mount.getName()+"'");
             }
