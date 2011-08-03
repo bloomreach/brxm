@@ -38,7 +38,9 @@
         CONTAINERITEM   : 'CONTAINER_ITEM_COMPONENT',
 
         ATTR : {
-            ID : 'hst:uuid'
+            ID : 'uuid',
+            TYPE : 'type',
+            XTYPE : 'xtype'
         },
 
         DIR : {

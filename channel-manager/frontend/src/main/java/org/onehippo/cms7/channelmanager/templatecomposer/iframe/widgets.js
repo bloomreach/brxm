@@ -224,8 +224,7 @@ jQuery.noConflict();
             this.cls.emptyItem      = 'hst-empty-container-item';
             this.cls.overlay.item   = 'hst-overlay-container-item';
 
-            this.sel.container      = this.sel.self + ' .' + this.cls.container;
-            this.sel.item           = this.sel.self + ' div.componentContentWrapper';
+            this.sel.container      = this.sel.self;
             this.sel.itemWrapper    = this.sel.self + ' .' + this.cls.item;
 
             this.sel.sortable       = this.sel.overlay;
@@ -241,10 +240,10 @@ jQuery.noConflict();
             };
 
             //workaround: set to opposite to evoke this.sync() to render an initially correct UI
-            this.isEmpty = $(this.sel.item).size() > 0;
+            this.isEmpty = $(this.sel.itemWrapper).size() == 0;
 
             var self = this;
-            $(this.sel.item).each(function() {
+            $(this.sel.itemWrapper).each(function() {
                 self._insertNewItem(this, true);
             });
 
@@ -439,11 +438,11 @@ jQuery.noConflict();
         },
 
         checkState : function() {
-            if(this.state.checkEmpty) {
+            if (this.state.checkEmpty) {
                 this._checkEmpty();
             }
 
-            if(this.state.syncOverlaysWithItemOrder) {
+            if (this.state.syncOverlaysWithItemOrder) {
                 var lookup = this.items.getIndexMap();
                 var items = $(this.sel.sort.items).get();
                 items.sort(function(a, b) {
@@ -456,7 +455,7 @@ jQuery.noConflict();
                     self.overlay.append(itm);
                 });
 
-            }else if(this.state.syncItemsWithOverlayOrder) {
+            } else if (this.state.syncItemsWithOverlayOrder) {
                 var order = [];
                 $(this.sel.sort.items).each(function() {
                     var id = $(this).attr(HST.ATTR.ID);
@@ -468,8 +467,8 @@ jQuery.noConflict();
                 var container = $(this.sel.container);
                 var items = $(this.sel.itemWrapper).get();
                 items.sort(function(a, b) {
-                    a = lookup[$('div.componentContentWrapper', a).attr(HST.ATTR.ID)];
-                    b = lookup[$('div.componentContentWrapper', b).attr(HST.ATTR.ID)];
+                    a = lookup[$(a).attr(HST.ATTR.ID)];
+                    b = lookup[$(b).attr(HST.ATTR.ID)];
                     return (a < b) ? -1 : (a > b) ? 1 : 0;
                 });
                 $.each(items, function(idx, itm) {
@@ -478,7 +477,7 @@ jQuery.noConflict();
             }
 
             var currentOrder = this.items.keySet();
-            if(this.state.orderChanged(currentOrder)) {
+            if (this.state.orderChanged(currentOrder)) {
                 this.state.previousOrder = currentOrder;
                 this.parent.requestSync();
                 sendMessage({id: this.id, children: currentOrder}, 'rearrange');

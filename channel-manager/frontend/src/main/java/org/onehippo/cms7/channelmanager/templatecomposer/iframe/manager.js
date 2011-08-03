@@ -31,7 +31,6 @@ jQuery.noConflict();
     //TODO: looks more like a UI.Page component
     Hippo.PageComposer.UI.Manager.prototype = {
         init: function() {
-
             this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
             if (this.preview) {
                 this.overlay.hide();
@@ -41,11 +40,10 @@ jQuery.noConflict();
             try {
                 //attach mouseover/mouseclick for components
                 var self = this;
-                $('div.componentContentWrapper').each(function(index) {
-                    if(Hippo.PageComposer.UI.Factory.isContainer(this)) {
-                        self._createContainer(this);
-                    }
+                $('.hst-container').each(function(index) {
+                    self._createContainer(this);
                 });
+
             } catch(e) {
                 console.error(e);
             }
@@ -59,9 +57,8 @@ jQuery.noConflict();
 
         _retrieve : function(element) {
             var factory = Hippo.PageComposer.UI.Factory;
-            var data = factory.verify(element);
-            var o = factory.getById(data.id);
-            if(o == null) {
+            var o = factory.getById(element.getAttribute(HST.ATTR.ID));
+            if (o == null) {
                 Hippo.PageComposer.Main.die('Object with id ' + data.id + ' not found in registry');
             }
             return o;
@@ -93,22 +90,24 @@ jQuery.noConflict();
 
         remove : function(element) {
             if (!element.hasAttribute(HST.ATTR.ID)) {
-                element = $(element).parents('.componentContentWrapper')[0];
+                element = $(element).parents('.hst-container')[0];
             }
 
-            var d = Hippo.PageComposer.UI.Factory.verify(element);
-            if (d.type == HST.CONTAINERITEM) {
-                var containerId = $(element).parents('.componentContentWrapper').attr(HST.ATTR.ID);
-                var container = this.containers[containerId];
-                if(!!container && container.removeItem(d.id)) {
-                    Hippo.PageComposer.UI.Factory.deleteObjectRef(d.id);
+            var type = element.getAttribute(HST.ATTR.TYPE);
+            var id = element.getAttribute(HST.ATTR.ID);
+            var xtype = element.getAttribute(HST.ATTR.XTYPE);
+
+            if (type == HST.CONTAINERITEM) {
+                var container = this.containers[id];
+                if(!!container && container.removeItem(id)) {
+                    Hippo.PageComposer.UI.Factory.deleteObjectRef(id);
                 }
-            } else if (d.type == HST.CONTAINER) {
-                var container = this.containers[d.id];
+            } else if (type == HST.CONTAINER) {
+                var container = this.containers[id];
                 if (!!container) {
                     container.remove();
                     delete this.containers[id];
-                    Hippo.PageComposer.UI.Factory.deleteObjectRef(d.id);
+                    Hippo.PageComposer.UI.Factory.deleteObjectRef(id);
                 }
             }
             this.checkStateChanges();

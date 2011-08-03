@@ -33,6 +33,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             pageModel : null
         };
 
+        this.addEvents('pageIdChanged', 'mountIdChanged', 'beforeInitIframe', 'afterInitIframe');
+
         this.pageModelFacade = null;
 
         this.initUI(config);
@@ -53,7 +55,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initUI : function(config) {
-        Ext.Msg.wait("Loading...");
+//        Ext.Msg.wait("Loading...");
         Ext.apply(config, { items :
             [
                 {
@@ -67,7 +69,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                             text: 'Preview',
                             iconCls: 'title-button',
                             id: 'pagePreviewButton',
-                            enableToggle: true,
                             toggleGroup : 'composerMode',
                             pressed: config.previewMode,
                             allowDepress: false,
@@ -174,33 +175,72 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
             // do initial handshake with CmsSecurityValve of the composer mount and
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+            // the redirect to the composermode rest resource fails with the handshake, so we have to
+            // make a second request to actually set the composermode after we are authenticated
+
             var me = this;
-            Ext.Ajax.request({
-                url: me.composerRestMountUrl+'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
-                success: function () {
-                    var iFrame = Ext.getCmp('Iframe');
-                    iFrame.setSrc(me.composerMountUrl+me.renderHostSubMountPath+"?"+me.renderHostParameterName+"="+me.renderHost);
-                },
-                failure: function(result, request) {
-                    // try anyway to give info about what is going on
-                    var iFrame = Ext.getCmp('Iframe');
-                    iFrame.setSrc(me.composerMountUrl+me.renderHostSubMountPath+"?"+me.renderHostParameterName+"="+me.renderHost);
-                }
+            var composerMode = function(callback) {
+                Ext.Ajax.request({
+                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
+                    method : 'POST',
+                    success: callback,
+                    failure: function() {
+                        window.setTimeout(function() {
+                            composerMode(callback);
+                        }, 1000);
+                    }
+                });
+            };
+            composerMode(function() {
+                var iFrame = Ext.getCmp('Iframe');
+                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
+                // keep session active
+                Ext.TaskMgr.start({
+                    run: me.keepAlive,
+                    interval: 60000,
+                    scope: me
+                });
             });
+
         }, this, {single: true});
+
+        this.on('mountIdChanged', function (data) {
+            this.stores.toolkit = this.createToolkitStore(data.mountId);
+            this.stores.toolkit.load();
+            if (this.mainWindow) {
+                var grid = Ext.getCmp('ToolkitGrid');
+                grid.reconfigure(this.stores.toolkit, grid.getColumnModel());
+            } else {
+                this.mainWindow = this.createMainWindow(data.mountId);
+                this.mainWindow.show();
+            }
+        }, this);
+
+        this.on('pageIdChanged', function(data) {
+            this.stores.pageModel = this.createPageModelStore(data.mountId, data.pageId);
+            this.stores.pageModel.load();
+
+            if (this.mainWindow) {
+                var grid = Ext.getCmp('PageModelGrid');
+                grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
+            }
+        }, this);
+
     },
 
     togglePreviewMode: function () {
         if (this.previewMode && !this.iframeInitialized && this.iframeDOMReady) {
             this.previewMode = !this.previewMode;
             this.initializeIFrameHead(this.frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
-        } else {
+            return true;
+        } else if (typeof this.toggleInterval === 'undefined' || this.toggleInterval === null) {
             var self = this;
-            var toggleInterval = window.setInterval(function() {
+            this.toggleInterval = window.setInterval(function() {
                 if (!self.iframeInitialized || typeof self.mainWindow === 'undefined') {
                     return;
                 }
-                window.clearInterval(toggleInterval);
+
+                window.clearInterval(self.toggleInterval);
                 var iframe = Ext.getCmp('Iframe');
                 iframe.sendMessage({}, 'toggle');
                 if (self.previewMode) {
@@ -208,9 +248,13 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 } else {
                     self.mainWindow.hide('pageComposerButton');
                 }
+
                 self.previewMode = !self.previewMode;
+                self.toggleInterval = null;
             }, 10);
+            return true;
         }
+        return false;
     },
 
    refreshIframe : function() {
@@ -220,17 +264,16 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     onIframeDOMReady : function(frm) {
-        if (!this.previewMode && !Ext.Msg.isVisible()) {
-            Ext.Msg.wait('Loading...');
-        }
-        if (this.previewMode) {
-            Ext.Msg.hide();
-        }
         this.frm = frm;
         this.iframeInitialized = false;
         if (!this.previewMode) {
+            if (!Ext.Msg.isVisible()) {
+                Ext.Msg.wait('Loading...');
+            }
             // clone arrays with concat()
             this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
+        } else {
+            Ext.Msg.hide();
         }
         this.iframeDOMReady = true;
     },
@@ -305,42 +348,17 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         var mountId = data.mountId;
 
         if (mountId != this.ids.mountId) {
-            this.stores.toolkit = this.createToolkitStore(mountId);
-            this.stores.toolkit.load();
+            this.fireEvent('mountIdChanged', {mountId: mountId, oldMountId: this.ids.mountId, pageId: pageId});
         }
 
         if (pageId != this.ids.page) {
-            this.stores.pageModel = this.createPageModelStore(mountId, pageId);
-            this.stores.pageModel.load();
+            this.fireEvent('pageIdChanged', {mountId: mountId, pageId: pageId, oldPageId: this.ids.page});
         } else {
             this.shareData();
         }
 
-        if (!this.mainWindow) {
-            this.mainWindow = this.createMainWindow(this.ids.mountId);
-            this.mainWindow.show();
-        } else {
-            if (mountId != this.ids.mountId) {
-                var grid = Ext.getCmp('ToolkitGrid');
-                grid.reconfigure(this.stores.toolkit, grid.getColumnModel());
-            }
-            if (pageId != this.ids.page) {
-                var grid = Ext.getCmp('PageModelGrid');
-                grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
-            }
-            if (!this.mainWindow.isVisible()) {
-                this.mainWindow.show('pageComposerButton');
-            }
-        }
-
         this.ids.page = pageId;
         this.ids.mountId = mountId;
-
-        Ext.TaskMgr.start({
-            run: this.keepAlive,
-            interval: 60000,
-            scope: this
-        });
 
         this.iframeInitialized = true;
         Ext.Msg.hide();
@@ -538,12 +556,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     handleOnClick : function(element) {
-
-        var id = element.getAttribute(HST.ATTR.ID);
+        var id = element.getAttribute('id');
         var recordIndex = this.stores.pageModel.findExact('id', id);
 
         if (recordIndex < 0) {
-            console.warn('Handling onClick for element['+HST.ATTR.ID+'=' + id + '] with no record in component store');
+            console.warn('Handling onClick for element[id=' + id + '] with no record in component store');
             return;
         }
 

@@ -94,10 +94,10 @@ Ext.namespace('Hippo.App.PageModel');
                 element.id = record.id;
                 element.setAttribute(HST.ATTR.ID, record.id);
                 element.setAttribute('hst:name', record.name);
-                element.setAttribute('hst:type', record.type);
-                element.setAttribute('hst:xtype', record.xtype);
+                element.setAttribute(HST.ATTR.TYPE, record.type);
+                element.setAttribute(HST.ATTR.XTYPE, record.xtype);
                 element.setAttribute('hst:temporary', true);
-                element.className = 'componentContentWrapper hst-temporary';
+                element.className = 'hst-container';
             }
             return element;
         }

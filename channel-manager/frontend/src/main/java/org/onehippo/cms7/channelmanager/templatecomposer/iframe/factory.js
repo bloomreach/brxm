@@ -27,8 +27,11 @@ jQuery.noConflict();
 
         Factory.prototype = {
             createOrRetrieve : function(element) {
+                if (this.objects[element.id]) {
+                    return this.objects[element.id];
+                }
                 var verified = this.verify(element);
-                return this.objects[verified.id] || this._create(verified, true);
+                return this._create(verified, true);
             },
 
             _create : function(data, verify) {
@@ -49,27 +52,24 @@ jQuery.noConflict();
             verify : function(element) {
                 var die = Hippo.PageComposer.Main.die;
 
-                if (typeof element === 'undefined' || element === null) {
-                    die("element is undefined or null");
+                var hstContainerMetaData = this.getContainerMetaData(element);
+                if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
+                    die("hstContainerMetaData is undefined or null for element");
                 }
 
-                var el = $(element);
-                var id = el.attr(HST.ATTR.ID);
+                var id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die('Attribute '+HST.ATTR.ID+' not found on element');
+                    die('Attribute '+HST.ATTR.ID+' not found on hstContainerMetaData');
                 }
 
-                if (!element.id) {
-                    if(Hippo.PageComposer.Main.isDebug()) {
-                        console.warn('No @id found on element, using value of '+HST.ATTR.ID+' instead.');
-                    }
-                    element.id = id;
-                }
+                element.id = id;
+                element.setAttribute(HST.ATTR.ID, id);
 
-                var type = el.attr('hst:type');
+                var type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die('Attribute hst:type not found');
+                    die('Attribute type not found');
                 }
+                element.setAttribute(HST.ATTR.TYPE,  type);
 
                 var base = Hippo.PageComposer.UI.Widget;
                 if (type === HST.CONTAINER) {
@@ -79,7 +79,7 @@ jQuery.noConflict();
                 }
 
                 //Not very sexy this..
-                var xtype = el.attr('hst:xtype');
+                var xtype = hstContainerMetaData[HST.ATTR.XTYPE];
                 if (typeof xtype === 'undefined' || xtype == null || xtype == '') {
                     if (type === HST.CONTAINER) {
                         xtype = 'Hippo.PageComposer.UI.Container.Base';
@@ -87,6 +87,7 @@ jQuery.noConflict();
                         xtype = 'Hippo.PageComposer.UI.ContainerItem.Base';
                     }
                 }
+                element.setAttribute(HST.ATTR.XTYPE, xtype);
 
                 return {
                     id: id,
@@ -115,13 +116,49 @@ jQuery.noConflict();
                 this.registry[key] = value;
             },
 
-            isContainer : function(element) {
-                var die = Hippo.PageComposer.Main.die;
-                var type = $(element).attr('hst:type');
-                if (typeof type === 'undefined') {
-                    die('Attribute hst:type not found');
+            getContainerMetaData : function(element) {
+                if (element.className === 'hst-container-item') {
+                    var childNodes = element.childNodes;
+                    for (var i=0, len=childNodes.length; i<len; i++) {
+                        var hstMetaData = this.convertToHstMetaData(childNodes[i]);
+                        if (hstMetaData !== null) {
+                            return hstMetaData;
+                        }
+                    }
+                } else if (element.className === 'hst-container') {
+                    var tmpElement = element;
+                    while (tmpElement.previousSibling !== null) {
+                        tmpElement = tmpElement.previousSibling;
+                        var hstMetaData = this.convertToHstMetaData(tmpElement);
+                        if (hstMetaData !== null) {
+                            return hstMetaData;
+                        }
+                    }
                 }
-                return type === HST.CONTAINER;
+                return null;
+            },
+
+            convertToHstMetaData : function(element) {
+                if (element.nodeType !== 8) {
+                    return null;
+                }
+                try {
+                    if (!element.data || element.data.length == 0
+                            || !element.data.indexOf(HST.ATTR.ID) === -1
+                            || !element.data.indexOf(HST.ATTR.TYPE === -1)
+                            || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
+                        return null;
+                    }
+                    var commentJsonObject = JSON.parse(' '+element.data);
+                    if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
+                        && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
+                        && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {
+                        return commentJsonObject;
+                    }
+                } catch(exception) {
+                    console.error('Error parsing container meta data. '+exception);
+                }
+                return null;
             }
 
         };
