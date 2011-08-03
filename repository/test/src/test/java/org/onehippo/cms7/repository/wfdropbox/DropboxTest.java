@@ -38,7 +38,7 @@ public class DropboxTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         Node node = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
         node = node.addNode("test");
         node = node.addNode("test","hipposys:workflow");
