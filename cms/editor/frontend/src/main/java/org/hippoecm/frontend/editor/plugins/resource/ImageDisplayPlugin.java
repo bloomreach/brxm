@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
@@ -105,38 +104,29 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             } else {
                 filename = node.getParent().getName();
             }
-            String mimeType = node.getProperty("jcr:mimeType").getString();
-            if (mimeType.indexOf('/') > 0) {
-                String category = mimeType.substring(0, mimeType.indexOf('/'));
-                if ("image".equals(category)) {
-                    fragment = new Fragment(id, "image", this);
-                    fragment.add(new JcrImage("image", resource));
-                } else {
-                    fragment = new Fragment(id, "embed", this);
-                    fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
-                    fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
-                    fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
-                        private static final long serialVersionUID = 1L;
+            fragment = new Fragment(id, "embed", this);
+            fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
+            fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
+            fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
+                private static final long serialVersionUID = 1L;
 
-                        @Override
-                        protected void configureResponse(Response response) {
-                            if (response instanceof WebResponse) {
-                                ((WebResponse) response).setHeader("Content-Disposition", "attachment; filename="
-                                        + filename);
-                            }
-                        }
-                    }) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        protected void onDetach() {
-                            resource.detach();
-                            super.onDetach();
-                        }
-
-                    });
+                @Override
+                protected void configureResponse(Response response) {
+                    if (response instanceof WebResponse) {
+                        ((WebResponse) response).setHeader("Content-Disposition", "attachment; filename="
+                                + filename);
+                    }
                 }
-            }
+            }) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onDetach() {
+                    resource.detach();
+                    super.onDetach();
+                }
+
+            });
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
