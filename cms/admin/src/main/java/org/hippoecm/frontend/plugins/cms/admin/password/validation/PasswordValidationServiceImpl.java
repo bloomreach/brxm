@@ -74,7 +74,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             log.error("The value of the property password.strength is larger than the number of available " +
             		"optional password validators. This way, no attempt at creating a new password can succeed.");
         }
-        maxAge = getPluginConfig().getLong("password.maxage", -1l);
+        maxAge = getPluginConfig().getLong("password.maxAge", -1l);
         notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
     }
 
