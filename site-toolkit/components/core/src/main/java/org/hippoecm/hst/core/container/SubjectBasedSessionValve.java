@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 

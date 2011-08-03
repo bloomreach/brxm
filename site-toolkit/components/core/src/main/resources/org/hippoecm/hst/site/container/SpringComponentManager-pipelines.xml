@@ -60,6 +60,10 @@
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
   
+  <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
+    <property name="repository" ref="javax.jcr.Repository.cms"/>
+  </bean>
+  
   <!-- Generic no-cache response headers setting valve -->
   <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
     <property name="settableHeaders">
@@ -132,6 +136,7 @@
             <property name="preInvokingValves">
               <list>
                 <ref bean="initializationValve" />
+                <ref bean="cmsSecurityValve"/>
               </list>
             </property>
             <property name="invokingValves">

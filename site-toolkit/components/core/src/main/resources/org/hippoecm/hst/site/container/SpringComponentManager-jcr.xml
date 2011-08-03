@@ -245,4 +245,10 @@
     <property name="logoutOnSessionUnbound" value="true" />
   </bean>
   
+  <!-- SSO cms non-pooling delegating repository -->
+  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepository">
+    <constructor-arg ref="javax.jcr.Repository.delegating" />
+    <property name="logoutOnSessionUnbound" value="true" />
+  </bean>
+  
 </beans>

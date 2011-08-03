@@ -137,6 +137,7 @@
           <property name="preInvokingValves">
             <list>
               <ref bean="initializationValve" />
+              <ref bean="cmsSecurityValve"/>
             </list>
           </property>
           <property name="invokingValves">

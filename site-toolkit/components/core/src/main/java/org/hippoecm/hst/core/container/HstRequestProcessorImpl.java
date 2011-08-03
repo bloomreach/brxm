@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstRequestProcessorImpl
@@ -26,6 +28,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  * @version $Id$
  */
 public class HstRequestProcessorImpl implements HstRequestProcessor {
+    
+    protected final static Logger log = LoggerFactory.getLogger(HstRequestProcessorImpl.class);
     
     protected Pipelines pipelines;
     
@@ -64,7 +68,11 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             }
        
             pipeline.beforeInvoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
-            pipeline.invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            if(servletResponse.isCommitted()) {
+               log.debug("Response is already committed during pre-invoking valves. Skip invoking valves");
+            } else {
+                pipeline.invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            }
         } catch (ContainerException e) {
             throw e;
         } catch (Exception e) {

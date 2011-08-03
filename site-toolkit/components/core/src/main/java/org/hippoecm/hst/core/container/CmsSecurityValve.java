@@ -1,4 +1,4 @@
-package org.hippoecm.hst.pagecomposer.container;
+package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ValveContext;
@@ -25,10 +24,17 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.onehippo.sso.CredentialCipher;
 
 /**
- * CmsSecurityValve responsible for authenticating the user using CMS. <p> When CMS invokes the mount configured with
- * this valve, HST checks if the CMS has provided encrypted credentials or not. If the credentials are _not_ available
+ * CmsSecurityValve responsible for authenticating the user using CMS. 
+ * 
+ * <p> This valve check if the CMS has provided encrypted credentials or not if and only if the 
+ * page request is done from the CMS context. This valve checks if the CMS has provided encrypted credentials or not. If the credentials are _not_ available
  * with the URL, this valve will redirect to the CMS auth URL with a secret. If the credentials are  available with the
  * URL, this valve will try to get the session for the credentials and continue. </p>
+ * 
+ * <p>
+ * The check whether the page request originates from a CMS context is done by checking whether the {@link HstRequestContext#getRenderHost()}
+ * is not <code>null</code> : A non-null render host implies that the CMS requested the page.
+ * </p>
  */
 public class CmsSecurityValve extends AbstractValve {
     private static final String SSO_BASED_SESSION_ATTR_NAME = CmsSecurityValve.class.getName() + ".jcrSession";
@@ -44,8 +50,12 @@ public class CmsSecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
+        if(requestContext.getRenderHost() == null) {
+            context.invokeNext();
+            return;
+        } 
+        log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
-
         HttpSession session = servletRequest.getSession(true);
 
         if (session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {

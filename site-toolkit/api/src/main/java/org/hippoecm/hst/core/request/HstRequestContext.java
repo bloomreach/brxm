@@ -308,8 +308,9 @@ public interface HstRequestContext {
     
     /**
      * 
-     * @return the render host to use for rendering the request  or <code>null</code> when no specific render host is defined. In this case,
-     * the host from the {@link HttpServletRequest#getHeader("X-forwarded-Host")} is used. 
+     * @return the render host to use for rendering the request  or <code>null</code> when no specific render host is defined. Typically,
+     * there is only a render host when the request originated from the CMS 
+     *
      */
     public String getRenderHost();
     
