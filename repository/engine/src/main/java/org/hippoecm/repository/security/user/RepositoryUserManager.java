@@ -36,10 +36,32 @@ public class RepositoryUserManager extends AbstractUserManager {
     private final static String SVN_ID = "$Id$";
 
     private boolean maintenanceMode = false;
-
+    
+    private long passwordMaxAge = -1l;
+    
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
         maintenanceMode = context.isMaintenanceMode();
+        Node securityNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
+            passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
+        }
+    }
+
+    @Override
+    public boolean isActive(String rawUserId) throws RepositoryException {
+        return super.isActive(rawUserId) && !isPasswordExpired(rawUserId);
+    }
+    
+    private boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+        if (passwordMaxAge > 0) {
+            Node user = getUser(rawUserId);
+            if (user.hasProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED)) {
+                long passwordLastModified = user.getProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED).getLong();
+                return passwordLastModified + passwordMaxAge < System.currentTimeMillis();
+            }
+        }
+        return false;
     }
 
     /**

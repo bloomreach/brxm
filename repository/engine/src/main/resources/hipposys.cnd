@@ -234,6 +234,7 @@
 - hipposys:groupspath (string) mandatory
 - hipposys:rolespath (string) mandatory
 - hipposys:domainspath (string) mandatory
+- hipposys:passwordmaxage (long)
 + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
 + * (hipposys:securityprovider) = hipposys:securityprovider
 
