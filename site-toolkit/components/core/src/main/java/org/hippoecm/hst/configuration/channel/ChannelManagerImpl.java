@@ -571,8 +571,8 @@ public class ChannelManagerImpl implements ChannelManager {
             channelPropsNode = mount.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
         }
 
-        channelPropsNode.setProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME, channel.getName());
         ChannelPropertyMapper.saveProperties(channelPropsNode, bps.getPropertyDefinitions(), channel.getProperties());
+        channelPropsNode.setProperty(HstNodeTypes.CHANNELINFO_PROPERTY_NAME, channel.getName());
     }
 
     /**
