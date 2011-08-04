@@ -50,10 +50,6 @@ public class CmsSecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
-        if(requestContext.getRenderHost() == null) {
-            context.invokeNext();
-            return;
-        } 
         log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
         HttpSession session = servletRequest.getSession(true);

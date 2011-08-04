@@ -49,7 +49,7 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerMode(@Context HttpServletRequest servletRequest,
                                              @Context HttpServletResponse servletResponse) {
-        HttpSession session = servletRequest.getSession(false);
+        HttpSession session = servletRequest.getSession(true);
         if (session == null) {
             return error("Cannot set into composer mode, no httpSession");
         }
@@ -64,7 +64,7 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response previewMode(@Context HttpServletRequest servletRequest,
                                              @Context HttpServletResponse servletResponse) {
-        HttpSession session = servletRequest.getSession(false);
+        HttpSession session = servletRequest.getSession(true);
         if (session == null) {
             return error("Cannot set into composer mode, no httpSession");
         }
