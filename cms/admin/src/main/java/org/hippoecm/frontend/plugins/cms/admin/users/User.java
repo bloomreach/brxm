@@ -463,7 +463,7 @@ public class User implements Comparable<User>, IClusterable {
     }
     
     public long getPasswordExpirationTime() {
-        if (passwordLastModified != null) {
+        if (passwordLastModified != null && passwordMaxAge > 0) {
             return passwordLastModified.getTimeInMillis() + passwordMaxAge;
         }
         return -1l;
