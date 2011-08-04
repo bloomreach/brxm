@@ -71,6 +71,11 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         } else {
             add(new Label("active", new ResourceModel("user-active-false")));
         }
+        if (user.isPasswordExpired()) {
+            add(new Label("expired", new ResourceModel("user-password-expired-true")));
+        } else {
+            add(new Label("expired", new ResourceModel("user-password-expired-false")));
+        }
 
         // local memberships
         add(new Label("local-memberships-label", new ResourceModel("user-local-memberships")));

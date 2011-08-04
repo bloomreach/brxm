@@ -20,11 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -77,6 +76,7 @@ public class User implements Comparable<User>, IClusterable {
     private String email;
     private String provider;
     private Calendar passwordLastModified;
+    private long passwordMaxAge = -1l;
 
     private Map<String, String> properties = new TreeMap<String, String>();
     private transient List<DetachableGroup> externalMemberships;
@@ -205,8 +205,25 @@ public class User implements Comparable<User>, IClusterable {
     //----------------------- constructors ---------//
     public User() {
     }
+    
+    public User(final String username) throws RepositoryException {
+        String queryString = QUERY_USER_EXISTS.replace("{}", username);
+        try {
+            Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            NodeIterator iter = query.execute().getNodes();
+            if (iter.hasNext()) {
+                init(iter.nextNode());
+            }
+        } catch (RepositoryException e) {
+            log.error("Unable to get node for user '{}' while constructing user", username, e);
+        }
+    }
 
     public User(final Node node) throws RepositoryException {
+        init(node);
+    }
+    
+    private void init(final Node node) throws RepositoryException {
         this.node = node;
         this.path = node.getPath().substring(1);
         this.username = NodeNameCodec.decode(node.getName());
@@ -240,6 +257,11 @@ public class User implements Comparable<User>, IClusterable {
             } else {
                 properties.put(name, p.getString());
             }
+        }
+        
+        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
+            passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
         }
     }
 
@@ -382,7 +404,9 @@ public class User implements Comparable<User>, IClusterable {
         }
         
         // set password last changed date
-        node.setProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED, Calendar.getInstance());
+        Calendar now = Calendar.getInstance();
+        node.setProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED, now);
+        passwordLastModified = now;
         
         // set new password
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
@@ -431,6 +455,18 @@ public class User implements Comparable<User>, IClusterable {
             }
         }
         return false;
+    }
+    
+    public boolean isPasswordExpired() {
+        long passwordExpirationTime = getPasswordExpirationTime();
+        return passwordExpirationTime != -1l && passwordExpirationTime < System.currentTimeMillis();
+    }
+    
+    public long getPasswordExpirationTime() {
+        if (passwordLastModified != null) {
+            return passwordLastModified.getTimeInMillis() + passwordMaxAge;
+        }
+        return -1l;
     }
 
     //--------------------- default object -------------------//

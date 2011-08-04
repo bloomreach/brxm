@@ -20,13 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +45,9 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     
     // number of optional validators that should pass
     private int requiredStrength;
-    private long maxAge;
-    private long notificationPeriod;
+    
+    private long passwordMaxAge = -1l;
+    private long notificationPeriod = THREEDAYS;
 
     public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -52,6 +57,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     }
     
     private void loadConfiguration() {
+        // get the child pluginconfig nodes that define the validators
         Set<IPluginConfig> configs = getPluginConfig().getPluginConfigSet();
         validators = new ArrayList<IPasswordValidator>(configs.size());
         int numberOfOptionalValidators = 0;
@@ -69,13 +75,25 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
                 log.error("Failed to create password validator: " + e.toString());
             }
         }
+        
+        // get the required password strength and the password expiration notification period
         requiredStrength = getPluginConfig().getInt("password.strength", 0);
         if (requiredStrength > numberOfOptionalValidators) {
             log.error("The value of the property password.strength is larger than the number of available " +
             		"optional password validators. This way, no attempt at creating a new password can succeed.");
         }
-        maxAge = getPluginConfig().getLong("password.maxAge", -1l);
         notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
+        
+        // password max age is defined on the /hippo:configuration/hippo:security node
+        try {
+            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
+                passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
+            }
+        }
+        catch (RepositoryException e) {
+            log.error("Failed to determine configured password maximum age", e);
+        }
     }
 
     @Override
@@ -106,28 +124,19 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         return result;
     }
     
-    public boolean isPasswordExpired(User user) {
-        // -1 means no max age
-        if (maxAge != -1l) {
-            long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
-            if (passwordLastModified + maxAge > System.currentTimeMillis()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    @Override
     public boolean isPasswordAboutToExpire(User user) {
-        // -1 means no max age
-        if (maxAge != -1l) {
-            // -1 means no notification
-            if (notificationPeriod != -1l) {
-                long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
-                if (passwordLastModified + maxAge > System.currentTimeMillis() - notificationPeriod) {
-                    return true;
+        if (passwordMaxAge > 0) {
+            if (notificationPeriod > 0) {
+                if (user.getPasswordLastModified() != null) {
+                    long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
+                    if (passwordLastModified + passwordMaxAge - System.currentTimeMillis() < notificationPeriod) {
+                        return true;
+                    }
                 }
             }
         }
         return false;
     }
+    
 }

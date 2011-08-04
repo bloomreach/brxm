@@ -26,5 +26,6 @@ public interface IPasswordValidationService extends IClusterable {
 
     public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException;
     
-    public boolean isPasswordExpired(User user);
+    public boolean isPasswordAboutToExpire(User user);
+    
 }

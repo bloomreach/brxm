@@ -17,25 +17,22 @@ package org.hippoecm.frontend.plugins.cms.admin.plugins;
 
 import java.util.List;
 
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
@@ -44,40 +41,44 @@ import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ChangePasswordShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
+    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordShortcutPlugin.class);
 
-    private static final long serialVersionUID = 1L;
-
-    private String username;
-    private JcrNodeModel userModel;
+    private final String username;
+    private User user;
 
     private String currentPassword;
     private String newPassword;
     private String checkPassword;
-
+    
+    private IPasswordValidationService passwordValidationService;
+    
+    private Label label;
+            
     public ChangePasswordShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
+        
+        username = ((UserSession) Session.get()).getJcrSession().getUserID();
+        
+        try {
+            user = new User(username);
+        } catch (RepositoryException e) {
+            log.error("Unable to create user {}", username, e);
+        }
+        
         AjaxLink link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                currentPassword = "";
-                newPassword = "";
-                checkPassword = "";
-                username = ((UserSession) Session.get()).getJcrSession().getUserID();
                 IDialogService dialogService = getDialogService();
-                if (setUserNode() && canChangePassword()) {
+                if (user != null && canChangePassword()) {
                     dialogService.show(new ChangePasswordShortcutPlugin.Dialog(context, config));
                 } else {
                     dialogService.show(new ChangePasswordShortcutPlugin.CannotChangeDialog(context, config));
@@ -85,37 +86,33 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             }
         };
         add(link);
-    }
+        
+        label = new Label("label", new AbstractReadOnlyModel<String>() {
 
-    /**
-     * Set the user node. This really should be looked up by some UserManager. For now
-     * use the same code as in the AbstractUserManager
-     * @see org.hippoecm.repository.security.user.AbstractUserManager#getUser(String)
-     * @param userId
-     * @return
-     */
-    private boolean setUserNode() {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            private static final long serialVersionUID = 1L;
 
-        try {
-            StringBuilder statement = new StringBuilder();
-            statement.append("//element");
-            statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-            statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(username, true))
-            .append("'").append(']');
-            Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
-            QueryResult result = q.execute();
-            NodeIterator nodeIter = result.getNodes();
-            if (nodeIter.hasNext()) {
-                userModel = new JcrNodeModel(nodeIter.nextNode());
-                return true;
-            } else {
-                return false;
+            @Override
+            public String getObject() {
+                if (passwordValidationService != null) {
+                    if (passwordValidationService.isPasswordAboutToExpire(user)) {
+                        long expirationTime = user.getPasswordExpirationTime();
+                        Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
+                        StringResourceModel model = new StringResourceModel(
+                                "password-about-to-expire", 
+                                ChangePasswordShortcutPlugin.this, 
+                                null, 
+                                new Object[] { expirationDuration.toString(getLocale()) });
+                        return model.getObject();
+                    }
+                }
+                return "";
             }
-        } catch (RepositoryException e) {
-            log.error("Error while trying to get user node.", e);
-            return false;
-        }
+            
+        });
+        label.setOutputMarkupId(true);
+        add(label);
+        
+        passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
     }
 
     /**
@@ -124,12 +121,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      * @return
      */
     private boolean canChangePassword() {
-        try {
-            return !getUser().isExternal();
-        } catch (RepositoryException e) {
-            log.error("Error while checking primary type", e);
-            return false;
-        }
+        return !user.isExternal();
     }
 
     /**
@@ -137,12 +129,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      * @return
      */
     private boolean checkPassword(char[] password) {
-        try {
-            return getUser().checkPassword(password);
-        } catch (RepositoryException e) {
-            log.error("Error while checking user password", e);
-        }
-        return false;
+        return user.checkPassword(password);
     }
 
     /**
@@ -152,7 +139,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
      */
     private boolean setPassword(char[] password) {
         try {
-            getUser().savePassword(new String(password));
+            user.savePassword(new String(password));
             return true;
         } catch (RepositoryException e) {
             log.error("Error while setting user password", e);
@@ -184,21 +171,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         this.checkPassword = checkPassword;
     }
 
-    private User getUser() throws RepositoryException {
-        Node user = userModel.getNode();
-        if (user == null) {
-            throw new ItemNotFoundException();
-        }
-        return new User(user);
-    }
-
     public class Dialog extends AbstractDialog {
 
         private static final long serialVersionUID = 1L;
 
         private PasswordWidget currentWidget;
         
-        private IPasswordValidationService passwordValidationService; 
+        private final IPasswordValidationService passwordValidationService; 
 
         public Dialog(final IPluginContext context, final IPluginConfig config) {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
@@ -256,7 +235,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             } else {
                 if (passwordValidationService != null) {
                     try {
-                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, getUser());
+                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(newPassword, user);
                         for (PasswordValidationStatus status : statuses) {
                             if (!status.accepted()) {
                                 error(status.getMessage());
@@ -304,6 +283,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
                 target.addComponent(currentWidget);
+                target.addComponent(label);
             }
         }
 
