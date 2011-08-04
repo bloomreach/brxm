@@ -94,7 +94,10 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             @Override
             public String getObject() {
-                if (passwordValidationService != null) {
+                if (user.isPasswordExpired()) {
+                    return new StringResourceModel("password-is-expired", ChangePasswordShortcutPlugin.this, null).getObject();
+                }
+                else if (passwordValidationService != null) {
                     if (passwordValidationService.isPasswordAboutToExpire(user)) {
                         long expirationTime = user.getPasswordExpirationTime();
                         Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
