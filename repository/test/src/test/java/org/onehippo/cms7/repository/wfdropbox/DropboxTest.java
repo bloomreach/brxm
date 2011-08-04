@@ -70,6 +70,7 @@ public class DropboxTest extends TestCase {
 
     @Test(timeout=10000)
     public void test() throws RepositoryException, InterruptedException {
+        TestWorkflowImpl.invocationCountDateArg = 0;
         Node node = session.getRootNode().addNode("test");
         Node doc = node.addNode("document", "hippo:handle");
         doc.addMixin("hippo:hardhandle");
