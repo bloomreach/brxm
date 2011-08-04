@@ -79,6 +79,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
                 if (user != null && canChangePassword()) {
+                    currentPassword = newPassword = checkPassword = "";
                     dialogService.show(new ChangePasswordShortcutPlugin.Dialog(context, config));
                 } else {
                     dialogService.show(new ChangePasswordShortcutPlugin.CannotChangeDialog(context, config));
