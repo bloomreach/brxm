@@ -149,10 +149,11 @@ jQuery.noConflict();
                             || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
                         return null;
                     }
-                    var commentJsonObject = JSON.parse(' '+element.data);
+                    var commentJsonObject = JSON.parse(element.data);
                     if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
                         && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
                         && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {
+                        element.parentNode.removeChild(element);
                         return commentJsonObject;
                     }
                 } catch(exception) {
