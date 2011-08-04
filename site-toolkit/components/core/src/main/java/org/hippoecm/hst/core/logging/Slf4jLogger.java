@@ -26,21 +26,27 @@ public class Slf4jLogger implements Logger {
      * Following the pattern discussed in pages 162 through 168 of "The complete
      * log4j manual".
      */
-    private final static String FQCN = Slf4jLogger.class.getName();
+    private final static String DEFAULT_FQCN = Slf4jLogger.class.getName();
     
     private final static int DEBUG_INT = 10;
     private final static int INFO_INT = 20;
     private final static int WARN_INT = 30;
     private final static int ERROR_INT = 40;
 
-    private org.slf4j.Logger logger;
+    private final org.slf4j.Logger logger;
+    private final String fqcn;
     private boolean locationAware;
     private Method locationAwareLoggerLogMethod;
     private int locationAwareLoggerLogMethodArgsCount;
     private Class<?> messageFormatterClazz;
 
     public Slf4jLogger(final org.slf4j.Logger logger) {
+        this(logger, DEFAULT_FQCN);
+    }
+    
+    public Slf4jLogger(final org.slf4j.Logger logger, final String fqcn) {
         this.logger = logger;
+        this.fqcn = fqcn;
         
         try {
             Class<?> locationAwareLoggerClazz = Thread.currentThread().getContextClassLoader().loadClass("org.slf4j.spi.LocationAwareLogger");
@@ -266,7 +272,7 @@ public class Slf4jLogger implements Logger {
                     msg = (String) MethodUtils.invokeMethod(formattingTuple, "getMessage", null);
                 }
                 
-                locationAwareLoggerLogMethod.invoke(logger, null, FQCN, level, msg, null, t);
+                locationAwareLoggerLogMethod.invoke(logger, null, fqcn, level, msg, null, t);
             } else {
                 String msg = null;
                 
@@ -276,7 +282,7 @@ public class Slf4jLogger implements Logger {
                     msg = (String) MethodUtils.invokeStaticMethod(messageFormatterClazz, "arrayFormat", new Object [] { format, argArray });
                 }
                 
-                locationAwareLoggerLogMethod.invoke(logger, null, FQCN, level, msg, t);
+                locationAwareLoggerLogMethod.invoke(logger, null, fqcn, level, msg, t);
             }
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {

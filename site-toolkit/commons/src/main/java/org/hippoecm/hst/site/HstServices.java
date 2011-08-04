@@ -91,6 +91,20 @@ public class HstServices {
         }
     }
     
+    /**
+     * Returns the centralized {@link Logger} component managed by the HST container with wrapper logger fqcn used to find logging location
+     * @param loggerName
+     * @param fqcn
+     * @return
+     */
+    public static Logger getLogger(String loggerName, String fqcn) {
+        if (isAvailable()) {
+            return ((LoggerFactory) getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME)).getLogger(loggerName, fqcn);
+        } else {
+            return noopLogger;
+        }
+    }
+    
     public static String getImplementationVersion(){
         if(HST_VERSION != null) {
             return HST_VERSION;

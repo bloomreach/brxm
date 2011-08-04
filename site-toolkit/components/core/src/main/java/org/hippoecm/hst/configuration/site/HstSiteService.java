@@ -37,12 +37,15 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstSiteService implements HstSite {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final String FQCN = HstSiteService.class.getName();
 
     private HstSiteMapService siteMapService;
     private HstSiteMapItemHandlersConfigurationService siteMapItemHandlersConfigurationService;
@@ -135,8 +138,8 @@ public class HstSiteService implements HstSite {
      * @deprecated
      */
     @Deprecated
-    public Mount getMount(){
-        log.warn("getMount on HstSite is deprecated. Fetch the Mount from the HstRequestContext#getResolvedMount instead");
+    public Mount getMount() {
+        HstServices.getLogger(FQCN, FQCN).warn("HstSite#getMount() is deprecated. Fetch the Mount from the HstRequestContext#getResolvedMount instead");
         return this.mount;
     }
 

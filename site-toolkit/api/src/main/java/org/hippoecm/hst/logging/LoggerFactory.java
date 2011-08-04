@@ -28,7 +28,20 @@ package org.hippoecm.hst.logging;
  * @version $Id$
  */
 public interface LoggerFactory {
-
+    
+    /**
+     * Returns HST Logger with the category name
+     * @param name
+     * @return
+     */
     Logger getLogger(String name);
+    
+    /**
+     * Returns HST Logger with the category name and wrapper logger fqcn used to find logging location
+     * @param name
+     * @param fqcn
+     * @return
+     */
+    Logger getLogger(String name, String fqcn);
     
 }

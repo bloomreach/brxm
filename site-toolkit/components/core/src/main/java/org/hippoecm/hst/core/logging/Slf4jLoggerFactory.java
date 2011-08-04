@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.logging;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.logging.LogEventBuffer;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.logging.LoggerFactory;
@@ -37,6 +38,10 @@ public class Slf4jLoggerFactory implements LoggerFactory {
     }
     
     public Logger getLogger(String name) {
+        return getLogger(name, null);
+    }
+    
+    public Logger getLogger(String name, String fqcn) {
         Logger logger = null;
 
         if (runtimeMode == RuntimeMode.UNKNOWN_MODE) {
@@ -51,8 +56,10 @@ public class Slf4jLoggerFactory implements LoggerFactory {
         
         if (runtimeMode == RuntimeMode.DEVELOPMENT_MODE) {
             logger = new TraceToolSlf4jLogger(traceToolLogEventBuffer, org.slf4j.LoggerFactory.getLogger(name));
-        } else {
+        } else if (StringUtils.isBlank(fqcn)) {
             logger = new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(name));
+        } else {
+            logger = new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(name), fqcn);
         }
         
         return logger;
