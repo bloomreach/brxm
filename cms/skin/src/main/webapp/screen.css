@@ -2296,3 +2296,9 @@ body.hippo-root div.yui-log-container {
 .hippo-picker .hippo-picker-list-details .toggle-button > a > img {
   height: 15px;
 }
+
+.password-expiration-label {
+	color: red;
+	font-weight: bold;
+}
+
