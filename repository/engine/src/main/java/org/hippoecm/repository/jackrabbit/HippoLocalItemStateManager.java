@@ -39,7 +39,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
-import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -629,52 +628,12 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         ((NodeState)state).removeAllChildNodeEntries();
                         if(changedParents.contains(state.getId())) {
                             modifiedExternals.add(state.getId());
-                        }  else if (hasExternalBeenMovedOrRenamed((NodeState) state)) {
-                            modifiedExternals.add(state.getId());
                         }
                         //store(state);
                     }
                     //virtualStates.add(state);
                 }
             }
-        }
-
-        private boolean hasExternalBeenMovedOrRenamed(NodeState state) {
-            try {
-                ItemState sharedState = sharedStateMgr.getItemState(state.getId());
-                if (!sharedState.getParentId().equals(state.getParentId())) {
-                    return true;
-                }
-                NodeState parentState = (NodeState) get(state.getParentId());
-                if (parentState != null && parentState.getStatus() != ItemState.STATUS_NEW) {
-                    try {
-                        NodeState sharedParentState = (NodeState) sharedStateMgr.getItemState(parentState.getId());
-                        ChildNodeEntry sharedEntry = sharedParentState.getChildNodeEntry((NodeId) state.getId());
-                        if (sharedEntry == null) {
-                            log.warn("Parent of external node " + state.getId() + " no longer has a child node entry for it");
-                            return false;
-                        }
-                        ChildNodeEntry stateEntry = parentState.getChildNodeEntry((NodeId) state.getId());
-                        if (!stateEntry.getName().equals(sharedEntry.getName())) {
-                            return true;
-                        }
-                    } catch (NoSuchItemStateException e) {
-                        // parent no longer exists
-                        log.warn("Parent state for external node " + state.getId() + " no longer exists", e);
-                        return false;
-                    } catch (ItemStateException e) {
-                        log.error("Error retrieving parent state", e);
-                        return false;
-                    }
-                }
-            } catch (NoSuchItemStateException e) {
-                log.warn("State was modified, but could not be found in shared; " + state.getId(), e);
-                return true;
-            } catch (ItemStateException e) {
-                log.error("Could not retrieve state for external node " + state.getId(), e);
-                return false;
-            }
-            return false;
         }
 
         private void repopulate() {
