@@ -72,7 +72,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                             toggleGroup : 'composerMode',
                             pressed: config.previewMode,
                             allowDepress: false,
-                            width: 150
+                            width: 150,
+                            disabled: true
                         },
                         {
                             text: 'Edit',
@@ -83,9 +84,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                             pressed: !config.previewMode,
                             allowDepress: false,
                             width: 150,
+                            disabled: true,
                             listeners: {
                                 'toggle': {
-                                    fn : this.togglePreviewMode,
+                                    fn : this.toggleMode,
                                     scope: this
                                 }
                             }
@@ -177,7 +179,6 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
             // the redirect to the composermode rest resource fails with the handshake, so we have to
             // make a second request to actually set the composermode after we are authenticated
-
             var me = this;
             var composerMode = function(callback) {
                 Ext.Ajax.request({
@@ -193,6 +194,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             };
             composerMode(function() {
                 var iFrame = Ext.getCmp('Iframe');
+                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
                 iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
                 // keep session active
                 Ext.TaskMgr.start({
@@ -228,19 +230,28 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     },
 
-    togglePreviewMode: function () {
-        if (this.previewMode && !this.iframeInitialized && this.iframeDOMReady) {
-            this.previewMode = !this.previewMode;
-            this.initializeIFrameHead(this.frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
-            return true;
-        } else if (typeof this.toggleInterval === 'undefined' || this.toggleInterval === null) {
-            var self = this;
-            this.toggleInterval = window.setInterval(function() {
-                if (!self.iframeInitialized || typeof self.mainWindow === 'undefined') {
-                    return;
-                }
-
-                window.clearInterval(self.toggleInterval);
+    toggleMode: function () {
+        if (this.toggleInterval) {
+            return false;
+        }
+        Ext.getCmp('pagePreviewButton').setDisabled(this.previewMode);
+        Ext.getCmp('pageComposerButton').setDisabled(!this.previewMode);
+        var self = this;
+        // wait for the iframe dom to be ready
+        this.toggleInterval = window.setInterval(function() {
+            if (!self.iframeDOMReady) {
+                return;
+            }
+            window.clearInterval(self.toggleInterval);
+            self.toggleInterval = null;
+            // first time switch to template composer mode
+            // initialize iframe head
+            if (self.previewMode && !self.iframeInitialized) {
+                self.previewMode = !self.previewMode;
+                self.initializeIFrameHead(self.frm, self.iFrameCssHeadContributions.concat(), self.iFrameJsHeadContributions.concat());
+            } else {
+                // once the composer javascript in the iframe is injected and initialised we send a toggle
+                // message which shows/hides the drag and drop overlay in the iframe
                 var iframe = Ext.getCmp('Iframe');
                 iframe.sendMessage({}, 'toggle');
                 if (self.previewMode) {
@@ -248,13 +259,12 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 } else {
                     self.mainWindow.hide('pageComposerButton');
                 }
-
+                Ext.getCmp('pagePreviewButton').setDisabled(false);
+                Ext.getCmp('pageComposerButton').setDisabled(false);
                 self.previewMode = !self.previewMode;
-                self.toggleInterval = null;
-            }, 10);
-            return true;
-        }
-        return false;
+            }
+        }, 10);
+        return true;
     },
 
    refreshIframe : function() {
@@ -274,6 +284,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
         } else {
             Ext.Msg.hide();
+            Ext.getCmp('pagePreviewButton').setDisabled(false);
+            Ext.getCmp('pageComposerButton').setDisabled(false);
         }
         this.iframeDOMReady = true;
     },
@@ -361,6 +373,8 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         this.ids.mountId = mountId;
 
         this.iframeInitialized = true;
+        Ext.getCmp('pagePreviewButton').setDisabled(false);
+        Ext.getCmp('pageComposerButton').setDisabled(false);
         Ext.Msg.hide();
     },
 

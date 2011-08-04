@@ -40,7 +40,7 @@ jQuery.noConflict();
             try {
                 //attach mouseover/mouseclick for components
                 var self = this;
-                $('.hst-container').each(function(index) {
+                $('.'+HST.CLASS.CONTAINER).each(function(index) {
                     self._createContainer(this);
                 });
 
@@ -90,7 +90,7 @@ jQuery.noConflict();
 
         remove : function(element) {
             if (!element.hasAttribute(HST.ATTR.ID)) {
-                element = $(element).parents('.hst-container')[0];
+                element = $(element).parents('.'+HST.CLASS.CONTAINER)[0];
             }
 
             var type = element.getAttribute(HST.ATTR.TYPE);

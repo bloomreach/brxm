@@ -43,6 +43,11 @@
             XTYPE : 'xtype'
         },
 
+        CLASS : {
+            CONTAINER : 'hst-container',
+            ITEM : 'hst-container-item'
+        },
+
         DIR : {
             VERTICAL    : 1,
             HORIZONTAL  : 1

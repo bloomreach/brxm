@@ -117,7 +117,7 @@ jQuery.noConflict();
             },
 
             getContainerMetaData : function(element) {
-                if (element.className === 'hst-container-item') {
+                if (element.className === HST.CLASS.ITEM) {
                     var childNodes = element.childNodes;
                     for (var i=0, len=childNodes.length; i<len; i++) {
                         var hstMetaData = this.convertToHstMetaData(childNodes[i]);
@@ -125,7 +125,7 @@ jQuery.noConflict();
                             return hstMetaData;
                         }
                     }
-                } else if (element.className === 'hst-container') {
+                } else if (element.className === HST.CLASS.CONTAINER) {
                     var tmpElement = element;
                     while (tmpElement.previousSibling !== null) {
                         tmpElement = tmpElement.previousSibling;

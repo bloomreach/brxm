@@ -218,8 +218,8 @@ jQuery.noConflict();
             this.cls.highlight      = 'hst-highlight';
             this.cls.overlay.custom = 'hst-overlay-container';
 
-            this.cls.container      = 'hst-container';
-            this.cls.item           = 'hst-container-item';
+            this.cls.container      = HST.CLASS.CONTAINER;
+            this.cls.item           = HST.CLASS.ITEM;
             this.cls.emptyContainer = 'hst-empty-container';
             this.cls.emptyItem      = 'hst-empty-container-item';
             this.cls.overlay.item   = 'hst-overlay-container-item';
