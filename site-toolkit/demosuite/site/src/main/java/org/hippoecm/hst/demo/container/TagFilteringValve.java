@@ -52,7 +52,7 @@ public class TagFilteringValve extends AbstractValve {
                 }
             }
         }
-
+ 
         List<String> options = new ArrayList<String>(2);
         options.add("aap");
         options.add("noot");
@@ -63,6 +63,7 @@ public class TagFilteringValve extends AbstractValve {
             value = abcookie.getValue();
             if ("<null>".equals(value)) {
                 option = null;
+                value = null;
             } else if (options.contains(value)) {
                 option = value;
             } else {
