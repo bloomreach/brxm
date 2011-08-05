@@ -39,10 +39,16 @@ import org.onehippo.sso.CredentialCipher;
 public class CmsSecurityValve extends AbstractValve {
     private static final String SSO_BASED_SESSION_ATTR_NAME = CmsSecurityValve.class.getName() + ".jcrSession";
 
+    private boolean renderHostCheck = true;
+    
     private Repository repository;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    public void setRenderHostCheck(boolean renderHostCheck) {
+        this.renderHostCheck = renderHostCheck;
     }
 
     @Override
@@ -50,6 +56,10 @@ public class CmsSecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
+        if(renderHostCheck && requestContext.getRenderHost() == null) {
+            context.invokeNext();
+            return;
+        } 
         log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
         HttpSession session = servletRequest.getSession(true);
