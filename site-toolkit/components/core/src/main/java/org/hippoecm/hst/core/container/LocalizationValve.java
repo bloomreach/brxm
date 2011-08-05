@@ -63,9 +63,22 @@ public class LocalizationValve extends AbstractValve {
         }
         
         if (preferredLocale != null) {
+            List<Locale> locales = new ArrayList<Locale>();
+            locales.add(preferredLocale);
+
+            for (Enumeration<?> e = servletRequest.getLocales(); e.hasMoreElements();) {
+                Locale locale = (Locale) e.nextElement();
+
+                if (!locale.equals(preferredLocale)) {
+                    locales.add(locale);
+                }
+            }
+
+            requestContext.setPreferredLocale(preferredLocale);
+            requestContext.setLocales(locales);
+            
             requestContext.setAttribute("javax.servlet.jsp.jstl.fmt.locale.application", preferredLocale);
             servletRequest.setAttribute("javax.servlet.jsp.jstl.fmt.locale.request", preferredLocale);
-            context.getServletResponse().setLocale(preferredLocale);
         }
 
         // continue

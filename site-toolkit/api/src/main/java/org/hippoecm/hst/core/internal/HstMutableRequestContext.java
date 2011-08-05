@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
+
 /**
  * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
  * 
@@ -77,19 +78,13 @@ public interface HstMutableRequestContext extends HstRequestContext {
     /**
      * Sets the preferred locale associated with this request.
      * @param locale The preferred locale associated with this request.
-     * @deprecated we set the locales not any more on the request. 
-     * and HSTTWO-1665
      */
-    @Deprecated 
     public void setPreferredLocale(Locale locale);
     
     /**
      * Sets the locales assocaited with this request.
      * @param locales
-     * @deprecated we set the locales not any more on the request. 
-     * and HSTTWO-1665
      */
-    @Deprecated 
     public void setLocales(List<Locale> locales);
     
     /**
