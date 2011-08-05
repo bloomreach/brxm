@@ -140,6 +140,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
                 this.on('beforeshow', function () {
                     Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
+                    Ext.getCmp('createButton').setText("Choose ...");
                 }, this);
 
                 Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
