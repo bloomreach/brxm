@@ -49,6 +49,7 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissi
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-48.png -text svneol=unset#image/png
+admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin$ChangePasswordFeedbackPanel.html -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_fr.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_it.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-128.png -text svneol=unset#image/png

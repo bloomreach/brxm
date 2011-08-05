@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.plugins;
 
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -31,25 +32,35 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
+import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidator;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ChangePasswordShortcutPlugin extends RenderPlugin {
+    
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordShortcutPlugin.class);
+    private static final long THREEDAYS = 1000 * 3600 * 24 * 3;
+    
+    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=380,height=380").makeImmutable();
 
+    private final long notificationPeriod;
+    private long passwordMaxAge = -1l;
+    
     private final String username;
     private User user;
 
@@ -57,12 +68,23 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private String newPassword;
     private String checkPassword;
     
-    private IPasswordValidationService passwordValidationService;
-    
     private Label label;
             
     public ChangePasswordShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+        
+        notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
+        
+        // password max age is defined on the /hippo:configuration/hippo:security node
+        try {
+            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
+                passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
+            }
+        }
+        catch (RepositoryException e) {
+            log.error("Failed to determine configured password maximum age", e);
+        }
         
         username = ((UserSession) Session.get()).getJcrSession().getUserID();
         
@@ -80,9 +102,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 IDialogService dialogService = getDialogService();
                 if (user != null && canChangePassword()) {
                     currentPassword = newPassword = checkPassword = "";
-                    dialogService.show(new ChangePasswordShortcutPlugin.Dialog(context, config));
+                    dialogService.show(new ChangePasswordShortcutPlugin.ChangePasswordDialog(context, config));
                 } else {
-                    dialogService.show(new ChangePasswordShortcutPlugin.CannotChangeDialog(context, config));
+                    dialogService.show(new ChangePasswordShortcutPlugin.CannotChangePasswordDialog(context, config));
                 }
             }
         };
@@ -97,17 +119,15 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 if (user.isPasswordExpired()) {
                     return new StringResourceModel("password-is-expired", ChangePasswordShortcutPlugin.this, null).getObject();
                 }
-                else if (passwordValidationService != null) {
-                    if (passwordValidationService.isPasswordAboutToExpire(user)) {
-                        long expirationTime = user.getPasswordExpirationTime();
-                        Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
-                        StringResourceModel model = new StringResourceModel(
-                                "password-about-to-expire", 
-                                ChangePasswordShortcutPlugin.this, 
-                                null, 
-                                new Object[] { expirationDuration.toString(getLocale()) });
-                        return model.getObject();
-                    }
+                else if (isPasswordAboutToExpire(user)) {
+                    long expirationTime = user.getPasswordExpirationTime();
+                    Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
+                    StringResourceModel model = new StringResourceModel(
+                            "password-about-to-expire", 
+                            ChangePasswordShortcutPlugin.this, 
+                            null, 
+                            new Object[] { expirationDuration.toString(getLocale()) });
+                    return model.getObject();
                 }
                 return "";
             }
@@ -115,8 +135,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         });
         label.setOutputMarkupId(true);
         add(label);
-        
-        passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
+
     }
 
     /**
@@ -150,6 +169,18 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         }
         return false;
     }
+    
+    private boolean isPasswordAboutToExpire(User user) {
+        if (passwordMaxAge > 0 && notificationPeriod > 0) {
+            if (user.getPasswordLastModified() != null) {
+                long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
+                if (passwordLastModified + passwordMaxAge - System.currentTimeMillis() < notificationPeriod) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public String getCurrentPassword() {
         return currentPassword;
@@ -175,7 +206,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         this.checkPassword = checkPassword;
     }
 
-    public class Dialog extends AbstractDialog {
+    private class ChangePasswordDialog extends AbstractDialog {
 
         private static final long serialVersionUID = 1L;
 
@@ -183,15 +214,18 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         
         private final IPasswordValidationService passwordValidationService; 
 
-        public Dialog(final IPluginContext context, final IPluginConfig config) {
+        public ChangePasswordDialog(final IPluginContext context, final IPluginConfig config) {
             setOkLabel(new StringResourceModel("change-label", ChangePasswordShortcutPlugin.this, null));
 
-            replace(feedback = new FeedbackPanel("feedback") {
+            replace(feedback = new ChangePasswordFeedbackPanel("feedback") {
+
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected FeedbackMessagesModel newFeedbackMessagesModel() {
-                    return Dialog.this.getFeedbackMessagesModel();
+                    return ChangePasswordDialog.this.getFeedbackMessagesModel();
                 }
+                
             });
             feedback.setOutputMarkupId(true);
 
@@ -216,7 +250,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             add(checkWidget);
             
             passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
-            
+            for (IPasswordValidator validator : passwordValidationService.getPasswordValidators()) {
+                info(validator.getDescription());
+            }
         }
 
         @Override
@@ -248,7 +284,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                         }
                     }
                     catch (RepositoryException e) {
-                        log.error("Failure validating password using password validation service", e);
+                        log.error("Failed to validate password using password validation service", e);
                         ok = false;
                     }
                 }
@@ -297,24 +333,33 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return SMALL;
+            return DIALOG_PROPERTIES;
         }
         
         
     }
 
-    public class CannotChangeDialog extends AbstractDialog {
+    private class CannotChangePasswordDialog extends AbstractDialog {
 
         private static final long serialVersionUID = 1L;
 
-        public CannotChangeDialog(final IPluginContext context, final IPluginConfig config) {
-            info(new StringResourceModel("cannot-change-passoword", ChangePasswordShortcutPlugin.this, null)
+        public CannotChangePasswordDialog(final IPluginContext context, final IPluginConfig config) {
+            info(new StringResourceModel("cannot-change-password", ChangePasswordShortcutPlugin.this, null)
             .getString());
             setCancelVisible(false);
         }
 
         public IModel getTitle() {
             return new StringResourceModel("change-password-label", ChangePasswordShortcutPlugin.this, null);
+        }
+    }
+
+    private static class ChangePasswordFeedbackPanel extends FeedbackPanel {
+
+        private static final long serialVersionUID = 1L;
+        
+        public ChangePasswordFeedbackPanel(String id) {
+            super(id);
         }
     }
 }

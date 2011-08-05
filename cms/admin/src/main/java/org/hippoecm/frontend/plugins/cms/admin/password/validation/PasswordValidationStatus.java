@@ -15,18 +15,36 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.password.validation;
 
+import java.util.List;
+
 public final class PasswordValidationStatus {
     
+    public static final PasswordValidationStatus ACCEPTED = new PasswordValidationStatus(true);
+    
     private final String message;
+    private final List<String> subMessages;
     private final boolean accepted;
     
+    public PasswordValidationStatus(boolean accepted) {
+        this(null, accepted);
+    }
+    
     public PasswordValidationStatus(String message, boolean accepted) {
+        this(message, null, accepted);
+    }
+    
+    public PasswordValidationStatus(String message, List<String> subMessages, boolean accepted) {
         this.message = message;
         this.accepted = accepted;
+        this.subMessages = subMessages;
     }
     
     public String getMessage() {
         return message;
+    }
+    
+    public List<String> getSubMessages() {
+        return subMessages;
     }
     
     public boolean accepted() {

@@ -40,7 +40,7 @@ public abstract class AbstractPasswordValidator implements IPasswordValidator {
     public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException {
         PasswordValidationStatus result = null;
         if (isValid(password, user)) {
-            result = new PasswordValidationStatus(null, true);
+            result = PasswordValidationStatus.ACCEPTED;
         }
         else {
             result = new PasswordValidationStatus(getDescription(), false);
@@ -57,7 +57,7 @@ public abstract class AbstractPasswordValidator implements IPasswordValidator {
     public String getDescription() {
         return new ClassResourceModel("description", getClass(), getDescriptionParameters()).getObject();
     }
-    
+        
     protected Object[] getDescriptionParameters() {
         return null;
     }

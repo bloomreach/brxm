@@ -39,15 +39,9 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PasswordValidationServiceImpl.class);
     
-    private static final long THREEDAYS = 1000 * 3600 * 24 * 3;
-    
     private List<IPasswordValidator> validators;
     
-    // number of optional validators that should pass
-    private int requiredStrength;
-    
     private long passwordMaxAge = -1l;
-    private long notificationPeriod = THREEDAYS;
 
     public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -60,7 +54,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         // get the child pluginconfig nodes that define the validators
         Set<IPluginConfig> configs = getPluginConfig().getPluginConfigSet();
         validators = new ArrayList<IPasswordValidator>(configs.size());
-        int numberOfOptionalValidators = 0;
+        List<IPasswordValidator> optionalValidators = new ArrayList<IPasswordValidator>(configs.size());
         for (IPluginConfig config : configs) {
             String validatorClassName = config.getString("validator.class");
             try {
@@ -68,75 +62,85 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
                 Constructor<IPasswordValidator> validatorConstructor = validatorClass.getConstructor(IPluginConfig.class);
                 IPasswordValidator validator = validatorConstructor.newInstance(config);
                 if (validator.isOptional()) {
-                    numberOfOptionalValidators++;
+                    optionalValidators.add(validator);
                 }
-                validators.add(validator);
+                else {
+                    validators.add(validator);
+                }
             } catch (Exception e) {
                 log.error("Failed to create password validator: " + e.toString());
             }
         }
         
         // get the required password strength and the password expiration notification period
-        requiredStrength = getPluginConfig().getInt("password.strength", 0);
-        if (requiredStrength > numberOfOptionalValidators) {
-            log.error("The value of the property password.strength is larger than the number of available " +
-            		"optional password validators. This way, no attempt at creating a new password can succeed.");
-        }
-        notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
+        int requiredStrength = getPluginConfig().getInt("password.strength", 0);
         
-        // password max age is defined on the /hippo:configuration/hippo:security node
-        try {
-            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
-            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
-                passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
-            }
-        }
-        catch (RepositoryException e) {
-            log.error("Failed to determine configured password maximum age", e);
-        }
+        // add the optional password validator
+        validators.add(new OptionalPasswordValidator(optionalValidators, requiredStrength));
+
     }
 
     @Override
     public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException {
         List<PasswordValidationStatus> result = new ArrayList<PasswordValidationStatus>(validators.size());
-        int strength = 0;
-        List<String> optionalValidatorDescriptions = new ArrayList<String>(validators.size());
         for (IPasswordValidator validator : validators) {
             PasswordValidationStatus status = validator.checkPassword(password, user);
-            if (validator.isOptional()) {
-                optionalValidatorDescriptions.add(validator.getDescription());
-                if (status.accepted()) {
-                    strength++;
-                }
-            }
-            else {
-                result.add(status);
-            }
-        }
-        if (requiredStrength > strength) {
-            String message = new ClassResourceModel("message", PasswordValidationServiceImpl.class, new Object[] { new Integer(requiredStrength) }).getObject();
-            int counter = 1;
-            for (String validatorDescription : optionalValidatorDescriptions) {
-                message += counter++ + ") " + validatorDescription + " ";
-            }
-            result.add(new PasswordValidationStatus(message, false));
+            result.add(status);
         }
         return result;
     }
     
-    @Override
-    public boolean isPasswordAboutToExpire(User user) {
-        if (passwordMaxAge > 0) {
-            if (notificationPeriod > 0) {
-                if (user.getPasswordLastModified() != null) {
-                    long passwordLastModified = user.getPasswordLastModified().getTimeInMillis();
-                    if (passwordLastModified + passwordMaxAge - System.currentTimeMillis() < notificationPeriod) {
-                        return true;
-                    }
-                }
+    public List<IPasswordValidator> getPasswordValidators() {
+        return validators;
+    }
+    
+    private static class OptionalPasswordValidator implements IPasswordValidator {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private final List<IPasswordValidator> optionalValidators;
+        private final int requiredStrength;
+        
+        private OptionalPasswordValidator(List<IPasswordValidator> optionalValidators, int requiredStrength) {
+            this.optionalValidators = optionalValidators;
+            this.requiredStrength = requiredStrength;
+            if (requiredStrength > optionalValidators.size()) {
+                log.error("The value of the property password.strength is larger than the number of available " +
+                        "optional password validators. This way, no attempt at creating a new password can succeed.");
             }
         }
-        return false;
+
+        @Override
+        public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException {
+            int passwordStrength = 0;
+            for (IPasswordValidator validator : optionalValidators) {
+                PasswordValidationStatus status = validator.checkPassword(password, user);
+                if (status.accepted()) {
+                    passwordStrength++;
+                }
+            }
+            if (passwordStrength < requiredStrength) {
+                return new PasswordValidationStatus(getDescription(), false);
+            }
+            return PasswordValidationStatus.ACCEPTED;
+        }
+
+        @Override
+        public boolean isOptional() {
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            StringBuilder description = new StringBuilder();
+            description.append(new ClassResourceModel("message", PasswordValidationServiceImpl.class, new Object[] { new Integer(requiredStrength) }).getObject());
+            int counter = 1;
+            for (IPasswordValidator validator : optionalValidators) {
+                description.append("\n").append(counter++).append(") ").append(validator.getDescription());
+            }
+            return description.toString();
+        }
+        
     }
     
 }
