@@ -39,11 +39,18 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     },
                     items:[
                         {
-                            xtype: 'textfield',
+                            xtype: 'displayfield',
                             fieldLabel: 'Blueprint',
-                            id: 'blueprintId',
-                            readOnly: true,
-                            allowBlank: false
+                            id: 'displayedBlueprintId',
+                            style: {
+                                textAlign: 'left',
+                                paddingLeft: '70px'
+                            }
+                        },
+                        {
+                            xtype: 'hidden',
+                            fieldLabel: 'Blueprint',
+                            id: 'blueprintId'
                         },
                         {
                             xtype: 'textfield',
@@ -72,7 +79,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 this.on('beforeshow', function () {
                     this.getForm().reset();
                     var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
-                     Ext.getCmp('blueprintId').setValue(blueprint.id);
+                    Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
+                    Ext.getCmp('blueprintId').setValue(blueprint.id);
                 }, this);
                 this.doLayout();
             },
