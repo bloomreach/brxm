@@ -116,6 +116,12 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                     ],
                     buttons: [
                         {
+                            id: 'createButton',
+                            text: 'Choose ...',
+                            handler: me.processNextStep,
+                            scope: me
+                        },
+                        {
                             id: 'cancelButton',
                             text: 'Cancel',
                             scope: me,
@@ -123,12 +129,6 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                                 this.hide();
                             }
 
-                        },
-                        {
-                            id: 'createButton',
-                            text: 'Choose ...',
-                            handler: me.processNextStep,
-                            scope: me
                         }
                     ]
 
