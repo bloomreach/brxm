@@ -52,8 +52,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         
         Pipeline pipeline = (namedPipeline != null ? pipelines.getPipeline(namedPipeline) : pipelines.getDefaultPipeline());
         
-        if (pipeline == null)
-        {
+        if (pipeline == null) {
         	if (namedPipeline != null) {
             	throw new ContainerException("Unknown namedPipeline "+namedPipeline+". Request processing cannot continue.");
         	}
@@ -67,18 +66,19 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
                 Thread.currentThread().setContextClassLoader(processorClassLoader);
             }
        
-            pipeline.beforeInvoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
-            if(servletResponse.isCommitted()) {
-               log.debug("Response is already committed during pre-invoking valves. Skip invoking valves");
+            PipelineContext pipelineContext = pipeline.preprocess(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            
+            if (pipelineContext.isPipelineCompletionRequested()) {
+                log.debug("Pipeline completion has been requested. Skip the main processing.");
             } else {
-                pipeline.invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+                pipeline.process(requestContainerConfig, requestContext, servletRequest, servletResponse);
             }
         } catch (ContainerException e) {
             throw e;
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            pipeline.afterInvoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            pipeline.postprocess(requestContainerConfig, requestContext, servletRequest, servletResponse);
       
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(containerClassLoader);

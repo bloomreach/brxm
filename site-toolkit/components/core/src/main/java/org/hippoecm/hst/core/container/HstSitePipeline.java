@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 
 /**
  * HstSitePipeline
@@ -27,7 +28,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public class HstSitePipeline implements Pipeline
 {
-
+    
     protected Valve [] preInvokingValves;
     protected Valve [] invokingValves;
     protected Valve [] postInvokingValves;
@@ -94,29 +95,71 @@ public class HstSitePipeline implements Pipeline
     public void initialize() throws ContainerException {
     }
     
+    @Deprecated
     public void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, preInvokingValves);
     }
 
+    public PipelineContext preprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, preInvokingValves);
+    }
+    
+    @Deprecated
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, invokingValves);
     }
     
+    public PipelineContext process(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, invokingValves);
+    }
+    
+    @Deprecated
     public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, postInvokingValves);
     }
     
-    private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    public PipelineContext postprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, postInvokingValves);
+    }
+    
+    private PipelineContext invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves).invokeNext();
+            ValvesInvocation valvesInvocation = new ValvesInvocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves);
+            valvesInvocation.invokeNext();
+            return new PipelineInvocation(valvesInvocation);
         }
+        
+        return new PipelineInvocation();
     }
 
     public void destroy() throws ContainerException {
-    }    
+    }
     
-    private static final class Invocation implements ValveContext
+    private static final class PipelineInvocation implements PipelineContext {
+        
+        private final ValvesInvocation valvesInvocation;
+        
+        public PipelineInvocation() {
+            this(null);
+        }
+        
+        public PipelineInvocation(final ValvesInvocation valvesInvocation) {
+            this.valvesInvocation = valvesInvocation;
+        }
+        
+        public boolean isPipelineCompletionRequested() {
+            if (valvesInvocation != null) {
+                return valvesInvocation.isPipelineCompletionRequested();
+            }
+            
+            return false;
+        }
+        
+    }
+    
+    private static final class ValvesInvocation implements ValveContext
     {
+        private static final String FQCN = ValvesInvocation.class.getName(); 
 
         private final Valve[] valves;
 
@@ -125,10 +168,11 @@ public class HstSitePipeline implements Pipeline
         private final HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
         private final HstRequestContext requestContext;
+        private boolean pipelineCompletionRequested;
 
         private int at = 0;
 
-        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
+        public ValvesInvocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
             this.servletRequest = servletRequest;
@@ -137,12 +181,21 @@ public class HstSitePipeline implements Pipeline
         }
 
         public void invokeNext() throws ContainerException {
+            if (pipelineCompletionRequested) {
+                HstServices.getLogger(FQCN, FQCN).warn("Pipeline is already completed. Next invocation will be ignored.");
+                return;
+            }
+            
             if (at < valves.length)
             {
                 Valve next = valves[at];
                 at++;
                 next.invoke(this);
             }
+        }
+
+        public void completePipeline() throws ContainerException {
+            this.pipelineCompletionRequested = true;
         }
 
         public HstContainerConfig getRequestContainerConfig() {
@@ -166,6 +219,10 @@ public class HstSitePipeline implements Pipeline
         
         public HstComponentWindow getRootComponentWindow() {
             return this.rootComponentWindow;
+        }
+        
+        boolean isPipelineCompletionRequested() {
+            return pipelineCompletionRequested;
         }
     }
 }

@@ -36,6 +36,8 @@ public interface Pipeline
     void initialize() throws ContainerException;
     
     /**
+     * @deprecated Use {@link #preprocess(HstContainerConfig, HstRequestContext, HttpServletRequest, HttpServletResponse)} instead.
+     * 
      * Does pre-processing step for the request processing.
      * 
      * @param requestContainerConfig the HstComponent container configuration
@@ -44,9 +46,23 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
+    @Deprecated
     void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
+     * Does pre-processing step for the request processing.
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
+     * @param servletRequest
+     * @param servletResponse
+     * @return pipelineContext
+     * @throws ContainerException
+     */
+    PipelineContext preprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+
+    /**
+     * @deprecated Use {@link #process(HstContainerConfig, HstRequestContext, HttpServletRequest, HttpServletResponse)} instead.
      * Invokes the request processing
      * 
      * @param requestContainerConfig the HstComponent container configuration
@@ -55,9 +71,23 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
+    @Deprecated
     void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
     
     /**
+     * Invokes the request processing
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
+     * @param servletRequest
+     * @param servletResponse
+     * @return pipelineContext
+     * @throws ContainerException
+     */
+    PipelineContext process(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+    
+    /**
+     * @deprecated Use {@link #postprocess(HstContainerConfig, HstRequestContext, HttpServletRequest, HttpServletResponse)} instead.
      * Does post-processing step for the request processing.
      * 
      * @param requestContainerConfig the HstComponent container configuration
@@ -66,7 +96,20 @@ public interface Pipeline
      * @param servletResponse
      * @throws ContainerException
      */
+    @Deprecated
     void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
+
+    /**
+     * Does post-processing step for the request processing.
+     * 
+     * @param requestContainerConfig the HstComponent container configuration
+     * @param requestContext
+     * @param servletRequest
+     * @param servletResponse
+     * @return pipelineContext
+     * @throws ContainerException
+     */
+    PipelineContext postprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Destroys the pipeline.
