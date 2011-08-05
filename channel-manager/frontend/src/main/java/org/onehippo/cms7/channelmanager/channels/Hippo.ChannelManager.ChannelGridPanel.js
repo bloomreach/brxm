@@ -136,7 +136,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     }
                     break;
                 case 27: // ESC
-                    this.fireEvent('channel-deselected');
+                    this.fireEvent('channel-escaped');
                     break;
             }
         }, this);

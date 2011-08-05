@@ -70,13 +70,16 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.gridPanel.on('channel-selected', function(channelId, channelName) {
             this.propertiesPanel.showPanel(channelId, channelName);
         }, this);
-        this.gridPanel.on('channel-deselected', function(sm) {
+        this.gridPanel.on('channel-escaped', function() {
             if (this.propertiesPanel.isShown()) {
                 this.propertiesPanel.hidePanel();
             } else {
-                this.gridPanel.selectRow(-1);
-                this.propertiesPanel.closePanel();
+                this.gridPanel.fireEvent('channel-deselected');
             }
+        }, this),
+        this.gridPanel.on('channel-deselected', function() {
+            this.gridPanel.selectRow(-1);
+            this.propertiesPanel.closePanel();
         }, this);
     }
 
