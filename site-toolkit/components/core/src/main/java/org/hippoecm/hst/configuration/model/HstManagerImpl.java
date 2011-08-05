@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -189,7 +191,6 @@ public class HstManagerImpl implements HstManager {
     }
 
     protected void buildSites() throws RepositoryNotAvailableException{
-          
         if (clearAll) { 
             configChangeEventMap = null;
             commonCatalog = null;
@@ -315,6 +316,12 @@ public class HstManagerImpl implements HstManager {
                             hstComponentsConfigurationChanged = true;
                         }
                         
+                        /*
+                         * When a node is removed and added, we need to reload the parent because 
+                         * the ordering is most likely changed: Jackrabbit returns for a MOVE a 'remove' and an 'add' as event.
+                         * we keep track of removals in removedPaths. When we also later encounter an add, we reload the parent
+                         */
+                        Map<String, HstNode> removedPathsForParentNode = new HashMap<String, HstNode>();
                           
                         for(HstEvent event : events) {
                             if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
@@ -322,6 +329,7 @@ public class HstManagerImpl implements HstManager {
                                     HstNode node = getConfigurationNodeForPath(event.path);
                                     if(node != null) {
                                         if(node.getParent() != null) {
+                                            removedPathsForParentNode.put(node.getValueProvider().getPath(), node.getParent());
                                             node.getParent().removeNode(node.getValueProvider().getName());
                                         } else {
                                             // we are a root
@@ -340,7 +348,25 @@ public class HstManagerImpl implements HstManager {
                                     ((HstNodeImpl)node).markStale(); 
                                 }
                             }
+                        } 
+                        
+                        // check whether there were removes and adds for the same node (in other words, a MOVE)
+                        List<String> extraNodesToLoad = new ArrayList<String>();
+                        for(String path : loadNodes) { 
+                            if(removedPathsForParentNode.containsKey(path)) {
+                                // found a move and add. Remove the parent and reload the parent
+                                HstNode node = removedPathsForParentNode.get(path);
+                                if(node.getParent() != null) {
+                                    node.getParent().removeNode(node.getValueProvider().getName());
+                                    extraNodesToLoad.add(node.getValueProvider().getPath());
+                                } else {
+                                    // we are a root
+                                    configurationRootNodes.remove(node.getValueProvider().getPath());
+                                }
+                            }
                         }
+                        
+                        loadNodes.addAll(extraNodesToLoad);
                     }
                     
                     if( configurationRootNodes.isEmpty()) {
