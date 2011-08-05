@@ -28,10 +28,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -42,7 +44,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultHstLinkCreator.class);
-
+    private static final String FQCN = HstSiteService.class.getName();
+    
     private final static String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
     private String[] binaryLocations;
     private String binariesPrefix;
@@ -197,6 +200,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
      */
     @Deprecated
     public HstLink create(HstSiteMapItem toHstSiteMapItem) {
+        HstServices.getLogger(FQCN, FQCN).warn("HstLinkCreator#create(HstSiteMapItem) is deprecated. Use HstLinkCreator#create(HstSiteMapItem, Mount) instead");
         return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getMount()));
     }
     
@@ -214,7 +218,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             log.warn("Could not find HstSiteMapItem for siteMapItemRefId '{}' and mount '{}'. Return null", siteMapItemRefId, mount.getName());
             return null;
         }
-        return create(siteMapItem);
+        return create(siteMapItem, mount);
     }
 
     private HstLink postProcess(HstLink link) {
