@@ -96,9 +96,13 @@ public class CmsSecurityValve extends AbstractValve {
                     } else {
                         log.error("No destinationUrl specified");
                     }
-                    //Everything seems to be fine, redirect to destination url and return
-                    servletResponse.sendRedirect(cmsAuthUrl);
-
+                    
+                    if (cmsAuthUrl != null) {
+                        //Everything seems to be fine, redirect to destination url and return
+                        servletResponse.sendRedirect(cmsAuthUrl);
+                    } else {
+                        log.error("No cmsAuthUrl specified");
+                    }
                 } catch (UnsupportedEncodingException e) {
                     log.error("Unable to encode the destination url with utf8 encoding" + e.getMessage(), e);
                 } catch (IOException e) {
