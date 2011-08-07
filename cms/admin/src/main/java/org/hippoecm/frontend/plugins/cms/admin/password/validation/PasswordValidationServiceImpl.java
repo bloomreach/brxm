@@ -20,17 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +36,6 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     private static final Logger log = LoggerFactory.getLogger(PasswordValidationServiceImpl.class);
     
     private List<IPasswordValidator> validators;
-    
-    private long passwordMaxAge = -1l;
 
     public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -72,7 +66,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             }
         }
         
-        // get the required password strength and the password expiration notification period
+        // get the required password strength
         int requiredStrength = getPluginConfig().getInt("password.strength", 0);
         
         // add the optional password validator

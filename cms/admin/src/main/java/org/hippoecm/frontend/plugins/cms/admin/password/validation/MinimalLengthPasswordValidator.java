@@ -26,7 +26,7 @@ public class MinimalLengthPasswordValidator extends AbstractPasswordValidator im
     
     public MinimalLengthPasswordValidator(IPluginConfig config) {
         super(false);
-        minimallength = config.getAsInteger("minimallength", 8);
+        minimallength = config.getAsInteger("minimallength", 4);
     }
 
     @Override

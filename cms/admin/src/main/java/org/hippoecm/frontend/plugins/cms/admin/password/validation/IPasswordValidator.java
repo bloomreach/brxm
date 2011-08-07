@@ -21,12 +21,30 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
+/**
+ * A password validator checks whether a password complies to a rule.
+ */
 public interface IPasswordValidator extends Serializable {
-    
+
+    /**
+     * Check whether the password complies to the rule this IPasswordValidator defines.
+     * 
+     * @param password  the password to check against the rule.
+     * @param user  the user for whom the password is being checked.
+     * @return  the validation status
+     * @throws RepositoryException
+     */
     public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException;
     
+    /**
+     * If this validator is optional then it is part of a set of validators for which
+     * a configured number of them must pass.
+     */
     public boolean isOptional();
     
+    /**
+     * Internationalized description of what rule this validator checks.
+     */
     public String getDescription();
     
 }

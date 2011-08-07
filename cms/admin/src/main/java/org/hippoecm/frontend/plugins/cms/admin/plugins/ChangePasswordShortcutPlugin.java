@@ -54,7 +54,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordShortcutPlugin.class);
-    private static final long THREEDAYS = 1000 * 3600 * 24 * 3;
+    
+    private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+    private static final long ONEDAYMS = 1000 * 3600 * 24;
     
     private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=380,height=380").makeImmutable();
 
@@ -73,13 +75,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     public ChangePasswordShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         
-        notificationPeriod = getPluginConfig().getLong("password.expirationNotificationPeriod", THREEDAYS);
+        notificationPeriod = (long) getPluginConfig().getDouble("passwordexpirationnotificationdays", 3) * ONEDAYMS;
         
         // password max age is defined on the /hippo:configuration/hippo:security node
         try {
-            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
-            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
-                passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
+            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(SECURITY_PATH);
+            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
+                passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
             }
         }
         catch (RepositoryException e) {

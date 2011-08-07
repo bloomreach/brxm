@@ -67,6 +67,8 @@ public class User implements Comparable<User>, IClusterable {
     private final static String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND hipposys:members='{}'";
     private final static String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE hipposys:members='{}'";
 
+    private final static long ONEDAYMS = 1000 * 3600 * 24;
+    
     private boolean external = false;
     private boolean active = true;
     private String path;
@@ -260,8 +262,8 @@ public class User implements Comparable<User>, IClusterable {
         }
         
         Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
-        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
-            passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
+        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
+            passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
         }
     }
 
@@ -459,7 +461,7 @@ public class User implements Comparable<User>, IClusterable {
     
     public boolean isPasswordExpired() {
         long passwordExpirationTime = getPasswordExpirationTime();
-        return passwordExpirationTime != -1l && passwordExpirationTime < System.currentTimeMillis();
+        return passwordExpirationTime > 0 && passwordExpirationTime < System.currentTimeMillis();
     }
     
     public long getPasswordExpirationTime() {
