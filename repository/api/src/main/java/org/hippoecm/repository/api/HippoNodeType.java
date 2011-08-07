@@ -338,7 +338,7 @@ public interface HippoNodeType {
     /**
      * 
      */
-    final public static String HIPPO_PASSWORDMAXAGE = "hipposys:passwordmaxage";
+    final public static String HIPPO_PASSWORDMAXAGEDAYS = "hipposys:passwordmaxagedays";
     /**
      * 
      */

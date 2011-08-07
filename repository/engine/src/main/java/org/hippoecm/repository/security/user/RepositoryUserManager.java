@@ -35,17 +35,15 @@ public class RepositoryUserManager extends AbstractUserManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private boolean maintenanceMode = false;
+    private final static String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     
-    private long passwordMaxAge = -1l;
+    private final static long ONEDAYMS = 1000 * 3600 * 24;
+    
+    private boolean maintenanceMode = false;
     
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
         maintenanceMode = context.isMaintenanceMode();
-        Node securityNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
-        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE)) {
-            passwordMaxAge = securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGE).getLong();
-        }
     }
 
     @Override
@@ -54,6 +52,7 @@ public class RepositoryUserManager extends AbstractUserManager {
     }
     
     private boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+        long passwordMaxAge = getPasswordMaxAge();
         if (passwordMaxAge > 0) {
             Node user = getUser(rawUserId);
             if (user.hasProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED)) {
@@ -62,6 +61,14 @@ public class RepositoryUserManager extends AbstractUserManager {
             }
         }
         return false;
+    }
+
+    private long getPasswordMaxAge() throws RepositoryException {
+        Node securityNode = session.getRootNode().getNode(SECURITY_PATH);
+        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
+            return (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
+        }
+        return -1l;
     }
 
     /**
