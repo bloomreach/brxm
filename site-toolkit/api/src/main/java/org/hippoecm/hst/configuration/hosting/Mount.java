@@ -120,6 +120,16 @@ public interface Mount {
      * the predefined property name prefix to indicates mount aliases
      */
     static final String PROPERTY_NAME_MOUNT_PREFIX = "hst:mount";
+
+    /**
+     * the string value that indicates 'live' 
+     */
+    static final String LIVE_NAME = "live";
+    
+    /**
+     * the string value that indicates 'preview' 
+     */
+    static final String PREVIEW_NAME = "preview";
     
     /**
      * @return The name of this {@link Mount} item

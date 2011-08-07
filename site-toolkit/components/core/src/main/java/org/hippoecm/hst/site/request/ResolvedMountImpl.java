@@ -18,17 +18,17 @@ package org.hippoecm.hst.site.request;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
-import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResolvedMountImpl implements ResolvedMount{
+public class ResolvedMountImpl implements MutableResolvedMount {
 
 
     private final static Logger log = LoggerFactory.getLogger(ResolvedMountImpl.class);
@@ -43,22 +43,32 @@ public class ResolvedMountImpl implements ResolvedMount{
         this.resolvedMountPath = resolvedMountPath;
     }
     
+    @Override
     public Mount getMount() {
         return mount;
     }
 
+    @Override
+    public void setMount(Mount mount) {
+       this.mount = mount;
+    }
+
+    @Override
     public ResolvedVirtualHost getResolvedVirtualHost() {
         return resolvedVirtualHost;
     }
-    
+
+    @Override
     public String getResolvedMountPath() {
         return resolvedMountPath;
     }
-    
+
+    @Override
     public String getNamedPipeline() {
        return mount.getNamedPipeline();
     }
 
+    @Override
     public ResolvedSiteMapItem matchSiteMapItem(String siteMapPathInfo) throws MatchException {
         // test whether this Mount actually has a HstSite attached. If not, we return null as we can not match to a SiteMapItem when there is no HstSite object
         if(getMount().getHstSite() == null) {
@@ -98,29 +108,36 @@ public class ResolvedMountImpl implements ResolvedMount{
         }
         return item; 
     }
-    
+
+    @Override
     public boolean isAuthenticated() {
         return mount.isAuthenticated();
     }
-    
+
+    @Override
     public Set<String> getRoles() {
         return mount.getRoles();
     }
-    
+
+    @Override
     public Set<String> getUsers() {
         return mount.getUsers();
     }
-    
+
+    @Override
     public boolean isSubjectBasedSession() {
         return mount.isSubjectBasedSession();
     }
-    
+
+    @Override
     public boolean isSessionStateful() {
         return mount.isSessionStateful();
     }
-    
+
+    @Override
     public String getFormLoginPage() {
         return mount.getFormLoginPage();
     }
+
     
 }

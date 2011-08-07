@@ -30,7 +30,7 @@ public class MountService implements Mount {
     private static final Logger log = LoggerFactory.getLogger(MountService.class);
     
     
-    private static final String DEFAULT_TYPE = "live";
+    private static final String DEFAULT_TYPE = Mount.LIVE_NAME;
     /**
      * The name of this {@link Mount}. If it is the root, it is called hst:root
      */
@@ -55,11 +55,17 @@ public class MountService implements Mount {
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
      */
     private Mount parent;
-    
+
     /**
      * the HstSite this {@link Mount} points to. It can be <code>null</code>
      */
     private HstSite hstSite;
+    
+    /**
+     * the previewHstSite equivalent of this {@link Mount}. If this {@link Mount} is a preview,
+     * then previewHstSite == hstSite.  It can be <code>null</code>
+     */
+    private HstSite previewHstSite;
     
     /**
      * The child {@link Mount} below this {@link Mount}
@@ -102,19 +108,41 @@ public class MountService implements Mount {
     private String mountPath;
     
     /**
-     * The absolute canonical path of the content
+     * The absolute path of the content (which might be the location of some mirror node)
      */
     private String contentPath;
+
+    /**
+     * The absolute path of the content (which might be the location of some mirror node) of the preview version of this {@link Mount}. If
+     * there is no preview, or this Mount is already a preview, then previewContentPath equals contentPath
+     */
+    private String previewContentPath;
     
     /**
-     * The absolute canonical path of the content
+     * The absolute canonical path of the content : In case <code>contentPath</code> points to a mirror,
+     * this <code>canonicalContentPath</code> points to the location the mirror points to
      */
     private String canonicalContentPath;
+    
+    /**
+     * The absolute canonical path of the content of the preview version of this {@link Mount}: In case <code>previewContentPath</code> points to a mirror,
+     * this <code>canonicalContentPath</code> points to the location the mirror points to.
+     * 
+     * Note that although <code>contentPath</code> and <code>previewContentPath</code> may point to a differrent mirror,
+     * <code>canonicalContentPath</code> and <code>previewCanonicalContentPath</code> are most of the time equal
+     */
+    private String previewCanonicalContentPath;
 
     /**
      * The path where the {@link Mount} is pointing to
      */
     private String mountPoint;
+    
+    /**
+     * The path where the preview equivalent of this {@link Mount} is pointing to. If this {@link Mount} is 
+     * a preview. the previewMountPoint is the same as mountPoint
+     */
+    private String previewMountPoint;
     
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
@@ -370,6 +398,13 @@ public class MountService implements Mount {
             }
         }
         
+        if(Mount.PREVIEW_NAME.equals(type)) {
+            previewMountPoint = mountPoint;
+        } else {
+            previewMountPoint = mountPoint + "-" + Mount.PREVIEW_NAME;
+        }
+        
+        
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
             this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
         } else if (parent != null){
@@ -435,10 +470,24 @@ public class MountService implements Mount {
                         + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
             }
             
-            this.hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
-            this.canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
-            this.contentPath = hstSiteNodeForMount.getContentPath();
+            hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
+            canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
+            contentPath = hstSiteNodeForMount.getContentPath();
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
+            
+            // now also try to get hold of the previewHstSite. If we cannot load it, we log an info: 
+            HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
+            if(previewHstSiteNodeForMount == null) {
+                log.info("There is no preview version '{}-preview' for  mount '{}'. Cannot create a PREVIEW HstSite " +
+                		"for this Mount. The live mount will be used.",  mountPoint,  mount.getValueProvider().getPath());
+                previewHstSite = hstSite;
+                previewCanonicalContentPath = canonicalContentPath;
+                previewContentPath = contentPath;
+            } else {
+                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
+                previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();;
+                previewContentPath = previewHstSiteNodeForMount.getContentPath();;
+            }
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
@@ -486,6 +535,12 @@ public class MountService implements Mount {
         return hstSite;
     }
 
+    // not an API method. Only internal for the core
+    public HstSite getPreviewHstSite() {
+        return previewHstSite;
+    }
+
+    
     public String getName() {
         return name;
     }
@@ -513,6 +568,19 @@ public class MountService implements Mount {
 
     public String getCanonicalContentPath() {
         return canonicalContentPath;
+    }
+    
+    /*
+     * internal only : not api 
+     */
+    public String getPreviewContentPath() {
+        return previewContentPath;
+    }
+    /*
+     * internal only: not api 
+     */
+    public String getPreviewCanonicalContentPath() {
+        return previewCanonicalContentPath;
     }
 
     public String getMountPoint() {
@@ -570,7 +638,7 @@ public class MountService implements Mount {
     }
 
     public boolean isPreview() {
-        return isOfType("preview");
+        return isOfType(Mount.PREVIEW_NAME);
     }
 
     public String getType() {
