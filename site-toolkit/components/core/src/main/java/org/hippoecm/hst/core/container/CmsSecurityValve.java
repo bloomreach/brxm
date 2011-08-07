@@ -238,29 +238,6 @@ public class CmsSecurityValve extends AbstractValve {
         }
         
         @Override
-        public String getType() {
-            return Mount.PREVIEW_NAME;
-        }
-
-        @Override
-        public List<String> getTypes() {
-            if(delegatee.isPreview()) {
-                return delegatee.getTypes();
-            }
-            if(types != null) {
-                return types;
-            }
-            List<String> types = new ArrayList<String>(delegatee.getTypes());
-            
-            if(types.contains(Mount.LIVE_NAME)) {
-                types.remove(Mount.LIVE_NAME);
-            }
-            if(!types.contains(Mount.PREVIEW_NAME)) {
-                types.add(Mount.PREVIEW_NAME);
-            }
-            return Collections.unmodifiableList(types);
-        }
-        @Override
         public boolean isPreview() {
             return true;
         }
@@ -304,6 +281,23 @@ public class CmsSecurityValve extends AbstractValve {
         /*
          * below delegate everything to original mount
          */
+        
+        /*
+         * NOTE For getType and getTypes the 'preview' version still returns the value the original mount had. So, for a live mount, it will still
+         * be live. This is because otherwise cross mount links will fail (you cannot link from preview to live and vice versa). 
+         * 
+         * This means, implementation should always check isPreview() to check whether the mount is preview, and not isOfType("preview")
+         */
+        @Override
+        public String getType() {
+            return delegatee.getType();
+        }
+
+        @Override
+        public List<String> getTypes() {
+            return delegatee.getTypes();
+        }
+        
         @Override
         public <T> T getChannelInfo() {
             return (T) delegatee.getChannelInfo();
