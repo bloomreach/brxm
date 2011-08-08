@@ -31,7 +31,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             animCollapse: true,
             collapsed: true,
             collapsible: true,
-            collapsibleSplitTip: self.resources['split.tip'],
+            collapsibleSplitTip: config.resources['split.tip'],
             cmargins: '0',
             enabled: false,
             floatable: false,
@@ -41,6 +41,22 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             stateful: true,
             useSplitTips: true,
             width: 600
+        });
+
+        config.items.push({
+            xtype: 'button',
+            text: 'Open Channel',
+            listeners: {
+                click : {
+                    fn: function() {
+                        // TODO cleanup and use events instead
+                        Ext.getCmp('rootPanel').layout.setActiveItem(1);
+                        document.getElementById('Hippo.App.Main').className = 'x-panel';
+                        Hippo.App.Main.initComposer(this.subMountPath, this.hostname);
+                    },
+                    scope : this
+                }
+            }
         });
 
         Hippo.ChannelManager.ChannelPropertiesPanel.superclass.constructor.call(this, config);
@@ -54,13 +70,14 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         }, this);
     },
 
-    showPanel: function(channelId, channelName) {
+    showPanel: function(channelId, channelName, record) {
         this.channelId = channelId;
 
         if (channelName) {
             this.setTitle(channelName);
         }
-
+        this.hostname = record.get('hostname');
+        this.subMountPath = record.get('subMountPath');
         this.expand();
         this.fireEvent('selectchannel', channelId);
     },

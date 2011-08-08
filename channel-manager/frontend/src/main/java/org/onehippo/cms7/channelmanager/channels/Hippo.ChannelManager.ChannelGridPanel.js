@@ -33,7 +33,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
         Ext.apply(config, {
             id: 'channel-grid-panel',
-            store: self.store,
             stripeRows: true,
             autoHeight: true,
             viewConfig: {
@@ -41,10 +40,10 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             stateful: true,
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'savestate' ],
-            title: self.resources['title'],
+            title: config.resources['title'],
 
             colModel: new Ext.grid.ColumnModel({
-                columns: self.columns,
+                columns: config.columns,
                 defaults: {
                     sortable: true
                 }
@@ -52,14 +51,14 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
             view: new Ext.grid.GroupingView({
                 forceFit: true,
-                columnsText: self.resources['menu.columns'],
-                emptyText: self.resources['zero.channels'],
-                groupByText: self.resources['menu.group.by'],
+                columnsText: config.resources['menu.columns'],
+                emptyText: config.resources['zero.channels'],
+                groupByText: config.resources['menu.group.by'],
                 groupTextTpl: String.format('{text} ({[values.rs.length]} {[values.rs.length != 1 ? "{0}" : "{1}"]})',
-                        self.resources['group.channels'], self.resources['group.channel']),
-                showGroupsText: self.resources['menu.show.groups'],
-                sortAscText: self.resources['menu.sort.ascending'],
-                sortDescText: self.resources['menu.sort.descending']
+                        config.resources['group.channels'], config.resources['group.channel']),
+                showGroupsText: config.resources['menu.show.groups'],
+                sortAscText: config.resources['menu.sort.ascending'],
+                sortDescText: config.resources['menu.sort.descending']
             }),
 
             tbar: new Ext.Toolbar({
@@ -69,7 +68,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 },
                 items: [
                     {
-                        text: self.resources['action.add.channel'],
+                        text: config.resources['action.add.channel'],
                         handler: function() {
                             this.fireEvent('add-channel');
                         },
@@ -88,16 +87,17 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
     initComponent: function() {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
-        this.store.load({
-            callback: function() {
-                if (this.selectChannel(this.selectedChannelId)) {
-                    this.getView().focusEl.focus();
-                } else {
-                    this.selectedChannelId = null;
-                }
-            },
-            scope: this
-        });
+        this.store.on('load', function() {
+            if (this.selectChannel(this.selectedChannelId)) {
+                this.getView().focusEl.focus();
+            } else {
+                this.selectedChannelId = null;
+            }
+        }, this);
+        this.on('afterrender', function() {
+            this.store.load();
+        }, this);
+
         this.addEvents('add-channel', 'channel-selected', 'channel-deselected', 'savestate');
 
         var sm = this.getSelectionModel();
@@ -123,7 +123,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
         sm.on('rowselect', function(sm, rowIndex, record) {
             this.isSelectingRow = false;
-            this.fireEvent('channel-selected', record.get('channelId'), record.get('name'));
+            this.fireEvent('channel-selected', record.get('channelId'), record.get('name'), record);
         }, this);
 
         // register keyboard navigation

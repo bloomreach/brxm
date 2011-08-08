@@ -25,62 +25,69 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.channelStore = config.channelStore;
         this.blueprintStore = config.blueprintStore;
 
+         Ext.apply(config, {
+            id: 'rootPanel',
+            layout: 'card',
+            activeItem: 0,
+            layoutOnCardChange: true,
+            deferredRender: true,
+            viewConfig: {
+                forceFit: true
+            }
+         });
+
         Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
     },
 
     initComponent: function() {
         var me = this;
-        var config = {
-            layout: 'border',
-            height: 900,
-            viewConfig: {
-                forceFit: true
-            }
-        };
 
-       // recalculate the ExtJs layout when the YUI layout manager fires a resize event
-        this.on('afterlayout', function(portal, layout) {
+        // recalculate the ExtJs layout when the YUI layout manager fires a resize event
+        this.on('afterlayout', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
-            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.doLayout, true);
+            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
+                me.setSize(arguments[0].body.w, arguments[0].body.h);
+                me.doLayout();
+            }, true);
         }, this, {single: true});
 
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
+        this.on('afterlayout', function() {
+            // get all child components
+            this.win = new Hippo.ChannelManager.NewChannelWindow({
+                blueprintStore: me.blueprintStore,
+                channelStore : me.channelStore
+            });
+            this.formPanel = Ext.getCmp('channel-form-panel');
+            this.gridPanel = Ext.getCmp('channel-grid-panel');
+            this.propertiesPanel = Ext.getCmp('channel-properties-panel');
+
+            // register channel creation events
+            this.gridPanel.on('add-channel', function() {
+                this.win.show();
+            }, this);
+            this.formPanel.on('channel-created', function() {
+                this.win.hide();
+                this.channelStore.reload();
+            }, this);
+
+            // register properties panel events
+            this.gridPanel.on('channel-selected', function(channelId, channelName, record) {
+                this.propertiesPanel.showPanel(channelId, channelName, record);
+            }, this);
+            this.gridPanel.on('channel-escaped', function() {
+                if (this.propertiesPanel.isShown()) {
+                    this.propertiesPanel.hidePanel();
+                } else {
+                    this.gridPanel.fireEvent('channel-deselected');
+                }
+            }, this);
+            this.gridPanel.on('channel-deselected', function() {
+                this.gridPanel.selectRow(-1);
+                this.propertiesPanel.closePanel();
+            }, this);
+        }, this);
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
-
-        // get all child components
-        this.win = new Hippo.ChannelManager.NewChannelWindow({
-            blueprintStore: me.blueprintStore,
-            channelStore : me.channelStore
-        });
-        this.formPanel = Ext.getCmp('channel-form-panel');
-        this.gridPanel = Ext.getCmp('channel-grid-panel');
-        this.propertiesPanel = Ext.getCmp('channel-properties-panel');
-
-        // register channel creation events
-        this.gridPanel.on('add-channel', function() {
-            this.win.show();
-        }, this);
-        this.formPanel.on('channel-created', function() {
-            this.win.hide();
-            this.channelStore.reload();
-        }, this);
-
-        // register properties panel events
-        this.gridPanel.on('channel-selected', function(channelId, channelName) {
-            this.propertiesPanel.showPanel(channelId, channelName);
-        }, this);
-        this.gridPanel.on('channel-escaped', function() {
-            if (this.propertiesPanel.isShown()) {
-                this.propertiesPanel.hidePanel();
-            } else {
-                this.gridPanel.fireEvent('channel-deselected');
-            }
-        }, this),
-        this.gridPanel.on('channel-deselected', function() {
-            this.gridPanel.selectRow(-1);
-            this.propertiesPanel.closePanel();
-        }, this);
     }
 
 });

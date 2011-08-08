@@ -207,21 +207,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             }
         });
 
-        container.add(new ExtButton("open-channel-button", new Model<String>("Open Channel")) {
-            @Override
-            protected void onClick(final AjaxRequestTarget target) {
-                super.onClick(target);
-                if (channel != null) {
-                    ChannelManagerPerspective channelManagerPerspective = findParent(ChannelManagerPerspective.class);
-                    IPluginContext context = channelManagerPerspective.getPluginContext();
-                    TemplateComposerPerspective templateComposerPerspective = context.getService(TemplateComposerPerspective.TC_PERSPECTIVE_SERVICE, TemplateComposerPerspective.class);
-                    templateComposerPerspective.focus(target, channel.getHostname(), channel.getSubMountPath());
-                } else {
-                    log.warn("Cannot open channel: no channel has been selected");
-                }
-            }
-        });
-
         container.setOutputMarkupId(true);
         ExtBoxComponent box = new ExtBoxComponent();
         box.add(container);

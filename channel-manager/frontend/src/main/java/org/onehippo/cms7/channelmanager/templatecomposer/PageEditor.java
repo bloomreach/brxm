@@ -21,21 +21,18 @@ import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
-import org.wicketstuff.js.ext.ExtComponent;
+import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 
 @ExtClass("Hippo.App.PageEditor")
-public class PageEditor extends ExtComponent {
+public class PageEditor extends ExtPanel {
 
     @ExtProperty
     public Boolean debug = false;
@@ -64,6 +61,18 @@ public class PageEditor extends ExtComponent {
         this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
+        if (config.get("previewMode") != null) {
+            this.previewMode = config.getBoolean("previewMode");
+        }
+        this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
+
+        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
+        add(new TemplateComposerResourceBehavior());
+    }
+
+    public PageEditor(final IPluginConfig config) {
+        this.composerMountUrl = config.getString("composerMountUrl", "/site");
+        this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         if (config.get("previewMode") != null) {
             this.previewMode = config.getBoolean("previewMode");
         }

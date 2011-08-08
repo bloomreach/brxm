@@ -66,6 +66,19 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
+                            text : '<<',
+                            id : "channelManager",
+                            listeners : {
+                                'click' : {
+                                    fn : function() {
+                                        // TODO cleanup and use events instead
+                                        Ext.getCmp('rootPanel').layout.setActiveItem(0);
+                                    },
+                                    scope: this
+                                }
+                            }
+                        },
+                        {
                             text: 'Preview',
                             iconCls: 'title-button',
                             id: 'pagePreviewButton',
@@ -175,35 +188,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
 
-            // do initial handshake with CmsSecurityValve of the composer mount and
-            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-            // the redirect to the composermode rest resource fails with the handshake, so we have to
-            // make a second request to actually set the composermode after we are authenticated
-            var me = this;
-            var composerMode = function(callback) {
-                Ext.Ajax.request({
-                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
-                    method : 'POST',
-                    success: callback,
-                    failure: function() {
-                        window.setTimeout(function() {
-                            composerMode(callback);
-                        }, 1000);
-                    }
-                });
-            };
-            composerMode(function() {
-                var iFrame = Ext.getCmp('Iframe');
-                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
-                // keep session active
-                Ext.TaskMgr.start({
-                    run: me.keepAlive,
-                    interval: 60000,
-                    scope: me
-                });
-            });
-
+            if (this.renderHostSubMountPath && this.renderHost) {
+                this.initComposer(this.renderHostSubMountPath, this.renderHost);
+            }
         }, this, {single: true});
 
         this.on('mountIdChanged', function (data) {
@@ -228,6 +215,37 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             }
         }, this);
 
+    },
+
+    initComposer : function(renderHostSubMountPath, renderHost) {
+            // do initial handshake with CmsSecurityValve of the composer mount and
+            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+            // the redirect to the composermode rest resource fails with the handshake, so we have to
+            // make a second request to actually set the composermode after we are authenticated
+            var me = this;
+            var composerMode = function(callback) {
+                Ext.Ajax.request({
+                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
+                    method : 'POST',
+                    success: callback,
+                    failure: function() {
+                        window.setTimeout(function() {
+                            composerMode(callback);
+                        }, 1000);
+                    }
+                });
+            };
+            composerMode(function() {
+                var iFrame = Ext.getCmp('Iframe');
+                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
+                iFrame.setSrc(me.composerMountUrl + renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + renderHost);
+                // keep session active
+                Ext.TaskMgr.start({
+                    run: me.keepAlive,
+                    interval: 60000,
+                    scope: me
+                });
+            });
     },
 
     toggleMode: function () {
