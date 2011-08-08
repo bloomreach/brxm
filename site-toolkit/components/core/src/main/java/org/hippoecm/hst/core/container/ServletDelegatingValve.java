@@ -238,6 +238,11 @@ public class ServletDelegatingValve extends AbstractValve
         public void setAttribute(String name, Object object) {
             attributes.put(name, object);
         }
+
+        @Override
+        public String getContextPath() {
+            throw new UnsupportedOperationException("getContextPath is not supported for ServletDelegatingValve");
+        }
     }
 }
 
