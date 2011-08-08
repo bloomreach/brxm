@@ -168,7 +168,7 @@ public class LocationMapResolver {
         }
 
         if(matchingSiteMapItem == null) {
-            log.warn("Unable to linkrewrite '{}' to any sitemap item", path);
+            log.debug("Unable to linkrewrite '{}' to any sitemap item", path);
             return null;
         }
         
