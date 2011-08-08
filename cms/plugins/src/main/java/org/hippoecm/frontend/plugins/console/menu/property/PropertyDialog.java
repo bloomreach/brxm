@@ -81,24 +81,36 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private Boolean isMultiple = Boolean.FALSE;
     private String type = PropertyType.TYPENAME_STRING;
     private MenuPlugin plugin;
-    private IModel<Map<String, PropertyDefinition>> choiceModel;
+    private IModel<Map<String, List<PropertyDefinition>>> choiceModel;
 
     public PropertyDialog(final MenuPlugin plugin) {
         this.plugin = plugin;
-
+        
         // list defined properties for automatic completion
-        choiceModel = new LoadableDetachableModel<Map<String, PropertyDefinition>>() {
-            protected Map<String, PropertyDefinition> load() {
-                Map<String, PropertyDefinition> choices = new HashMap<String, PropertyDefinition>();
+        choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
+            private static final long serialVersionUID = 1L;
+
+            protected Map<String, List<PropertyDefinition>> load() {
+                Map<String, List<PropertyDefinition>> choices = new HashMap<String, List<PropertyDefinition>>();
                 Node node = ((JcrNodeModel) plugin.getDefaultModel()).getNode();
                 try {
                     NodeType pnt = node.getPrimaryNodeType();
                     for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
-                        choices.put(pd.getName(), pd);
+                        List<PropertyDefinition> list = choices.get(pd.getName());
+                        if (list == null) {
+                            list = new ArrayList<PropertyDefinition>(5);
+                        }
+                        list.add(pd);
+                        choices.put(pd.getName(), list);
                     }
                     for (NodeType nt : node.getMixinNodeTypes()) {
                         for (PropertyDefinition pd : nt.getPropertyDefinitions()) {
-                            choices.put(pd.getName(), pd);
+                            List<PropertyDefinition> list = choices.get(pd.getName());
+                            if (list == null) {
+                                list = new ArrayList<PropertyDefinition>(5);
+                            }
+                            list.add(pd);
+                            choices.put(pd.getName(), list);
                         }
                     }
                 } catch (RepositoryException e) {
@@ -120,11 +132,15 @@ public class PropertyDialog extends AbstractDialog<Node> {
             @Override
             public Boolean getObject() {
                 if (PropertyDialog.this.name != null) {
-                    PropertyDefinition pd = choiceModel.getObject().get(PropertyDialog.this.name);
-                    if (pd != null) {
-                        // somehow need to set isMultiple here, otherwise it doesn't get picked up...
-                        PropertyDialog.this.isMultiple = pd.isMultiple();
-                        return pd.isMultiple();
+                    List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
+                    if (propdefs != null) {
+                        for (PropertyDefinition pd : propdefs) {
+                            if (PropertyType.nameFromValue(pd.getRequiredType()).equals(type)) {
+                                // somehow need to set isMultiple here, otherwise it doesn't get picked up...
+                                PropertyDialog.this.isMultiple = pd.isMultiple();
+                                return pd.isMultiple();
+                            }
+                        }
                     }
                 }
                 return PropertyDialog.this.isMultiple;
@@ -144,12 +160,14 @@ public class PropertyDialog extends AbstractDialog<Node> {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public List<? extends String> getObject() {
+            public List<String> getObject() {
                 if (PropertyDialog.this.name != null) {
-                    PropertyDefinition pd = choiceModel.getObject().get(PropertyDialog.this.name);
-                    if (pd != null) {
-                        List<String> result = new ArrayList<String>(1);
-                        result.add(PropertyType.nameFromValue(pd.getRequiredType()));
+                    List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
+                    if (propdefs != null) {
+                        List<String> result = new ArrayList<String>(propdefs.size());
+                        for (PropertyDefinition pd : propdefs) {
+                            result.add(PropertyType.nameFromValue(pd.getRequiredType()));
+                        }
                         return result;
                     }
                 }
