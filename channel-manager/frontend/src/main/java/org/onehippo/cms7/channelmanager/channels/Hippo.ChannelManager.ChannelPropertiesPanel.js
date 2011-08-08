@@ -49,10 +49,9 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             listeners: {
                 click : {
                     fn: function() {
-                        // TODO cleanup and use events instead
+                        Hippo.App.Main.initComposer(this.subMountPath, this.hostname);
                         Ext.getCmp('rootPanel').layout.setActiveItem(1);
                         document.getElementById('Hippo.App.Main').className = 'x-panel';
-                        Hippo.App.Main.initComposer(this.subMountPath, this.hostname);
                     },
                     scope : this
                 }

@@ -3,6 +3,8 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 public class IFrameBundle {
 
+    public static String PAGE_EDITOR_CSS = "PageEditor.css";
+
     public static String FACTORY = "factory.js";
 
     public static String MAIN = "main.js";

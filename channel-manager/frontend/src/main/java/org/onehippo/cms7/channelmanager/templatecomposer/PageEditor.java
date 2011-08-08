@@ -97,7 +97,7 @@ public class PageEditor extends ExtPanel {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
         properties.put("iFrameCssHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(PageEditor.class, "pageeditor/PageEditor.css")).toString())
+            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString())
         );
         if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(

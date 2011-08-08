@@ -44,18 +44,15 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     //Keeps the session alive every minute
     keepAlive : function() {
-        if (this.ids.mountId != null) { //Ping only if the site id is not null
-            Ext.Ajax.request({
-                url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
-                success: function () {
-                    //Do nothing
-                }
-            });
-        }
+        Ext.Ajax.request({
+            url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
+            success: function () {
+                //Do nothing
+            }
+        });
     },
 
     initUI : function(config) {
-//        Ext.Msg.wait("Loading...");
         Ext.apply(config, { items :
             [
                 {
@@ -66,12 +63,11 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
-                            text : '<<',
+                            text : '<',
                             id : "channelManager",
                             listeners : {
                                 'click' : {
                                     fn : function() {
-                                        // TODO cleanup and use events instead
                                         Ext.getCmp('rootPanel').layout.setActiveItem(0);
                                     },
                                     scope: this

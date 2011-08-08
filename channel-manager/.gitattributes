@@ -40,12 +40,12 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEdi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditorBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel.js -text
