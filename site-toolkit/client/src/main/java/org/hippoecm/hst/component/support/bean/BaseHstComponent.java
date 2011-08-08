@@ -497,7 +497,7 @@ public class BaseHstComponent extends GenericHstComponent {
                 
                 for (Class<? extends HippoBean> localClass : localAnnotatedClasses) {
                     if (annotatedClasses.contains(localClass)) {
-                        log.warn("local added class '{}' already present. Skipping", localClass.getName());
+                        log.debug("local added class '{}' already present. Skipping", localClass.getName());
                     } else {
                         annotatedClasses.add(localClass); 
                     }
