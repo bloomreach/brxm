@@ -235,6 +235,7 @@
 - hipposys:rolespath (string) mandatory
 - hipposys:domainspath (string) mandatory
 - hipposys:passwordmaxagedays (double)
+- hipposys:passwordmaxagedays (long)
 + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
 + * (hipposys:securityprovider) = hipposys:securityprovider
 
