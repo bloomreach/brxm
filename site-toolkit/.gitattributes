@@ -439,7 +439,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/JaxrsRestServiceVa
 components/core/src/main/java/org/hippoecm/hst/core/container/LocalizationValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/container/ServletDelegatingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text
