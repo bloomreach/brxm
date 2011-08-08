@@ -130,9 +130,13 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             description.append(new ClassResourceModel("message", PasswordValidationServiceImpl.class, new Object[] { new Integer(requiredStrength) }).getObject());
             int counter = 1;
             for (IPasswordValidator validator : optionalValidators) {
-                description.append("\n").append(counter++).append(") ").append(validator.getDescription());
+                description.append("\n").append(counter).append(") ").append(validator.getDescription());
+                if (counter < optionalValidators.size()) {
+                    description.append(";");
+                }
+                counter++;
             }
-            return description.toString();
+            return description.append(".").toString();
         }
         
     }
