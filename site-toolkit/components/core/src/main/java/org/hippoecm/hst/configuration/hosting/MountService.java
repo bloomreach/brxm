@@ -586,7 +586,14 @@ public class MountService implements Mount {
     public String getMountPoint() {
         return mountPoint;
     }
-
+    
+    /*
+     * internal only: not api 
+     */
+    public String getPreviewMountPoint() {
+        return previewMountPoint;
+    }
+    
     public boolean isMapped() {
         return isMapped;
     }

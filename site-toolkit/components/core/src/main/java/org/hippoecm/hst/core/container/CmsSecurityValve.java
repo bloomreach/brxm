@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,7 @@ import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -157,6 +156,19 @@ public class CmsSecurityValve extends AbstractValve {
         }
         
         LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+        if(!lazySession.isLive()) {
+            log.debug("SSO jcr session is not live. Try to get a new one.");
+            setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+            lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+        } else {
+            // always refresh jcr session, otherwise changes in documents won't be visible
+            try {
+                lazySession.refresh(false);
+            } catch (RepositoryException e) {
+                throw new ContainerException("Failed to refresh jcr session.", e);
+            }
+        }
+        
         ((HstMutableRequestContext) requestContext).setSession(lazySession);
 
         context.invokeNext();
@@ -168,14 +180,13 @@ public class CmsSecurityValve extends AbstractValve {
             lazySession = (LazySession) repository.login(credentials);
             httpSession.setAttribute(SSO_BASED_SESSION_ATTR_NAME, lazySession);
         } catch (Exception e) {
-            throw new ContainerException("Failed to create session based on subject.", e);
+            throw new ContainerException("Failed to create session based on SSO.", e);
         }
     }
 
     private class MountAsPreviewDecorator implements Mount {
         
         private Mount delegatee; 
-        private List<String> types;
         private Mount parentAsPreview;
         private Map<String,Mount> childAsPreview = new HashMap<String, Mount>();
         
@@ -197,13 +208,20 @@ public class CmsSecurityValve extends AbstractValve {
                 return delegatee.getHstSite();
             }
         }
-
+  
         @Override
         public String getMountPoint() {
             if(delegatee.isPreview()) {
                 return delegatee.getMountPoint();
             }
-            return delegatee.getMountPoint();
+            if(delegatee instanceof MountService) {
+                return ((MountService)delegatee).getPreviewMountPoint();
+            } else {
+                log.warn("Don't know how to get the preview mountPoint of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'." +
+                        "Return the value from the  current mount and not preview version. ", 
+                        delegatee.getMountPath(), delegatee.getClass().getName());
+                return delegatee.getMountPoint();
+            }
         }
 
         @Override
@@ -214,8 +232,8 @@ public class CmsSecurityValve extends AbstractValve {
             if(delegatee instanceof MountService) {
                 return ((MountService)delegatee).getPreviewCanonicalContentPath();
             } else {
-                log.warn("Don't know how to get the canonical content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'." +
-                        "Return the current mount and not preview version. ", 
+                log.warn("Don't know how to get the preview canonical content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'." +
+                        "Return the value from the current mount and not preview version. ", 
                         delegatee.getMountPath(), delegatee.getClass().getName());
                 return delegatee.getCanonicalContentPath();
             }
@@ -230,8 +248,8 @@ public class CmsSecurityValve extends AbstractValve {
             if(delegatee instanceof MountService) {
                 return ((MountService)delegatee).getPreviewContentPath();
             } else {
-                log.warn("Don't know how to get the content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'." +
-                        "Return the current mount and not preview version. ", 
+                log.warn("Don't know how to get the preview content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'." +
+                        "Return the value from the  current mount and not preview version. ", 
                         delegatee.getMountPath(), delegatee.getClass().getName());
                 return delegatee.getContentPath();
             }
