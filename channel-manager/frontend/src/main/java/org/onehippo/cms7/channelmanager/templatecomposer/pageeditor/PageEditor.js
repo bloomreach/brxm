@@ -37,6 +37,10 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
         this.pageModelFacade = null;
 
+        this.iframeResourcesCached = false;
+        this.iframeResourceCache = [];
+        this.preCacheIFrameResources(config);
+
         this.initUI(config);
 
         Hippo.App.PageEditor.superclass.constructor.call(this, config);
@@ -213,6 +217,36 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     },
 
+    preCacheIFrameResources : function(config) {
+        var self = this;
+        // clone array with concat()
+        var queue = config.iFrameCssHeadContributions.concat().concat(config.iFrameJsHeadContributions);
+        var requestContents = function(queueEmptyCallback) {
+            if (queue.length == 0) {
+                queueEmptyCallback();
+                return;
+            }
+            var src = queue.shift();
+            Ext.Ajax.request({
+                url : src,
+                method : 'GET',
+                success : function(result, request) {
+                    self.iframeResourceCache[src] = result.responseText;
+                    requestContents(queueEmptyCallback);
+                },
+                failure : function(result, request) {
+                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
+                    requestContents(queueEmptyCallback);
+                }
+            });
+        };
+        requestContents(
+            function() {
+                self.iframeResourcesCached = true;
+            }
+        );
+    },
+
     initComposer : function(renderHostSubMountPath, renderHost) {
             // do initial handshake with CmsSecurityValve of the composer mount and
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
@@ -262,7 +296,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             // initialize iframe head
             if (self.previewMode && !self.iframeInitialized) {
                 self.previewMode = !self.previewMode;
-                self.initializeIFrameHead(self.frm, self.iFrameCssHeadContributions.concat(), self.iFrameJsHeadContributions.concat());
+                self.initializeIFrameHead(self.frm);
             } else {
                 // once the composer javascript in the iframe is injected and initialised we send a toggle
                 // message which shows/hides the drag and drop overlay in the iframe
@@ -294,8 +328,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             if (!Ext.Msg.isVisible()) {
                 Ext.Msg.wait('Loading...');
             }
-            // clone arrays with concat()
-            this.initializeIFrameHead(frm, this.iFrameCssHeadContributions.concat(), this.iFrameJsHeadContributions.concat());
+            this.initializeIFrameHead(frm);
         } else {
             Ext.Msg.hide();
             Ext.getCmp('pagePreviewButton').setDisabled(false);
@@ -309,29 +342,24 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
         frm.execScript('Hippo.PageComposer.Main.init(' + Hippo.App.Main.debug + ','+this.previewMode+')', true);
     },
 
-    initializeIFrameHead : function(frm, cssSources, javascriptSources) {
-        var pageEditor = this;
+    initializeIFrameHead : function(frm) {
+        // wait until resources are cached
+        if (this.initializeIFrameHeadInterval) {
+            return;
+        }
+        if (!this.iframeResourcesCached) {
+            var self = this;
+            this.initializeIFrameHeadInterval = window.setInterval(function() {
+                self.initializeIFrameHead.call(self, frm);
+            }, 10);
+            return;
+        }
+        window.clearTimeout(this.initializeIFrameHeadInterval);
+        this.initializeIFrameHeadInterval = null;
 
-        var requestContents = function(queue, processResponseCallback, queueEmptyCallback) {
-            if (queue.length == 0) {
-                queueEmptyCallback();
-                return;
-            }
-            var src = queue.shift();
-            Ext.Ajax.request({
-                url : src,
-                method : 'GET',
-                success : function(result, request) {
-                    processResponseCallback(src, result.responseText);
-                    requestContents(queue, processResponseCallback, queueEmptyCallback);
-                },
-                failure : function(result, request) {
-                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
-                }
-            });
-        };
-
-        var processCssHeadContribution = function(src, responseText) {
+        for (var i=0, len=this.iFrameCssHeadContributions.length; i<len; i++) {
+            var src = this.iFrameCssHeadContributions[i];
+            var responseText = this.iframeResourceCache[src];
             var frmDocument = frm.getFrameDocument();
 
             if (Ext.isIE) {
@@ -353,20 +381,15 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 styleElement.setAttribute("title", src);
                 head.appendChild(styleElement);
             }
-        };
+        }
 
-        var processJsHeadContribution = function(src, responseText) {
+        for (var i=0, len=this.iFrameJsHeadContributions.length; i<len; i++) {
+            var src = this.iFrameJsHeadContributions[i];
+            var responseText = this.iframeResourceCache[src];
             frm.writeScript(responseText, {type: "text/javascript", "title" : src});
-        };
+        }
 
-        requestContents(cssSources, processCssHeadContribution,
-            function() {
-                 requestContents(javascriptSources, processJsHeadContribution,
-                 function() {
-                     pageEditor.onIFrameHeadInitialized.call(pageEditor, frm);
-                 });
-            }
-        );
+        this.onIFrameHeadInitialized(frm);
     },
 
     onIFrameAfterInit : function(data) {
