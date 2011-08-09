@@ -333,6 +333,6 @@ public interface HstResponse extends HttpServletResponse {
      *
      * @param comment the comment node
      */
-    void addPreambleNode(Comment comment);
+    void addPreamble(Comment comment);
 
 }

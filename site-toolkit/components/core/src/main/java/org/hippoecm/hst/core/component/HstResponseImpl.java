@@ -340,7 +340,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return contained;
     }
 
-    public void addPreambleNode(Comment comment) {
+    public void addPreamble(Comment comment) {
         responseState.addPreambleNode(comment);
     }
 

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -299,6 +300,7 @@ public class AggregationValve extends AbstractValve {
             
             if(session != null ) {
                 Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
+                composerMode = true;
                 if (composerMode != null) {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
                     // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
@@ -308,20 +310,31 @@ public class AggregationValve extends AbstractValve {
                         rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
                     } else if(Boolean.TRUE.equals(composerMode)) {
                         HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                        if (compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT ||
-                                compConfig.getComponentType() == HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT) {
                             // TODO replace by json marshaller
-                            Comment comment = response.createComment("{\"uuid\":\"" + compConfig.getCanonicalIdentifier() +
-                                    "\",\"xtype\":\"" + (compConfig.getXType() == null ? "" : compConfig.getXType()) +
-                                    "\",\"type\":\"" + compConfig.getComponentType().toString() + "\"}");
-                            response.addPreambleNode(comment);
+                        
+                        HashMap<String, String> attributes = new HashMap<String, String>();
+                        attributes.put("uuid", compConfig.getCanonicalIdentifier());
+                        if(compConfig.getXType() != null) {
+                            attributes.put("xtype", compConfig.getXType());
                         }
+                        attributes.put("type", compConfig.getComponentType().toString());
+                        Comment comment = createCommentWithAttr(attributes, response);
+                        response.addPreamble(comment);
                     }
                 } 
             }
         }
     }
     
+    private Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
+        StringBuilder builder = new StringBuilder();
+        for(Entry<String, String> attr : attributes.entrySet()) {
+            builder.append("\"").append(attr.getKey()).append("\":").append("\"").append(attr.getValue()).append("\"");
+        }
+        Comment comment = response.createComment("{ " + builder.toString() +"}");
+        return comment;
+    }
+
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
             final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
