@@ -135,7 +135,7 @@ public class HstLinkImpl implements HstLink {
                     // URL is cross mount. Check whether we should return # or a cross mount link:
                     // TODO: for now, we never return a cross mount link when having a render host. When we want to support a 
                     // preview from the cms, we might need a switch to support cross mount linking in combination with a renderhost.
-                    boolean enableCrossMountLink = false;
+                    boolean enableCrossMountLink = true;
                     if(enableCrossMountLink) {
                         // return the url with renderHost which might be a different host.
                         renderHost =  mount.getVirtualHost().getHostName(); 
