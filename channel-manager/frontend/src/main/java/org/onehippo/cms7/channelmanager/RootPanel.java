@@ -18,8 +18,6 @@ package org.onehippo.cms7.channelmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
@@ -29,26 +27,43 @@ import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.wicketstuff.js.ext.ExtButton;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.layout.BorderLayout;
-import org.wicketstuff.js.ext.layout.FitLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
 
+    public enum Card {
+        CHANNEL_MANAGER(0),
+        TEMPLATE_COMPOSER(1);
+
+        private Integer tabIndex;
+
+        private Card(Integer tabIndex) {
+            this.tabIndex = tabIndex;
+        }
+
+    }
+
     public static final String CONFIG_CHANNEL_LIST = "channel-list";
 
     private BlueprintStore blueprintStore;
+
     private ChannelStore channelStore;
+
+    private PageEditor pageEditor;
+
+    @ExtProperty
+    private Integer activeItem = 0;
 
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
         js.append("try { ");
-        super.buildInstantiationJs(js, extClass, properties);    //To change body of overridden methods use File | Settings | File Templates.
+        super.buildInstantiationJs(js, extClass, properties);
         js.append("} catch(exception) { console.log('Error initializing channel manager. '+exception); } ");
     }
 
@@ -57,6 +72,7 @@ public class RootPanel extends ExtPanel {
 
         add(new ChannelManagerResourceBehaviour());
 
+        // item0
         ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setLayout(new BorderLayout());
 
@@ -80,10 +96,10 @@ public class RootPanel extends ExtPanel {
 
         add(channelManagerCard);
 
+        // item1
         IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        PageEditor pageEditor = new PageEditor(pageEditorConfig);
+        pageEditor = new PageEditor(pageEditorConfig);
         add(pageEditor);
-
     }
 
     @Override
@@ -97,6 +113,14 @@ public class RootPanel extends ExtPanel {
         super.onRenderProperties(properties);
         properties.put("blueprintStore", new JSONIdentifier(this.blueprintStore.getJsObjectId()));
         properties.put("channelStore", new JSONIdentifier(this.channelStore.getJsObjectId()));
+    }
+
+    public PageEditor getPageEditor() {
+        return this.pageEditor;
+    }
+
+    public void setActiveCard(Card rootPanelCard) {
+        this.activeItem = rootPanelCard.tabIndex;
     }
 
 }

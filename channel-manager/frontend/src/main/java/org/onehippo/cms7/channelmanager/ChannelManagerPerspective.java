@@ -19,6 +19,7 @@ package org.onehippo.cms7.channelmanager;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -30,6 +31,8 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
@@ -38,6 +41,8 @@ import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
  * @author Vijay Kiran
  */
 public class ChannelManagerPerspective extends Perspective {
+
+    private RootPanel rootPanel;
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -50,7 +55,7 @@ public class ChannelManagerPerspective extends Perspective {
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css", true));
 
-        RootPanel rootPanel = new RootPanel(context, config, "channel-root");
+        rootPanel = new RootPanel(context, config, "channel-root");
         add(rootPanel);
     }
 
@@ -81,6 +86,14 @@ public class ChannelManagerPerspective extends Perspective {
     @Override
     public IPluginContext getPluginContext() {
         return super.getPluginContext();
+    }
+
+    public void openTemplateComposer(final AjaxRequestTarget target, final Channel channel, final boolean preview) {
+        PageEditor pageEditor = rootPanel.getPageEditor();
+        pageEditor.setChannel(channel);
+        pageEditor.setPreviewMode(preview);
+        rootPanel.setActiveCard(RootPanel.Card.TEMPLATE_COMPOSER);
+        target.addComponent(rootPanel);
     }
 
 }

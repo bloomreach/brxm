@@ -33,7 +33,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
             pageModel : null
         };
 
-        this.addEvents('pageIdChanged', 'mountIdChanged', 'beforeInitIframe', 'afterInitIframe');
+        this.addEvents('pageIdChanged', 'mountIdChanged');
 
         this.pageModelFacade = null;
 
@@ -63,7 +63,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
-                            text : '<',
+                            text : '< Channel summary',
                             id : "channelManager",
                             listeners : {
                                 'click' : {
@@ -269,9 +269,9 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                 var iframe = Ext.getCmp('Iframe');
                 iframe.sendMessage({}, 'toggle');
                 if (self.previewMode) {
-                    self.mainWindow.show('pageComposerButton');
+                    self.mainWindow.show();
                 } else {
-                    self.mainWindow.hide('pageComposerButton');
+                    self.mainWindow.hide();
                 }
                 Ext.getCmp('pagePreviewButton').setDisabled(false);
                 Ext.getCmp('pageComposerButton').setDisabled(false);

@@ -22,6 +22,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +55,8 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     public Boolean previewMode = true;
+
+    private Channel channel;
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
@@ -136,6 +139,24 @@ public class PageEditor extends ExtPanel {
 
     public void setRenderHostSubMountPath(final String renderHostSubMountPath) {
         this.renderHostSubMountPath = renderHostSubMountPath;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+        this.renderHost = channel.getHostname();
+        this.renderHostSubMountPath = channel.getSubMountPath();
+    }
+
+    public Channel getChannel() {
+        return this.channel;
+    }
+
+    public Boolean getPreviewMode() {
+        return previewMode;
+    }
+
+    public void setPreviewMode(final Boolean previewMode) {
+        this.previewMode = previewMode;
     }
 
 }

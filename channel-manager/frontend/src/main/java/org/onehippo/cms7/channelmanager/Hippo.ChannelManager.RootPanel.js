@@ -28,7 +28,6 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
          Ext.apply(config, {
             id: 'rootPanel',
             layout: 'card',
-            activeItem: 0,
             layoutOnCardChange: true,
             deferredRender: true,
             viewConfig: {
