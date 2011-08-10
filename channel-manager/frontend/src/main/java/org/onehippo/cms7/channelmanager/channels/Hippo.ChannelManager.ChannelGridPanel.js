@@ -16,6 +16,18 @@
 
 Ext.namespace('Hippo.ChannelManager');
 
+Ext.ToolTip.prototype.onTargetOver =
+        Ext.ToolTip.prototype.onTargetOver.createInterceptor(function(e) {
+            this.baseTarget = e.getTarget();
+        });
+Ext.ToolTip.prototype.onMouseMove =
+        Ext.ToolTip.prototype.onMouseMove.createInterceptor(function(e) {
+            if (!e.within(this.baseTarget)) {
+                this.onTargetOver(e);
+                return false;
+            }
+        });
+
 /**
  * @class Hippo.ChannelManager.ChannelGridPanel
  * @extends Ext.grid.GridPanel
@@ -79,7 +91,37 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: true
-            })
+            }),
+
+            // enable per-cell tooltips
+            onRender: function() {
+                Ext.grid.GridPanel.prototype.onRender.apply(this, arguments);
+                this.addEvents("beforetooltipshow");
+                this.tooltip = new Ext.ToolTip({
+                    renderTo: Ext.getBody(),
+                    target: this.view.mainBody,
+                    listeners: {
+                        beforeshow: function(tooltip) {
+                            var v = this.getView();
+                            var row = v.findRowIndex(tooltip.baseTarget);
+                            var cell = v.findCellIndex(tooltip.baseTarget);
+                            this.fireEvent("beforetooltipshow", this, row, cell);
+                        },
+                        scope: this
+                    }
+                });
+            },
+            listeners: {
+                render: function(g) {
+                    g.on("beforetooltipshow", function(grid, row, col) {
+                         var record = grid.getStore().getAt(row);
+                         var colName = grid.getColumnModel().getDataIndex(col);
+                         var value = record.get(colName);
+                         grid.tooltip.body.update(value);
+                    });
+                }
+            }
+
         });
 
         Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
