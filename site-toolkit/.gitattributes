@@ -390,6 +390,7 @@ components/core/src/main/java/org/hippoecm/hst/configuration/channel/JcrHstPrope
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/hosting/ExtendedMount.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationEventListener.java svneol=native#text/plain
@@ -541,6 +542,7 @@ components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigS
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestHstRequestContextImpl.java -text
+components/core/src/test/java/org/hippoecm/hst/site/request/TestMountDecoratorImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestSiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/AbstractSpringTestCase.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockJspServlet.java svneol=native#text/plain
