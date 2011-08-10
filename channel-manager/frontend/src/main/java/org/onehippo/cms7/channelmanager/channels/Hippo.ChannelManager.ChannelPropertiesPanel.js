@@ -49,7 +49,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             listeners: {
                 click : {
                     fn: function() {
-                        Hippo.ChannelManager.TemplateComposer.Instance.initComposer(this.subMountPath, this.hostname);
+                        Hippo.ChannelManager.TemplateComposer.Instance.initComposer(this.channelName, this.subMountPath, this.hostname);
                         Ext.getCmp('rootPanel').layout.setActiveItem(1);
                         // TODO fix, I have no clue why the template composer card is not getting activated properly
                         document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
@@ -76,6 +76,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         if (channelName) {
             this.setTitle(channelName);
         }
+        this.channelName = channelName;
         this.hostname = record.get('hostname');
         this.subMountPath = record.get('subMountPath');
         this.expand();
