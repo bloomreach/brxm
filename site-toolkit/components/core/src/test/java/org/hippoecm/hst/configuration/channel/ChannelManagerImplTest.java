@@ -66,6 +66,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Channel channel = channels.values().iterator().next();
         assertEquals("testchannel", channel.getId());
         assertEquals("Test Channel", channel.getName());
+        assertEquals("/hst:hst/hst:unittestsites/unittestproject-live", channel.getHstMountPoint());
         assertEquals(Channel.UNKNOWN_BLUEPRINT, channel.getBlueprintId());
     }
 

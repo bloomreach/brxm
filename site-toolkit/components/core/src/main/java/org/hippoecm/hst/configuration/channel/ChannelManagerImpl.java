@@ -175,6 +175,7 @@ public class ChannelManagerImpl implements ChannelManager {
             if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
                 String mountPoint = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
                 Node siteNode = currNode.getSession().getNode(mountPoint);
+                channel.setHstMountPoint(siteNode.getPath());
                 if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                     channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
                 }
