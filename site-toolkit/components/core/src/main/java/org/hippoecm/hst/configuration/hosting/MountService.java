@@ -484,9 +484,17 @@ public class MountService implements Mount {
                 previewCanonicalContentPath = canonicalContentPath;
                 previewContentPath = contentPath;
             } else {
-                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
-                previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();;
-                previewContentPath = previewHstSiteNodeForMount.getContentPath();;
+                try {
+                    previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager, ((HstSiteService)hstSite).getConfigurationPath());
+                    previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();;
+                    previewContentPath = previewHstSiteNodeForMount.getContentPath();;
+                } catch (ServiceException e) {
+                   if(log.isDebugEnabled()) {
+                       log.warn("Cannot create a preview version for mount '"+mountPath+"'", e);
+                   } else {
+                       log.warn("Cannot create a preview version for mount '{}'", mountPath, e.toString());
+                   }
+                }
             }
         }
 

@@ -63,11 +63,11 @@ public class HstSiteService implements HstSite {
     private Mount mount;
     
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
-    
+
     
     public HstSiteService(HstSiteRootNode site, Mount mount, HstManagerImpl hstManager) throws ServiceException{
         name = site.getValueProvider().getName();
-        this.mount = mount;
+        this.mount = mount; 
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = site.getConfigurationPath();
         
@@ -78,8 +78,39 @@ public class HstSiteService implements HstSite {
         }
         init(configurationNode, mount, hstManager);
     }
- 
-     
+    
+    public HstSiteService(HstSiteRootNode site, Mount mount,
+            HstManagerImpl hstManager, String liveConfigurationPath) throws ServiceException {
+          
+        name = site.getValueProvider().getName();
+        this.mount = mount;
+        canonicalIdentifier = site.getValueProvider().getIdentifier();
+        configurationPath = site.getConfigurationPath();
+        
+        HstNode configurationNode = null;
+        
+        if(configurationPath.equals(liveConfigurationPath)) {
+            // try to get a preview version.
+            log.debug("Trying to fetch the preview version '{}' for the live configuration path '{}'. If not present, use live configuration path", configurationPath+"-preview", configurationPath);
+            // append -preview
+            configurationPath += "-" + Mount.PREVIEW_NAME;
+            configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
+            if(configurationNode == null) {
+                log.debug("There is no preview configuration available for '{}'. Try to use live '{}' if present.", configurationNode, liveConfigurationPath);
+                configurationPath = liveConfigurationPath;
+                configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
+            }
+        } else {
+            log.debug("The preview hst:site '{}' has explicitly configured a different configuration path than the live: '{}'. HST won't use the automatic -preview convention.", site.getValueProvider().getPath(), configurationPath + " vs " + liveConfigurationPath);
+            configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
+        }
+        
+        if(configurationNode == null) {
+            throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
+        }
+        init(configurationNode, mount, hstManager);
+    }
+
     private void init(HstNode configurationNode, Mount mount, HstManagerImpl hstManager) throws ServiceException {
        // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
       
