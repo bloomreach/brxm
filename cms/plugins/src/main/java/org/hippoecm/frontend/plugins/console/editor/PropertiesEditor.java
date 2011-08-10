@@ -52,7 +52,7 @@ public class PropertiesEditor extends DataView {
         try {
             item.add(deleteLink("delete", model));
             item.add(new Label("name", model.getProperty().getName()));
-            item.add(new Label("type", PropertyType.nameFromValue(model.getProperty().getDefinition().getRequiredType())));
+            item.add(new Label("type", PropertyType.nameFromValue(model.getProperty().getType())));
             item.add(new PropertyValueEditor("values", model));
             if (model.getProperty().getDefinition().isMultiple() && !model.getProperty().getDefinition().isProtected()) {
                 item.add(addLink("add", model));
