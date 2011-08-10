@@ -32,7 +32,6 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.junit.Test;
-import org.junit.Ignore;
 
 public class JcrPropertyValueModelTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -107,8 +106,6 @@ public class JcrPropertyValueModelTest extends PluginTest {
     }
 
     @Test
-    // ignore until CMS7-5403 is resolved
-    @Ignore
     public void testSetNullRemovesSingleValuedProperty() throws Exception {
         Node test = this.root.addNode("test", "frontendtest:model");
         test.setProperty("frontendtest:string", "y");
