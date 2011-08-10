@@ -35,6 +35,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -50,6 +51,8 @@ import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -290,7 +293,7 @@ public class HstFilter implements Filter {
             
                 
     		if (requestContext == null) {
-        		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
+        		HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
         		if (this.contextNamespace != null) {
         			requestContext.setContextNamespace(contextNamespace);
@@ -313,17 +316,36 @@ public class HstFilter implements Filter {
                 return;
             } else {
                 
-                ResolvedMount mount = requestContext.getResolvedMount();
+                ResolvedMount resolvedMount = requestContext.getResolvedMount();
                 
-                if (mount == null) {
-                    mount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
-                    if(mount != null) {
-                        requestContext.setResolvedMount(mount);
+                if (resolvedMount == null) {
+                    resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
+                    if(resolvedMount != null) {
+                        requestContext.setResolvedMount(resolvedMount);
                         // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
                         if(request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
                             String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
                             requestContext.setRenderHost(xfh);
                             requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
+                            // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
+                            HttpSession session = containerRequest.getSession(false);
+                            if(session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED ))) {
+                                // we are in a CMS SSO context. 
+                                if(resolvedMount instanceof MutableResolvedMount) {
+                                    Mount mount = resolvedMount.getMount();
+                                    MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
+                                    if(decoratedMount == mount) {
+                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview");
+                                    } else {
+                                        logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
+                                    }
+                                    ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
+                                } else {
+                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request");
+                                }
+                            }
+
                         }
                     }
                     else {
@@ -331,15 +353,15 @@ public class HstFilter implements Filter {
                     }
                 }
 
-                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, requestContext, mount, res);
+                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, requestContext, resolvedMount, res);
 
-                if (mount.getMount().isMapped()) {
+                if (resolvedMount.getMount().isMapped()) {
                     ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                     boolean processSiteMapItemHandlers = false;
 
                     if (resolvedSiteMapItem == null) {
                         processSiteMapItemHandlers = true;
-                        resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerUrl.getPathInfo());
+                        resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
                         if(resolvedSiteMapItem == null) {
                             // should not be possible as when it would be null, an exception should have been thrown
                             logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
@@ -353,13 +375,13 @@ public class HstFilter implements Filter {
 
                 }
                 else {
-                    if(mount.getNamedPipeline() == null) {
+                    if(resolvedMount.getNamedPipeline() == null) {
                         logger.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
                         sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                     }
                     else {
-                        logger.info("Processing request for pipeline '{}'", mount.getNamedPipeline());
-                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, mount.getNamedPipeline());
+                        logger.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
+                        HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                     }
                 }
             }
