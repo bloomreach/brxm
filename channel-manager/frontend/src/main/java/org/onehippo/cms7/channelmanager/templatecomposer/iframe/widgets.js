@@ -17,9 +17,9 @@
 jQuery.noConflict();
 (function($) {
 
-    $.namespace('Hippo.PageComposer.UI', 'Hippo.PageComposer.UI.Container', 'Hippo.PageComposer.UI.ContainerItem');
+    $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
-    Hippo.PageComposer.UI.Widget = Class.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget = Class.extend({
         init : function(id, element) {
             this.id = id;
             this.overlayId = id + '-overlay';
@@ -200,7 +200,7 @@ jQuery.noConflict();
         }
     });
 
-    Hippo.PageComposer.UI.Container.Base = Hippo.PageComposer.UI.Widget.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
         init : function(id, element) {
             this._super(id, element);
 
@@ -247,7 +247,7 @@ jQuery.noConflict();
                 self._insertNewItem(this, true);
             });
 
-            this.state = new Hippo.PageComposer.UI.DDState(this.items.keySet());
+            this.state = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.DDState(this.items.keySet());
         },
 
         onRender : function() {
@@ -273,7 +273,7 @@ jQuery.noConflict();
         },
 
         _insertNewItem : function(element, exists, index) {
-            var item = Hippo.PageComposer.UI.Factory.createOrRetrieve(element);
+            var item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
             this.items.put(item.id, item, index);
             if(!exists) {
                 var itemElement = this.createItemElement(item.element);
@@ -309,7 +309,7 @@ jQuery.noConflict();
             this.eachItem(function(key, item) {
                 if (typeof item !== 'undefined') {
                     item.sync();
-                } else if(!quite && Hippo.PageComposer.Main.isDebug()) {
+                } else if(!quite && Hippo.ChannelManager.TemplateComposer.IFrame.Main.isDebug()) {
                     console.warn('ContainerItem with id=' + id + ' is not found in active map.');
                 }
             });
@@ -367,7 +367,7 @@ jQuery.noConflict();
 
         ddOnReceive : function(event, ui) {
             var id = ui.item.attr(HST.ATTR.ID);
-            var item = Hippo.PageComposer.UI.Factory.getById(id);
+            var item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(id);
             var self = this;
             $(this.sel.sort.items).each(function(index) {
                 var itemId = $(this).attr(HST.ATTR.ID);
@@ -399,7 +399,7 @@ jQuery.noConflict();
                 var prev = ui.placeholder.prev();
                 var next = ui.placeholder.next();
                 var getEl = function(_el) {
-                    return Hippo.PageComposer.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
+                    return Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
                 };
                 var original = ui.item[0];
                 if(prev[0] == original || (next.length > 0 && next[0] == original)) {
@@ -556,10 +556,10 @@ jQuery.noConflict();
         }
 
     });
-    Hippo.PageComposer.UI.Factory.register('HST.BaseContainer', Hippo.PageComposer.UI.Container.Base);
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.BaseContainer', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base);
 
     //Container implementations
-    Hippo.PageComposer.UI.Container.Table = Hippo.PageComposer.UI.Container.Base.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Table = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
         init : function(id, element) {
             this._super(id, element);
@@ -575,26 +575,9 @@ jQuery.noConflict();
         }
 
     });
-    Hippo.PageComposer.UI.Factory.register('HST.Table', Hippo.PageComposer.UI.Container.Table);
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.Table', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Table);
 
-    Hippo.PageComposer.UI.Container.UnorderedList = Hippo.PageComposer.UI.Container.Base.extend({
-
-        init : function(id, element) {
-            this._super(id, element);
-
-            this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
-            this.sel.append.container = this.sel.container;
-            this.sel.append.insertAt = this.sel.container + ' > li';
-        },
-
-        createItemElement : function(element) {
-            return $('<li class="' + this.cls.item + '"></li>').append(element);
-        }
-
-    });
-    Hippo.PageComposer.UI.Factory.register('HST.UnorderedList', Hippo.PageComposer.UI.Container.UnorderedList);
-
-    Hippo.PageComposer.UI.Container.OrderedList = Hippo.PageComposer.UI.Container.Base.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.UnorderedList = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
         init : function(id, element) {
             this._super(id, element);
@@ -609,9 +592,26 @@ jQuery.noConflict();
         }
 
     });
-    Hippo.PageComposer.UI.Factory.register('HST.OrderedList', Hippo.PageComposer.UI.Container.OrderedList);
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.UnorderedList', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.UnorderedList);
 
-    Hippo.PageComposer.UI.Container.VerticalBox = Hippo.PageComposer.UI.Container.Base.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.OrderedList = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
+
+        init : function(id, element) {
+            this._super(id, element);
+
+            this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
+            this.sel.append.container = this.sel.container;
+            this.sel.append.insertAt = this.sel.container + ' > li';
+        },
+
+        createItemElement : function(element) {
+            return $('<li class="' + this.cls.item + '"></li>').append(element);
+        }
+
+    });
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.OrderedList', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.OrderedList);
+
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.VerticalBox = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
         init : function(id, element) {
             this._super(id, element);
@@ -626,10 +626,10 @@ jQuery.noConflict();
         }
 
     });
-    Hippo.PageComposer.UI.Factory.register('HST.vBox', Hippo.PageComposer.UI.Container.VerticalBox);
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.vBox', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.VerticalBox);
 
     //Container items
-    Hippo.PageComposer.UI.ContainerItem.Base = Hippo.PageComposer.UI.Widget.extend({
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
         init : function(id, element) {
             this._super(id, element);
 
@@ -733,10 +733,10 @@ jQuery.noConflict();
         }
 
     });
-    Hippo.PageComposer.UI.Factory.register('HST.Item', Hippo.PageComposer.UI.ContainerItem.Base);
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.Item', Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base);
 
 
-    Hippo.PageComposer.UI.DDState = function(initialOrder) {
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.DDState = function(initialOrder) {
         this.checkEmpty = false;
 
         this.syncItemsWithOverlayOrder = false;
@@ -746,7 +746,7 @@ jQuery.noConflict();
 
     };
 
-    Hippo.PageComposer.UI.DDState.prototype = {
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.DDState.prototype = {
 
         orderChanged : function(test) {
             if(test.length != this.previousOrder.length) {

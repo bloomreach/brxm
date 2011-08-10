@@ -17,7 +17,7 @@
 jQuery.noConflict();
 (function($) {
 
-    $.namespace('Hippo.PageComposer');
+    $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame');
 
     var Main = function() {
         this.debug = false;
@@ -28,7 +28,7 @@ jQuery.noConflict();
         init: function(debug, preview) {
             this.debug = debug;
 
-            var manager = new Hippo.PageComposer.UI.Manager(preview);
+            var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(preview);
 
             onhostmessage(function(msg) {
                 manager.getOverlay().toggle();
@@ -99,7 +99,7 @@ jQuery.noConflict();
         },
 
        die: function(msg) {
-            if(Hippo.PageComposer.Main.isDebug()) {//global reference for scope simplicity
+            if(Hippo.ChannelManager.TemplateComposer.IFrame.Main.isDebug()) {//global reference for scope simplicity
                 console.error(msg);
             } else {
                 throw new Error(msg);
@@ -107,6 +107,6 @@ jQuery.noConflict();
         }
     };
 
-    Hippo.PageComposer.Main = new Main();
+    Hippo.ChannelManager.TemplateComposer.IFrame.Main = new Main();
 
 })(jQuery);

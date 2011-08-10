@@ -16,9 +16,9 @@
 jQuery.noConflict();
 (function($) {
 
-    $.namespace('Hippo.PageComposer.UI');
+    $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    Hippo.PageComposer.UI.Manager = function(preview) {
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager = function(preview) {
         this.current = null;
         this.containers = {};
         this.dropIndicator = null;
@@ -29,7 +29,7 @@ jQuery.noConflict();
 
 
     //TODO: looks more like a UI.Page component
-    Hippo.PageComposer.UI.Manager.prototype = {
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager.prototype = {
         init: function() {
             this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
             if (this.preview) {
@@ -50,16 +50,16 @@ jQuery.noConflict();
         },
 
         _createContainer : function(element) {
-            var container = Hippo.PageComposer.UI.Factory.createOrRetrieve(element);
+            var container = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
             this.containers[container.id] = container;
             container.render(this);
         },
 
         _retrieve : function(element) {
-            var factory = Hippo.PageComposer.UI.Factory;
+            var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
             var o = factory.getById(element.getAttribute(HST.ATTR.ID));
             if (o == null) {
-                Hippo.PageComposer.Main.die('Object with id ' + data.id + ' not found in registry');
+                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die('Object with id ' + data.id + ' not found in registry');
             }
             return o;
         },
@@ -100,14 +100,14 @@ jQuery.noConflict();
             if (type == HST.CONTAINERITEM) {
                 var container = this.containers[id];
                 if(!!container && container.removeItem(id)) {
-                    Hippo.PageComposer.UI.Factory.deleteObjectRef(id);
+                    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.deleteObjectRef(id);
                 }
             } else if (type == HST.CONTAINER) {
                 var container = this.containers[id];
                 if (!!container) {
                     container.remove();
                     delete this.containers[id];
-                    Hippo.PageComposer.UI.Factory.deleteObjectRef(id);
+                    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.deleteObjectRef(id);
                 }
             }
             this.checkStateChanges();

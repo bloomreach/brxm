@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-Ext.namespace('Hippo.App');
+Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.App.BaseGridPanel = Ext.extend(Ext.grid.GridPanel, {
+Hippo.ChannelManager.TemplateComposer.BaseGridPanel = Ext.extend(Ext.grid.GridPanel, {
     frame: false,
     loadMask: true,
     viewConfig: {
@@ -80,7 +80,7 @@ Hippo.App.BaseGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
         Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-        Hippo.App.BaseGridPanel.superclass.initComponent.apply(this, arguments);
+        Hippo.ChannelManager.TemplateComposer.BaseGridPanel.superclass.initComponent.apply(this, arguments);
     },
 
     newEmptyContextMenu: function() {
@@ -93,4 +93,4 @@ Hippo.App.BaseGridPanel = Ext.extend(Ext.grid.GridPanel, {
         ];
     }
 });
-Ext.reg('h_base_grid', Hippo.App.BaseGridPanel);
+Ext.reg('h_base_grid', Hippo.ChannelManager.TemplateComposer.BaseGridPanel);

@@ -32,7 +32,7 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 
-@ExtClass("Hippo.App.PageEditor")
+@ExtClass("Hippo.ChannelManager.TemplateComposer.PageEditor")
 public class PageEditor extends ExtPanel {
 
     @ExtProperty
@@ -92,7 +92,7 @@ public class PageEditor extends ExtPanel {
 
     @Override
     public String getMarkupId() {
-        return "Hippo.App.Main";
+        return "Hippo.ChannelManager.TemplateComposer.Instance";
     }
 
     @Override

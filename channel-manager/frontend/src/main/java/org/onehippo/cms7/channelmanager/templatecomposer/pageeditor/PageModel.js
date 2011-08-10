@@ -14,13 +14,13 @@
  *  limitations under the License.
  */
 
-Ext.namespace('Hippo.App.PageModel');
+Ext.namespace('Hippo.ChannelManager.TemplateComposer.PageModel');
 
 (function() {
-    Hippo.App.PageModel.FactoryImpl = function() {
+    Hippo.ChannelManager.TemplateComposer.PageModel.FactoryImpl = function() {
     };
 
-    Hippo.App.PageModel.FactoryImpl.prototype = {
+    Hippo.ChannelManager.TemplateComposer.PageModel.FactoryImpl.prototype = {
         createModel: function(element, cfg) {
 
             var id, name, path, type, xtype;
@@ -46,25 +46,25 @@ Ext.namespace('Hippo.App.PageModel');
             };
             Ext.apply(config, cfg);
 
-            return new Hippo.App.PageModel.Component(config);
+            return new Hippo.ChannelManager.TemplateComposer.PageModel.Component(config);
         },
 
         createRecord : function(model) {
-            return new Hippo.App.PageModel.ComponentRecord(model);
+            return new Hippo.ChannelManager.TemplateComposer.PageModel.ComponentRecord(model);
         }
     };
 
-    Hippo.App.PageModel.Factory = new Hippo.App.PageModel.FactoryImpl();
+    Hippo.ChannelManager.TemplateComposer.PageModel.Factory = new Hippo.ChannelManager.TemplateComposer.PageModel.FactoryImpl();
 
-    Hippo.App.PageModel.Component = function(cfg) {
+    Hippo.ChannelManager.TemplateComposer.PageModel.Component = function(cfg) {
         Ext.apply(this, cfg);
     };
 
-    Hippo.App.PageModel.Component.prototype = {
+    Hippo.ChannelManager.TemplateComposer.PageModel.Component.prototype = {
     };
 
     //TODO: update this one for dropFromParent stuff
-    Hippo.App.PageModel.ComponentRecord = Ext.data.Record.create([
+    Hippo.ChannelManager.TemplateComposer.PageModel.ComponentRecord = Ext.data.Record.create([
         {name: 'id', mapping: 'id'},
         {name: 'name', mapping: 'name'},
         {name: 'type', mapping: 'type'},
@@ -77,7 +77,7 @@ Ext.namespace('Hippo.App.PageModel');
 
     ]);
 
-    Hippo.App.PageModel.ReadRecord = Ext.data.Record.create([
+    Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord = Ext.data.Record.create([
         {name: 'id', mapping: 'id'},
         {name: 'name', mapping: 'name'},
         {name: 'path', mapping: 'path'},
@@ -88,7 +88,7 @@ Ext.namespace('Hippo.App.PageModel');
         {name: 'xtype', mapping: 'xtype'},
         {name: 'children', mapping: 'children'},
         {name: 'element', convert: function(v, record) {
-            var element = Hippo.App.Main.findElement(record.id);
+            var element = Hippo.ChannelManager.TemplateComposer.Instance.findElement(record.id);
             if (element == null) {
                 element = document.createElement('div');
                 element.id = record.id;

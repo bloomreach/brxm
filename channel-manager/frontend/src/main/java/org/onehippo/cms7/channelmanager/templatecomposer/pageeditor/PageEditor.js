@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-Ext.namespace('Hippo.App');
+Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
+Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     constructor : function(config) {
         if (config.debug) {
@@ -43,7 +43,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
         this.initUI(config);
 
-        Hippo.App.PageEditor.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.constructor.call(this, config);
     },
 
     //Keeps the session alive every minute
@@ -180,7 +180,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initComponent : function() {
-        Hippo.App.PageEditor.superclass.initComponent.call(this);
+        Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
         // recalculate the ExtJs layout when the YUI layout manager fires a resize event
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
@@ -235,7 +235,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                     requestContents(queueEmptyCallback);
                 },
                 failure : function(result, request) {
-                    Hippo.App.Main.fireEvent.call(this, 'exception', this, result);
+                    Hippo.ChannelManager.TemplateComposer.Instance.fireEvent.call(this, 'exception', this, result);
                     requestContents(queueEmptyCallback);
                 }
             });
@@ -339,7 +339,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
 
     onIFrameHeadInitialized : function(frm) {
         // send init call to iframe app
-        frm.execScript('Hippo.PageComposer.Main.init(' + Hippo.App.Main.debug + ','+this.previewMode+')', true);
+        frm.execScript('Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ','+this.previewMode+')', true);
     },
 
     initializeIFrameHead : function(frm) {
@@ -416,14 +416,14 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     createToolkitStore : function(mountId) {
-        return new Hippo.App.ToolkitStore({
+        return new Hippo.ChannelManager.TemplateComposer.ToolkitStore({
             mountId : mountId,
             composerRestMountUrl : this.composerRestMountUrl
         });
     },
 
     createPageModelStore : function(mountId, pageId) {
-        return new Hippo.App.PageModelStore({
+        return new Hippo.ChannelManager.TemplateComposer.PageModelStore({
             rootComponentIdentifier: this.rootComponentIdentifier,
             mountId: mountId,
             pageId: pageId,
@@ -535,7 +535,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
                                 }
                             }),
                             plugins: [
-                                Hippo.App.DragDropOne
+                                Hippo.ChannelManager.TemplateComposer.DragDropOne
                             ]
                         },
                         {
@@ -747,7 +747,7 @@ Hippo.App.PageEditor = Ext.extend(Ext.Panel, {
     }
 });
 
-Hippo.App.RestStore = Ext.extend(Ext.data.Store, {
+Hippo.ChannelManager.TemplateComposer.RestStore = Ext.extend(Ext.data.Store, {
 
     constructor : function(config) {
 
@@ -769,11 +769,11 @@ Hippo.App.RestStore = Ext.extend(Ext.data.Store, {
         };
 
         Ext.apply(this, cfg, config);
-        Hippo.App.RestStore.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.RestStore.superclass.constructor.call(this, config);
     }
 });
 
-Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
+Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
 
@@ -789,16 +789,16 @@ Hippo.App.ToolkitStore = Ext.extend(Hippo.App.RestStore, {
         var cfg = {
             id: 'ToolkitStore',
             proxy: proxy,
-            prototypeRecord : Hippo.App.PageModel.ReadRecord
+            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
         };
 
         Ext.apply(config, cfg);
 
-        Hippo.App.ToolkitStore.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.ToolkitStore.superclass.constructor.call(this, config);
     }
 });
 
-Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
+Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
 
@@ -856,17 +856,17 @@ Hippo.App.PageModelStore = Ext.extend(Hippo.App.RestStore, {
         var cfg = {
             id: 'PageModelStore',
             proxy: proxy,
-            prototypeRecord : Hippo.App.PageModel.ReadRecord
+            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
         };
 
         Ext.apply(config, cfg);
 
-        Hippo.App.PageModelStore.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.PageModelStore.superclass.constructor.call(this, config);
     }
 });
 
 
-Hippo.App.DragDropOne = (function() {
+Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
 
     return {
 
@@ -892,7 +892,7 @@ Hippo.App.DragDropOne = (function() {
                     var framePanel = Ext.getCmp('Iframe');
                     var frmDoc = framePanel.getFrameDocument();
                     framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
-                    Hippo.App.Main.stores.pageModel.each(function(record) {
+                    Hippo.ChannelManager.TemplateComposer.Instance.stores.pageModel.each(function(record) {
                         var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
                             var id = record.get('id') + '-overlay';
@@ -975,9 +975,9 @@ Hippo.App.DragDropOne = (function() {
                                 componentClassName : record.get('componentClassName'),
                                 xtype: record.get('xtype')
                             };
-                            var model = Hippo.App.PageModel.Factory.createModel(null, cfg);
+                            var model = Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createModel(null, cfg);
                             models.push(model);
-                            pmStore.insert(at + i, Hippo.App.PageModel.Factory.createRecord(model));
+                            pmStore.insert(at + i, Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createRecord(model));
                         }
                         return true;
                     }

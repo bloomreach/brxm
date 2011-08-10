@@ -17,9 +17,9 @@
 jQuery.noConflict();
 (function($) {
 
-    $.namespace('Hippo.PageComposer.UI');
+    $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    if (!Hippo.PageComposer.UI.Factory) {
+    if (!Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory) {
         var Factory = function() {
             this.objects = {};
             this.registry = {};
@@ -35,14 +35,14 @@ jQuery.noConflict();
             },
 
             _create : function(data, verify) {
-                var die = Hippo.PageComposer.Main.die;
+                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
                     die('No implementation found for xtype=' + data.xtype);
                 }
                 var c = new this.registry[data.xtype](data.id, data.element);
                 if(verify) {
                     if (!c instanceof data.base) {
-                        Hippo.PageComposer.Main.die('Instance with id ' + data.id + ' should be a subclass of ' + data.base);
+                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die('Instance with id ' + data.id + ' should be a subclass of ' + data.base);
                     }
                 }
                 this.objects[c.id] = c;
@@ -50,7 +50,7 @@ jQuery.noConflict();
             },
 
             verify : function(element) {
-                var die = Hippo.PageComposer.Main.die;
+                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
@@ -71,20 +71,20 @@ jQuery.noConflict();
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
-                var base = Hippo.PageComposer.UI.Widget;
+                var base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget;
                 if (type === HST.CONTAINER) {
-                    base = Hippo.PageComposer.UI.Container.Base;
+                    base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base;
                 } else if (type === HST.CONTAINERITEM) {
-                    base = Hippo.PageComposer.UI.ContainerItem.Base;
+                    base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base;
                 }
 
                 //Not very sexy this..
                 var xtype = hstContainerMetaData[HST.ATTR.XTYPE];
                 if (typeof xtype === 'undefined' || xtype == null || xtype == '') {
                     if (type === HST.CONTAINER) {
-                        xtype = 'Hippo.PageComposer.UI.Container.Base';
+                        xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base';
                     } else if (type === HST.CONTAINERITEM) {
-                        xtype = 'Hippo.PageComposer.UI.ContainerItem.Base';
+                        xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base';
                     }
                 }
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
@@ -157,13 +157,13 @@ jQuery.noConflict();
                         return commentJsonObject;
                     }
                 } catch(exception) {
-                    console.error('Error parsing container meta data. '+exception);
+                    console.error('Error parsing container meta data from comment data:\''+element.data+'\'. '+exception);
                 }
                 return null;
             }
 
         };
 
-        Hippo.PageComposer.UI.Factory = new Factory();
+        Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory = new Factory();
     }
 })(jQuery);

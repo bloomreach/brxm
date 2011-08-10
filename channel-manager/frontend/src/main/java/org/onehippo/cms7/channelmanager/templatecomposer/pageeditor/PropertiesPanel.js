@@ -14,9 +14,9 @@
  *  limitations under the License.
  */
 
-Ext.namespace('Hippo.App');
+Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
+Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     initComponent:function() {
         Ext.apply(this, {
             autoHeight: true,
@@ -47,7 +47,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
                 }
             ]
         });
-        Hippo.App.PropertiesPanel.superclass.initComponent.apply(this, arguments);
+        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
     },
 
     submitForm:function () {
@@ -65,7 +65,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
     },
 
     onRender:function() {
-        Hippo.App.PropertiesPanel.superclass.onRender.apply(this, arguments);
+        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.onRender.apply(this, arguments);
     },
 
     createDocument: function (ev, target, options) {
@@ -246,7 +246,7 @@ Hippo.App.PropertiesPanel = Ext.extend(Ext.FormPanel, {
 
 })
         ;
-Ext.reg('h_properties_panel', Hippo.App.PropertiesPanel);
+Ext.reg('h_properties_panel', Hippo.ChannelManager.TemplateComposer.PropertiesPanel);
 
 //Add * to the required fields 
 
