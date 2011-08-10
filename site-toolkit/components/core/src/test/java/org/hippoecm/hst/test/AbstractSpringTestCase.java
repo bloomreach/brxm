@@ -130,7 +130,7 @@ public abstract class AbstractSpringTestCase
         ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
         requestContext.setResolvedMount(mount);
         // now we can parse the url *with* a RESOLVED_MOUNT which is needed!        
-        HstURLFactory factory = (HstURLFactory)HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+        HstURLFactory factory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         HstContainerURL hstContainerURL = factory.getContainerURLProvider().parseURL(request, response, mount);
         ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
         requestContext.setBaseURL(hstContainerURL);

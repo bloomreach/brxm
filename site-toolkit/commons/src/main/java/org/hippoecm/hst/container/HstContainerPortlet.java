@@ -358,7 +358,7 @@ public class HstContainerPortlet extends GenericPortlet {
     protected HstPortalContextProvider getPortalContextProvider(PortletRequest request)
     {
     	if (HstServices.isAvailable()) {
-    		return (HstPortalContextProvider)HstServices.getComponentManager().getComponent(HstPortalContextProvider.class.getName());
+    		return HstServices.getComponentManager().getComponent(HstPortalContextProvider.class.getName());
     	}
     	return null;
     }
@@ -366,7 +366,7 @@ public class HstContainerPortlet extends GenericPortlet {
     protected HstMutablePortletRequestContext createHstRequestContext(PortletRequest request, PortletResponse response) {
     	HstMutablePortletRequestContext prc = null;
     	if (HstServices.isAvailable()) {
-    		HstRequestContextComponent rcc = (HstRequestContextComponent)HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
+    		HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent("org.hippoecm.hst.core.internal.HstRequestContextComponent");
     		prc = (HstMutablePortletRequestContext)rcc.create(true);
 			prc.setContextNamespace(response.getNamespace());
 			prc.setPortletConfig(getPortletConfig());
