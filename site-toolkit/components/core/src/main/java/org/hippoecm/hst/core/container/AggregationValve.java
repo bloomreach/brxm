@@ -329,6 +329,9 @@ public class AggregationValve extends AbstractValve {
     private Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
         StringBuilder builder = new StringBuilder();
         for(Entry<String, String> attr : attributes.entrySet()) {
+            if (builder.length() != 0) {
+                builder.append(", ");
+            }
             builder.append("\"").append(attr.getKey()).append("\":").append("\"").append(attr.getValue()).append("\"");
         }
         Comment comment = response.createComment("{ " + builder.toString() +"}");
