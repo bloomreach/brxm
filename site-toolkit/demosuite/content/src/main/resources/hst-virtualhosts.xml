@@ -202,6 +202,12 @@
               <sv:property sv:name="hst:type" sv:type="String">
                 <sv:value>preview</sv:value>
               </sv:property>
+              <sv:property sv:name="hst:authenticated" sv:type="Boolean">
+                <sv:value>true</sv:value>
+              </sv:property>
+              <sv:property sv:multiple="true" sv:name="hst:roles" sv:type="String">
+                <sv:value>everybody</sv:value>
+              </sv:property>
               <sv:property sv:name="hst:mountrest" sv:type="String">
                 <sv:value>restapi</sv:value>
               </sv:property>
