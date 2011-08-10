@@ -324,8 +324,6 @@ public class HstFilter implements Filter {
                             String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
                             requestContext.setRenderHost(xfh);
                             requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
-                            // we indicate on the request that CMS single sign on authentication is needed to proceed rendering later on
-                            request.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATION_NEEDED, true);
                         }
                     }
                     else {

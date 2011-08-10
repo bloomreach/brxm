@@ -146,8 +146,4 @@ public interface ContainerConstants {
      */
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
     
-    /**
-     * request attribute to indicate that cms single sign on is needed
-     */
-    String CMS_SSO_AUTHENTICATION_NEEDED = "org.hippoecm.hst.container.cms_sso_authentication_needed";
 }
