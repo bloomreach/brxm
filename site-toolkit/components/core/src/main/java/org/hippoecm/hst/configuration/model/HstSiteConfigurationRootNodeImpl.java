@@ -89,13 +89,15 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
         HstNode hstNode = getNode(nodeName);
         if(hstNode == null) {
             // inherit the node from inheritedConfig. 
-            this.addDescendantHstNodeCopy(nodeName, (HstNodeImpl)inheritedNode);
-        } else {
+            HstNodeImpl copy = new HstNodeImpl((HstNodeImpl)inheritedNode, this);
+            addNode(nodeName, copy);
+        } else { 
             // add the direct children that are in the inheritedConfig but not in the current.
             for(HstNode inheritedChild : inheritedNode.getNodes()) {
-                if(hstNode.getNode(inheritedChild.getValueProvider().getName()) == null) {
+                if (hstNode.getNode(inheritedChild.getValueProvider().getName()) == null) {
                     // inherit the child node.
-                    ((HstNodeImpl)hstNode).addDescendantHstNodeCopy(inheritedChild.getValueProvider().getName(), (HstNodeImpl)inheritedChild);
+                    HstNodeImpl copy = new HstNodeImpl((HstNodeImpl) inheritedChild, hstNode);
+                    ((HstNodeImpl) hstNode).addNode(inheritedChild.getValueProvider().getName(), copy);
                 }
             }
         }

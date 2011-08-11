@@ -233,17 +233,4 @@ public class HstNodeImpl implements HstNode {
         stale = false;
     }
     
-
-    /**
-     * Adds the node to first copy and then to add. 
-     * It is something between a deep and shallow copy: The descendant are copied, but not the parent. Also, the 
-     * JCRValueProvider of the copied descendants are shared
-     * @param nodeName
-     * @param inheritedNode
-     */
-    protected void addDescendantHstNodeCopy(String nodeName, HstNodeImpl nodeToCopyAndAdd) {
-        HstNodeImpl copy = new HstNodeImpl(nodeToCopyAndAdd, this);
-        addNode(nodeName, copy);
-    }
-    
 }
