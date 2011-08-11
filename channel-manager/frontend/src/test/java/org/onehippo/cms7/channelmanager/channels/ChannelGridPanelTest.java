@@ -1,13 +1,14 @@
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -16,50 +17,14 @@ import static org.junit.Assert.assertTrue;
 public class ChannelGridPanelTest {
 
     @Test
-    public void columnsForExistingChannelFields() {
-        String[] existingChannelFields = new String[]{
-                "blueprintId",
-                "composerModeEnabled",
-                "contentRoot",
-                "hostname",
-                "hstMountPoint",
-                "hstConfigPath",
-                "id",
-                "name",
-                "subMountPath",
-                "type",
-                "url"
-        };
-        JavaPluginConfig config = new JavaPluginConfig();
-        config.put("columns", existingChannelFields);
-
-        List<String> parsedFields = ChannelGridPanel.parseChannelFields(config);
-        assertEquals(existingChannelFields.length, parsedFields.size());
-        for (int i = 0; i < existingChannelFields.length; i++) {
-            assertEquals(existingChannelFields[i], parsedFields.get(i));
-        }
-    }
-
-    @Test
-    public void columnsForNonGetterMethodsAreIgnored() {
-        JavaPluginConfig config = new JavaPluginConfig();
-        config.put("columns", new String[]{"string", "hashCode"});
-
-        List<String> parsedFields = ChannelGridPanel.parseChannelFields(config);
-
-        assertFalse(parsedFields.contains("string"));
-        assertFalse(parsedFields.contains("hashCode"));
-    }
-
-    @Test
     public void columnsForNonExistingChannelFieldsAreIgnored() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("columns", new String[]{"id", "nosuchfield", "name"});
 
-        List<String> parsedFields = ChannelGridPanel.parseChannelFields(config);
+        List<ChannelStore.Column> parsedFields = ChannelGridPanel.parseChannelFields(config);
         assertEquals(2, parsedFields.size());
-        assertEquals("id", parsedFields.get(0));
-        assertEquals("name", parsedFields.get(1));
+        assertTrue(parsedFields.contains(ChannelStore.Column.id));
+        assertTrue(parsedFields.contains(ChannelStore.Column.name));
     }
 
     @Test
@@ -86,36 +51,28 @@ public class ChannelGridPanelTest {
         testIsDefaultColumns(ChannelGridPanel.parseChannelFields(config));
     }
 
-    private void testIsDefaultColumns(List<String> fields) {
-        assertEquals(1, fields.size());
-        assertTrue(fields.contains("name"));
+    private void testIsDefaultColumns(List<ChannelStore.Column> fields) {
+        assertTrue(fields.contains(ChannelStore.Column.name));
     }
 
     @Test
     public void sortColumnForExistingColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
-
-        List<String> columns = Arrays.asList("url");
-
-        assertEquals("url", ChannelGridPanel.parseSortColumn(config, columns));
+        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.url)));
     }
 
     @Test
     public void sortColumnForNonExistingColumnIsFirstColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
-
-        List<String> columns = Arrays.asList("hostname", "blueprintId");
-
-        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, columns));
+        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.hostname, ChannelStore.Column.blueprintId)));
     }
 
     @Test
     public void emptySortColumnIsFirstColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
-        List<String> columns = Arrays.asList("url", "hostname");
-        assertEquals("url", ChannelGridPanel.parseSortColumn(config, columns));
+        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.url, ChannelStore.Column.hostname)));
     }
 
     @Test

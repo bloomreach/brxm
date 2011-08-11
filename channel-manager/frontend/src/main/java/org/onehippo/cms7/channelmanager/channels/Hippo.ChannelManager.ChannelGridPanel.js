@@ -165,7 +165,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
         sm.on('rowselect', function(sm, rowIndex, record) {
             this.isSelectingRow = false;
-            this.fireEvent('channel-selected', record.get('channelId'), record.get('name'), record);
+            this.fireEvent('channel-selected', record.get('id'), record.get('name'), record);
         }, this);
 
         // register keyboard navigation
@@ -174,7 +174,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 case 13: // ENTER
                     var selectedRecord = this.getSelectionModel().getSelected();
                     if (selectedRecord) {
-                        this.selectChannel(selectedRecord.get('channelId'));
+                        this.selectChannel(selectedRecord.get('id'));
                     }
                     break;
                 case 27: // ESC
@@ -188,7 +188,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     // This method call selectRow(index);
     // Returns true if the channel was selected, false if not (e.g. because the channel does not exist)
     selectChannel: function(channelId) {
-        var index = this.store.findExact('channelId', channelId);
+        var index = this.store.findExact('id', channelId);
         this.selectRow(index);
         return index >= 0;
     },
@@ -214,7 +214,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         var state = Hippo.ChannelManager.ChannelGridPanel.superclass.getState.call(this);
         var selectedRecord = this.getSelectionModel().getSelected();
         if (selectedRecord) {
-            state.selected = selectedRecord.get('channelId');
+            state.selected = selectedRecord.get('id');
         } else {
             // remove any old value
             delete state.selected;

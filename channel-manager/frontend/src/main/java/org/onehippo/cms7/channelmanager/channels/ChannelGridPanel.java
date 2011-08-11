@@ -17,13 +17,12 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,9 +44,7 @@ public class ChannelGridPanel extends ExtPanel {
     public static final String CONFIG_COLUMNS = "columns";
     public static final String CONFIG_SORT_COLUMN = "sort.column";
     public static final String CONFIG_SORT_ORDER = "sort.order";
-
-    private static final String COLUMN_NAME = "name";
-    private static final List<String> DEFAULT_COLUMNS = Collections.singletonList(COLUMN_NAME);
+    private List<ChannelStore.Column> visibleFields;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
@@ -55,59 +52,59 @@ public class ChannelGridPanel extends ExtPanel {
     public ChannelGridPanel(IPluginConfig config) {
         super();
 
-        List<String> channelFields = parseChannelFields(config);
         List<ExtField> fieldList = new ArrayList<ExtField>();
-        for (String fieldName : channelFields) {
-            fieldList.add(new ExtField(fieldName));
+        for (ChannelStore.Column column : ChannelStore.Column.values()) {
+            fieldList.add(new ExtField(column.name()));
         }
 
-        // always include the hidden field 'channelId' that is used in code to identify each channel
-        fieldList.add(new ExtField(ChannelStore.CHANNEL_ID));
+        visibleFields = parseChannelFields(config);
 
-        this.store = new ChannelStore(fieldList, parseSortColumn(config, channelFields), parseSortOrder(config));
+        this.store = new ChannelStore(fieldList, parseSortColumn(config, visibleFields), parseSortOrder(config));
         add(this.store);
     }
 
-    static List<String> parseChannelFields(IPluginConfig config) {
+    static List<ChannelStore.Column> parseChannelFields(IPluginConfig config) {
         if (config == null) {
-            return DEFAULT_COLUMNS;
+            return Arrays.asList(ChannelStore.Column.values());
         }
         String[] columnNames = config.getStringArray(CONFIG_COLUMNS);
         if (columnNames == null || columnNames.length == 0) {
-            return DEFAULT_COLUMNS;
+            return Arrays.asList(ChannelStore.Column.values());
         }
 
-        List<String> channelFields = new LinkedList<String>();
+        List<ChannelStore.Column> columns = new ArrayList<ChannelStore.Column>();
         for (String columnName : columnNames) {
-            if (ReflectionUtil.getGetterMethodForField(Channel.class, columnName) != null) {
-                channelFields.add(columnName);
-            } else {
-                log.warn("Ignoring channel list column '{}': class {} does not have a getter method for this field",
-                        columnName, Channel.class.getName());
+            try {
+                columns.add(ChannelStore.Column.valueOf(columnName));
+            } catch (Exception exception) {
+                // ignore
             }
         }
-
-        if (channelFields.isEmpty()) {
-            return DEFAULT_COLUMNS;
+        if (!columns.contains(ChannelStore.Column.name)) {
+            columns.add(0, ChannelStore.Column.name);
         }
-
-        return channelFields;
+        return columns;
     }
 
-    static String parseSortColumn(IPluginConfig config, List<String> columnNames) {
-        if (config == null) {
-            return COLUMN_NAME;
+    static String parseSortColumn(IPluginConfig config, List<ChannelStore.Column> columnNames) {
+        if (config == null || columnNames.size() == 0) {
+            return ChannelStore.Column.name.name();
         }
-
-        String sortColumn = config.getString(CONFIG_SORT_COLUMN);
-
-        if (!columnNames.contains(sortColumn)) {
-            log.warn("Sort column '{}' is not one of the shown columns {}. Using column '{}' instead.",
-                    new Object[]{sortColumn, columnNames, columnNames.get(0)});
-            return columnNames.get(0);
+        String configSortColumn = config.getString(CONFIG_SORT_COLUMN);
+        try {
+            ChannelStore.Column sortColumn = ChannelStore.Column.valueOf(configSortColumn);
+            for (ChannelStore.Column column : columnNames) {
+                if (sortColumn == column) {
+                    return sortColumn.name();
+                }
+            }
+        } catch (Exception exception) {
+            // ignore
         }
-
-        return sortColumn;
+        ChannelStore.Column fallback = columnNames.get(0);
+        log.warn("Sort column '{}' is not one of the shown columns {}. Using column '{}' instead.",
+                    new Object[]{configSortColumn, columnNames, fallback});
+        return fallback.name();
     }
 
     static ChannelStore.SortOrder parseSortOrder(IPluginConfig config) {
@@ -116,7 +113,6 @@ public class ChannelGridPanel extends ExtPanel {
         }
 
         String order = config.getString(CONFIG_SORT_ORDER);
-
         if (order == null || order.equalsIgnoreCase("ascending")) {
             return ChannelStore.SortOrder.ascending;
         } else if (order.equalsIgnoreCase("descending")) {
@@ -148,15 +144,24 @@ public class ChannelGridPanel extends ExtPanel {
     private JSONArray getColumnsConfig() throws JSONException {
         JSONArray columnsConfig = new JSONArray();
 
-        for (ExtField field : store.getFields()) {
-            final String fieldName = field.getName();
-            if (!fieldName.equals(ChannelStore.CHANNEL_ID)) {
-                final JSONObject fieldConfig = new JSONObject();
-                fieldConfig.put("dataIndex", fieldName);
-                fieldConfig.put("id", fieldName);
-                fieldConfig.put("header", getResourceValue("column." + fieldName));
-                columnsConfig.put(fieldConfig);
-            }
+        EnumSet<ChannelStore.Column> hiddenColumns = EnumSet.allOf(ChannelStore.Column.class);
+        for (ChannelStore.Column column : visibleFields) {
+            final JSONObject fieldConfig = new JSONObject();
+            fieldConfig.put("dataIndex", column.name());
+            fieldConfig.put("id", column.name());
+            fieldConfig.put("header", getResourceValue("column." + column.name()));
+            fieldConfig.put("hidden", false);
+            columnsConfig.put(fieldConfig);
+            hiddenColumns.remove(column);
+        }
+
+        for (ChannelStore.Column column : hiddenColumns) {
+            final JSONObject fieldConfig = new JSONObject();
+            fieldConfig.put("dataIndex", column.name());
+            fieldConfig.put("id", column.name());
+            fieldConfig.put("header", getResourceValue("column." + column.name()));
+            fieldConfig.put("hidden", true);
+            columnsConfig.put(fieldConfig);
         }
 
         return columnsConfig;

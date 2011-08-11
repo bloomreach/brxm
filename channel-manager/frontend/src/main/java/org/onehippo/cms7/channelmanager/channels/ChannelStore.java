@@ -50,9 +50,23 @@ import org.wicketstuff.js.ext.util.ExtClass;
 @ExtClass("Hippo.ChannelManager.ChannelStore")
 public class ChannelStore extends ExtGroupingStore<Object> {
 
-    public static enum SortOrder { ascending, descending }
+    // the names are used to access
+    // the getters of Channel via reflection
+    public enum Column {
+        id, // channel id
+        name,
+        blueprintId,
+        url,
+        contentRoot,
+        hstConfigPath,
+        hostname,
+        subMountPath,
+        composerModeEnabled,
+        hstMountPoint,
+        type
+    }
 
-    static final String CHANNEL_ID = "channelId";
+    public static enum SortOrder { ascending, descending }
 
     /**
      * The first serialized version of this source. Version {@value}.
@@ -100,13 +114,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         for (Channel channel : getChannels().values()) {
             JSONObject object = new JSONObject();
-            for (ExtField field : getFields()) {
-                String fieldName = field.getName();
-                if (fieldName.equals(CHANNEL_ID)) {
-                    fieldName = "id";
-                }
-                final String fieldValue = ReflectionUtil.getStringValue(channel, fieldName);
-                object.put(field.getName(), fieldValue);
+            for (Column column : Column.values()) {
+                final String fieldValue = ReflectionUtil.getStringValue(channel, column.name());
+                object.put(column.name(), fieldValue);
             }
             data.put(object);
         }

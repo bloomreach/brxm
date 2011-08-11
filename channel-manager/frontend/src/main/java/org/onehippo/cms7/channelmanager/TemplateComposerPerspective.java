@@ -16,13 +16,9 @@
 package org.onehippo.cms7.channelmanager;
 
 
-import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -35,8 +31,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerResourceBehavior;
-import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;

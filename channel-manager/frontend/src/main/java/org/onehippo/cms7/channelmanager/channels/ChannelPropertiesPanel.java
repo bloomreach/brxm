@@ -226,8 +226,8 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         addEventListener("selectchannel", new ExtEventListener() {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                if (parameters.containsKey("channelId")) {
-                    JSONArray channelId = parameters.get("channelId");
+                if (parameters.containsKey("id")) {
+                    JSONArray channelId = parameters.get("id");
                     if (channelId.length() > 0) {
                         try {
                             channel = getChannel((String) channelId.get(0));
@@ -287,7 +287,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return new ExtEventAjaxBehavior() {
                 @Override
                 public String[] getParameters() {
-                    return new String[]{"channelId"};
+                    return new String[]{"id"};
                 }
             };
         }
