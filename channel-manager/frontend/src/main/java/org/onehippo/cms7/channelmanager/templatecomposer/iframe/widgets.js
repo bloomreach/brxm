@@ -43,6 +43,7 @@ jQuery.noConflict();
                 overlay : {
                     base: 'hst-overlay',
                     hover : 'hst-overlay-hover',
+                    inherited : 'hst-overlay-inherited',
                     mark : null,
                     custom : null
                 }
@@ -82,6 +83,9 @@ jQuery.noConflict();
             }
             if(this.cls.overlay.custom != null) {
                 overlay.addClass(this.cls.overlay.custom);
+            }
+            if (this.el.attr(HST.ATTR.INHERITED)) {
+                overlay.addClass(this.cls.overlay.inherited);
             }
             overlay.css('position', 'absolute');
             overlay.attr(HST.ATTR.ID, this.id);
@@ -317,6 +321,9 @@ jQuery.noConflict();
 
         _createSortable : function() {
             //instantiate jquery.UI sortable
+            if (this.el.attr(HST.ATTR.INHERITED)) {
+                return;
+            }
             $(this.sel.sortable).sortable({
                 //revert: 100,
                 items: this.sel.sort.itemsRel,

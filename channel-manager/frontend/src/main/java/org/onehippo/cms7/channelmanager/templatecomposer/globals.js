@@ -40,7 +40,8 @@
         ATTR : {
             ID : 'uuid',
             TYPE : 'type',
-            XTYPE : 'xtype'
+            XTYPE : 'xtype',
+            INHERITED : 'inherited'
         },
 
         CLASS : {

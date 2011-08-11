@@ -83,6 +83,15 @@
     opacity: 0.4;
 }
 
+.hst-overlay.hst-overlay-inherited {
+    border-color: #999999;
+}
+
+
+.hst-overlay-container-item.hst-overlay-inherited {
+    border-color: #e3e3e3;
+}
+
 .empty-container-placeholder {
     height: 20px;
     font-size: 15px;

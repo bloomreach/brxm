@@ -616,6 +616,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     handleOnClick : function(element) {
+        if (element.getAttribute(HST.ATTR.INHERITED)) {
+            return;
+        }
         var id = element.getAttribute('id');
         var recordIndex = this.stores.pageModel.findExact('id', id);
 

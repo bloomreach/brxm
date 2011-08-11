@@ -89,6 +89,10 @@ jQuery.noConflict();
                 }
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
 
+                if (typeof hstContainerMetaData[HST.ATTR.INHERITED] !== 'undefined') {
+                    element.setAttribute(HST.ATTR.INHERITED, hstContainerMetaData[HST.ATTR.INHERITED]);
+                }
+
                 return {
                     id: id,
                     type: type,
