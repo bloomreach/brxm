@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2010 Hippo
+  * Copyright 2011 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     <div yui:id="template-composer-perspective-center">
       <div yui:id="template-composer-perspective-center-body">
         <div class="channel-manager" wicket:id="channel-root">
-          <div class="channel-properties" wicket:id="container">
+          <div class="channel-properties" wicket:id="channel-properties-container">
             <table>
               <wicket:container wicket:id="fieldgroups">
                 <tbody class="fieldgroup">
@@ -41,6 +41,9 @@
                 </tbody>
               </wicket:container>
             </table>
+          </div>
+          <div wicket:id="hst-config-editor-container">
+            <span wicket:id="label-mountpoint"></span>
           </div>
         </div>
       </div>

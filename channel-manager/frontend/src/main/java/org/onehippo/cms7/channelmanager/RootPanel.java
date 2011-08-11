@@ -26,6 +26,7 @@ import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
+import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.data.ExtField;
@@ -39,7 +40,8 @@ public class RootPanel extends ExtPanel {
 
     public enum Card {
         CHANNEL_MANAGER(0),
-        TEMPLATE_COMPOSER(1);
+        TEMPLATE_COMPOSER(1),
+        HST_CONFIG_EDITOR(2);
 
         private Integer tabIndex;
 
@@ -52,9 +54,7 @@ public class RootPanel extends ExtPanel {
     public static final String CONFIG_CHANNEL_LIST = "channel-list";
 
     private BlueprintStore blueprintStore;
-
     private ChannelStore channelStore;
-
     private PageEditor pageEditor;
 
     @ExtProperty
@@ -72,8 +72,8 @@ public class RootPanel extends ExtPanel {
 
         add(new ChannelManagerResourceBehaviour());
 
-        // item0
-        ExtPanel channelManagerCard = new ExtPanel();
+        // card 0: channel manager
+        final ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setLayout(new BorderLayout());
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
@@ -84,7 +84,9 @@ public class RootPanel extends ExtPanel {
         //Use the same store variable as the grid panel, no need to create another store.
         this.channelStore = channelPanel.getStore();
 
-        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context);
+        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context, null);
+
+        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, hstConfigEditor);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         channelManagerCard.add(channelPropertiesPanel);
 
@@ -96,10 +98,13 @@ public class RootPanel extends ExtPanel {
 
         add(channelManagerCard);
 
-        // item1
-        IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
+        // card 1: template composer
+        final IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
         pageEditor = new PageEditor(pageEditorConfig);
         add(pageEditor);
+
+        // card 2: HST config editor
+        add(hstConfigEditor);
     }
 
     @Override
