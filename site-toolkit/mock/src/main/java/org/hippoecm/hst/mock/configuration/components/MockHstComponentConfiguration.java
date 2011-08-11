@@ -47,6 +47,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String namedResourceServer;
     private String pageErrorHandlerClassName;
     private String xType;
+    private boolean inherited;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -206,5 +207,14 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    @Override
+    public boolean isInherited() {
+        return inherited;
+    }
+    
+    public void setInherited(boolean inherited) {
+        this.inherited = inherited;
     }
 }
