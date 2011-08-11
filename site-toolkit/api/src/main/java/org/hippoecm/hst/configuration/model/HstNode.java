@@ -83,4 +83,8 @@ public interface HstNode {
      */
     boolean isStale();
 
+    /**
+     * @return <code>true</code> when this HstNode is inherited
+     */
+    boolean isInherited();
 }

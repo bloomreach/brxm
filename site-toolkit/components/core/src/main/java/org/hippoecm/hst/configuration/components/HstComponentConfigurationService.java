@@ -100,6 +100,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     private String canonicalIdentifier;
     
+    /**
+     * <code>true</code> when the backing {@link HstNode} of this {@link HstComponentConfiguration} is inherited
+     */
+    private boolean inherited;
+    
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
@@ -120,7 +125,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
-       
+        this.inherited = node.isInherited();
         if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
           type = Type.COMPONENT;
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
@@ -336,6 +341,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return canonicalIdentifier;
     }
     
+    @Override
+    public boolean isInherited() {
+        return inherited;
+    }
+    
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
@@ -362,6 +372,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.canonicalIdentifier = child.canonicalIdentifier;
         copy.dummyContent = child.dummyContent;
         copy.componentFilterTag = child.componentFilterTag;
+        copy.inherited = child.inherited;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -445,6 +456,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.componentFilterTag == null) {
                     this.componentFilterTag = referencedComp.componentFilterTag;
                 }
+                
+                // inherited flag not needed to take from the referencedComp
                 
                 if (this.parameters == null) {
                     this.parameters = new HashMap<String, String>(referencedComp.parameters);
@@ -538,6 +551,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.componentFilterTag == null) {
             this.componentFilterTag = childToMerge.componentFilterTag;
         }
+        
+        // inherited flag not needed to merge
         
         if (this.parameters == null) {
             this.parameters = new HashMap<String, String>(childToMerge.parameters);
@@ -652,5 +667,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
     }
+
 
 }

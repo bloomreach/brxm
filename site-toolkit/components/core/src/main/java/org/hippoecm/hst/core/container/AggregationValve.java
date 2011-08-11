@@ -317,6 +317,9 @@ public class AggregationValve extends AbstractValve {
                         if(compConfig.getXType() != null) {
                             attributes.put("xtype", compConfig.getXType());
                         }
+                        if(compConfig.isInherited()) {
+                            attributes.put("inherited", "true"); 
+                        }
                         attributes.put("type", compConfig.getComponentType().toString());
                         Comment comment = createCommentWithAttr(attributes, response);
                         response.addPreamble(comment);

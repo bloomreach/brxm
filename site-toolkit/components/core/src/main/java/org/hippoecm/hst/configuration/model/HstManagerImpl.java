@@ -190,7 +190,7 @@ public class HstManagerImpl implements HstManager {
         return virtualHosts;
     }
 
-    protected void buildSites() throws RepositoryNotAvailableException{
+    protected void buildSites() throws RepositoryNotAvailableException {
         if (clearAll) { 
             configChangeEventMap = null;
             commonCatalog = null;

@@ -16,6 +16,8 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.Map;
+
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.container.PageErrorHandler;
@@ -220,4 +222,9 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the filter tag of this component, or null if no tag is available.
      */
     String getComponentFilterTag();
+    
+    /**
+     * @return <code>true</code> when the backing provider ({@link HstNode}) of this {@link HstComponentConfiguration} is inherited
+     */
+    boolean isInherited();
 }

@@ -62,6 +62,11 @@ public class HstNodeImpl implements HstNode {
      */
     private boolean stale = false;
     
+    /**
+     * when <code>true</code>, is means this HstNode is inherited from some other structure
+     */
+    private boolean inherited = false; 
+    
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
         this.parent = parent;
         try {
@@ -79,25 +84,43 @@ public class HstNodeImpl implements HstNode {
     }
 
     /**
-     * This is a copy constructor. A copy of inheritedNode is created
+     * This is a copy constructor. A copy of <code>node</code> is created
+     * 
+     * Note: This deep copy does NOT copy the parent field, as this constructor is used to copy descendant structures. 
+     * Also it does not make a kind of clone of the JCRValueProvider: that one is still shared.
+     * 
+     * It is something between a deep and shallow copy: The descendant are copied.
+     * 
+     * Inherited is marked as false
+     * 
+     * @param node
+     */
+    public HstNodeImpl(HstNodeImpl node, HstNode parent) {
+       this(false, node, parent);
+    }
+    
+    /**
+     * This is a copy constructor. A copy of <code>node</code> is created
      * 
      * Note: This deep copy does NOT copy the parent field, as this constructor is used to copy descendant structures. 
      * Also it does not make a kind of clone of the JCRValueProvider: that one is still shared.
      * 
      * It is something between a deep and shallow copy: The descendant are copied
      * 
-     * @param inheritedNode
+     * If <code>inherited</code> equals <code>true</code>, the HstNode's are marked as inherited. 
+     * 
+     * @param node
      */
-    public HstNodeImpl(HstNodeImpl inheritedNode, HstNode parent) {
-       
-       provider = inheritedNode.provider;
-       nodeTypeName = inheritedNode.nodeTypeName;
-       stale = inheritedNode.stale;
-       this.parent = parent;
-       children = new LinkedHashMap<String, HstNode>();
-       for(Entry<String, HstNode> entry : inheritedNode.children.entrySet()) {
-           children.put(entry.getKey(), new HstNodeImpl((HstNodeImpl)entry.getValue(), this));
-       }
+    public HstNodeImpl(boolean inherited, HstNodeImpl node, HstNode parent) {
+        provider = node.provider;
+        nodeTypeName = node.nodeTypeName;
+        stale = node.stale;
+        this.parent = parent;
+        this.inherited = inherited;
+        children = new LinkedHashMap<String, HstNode>();
+        for(Entry<String, HstNode> entry : node.children.entrySet()) {
+            children.put(entry.getKey(), new HstNodeImpl(inherited, (HstNodeImpl)entry.getValue(), this));
+        }
     }
 
     protected void loadChilds(Node jcrNode, HstNode parent) throws RepositoryException {
@@ -226,6 +249,11 @@ public class HstNodeImpl implements HstNode {
         return stale;
     }
 
+    @Override
+    public boolean isInherited() {
+        return inherited;
+    }
+    
     @Override
     public void setJCRValueProvider(JCRValueProvider valueProvider) {
         this.provider = valueProvider;
