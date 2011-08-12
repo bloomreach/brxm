@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2011 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
@@ -37,24 +52,23 @@ import org.onehippo.sso.CredentialCipher;
 public class CmsSecurityValve extends AbstractValve {
     private static final String SSO_BASED_SESSION_ATTR_NAME = CmsSecurityValve.class.getName() + ".jcrSession";
 
-    private boolean renderHostCheck = true;
-    
     private Repository repository;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
-
-    public void setRenderHostCheck(boolean renderHostCheck) {
-        this.renderHostCheck = renderHostCheck;
-    }
-
+    
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
-        if(renderHostCheck && requestContext.getRenderHost() == null) {
+        /*
+         * we invoke the next valve if the call is not from the cms. A call is *not* from the cms template composer if:
+         * 1) The renderHost == null AND 
+         * 2) ContainerConstants.CMS_HOST_CONTEXT attribute is not TRUE
+         */
+        if(requestContext.getRenderHost() == null && !Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
             context.invokeNext();
             return;
         } 
@@ -131,25 +145,29 @@ public class CmsSecurityValve extends AbstractValve {
                     throw new ContainerException(se);
                 }
             } 
-        }
+        } 
 
         LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+        
         if(!lazySession.isLive()) {
             log.debug("SSO jcr session is not live. Try to get a new one.");
             setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
             lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-        } else {
+        } 
+        
+        // we need to synchronize on a jcr session as a jcr session is not thread safe. Also, virtual states will be lost
+        // if another thread flushes this session
+        synchronized (lazySession) {
             // always refresh jcr session, otherwise changes in documents won't be visible
             try {
                 lazySession.refresh(false);
             } catch (RepositoryException e) {
                 throw new ContainerException("Failed to refresh jcr session.", e);
             }
-        }
         
-        ((HstMutableRequestContext) requestContext).setSession(lazySession);
-
-        context.invokeNext();
+            ((HstMutableRequestContext) requestContext).setSession(lazySession);
+            context.invokeNext();
+        }
     }
 
     protected void setSSOSession(HttpSession httpSession, Credentials credentials) throws ContainerException {

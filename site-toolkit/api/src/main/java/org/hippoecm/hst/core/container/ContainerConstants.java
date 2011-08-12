@@ -146,4 +146,9 @@ public interface ContainerConstants {
      */
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
     
+    /**
+     * The attribute used on the request to indicate that the request is from a cms context : Typically the _rp rest calls
+     * from the template composer
+     */ 
+    String CMS_HOST_CONTEXT = "org.hippoecm.hst.container.sso_cms_context";
 }
