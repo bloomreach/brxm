@@ -95,7 +95,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             String[] values = new String[hstParameters.size()];
             jcrNode.setProperty(HST_PARAMETERNAMES, hstParameters.keySet().toArray(values));
             jcrNode.setProperty(HST_PARAMETERVALUES, hstParameters.values().toArray(values));
-            jcrNode.save();
+            jcrNode.getSession().save();
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component " + e, e);
             throw new WebApplicationException(e);
