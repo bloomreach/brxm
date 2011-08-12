@@ -29,6 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
@@ -39,7 +40,7 @@ import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MountService implements ExtendedMount {
+public class MountService implements ContextualizableMount {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(MountService.class);

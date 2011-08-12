@@ -13,15 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.hosting;
+package org.hippoecm.hst.configuration.internal;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 
 /**
- * internal only api for being able to decorate a {@link Mount} to a preivew {@link Mount}
+ * internal only api for being able to decorate a {@link Mount} to a preview {@link Mount}
  */
-public interface ExtendedMount extends Mount {
+public interface ContextualizableMount extends Mount {
 
     /**
      * internal only : not api 

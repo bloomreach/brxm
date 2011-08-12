@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.configuration.hosting.ExtendedMount;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -56,8 +56,8 @@ public class MountDecoratorImpl implements MountDecorator{
             if (delegatee.isPreview()) {
                 return delegatee.getHstSite();
             }
-            if (delegatee instanceof ExtendedMount) {
-                return ((ExtendedMount) delegatee).getPreviewHstSite();
+            if (delegatee instanceof ContextualizableMount) {
+                return ((ContextualizableMount) delegatee).getPreviewHstSite();
             } else {
                 log.warn(
                        "Don't know how to get the preview of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
@@ -72,8 +72,8 @@ public class MountDecoratorImpl implements MountDecorator{
             if (delegatee.isPreview()) {
                 return delegatee.getMountPoint();
             }
-            if (delegatee instanceof ExtendedMount) {
-                return ((ExtendedMount) delegatee).getPreviewMountPoint();
+            if (delegatee instanceof ContextualizableMount) {
+                return ((ContextualizableMount) delegatee).getPreviewMountPoint();
             } else {
                 log.warn("Don't know how to get the preview mountPoint of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
                            + "Return the value from the  current mount and not preview version. ",
@@ -87,8 +87,8 @@ public class MountDecoratorImpl implements MountDecorator{
             if (delegatee.isPreview()) {
                 return delegatee.getCanonicalContentPath();
             }
-            if (delegatee instanceof ExtendedMount) {
-                return ((ExtendedMount) delegatee).getPreviewCanonicalContentPath();
+            if (delegatee instanceof ContextualizableMount) {
+                return ((ContextualizableMount) delegatee).getPreviewCanonicalContentPath();
             } else {
                 log.warn("Don't know how to get the preview canonical content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
                           + "Return the value from the current mount and not preview version. ",
@@ -103,8 +103,8 @@ public class MountDecoratorImpl implements MountDecorator{
             if (delegatee.isPreview()) {
                 return delegatee.getContentPath();
             }
-            if (delegatee instanceof ExtendedMount) {
-                return ((ExtendedMount) delegatee).getPreviewContentPath();
+            if (delegatee instanceof ContextualizableMount) {
+                return ((ContextualizableMount) delegatee).getPreviewContentPath();
             } else {
                 log.warn("Don't know how to get the preview content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
                           + "Return the value from the  current mount and not preview version. ",

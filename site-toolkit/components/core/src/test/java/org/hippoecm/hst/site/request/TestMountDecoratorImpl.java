@@ -24,14 +24,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.hosting.ExtendedMount;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.junit.Test;
 
 public class TestMountDecoratorImpl {
     @Test
     public void testDecorationsOfLiveToPreviewMount() throws Exception {
-        ExtendedMount mount = createNiceMock(ExtendedMount.class);
+        ContextualizableMount mount = createNiceMock(ContextualizableMount.class);
 
         expect(mount.isPreview()).andReturn(false).anyTimes();
         expect(mount.getMountPoint()).andReturn("/hst:hst/hst:sites/myproject").anyTimes();
@@ -53,7 +53,7 @@ public class TestMountDecoratorImpl {
     
     @Test
     public void testDecorationsOfAlreadyPreviewMount() throws Exception {
-        ExtendedMount mount = createNiceMock(ExtendedMount.class);
+        ContextualizableMount mount = createNiceMock(ContextualizableMount.class);
 
         expect(mount.isPreview()).andReturn(true).anyTimes();
         replay(mount);
