@@ -88,11 +88,10 @@ public class DropboxTest extends TestCase {
         assertEquals(0, TestWorkflowImpl.invocationCountNoArg);
         assertEquals(0, TestWorkflowImpl.invocationCountDateArg);
         session.save();
-        while(TestWorkflowImpl.invocationCountDateArg == 0) {
+        while (TestWorkflowImpl.invocationCountDateArg == 0 || session.getRootNode().getNode("test").hasNode("call")) {
             Thread.sleep(300);
+            session.refresh(false);
         }
-        Thread.sleep(1000);
-        session.refresh(false);
         assertFalse(session.getRootNode().getNode("test").hasNode("call"));
         assertEquals(0, TestWorkflowImpl.invocationCountNoArg);
         assertEquals(1, TestWorkflowImpl.invocationCountDateArg);
