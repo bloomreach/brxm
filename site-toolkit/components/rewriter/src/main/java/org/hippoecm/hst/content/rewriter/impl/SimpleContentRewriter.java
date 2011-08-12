@@ -25,12 +25,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +50,18 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     protected static final String ATTR_END = "\"";
     protected static final Pattern HTML_TAG_PATTERN = Pattern.compile("<html[\\s\\/>]", Pattern.CASE_INSENSITIVE);
     protected static final Pattern BODY_TAG_PATTERN = Pattern.compile("<body[\\s\\/>]", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Flag to indicate if internal links should start with scheme and host
+     */
+    private boolean externalizeInternalLinks;
     
     public SimpleContentRewriter() {
         
+    }
+
+    public SimpleContentRewriter(boolean externalizeInternalLinks) {
+        this.externalizeInternalLinks = externalizeInternalLinks;
     }
     
     @Override
@@ -124,10 +130,10 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         }
                         
                         HstLink href = getDocumentLink(documentPath,node, requestContext, targetMount);
-                        if(href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(requestContext, false));
+                        if (href != null && href.getPath() != null) {
+                            sb.append(href.toUrlForm(requestContext, isExternalizeInternalLinks()));
                         } else {
-                           log.warn("Skip href because url is null"); 
+                           log.warn("Skip href because url is null");
                         }
                         
                         if (hasQueryString) {
@@ -180,8 +186,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         sb.append(srcPath);
                     } else {
                         HstLink binaryLink = getBinaryLink(srcPath, node, requestContext, targetMount);
-                        if(binaryLink != null && binaryLink.getPath() != null) {
-                             sb.append(binaryLink.toUrlForm(requestContext,false));
+                        if (binaryLink != null && binaryLink.getPath() != null) {
+                            sb.append(binaryLink.toUrlForm(requestContext, isExternalizeInternalLinks()));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }
@@ -241,7 +247,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                  * The hierarchy resolver knows how to solve: [some-encoding-wildcard]
                  * 
                  */
-                Node mirrorNode = ((HippoWorkspace)((HippoSession)node.getSession()).getWorkspace()).getHierarchyResolver().getNode(node, path);    
+                Node mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
                 if (mirrorNode != null) {
                     if (targetMount == null) {
                         return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
@@ -268,5 +274,9 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         }
         return false;
     }
-    
+
+    public boolean isExternalizeInternalLinks() {
+        return externalizeInternalLinks;
+    }
+
 }

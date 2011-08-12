@@ -62,13 +62,13 @@ ${document.title}
             ${document.summary}
         </#if>
     </p>
-    <p>
+    <div>
         <#if isPreview>
             <span class="editable inline" id="demosite:body"><@hst.html hippohtml=document.html/></span>
         <#else>
-            <@hst.html hippohtml=document.html/>
+            <@hst.html hippohtml=document.html />
         </#if>
-    </p>
+    </div>
   </div>
 
   <#if document.resource??>

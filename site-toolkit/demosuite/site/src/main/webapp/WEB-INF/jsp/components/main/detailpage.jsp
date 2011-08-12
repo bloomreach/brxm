@@ -62,7 +62,7 @@
             </c:otherwise>
         </c:choose>
     </p>
-    <p>
+    <div>
         <c:choose>
             <c:when test="${isPreview}">
                 <span class="editable inline" id="demosite:body"><hst:html hippohtml="${document.html}"/></span>
@@ -71,7 +71,7 @@
                 <hst:html hippohtml="${document.html}"/>
             </c:otherwise>
         </c:choose>
-    </p>
+    </div>
   </div>
   
   

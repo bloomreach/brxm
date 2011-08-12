@@ -54,6 +54,8 @@ public class HstHtmlTag extends TagSupport {
     protected boolean skipTag;
         
     protected ContentRewriter<String> contentRewriter;
+
+    protected Boolean externalizeInternalLinks;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -103,9 +105,8 @@ public class HstHtmlTag extends TagSupport {
        
         if(hippoHtml.getNode() != null) {
             if (contentRewriter == null) {
-                contentRewriter = new SimpleContentRewriter();
+                contentRewriter = new SimpleContentRewriter(isExternalizeInternalLinks().booleanValue());
             }
-            
             html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
@@ -143,6 +144,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
+        externalizeInternalLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
         
@@ -162,6 +164,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
+        externalizeInternalLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
     }
@@ -186,7 +189,22 @@ public class HstHtmlTag extends TagSupport {
     public ContentRewriter<String> getContentRewriter() {
         return contentRewriter;
     }
-    
+
+    public Boolean isExternalizeInternalLinks() {
+        if (externalizeInternalLinks == null) {
+            externalizeInternalLinks = Boolean.FALSE;
+        }
+        return externalizeInternalLinks;
+    }
+
+    /**
+     * @param externalizeInternalLinks flag to define whether internal links are rewritten into external form
+     *                                 (including scheme and domain)
+     */
+    public void setExternalizeInternalLinks(Boolean externalizeInternalLinks) {
+        this.externalizeInternalLinks = externalizeInternalLinks;
+    }
+
     /**
      * Sets the var property.
      * @param var The var to set

@@ -19,17 +19,15 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * AbstractContentRewriter
- * <P>
- * An abstract adapter class for {@link ContentEditor}. 
+ * <p>
+ * An abstract adapter class for {@link ContentRewriter}.
  * The methods in this class are empty. 
- * This class exists as convenience for creating <CODE>ContentRewriter</CODE> objects.
- * </P>
+ * This class exists as convenience for creating <code>ContentRewriter</code> objects.
+ * </p>
  * @version $Id$
  */
 public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {

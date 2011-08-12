@@ -446,6 +446,14 @@
             <type>org.hippoecm.hst.content.rewriter.ContentRewriter</type>
             <description>A ContentRewriter object.</description>
         </attribute>
+        <attribute>
+          <name>externalizeInternalLinks</name>
+          <required>false</required>
+          <rtexprvalue>true</rtexprvalue>
+          <type>java.lang.Boolean</type>
+          <description>Flag to define whether internal links are rewritten into external form
+            (including scheme and domain).</description>
+        </attribute>
         <example><![CDATA[
           <div>
              <hst:html hippohtml="${document.intro}"/>
