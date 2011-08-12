@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
@@ -60,12 +59,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            Mount parentMount = requestContext.getResolvedMount().getMount().getParent();
-            if (parentMount == null) {
-                log.warn("Page Composer only work when there is a parent Mount");
-            }
             return new ComponentWrapper(getRequestConfigNode(requestContext));
-
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
