@@ -22,33 +22,72 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Id$
  */
 
 public class AbstractConfigResource {
+    
+    private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
+
+    
     private ObjectConverter objectConverter;
+    private MountDecorator mountDecorator;
     private List<Class<? extends HippoBean>> annotatedClasses;
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
+    /**
+     * @param mountDecorator the mountDecorator to set
+     */
+    public void setMountDecorator(MountDecorator mountDecorator) {
+        this.mountDecorator = mountDecorator;
+    }
 
+    
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
-
+ 
     protected String getRequestConfigIdentifier(HstRequestContext requestContext) {
         return (String) requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
     }
+    
+    protected HstSite getEditingHstSite(final HstRequestContext requestContext) {
+        final Mount mount = getEditingHstMount(requestContext);
+        if (mount == null) {
+            log.warn("No mount found for identifier '{}'", getRequestConfigIdentifier(requestContext));
+            return null;
+        }
+        return mount.getHstSite();
+    }
+
+    protected Mount getEditingHstMount(final HstRequestContext requestContext) {
+        final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
+        Mount mount =  requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
+        // The mount is fetch by UUID. We now need to decorate to act as preview
+        if(mountDecorator == null) {
+            log.warn("MountDecorator is null. Cannot decorate the mount to preview");
+            return mount;
+        }
+        Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+        return previewMount;
+    }
+
 
     protected Node getRequestConfigNode(HstRequestContext requestContext) {
         return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);

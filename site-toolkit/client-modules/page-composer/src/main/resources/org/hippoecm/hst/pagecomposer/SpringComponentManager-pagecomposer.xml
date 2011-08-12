@@ -30,6 +30,10 @@
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
   </bean>
 
+
+  <bean id="abstractConfigResource" abstract="true" >
+    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
+  </bean>
   <!-- 
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
@@ -45,27 +49,27 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ExceptionResource" parent="abstractConfigResource"/>
           </constructor-arg>
         </bean>
       </list>

@@ -62,7 +62,7 @@ public class MountResource extends AbstractConfigResource {
     public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest,
                                                @Context HttpServletResponse servletResponse,
                                                @PathParam("pageId") String pageId) {
-        try {
+        try { 
             final HstRequestContext requestContext = getRequestContext(servletRequest);
             final HstSite editingHstSite = getEditingHstSite(requestContext);
             if (editingHstSite == null) {
@@ -189,18 +189,5 @@ public class MountResource extends AbstractConfigResource {
         return ok("Document list", documentLocations);
     }
 
-    private HstSite getEditingHstSite(final HstRequestContext requestContext) {
-        final Mount mount = getEditingHstMount(requestContext);
-        if (mount == null) {
-            log.warn("No mount found for identifier '{}'", getRequestConfigIdentifier(requestContext));
-            return null;
-        }
-        return mount.getHstSite();
-    }
-
-    private Mount getEditingHstMount(final HstRequestContext requestContext) {
-        final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
-        return requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
-    }
-
+    
 }
