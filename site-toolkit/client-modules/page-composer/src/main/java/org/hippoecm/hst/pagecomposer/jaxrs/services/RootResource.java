@@ -26,9 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -39,6 +37,7 @@ public class RootResource extends AbstractConfigResource {
     public Response keepAlive(@Context HttpServletRequest servletRequest,
                               @Context HttpServletResponse servletResponse) {
 
+        @SuppressWarnings("unused")
         HttpSession session = servletRequest.getSession(true);
 
         return ok("Keepalive successful", null);
