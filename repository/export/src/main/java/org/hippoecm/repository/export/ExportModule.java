@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -43,6 +44,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * This module implements automatic export of repository content.
@@ -181,6 +183,7 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/content/attic");
             ignored.add("/hst:hst/hst:configuration/hst:default");
             ignored.add("/hippo:configuration/hippo:modules/autoexport");
+            ignored.add("/hippo:configuration/hippo:modules/brokenlinks");
             ignored.add("/hippo:configuration/hippo:temporary");
             ignored.add("/hippo:configuration/hippo:initialize");
             ignored.add("/formdata");
@@ -218,8 +221,8 @@ public final class ExportModule implements DaemonModule {
                 return;
             }
 
-            // The following synchronized block will block if m_task is already running.
-            // Once the lock is acquired m_task.run() itself will block, 
+            // The following synchronized block will block if task is already running.
+            // Once the lock is acquired task.run() itself will block, 
             // thereby making it possible to cancel it here
             synchronized (task) {
                 if (future != null) {
@@ -241,7 +244,7 @@ public final class ExportModule implements DaemonModule {
                     } catch (RepositoryException e) {
                         log.error("Error occurred getting path from event.", e);
                     }
-                    events.add(event);
+                    addEvent(event);
                 }
                 if (events.size() > 0) {
                     // Schedule events to be processed 2 seconds in the future.
@@ -253,6 +256,42 @@ public final class ExportModule implements DaemonModule {
                     future = executor.schedule(task, 2, TimeUnit.SECONDS);
                 }
             }
+        }
+        
+        /*
+         * We don't always add events to the set of events to be processed.
+         * The reason for this is that because we accumulate events for a period of time
+         * before we actually process them the situation can occur that 1) a node was both added and
+         * removed or conversely 2) both removed and added in that period. Because we don't know whether either
+         * 1) or 2) was the case we don't know whether the node is actually there or not. But we do
+         * know that the events cancelled each other out. So in these two cases we can safely ignore
+         * these events. 
+         * Note that this is important only in the case of node events. This is because
+         * the added or removed node could be the root of a content file and thus either remove or add
+         * events could either trigger a content file to be removed or added.
+         * Also note that the scenario described where we have both add and remove events on the same node
+         * in the queue is not likely to occur in normal usage. We probably only encounter it during unit testing.
+         */
+        private void addEvent(Event event) {
+            for (Iterator<Event> iter = events.iterator(); iter.hasNext();) {
+                Event evt = iter.next();
+                try {
+                    if (evt.getPath().equals(event.getPath())) {
+                        if (evt.getType() == Event.NODE_ADDED && event.getType() == Event.NODE_REMOVED) {
+                            iter.remove();
+                            return;
+                        }
+                        if (evt.getType() == Event.NODE_REMOVED && event.getType() == Event.NODE_ADDED) {
+                            iter.remove();
+                            return;
+                        }
+                    }
+                }
+                catch (RepositoryException e) { 
+                    log.error("Failed to check if event should be added to the set of to-be-processed events", e);
+                }
+            }
+            events.add(event);
         }
 
         private void processEvents() {

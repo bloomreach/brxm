@@ -69,7 +69,7 @@ class ContentResourceInstruction extends ResourceInstruction {
     @Override
     void export(Session session) {
         if (!enabled) {
-            log.info("Export in this context is disabled. Changes will be lost.");
+            log.warn("Export in this context is disabled. Changes will be lost.");
             return;
         }
         log.info("Exporting " + contentresource);
