@@ -32,15 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -68,12 +66,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * Test for org.hippoecm.repository.export.ExportModule
  */
-@Ignore
 public class ExportTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
+    private static final long SLEEP_AFTER_SAVE = 2*1000 + 500;
+    
     private final static String BUILD_HOME;
     private final static String EXTENSION_HOME;
     private final static String CONFIG_HOME;
@@ -116,12 +115,12 @@ public class ExportTest extends TestCase {
         super.setUp();
         // remove imported nodes
         Node root = super.session.getNode("/");
-        for (NodeIterator iter = root.getNode("export-test").getNodes(); iter.hasNext();) {
+        for (NodeIterator iter = root.getNodes("et:*"); iter.hasNext();) {
             Node node = iter.nextNode();
             log.debug("removing node " + node.getPath());
             node.remove();
         }
-        for (NodeIterator iter = root.getNode("hippo:configuration/hippo:initialize").getNodes("et:*"); iter.hasNext();) {
+        for (NodeIterator iter = root.getNode("hippo:configuration/hippo:initialize").getNodes("et-*"); iter.hasNext();) {
             Node node = iter.nextNode();
             log.debug("removing node " + node.getPath());
             node.remove();
@@ -130,169 +129,168 @@ public class ExportTest extends TestCase {
         try {
             manager.unregisterNodeType("et:example");
         } catch (NoSuchNodeTypeException e) {
-        }
+        } 
         try {
             manager.unregisterNodeType("et:example2");
         } catch (NoSuchNodeTypeException e) {
-        }
+        } 
         NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
         // unregistering namespace is not supported by jackrabbit...
 //            try { registry.unregisterNamespace("etx"); } catch (NamespaceException e) {}
         super.session.save();
-        m_testRoot = session.getNode("/export-test");
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        m_testRoot = session.getRootNode();
     }
 
-//    @Test
-//    public void testAddNode() throws Exception {
-//            m_testRoot.addNode("et:simple", "et:node");
-//            super.session.save();
-//        compare("simple");
-//    }
-//  @Test
-//  public void testAddAndRemoveNode() throws Exception {
-//          // case: add and remove a child node
-//          Node node0 = m_testRoot.addNode("et:simple", "et:node");
-//          Node node1 = node0.addNode("et:simple", "et:node");
-//          super.session.save();
-//          node1.remove();
-//          super.session.save();
-//    compare("simple");
-//    // case: add and remove a context node
-//    // (should add and remove content resource instruction)
-//    Node node2 = m_testRoot.addNode("et:simple2", "et:node");
-//    super.session.save();
-//    Thread.sleep(2*1000);
-//    node2.remove();
-//    super.session.save();
-//    // result should be the same
-//    compare("simple");
-//  }
-//  @Test
-//  public void testMoveNode() throws Exception {
-//          // create /export-test/et:tobemoved and persist 
-//          m_testRoot.addNode("et:tobemoved", "et:node");
-//          super.session.save();
-//          Thread.sleep(2*1000); // allow export to finish
-//          // move
-//          super.session.move("/export-test/et:tobemoved", "/export-test/et:simple");
-//          super.session.save();
-//          compare("simple");
-//  }
-//    /*
-//     * Because unregistering namespaces is not supported by jackrabbit
-//     * we cannot clean up and this test only works on a clean repository
-//     */
-//    @Test
-//    public void testAddNamespace() throws Exception {
-//            NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
-//            registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
-//            // we need to add and remove a node here in order for the jcr event listener to be called
-//            Node node = m_testRoot.addNode("et:simple", "et:node");
-//            super.session.save();
-//            node.remove();
-//            super.session.save();
-//            compare("namespace");
-//    }
-//    /*
-//     * Because unregistering namespaces is not supported by jackrabbit
-//     * we cannot clean up and this test only works on a clean repository
-//     */
-//    @Test
-//    public void testAddandUpdateNamespace() throws Exception {
-//            NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
-//            registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.0");
-//            // we need to add and remove a node here in order for the jcr event listener to be called
-//            Node node = m_testRoot.addNode("et:simple", "et:node");
-//            super.session.save();
-//    
-//            // if we register a namespace that is an updated version of
-//            // a previously registered namespace then the instruction
-//            // for that previously registered namespace must be removed
-//            // and an updated namespace instruction must be added
-//            
-//            // get the old one out of the way
-//      ((NamespaceRegistryImpl)registry).externalRemap("etx", "etx_old", "http://hippoecm.org/etx/nt/1.0");
-//            
-//            // register the new one
-//            registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
-//            // just to trigger an event
-//            node.remove();
-//            super.session.save();
-//            compare("namespace");
-//    }
-//    @Test
-//    public void testAddNodetype() throws Exception {
-//            NodeTypeManager ntm = super.session.getWorkspace().getNodeTypeManager();
-//            NodeTypeTemplate template = ntm.createNodeTypeTemplate();
-//            template.setName("et:example");
-//            ntm.registerNodeType(template, false);
-//            super.session.save();
-//            compare("nodetype");
-//    }
-//    @Test
-//    public void testAddNodetypes() throws Exception {
-//            NodeTypeManager ntm = super.session.getWorkspace().getNodeTypeManager();
-//            NodeTypeTemplate template = ntm.createNodeTypeTemplate();
-//            template.setName("et:example");
-//            ntm.registerNodeType(template, false);
-//            super.session.save();
-//            Thread.sleep(2*1000);
-//            // adding a nodetype in the same namespace should result
-//            // in the cnd for this namespace to be updated
-//            NodeTypeTemplate template2 = ntm.createNodeTypeTemplate();
-//            template2.setName("et:example2");
-//            ntm.registerNodeType(template2, false);
-//            super.session.save();
-//            compare("nodetypes");
-//    }
-//    @Test public void testFilterContentHandler() throws Exception {
-//            File contentFile = new File(CONTENT_HOME, "exporttest-content.xml");
-//            FileReader contentFileReader = new FileReader(contentFile);
-//            InputSource contentFileSource = new InputSource(contentFileReader);
-//            
-//            File resultFile = new File(BUILD_HOME, "exporttest-content-result.xml");
-//            FileWriter resultFileWriter = new FileWriter(resultFile);
-//            
-//        SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-//        TransformerHandler handler = stf.newTransformerHandler();
-//        Transformer transformer = handler.getTransformer();
-//        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
-//        handler.setResult(new StreamResult(resultFileWriter));
-//            
-//        List<String> excluded = Arrays.asList("/test/basedocument");
-//            ContentResourceInstruction.FilterContentHandler filter = new ContentResourceInstruction.FilterContentHandler(handler, excluded);
-//            
-//            XMLReader reader = XMLReaderFactory.createXMLReader();
-//            reader.setContentHandler(filter);
-//            reader.parse(contentFileSource);
-//    }
-//    @Test public void testFilterContentHandler2() throws Exception {
-//            File contentFile = new File(CONTENT_HOME, "nested-content.xml");
-//            FileReader contentFileReader = new FileReader(contentFile);
-//            InputSource contentFileSource = new InputSource(contentFileReader);
-//            
-//            File resultFile = new File(BUILD_HOME, "nested-content-result.xml");
-//            FileWriter resultFileWriter = new FileWriter(resultFile);
-//            
-//        SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-//        TransformerHandler handler = stf.newTransformerHandler();
-//        Transformer transformer = handler.getTransformer();
-//        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-//        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
-//        handler.setResult(new StreamResult(resultFileWriter));
-//                    
-//        List<String> excluded = Arrays.asList("/0/0.1");
-//            ContentResourceInstruction.FilterContentHandler filter = new ContentResourceInstruction.FilterContentHandler(handler, excluded);
-//            
-//            XMLReader reader = XMLReaderFactory.createXMLReader();
-//            reader.setContentHandler(filter);
-//            reader.parse(contentFileSource);
-//    }
+    @Test
+    public void testAddNode() throws Exception {
+        m_testRoot.addNode("et:simple", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("simple");
+    }
+    
+    @Test
+    public void testAddAndRemoveNode() throws Exception {
+        // case: add and remove a child node
+        Node node0 = m_testRoot.addNode("et:simple", "et:node");
+        Node node1 = node0.addNode("et:simple", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        node1.remove();
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("simple");
+        // case: add and remove a context node
+        // (should add and remove content resource instruction)
+        Node node2 = m_testRoot.addNode("et:simple2", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        node2.remove();
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        // result should be the same
+        compare("simple");
+    }
+    
+    @Test
+    public void testMoveNode() throws Exception {
+        // create /export-test/et:tobemoved and persist 
+        m_testRoot.addNode("et:tobemoved", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        // move
+        super.session.move("/et:tobemoved", "/et:simple");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("simple");
+    }
+    
+    /*
+     * Because unregistering namespaces is not supported by jackrabbit
+     * we cannot clean up and this test only works on a clean repository
+     */
+    @Test
+    @Ignore
+    public void testAddNamespace() throws Exception {
+        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
+        registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
+        // we need to add and remove a node here in order for the jcr event listener to be called
+        Node node = m_testRoot.addNode("et:simple", "et:node");
+        super.session.save();
+        node.remove();
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("namespace");
+    }
+    
+    /*
+     * Because unregistering namespaces is not supported by jackrabbit
+     * we cannot clean up and this test only works on a clean repository
+     */
+    @Test
+    @Ignore
+    public void testAddandUpdateNamespace() throws Exception {
+        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
+        registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.0");
+        // we need to add and remove a node here in order for the jcr event listener to be called
+        Node node = m_testRoot.addNode("et:simple", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        
+        // if we register a namespace that is an updated version of
+        // a previously registered namespace then the instruction
+        // for that previously registered namespace must be removed
+        // and an updated namespace instruction must be added
+        
+        // get the old one out of the way
+        ((NamespaceRegistryImpl)registry).externalRemap("etx", "etx_old", "http://hippoecm.org/etx/nt/1.0");
+            
+        // register the new one
+        registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
+        // just to trigger an event
+        node.remove();
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("namespace");
+    }
+    
+    @Test
+    public void testAddNodetype() throws Exception {
+        NodeTypeManager ntm = super.session.getWorkspace().getNodeTypeManager();
+        NodeTypeTemplate template = ntm.createNodeTypeTemplate();
+        template.setName("et:example");
+        ntm.registerNodeType(template, false);
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("nodetype");
+    }
+    
+    @Test
+    public void testAddNodetypes() throws Exception {
+        NodeTypeManager ntm = super.session.getWorkspace().getNodeTypeManager();
+        NodeTypeTemplate template = ntm.createNodeTypeTemplate();
+        template.setName("et:example");
+        ntm.registerNodeType(template, false);
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        // adding a nodetype in the same namespace should result
+        // in the cnd for this namespace to be updated
+        NodeTypeTemplate template2 = ntm.createNodeTypeTemplate();
+        template2.setName("et:example2");
+        ntm.registerNodeType(template2, false);
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("nodetypes");
+    }
+        
+    @Test
+    @Ignore
+    public void testFilterContentHandler() throws Exception {
+        File contentFile = new File(CONTENT_HOME, "nested-content.xml");
+        FileReader contentFileReader = new FileReader(contentFile);
+        InputSource contentFileSource = new InputSource(contentFileReader);
+        
+        File resultFile = new File(BUILD_HOME, "nested-content-result.xml");
+        FileWriter resultFileWriter = new FileWriter(resultFile);
+            
+        SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+        TransformerHandler handler = stf.newTransformerHandler();
+        Transformer transformer = handler.getTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
+        handler.setResult(new StreamResult(resultFileWriter));
+                    
+        List<String> excluded = Arrays.asList("/0/0.1");
+        ContentResourceInstruction.FilterContentHandler filter = new ContentResourceInstruction.FilterContentHandler(handler, excluded);
+        
+        XMLReader reader = XMLReaderFactory.createXMLReader();
+        reader.setContentHandler(filter);
+        reader.parse(contentFileSource);
+    }
+    
     @After
     @Override
     public void tearDown() throws Exception {

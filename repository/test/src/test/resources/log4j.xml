@@ -49,22 +49,18 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="true" name="org.hippoecm.repository.export.ExportModule">
-      <level value="warn"/>
-      <appender-ref ref="console"/>
-    </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
 
   <category additivity="false" name="org.jpox.util">
     <level value="warn"/>
@@ -101,12 +97,12 @@
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.export">
-    <level value="debug"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
   </category>
   
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="info"/>
+    <level value="INFO"/>
     <appender-ref ref="root"/>
   </category>
 

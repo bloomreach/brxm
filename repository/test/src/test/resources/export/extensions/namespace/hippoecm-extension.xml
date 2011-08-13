@@ -28,7 +28,7 @@
       <sv:value>http://hippoecm.org/etx/nt/1.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3000.0</sv:value>
+      <sv:value>30000.0</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
