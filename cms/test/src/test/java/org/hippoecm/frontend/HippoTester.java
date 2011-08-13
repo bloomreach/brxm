@@ -56,6 +56,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaConfigService;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
@@ -340,7 +341,7 @@ public class HippoTester extends WicketTester {
 
             @Override
             public UserSession newSession(Request request, Response response) {
-                return new UserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
+                return new PluginUserSession(request, new LoadableDetachableModel<javax.jcr.Session>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -365,9 +366,9 @@ public class HippoTester extends WicketTester {
         // this is a workaround for mockwebapplication's retaining of these cycles. 
         RequestCycle rc = createRequestCycle();
         if (appFactory != null) {
-            home = (Home) super.startPage(new Home(appFactory));
+            home = (Home) super.startPage(new PluginPage(appFactory));
         } else {
-            home = (Home) super.startPage(Home.class);
+            home = (Home) super.startPage(PluginPage.class);
         }
         rc.detach();
         return home;

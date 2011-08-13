@@ -71,7 +71,115 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordS
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 api/pom.xml -text
+api/src/main/java/org/hippoecm/frontend/Home.java -text
+api/src/main/java/org/hippoecm/frontend/IFacetRootsObserver.java -text
+api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
+api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingDecorator.java -text
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.properties -text
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_fr.properties -text
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_it.properties -text
+api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_nl.properties -text
+api/src/main/java/org/hippoecm/frontend/dialog/DialogAction.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/DialogLink.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/DialogLink.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/DialogService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/DialogServiceFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/DialogWindow.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ErrorDownloadRequestTarget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/IDialogFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/IDialogService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/ajax-loader.gif -text
+api/src/main/java/org/hippoecm/frontend/dialog/modal-window.patch -text
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-alpha.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-ie.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-2-alpha.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-2-ie.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-alpha.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-ie.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-alpha.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-ie.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/dialog/res/modal.css svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/res/modal.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/res/transparent1.gif -text
+api/src/main/java/org/hippoecm/frontend/dialog/res/transparent2.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
+api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
+api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
+api/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
+api/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
+api/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
+api/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/IChangeListener.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/IModelProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/IModelReference.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/model/ItemModelWrapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/JcrHelper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/JcrQueryModel.java -text
+api/src/main/java/org/hippoecm/frontend/model/ModelReference.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/model/NodeModelWrapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/PropertyValueProvider.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/EventCollection.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/event/IEvent.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/IObservable.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/IObservationContext.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/IObserver.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/IRefreshable.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/model/event/JcrEvent.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/JcrEventListener.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/JcrFrontendListener.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/event/ListenerList.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/Observable.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/event/ObservablePropertyModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/event/ObservableRegistry.java -text
+api/src/main/java/org/hippoecm/frontend/model/event/Observer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/map/AbstractValueMap.java -text
+api/src/main/java/org/hippoecm/frontend/model/map/HippoMap.java -text
+api/src/main/java/org/hippoecm/frontend/model/map/IHippoMap.java -text
+api/src/main/java/org/hippoecm/frontend/model/map/JcrList.java -text
+api/src/main/java/org/hippoecm/frontend/model/map/JcrMap.java -text
+api/src/main/java/org/hippoecm/frontend/model/map/JcrValueList.java -text
+api/src/main/java/org/hippoecm/frontend/model/nodetypes/JcrNodeTypeModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/nodetypes/JcrNodeTypesProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/nodetypes/NodeTypeModelWrapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/ocm/IStore.java -text
+api/src/main/java/org/hippoecm/frontend/model/ocm/JcrObject.java -text
+api/src/main/java/org/hippoecm/frontend/model/ocm/StoreException.java -text
+api/src/main/java/org/hippoecm/frontend/model/properties/JcrPropertiesProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/model/properties/StringConverter.java -text
+api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeModel.java -text
+api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeNode.java -text
+api/src/main/java/org/hippoecm/frontend/model/tree/ILabelTreeNode.java -text
+api/src/main/java/org/hippoecm/frontend/model/tree/ObservableTreeModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/IClusterControl.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/IPlugin.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/IPluginContext.java -text
+api/src/main/java/org/hippoecm/frontend/plugin/IServiceFactory.java -text
+api/src/main/java/org/hippoecm/frontend/plugin/IServiceReference.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/IServiceTracker.java -text
+api/src/main/java/org/hippoecm/frontend/plugin/config/ClusterConfigEvent.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/IClusterConfig.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/IPluginConfig.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/IPluginConfigService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/PluginConfigEvent.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/AbstractClusterDecorator.java -text
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/ClusterConfigDecorator.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/IApplicationFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/InheritingPluginConfig.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaClusterConfig.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaConfigService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaPluginConfig.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrClusterConfig.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrPluginConfig.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugin/config/impl/PluginConfigFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/ClassResourceModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/DocumentListFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BreadcrumbPlugin.html svneol=native#text/plain
@@ -228,6 +336,216 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/wizard/AjaxWizard.java
 api/src/main/java/org/hippoecm/frontend/plugins/standards/wizard/AjaxWizardButton.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/wizard/AjaxWizardButtonBar.html -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/wizard/AjaxWizardButtonBar.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/AjaxSettings.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/HippoNamespace.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/YuiPluginHelper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionConfiguration.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionManagerBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionSectionBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/init.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/AjaxIndicatorBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableBehavior.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableSettings.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.html -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDatePicker.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDatePickerSettings.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.html -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.properties -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_fr.properties -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_it.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_nl.properties -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/calendar-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/set-now-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/sprite.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/AbstractDragDropBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/DragBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/DropBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/ImageNodeDragBehavior.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/NodeDragBehavior.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/feedback.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/flash/ProbeFlashBehavior.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/flash/probe_flash.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/header/YuiContext.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/ajaxindicator/ajaxindicator-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/ajaxindicator/ajaxindicator.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/autocompletemanager/autocompletemanager-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/autocompletemanager/autocompletemanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/datetime/datetime.js -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmanager/dragdropmanager-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmanager/dragdropmanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/feedbackmanager/feedbackmanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/flash/flash.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hashmap/hashmap-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hashmap/hashmap.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoautocomplete/hippoautocomplete-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoautocomplete/hippoautocomplete.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodatatable/hippodatatable.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodom/hippodom-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodom/hippodom.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/tables/tables.js -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/upload/upload.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/AjaxSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/BooleanSetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/DoubleSetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/IYuiListener.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/IntSetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/Setting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/SettingsArraySetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringArraySetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringMapSetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringSetting.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/YuiObject.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/YuiType.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/layout/PageLayoutSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/layout/UnitSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/layout/WireframeSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiId.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdProcessor.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/rightclick/RightClickBehavior.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/ScrollBehavior.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/init_scroll.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/scroll.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeNamespace.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeSettings.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/YuiJcrTree.html -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/YuiJcrTree.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/hippotree/hippotree-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/hippotree/hippotree.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/treemanager/treemanager-debug.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/treemanager/treemanager.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/init_tree.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/mytree.css svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidgetSettings.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_fr.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_it.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_nl.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/AjaxMultiFileUploadComponent_it.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/back-h.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/back-v.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/bar-h.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/bar-v.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/delete-small-16.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/dt-arrow-dn.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/dt-arrow-up.png -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/select_upload_icononly.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/select_upload_icononly_hover.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/sprite.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/uploader.swf -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent.html -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_it.properties -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-small-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/util/JavascriptUtil.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/util/OptionsUtil.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/yui/webapp/WebAppSettings.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/widget/WidgetTemplate.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/widget/widget_template.js -text
+api/src/main/java/org/hippoecm/frontend/resource/JcrResource.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/resource/JcrResourceStream.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IBehaviorService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IBrowseService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IEditor.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IEditorFilter.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IEditorManager.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/IFocusListener.java -text
+api/src/main/java/org/hippoecm/frontend/service/IRenderService.java -text
+api/src/main/java/org/hippoecm/frontend/service/ITitleDecorator.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/ITranslateService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/ServiceContext.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/ServiceTracker.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/preferences/IPreference.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/preferences/IPreferencesStore.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.layout.xml svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.png -text svneol=unset#unset
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_fr.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_it.properties -text
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_nl.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_row.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewService.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ListViewService_row.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/RenderPlugin.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/RenderService.html -text
+api/src/main/java/org/hippoecm/frontend/service/render/RenderService.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/session/SessionClassLoaderModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/session/UserSession.java -text
+api/src/main/java/org/hippoecm/frontend/types/BuiltinFieldDescriptor.java -text
+api/src/main/java/org/hippoecm/frontend/types/BuiltinTypeDescriptor.java -text
+api/src/main/java/org/hippoecm/frontend/types/BuiltinTypeStore.java -text
+api/src/main/java/org/hippoecm/frontend/types/IFieldDescriptor.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/types/ITypeDescriptor.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/types/ITypeStore.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/types/JavaFieldDescriptor.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/types/JavaTypeDescriptor.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/types/TypeDescriptorEvent.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/types/TypeException.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/types/TypeHelper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/types/TypeLocator.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/util/MappingException.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/util/MaxLengthNodeNameFormatter.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/util/PluginConfigMapper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/validation/IValidationListener.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/validation/IValidationService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/wicket1985/Tree.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/AbstractView.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_fr.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_it.properties -text
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_nl.properties svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/AjaxUpdatingWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/BooleanFieldWidget.html -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/BooleanFieldWidget.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/ContextMenuTree.html -text
+api/src/main/java/org/hippoecm/frontend/widgets/ContextMenuTree.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/DateFieldWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/DateFieldWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/JcrTree.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/ManagedReuseStrategy.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/PasswordTextFieldWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/PasswordTextFieldWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/Pinger.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/RequiredTextFieldWidget.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/TextAreaWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/TextAreaWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/ThrottledTextFieldWidget.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/icons/folder-closed-virtual.gif -text
+api/src/main/java/org/hippoecm/frontend/widgets/icons/folder-open-virtual.gif -text
+api/src/main/java/org/hippoecm/frontend/widgets/icons/item-virtual.gif -text
+api/src/main/java/org/hippoecm/frontend/widgets/res/ie6_hover_fix.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/widgets/res/menu.gif -text
+api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css svneol=native#text/plain
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/box/corners-blue.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/box/corners.gif -text
@@ -437,14 +755,6 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
-api/src/test/java/org/hippoecm/frontend/plugins/standards/browse/BrowseServiceTest.java svneol=native#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/diff/LCSTest.java svneol=native#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/diff/TextDifferTest.java svneol=native#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/format/ByteSizeFormatterTest.java -text svneol=unset#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/list/SearchDocumentsProviderTest.java svneol=native#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/search/TextSearchTest.java svneol=native#text/plain
-api/src/test/java/org/hippoecm/frontend/plugins/standards/tabs/TabsTest.java svneol=native#text/plain
-api/src/test/resources/mock.jar -text
 browse/pom.xml svneol=native#text/plain
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
 browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
@@ -960,9 +1270,6 @@ editor/test/src/test/resources/test-workflows.xml -text
 editor/test/src/test/resources/test.cnd -text
 engine/src/main/java/org/hippoecm/frontend/ClassFromKeyStringResourceLoader.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/FacetRootsObserver.java -text
-engine/src/main/java/org/hippoecm/frontend/Home.html -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/Home.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.properties -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_fr.properties -text svneol=unset#text/plain
@@ -980,49 +1287,15 @@ engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage.properties -text
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_fr.properties -text
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_it.properties -text
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_nl.properties -text
+engine/src/main/java/org/hippoecm/frontend/PluginPage.html -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/PluginPage.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/PluginRequestCycleProcessor.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/ResourceRewriteFilter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/WebApplicationHelper.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
-engine/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
-engine/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingDecorator.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.properties -text
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_fr.properties -text
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_it.properties -text
-engine/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog_nl.properties -text
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogAction.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogLink.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogLink.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogService.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogServiceFactory.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/DialogWindow.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ErrorDownloadRequestTarget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/IDialogFactory.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/IDialogService.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/ajax-loader.gif -text
-engine/src/main/java/org/hippoecm/frontend/dialog/modal-window.patch -text
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-alpha.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-ie.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-2-alpha.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-2-ie.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-alpha.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-ie.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-alpha.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-ie.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/dialog/res/modal.css svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/res/modal.js svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/dialog/res/transparent1.gif -text
-engine/src/main/java/org/hippoecm/frontend/dialog/res/transparent2.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigTraversingPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/ConfigWrapper.java -text
@@ -1030,77 +1303,8 @@ engine/src/main/java/org/hippoecm/frontend/i18n/ITranslation.java svneol=native#
 engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
-engine/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
-engine/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
-engine/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
-engine/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/IChangeListener.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/IModelProvider.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/IModelReference.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/ItemModelWrapper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/JcrHelper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/JcrQueryModel.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
-engine/src/main/java/org/hippoecm/frontend/model/ModelReference.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/NodeModelWrapper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/PropertyValueProvider.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/EventCollection.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/event/IEvent.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/IObservable.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/IObservationContext.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/IObserver.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/IRefreshable.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/event/JcrEvent.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/JcrEventListener.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/JcrFrontendListener.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/event/ListenerList.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/Observable.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/event/ObservablePropertyModel.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/event/ObservableRegistry.java -text
-engine/src/main/java/org/hippoecm/frontend/model/event/Observer.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/map/AbstractValueMap.java -text
-engine/src/main/java/org/hippoecm/frontend/model/map/HippoMap.java -text
-engine/src/main/java/org/hippoecm/frontend/model/map/IHippoMap.java -text
-engine/src/main/java/org/hippoecm/frontend/model/map/JcrList.java -text
-engine/src/main/java/org/hippoecm/frontend/model/map/JcrMap.java -text
-engine/src/main/java/org/hippoecm/frontend/model/map/JcrValueList.java -text
-engine/src/main/java/org/hippoecm/frontend/model/nodetypes/JcrNodeTypeModel.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/nodetypes/JcrNodeTypesProvider.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/nodetypes/NodeTypeModelWrapper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/ocm/IStore.java -text
-engine/src/main/java/org/hippoecm/frontend/model/ocm/JcrObject.java -text
-engine/src/main/java/org/hippoecm/frontend/model/ocm/StoreException.java -text
-engine/src/main/java/org/hippoecm/frontend/model/properties/JcrPropertiesProvider.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/model/properties/StringConverter.java -text
-engine/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeModel.java -text
-engine/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeNode.java -text
-engine/src/main/java/org/hippoecm/frontend/model/tree/ILabelTreeNode.java -text
-engine/src/main/java/org/hippoecm/frontend/model/tree/ObservableTreeModel.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/IClusterControl.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/IPlugin.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/IPluginContext.java -text
-engine/src/main/java/org/hippoecm/frontend/plugin/IServiceFactory.java -text
-engine/src/main/java/org/hippoecm/frontend/plugin/IServiceReference.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/IServiceTracker.java -text
-engine/src/main/java/org/hippoecm/frontend/plugin/config/ClusterConfigEvent.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/IClusterConfig.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/IPluginConfig.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/IPluginConfigService.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/PluginConfigEvent.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/AbstractClusterDecorator.java -text
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/ClusterConfigDecorator.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/IApplicationFactory.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/InheritingPluginConfig.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaClusterConfig.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaConfigService.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JavaPluginConfig.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrApplicationFactory.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrClusterConfig.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactory.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrPluginConfig.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/PluginConfigFactory.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/empty/EmptyPlugin.html svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/empty/EmptyPlugin.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/error/ErrorPlugin.html svneol=native#text/plain
@@ -1113,96 +1317,22 @@ engine/src/main/java/org/hippoecm/frontend/plugin/impl/ServiceForwarder.java -te
 engine/src/main/java/org/hippoecm/frontend/plugin/impl/ServiceReference.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/loader/PluginClusterLoader.java -text
 engine/src/main/java/org/hippoecm/frontend/plugin/workflow/ShortcutsPlugin.java -text
-engine/src/main/java/org/hippoecm/frontend/resource/JcrResource.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/resource/JcrResourceStream.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IBehaviorService.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IBrowseService.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IEditor.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IEditorFilter.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IEditorManager.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/IFocusListener.java -text
-engine/src/main/java/org/hippoecm/frontend/service/IRenderService.java -text
-engine/src/main/java/org/hippoecm/frontend/service/ITitleDecorator.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/ITranslateService.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/ServiceContext.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/ServiceTracker.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/preferences/IPreference.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/preferences/IPreferencesStore.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
+engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin_it.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.html -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.java -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_fr.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_it.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/service/preferences/Preference.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.layout.xml svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.png -text svneol=unset#unset
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_fr.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_it.properties -text
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_nl.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin_row.png -text svneol=unset#image/png
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewService.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewService.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/ListViewService_row.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/RenderPlugin.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/service/render/RenderService.html -text
-engine/src/main/java/org/hippoecm/frontend/service/render/RenderService.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/JcrSessionReference.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/session/SessionClassLoaderModel.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/UnbindingHttpSessionStore.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/WorkflowManagerDecorator.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/BuiltinFieldDescriptor.java -text
-engine/src/main/java/org/hippoecm/frontend/types/BuiltinTypeDescriptor.java -text
-engine/src/main/java/org/hippoecm/frontend/types/BuiltinTypeStore.java -text
-engine/src/main/java/org/hippoecm/frontend/types/IFieldDescriptor.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/ITypeDescriptor.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/ITypeStore.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/JavaFieldDescriptor.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/JavaTypeDescriptor.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/TypeDescriptorEvent.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/TypeException.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/TypeHelper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/types/TypeLocator.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/util/MappingException.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/util/MaxLengthNodeNameFormatter.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/util/PluginConfigMapper.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/validation/IValidationListener.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/validation/IValidationService.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/wicket1985/Tree.java -text
-engine/src/main/java/org/hippoecm/frontend/widgets/AbstractView.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_fr.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_it.properties -text
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField_nl.properties svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/AjaxUpdatingWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/BooleanFieldWidget.html -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/BooleanFieldWidget.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/ContextMenuTree.html -text
-engine/src/main/java/org/hippoecm/frontend/widgets/ContextMenuTree.java -text
-engine/src/main/java/org/hippoecm/frontend/widgets/DateFieldWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/DateFieldWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/JcrTree.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/LabelledBooleanFieldWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/ManagedReuseStrategy.java -text
-engine/src/main/java/org/hippoecm/frontend/widgets/PasswordTextFieldWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/PasswordTextFieldWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/Pinger.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/RadioGroupWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/RequiredTextFieldWidget.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/TextAreaWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/TextAreaWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.html svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/ThrottledTextFieldWidget.java -text
-engine/src/main/java/org/hippoecm/frontend/widgets/icons/folder-closed-virtual.gif -text
-engine/src/main/java/org/hippoecm/frontend/widgets/icons/folder-open-virtual.gif -text
-engine/src/main/java/org/hippoecm/frontend/widgets/icons/item-virtual.gif -text
-engine/src/main/java/org/hippoecm/frontend/widgets/res/ie6_hover_fix.js svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/widgets/res/menu.gif -text
-engine/src/main/java/org/hippoecm/frontend/widgets/res/tree.css svneol=native#text/plain
 engine/src/main/resources/frontend.cnd -text
 engine/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
@@ -1480,16 +1610,6 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialogLink.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/BrowserCheckBehavior.java -text svneol=unset#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.html svneol=native#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin.java svneol=native#text/plain
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/LoginPlugin_it.properties -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.html -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.java -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin.properties -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_fr.properties -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_it.properties -text
-plugins/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_nl.properties -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.properties -text
@@ -1904,11 +2024,23 @@ test/src/test/java/org/hippoecm/frontend/model/ocm/JcrObjectTest.java -text
 test/src/test/java/org/hippoecm/frontend/plugin/ServiceFactoryTest.java -text
 test/src/test/java/org/hippoecm/frontend/plugin/config/impl/ClusterConfigDecoratorTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactoryTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/browse/BrowseServiceTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/diff/LCSTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/diff/TextDifferTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/format/ByteSizeFormatterTest.java -text svneol=unset#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/list/SearchDocumentsProviderTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/search/TextSearchTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/standards/tabs/TabsTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/yui/console.js svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/plugins/yui/javascript/TestSettings$TestPage.html -text
+test/src/test/java/org/hippoecm/frontend/plugins/yui/javascript/TestSettings.java -text
+test/src/test/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/session/UserSessionTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/util/MappingTestBean.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/util/PluginConfigMapperTest.java svneol=native#text/plain
 test/src/test/resources/frontendtest.cnd -text
 test/src/test/resources/hippoecm-extension.xml -text
+test/src/test/resources/mock.jar -text
 tools/development-content/README.txt svneol=native#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard.properties -text svneol=unset#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard_fr.properties -text svneol=unset#text/plain
@@ -2388,134 +2520,5 @@ xinha-test/README.txt svneol=native#text/plain
 xinha-test/src/test/resources/log4j.dtd svneol=native#text/plain
 xinha-test/src/test/resources/log4j.xml svneol=native#text/plain
 yui/pom.xml -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/AjaxSettings.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/HippoNamespace.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/YuiPluginHelper.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionConfiguration.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionManagerBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionSectionBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/init.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/AjaxIndicatorBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/AutoCompleteSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/autocomplete/init_autocomplete.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableBehavior.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datatable/DataTableSettings.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.html -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/DateFieldWidget.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDatePicker.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDatePickerSettings.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.html -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField.properties -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_fr.properties -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_it.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/YuiDateTimeField_nl.properties -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/calendar-16.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/set-now-16.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/datetime/resources/sprite.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/AbstractDragDropBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/DragBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/DropBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/ImageNodeDragBehavior.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/dragdrop/NodeDragBehavior.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.html svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/YuiFeedbackPanel.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/feedback/feedback.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/flash/ProbeFlashBehavior.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/flash/probe_flash.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/header/YuiContext.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/accordionmanager/accordionmanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/ajaxindicator/ajaxindicator-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/ajaxindicator/ajaxindicator.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/autocompletemanager/autocompletemanager-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/autocompletemanager/autocompletemanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/datetime/datetime.js -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmanager/dragdropmanager-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmanager/dragdropmanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/dragdropmodel/dragdropmodel.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/feedbackmanager/feedbackmanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/flash/flash.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/functionqueue/functionqueue.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hashmap/hashmap-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hashmap/hashmap.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoautocomplete/hippoautocomplete-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoautocomplete/hippoautocomplete.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodatatable/hippodatatable.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodom/hippodom-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippodom/hippodom.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippologger/hippologger.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/layoutmanager/layoutmanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/tables/tables.js -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/281/upload/upload.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/AjaxSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/BooleanSetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/DoubleSetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/IYuiListener.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/IntSetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/Setting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/SettingsArraySetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringArraySetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringMapSetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/StringSetting.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/YuiObject.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/javascript/YuiType.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/PageLayoutSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/UnitSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/WireframeSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiId.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdProcessor.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/rightclick/RightClickBehavior.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/ScrollBehavior.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/init_scroll.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/scroll.js -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeBehavior.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeNamespace.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeSettings.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/YuiJcrTree.html -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/YuiJcrTree.java -text svneol=unset#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/hippotree/hippotree-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/hippotree/hippotree.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/treemanager/treemanager-debug.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/treemanager/treemanager.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/init_tree.js svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/tree/mytree.css svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidgetSettings.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_fr.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_it.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog_nl.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/AjaxMultiFileUploadComponent_it.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/back-h.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/back-v.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/bar-h.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/bar-v.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/delete-small-16.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/dt-arrow-dn.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/dt-arrow-up.png -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/select_upload_icononly.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/select_upload_icononly_hover.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/sprite.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/uploader.swf -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent.html -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_it.properties -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-small-16.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/util/JavascriptUtil.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/util/OptionsUtil.java svneol=native#text/plain
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/webapp/WebAppSettings.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/widget/WidgetTemplate.java -text
-yui/src/main/java/org/hippoecm/frontend/plugins/yui/widget/widget_template.js -text
 yui/src/site/apt/index.apt -text
 yui/src/site/site.xml -text
-yui/src/test/java/org/hippoecm/frontend/plugins/yui/console.js svneol=native#text/plain
-yui/src/test/java/org/hippoecm/frontend/plugins/yui/javascript/TestSettings$TestPage.html -text
-yui/src/test/java/org/hippoecm/frontend/plugins/yui/javascript/TestSettings.java -text
-yui/src/test/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdTest.java svneol=native#text/plain

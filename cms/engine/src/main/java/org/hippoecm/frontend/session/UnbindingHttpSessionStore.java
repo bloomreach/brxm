@@ -32,7 +32,7 @@ import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebRequest;
 
 /**
- * HTTP Session store that invokes {@link #unbind()} on the UserSession when
+ * HTTP Session store that invokes {@link #unbind()} on the PluginUserSession when
  * the http session is invalidated.
  * 
  * TODO: use a {@link HttpSessionActivationListener} to get rid of WeakReferences
@@ -68,7 +68,7 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
             HttpSession httpSession = getHttpSession(webRequest);
 
             sessions.put(httpSession.getId(), new WeakReference<UserSession>((UserSession) newSession));
-            ((UserSession) newSession).onBind();
+            ((PluginUserSession) newSession).onBind();
         }
     }
 
@@ -76,7 +76,7 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
     protected void onUnbind(String sessionId) {
         WeakReference<UserSession> sessionRef = sessions.remove(sessionId);
         if (sessionRef != null) {
-            UserSession userSession = sessionRef.get();
+            PluginUserSession userSession = (PluginUserSession) sessionRef.get();
             if (userSession != null) {
                 userSession.unbind();
             }

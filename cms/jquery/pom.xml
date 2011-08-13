@@ -43,6 +43,19 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.hippoecm.maven.plugins</groupId>
+        <artifactId>maven-yuicompressor-plugin</artifactId>
+        <version>1.01.00</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>        
+      </plugin>
+      <!-- plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
         <version>1.1</version>
@@ -84,7 +97,7 @@
             </aggregation>
           </aggregations>
         </configuration>
-      </plugin>
+      </plugin -->
     </plugins>
   </build>
 

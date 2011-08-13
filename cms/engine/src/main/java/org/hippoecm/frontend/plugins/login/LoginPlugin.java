@@ -58,6 +58,7 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,7 +217,7 @@ public class LoginPlugin extends RenderPlugin {
 
         @Override
         public void onSubmit() {
-            UserSession userSession = (UserSession) getSession();
+            PluginUserSession userSession = (PluginUserSession) getSession();
             String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             boolean success = userSession.login(new UserCredentials(this));

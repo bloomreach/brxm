@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
@@ -63,7 +64,7 @@ public class PluginManager implements IClusterable {
         }
     }
 
-    private Home page;
+    private PluginPage page;
     private PluginFactory factory;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
@@ -71,7 +72,7 @@ public class PluginManager implements IClusterable {
     private Map<IClusterable, Integer> lookupMap;
     private int nextReferenceId;
 
-    public PluginManager(Home page) {
+    public PluginManager(PluginPage page) {
         this.page = page;
         factory = new PluginFactory();
         services = new HashMap<String, List<IClusterable>>();

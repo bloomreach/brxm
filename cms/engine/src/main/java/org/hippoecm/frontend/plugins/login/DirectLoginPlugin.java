@@ -43,6 +43,7 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.WebCredentials;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
 }
 
     protected void login() {
-        UserSession userSession = (UserSession)getSession();
+        PluginUserSession userSession = (PluginUserSession)getSession();
         HttpSession session = ((WebRequest)getRequest()).getHttpServletRequest().getSession(true);
         String username = username();
         if (username != null) {

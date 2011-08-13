@@ -64,7 +64,6 @@
     <module>admin</module>
     <module>gotolink</module>
     <module>search</module>
-    <module>yui</module>
     <module>edit</module>
     <module>browse</module>
     <module>dashboard</module>

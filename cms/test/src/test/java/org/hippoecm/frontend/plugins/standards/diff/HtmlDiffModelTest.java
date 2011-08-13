@@ -23,7 +23,7 @@ import java.io.StringReader;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class HtmlDiffModelTest {
     @Before
     public void setUp() {
         tester = new HippoTester();
-        tester.startPage(Home.class);
+        tester.startPage(PluginPage.class);
     }
 
     @After

@@ -25,8 +25,9 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.JcrObservationManager;
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,8 @@ public class JcrEventListener implements EventListener, IClusterable {
     }
 
     public void start() {
-        ObservationManager obMgr = JcrObservationManager.getInstance();
+        UserSession session = (UserSession) Session.get();
+        ObservationManager obMgr = session.getObservationManager();
         try {
             obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
         } catch (PathNotFoundException ex) {
@@ -79,7 +81,8 @@ public class JcrEventListener implements EventListener, IClusterable {
     }
 
     public void stop() {
-        ObservationManager obMgr = JcrObservationManager.getInstance();
+        UserSession session = (UserSession) Session.get();
+        ObservationManager obMgr = session.getObservationManager();
         try {
             obMgr.removeEventListener(this);
         } catch (RepositoryException ex) {

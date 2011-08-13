@@ -17,7 +17,7 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.model.StringResourceModel;
 
-public class PageExpiredErrorPage extends Home {
+public class PageExpiredErrorPage extends PluginPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

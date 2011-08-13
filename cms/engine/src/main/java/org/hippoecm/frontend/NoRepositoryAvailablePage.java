@@ -19,7 +19,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 
-public class NoRepositoryAvailablePage extends Home {
+public class NoRepositoryAvailablePage extends PluginPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.TestCase;
@@ -55,7 +56,7 @@ public abstract class PluginTest extends TestCase {
 
         @Override
         public UserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
-            UserSession userSession = super.newSession(request, response);
+            PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
             userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
                 private static final long serialVersionUID = 1L;
 
@@ -147,7 +148,7 @@ public abstract class PluginTest extends TestCase {
         home = tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
-        context = home.getPluginManager().start(config);
+        context = ((PluginPage) home).getPluginManager().start(config);
     }
 
     @After
@@ -193,7 +194,7 @@ public abstract class PluginTest extends TestCase {
      * @param config A plugin configuration, i.e. plugin.class is defined.
      */
     protected IPluginContext start(IPluginConfig config) {
-        return home.getPluginManager().start(config);
+        return ((PluginPage) home).getPluginManager().start(config);
     }
 
     public void setConfig(String[] config) {

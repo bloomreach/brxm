@@ -43,6 +43,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -154,7 +155,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         @Override
         public final void onSubmit() {
-            UserSession userSession = (UserSession) getSession();
+            PluginUserSession userSession = (PluginUserSession) getSession();
             if (!rememberme) {
                 Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
                 if (cookies != null) {

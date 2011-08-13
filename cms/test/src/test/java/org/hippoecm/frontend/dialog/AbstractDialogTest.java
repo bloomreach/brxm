@@ -21,6 +21,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -50,13 +51,13 @@ public class AbstractDialogTest {
     }
 
     protected HippoTester tester;
-    private Home home;
+    private PluginPage home;
     protected IPluginContext context;
 
     @Before
     public void setUp() {
         tester = new HippoTester();
-        home = tester.startPluginPage();
+        home = (PluginPage) tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);

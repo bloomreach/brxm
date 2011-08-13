@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.util.tester.WicketTester;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
 import org.junit.After;
@@ -35,16 +37,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class JsonParserTest {
 
-    private HippoTester tester;
+    private WicketTester tester;
     private Component dummyComponent;
 
     @Before
     public void setUp() {
-        tester = new HippoTester();
-        Page page = tester.startPage(Home.class);
-
+        tester = new WicketTester();
         dummyComponent = new JsonParserTestDummyComponent("dummy-id");
-        page.add(dummyComponent);
+        tester.startComponent(dummyComponent);
     }
 
     @After

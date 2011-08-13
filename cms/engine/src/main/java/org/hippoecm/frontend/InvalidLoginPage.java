@@ -17,7 +17,7 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.model.StringResourceModel;
 
-public class InvalidLoginPage extends Home {
+public class InvalidLoginPage extends PluginPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

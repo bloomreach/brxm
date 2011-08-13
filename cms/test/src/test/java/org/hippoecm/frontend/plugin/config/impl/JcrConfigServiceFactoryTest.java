@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 import org.apache.wicket.protocol.http.MockServletContext;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.DummyPlugin;
@@ -66,7 +67,7 @@ public class JcrConfigServiceFactoryTest extends PluginTest {
         };
 
         try {
-            Home home = second.startPluginPage();
+            PluginPage home = (PluginPage) second.startPluginPage();
             JavaPluginConfig config = new JavaPluginConfig("dummy");
             config.put("plugin.class", DummyPlugin.class.getName());
             IPluginContext context = home.getPluginManager().start(config);

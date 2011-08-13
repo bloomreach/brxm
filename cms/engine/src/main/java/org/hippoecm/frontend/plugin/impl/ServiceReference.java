@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.impl;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IServiceReference;
 
 public class ServiceReference<T extends IClusterable> implements IServiceReference<T> {
@@ -25,10 +26,10 @@ public class ServiceReference<T extends IClusterable> implements IServiceReferen
 
     private static final long serialVersionUID = 1L;
 
-    private Home page;
+    private PluginPage page;
     private String serviceId;
 
-    ServiceReference(Home page, String serviceId) {
+    ServiceReference(PluginPage page, String serviceId) {
         this.page = page;
         this.serviceId = serviceId;
     }

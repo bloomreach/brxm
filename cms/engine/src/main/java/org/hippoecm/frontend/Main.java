@@ -52,6 +52,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
@@ -204,7 +205,7 @@ public class Main extends WebApplication {
             public IRequestTarget decode(final RequestParameters requestParameters) {
 
 
-                UserSession userSession = (UserSession) Session.get();
+                PluginUserSession userSession = (PluginUserSession) Session.get();
                 final UserCredentials userCredentials = userSession.getCredentials();
 
                 IRequestTarget requestTarget = new BookmarkablePageRequestTarget(getHomePage());
@@ -303,7 +304,7 @@ public class Main extends WebApplication {
 
     @Override
     public UserSession newSession(Request request, Response response) {
-        return new UserSession(request);
+        return new PluginUserSession(request);
     }
 
     @Override
@@ -345,7 +346,7 @@ public class Main extends WebApplication {
             }
             String repositoryUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
             String repositoryPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
-            UserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
+            PluginUserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
         }
         return repository;
     }

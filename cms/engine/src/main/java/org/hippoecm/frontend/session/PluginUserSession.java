@@ -21,6 +21,7 @@ import java.util.WeakHashMap;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Application;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * When the Wicket session is no longer referenced, the JCR session model
  * is detached.
  */
-public class UserSession extends WebSession {
+public class PluginUserSession extends UserSession {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -80,11 +81,11 @@ public class UserSession extends WebSession {
         fallbackSession = JcrSessionModel.login(credentials);
     }
 
-    public UserSession(Request request) {
+    public PluginUserSession(Request request) {
         this(request, (UserCredentials)null);
     }
 
-    public UserSession(Request request, UserCredentials credentials) {
+    public PluginUserSession(Request request, UserCredentials credentials) {
         super(request);
 
         classLoader = new LoadableDetachableModel<ClassLoader>() {
@@ -132,7 +133,7 @@ public class UserSession extends WebSession {
     }
 
     @Deprecated
-    public UserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
+    public PluginUserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
         super(request);
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -308,6 +309,11 @@ public class UserSession extends WebSession {
             }
         }
         return null;
+    }
+
+    @Override
+    public ObservationManager getObservationManager() {
+        return JcrObservationManager.getInstance();
     }
 
     /**

@@ -30,13 +30,6 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <!-- FIXME: this dependency MUST ABSOLUTELY be removed before next GA release -->
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-core</artifactId>
-      <version>2.2.5-h3</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
@@ -56,19 +49,17 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-      <scope>compile</scope>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
+    <!-- FIXME: this dependency MUST ABSOLUTELY be removed before next GA release -->
     <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-datetime</artifactId>
-      <scope>compile</scope>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-core</artifactId>
+      <version>${jackrabbit.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -85,10 +76,27 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-extensions</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-datetime</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.wicketstuff</groupId>
       <artifactId>wicket-extjs</artifactId>
     </dependency>
+
   </dependencies>
 
   <build>

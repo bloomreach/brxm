@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -32,13 +33,13 @@ public class ServiceFactoryTest {
     private final static String SVN_ID = "$Id: $";
 
     HippoTester tester;
-    Home home;
+    PluginPage home;
     IPluginContext context;
 
     @Before
     public void setUp() {
         tester = new HippoTester();
-        home = (Home) tester.startPage(Home.class);
+        home = (PluginPage) tester.startPage(PluginPage.class);
         JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);

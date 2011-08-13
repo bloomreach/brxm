@@ -51,7 +51,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService, IContextMenuManager {
+public class PluginPage extends Home implements IServiceTracker<IRenderService> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -67,12 +67,12 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private IPluginConfigService pluginConfigService;
     private ContextMenuBehavior menuBehavior;
 
-    public Home() {
+    public PluginPage() {
         this(new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
                 + HippoNodeType.FRONTEND_PATH)));
     }
 
-    public Home(IApplicationFactory appFactory) {
+    public PluginPage(IApplicationFactory appFactory) {
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);

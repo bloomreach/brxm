@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 
 /**
  * Marker interface for classes that can be instantiated as a plugin.
@@ -35,7 +33,7 @@ import org.hippoecm.frontend.plugin.error.ErrorPlugin;
  * ({@link IPluginContext}, {@link IPluginConfig}) is invoked.
  * <p>
  * A plugin can check its configuration and throw runtime exceptions when it finds that
- * it cannot function correctly.  For render plugins, an {@link ErrorPlugin} will be
+ * it cannot function correctly.  For render plugins, a plugin that renders the error will be
  * instantiated in this case, informing the user of the problem.
  * 
  * <li><b>Connect</b> - Services that were registered during construction will be made

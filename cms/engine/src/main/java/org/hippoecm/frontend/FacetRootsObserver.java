@@ -42,7 +42,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FacetRootsObserver {
+public class FacetRootsObserver implements IFacetRootsObserver {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 

@@ -36,6 +36,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -428,7 +429,7 @@ public class ObservationTest extends PluginTest {
         // need to do this twice, test application maintains a reference to the previously rendered page
         home = tester.startPluginPage();
         home = tester.startPluginPage();
-        context = new PluginContext(home.getPluginManager(), new JavaPluginConfig("test"));
+        context = new PluginContext(((PluginPage) home).getPluginManager(), new JavaPluginConfig("test"));
         System.gc();
 
         root.addNode("test", "nt:unstructured");

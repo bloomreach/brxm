@@ -374,7 +374,7 @@ public class JcrObservationManager implements ObservationManager {
             // subscribe to facet search observer.
             // FIXME due to HREPTWO-2655, will not be able to receive events on newly
             // created facet search nodes.
-            fro = getSession().getFacetRootsObserver();
+            fro = (FacetRootsObserver) getSession().getFacetRootsObserver();
 
             // subscribe when listening to deep tree structures;
             // there will/might be facetsearches in there.
@@ -1020,7 +1020,7 @@ public class JcrObservationManager implements ObservationManager {
             // notify facet search listeners.
             // FIXME due to HREPTWO-2655, will not be able to receive events on newly
             // created facet search nodes.
-            FacetRootsObserver fso = session.getFacetRootsObserver();
+            FacetRootsObserver fso = (FacetRootsObserver) session.getFacetRootsObserver();
             fso.refresh();
 
             // create set of paths that need to be refreshed

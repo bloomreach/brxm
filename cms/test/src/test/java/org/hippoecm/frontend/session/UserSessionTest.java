@@ -30,7 +30,7 @@ public class UserSessionTest extends PluginTest {
     public void testSaveOnLogout() throws Exception {
         tester.setupRequestAndResponse();
 
-        UserSession userSession = new UserSession(RequestCycle.get().getRequest());
+        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
         userSession.login(new ValueMap("username=admin,password=admin"));
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
