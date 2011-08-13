@@ -22,6 +22,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
+
 public class UserSessionTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

@@ -26,7 +26,7 @@ import javax.jcr.Property;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.editor.type.JcrTypeStore;
-import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.EditorTestCase;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -58,7 +58,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TemplateBuilderTest extends PluginTest {
+public class TemplateBuilderTest extends EditorTestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
 
@@ -77,19 +77,6 @@ public class TemplateBuilderTest extends PluginTest {
 
     private static class PluginSelectModel  extends Model {
 
-    }
-
-    // the tests will modify templates, so reinitialize for each test
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp(true);
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown(true);
     }
 
     @Test

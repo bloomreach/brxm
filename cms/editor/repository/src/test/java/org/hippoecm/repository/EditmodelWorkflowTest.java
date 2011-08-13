@@ -35,21 +35,25 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.util.Utilities;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class EditmodelWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         if (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
         session.save();
     }
 
+    @After
     @Override
     public void tearDown() throws Exception {
         session.refresh(false);

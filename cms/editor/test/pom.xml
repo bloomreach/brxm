@@ -38,9 +38,8 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -74,51 +73,11 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-modules</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-config</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymockclassextension</artifactId>
     </dependency>
 
-    <!-- Testing needs a JTA implementation -->
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>atomikos-util</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -150,7 +109,17 @@
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
-            <exclude>**/RedefineNodetypeTest.java</exclude>
+            <exclude>**/JcrTypeDescriptorTest.java</exclude>
+            <exclude>**/ValidationPluginTest.java</exclude>
+            <exclude>**/NodeComparerTest.java</exclude>
+            <exclude>**/ValueComparerTest.java</exclude>
+            <exclude>**/FieldPluginTest.java</exclude>
+            <exclude>**/TemplateBuilderTest.java</exclude>
+            <exclude>**/TwoColumnTest.java</exclude>
+            <exclude>**/LayoutDescriptorTest.java</exclude>
+            <exclude>**/DefaultEditorFactoryTest.java</exclude>
+            <exclude>**/JcrTemplateStoreTest.java</exclude>
+            <exclude>**/TypeStoreTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -166,17 +135,8 @@
       <dependencies>
         <dependency>
           <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-cms-test</artifactId>
+          <artifactId>hippo-cms-editor-repository</artifactId>
           <version>${project.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-          <optional>true</optional>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-engine</artifactId>
-          <version>${hippo.repository.version}</version>
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>

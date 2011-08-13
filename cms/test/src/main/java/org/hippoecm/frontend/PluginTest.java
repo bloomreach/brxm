@@ -35,14 +35,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
-public abstract class PluginTest extends TestCase {
+public abstract class PluginTest extends RepositoryTest {
 
     protected final class PluginTestApplication extends Main {
 
@@ -55,7 +52,7 @@ public abstract class PluginTest extends TestCase {
         }
 
         @Override
-        public UserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
+        public PluginUserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
             PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
             userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
                 private static final long serialVersionUID = 1L;
@@ -73,7 +70,7 @@ public abstract class PluginTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    protected static ValueMap CREDENTIALS = new ValueMap("username=" + SYSTEMUSER_ID + ",password=" + SYSTEMUSER_PASSWORD.toString());
+    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTest.SYSTEMUSER_ID + ",password=" + RepositoryTest.SYSTEMUSER_PASSWORD.toString());
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
@@ -119,20 +116,10 @@ public abstract class PluginTest extends TestCase {
     protected Home home;
     protected IPluginContext context;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        TestCase.setUpClass(true);
-    }
-
-    @Override
     @Before
-    public void setUp() throws Exception {
-        setUp(false);
-    }
-
     @Override
-    public void setUp(boolean clear) throws Exception {
-        super.setUp(clear);
+    public void setUp() throws Exception {
+        super.setUp();
         
         while (session.getRootNode().hasNode("config")) {
             session.getRootNode().getNode("config").remove();

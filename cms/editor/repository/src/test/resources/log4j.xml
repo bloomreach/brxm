@@ -40,11 +40,6 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
 
-  <category additivity="true" name="org.apache.wicket.Localizer">
-    <level value="error"/>
-    <appender-ref ref="root"/>
-  </category>
-
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

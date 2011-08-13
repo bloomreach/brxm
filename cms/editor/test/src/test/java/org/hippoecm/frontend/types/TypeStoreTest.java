@@ -25,11 +25,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.editor.type.JcrTypeStore;
+import org.hippoecm.frontend.EditorTestCase;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.junit.Test;
 
-public class TypeStoreTest extends PluginTest {
+public class TypeStoreTest extends EditorTestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

@@ -28,11 +28,11 @@ import java.io.OutputStreamWriter;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.types.TypeException;
-import org.hippoecm.repository.TestCase;
 import org.junit.Test;
 
-public class ValueComparerTest extends TestCase {
+public class ValueComparerTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

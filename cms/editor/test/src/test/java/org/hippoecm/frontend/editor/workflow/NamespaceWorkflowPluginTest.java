@@ -26,7 +26,6 @@ import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.editor.layout.LayoutProviderPlugin;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -83,17 +82,19 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        //TODO: clear repository
+        super.setUp();
         build(session, content);
 
         start(new JcrPluginConfig(new JcrNodeModel("/test/layouts")));
         start(new JcrPluginConfig(new JcrNodeModel("/test/menu")));
 
         WorkflowManager wflMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-        Node nsNode = session.getRootNode().getNode("hippo:namespaces");
-        TemplateEditorWorkflow nsWfl = (TemplateEditorWorkflow) wflMgr.getWorkflow("test", nsNode);
-        nsWfl.createNamespace("testns", "http://example.org/test/0.0");
+        if (!session.itemExists("/hippo:namespaces/testns")) {
+            Node nsNode = session.getRootNode().getNode("hippo:namespaces");
+            TemplateEditorWorkflow nsWfl = (TemplateEditorWorkflow) wflMgr.getWorkflow("test", nsNode);
+            nsWfl.createNamespace("testns", "http://example.org/test/0.0");
+        }
 
         Node documentNode = session.getRootNode().getNode("hippo:namespaces/testns");
         String category = "test";
@@ -109,8 +110,6 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
     @After
     @Override
     public void teardown() throws Exception {
-        root.getNode("hippo:namespaces/testns").remove();
-        session.save();
         super.teardown();
     }
 

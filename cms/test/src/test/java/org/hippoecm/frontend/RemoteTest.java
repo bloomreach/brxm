@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm;
+package org.hippoecm.frontend;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
@@ -23,12 +23,13 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
-import org.hippoecm.repository.TestCase;
+import org.junit.Ignore;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
+@Ignore
 @RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
     org.hippoecm.frontend.config.PluginConfigTest.class,
@@ -61,7 +62,7 @@ public class RemoteTest extends Suite
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-            TestCase.setRepository(server);
+            RepositoryTest.setRepository(server);
 
             super.run(notifier);
 
