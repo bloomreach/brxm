@@ -195,6 +195,9 @@ api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrClusterConfig.java
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrPluginConfig.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/PluginConfigFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/DefaultGalleryProcessor.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/GalleryException.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/NullGalleryProcessor.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/ClassResourceModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/DocumentListFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BreadcrumbPlugin.html svneol=native#text/plain
@@ -561,6 +564,7 @@ api/src/main/java/org/hippoecm/frontend/widgets/icons/item-virtual.gif -text
 api/src/main/java/org/hippoecm/frontend/widgets/res/ie6_hover_fix.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/res/menu.gif -text
 api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css svneol=native#text/plain
+api/src/main/java/org/hippoecm/repository/gallery/HippoGalleryNodeType.java -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/box/corners-blue.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/box/corners.gif -text
@@ -1459,9 +1463,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImag
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java -text svneol=unset#text/plain
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/hippo-gallery-folder.png -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/image-add-16.png -text
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/model/DefaultGalleryProcessor.java svneol=native#text/plain
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/model/GalleryException.java svneol=native#text/plain
-gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/model/NullGalleryProcessor.java -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/new-file-folder-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/new-image-folder-16.png -text svneol=unset#image/png
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/toggle_list.png -text
