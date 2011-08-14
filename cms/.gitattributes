@@ -71,6 +71,8 @@ admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordS
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
 admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 api/pom.xml -text
+api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
+api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/Home.java -text
 api/src/main/java/org/hippoecm/frontend/IFacetRootsObserver.java -text
 api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
@@ -2383,7 +2385,6 @@ translation/test/src/main/java/org/hippoecm/frontend/translation/components/nl.p
 upgrade/src/main/java/org/hippoecm/frontend/upgrade/RelaxingDoctypeUpdaterModule.java svneol=native#text/plain
 versioning/pom.xml svneol=native#text/plain
 workflowmenu/pom.xml svneol=native#text/plain
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.html -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.java -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuButton_it.properties -text
@@ -2393,7 +2394,6 @@ workflowmenu/src/main/java/org/hippoecm/addon/workflow/PluginController.java svn
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/compound-new-16.png -text svneol=unset#image/png
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/doctype-new-16.png -text svneol=unset#image/png
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/update-all-16.png -text svneol=unset#image/png
-workflowmenu/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
 xinha-integration/pom.xml -text
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 xinha-integration/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain
