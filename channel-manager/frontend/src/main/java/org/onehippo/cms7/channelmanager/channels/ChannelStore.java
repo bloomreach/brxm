@@ -145,7 +145,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         // save channel (FIXME: move boilerplate to CMS engine)
         UserSession session = (UserSession) org.apache.wicket.Session.get();
-        Credentials credentials = session.getCredentials().getJcrCredentials();
+        Credentials credentials = session.getCredentials();
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();

@@ -262,7 +262,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
         // FIXME: move boilerplate to CMS engine
         UserSession session = (UserSession) Session.get();
-        Credentials credentials = session.getCredentials().getJcrCredentials();
+        Credentials credentials = session.getCredentials();
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
