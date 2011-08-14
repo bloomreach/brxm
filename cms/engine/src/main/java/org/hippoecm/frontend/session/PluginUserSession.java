@@ -74,8 +74,8 @@ public class PluginUserSession extends UserSession {
     private transient FacetRootsObserver facetRootsObserver;
     private UserCredentials credentials;
 
-    public Credentials getCredentials() {
-        return credentials.getJcrCredentials();
+    public UserCredentials getUserCredentials() {
+        return credentials;
     }
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
@@ -281,6 +281,11 @@ public class PluginUserSession extends UserSession {
         invalidate();
         dirty();
         throw new RestartResponseException(WebApplication.get().getHomePage());
+    }
+
+    @Override
+    public Credentials getCredentials() {
+        return credentials.getJcrCredentials();
     }
 
     /**

@@ -206,7 +206,7 @@ public class Main extends WebApplication {
 
 
                 PluginUserSession userSession = (PluginUserSession) Session.get();
-                final UserCredentials userCredentials = userSession.getCredentials();
+                final UserCredentials userCredentials = userSession.getUserCredentials();
 
                 IRequestTarget requestTarget = new BookmarkablePageRequestTarget(getHomePage());
 
