@@ -455,8 +455,3 @@ xinha-test/repository
 xinha-test/target
 xinha-test/version
 xinha-test/workspaces
-yui/.classpath
-yui/.project
-yui/.settings
-yui/hippo-cms-yui.iml
-yui/target

@@ -110,6 +110,21 @@ api/src/main/java/org/hippoecm/frontend/dialog/res/modal.css svneol=native#text/
 api/src/main/java/org/hippoecm/frontend/dialog/res/modal.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/res/transparent1.gif -text
 api/src/main/java/org/hippoecm/frontend/dialog/res/transparent2.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor$EditorWrapper.html svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor.java -text
+api/src/main/java/org/hippoecm/frontend/editor/EditorHelper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/IEditorContext.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/IEditorFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/ITemplateEngine.java -text
+api/src/main/java/org/hippoecm/frontend/editor/TemplateEngineException.java -text
+api/src/main/java/org/hippoecm/frontend/editor/compare/IComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/compare/NodeComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/compare/ObjectComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
@@ -991,13 +1006,6 @@ editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeLocator.java svneo
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PlainJcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PseudoTypeDescriptor.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor$EditorWrapper.html svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor.java -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/EditorHelper.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/IEditorContext.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/IEditorFactory.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/ITemplateEngine.java -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/TemplateEngineException.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/BuilderException.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.java -text svneol=unset#text/plain
@@ -1020,12 +1028,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListP
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeEditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeLayout.html -text svneol=unset#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/IComparer.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/NodeComparer.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/ObjectComparer.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorForm.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.java -text
@@ -1109,8 +1111,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Imag
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_fr.properties -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageDisplayPlugin_nl.properties -text svneol=unset#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin.properties -text
@@ -2532,6 +2532,3 @@ xinha-resources/webResources/xinha/skins/hippo-lite/skin.xml svneol=native#text/
 xinha-test/README.txt svneol=native#text/plain
 xinha-test/src/test/resources/log4j.dtd svneol=native#text/plain
 xinha-test/src/test/resources/log4j.xml svneol=native#text/plain
-yui/pom.xml -text
-yui/src/site/apt/index.apt -text
-yui/src/site/site.xml -text

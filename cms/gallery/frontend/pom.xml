@@ -40,13 +40,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -68,11 +67,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-builtin</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

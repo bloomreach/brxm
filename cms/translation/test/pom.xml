@@ -96,6 +96,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-engine</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
