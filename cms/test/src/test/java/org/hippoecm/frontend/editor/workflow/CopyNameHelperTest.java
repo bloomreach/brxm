@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.reviewedactions;
+package org.hippoecm.frontend.editor.workflow;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.repository.api.StringCodecFactory.UriEncoding;
 import org.junit.Test;
 

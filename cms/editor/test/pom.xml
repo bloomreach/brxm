@@ -111,8 +111,6 @@
           <excludes>
             <exclude>**/JcrTypeDescriptorTest.java</exclude>
             <exclude>**/ValidationPluginTest.java</exclude>
-            <exclude>**/NodeComparerTest.java</exclude>
-            <exclude>**/ValueComparerTest.java</exclude>
             <exclude>**/FieldPluginTest.java</exclude>
             <exclude>**/TemplateBuilderTest.java</exclude>
             <exclude>**/TwoColumnTest.java</exclude>

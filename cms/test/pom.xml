@@ -114,6 +114,12 @@
       <version>${jetty.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
+      <version>${easymock.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -181,6 +187,8 @@
             <exclude>**/TextSearchTest.java</exclude>
             <exclude>**/SearchDocumentsProviderTest.java</exclude>
             <exclude>**/BrowseServiceTest.java</exclude>
+            <exclude>**/NodeComparerTest.java</exclude>
+            <exclude>**/ValueComparerTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>

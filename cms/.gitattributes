@@ -1260,8 +1260,6 @@ editor/test/src/test/java/org/hippoecm/editor/template/BuiltinTemplateStoreTest.
 editor/test/src/test/java/org/hippoecm/frontend/EditorTest.java -text
 editor/test/src/test/java/org/hippoecm/frontend/EditorTestCase.java -text
 editor/test/src/test/java/org/hippoecm/frontend/editor/builder/TemplateBuilderTest.java -text
-editor/test/src/test/java/org/hippoecm/frontend/editor/compare/NodeComparerTest.java svneol=native#text/plain
-editor/test/src/test/java/org/hippoecm/frontend/editor/compare/ValueComparerTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/field/FieldPluginTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/impl/DefaultEditorFactoryTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/impl/JcrTemplateStoreTest.java svneol=native#text/plain
@@ -2031,6 +2029,8 @@ test/src/test/java/org/hippoecm/frontend/client/TestPage.java svneol=native#text
 test/src/test/java/org/hippoecm/frontend/client/console.js svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/config/PluginConfigTest.java -text
 test/src/test/java/org/hippoecm/frontend/dialog/AbstractDialogTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/editor/compare/NodeComparerTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/editor/compare/ValueComparerTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/i18n/model/NodeTranslatorTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrItemModelTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/JcrMultiPropertyValueModelTest.java svneol=native#text/plain

@@ -16,6 +16,8 @@
 package org.hippoecm.frontend;
 
 import org.hippoecm.frontend.config.PluginConfigTest;
+import org.hippoecm.frontend.editor.compare.NodeComparerTest;
+import org.hippoecm.frontend.editor.compare.ValueComparerTest;
 import org.hippoecm.frontend.i18n.model.NodeTranslatorTest;
 import org.hippoecm.frontend.model.*;
 import org.hippoecm.frontend.model.event.ObservationTest;
@@ -44,13 +46,16 @@ import org.junit.runners.Suite;
     JcrObjectTest.class,
     JcrConfigServiceFactoryTest.class,
 
-//    NodeTranslatorTest.class,
-//    UserSessionTest.class,
+    NodeTranslatorTest.class,
+    UserSessionTest.class,
     
     TabsTest.class,
     TextSearchTest.class,
     SearchDocumentsProviderTest.class,
-    BrowseServiceTest.class
+    BrowseServiceTest.class,
+
+    NodeComparerTest.class,
+    ValueComparerTest.class
 })
 public class EmbeddedTest
 {

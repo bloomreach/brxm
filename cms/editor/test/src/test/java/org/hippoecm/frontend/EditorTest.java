@@ -16,8 +16,6 @@
 package org.hippoecm.frontend;
 
 import org.hippoecm.frontend.editor.builder.TemplateBuilderTest;
-import org.hippoecm.frontend.editor.compare.NodeComparerTest;
-import org.hippoecm.frontend.editor.compare.ValueComparerTest;
 import org.hippoecm.frontend.editor.field.FieldPluginTest;
 import org.hippoecm.frontend.editor.impl.DefaultEditorFactoryTest;
 import org.hippoecm.frontend.editor.impl.JcrTemplateStoreTest;
@@ -33,8 +31,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     JcrTypeDescriptorTest.class,
     ValidationPluginTest.class,
-    NodeComparerTest.class,
-    ValueComparerTest.class,
     FieldPluginTest.class,
     TemplateBuilderTest.class,
     TwoColumnTest.class,
