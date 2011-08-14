@@ -67,6 +67,13 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -143,15 +150,6 @@
       <dependencies>
         <dependency>
           <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-cms-test</artifactId>
-          <version>${project.version}</version>
-          <type>jar</type>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-          <optional>true</optional>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7</groupId>
           <artifactId>hippo-repository-engine</artifactId>
           <version>${hippo.repository.version}</version>
           <type>jar</type>
@@ -162,4 +160,5 @@
       </dependencies>
     </profile>
   </profiles>
+
 </project>
