@@ -21,6 +21,7 @@ import org.hippoecm.frontend.IFacetRootsObserver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
 
+import javax.jcr.Credentials;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
@@ -43,6 +44,16 @@ public abstract class UserSession extends WebSession {
     public UserSession(Request request) {
         super(request);
     }
+
+    /**
+     * The user credentials; usage is discouraged, as it exposes details on how the
+     * UserSession was constructed.  This method can only be used when repository
+     * authentication was used.
+     *
+     * @return
+     */
+    @Deprecated
+    public abstract Credentials getCredentials();
 
     public abstract ClassLoader getClassLoader();
 

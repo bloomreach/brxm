@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
@@ -73,8 +74,8 @@ public class PluginUserSession extends UserSession {
     private transient FacetRootsObserver facetRootsObserver;
     private UserCredentials credentials;
 
-    public UserCredentials getCredentials() {
-        return credentials;
+    public Credentials getCredentials() {
+        return credentials.getJcrCredentials();
     }
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {

@@ -23,9 +23,13 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.LoginException;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
+/**
+ * This class is available for backwards compatibility, but should not be used by
+ * plugins.
+ */
+@Deprecated
 public class UserCredentials {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -76,6 +80,11 @@ public class UserCredentials {
         return username;
     }
 
+    /**
+     * JCR credentials.
+     *
+     * @return
+     */
     public Credentials getJcrCredentials() {
         return credentials;
     }
