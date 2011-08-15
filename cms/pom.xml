@@ -61,13 +61,13 @@
     <module>workflowmenu</module>
     <module>builtin</module>
     <module>versioning</module>
-    <module>admin</module>
     <module>gotolink</module>
     <module>search</module>
-    <module>edit</module>
+    <module>perspectives</module>
+    <!-- module>edit</module>
+    <module>admin</module>
     <module>browse</module>
-    <module>dashboard</module>
-    <module>rootpage</module>
+    <module>dashboard</module -->
     <module>reporting</module>
     <module>xinha-integration</module>
     <module>xinha-test</module>

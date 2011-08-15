@@ -1,75 +1,5 @@
 * text=auto !eol
 /WICKET-3927_2.patch -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.html -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlugin.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/AbstractPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidationService.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationStatus.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/RegexpPasswordValidator.java -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin$ChangePasswordFeedbackPanel.html -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_fr.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_it.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-128.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-16.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-32.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-128.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-16.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-48.png -text svneol=unset#image/png
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_fr.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
-admin/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
 api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
@@ -776,75 +706,6 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
-browse/pom.xml svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.html svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-128.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-16.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-24.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-48.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DefaultListColumnProviderPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_fr.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_nl.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FacetSearchListingPlugin.java -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FacetSearchProvider.java -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FolderViewPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin.java -text svneol=unset#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_fr.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_nl.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_fr.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_nl.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin.java -text svneol=unset#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_fr.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_nl.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/BrowserSections.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/BrowserSectionsModel.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/DocumentCollection.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/DocumentCollectionModel.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.html svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/OnEnterAjaxBehavior.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.html svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_fr.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_it.properties -text
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_nl.properties svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-back.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-right.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/cancel.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/enter.js svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/magnify.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search-back.png -text svneol=unset#image/png
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search.css svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseService.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/service/IBrowserSection.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/CmsJcrTree.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.html svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.html svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.java svneol=native#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperBehavior.java -text svneol=unset#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperSettings.java -text svneol=unset#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/YuiTreeNamespace.java -text svneol=unset#text/plain
-browse/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/js/treehelper/treehelper.js -text svneol=unset#text/plain
-browse/src/test/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseServiceTest.java svneol=native#text/plain
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_fr.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_it.properties -text
@@ -930,45 +791,7 @@ config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
-dashboard/pom.xml svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.html svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTarget.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_it.properties -text
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/DocumentEvent.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/EventModel.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin.html svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_it.properties -text
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-128.png -text svneol=unset#image/png
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-16.png -text svneol=unset#image/png
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-24.png -text svneol=unset#image/png
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-32.png -text svneol=unset#image/png
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-48.png -text svneol=unset#image/png
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.html svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
-dashboard/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
-dashboard/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-dashboard/src/main/resources/reporting.cnd -text
-dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
-dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
-dashboard/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest.java svneol=native#text/plain
 dependencies/pom.xml svneol=native#text/plain
-edit/pom.xml svneol=native#text/plain
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_it.properties -text
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text svneol=unset#image/png
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-16.png -text svneol=unset#image/png
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
-edit/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
-edit/src/test/java/org/hippoecm/frontend/plugins/cms/edit/EditorManagerTest.java svneol=native#text/plain
-edit/src/test/resources/cmstest.cnd -text
-edit/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 editor/common/pom.xml svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/NamespaceValidator.java svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/cnd/FieldIdentifier.java -text
@@ -1515,6 +1338,186 @@ gotolink/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.1.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.13.js -text
+perspectives/pom.xml -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-en.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-controlpanel-help-permissions-nl.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/images/hippo-panels-headerback.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/AbstractPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsCapitalPasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsDigitPasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsLowercasePasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsNoNamePasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/ContainsSpecialCharacterPasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidationService.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/IsNoPreviousPasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/MinimalLengthPasswordValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationStatus.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/RegexpPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin$ChangePasswordFeedbackPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/plugins/ChangePasswordShortcutPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-info-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/DocumentCollectionView.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/Navigator.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-24.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/browser-perspective-64.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DefaultListColumnProviderPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/DocumentListingPlugin_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FacetSearchListingPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FacetSearchProvider.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/FolderViewPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/NamespaceListingPlugin_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_fr.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/SearchViewPlugin_nl.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_fr.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/list/TypesListingPlugin_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/BrowserSections.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/BrowserSectionsModel.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/DocumentCollection.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/DocumentCollectionModel.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/OnEnterAjaxBehavior.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_fr.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin_nl.properties svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-back.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-right.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/cancel.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/enter.js svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/magnify.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search-back.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search.css svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseService.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/service/IBrowserSection.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/CmsJcrTree.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/FolderTreePlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/SectionTreePlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperBehavior.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/WicketTreeHelperSettings.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/YuiTreeNamespace.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/tree/yui/js/treehelper/treehelper.js -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLink.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTarget.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/DocumentEvent.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/EventModel.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/current/CurrentActivityPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-24.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/dashboard-perspective-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.html svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-16.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-32.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
+perspectives/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+perspectives/src/main/resources/reporting.cnd -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseServiceTest.java svneol=native#text/plain
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest.java svneol=native#text/plain
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/edit/EditorManagerTest.java svneol=native#text/plain
+perspectives/src/test/resources/cmstest.cnd -text
+perspectives/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
@@ -1661,10 +1664,6 @@ reporting/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/toolb
 reporting/src/main/resources/reporting-dashboard.xml -text
 reporting/src/main/resources/reports-cluster-loader.xml -text
 resources/pom.xml svneol=native#text/plain
-rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
-rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
-rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
-rootpage/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
 search/src/main/java/org/hippoecm/frontend/plugins/search/SearchPlugin.html svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/SearchPlugin.java svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/ResultItem.java svneol=native#text/plain
