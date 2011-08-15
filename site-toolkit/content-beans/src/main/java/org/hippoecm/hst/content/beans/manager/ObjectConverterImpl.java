@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -55,7 +56,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
-        if(path == null || !path.startsWith("/")) {
+        if(StringUtils.isEmpty(path) || !path.startsWith("/")) {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
@@ -69,7 +70,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Object getObject(Node node, String relPath) throws ObjectBeanManagerException {
-        if(relPath == null || relPath.startsWith("/")) {
+        if(StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
             log.warn("'{}' is not a valid relative path. Return null.", relPath);
             return null;
         }
@@ -93,13 +94,13 @@ public class ObjectConverterImpl implements ObjectConverter {
                 } else {
                     log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
                     return null;
-                }
+                } 
             } else {
                 return getObject(relNode);
             }   
             
         } catch (RepositoryException e) {
-            log.warn("Cannot get objectfor node '{}' with relPath '{}'",nodePath , relPath);
+            log.warn("Cannot get object for node '{}' with relPath '{}'",nodePath , relPath);
             return null;
         }
     }
