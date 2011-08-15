@@ -447,7 +447,7 @@
             <description>A ContentRewriter object.</description>
         </attribute>
         <attribute>
-          <name>externalizeInternalLinks</name>
+          <name>externalLinks</name>
           <required>false</required>
           <rtexprvalue>true</rtexprvalue>
           <type>java.lang.Boolean</type>
@@ -456,7 +456,7 @@
         </attribute>
         <example><![CDATA[
           <div>
-             <hst:html hippohtml="${document.intro}"/>
+             <hst:html hippohtml="${document.intro}" externalLinks="true"/>
           </div>
           ]]></example>
     </tag>

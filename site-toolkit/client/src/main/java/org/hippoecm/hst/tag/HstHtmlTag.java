@@ -55,7 +55,11 @@ public class HstHtmlTag extends TagSupport {
         
     protected ContentRewriter<String> contentRewriter;
 
-    protected Boolean externalizeInternalLinks;
+    /**
+     * Whether links should be rewritten to external (fully qualified) links including scheme, host, port etc. 
+     * Default false
+     */
+    protected boolean externalLinks;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -105,8 +109,9 @@ public class HstHtmlTag extends TagSupport {
        
         if(hippoHtml.getNode() != null) {
             if (contentRewriter == null) {
-                contentRewriter = new SimpleContentRewriter(isExternalizeInternalLinks().booleanValue());
+                contentRewriter = new SimpleContentRewriter();
             }
+            contentRewriter.setExternalLinks(externalLinks);
             html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
@@ -144,7 +149,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
-        externalizeInternalLinks = Boolean.FALSE;
+        externalLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
         
@@ -164,7 +169,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
-        externalizeInternalLinks = Boolean.FALSE;
+        externalLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
     }
@@ -189,20 +194,13 @@ public class HstHtmlTag extends TagSupport {
     public ContentRewriter<String> getContentRewriter() {
         return contentRewriter;
     }
-
-    public Boolean isExternalizeInternalLinks() {
-        if (externalizeInternalLinks == null) {
-            externalizeInternalLinks = Boolean.FALSE;
-        }
-        return externalizeInternalLinks;
-    }
-
+    
     /**
-     * @param externalizeInternalLinks flag to define whether internal links are rewritten into external form
+     * @param externalLinks flag to define whether internal links are rewritten into external form
      *                                 (including scheme and domain)
      */
-    public void setExternalizeInternalLinks(Boolean externalizeInternalLinks) {
-        this.externalizeInternalLinks = externalizeInternalLinks;
+    public void setExternalLinks(boolean externalLinks) {
+        this.externalLinks = externalLinks;
     }
 
     /**

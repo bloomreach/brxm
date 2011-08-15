@@ -32,20 +32,35 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     
+    private boolean externalLinks;
+    
     public AbstractContentRewriter() {
         
     }
     
+    @Override
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext) {
         return null;
     }
 
+    @Override
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext, String targetMountAlias) {
         return null;
     }
     
+    @Override
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext, Mount targetMount) {
         return null;
+    }
+
+    @Override
+    public boolean isExternalLinks() {
+        return externalLinks;
+    }
+
+    @Override
+    public void setExternalLinks(boolean externalLinks) {
+       this.externalLinks = externalLinks;
     }
     
 }

@@ -51,19 +51,10 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     protected static final Pattern HTML_TAG_PATTERN = Pattern.compile("<html[\\s\\/>]", Pattern.CASE_INSENSITIVE);
     protected static final Pattern BODY_TAG_PATTERN = Pattern.compile("<body[\\s\\/>]", Pattern.CASE_INSENSITIVE);
 
-    /**
-     * Flag to indicate if internal links should start with scheme and host
-     */
-    private boolean externalizeInternalLinks;
-    
     public SimpleContentRewriter() {
         
     }
 
-    public SimpleContentRewriter(boolean externalizeInternalLinks) {
-        this.externalizeInternalLinks = externalizeInternalLinks;
-    }
-    
     @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext) {
         return rewrite(html, node, requestContext, (Mount)null);
@@ -131,7 +122,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         
                         HstLink href = getDocumentLink(documentPath,node, requestContext, targetMount);
                         if (href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(requestContext, isExternalizeInternalLinks()));
+                            sb.append(href.toUrlForm(requestContext, isExternalLinks()));
                         } else {
                            log.warn("Skip href because url is null");
                         }
@@ -187,7 +178,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     } else {
                         HstLink binaryLink = getBinaryLink(srcPath, node, requestContext, targetMount);
                         if (binaryLink != null && binaryLink.getPath() != null) {
-                            sb.append(binaryLink.toUrlForm(requestContext, isExternalizeInternalLinks()));
+                            sb.append(binaryLink.toUrlForm(requestContext, isExternalLinks()));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }
@@ -273,10 +264,6 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             }
         }
         return false;
-    }
-
-    public boolean isExternalizeInternalLinks() {
-        return externalizeInternalLinks;
     }
 
 }

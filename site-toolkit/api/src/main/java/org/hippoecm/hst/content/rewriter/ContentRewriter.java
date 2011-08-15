@@ -58,4 +58,14 @@ public interface ContentRewriter<T> {
      */
     T rewrite(T content, Node contentNode, HstRequestContext requestContext, Mount targetMount);
     
+    /**
+     * Sets whether this {@link ContentRewriter} should create external (fully qualified) links or not.  
+     * @param externalLinks
+     */
+    void setExternalLinks(boolean externalLinks);
+    
+    /**
+     * @return <code>true</code> when external (fully qualified) links should be created
+     */
+    boolean isExternalLinks();
 }
