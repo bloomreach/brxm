@@ -8,8 +8,11 @@
 }
 
 ul.gallery-list li a {
+    display: block;
+    height: 100px;
     text-decoration: none;
     color: #333333;
+    position: relative;
 }
 
 ul.gallery-list {
@@ -43,6 +46,8 @@ ul.gallery-list li.selected {
 }
 
 .title {
+    position: absolute;
+    bottom: 0px;
     width: 100px;
     display: block;
     white-space: nowrap;
