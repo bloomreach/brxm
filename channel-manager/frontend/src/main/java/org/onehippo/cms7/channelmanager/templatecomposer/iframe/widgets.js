@@ -437,11 +437,19 @@ jQuery.noConflict();
         },
 
         highlight : function() {
-            this.overlay.addClass(this.cls.highlight);
+            if (this.el.attr(HST.ATTR.INHERITED)) {
+                this.overlay.removeClass(this.cls.overlay.inherited);
+            } else {
+                this.overlay.addClass(this.cls.highlight);
+            }
         },
 
         unhighlight : function() {
-            this.overlay.removeClass(this.cls.highlight);
+            if (this.el.attr(HST.ATTR.INHERITED)) {
+                this.overlay.addClass(this.cls.overlay.inherited);
+            } else {
+                this.overlay.removeClass(this.cls.highlight);
+            }
         },
 
         checkState : function() {
@@ -663,12 +671,14 @@ jQuery.noConflict();
             this.menu = $('<div/>').addClass('hst-overlay-menu'); //.appendTo(document.body);
 
             var data = {element: this.element};
-            var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
-            deleteButton.click(function(e) {
-                e.stopPropagation();
-                sendMessage(data, 'remove');
-            });
-            this.menu.append(deleteButton);
+            if (!this.el.attr(HST.ATTR.INHERITED)) {
+                var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
+                deleteButton.click(function(e) {
+                    e.stopPropagation();
+                    sendMessage(data, 'remove');
+                });
+                this.menu.append(deleteButton);
+            }
 
             var nameLabel = $('<div/>').addClass('hst-overlay-name-label');
             this.menu.append(nameLabel);

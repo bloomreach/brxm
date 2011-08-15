@@ -907,10 +907,12 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     Hippo.ChannelManager.TemplateComposer.Instance.stores.pageModel.each(function(record) {
                         var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
-                            var id = record.get('id') + '-overlay';
-                            var el = frmDoc.getElementById(id);
-                            var box = Ext.Element.fly(el).getBox();
-                            self.boxs.push({record: record, box: box});
+                            var id = record.get('id');
+                            var el = frmDoc.getElementById(id + '-overlay');
+                            if (!frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
+                                var box = Ext.Element.fly(el).getBox();
+                                self.boxs.push({record: record, box: box});
+                            }
                         }
                     });
                     Ext.ux.ManagedIFrame.Manager.showShims();
