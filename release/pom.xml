@@ -208,23 +208,12 @@
       <!-- All Hippo CMS artifacts -->
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-admin</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-api</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-application</artifactId>
-        <version>${hippo.cms.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-browse</artifactId>
+        <artifactId>hippo-cms-perspectives</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -235,16 +224,6 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-config</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-dashboard</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-edit</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -294,12 +273,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-layout</artifactId>
-        <version>${hippo.cms.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-plugins</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -313,11 +286,6 @@
         <artifactId>hippo-cms-resources</artifactId>
         <version>${hippo.cms.version}</version>
         <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-rootpage</artifactId>
-        <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -412,11 +380,6 @@
         <artifactId>hippo-cms-xinha-test</artifactId>
         <version>${hippo.cms.version}</version>
         <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-yui</artifactId>
-        <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
