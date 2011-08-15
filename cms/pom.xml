@@ -64,10 +64,6 @@
     <module>gotolink</module>
     <module>search</module>
     <module>perspectives</module>
-    <!-- module>edit</module>
-    <module>admin</module>
-    <module>browse</module>
-    <module>dashboard</module -->
     <module>reporting</module>
     <module>xinha-integration</module>
     <module>xinha-test</module>
