@@ -31,7 +31,8 @@ public interface HstSiteRootNode extends HstNode{
     String getCanonicalContentPath();
     
     /**
-     * @return the location where the configuration for this {@link HstSiteRootNode} can be found
+     * @return the location where the configuration for this {@link HstSiteRootNode} can be found. If missing, <code>null</code> or empty, 
+     * implementations can return a default value by convention
      */
     String getConfigurationPath();
 

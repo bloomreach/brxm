@@ -69,8 +69,7 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         this.mount = mount; 
         canonicalIdentifier = site.getValueProvider().getIdentifier();
-        configurationPath = site.getConfigurationPath();
-        
+        configurationPath = getConfigurationPath(site, hstManager);
         HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
         
         if(configurationNode == null) {
@@ -78,14 +77,14 @@ public class HstSiteService implements HstSite {
         }
         init(configurationNode, mount, hstManager);
     }
-    
+
     public HstSiteService(HstSiteRootNode site, Mount mount,
             HstManagerImpl hstManager, String liveConfigurationPath) throws ServiceException {
           
         name = site.getValueProvider().getName();
         this.mount = mount;
         canonicalIdentifier = site.getValueProvider().getIdentifier();
-        configurationPath = site.getConfigurationPath();
+        configurationPath = getConfigurationPath(site, hstManager);
         
         HstNode configurationNode = null;
         
@@ -111,6 +110,22 @@ public class HstSiteService implements HstSite {
         init(configurationNode, mount, hstManager);
     }
 
+    /**
+     * if {@link HstSiteRootNode#getConfigurationPath()} returns <code>null</code> or empty, return a configuration path by convention, 
+     * namely <code>hst:rootPath + /hst:configurations/ + siteNode.name</code>
+     * @param site
+     * @param hstManager
+     * @return the <code>configurationPath</code> 
+     */
+    private String getConfigurationPath(HstSiteRootNode site, HstManagerImpl hstManager) {
+        String path = site.getConfigurationPath();
+        if(path == null || "".equals(path)) {
+            path = hstManager.getRootPath() + "/hst:configurations/" + site.getValueProvider().getName(); 
+            log.debug("There is no hst:configurationpath configured for '{}'. Set it to '{}' by convention.", site.getValueProvider().getPath(), path);
+        }
+        return path;
+    }
+    
     private void init(HstNode configurationNode, Mount mount, HstManagerImpl hstManager) throws ServiceException {
        // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
       

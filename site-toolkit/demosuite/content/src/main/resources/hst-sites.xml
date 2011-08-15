@@ -25,10 +25,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite</sv:value>
-    </sv:property>
-    
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:facetselect</sv:value>
@@ -50,9 +46,6 @@
   <sv:node sv:name="demosite-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -77,10 +70,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite_fr</sv:value>
-    </sv:property>
-    
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:facetselect</sv:value>
@@ -102,9 +91,6 @@
   <sv:node sv:name="demosite_fr-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite_fr</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -131,9 +117,6 @@
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>ce6aa61c-4ff6-4c79-8bcf-44d431485b66</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite-test-many</sv:value>
-    </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:facetselect</sv:value>
@@ -157,9 +140,6 @@
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>ce6aa61c-4ff6-4c79-8bcf-44d431485b66</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/demosite-test-many</sv:value>
     </sv:property>
     <sv:node sv:name="hst:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
