@@ -59,7 +59,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
     protected volatile boolean stopped;
     protected LoggerFactory loggerFactory;
-
+    
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
@@ -271,16 +271,24 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             }
             
         } catch (LoginException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to get a session in EventListenersContainer. The repository might be not available yet or the credentials might be wrong. It will try initialization next time. " + e, e);
+            if(firstInitializationDone) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to get a session in EventListenersContainer. The repository might be not available yet or the credentials might be wrong. It will try initialization next time. " + e, e);
+                } else {
+                    log.warn("Failed to get a session in EventListenersContainer. The repository might be not available yet or the credentials might be wrong. It will try initialization next time. " + e);
+                }
             } else {
-                log.warn("Failed to get a session in EventListenersContainer. The repository might be not available yet or the credentials might be wrong. It will try initialization next time. " + e);
+                log.info("Could not yet get a session in the EventListenersContainer. The repository still needs to be started. Will try again in '{}' ms.", String.valueOf(sessionLiveCheckIntervalOnStartup));
             }
         } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("The repository is not available. It will try initialization next time. " + e, e);
+            if(firstInitializationDone) {
+                if (log.isDebugEnabled()) {
+                    log.warn("The repository is not available. It will try initialization next time. " + e, e);
+                } else {
+                    log.warn("The repository is not available. {} {}", "It will try initialization next time.", e);
+                }
             } else {
-                log.warn("The repository is not available. {} {}", "It will try initialization next time.", e);
+                 log.info("The repository is not yet available. The repository still needs to be started. Will try again in '{}' ms.", String.valueOf(sessionLiveCheckIntervalOnStartup));
             }
         }
     }
