@@ -298,8 +298,8 @@ public class Main extends WebApplication {
     }
 
     @Override
-    public Class<Home> getHomePage() {
-        return org.hippoecm.frontend.Home.class;
+    public Class<PluginPage> getHomePage() {
+        return org.hippoecm.frontend.PluginPage.class;
     }
 
     @Override
