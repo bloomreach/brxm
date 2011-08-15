@@ -1,2 +1,2 @@
 window.console = window.opener;
-navigator.productSub =  "";
+//navigator.productSub =  "";

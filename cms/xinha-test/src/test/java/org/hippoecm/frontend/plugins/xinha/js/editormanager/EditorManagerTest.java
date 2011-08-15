@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.xinha.js.editormanager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
+
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlInlineFrame;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -31,12 +32,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.xinha.XinhaPage;
 import org.hippoecm.frontend.plugins.xinha.XinhaTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlInlineFrame;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+@Ignore // YUI 2.9.0 uses getBoundingRectClient, which is not supported by htmlunit
 public class EditorManagerTest extends XinhaTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

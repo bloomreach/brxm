@@ -17,10 +17,13 @@ package org.hippoecm.frontend.plugins.xinha;
 
 import java.net.URL;
 
-import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
-import net.sourceforge.htmlunit.corejs.javascript.Function;
-import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+import com.gargoylesoftware.htmlunit.AjaxController;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.ContextParamWebApplicationFactory;
@@ -36,13 +39,10 @@ import org.mortbay.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.AjaxController;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequestSettings;
-import com.gargoylesoftware.htmlunit.WebWindow;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
+import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
 abstract public class XinhaTest {
     @SuppressWarnings("unused")
@@ -92,7 +92,7 @@ abstract public class XinhaTest {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public boolean processSynchron(HtmlPage page, WebRequestSettings settings, boolean async) {
+            public boolean processSynchron(final HtmlPage page, final WebRequest request, final boolean async) {
                 return true;
             }
         });
