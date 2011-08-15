@@ -64,7 +64,7 @@
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
     <sv:property sv:name="composerMountUrl" sv:type="String">
-      <sv:value>/site/</sv:value>
+      <sv:value>/site</sv:value>
     </sv:property>
     <sv:property sv:name="composerRestMountUrl" sv:type="String">
       <sv:value>/site/_rp/</sv:value>
