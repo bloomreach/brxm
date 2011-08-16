@@ -56,7 +56,7 @@ public class CmsSecurityValve extends AbstractValve {
 
     public void setRepository(Repository repository) {
         this.repository = repository;
-    }
+    } 
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {

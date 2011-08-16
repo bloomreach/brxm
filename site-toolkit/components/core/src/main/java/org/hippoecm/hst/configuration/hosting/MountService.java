@@ -493,22 +493,23 @@ public class MountService implements ContextualizableMount {
             
             // now also try to get hold of the previewHstSite. If we cannot load it, we log an info: 
             HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
-            if(previewHstSiteNodeForMount == null) {
-                log.info("There is no preview version '{}-preview' for  mount '{}'. Cannot create a PREVIEW HstSite " +
-                		"for this Mount. The live mount will be used.",  mountPoint,  mount.getValueProvider().getPath());
+            if(previewHstSiteNodeForMount == null || isPreview()) {
+                log.info("There is no preview version '{}-preview' for mount '{}' or the mount is already a preview" +
+                		"by itself. Cannot create a PREVIEW HstSite " +
+                		"for this Mount. The mount '"+mountPoint+"' will be used.",  mountPoint,  mount.getValueProvider().getPath());
                 previewHstSite = hstSite;
                 previewCanonicalContentPath = canonicalContentPath;
                 previewContentPath = contentPath;
             } else {
                 try {
-                    previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager, ((HstSiteService)hstSite).getConfigurationPath());
+                    previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
                     previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();;
                     previewContentPath = previewHstSiteNodeForMount.getContentPath();;
                 } catch (ServiceException e) {
                    if(log.isDebugEnabled()) {
-                       log.warn("Cannot create a preview version for mount '"+mountPath+"'", e);
+                       log.warn("Cannot create a preview version for mount '"+mount.getValueProvider().getPath()+"'", e);
                    } else {
-                       log.warn("Cannot create a preview version for mount '{}'", mountPath, e.toString());
+                       log.warn("Cannot create a preview version for mount '{}' : '{}'", mount.getValueProvider().getPath(), e.toString());
                    }
                 }
             }

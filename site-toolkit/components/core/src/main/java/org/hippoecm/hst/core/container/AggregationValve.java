@@ -304,13 +304,19 @@ public class AggregationValve extends AbstractValve {
                 if (composerMode != null) {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
                     // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
+                    HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
                     if (window == rootWindow) {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
-                        rootWindow.getResponseState().addHeader("HST-Page-Id", ((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
+                        rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
+                        boolean isPreviewConfig = false;
+                        if(mount.getHstSite().getConfigurationPath().endsWith("-"+Mount.PREVIEW_NAME)) {
+                            isPreviewConfig = true;
+                        }
+                        rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(isPreviewConfig));
+                        //"-" + Mount.PREVIEW_NAME;
                     } else if(Boolean.TRUE.equals(composerMode)) {
-                        HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                            // TODO replace by json marshaller
+                         // TODO replace by json marshaller
                         
                         HashMap<String, String> attributes = new HashMap<String, String>();
                         attributes.put("uuid", compConfig.getCanonicalIdentifier());

@@ -84,4 +84,9 @@ public interface HstSite {
     @Deprecated
     Mount getMount();
     
+    /**
+     * @return the absolute location where the configuration for this {@link HstSite} is stored
+     */
+    String getConfigurationPath();
+    
 }
