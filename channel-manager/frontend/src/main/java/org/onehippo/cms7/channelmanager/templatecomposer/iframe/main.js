@@ -82,16 +82,7 @@ jQuery.noConflict();
             }, this, false, 'resize');
 
             this.manager = manager;
-
-            $.head(document.location.href, function(headers) {
-                window.setTimeout(function() {
-                    sendMessage({
-                        siteId: headers['HST-Site-Id'],
-                        pageId: headers['HST-Page-Id'],
-                        mountId: headers['HST-Mount-Id']},
-                    'afterinit');
-                }, 1);
-            });
+            sendMessage({}, "afterinit");
         },
 
         isDebug: function() {

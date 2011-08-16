@@ -33,6 +33,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerResourceBehavior;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
@@ -70,6 +71,7 @@ public class ChannelManagerPerspective extends Perspective {
             Page page = renderService.getComponent().getPage();
             page.add(new ExtResourcesBehaviour());
             page.add(new ChannelManagerResourceBehaviour());
+            page.add(new TemplateComposerResourceBehavior());
         }
     }
 

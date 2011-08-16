@@ -33,7 +33,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             pageModel : null
         };
 
-        this.addEvents('pageIdChanged', 'mountIdChanged');
+        this.editingUnpublishedHstConfig = false;
+
+        this.addEvents('beforePageIdChange', 'beforeMountIdChange', "hstMetaDataResponse");
 
         this.pageModelFacade = null;
 
@@ -101,6 +103,21 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             listeners: {
                                 'toggle': {
                                     fn : this.toggleMode,
+                                    scope: this
+                                }
+                            }
+                        },
+                        {
+                            text: 'Publish',
+                            iconCls: 'title-button',
+                            id: 'publishHstConfig',
+                            width: 150,
+                            // hidden: true,
+                            listeners: {
+                                'click': {
+                                    fn : function() {
+                                        console.log("publish is not implemented yet");
+                                    },
                                     scope: this
                                 }
                             }
@@ -201,7 +218,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         }, this, {single: true});
 
-        this.on('mountIdChanged', function (data) {
+        this.on('hstMetaDataResponse', this.onHstMetaDataResponse, this);
+
+        this.on('beforeMountIdChange', function (data) {
+            console.log('mountIdChanged '+JSON.stringify(data));
+            if (this.previewMode) {
+                return false;
+            }
             this.stores.toolkit = this.createToolkitStore(data.mountId);
             this.stores.toolkit.load();
             if (this.mainWindow) {
@@ -209,15 +232,21 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 grid.reconfigure(this.stores.toolkit, grid.getColumnModel());
             } else {
                 this.mainWindow = this.createMainWindow(data.mountId);
-                this.mainWindow.show();
             }
+            this.mainWindow.show();
         }, this);
 
-        this.on('pageIdChanged', function(data) {
+        this.on('beforePageIdChange', function(data) {
+            console.log('pageIdChanged'+JSON.stringify(data));
+            if (this.previewMode) {
+                return false;
+            }
+            console.log('createPageModelStore and load');
             this.stores.pageModel = this.createPageModelStore(data.mountId, data.pageId);
             this.stores.pageModel.load();
 
             if (this.mainWindow) {
+                console.log('reconfigure page model grid');
                 var grid = Ext.getCmp('PageModelGrid');
                 grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
             }
@@ -256,35 +285,46 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
-            // do initial handshake with CmsSecurityValve of the composer mount and
-            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-            // the redirect to the composermode rest resource fails with the handshake, so we have to
-            // make a second request to actually set the composermode after we are authenticated
-            var me = this;
-            Ext.getCmp('channelName').setText(channelName);
-            var composerMode = function(callback) {
-                Ext.Ajax.request({
-                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
-                    method : 'POST',
-                    success: callback,
-                    failure: function() {
-                        window.setTimeout(function() {
-                            composerMode(callback);
-                        }, 1000);
-                    }
-                });
-            };
-            composerMode(function() {
-                var iFrame = Ext.getCmp('Iframe');
-                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-                iFrame.setSrc(me.composerMountUrl + renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + renderHost);
-                // keep session active
-                Ext.TaskMgr.start({
-                    run: me.keepAlive,
-                    interval: 60000,
-                    scope: me
-                });
+        // do initial handshake with CmsSecurityValve of the composer mount and
+        // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+        // the redirect to the composermode rest resource fails with the handshake, so we have to
+        // make a second request to actually set the composermode after we are authenticated
+        this.renderHostSubMountPath = renderHostSubMountPath;
+        this.renderHost = renderHost;
+        this.iframeDOMReady = false;
+        this.iframeInitialized = false;
+        this.editingUnpublishedHstConfig = false; // TODO remove
+        this.previewMode = true;
+        Ext.getCmp('pagePreviewButton').toggle(true, true);
+        Ext.getCmp('pageComposerButton').toggle(false, true);
+
+        // TODO only set in composer mode once
+        var me = this;
+        Ext.getCmp('channelName').setText(channelName);
+        var composerMode = function(callback) {
+            Ext.Ajax.request({
+                url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
+                method : 'POST',
+                success: callback,
+                failure: function() {
+                    window.setTimeout(function() {
+                        composerMode(callback);
+                    }, 1000);
+                }
             });
+        };
+        composerMode(function() {
+            var iFrame = Ext.getCmp('Iframe');
+            iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
+            iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
+
+            // keep session active
+            Ext.TaskMgr.start({
+                run: me.keepAlive,
+                interval: 60000,
+                scope: me
+            });
+        });
     },
 
     toggleMode: function () {
@@ -302,10 +342,30 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             window.clearInterval(self.toggleInterval);
             self.toggleInterval = null;
             // first time switch to template composer mode
-            // initialize iframe head
+            // initialize iframe head for drag and drop...
             if (self.previewMode && !self.iframeInitialized) {
-                self.previewMode = !self.previewMode;
-                self.initializeIFrameHead(self.frm);
+                console.log('set preview mode to false');
+                self.previewMode = false;
+                if (self.editingUnpublishedHstConfig) {
+                    self.initializeIFrameHead(self.frm);
+                } else {
+                    // create new preview hst configuration
+                    Ext.Ajax.request({
+                        url: self.composerRestMountUrl + self.ids.mountId + './edit', // TODO adjust url according to rest service
+                        success: function () {
+                            self.editingUnpublishedHstConfig = true; // TODO remove
+                            // refresh iframe to get new hst config uuids and initialize iframe head
+                            self.refreshIframe.call(self, null);
+                        },
+                        // TODO remove failure callback
+                        failure: function() {
+                            self.editingUnpublishedHstConfig = true; // TODO remove
+                            console.error('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
+                            // refresh iframe to get new hst config uuids and initialize iframe head
+                            self.refreshIframe.call(self, null);
+                        }
+                    });
+                }
             } else {
                 // once the composer javascript in the iframe is injected and initialised we send a toggle
                 // message which shows/hides the drag and drop overlay in the iframe
@@ -331,8 +391,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     onIframeDOMReady : function(frm) {
+        console.log("onIframeDOMReady");
         this.frm = frm;
         this.iframeInitialized = false;
+        this.requestHstMetaData( { url: frm.getDocumentURI() } );
         if (!this.previewMode) {
             if (!Ext.Msg.isVisible()) {
                 Ext.Msg.wait('Loading...');
@@ -344,11 +406,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('pageComposerButton').setDisabled(false);
         }
         this.iframeDOMReady = true;
-    },
-
-    onIFrameHeadInitialized : function(frm) {
-        // send init call to iframe app
-        frm.execScript('Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ','+this.previewMode+')', true);
     },
 
     initializeIFrameHead : function(frm) {
@@ -398,30 +455,59 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             frm.writeScript(responseText, {type: "text/javascript", "title" : src});
         }
 
-        this.onIFrameHeadInitialized(frm);
+        frm.execScript('Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ','+this.previewMode+')', true);
+        // iframe will send afterinit message
     },
 
     onIFrameAfterInit : function(data) {
-        var pageId = data.pageId;
-        var mountId = data.mountId;
-
-        if (mountId != this.ids.mountId) {
-            this.fireEvent('mountIdChanged', {mountId: mountId, oldMountId: this.ids.mountId, pageId: pageId});
-        }
-
-        if (pageId != this.ids.page) {
-            this.fireEvent('pageIdChanged', {mountId: mountId, pageId: pageId, oldPageId: this.ids.page});
-        } else {
-            this.shareData();
-        }
-
-        this.ids.page = pageId;
-        this.ids.mountId = mountId;
-
+        console.log('onIframeAfterInit');
         this.iframeInitialized = true;
         Ext.getCmp('pagePreviewButton').setDisabled(false);
         Ext.getCmp('pageComposerButton').setDisabled(false);
         Ext.Msg.hide();
+    },
+
+    requestHstMetaData: function(options) {
+        console.log('requestHstMetaData' + JSON.stringify(options));
+        var self = this;
+        Ext.Ajax.request({
+            method: "HEAD",
+            url : options.url,
+            success : function(responseObject) {
+                self.fireEvent.apply(self, ["hstMetaDataResponse", {
+                    pageId : responseObject.getResponseHeader('HST-Page-Id'),
+                    mountId : responseObject.getResponseHeader('HST-Mount-Id'),
+                    siteId : responseObject.getResponseHeader('HST-Site-Id'),
+                    hasPreviewConfig : responseObject.getResponseHeader('HST-Site-HasPreviewConfig')
+                }]);
+            },
+            failure : function(responseObject) {
+                console.error('hst meta data request failed.');
+            }
+        });
+    },
+
+    onHstMetaDataResponse: function(data) {
+        var pageId = data.pageId;
+        var mountId = data.mountId;
+
+        if (mountId != this.ids.mountId) {
+            if (this.fireEvent('beforeMountIdChange', {mountId: mountId, oldMountId: this.ids.mountId, pageId: pageId})) {
+                this.ids.mountId = mountId;
+            }
+        }
+
+        if (pageId != this.ids.page) {
+            if (this.fireEvent('beforePageIdChange', {mountId: mountId, pageId: pageId, oldPageId: this.ids.page})) {
+                this.ids.page = pageId;
+            }
+        }
+
+        // TODO uncomment when REST-service is implemented
+        // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
+        if (data.hasPreviewConfig) {
+            // TODO enable publish
+        }
     },
 
     createToolkitStore : function(mountId) {
@@ -595,7 +681,23 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     shareData : function() {
+        console.log('shareData');
         var self = this;
+        if (!this.shareDataInterval && !this.iframeInitialized) {
+            this.shareDataInterval = window.setInterval(function() {
+                self.shareData.call(self, {});
+            }, 10);
+            return;
+        }
+
+        if (!this.iframeInitialized) {
+            return;
+        }
+
+        window.clearTimeout(this.shareDataInterval);
+        this.shareDataInterval = null;
+
+        console.log('shareData run');
         var facade = function() {
         };
         facade.prototype = {
