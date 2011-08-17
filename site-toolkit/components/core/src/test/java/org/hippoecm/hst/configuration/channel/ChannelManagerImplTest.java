@@ -67,7 +67,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         Channel channel = channels.values().iterator().next();
         assertEquals("testchannel", channel.getId());
-        assertEquals("testchannel", channel.getName());
+        assertEquals("Test Channel", channel.getName());
     }
 
     @Test
