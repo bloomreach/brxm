@@ -26,7 +26,7 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 public class ChannelUtils {
 
     @SuppressWarnings("unchecked")
-    public static <T> T getChannelInfo(final Map<String, Object> values, Class<?> parametersInfoType) {
+    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values, Class<? extends ChannelInfo> parametersInfoType) {
 
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");

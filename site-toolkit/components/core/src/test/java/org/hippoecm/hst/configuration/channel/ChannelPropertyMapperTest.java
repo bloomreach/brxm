@@ -34,7 +34,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class ChannelPropertyMapperTest extends AbstractHstTestCase {
 
-    public static interface TestInfo {
+    public static interface TestInfo extends ChannelInfo{
         @Parameter(name = "test-name")
         String getName();
     }

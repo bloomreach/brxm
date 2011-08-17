@@ -80,7 +80,7 @@ public interface ChannelManager {
      * @return
      * @throws ChannelException
      */
-    <T> T getChannelInfo(String channelId) throws ChannelException;
+    <T extends ChannelInfo> T getChannelInfo(String channelId) throws ChannelException;
 
     /**
      * The resource bundle for the channel info.  It contains the display names for fields

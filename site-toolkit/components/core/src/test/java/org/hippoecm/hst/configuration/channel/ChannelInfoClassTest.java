@@ -29,7 +29,7 @@ import static junit.framework.Assert.assertEquals;
 
 public class ChannelInfoClassTest {
 
-    static interface TestInfo {
+    static interface TestInfo extends ChannelInfo {
         @Parameter(name = "test-name", required = true)
         String getTestName();
     }
@@ -54,7 +54,7 @@ public class ChannelInfoClassTest {
         assertEquals("aap", info.getTestName());
     }
 
-    public static interface ExtendedTestInfo {
+    public static interface ExtendedTestInfo extends ChannelInfo {
         @Parameter(name = "color")
         @Color
         String getColor();

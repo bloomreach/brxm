@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -416,7 +417,7 @@ public interface Mount {
      * @param <T> Type of the channel info.  Only checked at runtime on assignment.
      * @return A channel properties instance.
      */
-    <T> T getChannelInfo();
+    <T extends ChannelInfo> T getChannelInfo();
 
     /**
      * @return the String[] of defaultSiteMapItemHandlerIds which all {@link HstSiteMapItem}'s get or <code>null</code> if non configured

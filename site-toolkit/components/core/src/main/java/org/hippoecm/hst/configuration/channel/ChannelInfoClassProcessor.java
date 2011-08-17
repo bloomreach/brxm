@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 
 public class ChannelInfoClassProcessor {
 
-    public static List<HstPropertyDefinition> getProperties(Class<?> channelInfoClass) {
+    public static List<HstPropertyDefinition> getProperties(Class<? extends ChannelInfo> channelInfoClass) {
         List<HstPropertyDefinition> properties = new ArrayList<HstPropertyDefinition>();
         for (Method method : channelInfoClass.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {

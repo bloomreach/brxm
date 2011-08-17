@@ -334,7 +334,7 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public synchronized <T> T getChannelInfo(String channelId) throws ChannelException {
+    public synchronized <T extends ChannelInfo> T getChannelInfo(String channelId) throws ChannelException {
         load();
         if (channelId != null && channels.containsKey(channelId)) {
             Channel channel = channels.get(channelId);

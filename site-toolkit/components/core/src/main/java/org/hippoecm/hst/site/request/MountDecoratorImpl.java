@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -174,7 +174,7 @@ public class MountDecoratorImpl implements MountDecorator{
         }
 
         @Override
-        public <T> T getChannelInfo() {
+        public <T extends ChannelInfo> T getChannelInfo() {
             return (T) delegatee.getChannelInfo();
         }
 

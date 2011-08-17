@@ -23,8 +23,6 @@ public class Channel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public final static String UNKNOWN_BLUEPRINT = "<unknown-blueprint>";
-
     private final String id;
 
     private String name;
@@ -38,7 +36,7 @@ public class Channel implements Serializable {
     private String contentRoot;
     private boolean composerModeEnabled;
     private final Map<String, Object> properties = new HashMap<String, Object>();
-    private Class channelInfoClass;
+    private Class<? extends ChannelInfo> channelInfoClass;
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -151,11 +149,11 @@ public class Channel implements Serializable {
         return properties;
     }
 
-    public Class getChannelInfoClass() {
+    public Class<? extends ChannelInfo> getChannelInfoClass() {
         return channelInfoClass;
     }
 
-    public void setChannelInfoClass(final Class channelInfoClass) {
+    public void setChannelInfoClass(final Class<? extends ChannelInfo> channelInfoClass) {
         this.channelInfoClass = channelInfoClass;
     }
 

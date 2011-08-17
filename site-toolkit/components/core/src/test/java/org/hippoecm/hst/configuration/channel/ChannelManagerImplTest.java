@@ -126,7 +126,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         });
     }
 
-    public static interface TestInfoClass {
+    public static interface TestInfoClass extends ChannelInfo {
         @Parameter(name="getme", defaultValue = "aap")
         String getGetme();
     }

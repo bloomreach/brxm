@@ -22,13 +22,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -225,7 +226,7 @@ public class MountService implements ContextualizableMount {
     private boolean sessionStateful;
     
     private String formLoginPage;
-    private Object channelInfo;
+    private ChannelInfo channelInfo;
     
     private String[] defaultSiteMapItemHandlerIds;
 
@@ -775,7 +776,7 @@ public class MountService implements ContextualizableMount {
         return mountProperties;
     }
 
-    public <T> T getChannelInfo() {
+    public <T extends ChannelInfo> T getChannelInfo() {
         return (T) channelInfo;
     }
 

@@ -52,6 +52,10 @@ public class ChannelPropertyMapper {
             String className = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS).getString();
             try {
                 Class clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
+                if (!ChannelInfo.class.isAssignableFrom(clazz)) {
+                    log.warn("Class " + className + " does not extend ChannelInfo");
+                    return channel;
+                }
                 channel.setChannelInfoClass(clazz);
                 if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                     Map<String, Object> properties = channel.getProperties();
@@ -66,7 +70,7 @@ public class ChannelPropertyMapper {
                     }
                 }
             } catch (ClassNotFoundException e) {
-                log.error("Could not load channel info class " + className + " for channel " + channel.getId(), e);
+                log.warn("Could not load channel info class " + className + " for channel " + channel.getId(), e);
             }
         }
         return channel;
@@ -79,7 +83,7 @@ public class ChannelPropertyMapper {
             channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).remove();
         }
         if (channel.getChannelInfoClass() != null) {
-            Class<?> channelInfoClass = channel.getChannelInfoClass();
+            Class<? extends ChannelInfo> channelInfoClass = channel.getChannelInfoClass();
             channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channel.getChannelInfoClass().getName());
 
             Node channelPropsNode;
