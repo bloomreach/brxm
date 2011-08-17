@@ -15,17 +15,13 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +34,7 @@ public class BlueprintService implements Blueprint {
     private final String description;
     private final String path;
 
-    private final Class<?> channelInfoClass;
-    private final List<HstPropertyDefinition> properties;
+    private final Channel prototypeChannel;
 
     public BlueprintService(final Node bluePrint) throws RepositoryException {
         path = bluePrint.getPath();
@@ -58,31 +53,10 @@ public class BlueprintService implements Blueprint {
             this.description = null;
         }
 
-        Class clazz = null;
-        if (bluePrint.hasProperty("hst:channelinfoclass")) {
-            String className = bluePrint.getProperty("hst:channelinfoclass").getString();
-            try {
-                clazz = getClass().getClassLoader().loadClass(className);
-            } catch (ClassNotFoundException e) {
-                log.error("Could not load ", e);
-            }
-        }
-        channelInfoClass = clazz;
-
-        if (channelInfoClass != null) {
-            properties = ChannelInfoClassProcessor.getProperties(channelInfoClass);
-            if (bluePrint.hasNode("hst:defaultchannelinfo")) {
-                Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(bluePrint.getNode("hst:defaultchannelinfo"), properties);
-                for (HstPropertyDefinition def : properties) {
-                    if ((def instanceof AbstractHstPropertyDefinition) && values.get(def) != null) {
-                        Object value = values.get(def);
-                        AbstractHstPropertyDefinition ahpd = (AbstractHstPropertyDefinition) def;
-                        ahpd.setDefaultValue(value);
-                    }
-                }
-            }
+        if (bluePrint.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
+            this.prototypeChannel = ChannelPropertyMapper.readChannel(bluePrint.getNode(HstNodeTypes.NODENAME_HST_CHANNEL));
         } else {
-            properties = Collections.emptyList();
+            this.prototypeChannel = new Channel(null);
         }
     }
 
@@ -101,39 +75,26 @@ public class BlueprintService implements Blueprint {
         return this.description;
     }
 
-    @Override
-    public Class<?> getChannelInfoClass() {
-        return channelInfoClass;
+    public Channel createChannel(String channelId) {
+        Channel channel = new Channel(channelId);
+        channel.setName(channelId);
+        channel.setChannelInfoClass(prototypeChannel.getChannelInfoClass());
+
+        Map<String, Object> properties = channel.getProperties();
+
+        Channel prototype = getPrototypeChannel();
+        channel.setChannelInfoClass(prototype.getChannelInfoClass());
+        properties.putAll(prototype.getProperties());
+
+        return channel;
     }
 
-    public List<HstPropertyDefinition> getPropertyDefinitions() {
-        return Collections.unmodifiableList(properties);
-    }
-
-    @Override
-    public ResourceBundle getResourceBundle(Locale locale) {
-        if (channelInfoClass != null) {
-            return ResourceBundle.getBundle(channelInfoClass.getName(), locale);
-        }
-        return null;
+    public Channel getPrototypeChannel() {
+        return prototypeChannel;
     }
 
     public Node getNode(final Session session) throws RepositoryException {
         return session.getNode(path);
-    }
-
-    public Map<String, Object> loadChannelProperties(Node mountNode) throws RepositoryException {
-        List<HstPropertyDefinition> propertyDefinitions = getPropertyDefinitions();
-        Map<HstPropertyDefinition, Object> properties = ChannelPropertyMapper.loadProperties(mountNode, propertyDefinitions);
-        Map<String, Object> channelProperties = new HashMap<String, Object>();
-        for (Map.Entry<HstPropertyDefinition, Object> entry : properties.entrySet()) {
-            channelProperties.put(entry.getKey().getName(), entry.getValue());
-        }
-        return channelProperties;
-    }
-
-    public void saveChannelProperties(Node mountNode, Map<String, Object> properties) throws RepositoryException {
-        ChannelPropertyMapper.saveProperties(mountNode, getPropertyDefinitions(), properties);
     }
 
 }

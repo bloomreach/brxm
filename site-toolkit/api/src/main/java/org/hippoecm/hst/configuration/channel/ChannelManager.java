@@ -16,7 +16,9 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Management interface for {@link Channel}s.  Basic Channel operations are provided.
@@ -30,17 +32,20 @@ public interface ChannelManager {
     Map<String, Channel> getChannels() throws ChannelException;
 
     /**
-     * Creates a channel with a unique ID.  The channel will not be persisted until save is invoked.
+     * Persist a channel; will create the mounts, sites and configuration when the channel is new.
+     * <p>
+     * When invoking this method, an HstSubject context must be provided with the credentials necessary
+     * to persist the channel.
+     * </p>
      *
-     * @param blueprintId
-     * @return
-     * @throws ChannelException when the blueprint is not valid
+     * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
+     * @param channel a channel instance to be persisted
+     * @throws ChannelException when the channel id already exists, or the channel could not be persisted.
      */
-    Channel createChannel(String blueprintId) throws ChannelException;
+    void persist(String blueprintId, Channel channel) throws ChannelException;
 
     /**
-     * Persist a channel; will create the mounts, sites and configuration when the channel is new. When the channel
-     * already exists, only the properties may have changed. If the URL path of the new channel is not empty, all
+     * Save channel properties.  If the URL path of the new channel is not empty, all
      * path-steps except the last one should already map to an existing mount.
      * <p>
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
@@ -68,7 +73,7 @@ public interface ChannelManager {
     Blueprint getBlueprint(String id) throws ChannelException;
 
     /**
-     * The channel info for this channel.  It is an instance of the {@link Blueprint#getChannelInfoClass()} class.
+     * The channel info for this channel.  It is an instance of the {@link Channel#getChannelInfoClass()} class.
      *
      * @param channelId
      * @param <T>
@@ -76,4 +81,12 @@ public interface ChannelManager {
      * @throws ChannelException
      */
     <T> T getChannelInfo(String channelId) throws ChannelException;
+
+    /**
+     * The resource bundle for the channel info.  It contains the display names for fields
+     * and values.
+     */
+    ResourceBundle getResourceBundle(Channel channel, Locale locale);
+
+    List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
 }

@@ -8,7 +8,7 @@
       <sv:value>hst:configuration</sv:value>
     </sv:property>
     <sv:property sv:name="hst:inheritsfrom" sv:type="String" sv:multiple="true">
-      <sv:value>../common</sv:value>
+      <sv:value>../unittest</sv:value>
     </sv:property>
     <sv:node sv:name="hst:pages">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -105,5 +105,15 @@
     <sv:property sv:name="hst:mountpoint" sv:type="String">
       <sv:value>/hst:hst/hst:sites/blueprint-site</sv:value>
     </sv:property>
+  </sv:node>
+  <sv:node sv:name="hst:channel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:channel</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:channelinfo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+         <sv:value>hst:channelinfo</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 </sv:node>

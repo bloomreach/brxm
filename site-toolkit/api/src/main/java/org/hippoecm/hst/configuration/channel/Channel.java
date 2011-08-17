@@ -25,7 +25,6 @@ public class Channel implements Serializable {
 
     public final static String UNKNOWN_BLUEPRINT = "<unknown-blueprint>";
 
-    private final String bluePrintId;
     private final String id;
 
     private String name;
@@ -39,26 +38,16 @@ public class Channel implements Serializable {
     private String contentRoot;
     private boolean composerModeEnabled;
     private final Map<String, Object> properties = new HashMap<String, Object>();
+    private Class channelInfoClass;
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
      * to guarantee uniqueness of the id.
      *
-     * @param bluePrintId the ID of the channel's blueprint
      * @param id the unique ID of this channel
      */
-    public Channel(String bluePrintId, String id) {
-        this.bluePrintId = bluePrintId;
+    public Channel(String id) {
         this.id = id;
-    }
-
-    /**
-     * The Blueprint ID for this channel, or {@value #UNKNOWN_BLUEPRINT} if no blueprint is available for this channel.
-     *
-     * @return the blueprint ID of this channel.
-     */
-    public String getBlueprintId() {
-        return bluePrintId != null ? bluePrintId : UNKNOWN_BLUEPRINT;
     }
 
     /**
@@ -162,6 +151,14 @@ public class Channel implements Serializable {
         return properties;
     }
 
+    public Class getChannelInfoClass() {
+        return channelInfoClass;
+    }
+
+    public void setChannelInfoClass(final Class channelInfoClass) {
+        this.channelInfoClass = channelInfoClass;
+    }
+
     public int hashCode() {
         return id.hashCode() ^ 317;
     }
@@ -181,7 +178,6 @@ public class Channel implements Serializable {
     public String toString() {
         return "Channel{" +
                 "id=" + id +
-                ", bluePrint=" + bluePrintId +
                 ", title='" + name + '\'' +
                 ", url='" + url + '\'' +
                 ", type='" + type + '\'' +
@@ -189,4 +185,5 @@ public class Channel implements Serializable {
                 ", contentRoot='" + contentRoot + '\'' +
                 '}';
     }
+
 }

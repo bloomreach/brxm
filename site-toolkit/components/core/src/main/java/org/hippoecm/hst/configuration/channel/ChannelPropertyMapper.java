@@ -29,14 +29,75 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChannelPropertyMapper {
+
+    static final Logger log = LoggerFactory.getLogger(ChannelPropertyMapper.class);
 
     private ChannelPropertyMapper() {
     }
 
-    public static Map<HstPropertyDefinition, Object> loadProperties(Node mountNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
+    public static Channel readChannel(Node channelNode) throws RepositoryException {
+        Channel channel = new Channel(channelNode.getName());
+        channel.setName(channelNode.getName());
+        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
+            channel.setName(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).getString());
+        }
+
+        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
+            String className = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS).getString();
+            try {
+                Class clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
+                channel.setChannelInfoClass(clazz);
+                if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+                    Map<String, Object> properties = channel.getProperties();
+                    List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor.getProperties(clazz);
+                    Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO), propertyDefinitions);
+                    for (HstPropertyDefinition def : propertyDefinitions) {
+                        if (values.get(def) != null) {
+                            properties.put(def.getName(), values.get(def));
+                        } else if (def.getDefaultValue() != null) {
+                            properties.put(def.getName(), def.getDefaultValue());
+                        }
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                log.error("Could not load channel info class " + className + " for channel " + channel.getId(), e);
+            }
+        }
+        return channel;
+    }
+
+    public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException {
+        if (channel.getName() != null) {
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());
+        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
+            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).remove();
+        }
+        if (channel.getChannelInfoClass() != null) {
+            Class<?> channelInfoClass = channel.getChannelInfoClass();
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channel.getChannelInfoClass().getName());
+
+            Node channelPropsNode;
+            if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+                channelPropsNode = channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+            } else {
+                channelPropsNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+            }
+            ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), channel.getProperties());
+        } else {
+            if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+                channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
+            }
+        }
+
+    }
+
+    static Map<HstPropertyDefinition, Object> loadProperties(Node mountNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
         Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition pd : propertyDefinitions) {
@@ -60,7 +121,7 @@ public class ChannelPropertyMapper {
         return properties;
     }
 
-    public static void saveProperties(Node mountNode, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
+    static void saveProperties(Node mountNode, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
         for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
             Property prop = propertyIterator.nextProperty();
             if (prop.getDefinition().isProtected()) {

@@ -44,7 +44,9 @@ public interface HstNodeTypes {
     public final static String NODETYPE_HST_CONTENTMOUNT = "hst:contentmount";
     public final static String NODETYPE_HST_TEMPLATE = "hst:template";
     public final static String NODETYPE_HST_CHANNELINFO = "hst:channelinfo";
-    
+    public final static String NODETYPE_HST_CHANNEL = "hst:channel";
+    public final static String NODETYPE_HST_CHANNELS = "hst:channels";
+
     public final static String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     public final static String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     public final static String GENERAL_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
@@ -127,10 +129,12 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_SUBJECTBASEDSESSION =  "hst:subjectbasedsession";
     public final static String MOUNT_PROPERTY_SESSIONSTATEFUL =  "hst:sessionstateful";
     public final static String MOUNT_PROPERTY_FORMLOGINPAGE =  "hst:formloginpage";
-    public final static String MOUNT_PROPERTY_CHANNELID =  "hst:channelid";
-    public final static String MOUNT_PROPERTY_BLUEPRINTID =  "hst:blueprintid";
-    public final static String MOUNT_PROPERTY_CHANNELPROPERTIES =  "hst:channelproperties";
     public final static String MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS =  "hst:defaultsitemapitemhandlerids";
+    public final static String MOUNT_PROPERTY_CHANNELPATH =  "hst:channelpath";
+
+
+    public final static String CHANNEL_PROPERTY_NAME = "hst:name";
+    public final static String CHANNEL_PROPERTY_CHANNELINFO_CLASS = "hst:channelinfoclass";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
@@ -148,7 +152,7 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_BLUEPRINTS = "hst:blueprints";
     public final static String NODENAME_HST_CHANNELINFO = "hst:channelinfo";
     public final static String NODENAME_HST_BLUEPRINT_SITE = "hst:site";
-
-    public final static String CHANNELINFO_PROPERTY_NAME = "hst:name";
+    public final static String NODENAME_HST_CHANNEL = "hst:channel";
+    public final static String NODENAME_HST_CHANNELS = "hst:channels";
 
 }

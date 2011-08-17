@@ -16,10 +16,6 @@
 package org.hippoecm.hst.configuration.channel;
 
 
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * A Blueprint is a "node" provided by the developers that is used to create and manage channels by the ChannelManager,
  * and is defined by the node type hst:blueprint. Please see the hst.cnd for the node type definition.
@@ -47,22 +43,11 @@ public interface Blueprint {
     String getDescription();
 
     /**
-     * Channel info class for this blueprint.  Or null when no class has been configured.
-     * @return info class of the blueprint.
-     */
-    Class<?> getChannelInfoClass();
-
-    /**
-     * The property definitions for this blueprint.
+     * Creates a channel.  The channel can be persisted using {@link ChannelManager#persist}.
      *
      * @return
+     * @throws ChannelException when the blueprint is not valid
      */
-    List<HstPropertyDefinition> getPropertyDefinitions();
-
-    /**
-     * The resource bundle for the channel info.  It contains the display names for fields
-     * and values.
-     */
-    ResourceBundle getResourceBundle(Locale locale);
+    Channel createChannel(String id) throws ChannelException;
 
 }

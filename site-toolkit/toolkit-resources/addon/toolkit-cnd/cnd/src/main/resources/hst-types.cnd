@@ -160,7 +160,6 @@
 
 
 [hst:channelinfo]
-- hst:name (string)
 - * (string)
 - * (string) multiple
 - * (boolean)
@@ -171,6 +170,15 @@
 - * (double) multiple
 - * (date)
 - * (date) multiple
+
+[hst:channel] > nt:base, mix:referenceable, mix:versionable
+- hst:name (string)
+- hst:channelinfoclass (string)
+// properties of the channel
++ hst:channelinfo (hst:channelinfo)
+
+[hst:channels] > nt:base, mix:referenceable, mix:versionable
++ * (hst:channel)
 
 [hst:mount] > nt:base, mix:referenceable
 + * (hst:mount)
@@ -214,11 +222,7 @@
 // form login page for this site mount, to which the request can be redirected for non-authenticated user.
 - hst:formloginpage (string)
 // channel to which this mount belongs
-- hst:channelid (string)
-// blueprint for the channel
-- hst:blueprintid (string)
-// properties of the channel
-+ hst:channelinfo (hst:channelinfo)
+- hst:channelpath (string)
 // to hold all the 'free defined properties'
 - * (string)
 
@@ -263,10 +267,9 @@
 //"User-friendly" Name of the Blueprint that is used in Channel Manager
 - hst:name (string)
 - hst:description (string)
-- hst:channelinfoclass (string)
 // prototype for the channel properties.
 // Used for default values
-+ hst:defaultchannelinfo (hst:channelinfo)
++ hst:channel (hst:channel)
 + hst:configuration (hst:configuration)
 + hst:site (hst:site)
 + hst:mount (hst:mount)
@@ -279,6 +282,7 @@
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
 + hst:blueprints (hst:blueprints) = hst:blueprints version
++ hst:channels (hst:channels) = hst:channels version
 + * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites

@@ -515,8 +515,8 @@ public class MountService implements ContextualizableMount {
             }
         }
 
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELID)) {
-            channelId = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELID);
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
+            channelId = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
 
             if (channelId != null) {
                 try {

@@ -523,7 +523,6 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.xml svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintServiceTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
@@ -1026,6 +1025,7 @@ toolkit-resources/addon/toolkit-cnd/cnd/src/main/resources/hst-types.cnd -text
 toolkit-resources/addon/toolkit-cnd/pom.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/pom.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestchannels.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestconfiguration.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent-sites.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent.xml -text
