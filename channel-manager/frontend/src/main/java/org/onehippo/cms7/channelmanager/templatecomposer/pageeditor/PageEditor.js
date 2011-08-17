@@ -303,6 +303,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('reconfigure page model grid');
             var grid = Ext.getCmp('PageModelGrid');
             grid.reconfigure(this.stores.pageModel, grid.getColumnModel());
+            this.mainWindow.show();
         }
     },
 
@@ -455,7 +456,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
         this.iframeDOMReady = false;
-        this.iframeInitialized = false
+        this.iframeInitialized = false;
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
 
@@ -1019,9 +1020,9 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 write :{
                     fn: function(store, action, result, res, rs) {
                         Ext.Msg.hide();
-                        Ext.Msg.wait('Refreshing page ...');
-                        var iframe = Ext.getCmp('Iframe');
-                        iframe.setSrc(iframe.getFrameDocument().location.href);
+                        Hippo.ChannelManager.TemplateComposer.Instance.iframeInitialized = false;
+                        Hippo.ChannelManager.TemplateComposer.Instance.shareData();
+                        Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
                     }
                 },
                 load : {
