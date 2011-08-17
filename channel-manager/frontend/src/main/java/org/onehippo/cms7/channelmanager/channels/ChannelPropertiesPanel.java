@@ -44,7 +44,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -248,12 +247,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
     }
 
     private ResourceBundle getResources() {
-        try {
-            return getChannelManager().getBlueprint(channel.getBlueprintId()).getResourceBundle(getSession().getLocale());
-        } catch (ChannelException e) {
-            log.error("Could not find blueprint", e);
-            return null;
-        }
+        return getChannelManager().getResourceBundle(channel, getSession().getLocale());
     }
 
     private void save() {
@@ -294,26 +288,14 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         return super.newExtEventBehavior(event);
     }
 
-    private Blueprint getBlueprint() {
-        if (channel == null) {
-            return null;
-        }
-        try {
-            return getChannelManager().getBlueprint(channel.getBlueprintId());
-        } catch (ChannelException e) {
-            throw new RuntimeException("Unable to get the channels from Channel Manager", e);
-        }
-    }
-
     private FieldGroup[] getFieldGroups() {
-        Blueprint blueprint = getBlueprint();
-        if (blueprint == null) {
+        if (channel == null) {
             return ZERO_FIELD_GROUPS;
         }
 
-        Class<?> channelInfoClass = blueprint.getChannelInfoClass();
+        Class<?> channelInfoClass = channel.getChannelInfoClass();
         if (channelInfoClass == null) {
-            log.info("Blueprint '{}' has no channel info class: no channel properties will be shown", blueprint.getId());
+            log.info("Channel '{}' has no channel info class: no channel properties will be shown", channel.getId());
             return ZERO_FIELD_GROUPS;
         }
 
@@ -361,7 +343,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
     }
 
     private HstPropertyDefinition getPropertyDefinition(String propertyName) {
-        for (HstPropertyDefinition definition : getBlueprint().getPropertyDefinitions()) {
+        for (HstPropertyDefinition definition : getChannelManager().getPropertyDefinitions(channel)) {
             if (definition.getName().equals(propertyName)) {
                 return definition;
             }

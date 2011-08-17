@@ -132,7 +132,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
         try {
-            newChannel = channelManager.createChannel(blueprintId);
+            newChannel = channelManager.getBlueprint(blueprintId).createChannel(record.getString("name"));
         } catch (ChannelException e) {
             final String errorMsg = "Could not create new channel with blueprint '" + blueprintId + "'";
             log.warn(errorMsg, e);
@@ -153,7 +153,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                         public Void run() throws ChannelException {
-                            channelManager.save(newChannel);
+                            channelManager.persist(blueprintId, newChannel);
                             return null;
                         }
                     }, null);

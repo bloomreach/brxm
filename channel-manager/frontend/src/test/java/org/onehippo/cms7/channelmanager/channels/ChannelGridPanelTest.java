@@ -1,8 +1,6 @@
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -66,7 +64,7 @@ public class ChannelGridPanelTest {
     public void sortColumnForNonExistingColumnIsFirstColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
-        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.hostname, ChannelStore.Column.blueprintId)));
+        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.hostname, ChannelStore.Column.id)));
     }
 
     @Test

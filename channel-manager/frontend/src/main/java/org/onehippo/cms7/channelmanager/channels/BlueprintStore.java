@@ -16,6 +16,10 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -27,10 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class BlueprintStore extends ExtJsonStore<Object> {
 
@@ -70,7 +70,6 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         }
         return data;
     }
-
 
     private List<Blueprint> getBlueprints() {
         ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());

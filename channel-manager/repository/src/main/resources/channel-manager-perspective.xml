@@ -22,7 +22,6 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="columns" sv:type="String">
       <sv:value>name</sv:value>
-      <sv:value>blueprintId</sv:value>
       <sv:value>url</sv:value>
       <sv:value>id</sv:value>
       <sv:value>contentRoot</sv:value>
