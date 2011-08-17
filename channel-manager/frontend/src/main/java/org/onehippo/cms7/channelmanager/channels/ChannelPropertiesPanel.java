@@ -46,6 +46,7 @@ import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.AssetLink;
@@ -293,7 +294,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return ZERO_FIELD_GROUPS;
         }
 
-        Class<?> channelInfoClass = channel.getChannelInfoClass();
+        Class<? extends ChannelInfo> channelInfoClass = channel.getChannelInfoClass();
         if (channelInfoClass == null) {
             log.info("Channel '{}' has no channel info class: no channel properties will be shown", channel.getId());
             return ZERO_FIELD_GROUPS;
