@@ -26,16 +26,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.impl.NodeDecorator;
 
@@ -190,20 +187,28 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
                 }
             }
         } else {
-            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
-                node.checkout();
-            }
+            checkout(node);
             node.addMixin(HippoNodeType.NT_TRANSLATED);
         }
         if (translationNode == null) {
-            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
-                node.checkout();
-            }
+            checkout(node);
             translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
             localized.setTranslation(translationNode);
+        } else {
+            checkout(translationNode);
         }
         translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
         node.save();
+    }
+
+    private static void checkout(Node node) throws RepositoryException {
+        while (node.getDepth() > 0) {
+            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
+                node.checkout();
+                return;
+            }
+            node = node.getParent();
+        }
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
