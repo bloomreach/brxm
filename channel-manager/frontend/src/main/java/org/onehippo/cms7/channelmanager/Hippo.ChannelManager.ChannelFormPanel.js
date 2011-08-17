@@ -17,6 +17,14 @@
 Ext.QuickTips.init();
 Ext.namespace('Hippo.ChannelManager');
 
+Ext.apply(Ext.form.VTypes, {
+    'hippourl': function(value) {
+            var expr = /(^http:\/\/([\-\w]+\.)*\w(\/[%\-\w]+(\.\w{2,})?)*)/i;
+            return expr.test(value);
+        },
+    'hippourlText' : 'This field should be a URL in the format "http:/'+'/www.example.com"'
+});
+
 /**
  * @class Hippo.ChannelManager.ChannelFormPanel
  * @extends Ext.form.FormPanel
@@ -63,7 +71,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                             fieldLabel: 'URL',
                             id: 'url',
                             allowBlank: false,
-                            vtype: 'url'
+                            vtype: 'hippourl'
                         },
                         {
                             xtype: 'textarea',
