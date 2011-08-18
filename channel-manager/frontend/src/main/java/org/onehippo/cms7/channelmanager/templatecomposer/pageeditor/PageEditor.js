@@ -384,6 +384,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Ext.getCmp('pageComposerButton').toggle(false, true);
         Ext.getCmp('pagePreviewButton').setDisabled(true);
         Ext.getCmp('pageComposerButton').setDisabled(true);
+        if (this.mainWindow) {
+            this.mainWindow.hide();
+        }
 
         if (!this.hstInComposerMode) {
             var me = this;
