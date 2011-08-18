@@ -465,7 +465,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 self.editingUnpublishedHstConfig = true; // TODO remove
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
-                                self.on('iFrameInitialized', function() {
+                                self.on('afterShareDataWithIFrame', function() {
                                     self.fireEvent('modeChanged', {previewMode : self.previewMode});
                                 }, self, { single: true});
                                 self.refreshIframe.call(self, null);
@@ -476,7 +476,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 console.error('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
-                                self.on('iFrameInitialized', function() {
+                                self.on('afterShareDataWithIFrame', function() {
                                     self.fireEvent('modeChanged', {previewMode : self.previewMode});
                                 }, self, { single: true});
                                 self.refreshIframe.call(self, null);
@@ -484,9 +484,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         });
                     }
                 };
-                console.log('self.ids.pageUrl:'+this.ids.pageUrl +', this.frm.getDocumentURI(): '+this.frm.getDocumentURI())
-                // go ahead if the ids are of the current document
-                if (this.ids.pageUrl === this.frm.getDocumentURI()) {
+                if (this.isHstMetaDataLoaded()) {
                     initialize.apply(this, [this.ids.mountId, this.ids.pageId]);
                 } else {
                     this.on('hstMetaDataResponse', function(data) {
@@ -637,6 +635,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : data.hasPreviewConfig });
             // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
         }
+    },
+
+    isHstMetaDataLoaded : function() {
+        return this.ids.pageUrl === this.frm.getDocumentURI();
     },
 
     createToolkitStore : function(mountId) {
@@ -810,6 +812,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     shareData : function() {
+        this.fireEvent('beforeShareDataWithIFrame');
         console.log('shareData');
 
         var func = function() {
@@ -832,6 +835,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.pageModelFacade = new facade();
             }
             this.sendFrameMessage(this.pageModelFacade, 'sharedata');
+            this.fireEvent('afterShareDataWithIFrame');
         }
 
         if (this.iframeInitialized) {
