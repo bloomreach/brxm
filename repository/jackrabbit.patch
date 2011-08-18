@@ -4,9 +4,12 @@
 # <URL:http://svn.apache.org/repos/asf/jackrabbit/tags/2.2.5/>
 # The patchfile below is divided into sections per
 # functionality/fix/workaround added.  Each section contains a header
-# with Jira issue key with as task to be able to get rid of thesepatches.
+# with Jira issue key with as task to be able to get rid of these patches.
 # These Jira issues are all subtasks of Jira issue REPO-187.
 #
+# Apply this file by running 'patch -c -p0 < jackrabbit.patch'
+# from the jackrabbit root directory.
+# 
 
 #
 # REPO-187: forked Jackrabbit
