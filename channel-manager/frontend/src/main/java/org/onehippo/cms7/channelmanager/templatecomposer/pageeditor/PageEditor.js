@@ -342,10 +342,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
         this.renderHostSubMountPath = renderHostSubMountPath;
         this.renderHost = renderHost;
-        this.iframeDOMReady = false;
-        this.iframeInitialized = false;
-        this.editingUnpublishedHstConfig = false; // TODO remove
         this.previewMode = true;
+        this.ids.pageId = null;
+        this.ids.mountId = null;
+        this.ids.pageUrl = null;
+        this.editingUnpublishedHstConfig = false; // TODO remove
+        this.resetIFrameState();
         Ext.getCmp('pagePreviewButton').toggle(true, true);
         Ext.getCmp('pageComposerButton').toggle(false, true);
 
@@ -477,9 +479,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     refreshIframe : function() {
         Ext.Msg.wait('Reloading page ...');
         var iframe = Ext.getCmp('Iframe');
+        this.resetIFrameState();
+        // we don't need to reload the stores, so just share the data again with the iframe
+        this.shareData();
+        iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
+    },
+
+    resetIFrameState : function() {
         this.iframeDOMReady = false;
         this.iframeInitialized = false;
-        iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
 
     onIframeDOMReady : function(frm) {
@@ -800,7 +808,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (this.iframeInitialized) {
             func.call(this);
         } else {
-            this.on('afterInitializeIFrameHead', func, this, {single : true});
+            if (this.shareDataIFrameInitializedListener) {
+                this.removeListener('iFrameInitialized', this.shareDataIFrameInitializedListener, this);
+            }
+            this.shareDataIFrameInitializedListener = func;
+            this.on('iFrameInitialized', func, this, {single : true});
         }
     },
 
@@ -1042,8 +1054,6 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 write :{
                     fn: function(store, action, result, res, rs) {
                         Ext.Msg.hide();
-                        Hippo.ChannelManager.TemplateComposer.Instance.iframeInitialized = false;
-                        Hippo.ChannelManager.TemplateComposer.Instance.shareData();
                         Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
                     }
                 },
