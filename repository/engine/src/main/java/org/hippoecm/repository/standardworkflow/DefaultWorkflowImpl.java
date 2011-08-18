@@ -203,8 +203,10 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     private static void checkout(Node node) throws RepositoryException {
         while (node.getDepth() > 0) {
-            if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
-                node.checkout();
+            if (node.isNodeType("mix:versionable")) {
+                if (!node.isCheckedOut()) {
+                    node.checkout();
+                }
                 return;
             }
             node = node.getParent();
