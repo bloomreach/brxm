@@ -193,6 +193,11 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         return index >= 0;
     },
 
+    getChannelByMountId: function(mountId) {
+        var collection = this.store.query('mountId', mountId);
+        return collection.first();
+    },
+
     // Selects the row with this index (0-based). A negative index clears the selection.
     // Fires a channel-selected event when a channel is selected, otherwise fires a channel-deselected event.
     selectRow: function(index) {

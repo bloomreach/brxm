@@ -54,6 +54,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     // the getters of Channel via reflection
     public enum Column {
         id, // channel id
+        mountId,
         name,
         blueprintId,
         url,

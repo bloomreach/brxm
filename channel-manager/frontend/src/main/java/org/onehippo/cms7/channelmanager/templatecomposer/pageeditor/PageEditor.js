@@ -387,7 +387,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         if (!this.hstInComposerMode) {
             var me = this;
-            Ext.getCmp('channelName').setText(channelName);
             // do initial handshake with CmsSecurityValve of the composer mount and
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
             // the redirect to the composermode rest resource fails with the handshake, so we have to
@@ -421,6 +420,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
             iFrame.setSrc(this.composerMountUrl + this.renderHostSubMountPath + "?" + this.renderHostParameterName + "=" + this.renderHost);
+        }
+    },
+
+    setChannelName : function(name, highlight) {
+        var channelNameText = Ext.getCmp('channelName');
+        channelNameText.setText(name);
+        if (highlight) {
+            channelNameText.getEl().highlight();
         }
     },
 

@@ -84,6 +84,13 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                 this.gridPanel.selectRow(-1);
                 this.propertiesPanel.closePanel();
             }, this);
+
+            Hippo.ChannelManager.TemplateComposer.Instance.on('beforeMountIdChange', function(data) {
+                var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);
+                Hippo.ChannelManager.TemplateComposer.Instance.setChannelName(channelRecord.get('name'), true);
+                this.gridPanel.selectChannel(channelRecord.get('id'));
+            }, this);
+
         }, this);
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
