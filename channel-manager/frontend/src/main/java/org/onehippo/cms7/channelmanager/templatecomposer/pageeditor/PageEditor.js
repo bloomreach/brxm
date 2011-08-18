@@ -34,6 +34,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             pageModel : null
         };
 
+        this.hstInComposerMode = false;
         this.editingUnpublishedHstConfig = false;
 
         this.addEvents('beforePreCacheIFrameResources', 'afterPreCacheIFrameResources',
@@ -116,11 +117,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             iconCls: 'title-button',
                             id: 'publishHstConfig',
                             width: 150,
-                            // hidden: true,
                             listeners: {
                                 'click': {
                                     fn : function() {
-                                        console.log("publish is not implemented yet");
+                                        this.publishHstConfiguration();
                                     },
                                     scope: this
                                 }
@@ -340,10 +340,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
-        // do initial handshake with CmsSecurityValve of the composer mount and
-        // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-        // the redirect to the composermode rest resource fails with the handshake, so we have to
-        // make a second request to actually set the composermode after we are authenticated
         this.renderHostSubMountPath = renderHostSubMountPath;
         this.renderHost = renderHost;
         this.iframeDOMReady = false;
@@ -353,32 +349,58 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Ext.getCmp('pagePreviewButton').toggle(true, true);
         Ext.getCmp('pageComposerButton').toggle(false, true);
 
-        // TODO only set in composer mode once
-        var me = this;
-        Ext.getCmp('channelName').setText(channelName);
-        var composerMode = function(callback) {
-            Ext.Ajax.request({
-                url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
-                method : 'POST',
-                success: callback,
-                failure: function() {
-                    window.setTimeout(function() {
-                        composerMode(callback);
-                    }, 1000);
-                }
+        if (!this.hstInComposerMode) {
+            var me = this;
+            Ext.getCmp('channelName').setText(channelName);
+            // do initial handshake with CmsSecurityValve of the composer mount and
+            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+            // the redirect to the composermode rest resource fails with the handshake, so we have to
+            // make a second request to actually set the composermode after we are authenticated
+            var composerMode = function(callback) {
+                Ext.Ajax.request({
+                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
+                    method : 'POST',
+                    success: callback,
+                    failure: function() {
+                        window.setTimeout(function() {
+                            composerMode(callback);
+                        }, 1000);
+                    }
+                });
+            };
+            composerMode(function() {
+                me.hstInComposerMode = true;
+                var iFrame = Ext.getCmp('Iframe');
+                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
+                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
+
+                // keep session active
+                Ext.TaskMgr.start({
+                    run: me.keepAlive,
+                    interval: 60000,
+                    scope: me
+                });
             });
-        };
-        composerMode(function() {
+        } else {
             var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-            iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
+            iFrame.setSrc(this.composerMountUrl + this.renderHostSubMountPath + "?" + this.renderHostParameterName + "=" + this.renderHost);
+        }
+    },
 
-            // keep session active
-            Ext.TaskMgr.start({
-                run: me.keepAlive,
-                interval: 60000,
-                scope: me
-            });
+    publishHstConfiguration : function() {
+        var self = this;
+        Ext.Ajax.request({
+            url: this.composerRestMountUrl + this.ids.mountId + './publish', // TODO adjust url according to rest service
+            success: function () {
+                Ext.getCmp('pagePreviewButton').toggle(true);
+                self.refreshIframe.call(self, null);
+            },
+            // TODO remove failure callback
+            failure: function() {
+                Ext.getCmp('pagePreviewButton').toggle(true);
+                self.refreshIframe.call(self, null);
+            }
         });
     },
 
