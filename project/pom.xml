@@ -39,6 +39,15 @@
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
+    <!--
+      Note on upgrading dependencies and plugins:
+      Always check the apache pom for guidance before upgrading.
+      Newer versions are not always better versions.
+      If they haven't upgraded to a certain version then probably that's
+      a good enough reason we shouldn't upgrade either.
+      You can find the latest apache pom here:
+      https://svn.apache.org/repos/asf/maven/pom/trunk/asf/pom.xml
+    -->
     <servlet-api.version>2.5</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
     <jdo2.api.version>2.3-eb</jdo2.api.version>
@@ -62,7 +71,7 @@
     <maven.plugin.javadoc.version>2.8</maven.plugin.javadoc.version>
     <maven.plugin.jrebel.version>1.0.7</maven.plugin.jrebel.version>
     <maven.plugin.project-info.version>2.4</maven.plugin.project-info.version>
-    <maven.plugin.release.version>2.2</maven.plugin.release.version>
+    <maven.plugin.release.version>2.1</maven.plugin.release.version>
     <maven.plugin.remote-resources.version>1.2.1</maven.plugin.remote-resources.version>
     <maven.plugin.resources.version>2.5</maven.plugin.resources.version>
     <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
