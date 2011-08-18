@@ -130,7 +130,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         {
                             id: 'channelName',
                             xtype: 'tbtext',
-                            text: 'channel name',
+                            text: '',
                             style: {
                                 marginLeft: '150px',
                             }
