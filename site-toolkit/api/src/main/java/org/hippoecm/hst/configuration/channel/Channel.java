@@ -37,6 +37,7 @@ public class Channel implements Serializable {
     private boolean composerModeEnabled;
     private final Map<String, Object> properties = new HashMap<String, Object>();
     private Class<? extends ChannelInfo> channelInfoClass;
+    private String mountId;
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -155,6 +156,14 @@ public class Channel implements Serializable {
 
     public void setChannelInfoClass(final Class<? extends ChannelInfo> channelInfoClass) {
         this.channelInfoClass = channelInfoClass;
+    }
+
+    public void setMountId(final String mountId) {
+        this.mountId = mountId;
+    }
+
+    public String getMountId() {
+        return this.mountId;
     }
 
     public int hashCode() {

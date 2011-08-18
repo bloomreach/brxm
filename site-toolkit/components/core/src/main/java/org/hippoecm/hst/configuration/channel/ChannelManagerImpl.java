@@ -172,6 +172,8 @@ public class ChannelManagerImpl implements ChannelManager {
                 }
             }
 
+            channel.setMountId(currNode.getIdentifier());
+
             setUrlFor(currNode, channel);
         }
     }
