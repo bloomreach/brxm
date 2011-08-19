@@ -336,32 +336,46 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public synchronized <T extends ChannelInfo> T getChannelInfo(String channelId) throws ChannelException {
-        load();
-        if (channelId != null && channels.containsKey(channelId)) {
-            Channel channel = channels.get(channelId);
-            if (channel.getChannelInfoClass() == null) {
-                log.warn("No channel info class specified for channel '{}'. The channel should have a blueprint with a channel info class in order to use the channel info object.", channelId);
-            } else {
-                return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channel.getChannelInfoClass());
-            }
+    public Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException {
+        String channelInfoClassName = channel.getChannelInfoClassName();
+        if (channelInfoClassName == null) {
+            throw new ChannelException("No channel info classname specified for " + channel.getId());
         }
-        return null;
+        try {
+            return (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
+        } catch (ClassNotFoundException cnfe) {
+            throw new ChannelException("Configured class " + channelInfoClassName + " was not found", cnfe);
+        } catch (ClassCastException cce) {
+            throw new ChannelException("Configured class " + channelInfoClassName + " does not extend ChannelInfo", cce);
+        }
+    }
+
+    @Override
+    public <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException {
+        Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass);
     }
 
     @Override
     public List<HstPropertyDefinition> getPropertyDefinitions(Channel channel) {
-        if (channel.getChannelInfoClass() != null) {
-            return ChannelInfoClassProcessor.getProperties(channel.getChannelInfoClass());
+        try {
+            if (channel.getChannelInfoClassName() != null) {
+                Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
+                if (channelInfoClass != null) {
+                    return ChannelInfoClassProcessor.getProperties(channelInfoClass);
+                }
+            }
+        } catch (ChannelException ex) {
+            log.warn("Could not load properties", ex);
         }
         return Collections.emptyList();
     }
 
     @Override
     public ResourceBundle getResourceBundle(Channel channel, Locale locale) {
-        Class channelInfoClass = channel.getChannelInfoClass();
-        if (channelInfoClass != null) {
-            return ResourceBundle.getBundle(channelInfoClass.getName(), locale);
+        String channelInfoClassName = channel.getChannelInfoClassName();
+        if (channelInfoClassName != null) {
+            return ResourceBundle.getBundle(channelInfoClassName, locale);
         }
         return null;
     }

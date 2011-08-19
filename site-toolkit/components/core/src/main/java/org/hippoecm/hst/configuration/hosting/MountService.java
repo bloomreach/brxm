@@ -28,8 +28,10 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -521,7 +523,13 @@ public class MountService implements ContextualizableMount {
 
             if (channelId != null) {
                 try {
-                    channelInfo = hstManager.getChannelManager().getChannelInfo(channelId);
+                    ChannelManager channelManager = hstManager.getChannelManager();
+                    Channel channel = channelManager.getChannels().get(channelId);
+                    if (channel != null) {
+                        channelInfo = channelManager.getChannelInfo(channel);
+                    } else {
+                        log.warn("Could not find channel " + channelId);
+                    }
                 } catch (ChannelException e) {
                     log.error("Could not set channel info", e);
                 }

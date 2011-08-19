@@ -164,7 +164,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                 return null;
             }
         });
-        TestInfoClass channelInfo = manager.getChannelInfo(channel.getId());
+        TestInfoClass channelInfo = manager.getChannelInfo(channel);
         assertEquals("noot", channelInfo.getGetme());
     }
 

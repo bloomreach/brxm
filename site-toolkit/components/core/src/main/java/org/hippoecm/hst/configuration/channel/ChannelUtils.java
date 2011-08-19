@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +39,10 @@ public class ChannelUtils {
 
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
                 String methodName = method.getName();
+
+                if ("getProperties".equals(methodName) && (args == null || args.length == 0)) {
+                    return Collections.unmodifiableMap(values);
+                }
 
                 boolean isGetter = false;
                 boolean isSetter = false;

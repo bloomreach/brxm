@@ -56,7 +56,7 @@ public class ChannelPropertyMapper {
                     log.warn("Class " + className + " does not extend ChannelInfo");
                     return channel;
                 }
-                channel.setChannelInfoClass(clazz);
+                channel.setChannelInfoClassName(className);
                 if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                     Map<String, Object> properties = channel.getProperties();
                     List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor.getProperties(clazz);
@@ -82,9 +82,9 @@ public class ChannelPropertyMapper {
         } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
             channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).remove();
         }
-        if (channel.getChannelInfoClass() != null) {
-            Class<? extends ChannelInfo> channelInfoClass = channel.getChannelInfoClass();
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channel.getChannelInfoClass().getName());
+        String channelInfoClassName = channel.getChannelInfoClassName();
+        if (channelInfoClassName != null) {
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channelInfoClassName);
 
             Node channelPropsNode;
             if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
@@ -92,7 +92,12 @@ public class ChannelPropertyMapper {
             } else {
                 channelPropsNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
             }
-            ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), channel.getProperties());
+            try {
+                Class<? extends ChannelInfo> channelInfoClass = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
+                ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), channel.getProperties());
+            } catch (ClassNotFoundException e) {
+                log.error("Could not find channel info class " + channelInfoClassName, e);
+            }
         } else {
             if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();

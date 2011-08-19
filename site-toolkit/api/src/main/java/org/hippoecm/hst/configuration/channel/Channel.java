@@ -36,7 +36,7 @@ public class Channel implements Serializable {
     private String contentRoot;
     private boolean composerModeEnabled;
     private final Map<String, Object> properties = new HashMap<String, Object>();
-    private Class<? extends ChannelInfo> channelInfoClass;
+    private String channelInfoClassName;
     private String mountId;
 
     /**
@@ -150,12 +150,12 @@ public class Channel implements Serializable {
         return properties;
     }
 
-    public Class<? extends ChannelInfo> getChannelInfoClass() {
-        return channelInfoClass;
+    public String getChannelInfoClassName() {
+        return channelInfoClassName;
     }
 
-    public void setChannelInfoClass(final Class<? extends ChannelInfo> channelInfoClass) {
-        this.channelInfoClass = channelInfoClass;
+    public void setChannelInfoClassName(String channelInfoClassName) {
+        this.channelInfoClassName = channelInfoClassName;
     }
 
     public void setMountId(final String mountId) {

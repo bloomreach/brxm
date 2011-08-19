@@ -73,14 +73,23 @@ public interface ChannelManager {
     Blueprint getBlueprint(String id) throws ChannelException;
 
     /**
-     * The channel info for this channel.  It is an instance of the {@link Channel#getChannelInfoClass()} class.
+     * The channel info class for this channel.  Since this class comes from a separate
+     * context, it cannot be deserialized.
      *
-     * @param channelId
+     * @param channel
+     * @return
+     */
+    Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException;
+
+    /**
+     * The channel info for this channel.  It is an instance of the {@link #getChannelInfoClass} class.
+     *
+     * @param channel
      * @param <T>
      * @return
      * @throws ChannelException
      */
-    <T extends ChannelInfo> T getChannelInfo(String channelId) throws ChannelException;
+    <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException;
 
     /**
      * The resource bundle for the channel info.  It contains the display names for fields

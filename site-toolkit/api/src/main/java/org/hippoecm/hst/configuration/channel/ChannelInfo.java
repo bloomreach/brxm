@@ -15,8 +15,12 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.Map;
+
 /**
  * Base type for channel info interfaces.
  */
 public interface ChannelInfo {
+
+    Map<String, Object> getProperties();
 }

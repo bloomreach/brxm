@@ -78,19 +78,12 @@ public class BlueprintService implements Blueprint {
     public Channel createChannel(String channelId) {
         Channel channel = new Channel(channelId);
         channel.setName(channelId);
-        channel.setChannelInfoClass(prototypeChannel.getChannelInfoClass());
+        channel.setChannelInfoClassName(prototypeChannel.getChannelInfoClassName());
 
         Map<String, Object> properties = channel.getProperties();
-
-        Channel prototype = getPrototypeChannel();
-        channel.setChannelInfoClass(prototype.getChannelInfoClass());
-        properties.putAll(prototype.getProperties());
+        properties.putAll(prototypeChannel.getProperties());
 
         return channel;
-    }
-
-    public Channel getPrototypeChannel() {
-        return prototypeChannel;
     }
 
     public Node getNode(final Session session) throws RepositoryException {
