@@ -294,9 +294,11 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return ZERO_FIELD_GROUPS;
         }
 
-        Class<? extends ChannelInfo> channelInfoClass = channel.getChannelInfoClass();
-        if (channelInfoClass == null) {
-            log.info("Channel '{}' has no channel info class: no channel properties will be shown", channel.getId());
+        Class<? extends ChannelInfo> channelInfoClass = null;
+        try {
+            channelInfoClass = getChannelManager().getChannelInfoClass(channel);
+        } catch (ChannelException e) {
+            log.warn("Channel '{}' has no channel info class: " + e.getMessage(), channel.getId());
             return ZERO_FIELD_GROUPS;
         }
 
