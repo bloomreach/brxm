@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -80,7 +82,7 @@ public class MountResource extends AbstractConfigResource {
             return error(e.toString());
         }
     }
-
+    
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,6 +98,100 @@ public class MountResource extends AbstractConfigResource {
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
     }
 
+    /**
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will 
+     * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     * @param servletRequest
+     * @param servletResponse
+     * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
+     */
+    @GET
+    @Path("/edit/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response startEdit(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final Mount editingMount = getEditingHstMount(requestContext); 
+        
+        if(editingMount.getType().equals(Mount.PREVIEW_NAME)) {
+            return error("The mount is configured as PREVIEW. Template composer works against live mounts decorated to preview.");
+        }
+         
+        if (editingMount == null || !(editingMount instanceof ContextualizableMount)) {
+            log.error("Could not get the editing site to create the toolkit representation.");
+            return error("Could not get the editing site to create the toolkit representation.");
+        }
+        
+        ContextualizableMount ctxEditingMount = (ContextualizableMount) editingMount;
+        
+        String configPath = ctxEditingMount.getPreviewHstSite().getConfigurationPath();
+        if(configPath != null) {
+            if(!configPath.endsWith("-" + Mount.PREVIEW_NAME)) {
+                // preview configuration is the same as live configuration. We need to create a preview now
+                try {
+                    Session jcrSession = requestContext.getSession();
+                    jcrSession.getWorkspace().copy(configPath, configPath+"-" + Mount.PREVIEW_NAME);
+                    
+                } catch (LoginException e) {
+                    return error("Could not get a jcr session : " + e + ". Cannot create a  preview configuration.");
+                } catch (RepositoryException e) {
+                    return error("Could not create a preview configuration : " + e );
+                } 
+            } else {
+                return ok("There is already a preview config");
+            }
+        } else {
+            // preview configuration already exists
+            return error("Config path cannot be null");
+        }
+        
+        return ok("Site can be editted now");
+    }
+    
+    /**
+     * If the {@link Mount} that this request belongs to does not have a preview configuration, it will 
+     * be created. If it already has a preview configuration, just an ok {@link Response} is returned.
+     * @param servletRequest
+     * @param servletResponse
+     * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
+     */
+    @GET
+    @Path("/publish/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response publish(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final Mount editingMount = getEditingHstMount(requestContext); 
+        
+        if(editingMount.getType().equals(Mount.PREVIEW_NAME)) {
+            return error("Cannot publish preview mounts. Template composer should work with live mounts decorated as preview.");
+        }
+         
+       ContextualizableMount ctxEditingMount = (ContextualizableMount) editingMount;
+       
+       String previewConfigPath = ctxEditingMount.getPreviewHstSite().getConfigurationPath();
+       if(previewConfigPath != null && previewConfigPath.endsWith("-" + Mount.PREVIEW_NAME)) {
+             // preview configuration exists: Rmoeve now live and rename preview
+           String liveConfigPath = previewConfigPath.substring(0, previewConfigPath.length() - (Mount.PREVIEW_NAME.length() + 1) );
+           try {
+                Session jcrSession = requestContext.getSession();
+                jcrSession.removeItem(liveConfigPath);
+                jcrSession.move(previewConfigPath, liveConfigPath);
+                jcrSession.save();
+            } catch (LoginException e) {
+                return error("Could not get a jcr session : " + e  + ". Cannot publish configuration.");
+            } catch (RepositoryException e) {
+                return error("Could not publish preview configuration : " + e );
+            }
+
+            return ok("Site is published");
+        } else {
+            return error("Cannot publish non preview site");
+        }
+       
+    }
+    
+    
     /**
      * Creates a document in the repository using the WorkFlowManager
      * The post parameters should contain the 'path', 'docType' and 'name' of the document.

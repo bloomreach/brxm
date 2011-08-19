@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MountDecoratorImpl implements MountDecorator{
+public class MountDecoratorImpl implements MountDecorator {
 
     protected final static Logger log = LoggerFactory.getLogger(MountDecoratorImpl.class);
     @Override
@@ -41,7 +41,7 @@ public class MountDecoratorImpl implements MountDecorator{
         return new MountAsPreviewDecorator(mount);
     }
 
-    private class MountAsPreviewDecorator implements Mount {
+    private class MountAsPreviewDecorator implements ContextualizableMount {
 
         private Mount delegatee;
         private Mount parentAsPreview;
@@ -148,6 +148,26 @@ public class MountDecoratorImpl implements MountDecorator{
             return child;
         }
 
+        @Override
+        public String getPreviewCanonicalContentPath() {
+            return getCanonicalContentPath();
+        }
+
+        @Override
+        public String getPreviewContentPath() {
+            return getContentPath();
+        }
+
+        @Override
+        public HstSite getPreviewHstSite() {
+            return getHstSite();
+        }
+
+        @Override
+        public String getPreviewMountPoint() {
+            return getMountPoint();
+        }
+        
         @Override
         public String getChannelId() {
             return delegatee.getChannelId();
@@ -322,6 +342,8 @@ public class MountDecoratorImpl implements MountDecorator{
         public String onlyForContextPath() {
             return delegatee.onlyForContextPath();
         }
+
+        
 
     }
 }
