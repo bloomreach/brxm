@@ -43,18 +43,23 @@ public class RootResource extends AbstractConfigResource {
         return ok("Keepalive successful", null);
     }
 
+    @GET
+    @Path("/composermode/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response composerModeGet(@Context HttpServletRequest servletRequest,
+                                             @Context HttpServletResponse servletResponse) {
+        HttpSession session = servletRequest.getSession(true);
+        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
+        return ok("Composer-Mode successful", null);
+    }
+    
     @POST
     @Path("/composermode/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerMode(@Context HttpServletRequest servletRequest,
                                              @Context HttpServletResponse servletResponse) {
         HttpSession session = servletRequest.getSession(true);
-        if (session == null) {
-            return error("Cannot set into composer mode, no httpSession");
-        }
-
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
-
         return ok("Composer-Mode successful", null);
     }
 

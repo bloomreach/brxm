@@ -236,10 +236,10 @@ public interface HstRequestContext {
     /**
      * Returns the path suffix from the resolved site map item.
      * If it is null, then returns the path suffix from the resolved Mount.
-     * @return the matched path suffix
+     * @return the matched path suffix and <code>null</code> if there is no path suffix
      */
     String getPathSuffix();
-
+    
     /**
      * <p>
      * a mount with {@link Mount#getAlias()} equal to <code>alias</code> and at least one common type with the mount from the current request. Thus, at least 

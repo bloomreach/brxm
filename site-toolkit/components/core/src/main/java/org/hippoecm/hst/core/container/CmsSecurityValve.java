@@ -52,17 +52,23 @@ import org.onehippo.sso.CredentialCipher;
 public class CmsSecurityValve extends AbstractValve {
     private static final String SSO_BASED_SESSION_ATTR_NAME = CmsSecurityValve.class.getName() + ".jcrSession";
 
+    private final static String DEFAULT_PATH_SUFFIX = "./";
+    
     private Repository repository;
+    private String pathSuffixDelimiter = DEFAULT_PATH_SUFFIX;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
     } 
     
+    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
+        this.pathSuffixDelimiter = pathSuffixDelimiter;
+    }
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = context.getRequestContext();
+        HstRequestContext requestContext = context.getRequestContext(); 
         /*
          * we invoke the next valve if the call is not from the cms. A call is *not* from the cms template composer if:
          * 1) The renderHost == null AND 
@@ -73,52 +79,29 @@ public class CmsSecurityValve extends AbstractValve {
             return;
         } 
         log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
-        ResolvedMount resolvedMount = requestContext.getResolvedMount();
         HttpSession session = servletRequest.getSession(true);
 
         if (session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
             String key = session.getId();
             String credentialParam = servletRequest.getParameter("cred");
-
+ 
             //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
             if (credentialParam == null) {
-                HstLink destinationLink = null;
-                try {
-                    Mount destLinkMount = resolvedMount.getMount();
-
-                    if (!destLinkMount.isSite()) {
-                        Mount siteMount = requestContext.getMount(ContainerConstants.MOUNT_ALIAS_SITE);
-
-                        if (siteMount != null) {
-                            destLinkMount = siteMount;
-                        }
-                    }
-
-                    ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-                    String pathInfo = (resolvedSiteMapItem == null ? "" : resolvedSiteMapItem.getPathInfo());
-                    destinationLink = requestContext.getHstLinkCreator().create(pathInfo, destLinkMount);
-
-                } catch (Exception linkEx) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to create destination link.", linkEx);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to create destination link. {}", linkEx.toString());
-                    }
+                  
+                String destinationURL = servletRequest.getRequestURL().toString();
+              
+                if(requestContext.getPathSuffix() != null) {
+                    destinationURL += pathSuffixDelimiter + requestContext.getPathSuffix();
                 }
-
                 // generate key; redirect to cms
                 try {
                     String cmsAuthUrl = null;
-                    if (destinationLink != null) {
-                        String cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
-                        if (!cmsBaseUrl.endsWith("/")) {
-                            cmsBaseUrl += "/";
-                        }
-                        cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + URLEncoder.encode(destinationLink.toUrlForm(requestContext, true), "UTF8") + "&key=" + key;
-                    } else {
-                        log.error("No destinationUrl specified");
+                    String cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+                    if (!cmsBaseUrl.endsWith("/")) {
+                        cmsBaseUrl += "/";
                     }
-                    
+                    cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL + "&key=" + key;
+                   
                     if (cmsAuthUrl != null) {
                         //Everything seems to be fine, redirect to destination url and return
                         servletResponse.sendRedirect(cmsAuthUrl);
