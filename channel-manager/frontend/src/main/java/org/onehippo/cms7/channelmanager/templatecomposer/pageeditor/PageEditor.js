@@ -488,9 +488,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 }, self, { single: true});
                                 self.refreshIframe.call(self, null);
                             },
-                            failure: function(data) {
+                            failure: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Ext.Msg.alert('Failed to create the preview hst configuration, continue to refresh and load in editing mode. '+jsonData.message);
+                                Ext.Msg.alert('Failed to create the preview hst configuration. '+jsonData.message);
                                 this.previewMode = true;
                                 self.refreshIframe.call(self, null);
                             }
