@@ -444,16 +444,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     publishHstConfiguration : function() {
         var self = this;
-        // TODO change to POST request
         Ext.Ajax.request({
+            method: 'POST',
             url: this.composerRestMountUrl + this.ids.mountId + './publish',
             success: function () {
                 Ext.getCmp('pagePreviewButton').toggle(true);
                 self.refreshIframe.call(self, null);
             },
-            failure: function(data) {
-                // TODO include error msg
-                Ext.Msg.alert('Failed to publish hst configuration');
+            failure: function(result) {
+                var jsonData = Ext.util.JSON.decode(result.responseText);
+                Ext.Msg.alert('Failed to publish hst configuration. '+jsonData.message);
             }
         });
     },
@@ -477,8 +477,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     } else {
                         // create new preview hst configuration
                         var self = this;
-                        // TODO change to POST call
                         Ext.Ajax.request({
+                            method: 'POST',
                             url: this.composerRestMountUrl + mountId + './edit',
                             success: function () {
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
@@ -489,8 +489,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 self.refreshIframe.call(self, null);
                             },
                             failure: function(data) {
-                                // TODO display error msg
-                                Ext.Msg.alert('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
+                                var jsonData = Ext.util.JSON.decode(result.responseText);
+                                Ext.Msg.alert('Failed to create the preview hst configuration, continue to refresh and load in editing mode. '+jsonData.message);
                                 this.previewMode = true;
                                 self.refreshIframe.call(self, null);
                             }
