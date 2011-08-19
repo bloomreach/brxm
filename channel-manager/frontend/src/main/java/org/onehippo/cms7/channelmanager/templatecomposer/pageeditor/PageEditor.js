@@ -35,14 +35,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         };
 
         this.hstInComposerMode = false;
-        this.editingUnpublishedHstConfig = false;
+        this.isPreviewHstConfig = false;
 
         this.addEvents('beforePreCacheIFrameResources', 'afterPreCacheIFrameResources',
                        'beforePageIdChange', 'beforeMountIdChange',
                        'beforeIFrameDOMReady', 'afterIFrameDOMReady',
                        'beforeRequestHstMetaData', 'hstMetaDataResponse',
                        'beforeInitializeIFrameHead', 'afterInitializeIFrameHead', 'iFrameInitialized',
-                        'editingUnpublishedHstConfigChanged');
+                        'isPreviewHstConfig');
 
         this.pageModelFacade = null;
 
@@ -314,8 +314,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         }, this);
 
-        this.on('editingUnpublishedHstConfigChanged', function(data) {
-            Ext.getCmp('publishHstConfig').setDisabled(!data.editingUnpublishedHstConfig);
+        this.on('isPreviewHstConfigChanged', function(data) {
+            console.log('isPreviewHstConfigChanged ' + data.isPreviewHstConfig);
+            Ext.getCmp('publishHstConfig').setDisabled(!data.isPreviewHstConfig);
         }, this);
     },
 
@@ -383,13 +384,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.ids.pageId = null;
         this.ids.mountId = null;
         this.ids.pageUrl = null;
-        this.editingUnpublishedHstConfig = false; // TODO remove
-        this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : this.editingUnpublishedHstConfig }); // TODO remove
+        this.isPreviewHstConfig = false;
         this.resetIFrameState();
         Ext.getCmp('pagePreviewButton').toggle(true, true);
         Ext.getCmp('pageComposerButton').toggle(false, true);
         Ext.getCmp('pagePreviewButton').setDisabled(true);
         Ext.getCmp('pageComposerButton').setDisabled(true);
+        Ext.getCmp('publishHstConfig').setDisabled(true);
+
         if (this.mainWindow) {
             this.mainWindow.hide();
         }
@@ -442,18 +444,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     publishHstConfiguration : function() {
         var self = this;
+        // TODO change to POST request
         Ext.Ajax.request({
-            url: this.composerRestMountUrl + this.ids.mountId + './publish', // TODO adjust url according to rest service
+            url: this.composerRestMountUrl + this.ids.mountId + './publish',
             success: function () {
                 Ext.getCmp('pagePreviewButton').toggle(true);
                 self.refreshIframe.call(self, null);
             },
-            // TODO remove failure callback
-            failure: function() {
-                Ext.getCmp('pagePreviewButton').toggle(true);
-                self.refreshIframe.call(self, null);
-                self.editingUnpublishedHstConfig = false; // TODO remove
-                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
+            failure: function(data) {
+                // TODO include error msg
+                Ext.Msg.alert('Failed to publish hst configuration');
             }
         });
     },
@@ -468,8 +468,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
                 this.previewMode = false;
                 var initialize = function(mountId, pageId) {
-                    console.log('this.editingUnpublishedHstConfig:' + this.editingUnpublishedHstConfig);
-                    if (this.editingUnpublishedHstConfig) {
+                    console.log('this.editingUnpublishedHstConfig:' + this.isPreviewHstConfig);
+                    if (this.isPreviewHstConfig) {
                         this.on('iFrameInitialized', function() {
                             this.fireEvent('modeChanged', {previewMode : this.previewMode});
                         }, this, { single: true});
@@ -477,11 +477,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     } else {
                         // create new preview hst configuration
                         var self = this;
+                        // TODO change to POST call
                         Ext.Ajax.request({
-                            url: this.composerRestMountUrl + mountId + './edit', // TODO adjust url according to rest service
+                            url: this.composerRestMountUrl + mountId + './edit',
                             success: function () {
-                                self.editingUnpublishedHstConfig = true; // TODO remove
-                                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
                                 self.on('afterShareDataWithIFrame', function() {
@@ -489,16 +488,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 }, self, { single: true});
                                 self.refreshIframe.call(self, null);
                             },
-                            // TODO remove failure callback
-                            failure: function() {
-                                self.editingUnpublishedHstConfig = true; // TODO remove
-                                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
-                                console.error('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
-                                // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                                // the editor for editing with the refresh
-                                self.on('afterShareDataWithIFrame', function() {
-                                    self.fireEvent('modeChanged', {previewMode : self.previewMode});
-                                }, self, { single: true});
+                            failure: function(data) {
+                                // TODO display error msg
+                                Ext.Msg.alert('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
+                                this.previewMode = true;
                                 self.refreshIframe.call(self, null);
                             }
                         });
@@ -649,12 +642,27 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         }
 
-        // TODO uncomment when REST-service is implemented
-        // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
-        if (this.editingUnpublishedHstConfig !== data.hasPreviewConfig) {
-            // this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : data.hasPreviewConfig });
-            // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
+        var hasPreviewConfig = this.getBoolean(data.hasPreviewConfig);
+        if (this.isPreviewHstConfig !== hasPreviewConfig) {
+            this.isPreviewHstConfig = hasPreviewConfig;
+            this.fireEvent('isPreviewHstConfigChanged', { isPreviewHstConfig : hasPreviewConfig });
         }
+    },
+
+    getBoolean: function(object) {
+        if (typeof object === 'undefined' || object === null) {
+            return null;
+        }
+        if (object === true || object === false) {
+            return object;
+        }
+        var str = object.toString().toLowerCase();
+        if (str === "true") {
+            return true;
+        } else if (str === "false") {
+            return false
+        }
+        return null;
     },
 
     isHstMetaDataLoaded : function() {
