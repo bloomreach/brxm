@@ -111,8 +111,8 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private void loadMounts(final Node configNode) throws RepositoryException {
-        if (configNode.hasNode("hst:hosts/" + hostGroup)) {
-            Node virtualHosts = configNode.getNode("hst:hosts/" + hostGroup);
+        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup)) {
+            Node virtualHosts = configNode.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup);
             NodeIterator rootChannelNodes = virtualHosts.getNodes();
             while (rootChannelNodes.hasNext()) {
                 Node hgNode = rootChannelNodes.nextNode();
@@ -397,7 +397,7 @@ public class ChannelManagerImpl implements ChannelManager {
         Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
         mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channel.getId());
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
+            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
                 mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());
             } else {
                 mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
@@ -411,14 +411,14 @@ public class ChannelManagerImpl implements ChannelManager {
         ChannelPropertyMapper.saveChannel(channelNode, channel);
 
         Session jcrSession = configRoot.getSession();
-        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE)) {
-            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINT_SITE), configRoot.getNode(sites), channel.getId());
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE), configRoot.getNode(sites), channel.getId());
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
             channel.setHstMountPoint(siteNode.getPath());
 
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                if (blueprintNode.hasNode("hst:configuration")) {
-                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode("hst:configurations").getPath() + "/" + channel.getId());
+                if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
+                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channel.getId());
                 } else {
                     // reuse the configuration path specified in the hst:site node, if it exists
                     String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
@@ -442,8 +442,8 @@ public class ChannelManagerImpl implements ChannelManager {
         } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
         }
-        if (blueprintNode.hasNode("hst:configuration")) {
-            copyNodes(blueprintNode.getNode("hst:configuration"), configRoot.getNode("hst:configurations"), channel.getId());
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
+            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channel.getId());
         }
     }
 
@@ -465,8 +465,8 @@ public class ChannelManagerImpl implements ChannelManager {
 
         String lastMountPathElementName = mountPathElements.get(mountPathElements.size() - 1);
 
-        if (blueprintNode.hasNode("hst:mount")) {
-            mount = copyNodes(blueprintNode.getNode("hst:mount"), mount, lastMountPathElementName);
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_MOUNT)) {
+            mount = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_MOUNT), mount, lastMountPathElementName);
         } else {
             mount = mount.addNode(lastMountPathElementName, HstNodeTypes.NODETYPE_HST_MOUNT);
         }
@@ -477,7 +477,7 @@ public class ChannelManagerImpl implements ChannelManager {
     private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException {
         final String[] elements = hostName.split("[.]");
 
-        Node mount = configRoot.getNode("hst:hosts/" + hostGroup);
+        Node mount = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup);
 
         for (int i = elements.length - 1; i >= 0; i--) {
             mount = getOrAddNode(mount, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
@@ -562,7 +562,7 @@ public class ChannelManagerImpl implements ChannelManager {
             }
         }
 
-        ChannelPropertyMapper.saveChannel(configRoot.getNode("hst:channels/" + channel.getId()), channel);
+        ChannelPropertyMapper.saveChannel(configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channel.getId()), channel);
     }
 
     /**

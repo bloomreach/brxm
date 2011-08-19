@@ -41,14 +41,14 @@ public class BlueprintService implements Blueprint {
 
         id = bluePrint.getName();
 
-        if (bluePrint.hasProperty("hst:name")) {
-            this.name = bluePrint.getProperty("hst:name").getString();
+        if (bluePrint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME)) {
+            this.name = bluePrint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME).getString();
         } else {
             this.name = this.id;
         }
 
-        if (bluePrint.hasProperty("hst:description")) {
-            this.description = bluePrint.getProperty("hst:description").getString();
+        if (bluePrint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION)) {
+            this.description = bluePrint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION).getString();
         } else {
             this.description = null;
         }

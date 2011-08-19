@@ -132,9 +132,11 @@ public interface HstNodeTypes {
     public final static String MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS =  "hst:defaultsitemapitemhandlerids";
     public final static String MOUNT_PROPERTY_CHANNELPATH =  "hst:channelpath";
 
-
     public final static String CHANNEL_PROPERTY_NAME = "hst:name";
     public final static String CHANNEL_PROPERTY_CHANNELINFO_CLASS = "hst:channelinfoclass";
+
+    public final static String BLUEPRINT_PROPERTY_NAME = "hst:name";
+    public final static String BLUEPRINT_PROPERTY_DESCRIPTION = "hst:description";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     
@@ -151,8 +153,11 @@ public interface HstNodeTypes {
     public final static String NODENAME_HST_HSTDEFAULT = "hst:default";
     public final static String NODENAME_HST_BLUEPRINTS = "hst:blueprints";
     public final static String NODENAME_HST_CHANNELINFO = "hst:channelinfo";
-    public final static String NODENAME_HST_BLUEPRINT_SITE = "hst:site";
+    public final static String NODENAME_HST_SITE = "hst:site";
     public final static String NODENAME_HST_CHANNEL = "hst:channel";
+    public final static String NODENAME_HST_CONFIGURATION = "hst:configuration";
+    public final static String NODENAME_HST_CONFIGURATIONS = "hst:configurations";
+    public final static String NODENAME_HST_MOUNT = "hst:mount";
+    public final static String NODENAME_HST_HOSTS = "hst:hosts";
     public final static String NODENAME_HST_CHANNELS = "hst:channels";
-
 }
