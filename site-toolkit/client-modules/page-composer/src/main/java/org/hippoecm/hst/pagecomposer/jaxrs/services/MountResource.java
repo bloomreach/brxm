@@ -105,7 +105,7 @@ public class MountResource extends AbstractConfigResource {
      * @param servletResponse
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
-    @GET
+    @POST
     @Path("/edit/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response startEdit(@Context HttpServletRequest servletRequest,
@@ -155,7 +155,7 @@ public class MountResource extends AbstractConfigResource {
      * @param servletResponse
      * @return ok {@link Response} when editing can start, and error {@link Response} otherwise
      */
-    @GET
+    @POST
     @Path("/publish/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response publish(@Context HttpServletRequest servletRequest,
