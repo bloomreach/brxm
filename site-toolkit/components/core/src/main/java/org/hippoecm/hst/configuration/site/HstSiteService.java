@@ -91,6 +91,25 @@ public class HstSiteService implements HstSite {
         String path = site.getConfigurationPath(); 
         // when there is an explicit path configured, return directly:
         if(!StringUtils.isEmpty(path)) {
+            // when there is an explicit configuration path, and the current site name ends with '-preview' but the 
+            // path does not, then, when there is a configuration at 'path' + -preview , we'll pick this one. Otherwise, just path is 
+            // used
+            if(site.getValueProvider().getName().endsWith("-" + Mount.PREVIEW_NAME)) {
+                // it is a preview site. Check whether the path ends with -preview. 
+                if(path.endsWith("-" + Mount.PREVIEW_NAME)) {
+                    return path;
+                } else {
+                    // check whether there is a preview config: If so, use this preview config
+                    String previewPath = path + "-" + Mount.PREVIEW_NAME;
+                    HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(previewPath);
+                    if (configurationNode != null) {
+                        // preview config found : use this config
+                        return previewPath;
+                    }
+                    // no previuew config, just use live config as well for preview
+                    return path;
+                }
+            }
             return path;
         }
            
