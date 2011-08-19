@@ -99,7 +99,8 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             try {
                 UUID.fromString(docbase);
             } catch (IllegalArgumentException e){
-                throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+                throw new HstContextualizeException("Unable to create a Virtualizer: node '"
+                        + contentFacetSelectNode.getPath() + "' has illegal hippo:docbase '" + docbase + "'", e);
             }
             
             Node canonicalContentNode = session.getNodeByIdentifier(docbase);
@@ -108,7 +109,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             String contentFacetSelectNodePath = contentFacetSelectNode.getPath();
             return new Mapper(canonicalContentNodePath,contentFacetSelectNodePath);
         } catch (RepositoryException e) {
-           throw new HstContextualizeException("Unable to create a Virtualizer: '{}'", e);
+           throw new HstContextualizeException("Unable to create a Virtualizer", e);
         }
     }
     
