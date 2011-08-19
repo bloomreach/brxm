@@ -118,6 +118,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             iconCls: 'title-button',
                             id: 'publishHstConfig',
                             width: 150,
+                            disabled: true,
                             listeners: {
                                 'click': {
                                     fn : function() {
@@ -312,6 +313,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 Ext.Msg.hide();
             }
         }, this);
+
+        this.on('editingUnpublishedHstConfigChanged', function(data) {
+            Ext.getCmp('publishHstConfig').setDisabled(!data.editingUnpublishedHstConfig);
+        }, this);
     },
 
     initEditMount : function(mountId) {
@@ -379,6 +384,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.ids.mountId = null;
         this.ids.pageUrl = null;
         this.editingUnpublishedHstConfig = false; // TODO remove
+        this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : this.editingUnpublishedHstConfig }); // TODO remove
         this.resetIFrameState();
         Ext.getCmp('pagePreviewButton').toggle(true, true);
         Ext.getCmp('pageComposerButton').toggle(false, true);
@@ -446,6 +452,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             failure: function() {
                 Ext.getCmp('pagePreviewButton').toggle(true);
                 self.refreshIframe.call(self, null);
+                self.editingUnpublishedHstConfig = false; // TODO remove
+                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
             }
         });
     },
@@ -473,6 +481,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             url: this.composerRestMountUrl + mountId + './edit', // TODO adjust url according to rest service
                             success: function () {
                                 self.editingUnpublishedHstConfig = true; // TODO remove
+                                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
                                 self.on('afterShareDataWithIFrame', function() {
@@ -483,6 +492,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             // TODO remove failure callback
                             failure: function() {
                                 self.editingUnpublishedHstConfig = true; // TODO remove
+                                self.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : self.editingUnpublishedHstConfig }); // TODO remove
                                 console.error('Failed to create the preview hst configuration, continue to refresh and load in editing mode.');
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
@@ -642,7 +652,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         // TODO uncomment when REST-service is implemented
         // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
         if (this.editingUnpublishedHstConfig !== data.hasPreviewConfig) {
-            this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : data.hasPreviewConfig });
+            // this.fireEvent('editingUnpublishedHstConfigChanged', { editingUnpublishedHstConfig : data.hasPreviewConfig });
             // this.editingUnpublishedHstConfig = data.hasPreviewConfig;
         }
     },
