@@ -84,7 +84,7 @@ public class RootPanel extends ExtPanel {
         //Use the same store variable as the grid panel, no need to create another store.
         this.channelStore = channelPanel.getStore();
 
-        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context, null);
+        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
 
         final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, hstConfigEditor);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);

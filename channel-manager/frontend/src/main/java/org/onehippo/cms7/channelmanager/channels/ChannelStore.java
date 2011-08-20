@@ -56,7 +56,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         id, // channel id
         mountId,
         name,
-        blueprintId,
         url,
         contentRoot,
         hstConfigPath,

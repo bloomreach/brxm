@@ -215,10 +215,10 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         add(new ExtButton(new Model<String>("Edit HST Configuration")){
             @Override
             protected void onClick(final AjaxRequestTarget target) {
-                target.appendJavascript("Ext.getCmp('rootPanel').layout.setActiveItem(" +
+                target.prependJavascript("Ext.getCmp('rootPanel').layout.setActiveItem(" +
                         RootPanel.Card.HST_CONFIG_EDITOR.ordinal() +
-                        ");\ndocument.getElementById('Hippo.ChannelManager.HstConfigEditor').className = 'x-panel';");
-                hstConfigEditor.setMountPoint(target, channel.getHstMountPoint());
+                        ");\ndocument.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';");
+                hstConfigEditor.setMountPoint(target, channel.getId(), channel.getHstMountPoint());
                 super.onClick(target);
             }
         });

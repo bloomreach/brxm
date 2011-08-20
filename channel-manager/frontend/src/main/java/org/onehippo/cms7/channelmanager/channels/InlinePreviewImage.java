@@ -65,7 +65,7 @@ public class InlinePreviewImage extends WebComponent {
         String src = getUrl(previewImage);
 
         if (src != null) {
-            tag.put("src", getUrl(previewImage));
+            tag.put("src", src);
 
             String width = getDimension(previewImage, HippoGalleryNodeType.IMAGE_WIDTH);
             if (width != null) {
@@ -149,7 +149,7 @@ public class InlinePreviewImage extends WebComponent {
                 log.warn("Cannot retrieve path of preview image", e);
             }
         }
-        return "";
+        return null;
     }
 
     private String getDimension(Node image, String propertyName) {

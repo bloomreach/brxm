@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.channelmanager;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
@@ -24,6 +27,7 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
@@ -32,18 +36,16 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditorResourceBehaviour;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerResourceBehavior;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
-/**
- * ChannelManagerPerspective
- *
- * @author Vijay Kiran
- */
 public class ChannelManagerPerspective extends Perspective {
 
     private RootPanel rootPanel;
+    private List<IRenderService> childservices = new LinkedList<IRenderService>();
+    private boolean rendered = false;
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -58,21 +60,6 @@ public class ChannelManagerPerspective extends Perspective {
 
         rootPanel = new RootPanel(context, config, "channel-root");
         add(rootPanel);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            IRenderService renderService = this;
-            while (renderService.getParentService() != null) {
-                renderService = renderService.getParentService();
-            }
-            Page page = renderService.getComponent().getPage();
-            page.add(new ExtResourcesBehaviour());
-            page.add(new ChannelManagerResourceBehaviour());
-            page.add(new TemplateComposerResourceBehavior());
-        }
     }
 
     @Override
@@ -98,4 +85,33 @@ public class ChannelManagerPerspective extends Perspective {
         target.addComponent(rootPanel);
     }
 
+    @Override
+    public void render(final PluginRequestTarget target) {
+        super.render(target);
+        if (!rendered) {
+            rendered = true;
+            if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+                IRenderService renderService = this;
+                while (renderService.getParentService() != null) {
+                    renderService = renderService.getParentService();
+                }
+                Page page = renderService.getComponent().getPage();
+                page.add(new ExtResourcesBehaviour());
+                page.add(new ChannelManagerResourceBehaviour());
+                page.add(new TemplateComposerResourceBehavior());
+                page.add(new HstConfigEditorResourceBehaviour());
+            }
+        }
+        for (IRenderService child : childservices) {
+            child.render(target);
+        }
+    }
+
+    public void removeRenderService(final IRenderService service) {
+        childservices.remove(service);
+    }
+
+    public void addRenderService(final IRenderService service) {
+        childservices.add(service);
+    }
 }

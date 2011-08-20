@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-Ext.namespace('Hippo.ChannelManager');
+Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
 
 /**
  * @class Hippo.ChannelManager.HstConfigEditor
  * @extends Ext.Panel
  */
-
-Hippo.ChannelManager.HstConfigEditor = Ext.extend(Ext.Panel, {
+Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
     constructor: function(config) {
         var self = this;
 
@@ -42,9 +41,8 @@ Hippo.ChannelManager.HstConfigEditor = Ext.extend(Ext.Panel, {
             ]
         });
 
-        Hippo.ChannelManager.HstConfigEditor.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
     }
-
 });
 
-Ext.reg('Hippo.ChannelManager.HstConfigEditor', Hippo.ChannelManager.HstConfigEditor);
+Ext.reg('Hippo.ChannelManager.HstConfigEditor.Container', Hippo.ChannelManager.HstConfigEditor.Container);
