@@ -201,7 +201,7 @@ final class Extension {
         double sequence = 30000.3;
         // find the parent content resource instruction to determine the sequence number
         ContentResourceInstruction parent = findContentResourceInstruction(root, true);
-        if (parent != null) {
+        if (parent != null && parent.sequence >= 30000.3) {
             sequence = parent.sequence + 1;
         }
         
@@ -234,8 +234,8 @@ final class Extension {
     @SuppressWarnings("rawtypes")
     void removeInstruction(Instruction instruction) {
         List nodes = document.getRootElement().elements();
-        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-            Element node = (Element)iter.next();
+        for (Object o : nodes) {
+            Element node = (Element) o;
             if (node.attributeValue("name").equals(instruction.getName())) {
                 document.getRootElement().remove(node);
                 break;
@@ -279,8 +279,8 @@ final class Extension {
     private List<Instruction> parseExtension(Element root) throws DocumentException {
         List elements = root.elements(NODE_QNAME);
         List<Instruction> instructions = new ArrayList<Instruction>(elements.size());
-        for (Iterator iter = elements.iterator(); iter.hasNext();) {
-            Element element = (Element)iter.next();
+        for (Object o : elements) {
+            Element element = (Element) o;
             Instruction instruction;
             instruction = parseInstruction(element);
             if (instruction != null) {
@@ -304,8 +304,8 @@ final class Extension {
         String nodetypesresource = null;
         Double sequence = 0.0;
         List properties = element.elements();
-        for (Iterator iter = properties.iterator(); iter.hasNext();) {
-            Element property = (Element)iter.next();
+        for (Object o : properties) {
+            Element property = (Element) o;
             String propName = property.attributeValue(NAME_QNAME);
             if (propName.equals("hippo:contentresource")) {
                 contentresource = property.element(VALUE_QNAME).getText();
