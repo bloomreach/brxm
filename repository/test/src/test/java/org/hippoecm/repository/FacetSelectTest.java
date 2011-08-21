@@ -26,9 +26,9 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -454,7 +454,7 @@ public class FacetSelectTest extends TestCase {
     }
 
     // REPO-163 failing test
-    @Ignore
+    @Test
     public void testRenamedFacetSelectIsIndexed() throws RepositoryException {
         String[] content = {
             "/test", "nt:unstructured",
@@ -483,8 +483,43 @@ public class FacetSelectTest extends TestCase {
         assertTrue(result.getNodes().hasNext());
     }
 
-    // REPO-163 failing test
-    @Ignore
+    @Test
+    public void testCopiedFacetSelectIsIndexed() throws RepositoryException {
+        String[] content = {
+            "/test", "nt:unstructured",
+            "jcr:mixinTypes", "mix:referenceable",
+            "/test/target", "nt:unstructured",
+            "jcr:mixinTypes", "mix:referenceable",
+            "/test/target/dummy", "nt:unstructured",
+            "/test/nav", "hippo:facetselect",
+            "hippo:docbase", "/test/target",
+            "hippo:facets", null,
+            "hippo:modes", null,
+            "hippo:values", null,
+            "/test/nav2", "hippo:facetselect",
+            "hippo:docbase", "/test/target",
+            "hippo:facets", null,
+            "hippo:modes", null,
+            "hippo:values", null
+        };
+        build(session, content);
+        session.save();
+        session.refresh(false);
+
+        recurse(session.getNode("/test"));
+        ((HippoSession)session).copy(session.getRootNode().getNode("test/nav"), "/test/mirror");
+        session.save();
+        session.refresh(false);
+
+        QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//element(mirror,hippo:facetselect)", Query.XPATH);
+        QueryResult result = query.execute();
+        assertTrue(result.getNodes().hasNext());
+        assertTrue(result.getNodes().hasNext());
+        assertTrue(result.getNodes().hasNext());
+    }
+
+    @Test
     public void testMovedFacetSelectIsIndexed() throws RepositoryException {
         String[] content = {
             "/test", "nt:unstructured",
@@ -513,7 +548,6 @@ public class FacetSelectTest extends TestCase {
         QueryResult result = query.execute();
         assertTrue(result.getNodes().hasNext());
     }
-
 
     @Test
     public void testSingleFilterBlocksEmptyMultiValue() throws Exception {

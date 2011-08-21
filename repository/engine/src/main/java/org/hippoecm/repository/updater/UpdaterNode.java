@@ -65,7 +65,6 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 final public class UpdaterNode extends UpdaterItem implements Node {
@@ -317,13 +316,6 @@ final public class UpdaterNode extends UpdaterItem implements Node {
                 }
                 if(origin == null) {
                     UpdaterEngine.log.error("could not find moved node in "+parent.origin.getPath()+" named "+name);
-                } else {
-                    // FIXME: workaround REPO-163
-                    if(((Node)origin).hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                        String docbase = ((Node)origin).getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        ((Node)origin).getProperty(HippoNodeType.HIPPO_DOCBASE).remove();
-                        ((Node)origin).setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
-                    }
                 }
             } catch (ConstraintViolationException ex) {
                 // happens in case of mandatory node that was kept left behind.
