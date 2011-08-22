@@ -105,7 +105,6 @@ public class CmsSecurityValve extends AbstractValve {
                     if (!cmsBaseUrl.endsWith("/")) {
                         cmsBaseUrl += "/";
                     }
-                    System.out.println("destinationURL --> " + destinationURL);
                     cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
                    
                     if (cmsAuthUrl != null) {
