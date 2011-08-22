@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.sso.CredentialCipher;
 
 /**
@@ -82,11 +83,20 @@ public class CmsSecurityValve extends AbstractValve {
  
             //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
             if (credentialParam == null) {
-                  
-                String destinationURL = servletRequest.getRequestURL().toString();
-              
+                
+                // find the destinationURL. Do not use servletRequest.getRequestURL() because behind proxies, this leads to an
+                // incorrect host
+                StringBuilder destinationURL = new StringBuilder(requestContext.getResolvedMount().getMount().getScheme()).append("://");
+                 
+                destinationURL.append(HstRequestUtils.getRequestHosts(servletRequest, false)[0]);
+                
+                // for SSO, we also go through the CMS. We always need the contextpath in the requests to the HST
+                //destinationURL.append(servletRequest.getContextPath());
+               
+                destinationURL.append(servletRequest.getRequestURI());
+               
                 if(requestContext.getPathSuffix() != null) {
-                    destinationURL += pathSuffixDelimiter + requestContext.getPathSuffix();
+                    destinationURL.append(pathSuffixDelimiter).append(requestContext.getPathSuffix());
                 }
                 // generate key; redirect to cms
                 try {
@@ -95,7 +105,8 @@ public class CmsSecurityValve extends AbstractValve {
                     if (!cmsBaseUrl.endsWith("/")) {
                         cmsBaseUrl += "/";
                     }
-                    cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL + "&key=" + key;
+                    System.out.println("destinationURL --> " + destinationURL);
+                    cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
                    
                     if (cmsAuthUrl != null) {
                         //Everything seems to be fine, redirect to destination url and return
