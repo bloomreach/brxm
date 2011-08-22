@@ -69,4 +69,3 @@ frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPane
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
 repository/src/main/resources/hippoecm-extension.xml eol=lf
-repository/src/main/resources/template-composer-perspective.xml -text

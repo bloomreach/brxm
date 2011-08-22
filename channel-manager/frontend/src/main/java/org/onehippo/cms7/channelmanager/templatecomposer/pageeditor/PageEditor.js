@@ -34,6 +34,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             pageModel : null
         };
 
+        if (config.composerMountUrl.lastIndexOf('/') !== config.composerMountUrl.length - 1) {
+            config.composerMountUrl = config.composerMountUrl + '/';
+        }
+        if (config.renderHostSubMountPath && config.renderHostSubMountPath.indexOf('/') === 0) {
+            config.renderHostSubMountPath = config.renderHostSubMountPath.substr(1);
+        }
+
         this.hstInComposerMode = false;
         this.isPreviewHstConfig = false;
 
@@ -378,7 +385,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
         this.fireEvent('beforeInitComposer');
-        this.renderHostSubMountPath = renderHostSubMountPath;
+        if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
+            this.renderHostSubMountPath = this.renderHostSubMountPath.substr(1);
+        } else {
+            this.renderHostSubMountPath = renderHostSubMountPath;
+        }
         this.renderHost = renderHost;
         this.previewMode = true;
         this.ids.pageId = null;

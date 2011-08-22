@@ -60,7 +60,7 @@ public class PageEditor extends ExtPanel {
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
-        this.composerMountUrl = config.getString("composerMountUrl", "/site");
+        this.composerMountUrl = config.getString("composerMountUrl", "/site/");
         this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
@@ -74,10 +74,12 @@ public class PageEditor extends ExtPanel {
     }
 
     public PageEditor(final IPluginConfig config) {
-        this.composerMountUrl = config.getString("composerMountUrl", "/site");
-        this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
-        if (config.get("previewMode") != null) {
-            this.previewMode = config.getBoolean("previewMode");
+        if (config != null) {
+            this.composerMountUrl = config.getString("composerMountUrl", "/site/");
+            this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
+            if (config.get("previewMode") != null) {
+                this.previewMode = config.getBoolean("previewMode");
+            }
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 
