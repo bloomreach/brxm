@@ -453,7 +453,6 @@ public class FacetSelectTest extends TestCase {
         listener.destroy();
     }
 
-    // REPO-163 failing test
     @Test
     public void testRenamedFacetSelectIsIndexed() throws RepositoryException {
         String[] content = {
