@@ -34,7 +34,7 @@ public class MountDecoratorImpl implements MountDecorator {
 
     protected final static Logger log = LoggerFactory.getLogger(MountDecoratorImpl.class);
     @Override
-    public Mount decorateMountAsPreview(Mount mount) {
+    public ContextualizableMount decorateMountAsPreview(ContextualizableMount mount) {
         if(mount.isPreview()) {
             return mount;
         }
@@ -43,11 +43,11 @@ public class MountDecoratorImpl implements MountDecorator {
 
     private class MountAsPreviewDecorator implements ContextualizableMount {
 
-        private Mount delegatee;
+        private ContextualizableMount delegatee;
         private Mount parentAsPreview;
         private Map<String, Mount> childAsPreview = new HashMap<String, Mount>();
 
-        public MountAsPreviewDecorator(Mount delegatee) {
+        public MountAsPreviewDecorator(ContextualizableMount delegatee) {
             this.delegatee = delegatee;
         }
 
@@ -56,15 +56,7 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.isPreview()) {
                 return delegatee.getHstSite();
             }
-            if (delegatee instanceof ContextualizableMount) {
-                return ((ContextualizableMount) delegatee).getPreviewHstSite();
-            } else {
-                log.warn(
-                       "Don't know how to get the preview of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
-                         + "Return the current mount and not preview version. ", delegatee
-                            .getMountPath(), delegatee.getClass().getName());
-                return delegatee.getHstSite();
-            }
+            return  delegatee.getPreviewHstSite();
         }
 
         @Override
@@ -72,14 +64,7 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.isPreview()) {
                 return delegatee.getMountPoint();
             }
-            if (delegatee instanceof ContextualizableMount) {
-                return ((ContextualizableMount) delegatee).getPreviewMountPoint();
-            } else {
-                log.warn("Don't know how to get the preview mountPoint of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
-                           + "Return the value from the  current mount and not preview version. ",
-                             delegatee.getMountPath(), delegatee.getClass().getName());
-                return delegatee.getMountPoint();
-            }
+            return delegatee.getPreviewMountPoint();
         }
 
         @Override
@@ -87,15 +72,7 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.isPreview()) {
                 return delegatee.getCanonicalContentPath();
             }
-            if (delegatee instanceof ContextualizableMount) {
-                return ((ContextualizableMount) delegatee).getPreviewCanonicalContentPath();
-            } else {
-                log.warn("Don't know how to get the preview canonical content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
-                          + "Return the value from the current mount and not preview version. ",
-                             delegatee.getMountPath(), delegatee.getClass().getName());
-                return delegatee.getCanonicalContentPath();
-            }
-
+            return delegatee.getPreviewCanonicalContentPath();
         }
 
         @Override
@@ -103,14 +80,7 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.isPreview()) {
                 return delegatee.getContentPath();
             }
-            if (delegatee instanceof ContextualizableMount) {
-                return ((ContextualizableMount) delegatee).getPreviewContentPath();
-            } else {
-                log.warn("Don't know how to get the preview content path of a Mount that is not an instanceof MountService. Unable for mount '{}' of type '{}'."
-                          + "Return the value from the  current mount and not preview version. ",
-                             delegatee.getMountPath(), delegatee.getClass().getName());
-                return delegatee.getContentPath();
-            }
+            return delegatee.getPreviewContentPath();
         }
 
         @Override
@@ -126,7 +96,12 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.getParent() == null) {
                 return null;
             }
-            parentAsPreview = new MountAsPreviewDecorator(delegatee.getParent());
+            if(!(delegatee.getParent() instanceof ContextualizableMount)) {
+                log.warn("Don't know how to get the preview parent Mount of mount '{}' because the parent Mount is not an instance of ContextualizableMount. Return null",
+                          delegatee.getParent().getMountPath());
+                return null;
+            }
+            parentAsPreview = new MountAsPreviewDecorator((ContextualizableMount)delegatee.getParent());
             return parentAsPreview;
         }
 
@@ -142,8 +117,12 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.getChildMount(name) == null) {
                 return null;
             }
-
-            child = new MountAsPreviewDecorator(delegatee.getChildMount(name));
+            if(!(delegatee.getChildMount(name) instanceof ContextualizableMount)) {
+                log.warn("Don't know how to get the preview child Mount of mount '{}' because the parent Mount is not an instance of ContextualizableMount. Return null",
+                        delegatee.getChildMount(name).getMountPath());
+                return null;
+            }
+            child = new MountAsPreviewDecorator((ContextualizableMount)delegatee.getChildMount(name));
             childAsPreview.put(name, child);
             return child;
         }
@@ -343,7 +322,10 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.onlyForContextPath();
         }
 
-        
+        @Override
+        public String getCmsLocation() {
+            return delegatee.getCmsLocation();
+        }
 
     }
 }

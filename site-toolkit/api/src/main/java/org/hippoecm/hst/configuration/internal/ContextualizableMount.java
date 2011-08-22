@@ -48,4 +48,10 @@ public interface ContextualizableMount extends Mount {
      * @return the preview hstSite of this mount. If this mount is already a preview mount, the same is returned as {@link #getHstSite()}
      */
     HstSite getPreviewHstSite();
+    
+    /**
+     * internal only : not api
+     * @return the fully qualified cms url 
+     */
+    String getCmsLocation();
 }

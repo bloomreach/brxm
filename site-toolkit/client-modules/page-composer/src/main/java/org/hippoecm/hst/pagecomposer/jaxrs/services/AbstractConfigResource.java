@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -83,8 +84,12 @@ public class AbstractConfigResource {
         if(mountDecorator == null) {
             log.warn("MountDecorator is null. Cannot decorate the mount to preview");
             return mount;
+        } 
+        if(!(mount instanceof ContextualizableMount )) {
+            log.warn("Mount must be an instance of ContextualizableMount. Cannot create a preview. Return mount as is");
+            return mount;
         }
-        Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+        Mount previewMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
         return previewMount;
     }
 

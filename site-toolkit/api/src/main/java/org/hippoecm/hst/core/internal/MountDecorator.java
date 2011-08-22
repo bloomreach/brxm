@@ -16,12 +16,13 @@
 package org.hippoecm.hst.core.internal;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 
 /**
  *  This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
  * 
- * <p>A mount decorator can decorate a mount to act like a preview {@link Mount}. If the {@link Mount} is must decorate is already a preview, 
- * it returns the {@link Mount} as is. If the is. If the {@link Mount} it must decorate is a live {@link Mount}, then it returns a preview version of it</p>
+ * <p>A mount decorator can decorate a {@link ContextualizableMount} to act like a preview {@link Mount}. If the {@link ContextualizableMount} is already a preview, 
+ * it returns the {@link ContextualizableMount} as is. If the is. If the {@link ContextualizableMount} it must decorate is a live {@link Mount}, then it returns a preview version of it</p>
  *
  */
 public interface MountDecorator {
@@ -32,5 +33,5 @@ public interface MountDecorator {
      * @param mount the mount to decorate
      * @return the decorated {@link Mount}
      */
-    Mount decorateMountAsPreview(Mount mount);
+    ContextualizableMount decorateMountAsPreview(ContextualizableMount mount);
 }

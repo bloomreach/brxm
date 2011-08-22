@@ -75,6 +75,7 @@ public class VirtualHostService implements VirtualHost {
     private boolean contextPathInUrl;
     private boolean showPort;
     private String scheme;
+    private String cmsLocation;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, HstManagerImpl hstManager) throws ServiceException {        
        
@@ -156,6 +157,17 @@ public class VirtualHostService implements VirtualHost {
         }
 
         pageNotFound = StringPool.get(pageNotFound);
+        
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION)) {
+            this.cmsLocation = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
+        } else {
+           // try to get the one from the parent
+            if(parentHost != null) {
+                this.cmsLocation = parentHost.cmsLocation;
+            } else {
+                this.cmsLocation = virtualHosts.getCmsLocation();
+            }
+        }
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
@@ -311,6 +323,10 @@ public class VirtualHostService implements VirtualHost {
         return versionInPreviewHeader;
     }
 
+    public String getCmsLocation() {
+        return cmsLocation;
+    }
+    
     public VirtualHosts getVirtualHosts() {
         return this.virtualHosts;
     }

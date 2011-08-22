@@ -40,6 +40,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -333,16 +334,19 @@ public class HstFilter implements Filter {
                                 // we are in a CMS SSO context. 
                                 if(resolvedMount instanceof MutableResolvedMount) {
                                     Mount mount = resolvedMount.getMount();
+                                    if(!(mount instanceof ContextualizableMount)) {
+                                        throw new MatchException("The matched mount for request '" + hostName + " and " +containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
+                                    }
                                     MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
-                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
+                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
                                     if(decoratedMount == mount) {
-                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview");
+                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
                                     } else {
                                         logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
                                     }
                                     ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
                                 } else {
-                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request");
+                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " +containerRequest.getRequestURI());
                                 }
                             }
 

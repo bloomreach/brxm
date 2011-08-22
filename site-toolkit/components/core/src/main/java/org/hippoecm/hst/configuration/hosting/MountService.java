@@ -231,6 +231,8 @@ public class MountService implements ContextualizableMount {
     private ChannelInfo channelInfo;
     
     private String[] defaultSiteMapItemHandlerIds;
+    
+    private String cmsLocation;
 
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -466,6 +468,17 @@ public class MountService implements ContextualizableMount {
             this.formLoginPage = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE));
         } else if (parent != null){
             this.formLoginPage = parent.getFormLoginPage();
+        }
+        
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION)) {
+            this.cmsLocation = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
+        } else {
+           // try to get the one from the parent
+            if(parent != null) {
+                this.cmsLocation = ((MountService)parent).getCmsLocation();
+            } else {
+                this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
+            }
         }
         
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
@@ -716,6 +729,10 @@ public class MountService implements ContextualizableMount {
     
     public boolean isVersionInPreviewHeader() {
         return versionInPreviewHeader;
+    }
+    
+   public String getCmsLocation() {
+        return cmsLocation;
     }
 
     public String getNamedPipeline(){

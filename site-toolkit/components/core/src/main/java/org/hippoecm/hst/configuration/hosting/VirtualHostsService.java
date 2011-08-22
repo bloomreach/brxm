@@ -82,6 +82,8 @@ public class VirtualHostsService implements VirtualHosts {
     private String[] prefixExclusions;
     private String[] suffixExclusions;
     
+    private String cmsLocation;
+    
     /*
      * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
      */
@@ -98,6 +100,7 @@ public class VirtualHostsService implements VirtualHosts {
         this.locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         this.homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         this.pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        this.cmsLocation = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
         if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
@@ -375,6 +378,10 @@ public class VirtualHostsService implements VirtualHosts {
     }
     public String getPageNotFound() {
         return pageNotFound;
+    }
+    
+    public String getCmsLocation() {
+        return cmsLocation;
     }
 
     public boolean isVersionInPreviewHeader(){

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.beans.DesignMode;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
@@ -26,6 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -80,16 +85,18 @@ public class CmsSecurityValve extends AbstractValve {
         if (session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
             String key = session.getId();
             String credentialParam = servletRequest.getParameter("cred");
- 
+  
             //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
             if (credentialParam == null) {
                 
-                // find the destinationURL. Do not use servletRequest.getRequestURL() because behind proxies, this leads to an
-                // incorrect host
-                StringBuilder destinationURL = new StringBuilder(requestContext.getResolvedMount().getMount().getScheme()).append("://");
-                 
-                destinationURL.append(HstRequestUtils.getRequestHosts(servletRequest, false)[0]);
+                if(!(requestContext.getResolvedMount().getMount() instanceof ContextualizableMount)) {
+                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type ContextualizableMount.");
+                }
                 
+                ContextualizableMount mount = (ContextualizableMount)requestContext.getResolvedMount().getMount();
+                StringBuilder destinationURL = new StringBuilder();
+                destinationURL.append(servletRequest.getScheme()).append("://");
+                destinationURL.append(HstRequestUtils.getRequestHosts(servletRequest, false)[0]);
                 // for SSO, we also go through the CMS. We always need the contextpath in the requests to the HST
                 //destinationURL.append(servletRequest.getContextPath());
                
@@ -98,10 +105,23 @@ public class CmsSecurityValve extends AbstractValve {
                 if(requestContext.getPathSuffix() != null) {
                     destinationURL.append(pathSuffixDelimiter).append(requestContext.getPathSuffix());
                 }
+                
+                String qString =  servletRequest.getQueryString();
+                if(qString != null) {
+                    destinationURL.append("?").append(qString);
+                }
+                
                 // generate key; redirect to cms
                 try {
                     String cmsAuthUrl = null;
-                    String cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+                    String cmsBaseUrl;
+                    if (StringUtils.isEmpty(mount.getCmsLocation())) {
+                        log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on virtualhosts, virtualhost or mount level to get rid of this warning");
+                        cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+                    } else {
+                        cmsBaseUrl = mount.getCmsLocation();
+                    }
+                    
                     if (!cmsBaseUrl.endsWith("/")) {
                         cmsBaseUrl += "/";
                     }

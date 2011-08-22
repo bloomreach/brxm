@@ -25,6 +25,9 @@
     <sv:property sv:name="hst:showport" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:cmslocation" sv:type="Boolean">
+      <sv:value>http://localhost:8080/cms</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:prefixexclusions" sv:type="String">
         <sv:value>/ping/</sv:value>
         <sv:value>/binaries/</sv:value>
