@@ -354,6 +354,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     } else {
                         objectPersist = true;
                         Object object = documentManager.getObject(uuid, classname, types);
+                        if (object == null) {
+                            return null;
+                        }
                         workflow = (Workflow)object;
                     }
                     if (workflow instanceof WorkflowImpl) {
