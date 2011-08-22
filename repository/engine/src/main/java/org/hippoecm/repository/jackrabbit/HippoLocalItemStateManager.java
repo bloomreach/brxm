@@ -76,7 +76,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     /** Mask pattern indicating a regular, non-virtual JCR item
      */
-    static final int ITEM_TYPE_REGULAR  = 0x00;
+    static final int ITEM_TYPE_REGULAR = 0x00;
 
     /** Mask pattern indicating an externally defined node, patterns can
      * be OR-ed to indicate both external and virtual nodes.
@@ -86,7 +86,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     /** Mask pattern indicating a virtual node, patterns can be OR-ed to
      * indicate both external and virtual nodes.
      */
-    static final int ITEM_TYPE_VIRTUAL  = 0x02;
+    static final int ITEM_TYPE_VIRTUAL = 0x02;
 
     /** Threshold of the number of virtual state deemed to be acceptable to hold in memory.
      */
@@ -95,50 +95,55 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private NodeTypeRegistry ntReg;
     private org.apache.jackrabbit.core.SessionImpl session;
     private HierarchyManager hierMgr;
-    FacetedNavigationEngine<Query, Context> facetedEngine;
-    FacetedNavigationEngine.Context facetedContext;
+    private FacetedNavigationEngine<Query, Context> facetedEngine;
+    private FacetedNavigationEngine.Context facetedContext;
     private HippoLocalItemStateManager.FilteredChangeLog filteredChangeLog = null;
     private boolean noUpdateChangeLog = false;
-    private Map<String,HippoVirtualProvider> virtualProviders;
-    private Map<Name,HippoVirtualProvider> virtualNodeNames;
+    private Map<String, HippoVirtualProvider> virtualProviders;
+    private Map<Name, HippoVirtualProvider> virtualNodeNames;
     private Set<Name> virtualPropertyNames;
     private Set<ItemState> virtualStates = new HashSet<ItemState>();
     private Set<ItemId> modifiedExternals = new HashSet<ItemId>();
-    private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
-    private Map<ItemId,Object> deletedExternals = new WeakHashMap<ItemId,Object>();
+    private Map<NodeId, ItemState> virtualNodes = new HashMap<NodeId, ItemState>();
+    private Map<ItemId, Object> deletedExternals = new WeakHashMap<ItemId, Object>();
     private NodeId rootNodeId;
     private final boolean virtualLayerEnabled;
     private int virtualLayerEnabledCount = 0;
     private boolean virtualLayerRefreshing = true;
     private boolean parameterizedView = false;
     private StateProviderContext currentContext = null;
+    private static Modules<DataProviderModule> dataProviderModules = null;
+    private boolean editFakeMode = false;
+    private boolean editRealMode = false;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, String attributeName, NodeTypeRegistry ntReg, boolean enabled,
                                       NodeId rootNodeId) {
         super(sharedStateMgr, factory, attributeName, cacheFactory);
         this.ntReg = ntReg;
-        this.virtualLayerEnabled = enabled;
+        virtualLayerEnabled = enabled;
         this.rootNodeId = rootNodeId;
-        virtualProviders = new HashMap<String,HippoVirtualProvider>();
-        virtualNodeNames = new HashMap<Name,HippoVirtualProvider>();
+        virtualProviders = new HashMap<String, HippoVirtualProvider>();
+        virtualNodeNames = new HashMap<Name, HippoVirtualProvider>();
         virtualPropertyNames = new HashSet<Name>();
     }
 
     public boolean isEnabled() {
         return virtualLayerEnabled && virtualLayerEnabledCount == 0;
     }
+
     public void setEnabled(boolean enabled) {
-        if(enabled) {
+        if (enabled) {
             --virtualLayerEnabledCount;
         } else {
             ++virtualLayerEnabledCount;
         }
     }
+
     public void setRefreshing(boolean enabled) {
         virtualLayerRefreshing = enabled;
     }
-    
+
     public NodeTypeRegistry getNodeTypeRegistry() {
         return ntReg;
     }
@@ -174,19 +179,17 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public HippoVirtualProvider lookupProvider(Name nodeTypeName) {
         return virtualNodeNames.get(nodeTypeName);
     }
-    
+
     public Name getQName(String name) throws IllegalNameException, NamespaceException {
         return session.getQName(name);
     }
-    
+
     public Path getQPath(String path) throws MalformedPathException, IllegalNameException, NamespaceException {
         return session.getQPath(path);
     }
 
-    private static Modules<DataProviderModule> dataProviderModules = null;
-
     private static synchronized Modules<DataProviderModule> getDataProviderModules(ClassLoader loader) {
-        if(dataProviderModules == null) {
+        if (dataProviderModules == null) {
             dataProviderModules = new Modules<DataProviderModule>(loader, DataProviderModule.class);
         }
         return new Modules(dataProviderModules);
@@ -203,22 +206,22 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         LinkedHashSet<DataProviderModule> providerInstances = new LinkedHashSet<DataProviderModule>();
         if (virtualLayerEnabled) {
             Modules<DataProviderModule> modules = getDataProviderModules(getClass().getClassLoader());
-            for(DataProviderModule module : modules) {
-                log.info("Provider module "+module.toString());
+            for (DataProviderModule module : modules) {
+                log.info("Provider module " + module.toString());
                 providerInstances.add(module);
             }
         }
 
-        for(DataProviderModule provider : providerInstances) {
-            if(provider instanceof HippoVirtualProvider) {
+        for (DataProviderModule provider : providerInstances) {
+            if (provider instanceof HippoVirtualProvider) {
                 registerProvider(provider.getClass().getName(), (HippoVirtualProvider)provider);
             }
         }
-        for(DataProviderModule provider : providerInstances) {
+        for (DataProviderModule provider : providerInstances) {
             try {
                 provider.initialize(this);
-            } catch(RepositoryException ex) {
-                log.error("cannot initialize virtual provider "+provider.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (RepositoryException ex) {
+                log.error("cannot initialize virtual provider " + provider.getClass().getName() + ": " + ex.getMessage(), ex);
             }
         }
     }
@@ -229,9 +232,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         super.dispose();
     }
 
-    boolean editFakeMode = false;
-    boolean editRealMode = false;
-    
     @Override
     public synchronized void edit() throws IllegalStateException {
         if (!editFakeMode)
@@ -248,7 +248,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public boolean inEditMode() {
-        if(editFakeMode)
+        if (editFakeMode)
             return false;
         return editRealMode;
     }
@@ -261,7 +261,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         virtualStates.clear();
         virtualNodes.clear();
         filteredChangeLog.invalidate();
-        if(!noUpdateChangeLog) {
+        if (!noUpdateChangeLog) {
             super.update(filteredChangeLog);
         }
         modifiedExternals.clear();
@@ -270,7 +270,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public void update()
-    throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
+            throws ReferentialIntegrityException, StaleItemStateException, ItemStateException, IllegalStateException {
         super.update();
         editRealMode = false;
         try {
@@ -391,9 +391,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public boolean hasItemState(ItemId id) {
-        if(id instanceof HippoNodeId || id instanceof ParameterizedNodeId) {
+        if (id instanceof HippoNodeId || id instanceof ParameterizedNodeId) {
             return true;
-        } else if (id instanceof PropertyId && ((PropertyId) id).getParentId() instanceof HippoNodeId) {
+        } else if (id instanceof PropertyId && ((PropertyId)id).getParentId() instanceof HippoNodeId) {
             return true;
         }
         return super.hasItemState(id);
@@ -406,21 +406,21 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             try {
                 state = super.getNodeState(id);
             } catch (NoSuchItemStateException ex) {
-                if(!(id instanceof ParameterizedNodeId)) {
+                if (!(id instanceof ParameterizedNodeId)) {
                     throw ex;
                 }
             }
         }
 
-        if(virtualNodes.containsKey(id)) {
-            state = (NodeState) virtualNodes.get(id);
-        } else if(state == null && id instanceof HippoNodeId) {
+        if (virtualNodes.containsKey(id)) {
+            state = (NodeState)virtualNodes.get(id);
+        } else if (state == null && id instanceof HippoNodeId) {
             boolean editPreviousMode = editFakeMode;
             editFakeMode = true;
             NodeState nodeState;
             try {
                 edit();
-                 if (isEnabled()) {
+                if (isEnabled()) {
                     nodeState = ((HippoNodeId)id).populate(currentContext);
                     if (nodeState == null) {
                         throw new NoSuchItemStateException("Populating node failed");
@@ -433,14 +433,14 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 forceStore(nodeState);
 
                 Name nodeTypeName = nodeState.getNodeTypeName();
-                if(virtualNodeNames.containsKey(nodeTypeName)) {
+                if (virtualNodeNames.containsKey(nodeTypeName)) {
                     int type = isVirtual(nodeState);
                     /*
                      * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
                      * Since the parent EXTERNAL node can impose new constaints, like an inherited filter, we
                      * first need to remove all the childNodeEntries, and then populate it again
                      */
-                    if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
+                    if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
                     state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
@@ -460,7 +460,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         }
         return super.getPropertyState(id);
     }
-    
+
     private NodeState populate(HippoNodeId nodeId) throws NoSuchItemStateException, ItemStateException {
         NodeState dereference = getNodeState(rootNodeId);
         NodeState state = createNew(nodeId, dereference.getNodeTypeName(), nodeId.parentId);
@@ -487,12 +487,12 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     int isVirtual(ItemState state) {
-        if(state.isNode()) {
+        if (state.isNode()) {
             int type = ITEM_TYPE_REGULAR;
-            if(state.getId() instanceof HippoNodeId) {
+            if (state.getId() instanceof HippoNodeId) {
                 type |= ITEM_TYPE_VIRTUAL;
             }
-            if(virtualNodeNames.containsKey(((NodeState)state).getNodeTypeName())) {
+            if (virtualNodeNames.containsKey(((NodeState)state).getNodeTypeName())) {
                 type |= ITEM_TYPE_EXTERNAL;
             }
             return type;
@@ -505,12 +505,12 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
              * named for all node types, but bound to a specific node type
              * for which there is already a provider defined.
              */
-            PropertyState propState = (PropertyState) state;
-            if(propState.getPropertyId() instanceof HippoPropertyId) {
+            PropertyState propState = (PropertyState)state;
+            if (propState.getPropertyId() instanceof HippoPropertyId) {
                 return ITEM_TYPE_VIRTUAL;
-            } else if(virtualPropertyNames.contains(propState.getName())) {
+            } else if (virtualPropertyNames.contains(propState.getName())) {
                 return ITEM_TYPE_VIRTUAL;
-            } else if(propState.getParentId() instanceof HippoNodeId) {
+            } else if (propState.getParentId() instanceof HippoNodeId) {
                 return ITEM_TYPE_VIRTUAL;
             } else {
                 return ITEM_TYPE_REGULAR;
@@ -544,9 +544,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     class FilteredChangeLog extends ChangeLog {
-
         private ChangeLog upstream;
-        Map<ItemId,Object> deletedExternals = new HashMap<ItemId,Object>();
+        Map<ItemId, Object> deletedExternals = new HashMap<ItemId, Object>();
 
         FilteredChangeLog(ChangeLog changelog) {
             upstream = changelog;
@@ -562,42 +561,42 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 return;
             }
             List<ItemState> deletedStates = new LinkedList<ItemState>();
-            for(ItemState state : upstream.deletedStates()) {
+            for (ItemState state : upstream.deletedStates()) {
                 deletedStates.add(state);
             }
             List<ItemState> addedStates = new LinkedList<ItemState>();
-            for(ItemState state : upstream.addedStates()) {
+            for (ItemState state : upstream.addedStates()) {
                 addedStates.add(state);
             }
             List<ItemState> modifiedStates = new LinkedList<ItemState>();
-            for(ItemState state : upstream.modifiedStates()) {
+            for (ItemState state : upstream.modifiedStates()) {
                 modifiedStates.add(state);
             }
-            for(ItemState state : deletedStates) {
-                if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+            for (ItemState state : deletedStates) {
+                if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
                     deletedExternals.put(state.getId(), null);
                     ((NodeState)state).removeAllChildNodeEntries();
                     forceUpdate(state);
                 }
             }
-            for(ItemState state : addedStates) {
-                if((isVirtual(state) & ITEM_TYPE_VIRTUAL) != 0) {
-                    if(state.isNode()) {
-                        NodeState nodeState = (NodeState) state;
+            for (ItemState state : addedStates) {
+                if ((isVirtual(state) & ITEM_TYPE_VIRTUAL) != 0) {
+                    if (state.isNode()) {
+                        NodeState nodeState = (NodeState)state;
                         try {
-                            NodeState parentNodeState = (NodeState) get(nodeState.getParentId());
-                            if(parentNodeState != null) {
+                            NodeState parentNodeState = (NodeState)get(nodeState.getParentId());
+                            if (parentNodeState != null) {
                                 parentNodeState.removeChildNodeEntry(nodeState.getNodeId());
                                 forceUpdate(nodeState);
                             }
-                        } catch(NoSuchItemStateException ex) {
+                        } catch (NoSuchItemStateException ex) {
                         }
                     } else {
                         forceUpdate(state);
                     }
-                } else if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    if(!deletedExternals.containsKey(state.getId()) &&
-                       !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
+                } else if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
+                    if (!deletedExternals.containsKey(state.getId())
+                            && !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                         ((NodeState)state).removeAllChildNodeEntries();
                         forceUpdate((NodeState)state);
                     }
@@ -605,36 +604,36 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             }
             for (ItemState state : modifiedStates) {
                 if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
-                    if (!deletedExternals.containsKey(state.getId()) &&
-                            !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
+                    if (!deletedExternals.containsKey(state.getId())
+                            && !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                         forceUpdate((NodeState)state);
                         ((NodeState)state).removeAllChildNodeEntries();
                     }
+                }
             }
-        }
         }
 
         private void repopulate() {
-            for(Iterator iter = new HashSet<ItemState>(virtualStates).iterator(); iter.hasNext(); ) {
-                ItemState state = (ItemState) iter.next();
+            for (Iterator iter = new HashSet<ItemState>(virtualStates).iterator(); iter.hasNext(); ) {
+                ItemState state = (ItemState)iter.next();
                 // only repopulate ITEM_TYPE_EXTERNAL, not state that are ITEM_TYPE_EXTERNAL && ITEM_TYPE_VIRTUAL
-                if(((isVirtual(state) & ITEM_TYPE_EXTERNAL)) != 0 && ((isVirtual(state) & ITEM_TYPE_VIRTUAL) == 0) &&
-                       !deleted(state.getId()) &&
-                       !deletedExternals.containsKey(state.getId()) &&
-                       !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
+                if (((isVirtual(state) & ITEM_TYPE_EXTERNAL)) != 0 && ((isVirtual(state) & ITEM_TYPE_VIRTUAL) == 0)
+                        && !deleted(state.getId())
+                        && !deletedExternals.containsKey(state.getId())
+                        && !HippoLocalItemStateManager.this.deletedExternals.containsKey(state.getId())) {
                     try {
-                        if(state.getId() instanceof ParameterizedNodeId) {
+                        if (state.getId() instanceof ParameterizedNodeId) {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(new StateProviderContext(((ParameterizedNodeId)state.getId()).getParameterString()), (NodeState)state);
                             parameterizedView = true;
-                        } else if(state.getId() instanceof HippoNodeId) {
+                        } else if (state.getId() instanceof HippoNodeId) {
                             ((HippoNodeId)state.getId()).populate(virtualNodeNames.get(((NodeState)state).getNodeTypeName()), (NodeState)state);
                         } else {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(null, (NodeState)state);
                         }
-                    } catch(ItemStateException ex) {
-                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                    } catch(RepositoryException ex) {
-                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                    } catch (ItemStateException ex) {
+                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     }
                 }
             }
@@ -665,49 +664,78 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             return upstream.isModified(id);
         }
 
-        @Override public ItemState get(ItemId id) throws NoSuchItemStateException {
+        @Override
+        public ItemState get(ItemId id) throws NoSuchItemStateException {
             return upstream.get(id);
         }
-        @Override public boolean has(ItemId id) {
+
+        @Override
+        public boolean has(ItemId id) {
             return upstream.has(id) && !deletedExternals.containsKey(id);
         }
-        @Override public boolean deleted(ItemId id) {
+
+        @Override
+        public boolean deleted(ItemId id) {
             return upstream.deleted(id) && !deletedExternals.containsKey(id);
         }
-        @Override public NodeReferences getReferencesTo(NodeId id) {
-            return upstream.getReferencesTo( id);
+
+        @Override
+        public NodeReferences getReferencesTo(NodeId id) {
+            return upstream.getReferencesTo(id);
         }
-        @Override public Iterable<ItemState> addedStates() {
+
+        @Override
+        public Iterable<ItemState> addedStates() {
             return new FilteredStateIterator(upstream.addedStates(), false);
         }
-        @Override public Iterable<ItemState> modifiedStates() {
+
+        @Override
+        public Iterable<ItemState> modifiedStates() {
             return new FilteredStateIterator(upstream.modifiedStates(), true);
         }
-        @Override public Iterable<ItemState> deletedStates() {
+
+        @Override
+        public Iterable<ItemState> deletedStates() {
             return new FilteredStateIterator(upstream.deletedStates(), false);
         }
-        @Override public Iterable<NodeReferences> modifiedRefs() {
+
+        @Override
+        public Iterable<NodeReferences> modifiedRefs() {
             return new FilteredReferencesIterator(upstream.modifiedRefs());
         }
-        @Override public void merge(ChangeLog other) {
+
+        @Override
+        public void merge(ChangeLog other) {
             upstream.merge(other);
         }
-        @Override public void push() {
+
+        @Override
+        public void push() {
             upstream.push();
         }
-        @Override public void persisted() {
+
+        @Override
+        public void persisted() {
             upstream.persisted();
         }
-        @Override public void reset() {
+
+        @Override
+        public void reset() {
             upstream.reset();
         }
-        @Override public void disconnect() {
+
+        @Override
+        public void disconnect() {
             upstream.disconnect();
         }
-        @Override public void undo(ItemStateManager parent) {
+
+        @Override
+        public void undo(ItemStateManager parent) {
             upstream.undo(parent);
         }
-        @Override public String toString() {
+
+        @Override
+        public String toString() {
             return upstream.toString();
         }
 
@@ -715,118 +743,128 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
             Iterable<ItemState> actualIterable;
             ItemState current;
             boolean modified;
+
             FilteredStateIterator(Iterable<ItemState> actualIterable, boolean modified) {
                 this.actualIterable = actualIterable;
                 current = null;
                 this.modified = modified;
             }
+
             public Iterator<ItemState> iterator() {
                 final Iterator<ItemState> actualIterator = actualIterable.iterator();
                 return new Iterator<ItemState>() {
-            public boolean hasNext() {
-                while(current == null) {
-                    if(!actualIterator.hasNext())
-                        return false;
-                    current = (ItemState) actualIterator.next();
-                    if(needsSkip(current)) {
-                        current = null;
-                    }
-                }
-                return (current != null);
-            }
-            public boolean needsSkip(ItemState current) {
-                if (HippoLocalItemStateManager.this.deletedExternals.containsKey(current.getId())) {
-                    return true;
-                }
-                if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
-                    if (!current.isNode()) {
-                        PropertyState propState = (PropertyState) current;
-                        if (modifiedExternals.contains(propState.getParentId())) {
-                            return false;
+                    public boolean hasNext() {
+                        while (current == null) {
+                            if (!actualIterator.hasNext())
+                                return false;
+                            current = (ItemState)actualIterator.next();
+                            if (needsSkip(current)) {
+                                current = null;
+                            }
                         }
+                        return (current != null);
                     }
-                    return true;
-                }
-                if (modified) {
-                    if ((isVirtual(current) & ITEM_TYPE_EXTERNAL) != 0) {
-                        return !modifiedExternals.contains(current.getId());
+
+                    public boolean needsSkip(ItemState current) {
+                        if (HippoLocalItemStateManager.this.deletedExternals.containsKey(current.getId())) {
+                            return true;
+                        }
+                        if ((isVirtual(current) & ITEM_TYPE_VIRTUAL) != 0) {
+                            if (!current.isNode()) {
+                                PropertyState propState = (PropertyState)current;
+                                if (modifiedExternals.contains(propState.getParentId())) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }
+                        if (modified) {
+                            if ((isVirtual(current) & ITEM_TYPE_EXTERNAL) != 0) {
+                                return !modifiedExternals.contains(current.getId());
+                            }
+                        }
+                        return false;
                     }
-                }
-                return false;
-            }
-            public ItemState next() throws NoSuchElementException {
-                ItemState rtValue = null;
-                while(current == null) {
-                    if(!actualIterator.hasNext()) {
-                        throw new NoSuchElementException();
-                    }
-                    current = (ItemState) actualIterator.next();
-                    if (needsSkip(current)) {
+
+                    public ItemState next() throws NoSuchElementException {
+                        ItemState rtValue = null;
+                        while (current == null) {
+                            if (!actualIterator.hasNext()) {
+                                throw new NoSuchElementException();
+                            }
+                            current = (ItemState)actualIterator.next();
+                            if (needsSkip(current)) {
+                                current = null;
+                            }
+                        }
+                        rtValue = current;
                         current = null;
+                        if (rtValue == null)
+                            throw new NoSuchElementException();
+                        return rtValue;
                     }
-                }
-                rtValue = current;
-                current = null;
-                if(rtValue == null)
-                    throw new NoSuchElementException();
-                return rtValue;
-            }
-            public void remove() throws UnsupportedOperationException, IllegalStateException {
-                actualIterator.remove();
-            }
-            };
+
+                    public void remove() throws UnsupportedOperationException, IllegalStateException {
+                        actualIterator.remove();
+                    }
+                };
             }
         }
 
         class FilteredReferencesIterator implements Iterable<NodeReferences> {
             Iterable<NodeReferences> actualIterable;
             NodeReferences current;
+
             FilteredReferencesIterator(Iterable<NodeReferences> actualIterable) {
                 this.actualIterable = actualIterable;
                 current = null;
             }
+
             public Iterator<NodeReferences> iterator() {
                 final Iterator<NodeReferences> actualIterator = actualIterable.iterator();
                 return new Iterator<NodeReferences>() {
-            public boolean hasNext() {
-                while (current == null) {
-                    if (!actualIterator.hasNext())
-                        return false;
-                    current = (NodeReferences)actualIterator.next();
-                    if (needsSkip(current)) {
+                    public boolean hasNext() {
+                        while (current == null) {
+                            if (!actualIterator.hasNext())
+                                return false;
+                            current = (NodeReferences)actualIterator.next();
+                            if (needsSkip(current)) {
+                                current = null;
+                            }
+                        }
+                        return (current != null);
+                    }
+
+                    public boolean needsSkip(NodeReferences current) {
+                        return isPureVirtual(current.getTargetId());
+                    }
+
+                    public NodeReferences next() throws NoSuchElementException {
+                        NodeReferences rtValue = null;
+                        while (current == null) {
+                            if (!actualIterator.hasNext()) {
+                                throw new NoSuchElementException();
+                            }
+                            current = (NodeReferences)actualIterator.next();
+                            if (needsSkip(current)) {
+                                current = null;
+                            }
+                        }
+                        rtValue = new NodeReferences(current.getTargetId());
+                        for (PropertyId propId : (List<PropertyId>)current.getReferences()) {
+                            if (!isPureVirtual(propId)) {
+                                rtValue.addReference(propId);
+                            }
+                        }
                         current = null;
+                        if (rtValue == null)
+                            throw new NoSuchElementException();
+                        return rtValue;
                     }
-                }
-                return (current != null);
-            }
-            public boolean needsSkip(NodeReferences current) {
-                return isPureVirtual(current.getTargetId());
-            }
-            public NodeReferences next() throws NoSuchElementException {
-                NodeReferences rtValue = null;
-                while (current == null) {
-                    if (!actualIterator.hasNext()) {
-                        throw new NoSuchElementException();
+
+                    public void remove() throws UnsupportedOperationException, IllegalStateException {
+                        actualIterator.remove();
                     }
-                    current = (NodeReferences)actualIterator.next();
-                    if (needsSkip(current)) {
-                        current = null;
-                    }
-                }
-                rtValue = new NodeReferences(current.getTargetId());
-                for (PropertyId propId : (List<PropertyId>)current.getReferences()) {
-                    if (!isPureVirtual(propId)) {
-                        rtValue.addReference(propId);
-                    }
-                }
-                current = null;
-                if (rtValue == null)
-                    throw new NoSuchElementException();
-                return rtValue;
-            }
-            public void remove() throws UnsupportedOperationException, IllegalStateException {
-                actualIterator.remove();
-            }
                 };
             }
         }
@@ -834,7 +872,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public void stateDestroyed(ItemState destroyed) {
-        if(destroyed.getContainer() != this) {
+        if (destroyed.getContainer() != this) {
             if ((isVirtual(destroyed) & ITEM_TYPE_EXTERNAL) != 0) {
                 deletedExternals.put(destroyed.getId(), null);
             }
@@ -851,7 +889,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         modifiedExternals.add(state.getId());
         super.store(state);
     }
-    
+
     private void forceStore(ItemState state) {
         super.store(state);
     }
