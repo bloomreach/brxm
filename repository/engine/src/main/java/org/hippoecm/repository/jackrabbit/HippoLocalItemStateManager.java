@@ -561,27 +561,17 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 }
                 return;
             }
-            Set<ItemId> changedParents = new HashSet<ItemId>();
             List<ItemState> deletedStates = new LinkedList<ItemState>();
             for(ItemState state : upstream.deletedStates()) {
                 deletedStates.add(state);
-                if (!state.isNode()) {
-                    changedParents.add(state.getParentId());
-                }
             }
             List<ItemState> addedStates = new LinkedList<ItemState>();
             for(ItemState state : upstream.addedStates()) {
                 addedStates.add(state);
-                if (!state.isNode()) {
-                    changedParents.add(state.getParentId());
-                }
             }
             List<ItemState> modifiedStates = new LinkedList<ItemState>();
             for(ItemState state : upstream.modifiedStates()) {
                 modifiedStates.add(state);
-                if (!state.isNode()) {
-                    changedParents.add(state.getParentId());
-                }
             }
             for(ItemState state : deletedStates) {
                 if((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
