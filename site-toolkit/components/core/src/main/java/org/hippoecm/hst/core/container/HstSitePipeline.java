@@ -34,7 +34,7 @@ public class HstSitePipeline implements Pipeline
     protected final static Logger log = LoggerFactory.getLogger(HstSitePipeline.class);
     
     protected Valve [] initializationValves;
-    protected Valve [] renderingValves;
+    protected Valve [] processingValves;
     protected Valve [] cleanupValves;
     
     public HstSitePipeline() throws Exception
@@ -87,49 +87,49 @@ public class HstSitePipeline implements Pipeline
     }
     
     /**
-     * @param renderingValves
-     * @deprecated use {@link #setRenderingValves(Valve[])} instead
+     * @param processingValves
+     * @deprecated use {@link #setProcessingValves(Valve[])} instead
      */
     @Deprecated
-    public void setInvokingValves(Valve [] renderingValves) {
-        log.warn("invokingValves is deprecated. Use renderingValves instead");
-        if (renderingValves == null) {
-            this.renderingValves = null;
+    public void setInvokingValves(Valve [] processingValves) {
+        log.warn("invokingValves is deprecated. Use processingValves instead");
+        if (processingValves == null) {
+            this.processingValves = null;
         } else {
-            this.renderingValves = new Valve[renderingValves.length];
-            System.arraycopy(renderingValves, 0, this.renderingValves, 0, renderingValves.length);
+            this.processingValves = new Valve[processingValves.length];
+            System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
         }
     }
     
     /**
      * 
-     * @param renderingValves
+     * @param processingValves
      */
-    public void setRenderingValves(Valve [] renderingValves) {
-        if (renderingValves == null) {
-            this.renderingValves = null;
+    public void setProcessingValves(Valve [] processingValves) {
+        if (processingValves == null) {
+            this.processingValves = null;
         } else {
-            this.renderingValves = new Valve[renderingValves.length];
-            System.arraycopy(renderingValves, 0, this.renderingValves, 0, renderingValves.length);
+            this.processingValves = new Valve[processingValves.length];
+            System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
         }
     }
     
     /**
-     * @param renderingValve
-     * @deprecated use {@link #addRenderingValve(Valve)} instead
+     * @param processingValve
+     * @deprecated use {@link #addProcessingValve(Valve)} instead
      */
     @Deprecated
-    public void addInvokingValve(Valve renderingValve) {
-        log.warn("addInvokingValve is deprecated. Use addRenderingValve instead");
-        renderingValves = add(renderingValves, renderingValve);
+    public void addInvokingValve(Valve processingValve) {
+        log.warn("addInvokingValve is deprecated. Use addProcessingValve instead");
+        processingValves = add(processingValves, processingValve);
     }
     
     /**
      * 
-     * @param renderingValve
+     * @param processingValve
      */
-    public void addRenderingValve(Valve renderingValve) {
-        renderingValves = add(renderingValves, renderingValve);
+    public void addProcessingValve(Valve processingValve) {
+        processingValves = add(processingValves, processingValve);
     }
     
     /**
@@ -204,7 +204,7 @@ public class HstSitePipeline implements Pipeline
     }
 
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, (Valve[])ArrayUtils.addAll(initializationValves, renderingValves));
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, (Valve[])ArrayUtils.addAll(initializationValves, processingValves));
     }
      
     public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {

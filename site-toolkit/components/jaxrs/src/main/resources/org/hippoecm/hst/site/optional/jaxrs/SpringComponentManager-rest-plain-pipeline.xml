@@ -98,7 +98,7 @@
               <ref bean="cmsSecurityValve"/>
             </list>
           </property>
-          <property name="renderingValves">
+          <property name="processingValves">
             <list>
               <ref bean="securityValve" />
               <ref bean="subjectBasedSessionValve" />
