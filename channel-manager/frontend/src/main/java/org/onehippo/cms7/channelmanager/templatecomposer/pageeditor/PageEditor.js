@@ -256,12 +256,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('beforeInitializeIFrameHead');
         }, this);
 
-        this.on('iFrameInitialized', this.onIFrameInitialized, this);
+        this.on('iFrameInitialized', function() {
+            console.log('onIFrameInitialized');
+            this.iframeInitialized = true;
+        }, this);
 
         this.on('hstMetaDataResponse', this.onHstMetaDataResponse, this);
 
         this.on('beforeMountIdChange', function(data) {
-            if (this.previewMode) {
+            if (!this.iframeInitialized) {
                 console.log('add beforeInitializeIFrameHead listener');
                 if (this.mountIdIFrameInitListener) {
                     this.removeListener('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this);
@@ -276,7 +279,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('beforePageIdChange', function(data) {
-            if (this.previewMode) {
+            console.log('beforePageIdChange, previewMode: '+this.previewMode);
+            if (!this.iframeInitialized) {
                 console.log('add beforeInitializeIFrameHead listener');
                 if (this.pageIdIFrameInitListener) {
                     this.removeListener('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this);
@@ -292,9 +296,30 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.on('beforeInitComposer', function() {
             Ext.Msg.wait('Loading...');
+            this.previewMode = true;
+            this.ids.pageId = null;
+            this.ids.mountId = null;
+            this.ids.pageUrl = null;
+            this.isPreviewHstConfig = false;
+            this.resetIFrameState();
+            Ext.getCmp('pagePreviewButton').toggle(true, true);
+            Ext.getCmp('pageComposerButton').toggle(false, true);
+            Ext.getCmp('pagePreviewButton').setDisabled(true);
+            Ext.getCmp('pageComposerButton').setDisabled(true);
+            Ext.getCmp('publishHstConfig').setDisabled(true);
+            if (this.mainWindow) {
+                this.mainWindow.hide();
+            }
+        }, this);
+
+        this.on('afterInitComposer', function() {
+            Ext.getCmp('pagePreviewButton').setDisabled(false);
+            Ext.getCmp('pageComposerButton').setDisabled(false);
+            Ext.Msg.hide();
         }, this);
 
         this.on('beforeModeChange', function(data) {
+            console.log('beforeModeChange');
             Ext.getCmp('pagePreviewButton').setDisabled(data.previewMode);
             Ext.getCmp('pageComposerButton').setDisabled(!data.previewMode);
             if (data.previewMode) {
@@ -303,6 +328,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('modeChanged', function(data) {
+            console.log('mode changed');
             if (data.previewMode) {
                 this.mainWindow.hide();
             } else {
@@ -311,14 +337,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
-        }, this);
-
-        this.on('afterIFrameDOMReady', function() {
-            if (this.previewMode) {
-                Ext.getCmp('pagePreviewButton').setDisabled(false);
-                Ext.getCmp('pageComposerButton').setDisabled(false);
-                Ext.Msg.hide();
-            }
         }, this);
 
         this.on('isPreviewHstConfigChanged', function(data) {
@@ -385,27 +403,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
         this.fireEvent('beforeInitComposer');
+        this.on('afterIFrameDOMReady', function() {
+            this.fireEvent('afterInitComposer');
+        }, this, {single : true});
         if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
             this.renderHostSubMountPath = renderHostSubMountPath.substr(1);
         } else {
             this.renderHostSubMountPath = renderHostSubMountPath;
         }
         this.renderHost = renderHost;
-        this.previewMode = true;
-        this.ids.pageId = null;
-        this.ids.mountId = null;
-        this.ids.pageUrl = null;
-        this.isPreviewHstConfig = false;
-        this.resetIFrameState();
-        Ext.getCmp('pagePreviewButton').toggle(true, true);
-        Ext.getCmp('pageComposerButton').toggle(false, true);
-        Ext.getCmp('pagePreviewButton').setDisabled(true);
-        Ext.getCmp('pageComposerButton').setDisabled(true);
-        Ext.getCmp('publishHstConfig').setDisabled(true);
-
-        if (this.mainWindow) {
-            this.mainWindow.hide();
-        }
 
         if (!this.hstInComposerMode) {
             var me = this;
@@ -602,14 +608,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         } else {
             this.on('afterPreCacheIFrameResources', func, this, {single : true});
         }
-    },
-
-    onIFrameInitialized : function() {
-        console.log('onIFrameInitialized');
-        this.iframeInitialized = true;
-        Ext.getCmp('pagePreviewButton').setDisabled(false);
-        Ext.getCmp('pageComposerButton').setDisabled(false);
-        Ext.Msg.hide();
     },
 
     requestHstMetaData: function(options) {
