@@ -343,7 +343,8 @@ public class ChannelManagerImpl implements ChannelManager {
     public Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException {
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName == null) {
-            throw new ChannelException("No channel info classname specified for " + channel.getId());
+            log.debug("No channelInfoClassName defined. Return just the ChannelInfo interface class");
+            return ChannelInfo.class;
         }
         try {
             return (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
@@ -596,5 +597,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
         return uri;
     }
+    
+    
 
 }
