@@ -814,7 +814,6 @@ demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svne
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
-demosuite/site/src/main/java/org/hippoecm/hst/demo/channels/WebsiteInfo.java -text svneol=unset#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain

@@ -7,9 +7,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:channel</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:channelinfoclass" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.channels.WebsiteInfo</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
       <sv:value>English Demo Site (live)</sv:value>
     </sv:property>
@@ -25,9 +22,6 @@
   <sv:node sv:name="demosite-fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:channel</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:channelinfoclass" sv:type="String">
-      <sv:value>org.hippoecm.hst.demo.channels.WebsiteInfo</sv:value>
     </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
       <sv:value>French Demo Site (live)</sv:value>
