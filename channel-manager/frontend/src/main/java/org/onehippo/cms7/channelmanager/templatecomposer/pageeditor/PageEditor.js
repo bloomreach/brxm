@@ -386,7 +386,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     initComposer : function(channelName, renderHostSubMountPath, renderHost) {
         this.fireEvent('beforeInitComposer');
         if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
-            this.renderHostSubMountPath = this.renderHostSubMountPath.substr(1);
+            this.renderHostSubMountPath = renderHostSubMountPath.substr(1);
         } else {
             this.renderHostSubMountPath = renderHostSubMountPath;
         }
