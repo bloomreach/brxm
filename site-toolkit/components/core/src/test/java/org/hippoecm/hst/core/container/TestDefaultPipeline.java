@@ -101,15 +101,13 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         
 
         HstRequestContext requestContext = resolveRequest(servletRequest, servletResponse);
-        
-        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
-        
+       
         try {
             this.defaultPipeline.invoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.cleanup(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();
@@ -124,15 +122,13 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         ((MockHttpServletRequest)servletRequest).setRequestURI(servletRequest.getContextPath() + servletRequest.getServletPath() + servletRequest.getPathInfo());
         
         HstRequestContext requestContext = resolveRequest(servletRequest, servletResponse);
-        
-        this.defaultPipeline.beforeInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
-        
+      
         try {
             this.defaultPipeline.invoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            this.defaultPipeline.afterInvoke(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
+            this.defaultPipeline.cleanup(this.requestContainerConfig, requestContext, this.servletRequest, this.servletResponse);
         }
         
         String content = ((MockHttpServletResponse) this.servletResponse).getContentAsString();

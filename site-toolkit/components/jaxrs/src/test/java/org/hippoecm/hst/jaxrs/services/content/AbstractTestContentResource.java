@@ -149,14 +149,13 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     	HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
     	requestContext.setPathSuffix(cr.getPathSuffix());
     	requestContext.setBaseURL(urlProvider.parseURL(cr, response, requestContext.getResolvedMount()));
-        jaxrsPipeline.beforeInvoke(hstContainerConfig, requestContext, cr, response);
         
         try {
             jaxrsPipeline.invoke(hstContainerConfig, requestContext, cr, response);
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            jaxrsPipeline.afterInvoke(hstContainerConfig, requestContext, cr, response);
+            jaxrsPipeline.cleanup(hstContainerConfig, requestContext, cr, response);
         }
     }
 }

@@ -18,8 +18,10 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstSitePipeline
@@ -28,56 +30,157 @@ import org.hippoecm.hst.site.HstServices;
  */
 public class HstSitePipeline implements Pipeline
 {
+
+    protected final static Logger log = LoggerFactory.getLogger(HstSitePipeline.class);
     
-    protected Valve [] preInvokingValves;
-    protected Valve [] invokingValves;
-    protected Valve [] postInvokingValves;
+    protected Valve [] initializationValves;
+    protected Valve [] renderingValves;
+    protected Valve [] cleanupValves;
     
     public HstSitePipeline() throws Exception
     {
     }
 
-    public void setPreInvokingValves(Valve [] preInvokingValves) {
-        if (preInvokingValves == null) {
-            this.preInvokingValves = null;
+    /**
+     * @param initializationValves
+     * @deprecated use {@link #setInitializationValves(Valve[])} instead
+     */
+    @Deprecated
+    public void setPreInvokingValves(Valve [] initializationValves) {
+        log.warn("preInvokingValves is deprecated. Use initializationValves instead");
+        if (initializationValves == null) {
+            this.initializationValves = null;
         } else {
-            this.preInvokingValves = new Valve[preInvokingValves.length];
-            System.arraycopy(preInvokingValves, 0, this.preInvokingValves, 0, preInvokingValves.length);
+            this.initializationValves = new Valve[initializationValves.length];
+            System.arraycopy(initializationValves, 0, this.initializationValves, 0, initializationValves.length);
         }
     }
     
-    public void addPreInvokingValve(Valve preInvokingValve) {
-        preInvokingValves = add(preInvokingValves, preInvokingValve);
-    }
-    
-    public void setInvokingValves(Valve [] invokingValves) {
-        if (invokingValves == null) {
-            this.invokingValves = null;
+    /**
+     * 
+     * @param initializationValves
+     */
+    public void setInitializationValves(Valve [] initializationValves) {
+        if (initializationValves == null) {
+            this.initializationValves = null;
         } else {
-            this.invokingValves = new Valve[invokingValves.length];
-            System.arraycopy(invokingValves, 0, this.invokingValves, 0, invokingValves.length);
+            this.initializationValves = new Valve[initializationValves.length];
+            System.arraycopy(initializationValves, 0, this.initializationValves, 0, initializationValves.length);
         }
     }
     
-    public void addInvokingValve(Valve invokingValve) {
-        invokingValves = add(invokingValves, invokingValve);
+    /**
+     * @param initializationValve
+     * @deprecated use {@link #addInitializationValve(Valve)} instead
+     */
+    @Deprecated
+    public void addPreInvokingValve(Valve initializationValve) {
+        log.warn("addPreInvokingValve is deprecated. Use addInitializationValve instead");
+        initializationValves = add(initializationValves, initializationValve);
     }
     
-    public void setPostInvokingValves(Valve [] postInvokingValves) {
-        if (postInvokingValves == null) {
-            this.postInvokingValves = null;
+    /**
+     * @param initializationValve
+     */
+    public void addInitializationValve(Valve initializationValve) {
+        initializationValves = add(initializationValves, initializationValve);
+    }
+    
+    /**
+     * @param renderingValves
+     * @deprecated use {@link #setRenderingValves(Valve[])} instead
+     */
+    @Deprecated
+    public void setInvokingValves(Valve [] renderingValves) {
+        log.warn("invokingValves is deprecated. Use renderingValves instead");
+        if (renderingValves == null) {
+            this.renderingValves = null;
         } else {
-            this.postInvokingValves = new Valve[postInvokingValves.length];
-            System.arraycopy(postInvokingValves, 0, this.postInvokingValves, 0, postInvokingValves.length);
+            this.renderingValves = new Valve[renderingValves.length];
+            System.arraycopy(renderingValves, 0, this.renderingValves, 0, renderingValves.length);
         }
     }
     
-    public void addPostInvokingValve(Valve postInvokingValve) {
-        postInvokingValves = add(postInvokingValves, postInvokingValve);
+    /**
+     * 
+     * @param renderingValves
+     */
+    public void setRenderingValves(Valve [] renderingValves) {
+        if (renderingValves == null) {
+            this.renderingValves = null;
+        } else {
+            this.renderingValves = new Valve[renderingValves.length];
+            System.arraycopy(renderingValves, 0, this.renderingValves, 0, renderingValves.length);
+        }
+    }
+    
+    /**
+     * @param renderingValve
+     * @deprecated use {@link #addRenderingValve(Valve)} instead
+     */
+    @Deprecated
+    public void addInvokingValve(Valve renderingValve) {
+        log.warn("addInvokingValve is deprecated. Use addRenderingValve instead");
+        renderingValves = add(renderingValves, renderingValve);
+    }
+    
+    /**
+     * 
+     * @param renderingValve
+     */
+    public void addRenderingValve(Valve renderingValve) {
+        renderingValves = add(renderingValves, renderingValve);
+    }
+    
+    /**
+     * @param cleanupValves
+     * @deprecated use {@link #setCleanupValves(Valve[])} instead
+     */
+    @Deprecated
+    public void setPostInvokingValves(Valve [] cleanupValves) {
+        log.warn("postInvokingValves is deprecated. Use cleanupValves instead");
+        if (cleanupValves == null) {
+            this.cleanupValves = null;
+        } else {
+            this.cleanupValves = new Valve[cleanupValves.length];
+            System.arraycopy(cleanupValves, 0, this.cleanupValves, 0, cleanupValves.length);
+        }
+    }
+    
+    /**
+     * 
+     * @param cleanupValve
+     */
+    public void setCleanupValves(Valve [] cleanupValve) {
+        if (cleanupValve == null) {
+            this.cleanupValves = null;
+        } else {
+            this.cleanupValves = new Valve[cleanupValve.length];
+            System.arraycopy(cleanupValve, 0, this.cleanupValves, 0, cleanupValve.length);
+        }
+    }
+    
+    /**
+     * 
+     * @param cleanupValve
+     * @deprecated use {@link #addCleanUpValve(Valve)}
+     */
+    @Deprecated
+    public void addPostInvokingValve(Valve cleanupValve) {
+        log.warn("addPostInvokingValve is deprecated. Use addCleanUpValve instead");
+        cleanupValves = add(cleanupValves, cleanupValve);
+    }
+    
+    /*
+     * 
+     */
+    public void addCleanupValve(Valve cleanupValve) {
+        cleanupValves = add(cleanupValves, cleanupValve);
     }
 
     private Valve[] add(Valve[] valves, Valve valve) {
         if(valve == null) {
+            
             return valves;
         }
         Valve[] newValves;
@@ -92,74 +195,38 @@ public class HstSitePipeline implements Pipeline
         return newValves;
     }
     
+    
     public void initialize() throws ContainerException {
     }
     
-    @Deprecated
     public void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, preInvokingValves);
+        throw new ContainerException("beforeInvoke should not be called any more. Before invoking valves execution is done by invoke ");
     }
 
-    public PipelineContext preprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, preInvokingValves);
-    }
-    
-    @Deprecated
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, invokingValves);
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, (Valve[])ArrayUtils.addAll(initializationValves, renderingValves));
     }
-    
-    public PipelineContext process(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, invokingValves);
-    }
-    
-    @Deprecated
+     
     public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, postInvokingValves);
+        log.warn("HstSitePipeline#afterInvoke has been deprecated. Use HstSitePipeline#cleanup instead");
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, cleanupValves);
     }
     
-    public PipelineContext postprocess(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        return invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, postInvokingValves);
+    public void cleanup(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, cleanupValves);
     }
     
-    private PipelineContext invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            ValvesInvocation valvesInvocation = new ValvesInvocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves);
-            valvesInvocation.invokeNext();
-            return new PipelineInvocation(valvesInvocation);
+            new Invocation(requestContainerConfig, requestContext, servletRequest, servletResponse, valves).invokeNext();
         }
-        
-        return new PipelineInvocation();
     }
 
     public void destroy() throws ContainerException {
-    }
+    }    
     
-    private static final class PipelineInvocation implements PipelineContext {
-        
-        private final ValvesInvocation valvesInvocation;
-        
-        public PipelineInvocation() {
-            this(null);
-        }
-        
-        public PipelineInvocation(final ValvesInvocation valvesInvocation) {
-            this.valvesInvocation = valvesInvocation;
-        }
-        
-        public boolean isPipelineCompletionRequested() {
-            if (valvesInvocation != null) {
-                return valvesInvocation.isPipelineCompletionRequested();
-            }
-            
-            return false;
-        }
-        
-    }
-    
-    private static final class ValvesInvocation implements ValveContext
+    private static final class Invocation implements ValveContext
     {
-        private static final String FQCN = ValvesInvocation.class.getName(); 
 
         private final Valve[] valves;
 
@@ -168,11 +235,10 @@ public class HstSitePipeline implements Pipeline
         private final HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
         private final HstRequestContext requestContext;
-        private boolean pipelineCompletionRequested;
 
         private int at = 0;
 
-        public ValvesInvocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
+        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
             this.servletRequest = servletRequest;
@@ -181,11 +247,6 @@ public class HstSitePipeline implements Pipeline
         }
 
         public void invokeNext() throws ContainerException {
-            if (pipelineCompletionRequested) {
-                HstServices.getLogger(FQCN, FQCN).warn("Pipeline is already completed. Next invocation will be ignored.");
-                return;
-            }
-            
             if (at < valves.length)
             {
                 Valve next = valves[at];
@@ -194,16 +255,12 @@ public class HstSitePipeline implements Pipeline
             }
         }
 
-        public void completePipeline() throws ContainerException {
-            this.pipelineCompletionRequested = true;
-        }
-
         public HstContainerConfig getRequestContainerConfig() {
             return this.requestContainerConfig;
         }
         
         public HstRequestContext getRequestContext() {
-        	return this.requestContext;
+            return this.requestContext;
         }
         public HttpServletRequest getServletRequest() {
             return this.servletRequest;
@@ -219,10 +276,6 @@ public class HstSitePipeline implements Pipeline
         
         public HstComponentWindow getRootComponentWindow() {
             return this.rootComponentWindow;
-        }
-        
-        boolean isPipelineCompletionRequested() {
-            return pipelineCompletionRequested;
         }
     }
 }

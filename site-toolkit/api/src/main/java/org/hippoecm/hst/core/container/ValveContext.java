@@ -37,14 +37,6 @@ public interface ValveContext
     void invokeNext() throws ContainerException;
     
     /**
-     * Requests completion of invocation pipelining.
-     * The request processor of a container may stop processing in the main pipelining
-     * except of some clean up processing.
-     * @throws ContainerException
-     */
-    void completePipeline() throws ContainerException;
-    
-    /**
      * Returns the HstComponent container configuration.
      * 
      * @return

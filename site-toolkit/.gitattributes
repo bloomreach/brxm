@@ -130,7 +130,6 @@ api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/PageErrors.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Pipeline.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/container/PipelineContext.java -text
 api/src/main/java/org/hippoecm/hst/core/container/Pipelines.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/RepositoryNotAvailableException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ServletContextAware.java svneol=native#text/plain
@@ -533,7 +532,6 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipelin
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstContainerURL.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstNavigationalStateCodec.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/container/TestHstRequestProcessor.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text

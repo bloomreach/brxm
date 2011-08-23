@@ -59,13 +59,16 @@
   <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
-  
+   
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
     <property name="repository" ref="javax.jcr.Repository.cms"/>
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
+    <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
   </bean>
   
   <bean id="cmsHostContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostContextValve"/>
+  
+  
   
   <!-- Generic no-cache response headers setting valve -->
   <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
@@ -122,6 +125,7 @@
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
   </bean>
   
+ 
   <!-- Post-processing valves -->
   
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
@@ -136,13 +140,13 @@
       <map>
         <entry key="DefaultSitePipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-            <property name="preInvokingValves">
+            <property name="initializationValves">
               <list>
                 <ref bean="initializationValve" />
                 <ref bean="cmsSecurityValve"/>
               </list>
             </property>
-            <property name="invokingValves">
+            <property name="renderingValves">
               <list>
                 <ref bean="contextResolvingValve" />
                 <ref bean="localizationValve" />
@@ -155,7 +159,7 @@
                 <ref bean="aggregationValve" />
               </list>
             </property>
-            <property name="postInvokingValves">
+            <property name="cleanupValves">
               <list>
                 <ref bean="cleanupValve" />
               </list>

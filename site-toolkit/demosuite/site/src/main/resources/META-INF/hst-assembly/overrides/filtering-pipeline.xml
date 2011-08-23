@@ -37,7 +37,7 @@
         </property>
       </bean>
     </property>
-    <property name="targetMethod" value="addPreInvokingValve"/>
+    <property name="targetMethod" value="addRenderingValve"/>
     <property name="arguments">
         <ref bean="filteringValve" />
     </property>

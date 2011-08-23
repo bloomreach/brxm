@@ -92,13 +92,13 @@
       <list>
         <value>JaxrsRestPlainPipeline</value>
         <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-          <property name="preInvokingValves">
+          <property name="initializationValves">
             <list>
               <ref bean="initializationValve" />
               <ref bean="cmsSecurityValve"/>
             </list>
           </property>
-          <property name="invokingValves">
+          <property name="renderingValves">
             <list>
               <ref bean="securityValve" />
               <ref bean="subjectBasedSessionValve" />
@@ -106,7 +106,7 @@
               <ref bean="jaxrsRestPlainServiceValve" />
             </list>
           </property>
-          <property name="postInvokingValves">
+          <property name="cleanupValves">
             <list>
               <ref bean="cleanupValve" />
             </list>

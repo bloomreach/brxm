@@ -133,7 +133,6 @@ public class CmsSecurityValve extends AbstractValve {
                     if (cmsAuthUrl != null) {
                         //Everything seems to be fine, redirect to destination url and return
                         servletResponse.sendRedirect(cmsAuthUrl);
-                        context.completePipeline();
                     } else {
                         log.error("No cmsAuthUrl specified");
                     }

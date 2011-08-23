@@ -94,20 +94,20 @@
       <list>
         <value>ComposerPipeline</value>
         <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-          <property name="preInvokingValves">
+          <property name="initializationValves">
             <list>
               <ref bean="initializationValve"/>
               <ref bean="cmsHostContextValve"/>
               <ref bean="cmsSecurityValve"/>
             </list>
           </property>
-          <property name="invokingValves">
+          <property name="renderingValves">
             <list>
               <ref bean="noCacheResponseHeadersValve"/>
               <ref bean="jaxrsHstConfigServiceValve"/>
             </list>
           </property>
-          <property name="postInvokingValves">
+          <property name="cleanupValves">
             <list>
               <ref bean="cleanupValve"/>
             </list>

@@ -66,19 +66,14 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
                 Thread.currentThread().setContextClassLoader(processorClassLoader);
             }
        
-            PipelineContext pipelineContext = pipeline.preprocess(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            pipeline.invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
             
-            if (pipelineContext.isPipelineCompletionRequested()) {
-                log.debug("Pipeline completion has been requested. Skip the main processing.");
-            } else {
-                pipeline.process(requestContainerConfig, requestContext, servletRequest, servletResponse);
-            }
         } catch (ContainerException e) {
             throw e;
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
-            pipeline.postprocess(requestContainerConfig, requestContext, servletRequest, servletResponse);
+            pipeline.cleanup(requestContainerConfig, requestContext, servletRequest, servletResponse);
       
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(containerClassLoader);
