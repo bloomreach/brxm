@@ -35,7 +35,9 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  */
 public class JCRSessionStatefulConcurrencyValve extends AbstractValve {
     
-    protected long maxRefreshIntervalOnLazySession;
+
+    // default max refresh interval for refresh on lazy session is 5 minutes
+    protected long maxRefreshIntervalOnLazySession = 300000;
     
     public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
         this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;

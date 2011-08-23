@@ -54,7 +54,13 @@ public class CmsSecurityValve extends AbstractValve {
     
     private Repository repository;
     private String pathSuffixDelimiter = DEFAULT_PATH_SUFFIX;
-
+    // default max refresh interval for refresh on lazy session is 5 minutes
+    protected long maxRefreshIntervalOnLazySession = 300000;
+    
+    public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
+        this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
+    }
+    
     public void setRepository(Repository repository) {
         this.repository = repository;
     } 
@@ -152,24 +158,35 @@ public class CmsSecurityValve extends AbstractValve {
             } 
         } 
 
-        LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-        
-        if(!lazySession.isLive()) {
-            log.debug("SSO jcr session is not live. Try to get a new one.");
-            setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
-            lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-        } 
-        
-        // we need to synchronize on a jcr session as a jcr session is not thread safe. Also, virtual states will be lost
+        // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session
-        synchronized (lazySession) {
-            // always refresh jcr session, otherwise changes in documents won't be visible
+        
+        synchronized (session) {
+            LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+            if(!lazySession.isLive()) {
+                log.debug("SSO jcr session is not live. Try to get a new one.");
+                setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+                lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+            } 
             try {
-                lazySession.refresh(false);
+                if (maxRefreshIntervalOnLazySession > 0L) {
+                    // First check whether the maxRefreshInterval has passed 
+                    if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
+                        lazySession.refresh(false);
+                    } else {
+                        // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
+                        long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
+                        if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
+                            lazySession.refresh(false);
+                        }
+                    }
+                } else {
+                    // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
+                    lazySession.refresh(false);
+                }
             } catch (RepositoryException e) {
                 throw new ContainerException("Failed to refresh jcr session.", e);
             }
-        
             ((HstMutableRequestContext) requestContext).setSession(lazySession);
             context.invokeNext();
         }
