@@ -68,7 +68,7 @@ public class MountService implements ContextualizableMount {
     /**
      * The channel to which this {@link Mount} belongs
      */
-    private String channelId;
+    private String channelPath;
 
     /**
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
@@ -532,16 +532,16 @@ public class MountService implements ContextualizableMount {
         }
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
-            channelId = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
+            channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
 
-            if (channelId != null) {
+            if (channelPath != null) {
                 try {
                     ChannelManager channelManager = hstManager.getChannelManager();
-                    Channel channel = channelManager.getChannels().get(channelId);
+                    Channel channel = channelManager.getChannelByJcrPath(channelPath);
                     if (channel != null) {
                         channelInfo = channelManager.getChannelInfo(channel);
                     } else {
-                        log.warn("Could not find channel " + channelId);
+                        log.warn("Could not find channel " + channelPath);
                     }
                 } catch (ChannelException e) {
                     log.error("Could not set channel info", e);
@@ -594,11 +594,6 @@ public class MountService implements ContextualizableMount {
     
     public String getIdentifier() {
         return uuid;
-    }
-
-    @Override
-    public String getChannelId() {
-        return channelId;
     }
 
     public String getAlias() {

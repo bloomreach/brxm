@@ -146,11 +146,6 @@ public class MountDecoratorImpl implements MountDecorator {
         public String getPreviewMountPoint() {
             return getMountPoint();
         }
-        
-        @Override
-        public String getChannelId() {
-            return delegatee.getChannelId();
-        }
 
         /*
          * below delegate everything to original mount

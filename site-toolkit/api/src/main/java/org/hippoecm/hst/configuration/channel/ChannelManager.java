@@ -98,4 +98,13 @@ public interface ChannelManager {
     ResourceBundle getResourceBundle(Channel channel, Locale locale);
 
     List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
+
+    /**
+     * Retrieve the channel by the repository path to the channel configuration node.
+     *
+     * @param channelPath
+     * @return
+     */
+    Channel getChannelByJcrPath(String channelPath) throws ChannelException;
+
 }

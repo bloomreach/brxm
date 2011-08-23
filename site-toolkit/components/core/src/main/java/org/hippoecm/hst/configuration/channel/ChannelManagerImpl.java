@@ -64,6 +64,7 @@ public class ChannelManagerImpl implements ChannelManager {
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
+    private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
 
     public ChannelManagerImpl() {
     }
@@ -78,6 +79,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     public void setRootPath(String rootPath) {
         this.rootPath = rootPath;
+        channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
     public void setHostGroup(String hostGroup) {
@@ -140,6 +142,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     private void populateChannels(Node node) throws RepositoryException {
         NodeIterator nodes = node.getNodes();
+        channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
         while (nodes.hasNext()) {
             Node currNode = nodes.nextNode();
 
@@ -150,14 +153,20 @@ public class ChannelManagerImpl implements ChannelManager {
                 continue;
             }
 
-            String id = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH).getString();
-            if (!channels.containsKey(id)) {
-                log.warn("Unknown channel " + id + ", ignoring mount " + currNode.getPath());
+            String channelPath = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH).getString();
+            if (!channelPath.startsWith(channelsRoot)) {
+                log.warn("Channel id " + channelPath + " is not part of the hst configuration under " + rootPath +
+                        ", ignoring channel info for mount " + currNode.getPath() +
+                        ".  Use the full repository path for identification.");
                 continue;
             }
-            Channel channel = channels.get(id);
+            Channel channel = channels.get(channelPath.substring(channelsRoot.length()));
+            if (channel == null) {
+                log.warn("Unknown channel " + channelPath + ", ignoring mount " + currNode.getPath());
+                continue;
+            }
             if (channel.getUrl() != null) {
-                log.warn("Channel " + id + " contains multiple mounts - analysing node " + currNode.getPath() + ", found url " + channel.getUrl() + " in channel");
+                log.warn("Channel " + channelPath + " contains multiple mounts - analysing node " + currNode.getPath() + ", found url " + channel.getUrl() + " in channel");
                 continue;
             }
 
@@ -377,6 +386,19 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
+    public synchronized Channel getChannelByJcrPath(final String channelPath) throws ChannelException {
+        load();
+        if (channelPath.startsWith(channelsRoot)) {
+            return channels.get(channelPath.substring(channelsRoot.length()));
+        }
+        if (channelPath.startsWith("/")) {
+           log.warn("Channel path " + channelPath + " is not part of the hst configuration under " + rootPath +
+                ".  Use the full repository path for identification.");
+        }
+        return null;
+    }
+
+    @Override
     public ResourceBundle getResourceBundle(Channel channel, Locale locale) {
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName != null) {
@@ -400,7 +422,8 @@ public class ChannelManagerImpl implements ChannelManager {
 
         // create mount
         Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channel.getId());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH,
+                rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channel.getId());
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
                 mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());

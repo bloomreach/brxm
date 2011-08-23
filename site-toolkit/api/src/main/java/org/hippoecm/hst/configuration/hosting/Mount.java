@@ -406,11 +406,6 @@ public interface Mount {
     String getIdentifier();
 
     /**
-     * @return the channel id of this {@link Mount}
-     */
-    String getChannelId();
-
-    /**
      * The channel properties for this mount.  The actual type of the info is set on the blueprint
      * for the channel of the Mount ({@see Blueprint#getChannelInfoClass()}).
      *
