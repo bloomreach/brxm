@@ -343,6 +343,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('isPreviewHstConfigChanged ' + data.isPreviewHstConfig);
             Ext.getCmp('publishHstConfig').setDisabled(!data.isPreviewHstConfig);
         }, this);
+
+        this.on('beforePublishHstConfiguration', function() {
+            Ext.getCmp('pagePreviewButton').setDisabled(true);
+            Ext.getCmp('pageComposerButton').setDisabled(true);
+        }, this);
+
+        this.on('afterPublishHstConfiguration', function() {
+            Ext.getCmp('pagePreviewButton').setDisabled(false);
+            Ext.getCmp('pageComposerButton').setDisabled(false);
+        }, this);
     },
 
     initEditMount : function(mountId) {
@@ -460,16 +470,21 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     publishHstConfiguration : function() {
+        this.fireEvent('beforePublishHstConfiguration');
         var self = this;
         Ext.Ajax.request({
             method: 'POST',
             url: this.composerRestMountUrl + this.ids.mountId + './publish',
             success: function () {
                 Ext.getCmp('pagePreviewButton').toggle(true);
+                self.on.apply(self, ['afterIFrameDOMReady', function() {
+                    this.fireEvent('afterPublishHstConfiguration');
+                }, self, {single : true}]);
                 self.refreshIframe.call(self, null);
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
+                self.fireEvent.call(self, 'afterPublishHstConfiguration');
                 Ext.Msg.alert('Failed to publish hst configuration. '+jsonData.message);
             }
         });
