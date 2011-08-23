@@ -32,6 +32,19 @@
   
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-repository</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
+    </dependency>
+    
+    
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <version>${hippo.packages.version}</version>
       <type>pom</type>

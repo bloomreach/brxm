@@ -70,7 +70,7 @@
     <sv:property sv:name="hst:locale" sv:type="String">
          <sv:value>en_US</sv:value>
     </sv:property>
-    <sv:node sv:name="dev-local">
+    <sv:node sv:name="dev-localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
@@ -88,6 +88,9 @@
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:channelpath" sv:type="String">
+              <sv:value>demosite</sv:value>
+            </sv:property>
             <sv:property sv:name="hst:mountrest" sv:type="String">
               <sv:value>restapi</sv:value>
             </sv:property>
@@ -97,6 +100,9 @@
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:channelpath" sv:type="String">
+                <sv:value>demosite-fr</sv:value>
               </sv:property>
               <sv:property sv:name="hst:locale" sv:type="String">
                  <sv:value>fr_FR</sv:value>
@@ -327,6 +333,23 @@
                   </sv:property>
                 </sv:node>
               </sv:node>
+            </sv:node>
+            <sv:node sv:name="_rp">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>6db1c591-92ed-47f1-9e3c-ffd2131fa4af</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+                <sv:value>false</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:namedpipeline" sv:type="String">
+                <sv:value>ComposerPipeline</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:type" sv:type="String">
+                <sv:value>composer</sv:value>
+              </sv:property>
             </sv:node>
           </sv:node>
       </sv:node>

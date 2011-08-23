@@ -778,6 +778,7 @@ demosuite/content/src/main/resources/demosite-types.cnd -text
 demosuite/content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+demosuite/content/src/main/resources/hst-channels.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hst-configurations.xml -text svneol=unset#text/plain
 demosuite/content/src/main/resources/hst-sites.xml -text
 demosuite/content/src/main/resources/hst-virtualhosts.xml svneol=native#text/plain
@@ -813,6 +814,7 @@ demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svne
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
+demosuite/site/src/main/java/org/hippoecm/hst/demo/channels/WebsiteInfo.java -text svneol=unset#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 demosuite/site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain

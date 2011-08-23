@@ -107,6 +107,8 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node hgNode = rootChannelNodes.nextNode();
                 loadChannel(hgNode);
             }
+        } else {
+            log.warn("Cannot load channels because node '{}' does not exist", configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS);
         }
     }
 
@@ -118,6 +120,8 @@ public class ChannelManagerImpl implements ChannelManager {
                 Node hgNode = rootChannelNodes.nextNode();
                 populateChannels(hgNode);
             }
+        } else { 
+            log.warn("Cannot load mounts because node '{}' does not exist", configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup);
         }
     }
 
