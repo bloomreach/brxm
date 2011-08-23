@@ -301,6 +301,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.ids.mountId = null;
             this.ids.pageUrl = null;
             this.isPreviewHstConfig = false;
+            this.channelName = null;
             this.resetIFrameState();
             Ext.getCmp('pagePreviewButton').toggle(true, true);
             Ext.getCmp('pageComposerButton').toggle(false, true);
@@ -466,7 +467,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var oldName = this.channelName;
         this.channelName = name;
         var channelNameText = Ext.getCmp('channelName');
-        if (typeof oldName !== 'undefined') {
+        if (typeof oldName !== 'undefined' && oldName !== null) {
             channelNameText.setText('You switch from "'+oldName+'" to "'+name+'"');
             this.showTitleSwitchTimeout = window.setTimeout(function() {
                 channelNameText.setText(name);
