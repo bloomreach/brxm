@@ -427,8 +427,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             var me = this;
             // do initial handshake with CmsSecurityValve of the composer mount and
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-            // the redirect to the composermode rest resource fails with the handshake, so we have to
-            // make a second request to actually set the composermode after we are authenticated
             var composerMode = function(callback) {
                 Ext.Ajax.request({
                     url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
@@ -461,11 +459,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     },
 
-    setChannelName : function(name, highlight) {
+    setChannelName : function(name) {
+        if (typeof this.showTitleSwitchTimeout !== 'undefined') {
+            window.clearTimeout(this.showTitleSwitchTimeout);
+        }
+        var oldName = this.channelName;
+        this.channelName = name;
         var channelNameText = Ext.getCmp('channelName');
-        channelNameText.setText(name);
-        if (highlight) {
-            channelNameText.getEl().highlight();
+        if (typeof oldName !== 'undefined') {
+            channelNameText.setText('You switch from "'+oldName+'" to "'+name+'"');
+            this.showTitleSwitchTimeout = window.setTimeout(function() {
+                channelNameText.setText(name);
+            }, 5000);
+        } else {
+            channelNameText.setText(name);
         }
     },
 
