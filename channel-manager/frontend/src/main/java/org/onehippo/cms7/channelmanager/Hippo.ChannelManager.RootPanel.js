@@ -50,50 +50,47 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             }, true);
         }, this, {single: true});
 
-        this.on('afterlayout', function() {
-            // get all child components
-            this.win = new Hippo.ChannelManager.NewChannelWindow({
-                blueprintStore: me.blueprintStore,
-                channelStore : me.channelStore
-            });
-            this.formPanel = Ext.getCmp('channel-form-panel');
-            this.gridPanel = Ext.getCmp('channel-grid-panel');
-            this.propertiesPanel = Ext.getCmp('channel-properties-panel');
+        // get all child components
+        this.win = new Hippo.ChannelManager.NewChannelWindow({
+            blueprintStore: me.blueprintStore,
+            channelStore : me.channelStore
+        });
+        this.formPanel = Ext.getCmp('channel-form-panel');
+        this.gridPanel = Ext.getCmp('channel-grid-panel');
+        this.propertiesPanel = Ext.getCmp('channel-properties-panel');
 
-            // register channel creation events
-            this.gridPanel.on('add-channel', function() {
-                this.win.show();
-            }, this);
-            this.formPanel.on('channel-created', function() {
-                this.win.hide();
-                this.channelStore.reload();
-            }, this);
+        // register channel creation events
+        this.gridPanel.on('add-channel', function() {
+            this.win.show();
+        }, this);
+        this.formPanel.on('channel-created', function() {
+            this.win.hide();
+            this.channelStore.reload();
+        }, this);
 
-            // register properties panel events
-            this.gridPanel.on('channel-selected', function(channelId, channelName, record) {
-                this.propertiesPanel.showPanel(channelId, channelName, record);
-            }, this);
-            this.gridPanel.on('channel-escaped', function() {
-                if (this.propertiesPanel.isShown()) {
-                    this.propertiesPanel.hidePanel();
-                } else {
-                    this.gridPanel.fireEvent('channel-deselected');
-                }
-            }, this);
-            this.gridPanel.on('channel-deselected', function() {
-                this.gridPanel.selectRow(-1);
-                this.propertiesPanel.closePanel();
-            }, this);
+        // register properties panel events
+        this.gridPanel.on('channel-selected', function(channelId, channelName, record) {
+            this.propertiesPanel.showPanel(channelId, channelName, record);
+        }, this);
+        this.gridPanel.on('channel-escaped', function() {
+            if (this.propertiesPanel.isShown()) {
+                this.propertiesPanel.hidePanel();
+            } else {
+                this.gridPanel.fireEvent('channel-deselected');
+            }
+        }, this);
+        this.gridPanel.on('channel-deselected', function() {
+            this.gridPanel.selectRow(-1);
+            this.propertiesPanel.closePanel();
+        }, this);
 
-            Hippo.ChannelManager.TemplateComposer.Instance.on('beforeMountIdChange', function(data) {
-                var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);
-                var firstChange = data.oldMountId === null;
-                Hippo.ChannelManager.TemplateComposer.Instance.setChannelName(channelRecord.get('name'), !firstChange);
-                if (!firstChange) {
-                    this.gridPanel.selectChannel(channelRecord.get('id'));
-                }
-            }, this);
-
+        Hippo.ChannelManager.TemplateComposer.Instance.on('beforeMountIdChange', function(data) {
+            var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);
+            var firstChange = data.oldMountId === null;
+            Hippo.ChannelManager.TemplateComposer.Instance.setChannelName(channelRecord.get('name'), !firstChange);
+            if (!firstChange) {
+                this.gridPanel.selectChannel(channelRecord.get('id'));
+            }
         }, this);
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
