@@ -104,8 +104,12 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                         beforeshow: function(tooltip) {
                             var v = this.getView();
                             var row = v.findRowIndex(tooltip.baseTarget);
-                            var cell = v.findCellIndex(tooltip.baseTarget);
-                            this.fireEvent("beforetooltipshow", this, row, cell);
+                            if (row) {
+                                var cell = v.findCellIndex(tooltip.baseTarget);
+                                if (cell) {
+                                    this.fireEvent("beforetooltipshow", this, row, cell);
+                                }
+                            }
                         },
                         scope: this
                     }
@@ -114,10 +118,10 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             listeners: {
                 render: function(g) {
                     g.on("beforetooltipshow", function(grid, row, col) {
-                         var record = grid.getStore().getAt(row);
-                         var colName = grid.getColumnModel().getDataIndex(col);
-                         var value = record.get(colName);
-                         grid.tooltip.body.update(value);
+                        var record = grid.getStore().getAt(row);
+                        var colName = grid.getColumnModel().getDataIndex(col);
+                        var value = record.get(colName);
+                        grid.tooltip.body.update(value);
                     });
                 }
             }
