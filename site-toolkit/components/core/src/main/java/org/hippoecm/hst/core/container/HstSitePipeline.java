@@ -37,6 +37,8 @@ public class HstSitePipeline implements Pipeline
     protected Valve [] processingValves;
     protected Valve [] cleanupValves;
     
+    private Valve [] mergedProcessingValves;
+    
     public HstSitePipeline() throws Exception
     {
     }
@@ -54,6 +56,7 @@ public class HstSitePipeline implements Pipeline
             this.initializationValves = new Valve[initializationValves.length];
             System.arraycopy(initializationValves, 0, this.initializationValves, 0, initializationValves.length);
         }
+        mergedProcessingValves = null;
     }
     
     /**
@@ -67,6 +70,7 @@ public class HstSitePipeline implements Pipeline
             this.initializationValves = new Valve[initializationValves.length];
             System.arraycopy(initializationValves, 0, this.initializationValves, 0, initializationValves.length);
         }
+        mergedProcessingValves = null;
     }
     
     /**
@@ -77,6 +81,7 @@ public class HstSitePipeline implements Pipeline
     public void addPreInvokingValve(Valve initializationValve) {
         log.warn("addPreInvokingValve is deprecated. Use addInitializationValve instead");
         initializationValves = add(initializationValves, initializationValve);
+        mergedProcessingValves = null;
     }
     
     /**
@@ -84,6 +89,7 @@ public class HstSitePipeline implements Pipeline
      */
     public void addInitializationValve(Valve initializationValve) {
         initializationValves = add(initializationValves, initializationValve);
+        mergedProcessingValves = null;
     }
     
     /**
@@ -99,6 +105,7 @@ public class HstSitePipeline implements Pipeline
             this.processingValves = new Valve[processingValves.length];
             System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
         }
+        mergedProcessingValves = null;
     }
     
     /**
@@ -112,6 +119,7 @@ public class HstSitePipeline implements Pipeline
             this.processingValves = new Valve[processingValves.length];
             System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
         }
+        mergedProcessingValves = null;
     }
     
     /**
@@ -122,6 +130,7 @@ public class HstSitePipeline implements Pipeline
     public void addInvokingValve(Valve processingValve) {
         log.warn("addInvokingValve is deprecated. Use addProcessingValve instead");
         processingValves = add(processingValves, processingValve);
+        mergedProcessingValves = null;
     }
     
     /**
@@ -130,6 +139,7 @@ public class HstSitePipeline implements Pipeline
      */
     public void addProcessingValve(Valve processingValve) {
         processingValves = add(processingValves, processingValve);
+        mergedProcessingValves = null;
     }
     
     /**
@@ -204,7 +214,11 @@ public class HstSitePipeline implements Pipeline
     }
 
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, (Valve[])ArrayUtils.addAll(initializationValves, processingValves));
+        if (mergedProcessingValves == null) {
+            mergedProcessingValves = (Valve[]) ArrayUtils.addAll(initializationValves, processingValves);
+        }
+        
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedProcessingValves);
     }
      
     public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
