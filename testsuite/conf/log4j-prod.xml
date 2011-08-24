@@ -93,7 +93,7 @@
     <level value="error"/>
   </logger>
 
-  <!-- ignore wicket localizer warnings -->
+  <!-- ignore wicket localized warnings -->
   <logger name="org.apache.wicket.Localizer">
     <level value="error"/>
   </logger>
@@ -110,16 +110,13 @@
   </logger>
 
   <!-- more info wanted -->
-  <logger name="org.apache.jackrabbit.core.persistence.bundle">
+  <logger name="org.apache.jackrabbit.core.persistence.pool">
     <level value="info"/>
   </logger>
   <logger name="org.hippoecm.repository.jackrabbit.persistence">
     <level value="info"/>
   </logger>
   <logger name="org.hippoecm.repository.updater">
-    <level value="info"/>
-  </logger>
-  <logger name="org.hippoecm.repository.export">
     <level value="info"/>
   </logger>
 

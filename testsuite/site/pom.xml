@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,53 +18,84 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>demosuite</artifactId>
-    <version>2.23.02-SNAPSHOT</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-testsuite</artifactId>
+    <version>1.01.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Demo Suite SITE Application</name>
-  <description>Hippo Site Toolkit Demo Suite SITE Application</description>
-  <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-  <artifactId>hst-demosuite-site</artifactId>
+  <name>Hippo Test Suite Site</name>
+  <description>Hippo Test Suite Site</description>
+  <artifactId>hippo-testsuite-site</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
 
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-spring-dependencies</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-client-dependencies</artifactId>
-      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
 
-    <!-- Additional (optional) HST dependencies -->
+    <dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>org.springframework.js</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-jaxrs</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.client-modules</groupId>
       <artifactId>hst-page-composer</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-security</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-annotation_1.1_spec</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    
     <!-- Common and demosuite dependencies -->
     <dependency>
       <groupId>javax.portlet</groupId>
@@ -76,64 +107,6 @@
       <groupId>org.apache.portals.bridges</groupId>
       <artifactId>portals-bridges-common</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>taglibs</groupId>
-      <artifactId>standard</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.webflow</groupId>
-      <artifactId>org.springframework.js</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.yui</groupId>
-      <artifactId>yui-2.xx-sources</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.1_spec</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
-    <!-- Freemarker -->
-    <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <scope>runtime</scope>
     </dependency>
     
     <!-- For wicket demo -->
@@ -148,13 +121,11 @@
       <artifactId>wicket-extensions</artifactId>
       <version>1.4.16</version>
     </dependency>
-
+    
   </dependencies>
 
   <build>
-    <defaultGoal>package</defaultGoal>
     <finalName>site</finalName>
-    
     <plugins>
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
@@ -168,8 +139,24 @@
           </container>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.googlecode.mavenfilesync</groupId>
+        <artifactId>maven-filesync-plugin</artifactId>
+        <configuration>
+          <mappings>
+            <mapping>
+              <sourceFolder>src/main/resources</sourceFolder>
+              <destinationFolder>@../target/tomcat${cargo.tomcat.major.version}x/webapps/site/WEB-INF/classes</destinationFolder>
+            </mapping>
+            <mapping>
+              <sourceFolder>src/main/webapp</sourceFolder>
+              <destinationFolder>@../target/tomcat${cargo.tomcat.major.version}x/webapps/site</destinationFolder>
+            </mapping>
+          </mappings>
+        </configuration>
+      </plugin>
     </plugins>
-    
+
     <resources>
       <resource>
         <directory>src/main/resources</directory>

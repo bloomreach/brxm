@@ -2,8 +2,9 @@
 /README.txt -text svneol=unset#text/plain
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
+conf/log4j-dev.xml -text svneol=unset#text/plain
+conf/log4j-prod.xml -text svneol=unset#text/plain
 conf/log4j.dtd -text
-conf/log4j.xml -text
 content/pom.xml -text
 content/src/main/resources/cms/cms-services-localhost.xml -text svneol=unset#text/plain
 content/src/main/resources/default-ecm-content.xml -text
