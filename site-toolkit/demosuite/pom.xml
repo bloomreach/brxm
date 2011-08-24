@@ -29,6 +29,10 @@
   <description>Hippo Site Toolkit Demo Suite</description>
   <packaging>pom</packaging>
 
+  <properties>
+    <!-- hippo.addon-channel-manager.version>1.01.02-SNAPSHOT</hippo.addon-channel-manager.version -->
+  </properties>
+ 
   <dependencyManagement>
     <dependencies>
 
