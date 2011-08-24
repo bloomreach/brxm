@@ -17,4 +17,5 @@ public class IFrameBundle {
 
     public static String ALL = "iframe-all.js";
 
+    public static String ERROR_HTML = "error.html";
 }

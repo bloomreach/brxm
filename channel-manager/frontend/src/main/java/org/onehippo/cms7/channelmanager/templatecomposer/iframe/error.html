@@ -1,0 +1,18 @@
+<html>
+<head>
+  <title></title>
+  <script type="text/javascript">
+    function setErrorMessage(msg) {
+      var msgElement = document.getElementById('errorMessage');
+      while (msgElement.firstChild) {
+        msgElement.removeChild(msgElement.firstChild);
+      }
+      var msgTextNode = document.createTextNode(msg);
+      msgElement.appendChild(msgTextNode);
+    }
+  </script>
+</head>
+<body style="text-align:center">
+  <h3 id="errorMessage">Error rendering site.</h3>
+</body>
+</html>

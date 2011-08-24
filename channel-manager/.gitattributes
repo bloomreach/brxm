@@ -45,6 +45,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/Templat
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/PageEditor.css -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/error.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text

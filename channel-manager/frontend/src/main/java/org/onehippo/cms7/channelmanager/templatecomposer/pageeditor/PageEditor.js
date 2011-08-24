@@ -49,7 +49,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                        'beforeIFrameDOMReady', 'afterIFrameDOMReady',
                        'beforeRequestHstMetaData', 'hstMetaDataResponse',
                        'beforeInitializeIFrameHead', 'afterInitializeIFrameHead', 'iFrameInitialized',
-                        'isPreviewHstConfig');
+                       'isPreviewHstConfig',
+                       'iFrameException');
 
         this.pageModelFacade = null;
 
@@ -66,7 +67,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Ext.Ajax.request({
             url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
             success: function () {
-                //Do nothing
+                // Do nothing
             }
         });
     },
@@ -354,6 +355,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
         }, this);
+
+        this.on('iFrameException', function(data) {
+            var iFrame = Ext.getCmp('Iframe');
+            var frm = iFrame.getFrame();
+            if (frm !== null && data.msg) {
+                this.on('afterIFrameDOMReady', function () {
+                    frm.execScript('setErrorMessage(\''+data.msg+'\');', true);
+                }, this, {single : true});
+                frm.isReset = false;
+                frm.setSrc(this.iFrameErrorPage);
+            }
+        }, this);
     },
 
     initEditMount : function(mountId) {
@@ -399,8 +412,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     requestContents(queueEmptyCallback);
                 },
                 failure : function(result, request) {
-                    Hippo.ChannelManager.TemplateComposer.Instance.fireEvent.call(this, 'exception', this, result);
-                    requestContents(queueEmptyCallback);
+                    self.fireEvent.apply(self, ['iFrameException', {msg : 'Pre-caching resource \''+src+'\' failed. Please try to refresh your browser and access the channel manager again.'}]);
                 }
             });
         };
@@ -424,6 +436,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
         this.renderHost = renderHost;
 
+        var retry = this.initialHstConnectionTimeout;
         if (!this.hstInComposerMode) {
             var me = this;
             // do initial handshake with CmsSecurityValve of the composer mount and
@@ -433,10 +446,27 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
                     method : 'POST',
                     success: callback,
-                    failure: function() {
-                        window.setTimeout(function() {
-                            composerMode(callback);
-                        }, 1000);
+                    failure: function(exceptionObject) {
+                        if (exceptionObject.isTimeout) {
+                            retry = retry - Ext.Ajax.timeout;
+                        }
+                        if (retry > 0) {
+                            retry = retry - 5000;
+                            window.setTimeout(function() {
+                                composerMode(callback);
+                            }, 5000);
+                        } else {
+                            Ext.Msg.hide();
+                            Ext.Msg.confirm('Timeout', 'The connection to the HST timed out. Do you want to retry to establish a connection?', function(id) {
+                                if (id === 'yes') {
+                                    retry = me.initialHstConnectionTimeout;
+                                    Ext.Msg.wait('Loading...');
+                                    composerMode(callback);
+                                } else {
+                                    me.fireEvent.apply(me, ['iFrameException', {msg : 'Connection timed out. Unable to change to composermode. Please check if the site is online.'}]);
+                                }
+                            });
+                        }
                     }
                 });
             };
@@ -468,7 +498,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.channelName = name;
         var channelNameText = Ext.getCmp('channelName');
         if (typeof oldName !== 'undefined' && oldName !== null) {
-            channelNameText.setText('You switch from "'+oldName+'" to "'+name+'"');
+            channelNameText.setText('You switched from "'+oldName+'" to "'+name+'"');
             this.showTitleSwitchTimeout = window.setTimeout(function() {
                 channelNameText.setText(name);
             }, 5000);
@@ -492,8 +522,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                self.fireEvent.call(self, 'afterPublishHstConfiguration');
-                Ext.Msg.alert('Failed to publish hst configuration. '+jsonData.message);
+                Ext.Msg.alert('Failed to publish hst configuration. '+jsonData.message, function() {
+                    self.refreshIframe.call(self, null);
+                });
             }
         });
     },
@@ -650,7 +681,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }]);
             },
             failure : function(responseObject) {
-                console.error('hst meta data request failed.');
+                self.fireEvent.apply(self, ['iFrameException', { msg: 'Requesting HST meta-data failed. Please check if the site is online.'}]);
             }
         });
     },

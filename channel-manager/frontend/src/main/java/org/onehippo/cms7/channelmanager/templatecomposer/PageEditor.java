@@ -56,6 +56,9 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     public Boolean previewMode = true;
 
+    @ExtProperty
+    public Long initialHstConnectionTimeout = 60000L;
+
     private Channel channel;
 
     public PageEditor(final String id, final IPluginConfig config) {
@@ -64,6 +67,7 @@ public class PageEditor extends ExtPanel {
         this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
         this.renderHost = config.getString("renderHost", "localhost");
         this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
+        this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
         if (config.get("previewMode") != null) {
             this.previewMode = config.getBoolean("previewMode");
         }
@@ -77,6 +81,7 @@ public class PageEditor extends ExtPanel {
         if (config != null) {
             this.composerMountUrl = config.getString("composerMountUrl", "/site/");
             this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
+            this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
             }
@@ -101,9 +106,12 @@ public class PageEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
+        properties.put("iFrameErrorPage", Arrays.asList(
+            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()
+        ));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString())
-        );
+            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString()
+        ));
         if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
