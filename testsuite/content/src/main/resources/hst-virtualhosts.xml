@@ -89,7 +89,7 @@
               <sv:value>/hst:hst/hst:sites/demosite</sv:value>
             </sv:property>
             <sv:property sv:name="hst:channelpath" sv:type="String">
-              <sv:value>demosite</sv:value>
+              <sv:value>/hst:hst/hst:channels/demosite</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountrest" sv:type="String">
               <sv:value>restapi</sv:value>
@@ -102,7 +102,7 @@
                 <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
               </sv:property>
               <sv:property sv:name="hst:channelpath" sv:type="String">
-                <sv:value>demosite-fr</sv:value>
+                <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
               </sv:property>
               <sv:property sv:name="hst:locale" sv:type="String">
                  <sv:value>fr_FR</sv:value>
