@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Channel implements Serializable {
+public class Channel implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,7 +35,7 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
-    private final Map<String, Object> properties = new HashMap<String, Object>();
+    private Map<String, Object> properties = new HashMap<String, Object>();
     private String channelInfoClassName;
     private String mountId;
 
@@ -164,6 +164,17 @@ public class Channel implements Serializable {
 
     public String getMountId() {
         return this.mountId;
+    }
+
+    @Override
+    public Channel clone() {
+        try {
+            Channel clone = (Channel) super.clone();
+            clone.properties = new HashMap<String, Object>(properties);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 
     public int hashCode() {

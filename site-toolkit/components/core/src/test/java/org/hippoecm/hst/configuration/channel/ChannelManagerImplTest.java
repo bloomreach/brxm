@@ -33,6 +33,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
@@ -68,6 +69,19 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Channel channel = channels.values().iterator().next();
         assertEquals("testchannel", channel.getId());
         assertEquals("Test Channel", channel.getName());
+    }
+
+    @Test
+    public void channelsAreClonedWhenRetrieved() throws ChannelException, RepositoryException {
+        ChannelManagerImpl manager = createManager();
+
+        Map<String, Channel> channels = manager.getChannels();
+        Channel channel = channels.values().iterator().next();
+        channel.setName("aap");
+
+        Map<String, Channel> moreChannels = manager.getChannels();
+        assertFalse(moreChannels == channels);
+        assertEquals("Test Channel", moreChannels.values().iterator().next().getName());
     }
 
     @Test

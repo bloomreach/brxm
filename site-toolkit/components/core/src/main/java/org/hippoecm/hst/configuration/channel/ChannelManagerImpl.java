@@ -279,7 +279,12 @@ public class ChannelManagerImpl implements ChannelManager {
     @Override
     public synchronized Map<String, Channel> getChannels() throws ChannelException {
         load();
-        return Collections.unmodifiableMap(channels);
+
+        Map<String, Channel> result = new HashMap<String, Channel>();
+        for (Map.Entry<String, Channel> entry : channels.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().clone());
+        }
+        return result;
     }
 
     @Override
