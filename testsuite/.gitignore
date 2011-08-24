@@ -1,3 +1,4 @@
+/.project
 cms/.classpath
 cms/.project
 cms/.settings
@@ -15,3 +16,4 @@ site/bin
 site/build.properties
 site/hst-demosuite-site.iml
 site/target
+/target
