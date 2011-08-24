@@ -159,35 +159,37 @@ public class CmsSecurityValve extends AbstractValve {
 
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session
-        
-        synchronized (session) {
-            LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-            if(!lazySession.isLive()) {
-                log.debug("SSO jcr session is not live. Try to get a new one.");
-                setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
-                lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-            } 
-            try {
-                if (maxRefreshIntervalOnLazySession > 0L) {
-                    // First check whether the maxRefreshInterval has passed 
-                    if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
-                        lazySession.refresh(false);
-                    } else {
-                        // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
-                        long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
-                        if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
+        if(Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
+            // only set the cms based lazySession on the request context when the context is the cms context
+            synchronized (session) {
+                LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+                if(!lazySession.isLive()) {
+                    log.debug("SSO jcr session is not live. Try to get a new one.");
+                    setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+                    lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+                } 
+                try {
+                    if (maxRefreshIntervalOnLazySession > 0L) {
+                        // First check whether the maxRefreshInterval has passed 
+                        if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
                             lazySession.refresh(false);
+                        } else {
+                            // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
+                            long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
+                            if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
+                                lazySession.refresh(false);
+                            }
                         }
+                    } else {
+                        // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
+                        lazySession.refresh(false);
                     }
-                } else {
-                    // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
-                    lazySession.refresh(false);
+                } catch (RepositoryException e) {
+                    throw new ContainerException("Failed to refresh jcr session.", e);
                 }
-            } catch (RepositoryException e) {
-                throw new ContainerException("Failed to refresh jcr session.", e);
+                ((HstMutableRequestContext) requestContext).setSession(lazySession);
+                context.invokeNext();
             }
-            ((HstMutableRequestContext) requestContext).setSession(lazySession);
-            context.invokeNext();
         }
     }
 
