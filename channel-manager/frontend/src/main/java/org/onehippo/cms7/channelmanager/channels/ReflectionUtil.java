@@ -23,7 +23,8 @@ class ReflectionUtil {
      *
      * @param o the object
      * @param fieldName the field to retrieve
-     * @return the string value of the field, or null if no getter method for this field exists.
+     * @return the string value of the field, an empty string if the getter returned null, or null if no getter method
+     * for this field exists.
      */
     static String getStringValue(Object o, String fieldName) {
         Method method = getGetterMethodForField(o.getClass(), fieldName);
@@ -32,7 +33,7 @@ class ReflectionUtil {
         }
         try {
             Object result = method.invoke(o);
-            return String.valueOf(result);
+            return result == null ? StringUtils.EMPTY : result.toString();
         } catch (IllegalAccessException e) {
             log.error("Cannot access value of field '" + fieldName + "'", e);
         } catch (InvocationTargetException e) {

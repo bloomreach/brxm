@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -64,6 +67,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         composerModeEnabled,
         hstMountPoint,
         type
+    }
+    public static final List<String> ALL_COLUMN_NAMES = new ArrayList<String>();
+    static {
+        for (Column column : Column.values()) {
+            ALL_COLUMN_NAMES.add(column.name());
+        }
     }
 
     public static enum SortOrder { ascending, descending }
@@ -113,15 +122,54 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         JSONArray data = new JSONArray();
 
         for (Channel channel : getChannels().values()) {
+            Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
-            for (Column column : Column.values()) {
-                final String fieldValue = ReflectionUtil.getStringValue(channel, column.name());
-                object.put(column.name(), fieldValue);
+            for (ExtField field : getFields()) {
+                String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
+                if (fieldValue == null) {
+                    Object value = channelProperties.get(field.getName());
+                    fieldValue = value == null ? StringUtils.EMPTY : value.toString();
+                }
+                object.put(field.getName(), fieldValue);
             }
             data.put(object);
         }
 
         return data;
+    }
+
+    String getColumnHeader(String columnName) {
+        if (isChannelColumn(columnName)) {
+            // known field of a Channel; translations are provided by the resource bundle of this class
+            return getResourceValue("column." + columnName);
+        }
+
+        // custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
+        getChannels();
+        for (Channel channel : channels.values()) {
+            String header = ChannelResourceModel.getChannelResourceValue(channel, columnName);
+            if (header != null) {
+                return header;
+            }
+        }
+
+        log.warn("Column '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the column name itself as the column header.",
+                columnName, org.apache.wicket.Session.get().getLocale());
+
+        return columnName;
+    }
+
+    private boolean isChannelColumn(String columnName) {
+        try {
+            Column.valueOf(columnName);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private static String getResourceValue(String key) {
+        return new ClassResourceModel(key, ChannelStore.class).getObject();
     }
 
     @Override

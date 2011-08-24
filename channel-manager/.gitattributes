@@ -25,7 +25,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPane
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelResourceModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DropDownListWidget.java -text
@@ -66,6 +69,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
+frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtilTest.java -text
 /pom.xml eol=lf
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf

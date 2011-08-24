@@ -82,26 +82,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     private Channel channel;
 
-    private class ChannelResourceModel extends LoadableDetachableModel<String> {
-
-        private final String key;
-
-        public ChannelResourceModel(String key) {
-            this.key = key;
-        }
-
-        @Override
-        protected String load() {
-            if (StringUtils.isNotEmpty(key)) {
-                ResourceBundle bundle = getResources();
-                if (bundle != null) {
-                    return bundle.getString(key);
-                }
-            }
-            return null;
-        }
-    }
-
     private class ChannelChoiceRenderer implements IChoiceRenderer<String> {
         private final String key;
 
@@ -111,7 +91,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
         @Override
         public Object getDisplayValue(final String object) {
-            ResourceBundle resources = getResources();
+            ResourceBundle resources = ChannelUtil.getResourceBundle(channel);
             if (resources != null) {
                 return resources.getString(key + "/" + object);
             }
@@ -138,7 +118,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             protected void populateItem(final ListItem<FieldGroup> item) {
                 final FieldGroup fieldGroup = item.getModelObject();
 
-                item.add(new Label("fieldgrouptitle", new ChannelResourceModel(fieldGroup.titleKey())) {
+                item.add(new Label("fieldgrouptitle", new ChannelResourceModel(channel, fieldGroup.titleKey())) {
                     @Override
                     public boolean isVisible() {
                         return getModelObject() != null;
@@ -166,7 +146,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                             return;
                         }
 
-                        item.add(new Label("key", new ChannelResourceModel(key)));
+                        item.add(new Label("key", new ChannelResourceModel(channel, key)));
 
                         HstValueType propType = propDef.getValueType();
 
@@ -247,10 +227,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         });
     }
 
-    private ResourceBundle getResources() {
-        return getChannelManager().getResourceBundle(channel, getSession().getLocale());
-    }
-
     private void save() {
         if (channel == null) {
             return;
@@ -265,7 +241,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                 public Void run() throws ChannelException {
-                    getChannelManager().save(channel);
+                    ChannelUtil.getChannelManager().save(channel);
                     return null;
                 }
             }, null);
@@ -294,11 +270,8 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             return ZERO_FIELD_GROUPS;
         }
 
-        Class<? extends ChannelInfo> channelInfoClass = null;
-        try {
-            channelInfoClass = getChannelManager().getChannelInfoClass(channel);
-        } catch (ChannelException e) {
-            log.warn("Channel '{}' has no channel info class: " + e.getMessage(), channel.getId());
+        Class<? extends ChannelInfo> channelInfoClass = ChannelUtil.getChannelInfoClass(channel);
+        if (channelInfoClass == null) {
             return ZERO_FIELD_GROUPS;
         }
 
@@ -323,15 +296,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
     }
 
-    private ChannelManager getChannelManager() {
-        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        if (channelManager != null) {
-            return channelManager;
-        } else {
-            throw new RuntimeException("Unable to get the channels from Channel Manager");
-        }
-    }
-
     private Channel getChannel(String channelId) {
         ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         if (channelManager != null) {
@@ -346,7 +310,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
     }
 
     private HstPropertyDefinition getPropertyDefinition(String propertyName) {
-        for (HstPropertyDefinition definition : getChannelManager().getPropertyDefinitions(channel)) {
+        for (HstPropertyDefinition definition : ChannelUtil.getChannelManager().getPropertyDefinitions(channel)) {
             if (definition.getName().equals(propertyName)) {
                 return definition;
             }

@@ -1,6 +1,7 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -10,26 +11,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
+ * Tests {@link ChannelGridPanel}.
  */
 public class ChannelGridPanelTest {
 
     @Test
-    public void columnsForNonExistingChannelFieldsAreIgnored() {
+    public void allColumnFieldsAreParsed() {
         JavaPluginConfig config = new JavaPluginConfig();
-        config.put("columns", new String[]{"id", "nosuchfield", "name"});
+        config.put("columns", new String[]{"id", "customChannelProperty", "name"});
 
-        List<ChannelStore.Column> parsedFields = ChannelGridPanel.parseChannelFields(config);
-        assertEquals(2, parsedFields.size());
-        assertTrue(parsedFields.contains(ChannelStore.Column.id));
-        assertTrue(parsedFields.contains(ChannelStore.Column.name));
-    }
-
-    @Test
-    public void noColumnsAfterIgnoringUsesDefault() {
-        JavaPluginConfig config = new JavaPluginConfig();
-        config.put("columns", new String[]{"", "nosuchfield"});
-        testIsDefaultColumns(ChannelGridPanel.parseChannelFields(config));
+        List<String> parsedFields = ChannelGridPanel.parseChannelFields(config);
+        assertEquals(3, parsedFields.size());
+        assertEquals(ChannelStore.Column.id.name(), parsedFields.get(0));
+        assertEquals("customChannelProperty", parsedFields.get(1));
+        assertEquals(ChannelStore.Column.name.name(), parsedFields.get(2));
     }
 
     @Test
@@ -49,28 +44,30 @@ public class ChannelGridPanelTest {
         testIsDefaultColumns(ChannelGridPanel.parseChannelFields(config));
     }
 
-    private void testIsDefaultColumns(List<ChannelStore.Column> fields) {
-        assertTrue(fields.contains(ChannelStore.Column.name));
+    private void testIsDefaultColumns(List<String> fields) {
+        for (ChannelStore.Column column : ChannelStore.Column.values()) {
+            assertTrue(fields.contains(column.name()));
+        }
     }
 
     @Test
     public void sortColumnForExistingColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
-        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.url)));
+        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Collections.singletonList(ChannelStore.Column.url.name())));
     }
 
     @Test
     public void sortColumnForNonExistingColumnIsFirstColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
-        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.hostname, ChannelStore.Column.id)));
+        assertEquals("hostname", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.hostname.name(), ChannelStore.Column.id.name())));
     }
 
     @Test
     public void emptySortColumnIsFirstColumn() {
         JavaPluginConfig config = new JavaPluginConfig();
-        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.url, ChannelStore.Column.hostname)));
+        assertEquals("url", ChannelGridPanel.parseSortColumn(config, Arrays.asList(ChannelStore.Column.url.name(), ChannelStore.Column.hostname.name())));
     }
 
     @Test

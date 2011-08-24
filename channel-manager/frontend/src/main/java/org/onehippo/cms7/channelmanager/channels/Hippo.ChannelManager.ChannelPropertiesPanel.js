@@ -43,18 +43,28 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
             width: 600
         });
 
-        config.items.push({
+        config.items.splice(1, 0, {
             xtype: 'button',
             text: 'Open Channel',
             listeners: {
-                click : {
+                click: {
                     fn: function() {
                         Hippo.ChannelManager.TemplateComposer.Instance.initComposer(this.channelName, this.subMountPath, this.hostname);
                         Ext.getCmp('rootPanel').layout.setActiveItem(1);
                         // TODO fix, I have no clue why the template composer card is not getting activated properly
                         document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
                     },
-                    scope : this
+                    scope: this
+                }
+            }
+        });
+        config.items.push({
+            xtype: 'button',
+            text: 'Save Changes',
+            listeners: {
+                click: {
+                    fn:  self.saveChannel,
+                    scope: this
                 }
             }
         });
@@ -94,6 +104,10 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
 
     isShown: function() {
         return !this.collapsed;
+    },
+
+    saveChannel: function() {
+        this.fireEvent('save');
     }
 
 });
