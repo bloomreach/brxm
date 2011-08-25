@@ -38,7 +38,7 @@
       
       <c:forEach var="item" items="${items}">
       <item>
-         <hst:link hippobean="${item}" var="link" external="true"/>
+         <hst:link hippobean="${item}" var="link" fullyQualified="true"/>
          <title>${item.title}</title>
          <link>${link}</link>
          <description>${item.summary}</description>
