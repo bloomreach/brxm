@@ -21,6 +21,7 @@ Ext.namespace('Hippo.ChannelManager');
  * @extends Ext.Panel
  */
 Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
+
     constructor: function(config) {
         this.channelStore = config.channelStore;
         this.blueprintStore = config.blueprintStore;
@@ -97,8 +98,19 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
-    }
+    },
 
+    showChannelManager: function() {
+        this.layout.setActiveItem(0);
+    },
+
+    showTemplateComposer: function() {
+        this.layout.setActiveItem(1);
+    },
+
+    showConfigEditor: function() {
+        this.layout.setActiveItem(2);
+    }
 });
 
 Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);

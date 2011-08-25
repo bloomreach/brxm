@@ -23,26 +23,44 @@ Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
 Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
     constructor: function(config) {
         var self = this;
+        this.resources = config.resources;
 
         Ext.apply(config, {
             tbar: [
                 {
-                    text : '< Channel summary',
+                    text : '< ' + this.resources['summary'],
                     id : 'hstConfigEditor',
                     listeners : {
                         'click' : {
                             fn : function() {
-                                Ext.getCmp('rootPanel').layout.setActiveItem(0);
+                                Ext.getCmp('rootPanel').showChannelManager();
                             },
                             scope: this
                         }
+                    }
+                },
+                {
+                    id: 'configEditorChannelName',
+                    xtype: 'tbtext',
+                    text: '',
+                    style: {
+                        marginLeft: '150px'
                     }
                 }
             ]
         });
 
         Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
+    },
+
+    initEditor: function(channelName) {
+        var channelNameText = Ext.getCmp('configEditorChannelName');
+        channelNameText.setText(channelName);
+
+        Ext.getCmp('rootPanel').showConfigEditor();
+        document.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';
     }
+
 });
 
 Ext.reg('Hippo.ChannelManager.HstConfigEditor.Container', Hippo.ChannelManager.HstConfigEditor.Container);

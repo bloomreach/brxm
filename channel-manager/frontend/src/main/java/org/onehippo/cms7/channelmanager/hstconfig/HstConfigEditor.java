@@ -32,7 +32,6 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
 import org.hippoecm.hst.plugins.frontend.ViewController;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerPerspective;
 import org.wicketstuff.js.ext.ExtBoxComponent;

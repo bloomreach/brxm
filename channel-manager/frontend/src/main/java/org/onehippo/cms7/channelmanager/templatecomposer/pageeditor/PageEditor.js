@@ -88,7 +88,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             listeners : {
                                 'click' : {
                                     fn : function() {
-                                        Ext.getCmp('rootPanel').layout.setActiveItem(0);
+                                        Ext.getCmp('rootPanel').showChannelManager();
                                     },
                                     scope: this
                                 }
@@ -141,7 +141,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             xtype: 'tbtext',
                             text: '',
                             style: {
-                                marginLeft: '150px',
+                                marginLeft: '150px'
                             }
                         }
                     ],

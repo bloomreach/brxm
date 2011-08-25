@@ -42,6 +42,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.HstConfigEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text

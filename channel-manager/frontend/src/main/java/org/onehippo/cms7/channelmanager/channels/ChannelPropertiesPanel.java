@@ -39,7 +39,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
@@ -60,7 +60,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.RootPanel;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,12 +191,10 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         box.add(container);
         add(box);
 
-        add(new ExtButton(new Model<String>("Edit HST Configuration")){
+        add(new ExtButton(new ResourceModel("edit.config")){
             @Override
             protected void onClick(final AjaxRequestTarget target) {
-                target.prependJavascript("Ext.getCmp('rootPanel').layout.setActiveItem(" +
-                        RootPanel.Card.HST_CONFIG_EDITOR.ordinal() +
-                        ");\ndocument.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';");
+                target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor('"+ channel.getName() +"');");
                 hstConfigEditor.setMountPoint(target, channel.getId(), channel.getHstMountPoint());
                 super.onClick(target);
             }
