@@ -142,7 +142,6 @@ public class ChannelManagerImpl implements ChannelManager {
 
     private void populateChannels(Node node) throws RepositoryException {
         NodeIterator nodes = node.getNodes();
-        channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
         while (nodes.hasNext()) {
             Node currNode = nodes.nextNode();
 
@@ -166,6 +165,9 @@ public class ChannelManagerImpl implements ChannelManager {
                 continue;
             }
             if (channel.getUrl() != null) {
+                // We already encountered this channel while recursively walking over all the mounts. This mount
+                // therefore points to the same channel as another mount, which is not allowed (each channel has only
+                // one mount)
                 log.warn("Channel " + channelPath + " contains multiple mounts - analysing node " + currNode.getPath() + ", found url " + channel.getUrl() + " in channel");
                 continue;
             }
@@ -395,8 +397,7 @@ public class ChannelManagerImpl implements ChannelManager {
         load();
         if (channelPath.startsWith(channelsRoot)) {
             return channels.get(channelPath.substring(channelsRoot.length()));
-        }
-        if (channelPath.startsWith("/")) {
+        } else {
            log.warn("Channel path " + channelPath + " is not part of the hst configuration under " + rootPath +
                 ".  Use the full repository path for identification.");
         }
@@ -427,8 +428,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
         // create mount
         Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH,
-                rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/" + channel.getId());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channel.getId());
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
                 mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());
