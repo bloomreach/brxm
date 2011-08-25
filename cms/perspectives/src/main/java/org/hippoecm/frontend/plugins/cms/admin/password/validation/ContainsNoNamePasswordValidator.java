@@ -37,7 +37,7 @@ public class ContainsNoNamePasswordValidator extends AbstractPasswordValidator i
         String lastName = user.getLastName();
         
         boolean valid = true;
-        if (userName.length() > 2) {
+        if (userName!= null && userName.length() > 2) {
             valid &= !contains(password, userName);
         }
         if (firstName != null && firstName.length() > 2) {
