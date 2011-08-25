@@ -261,4 +261,9 @@ public interface HstLinkCreator {
      */
     List<LocationResolver> getLocationResolvers();
 
+    /**
+     * Clears possibly available caches
+     */
+    void clear();
+
 }

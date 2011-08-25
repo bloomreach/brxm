@@ -84,7 +84,9 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         this.pageNotFoundPath = PathUtils.normalizePath(pageNotFoundPath);
     }
     
-    
+    public void clear() {
+        loadedSubLocationMapTree.clear();
+    }
     
     /**
      * If the uuid points to a node that is of type hippo:document and it is below a hippo:handle, we will

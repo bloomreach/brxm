@@ -41,6 +41,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
@@ -67,6 +68,7 @@ public class HstManagerImpl implements HstManager {
     
     private HstComponentRegistry componentRegistry;
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
+    private HstLinkCreator hstLinkCreator;
     
     /**
      * This is a {@link HstComponentsConfigurationService} instance cache : When all the backing HstNode's for 
@@ -176,6 +178,28 @@ public class HstManagerImpl implements HstManager {
     public HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory() {
         return siteMapItemHandlerFactory;
     } 
+    
+    public String getPathSuffixDelimiter() {
+        return pathSuffixDelimiter;
+    }
+    
+    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
+        this.pathSuffixDelimiter = pathSuffixDelimiter;
+    }
+
+
+    public void setChannelManager(ChannelManager channelManager) {
+        this.channelManager = channelManager;
+    }
+
+    public ChannelManager getChannelManager() {
+        return channelManager;
+    }
+    
+
+    public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
+        this.hstLinkCreator = hstLinkCreator;
+    }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
          
@@ -511,6 +535,7 @@ public class HstManagerImpl implements HstManager {
             StringPool.clear();
             enhancedConfigurationRootNodes.clear();
             configChangeEventMap = null;
+            hstLinkCreator.clear();
             clearAll = false;
         }
     } 
@@ -730,23 +755,6 @@ public class HstManagerImpl implements HstManager {
         return hstComponentsConfigurationInstanceCache;
     }
 
-    public String getPathSuffixDelimiter() {
-        return pathSuffixDelimiter;
-    }
-    
-    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
-        this.pathSuffixDelimiter = pathSuffixDelimiter;
-    }
-
-
-    public void setChannelManager(ChannelManager channelManager) {
-        this.channelManager = channelManager;
-    }
-
-    public ChannelManager getChannelManager() {
-        return channelManager;
-    }
-    
     static class HstEvent {
         enum EventType {
             NODE_EVENT,
