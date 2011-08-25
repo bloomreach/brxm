@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  */
 public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     
-    private boolean externalLinks;
+    private boolean fullyQualifiedLinks;
     
     public AbstractContentRewriter() {
         
@@ -54,13 +54,13 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     }
 
     @Override
-    public boolean isExternalLinks() {
-        return externalLinks;
+    public boolean isFullyQualifiedLinks() {
+        return fullyQualifiedLinks;
     }
 
     @Override
-    public void setExternalLinks(boolean externalLinks) {
-       this.externalLinks = externalLinks;
+    public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
+       this.fullyQualifiedLinks = fullyQualifiedLinks;
     }
     
 }

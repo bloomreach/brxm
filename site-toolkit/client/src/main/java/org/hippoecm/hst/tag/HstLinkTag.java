@@ -71,7 +71,7 @@ public class HstLinkTag extends ParamContainerTag {
     
     protected String scope;
 
-    protected boolean external;
+    protected boolean fullyQualified;
 
     /**
      * boolean indicating whether the link that will be created is the canonical link. The canonical link is always the same, regardless the current context, in other 
@@ -247,7 +247,7 @@ public class HstLinkTag extends ParamContainerTag {
             link.setSubPath(subPath);
         }
         
-        String urlString = this.link.toUrlForm(reqContext , external);
+        String urlString = this.link.toUrlForm(reqContext , fullyQualified);
         
         try {
             if (navigationStateful) {
@@ -355,7 +355,7 @@ public class HstLinkTag extends ParamContainerTag {
         siteMapItemRefId = null;
         subPath = null;
         link = null;
-        external = false;
+        fullyQualified = false;
         skipTag = false;
         preferSiteMapItem = null;
         fallback = true;
@@ -401,19 +401,36 @@ public class HstLinkTag extends ParamContainerTag {
     public String getSubPath(){
         return this.subPath;
     }
-    
+
+    /**
+     * @deprecated use {@link #isFullyQualified()} instead
+     */
+    @Deprecated
     public boolean isExternal(){
-        return this.external;
+        return this.fullyQualified;
     }
     
     public void setLink(HstLink hstLink) {
         this.link = hstLink;
     }
     
+    /**
+     * @deprecated use {@link #setFullyQualified(boolean)} instead
+     */
+    @Deprecated
     public void setExternal(boolean external) {
-        this.external = external;
+        log.warn("The attribute 'external' on the hst:link tag has been deprecated. Use 'fullyQualified' instead");
+        this.fullyQualified = external;
     }
 
+    public void setFullyQualified(boolean fullyQualified) {
+        this.fullyQualified = fullyQualified;
+    }
+    
+    public boolean isFullyQualified() {
+        return this.fullyQualified;
+    }
+    
     public void setPath(String path) {
         this.path = path;
     }

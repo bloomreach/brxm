@@ -83,7 +83,7 @@ public class HstLinkImpl implements HstLink {
     }
 
 
-    public String toUrlForm(HstRequestContext requestContext, boolean external) {
+    public String toUrlForm(HstRequestContext requestContext, boolean fullyQualified) {
         String characterEncoding = requestContext.getBaseURL().getCharacterEncoding();
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
@@ -143,7 +143,7 @@ public class HstLinkImpl implements HstLink {
                         return "#";
                     }
                 }
-            } else if(requestContext.isFullyQualifiedURLs() || external || requestMount.getVirtualHost() != mount.getVirtualHost()
+            } else if(requestContext.isFullyQualifiedURLs() || fullyQualified || requestMount.getVirtualHost() != mount.getVirtualHost()
                          || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
                          || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
                 

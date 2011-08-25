@@ -17,8 +17,6 @@ package org.hippoecm.hst.core.linking;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -74,10 +72,10 @@ public interface HstLink {
     
     /**
      * @param requestContext
-     * @param external if true, the returned url is external, in other words including http/https etc
+     * @param fullyQualified if true, the returned link is a fully qualified URL, in other words including http/https etc
      * @return the url form of this HstLink, which is a url
      */
-    String toUrlForm(HstRequestContext requestContext, boolean external);
+    String toUrlForm(HstRequestContext requestContext, boolean fullyQualified);
     
     /**
      * @return the path elements of this HstLink, which is the {@link #getPath()} splitted on slashes

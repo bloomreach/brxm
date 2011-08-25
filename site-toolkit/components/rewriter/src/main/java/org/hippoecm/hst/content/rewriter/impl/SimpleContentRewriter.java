@@ -122,7 +122,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         
                         HstLink href = getDocumentLink(documentPath,node, requestContext, targetMount);
                         if (href != null && href.getPath() != null) {
-                            sb.append(href.toUrlForm(requestContext, isExternalLinks()));
+                            sb.append(href.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         } else {
                            log.warn("Skip href because url is null");
                         }
@@ -178,7 +178,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     } else {
                         HstLink binaryLink = getBinaryLink(srcPath, node, requestContext, targetMount);
                         if (binaryLink != null && binaryLink.getPath() != null) {
-                            sb.append(binaryLink.toUrlForm(requestContext, isExternalLinks()));
+                            sb.append(binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         } else {
                             log.warn("Could not translate image src. Skip src");
                         }

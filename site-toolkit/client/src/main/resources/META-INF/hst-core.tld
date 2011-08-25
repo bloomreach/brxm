@@ -228,7 +228,16 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.Boolean</type>
-            <description>If value is 'true' the created link will be external, thus containing
+            <description>Deprecated: use fullyQualified instead.
+            If value is 'true' the created link will be a fully qualified link (URLs), thus starting with 
+                'http://' or 'https://' etc</description>
+        </attribute>
+        <attribute>
+            <name>fullyQualified</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+            <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with 
                 'http://' or 'https://' etc</description>
         </attribute>
         <attribute>
@@ -447,12 +456,12 @@
             <description>A ContentRewriter object.</description>
         </attribute>
         <attribute>
-          <name>externalLinks</name>
+          <name>fullyQualifiedLinks</name>
           <required>false</required>
           <rtexprvalue>true</rtexprvalue>
           <type>java.lang.Boolean</type>
-          <description>Flag to define whether internal links are rewritten into external form
-            (including scheme and domain).</description>
+          <description>Flag to define whether internal links are rewritten to fully qualified link (URLs), thus starting with 
+                'http://' or 'https://' etc</description>
         </attribute>
         <example><![CDATA[
           <div>

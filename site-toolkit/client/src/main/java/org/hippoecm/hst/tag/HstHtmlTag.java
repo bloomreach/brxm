@@ -56,10 +56,10 @@ public class HstHtmlTag extends TagSupport {
     protected ContentRewriter<String> contentRewriter;
 
     /**
-     * Whether links should be rewritten to external (fully qualified) links including scheme, host, port etc. 
+     * Whether links should be rewritten to fully qualified links (URLs) including scheme, host, port etc. 
      * Default false
      */
-    protected boolean externalLinks;
+    protected boolean fullyQualifiedLinks;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -111,7 +111,7 @@ public class HstHtmlTag extends TagSupport {
             if (contentRewriter == null) {
                 contentRewriter = new SimpleContentRewriter();
             }
-            contentRewriter.setExternalLinks(externalLinks);
+            contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
             html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
@@ -149,7 +149,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
-        externalLinks = Boolean.FALSE;
+        fullyQualifiedLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
         
@@ -169,7 +169,7 @@ public class HstHtmlTag extends TagSupport {
         var = null;
         scope = null;
         skipTag = false;
-        externalLinks = Boolean.FALSE;
+        fullyQualifiedLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
     }
@@ -196,11 +196,11 @@ public class HstHtmlTag extends TagSupport {
     }
     
     /**
-     * @param externalLinks flag to define whether internal links are rewritten into external form
+     * @param fullyQualifiedLinks flag to define whether internal links are rewritten into fully qualified links (URLs)
      *                                 (including scheme and domain)
      */
-    public void setExternalLinks(boolean externalLinks) {
-        this.externalLinks = externalLinks;
+    public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
+        this.fullyQualifiedLinks = fullyQualifiedLinks;
     }
 
     /**

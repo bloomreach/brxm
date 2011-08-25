@@ -16,9 +16,6 @@
 package org.hippoecm.hst.mock.core.linking;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -85,7 +82,7 @@ public class MockHstLink implements HstLink {
         this.subPath = subPath;
     }
 
-    public String toUrlForm(HstRequestContext requestContext, boolean external) {
+    public String toUrlForm(HstRequestContext requestContext, boolean fullyQualified) {
         throw new UnsupportedOperationException("Not implemented");
     }
 }
