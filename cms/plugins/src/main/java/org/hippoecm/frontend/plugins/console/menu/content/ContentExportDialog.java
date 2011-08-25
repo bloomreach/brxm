@@ -28,10 +28,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -41,7 +41,6 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +69,13 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
         }
 
-        IModel skipBinaryModel = new PropertyModel(this, "skipBinary");
-        CheckBox skipBinaries = new CheckBox("skip-binaries", skipBinaryModel);
+        IModel<Boolean> skipBinaryModel = new PropertyModel<Boolean>(this, "skipBinary");
+        AjaxCheckBox skipBinaries = new AjaxCheckBox("skip-binaries", skipBinaryModel) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+            }
+        };
         skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
         add(skipBinaries);
 
@@ -120,6 +124,14 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             path = e.getMessage();
         }
         return new Model("Export " + path);
+    }
+    
+    public boolean isSkipBinary() {
+        return skipBinary;
+    }
+    
+    public void setSkipBinary(boolean skipBinary) {
+        this.skipBinary = skipBinary;
     }
 
     // privates
