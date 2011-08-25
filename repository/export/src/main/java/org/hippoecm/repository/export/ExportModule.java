@@ -83,7 +83,7 @@ public final class ExportModule implements DaemonModule {
 
         // read 'hippoecm.export.dir' system property
         String configDir = System.getProperty("hippoecm.export.dir");
-        File configDirectory = null;
+        File configDirectory;
         if (configDir != null && !configDir.isEmpty()) {
             configDirectory = new File(configDir);
         } else {
@@ -112,7 +112,7 @@ public final class ExportModule implements DaemonModule {
         log.info("Automatically exporting changes to directory " + path);
 
         // create extension
-        Extension extension = null;
+        Extension extension;
         File file = new File(configDirectory, "hippoecm-extension.xml");
         try {
             extension = new Extension(file);
@@ -148,6 +148,7 @@ public final class ExportModule implements DaemonModule {
             try {
                 manager.removeEventListener(listener);
             } catch (RepositoryException e) {
+                //ignore
             }
         }
         // shutdown executor
@@ -268,7 +269,7 @@ public final class ExportModule implements DaemonModule {
          * these events. 
          * Note that this is important only in the case of node events. This is because
          * the added or removed node could be the root of a content file and thus either remove or add
-         * events could either trigger a content file to be removed or added.
+         * events could trigger a content file to be removed or added.
          * Also note that the scenario described where we have both add and remove events on the same node
          * in the queue is not likely to occur in normal usage. We probably only encounter it during unit testing.
          */

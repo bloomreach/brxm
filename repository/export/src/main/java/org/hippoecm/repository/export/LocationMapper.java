@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 /**
  * This utility class is responsible for mapping repository paths to context nodes and export files.
- * 
+ *
  * Do not call this class from multiple threads. It is not thread safe.
  */
 class LocationMapper {
@@ -65,6 +65,18 @@ class LocationMapper {
         propertyPatterns = new String[] {"/hst:hst/hst:configurations/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/" + NAME};
         contextNode = "/hst:hst/hst:configurations";
         file = "hst/configurations.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /hst:hst/hst:configurations/project
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME};
+        propertyPatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME + "/" + NAME};
+        contextNode = "/hst:hst/hst:configurations/$1/$2";
+        file = "hst/configurations/$1/$2.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /hst:hst/hst:configurations/project/hst:components|hst:pages
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME, "/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME + "/" + ANY};
+        propertyPatterns = new String [] {"/hst:hst/hst:configurations/" + NAME + "/(hst:components|hst:pages)/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:configurations/$1/$2/$3";
+        file = "hst/configurations/$1/$2/$3.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /hst:hst/hst:configurations/project
         nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME + ANY};
