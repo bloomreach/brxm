@@ -127,19 +127,19 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    /**
-     * Recursively gets the list of "channels" configured under a virtual host node.
-     * <p/>
-     * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
-     *
-     * @param currNode - the inital node to start with, must be a virtual host node.
-     * @throws javax.jcr.RepositoryException - In case cannot read required node/property from the repository.
-     */
     private void loadChannel(Node currNode) throws RepositoryException {
         Channel channel = ChannelPropertyMapper.readChannel(currNode);
         channels.put(channel.getId(), channel);
     }
 
+    /**
+     * Recursively populates the channels with URLs and other mount information.
+     * <p/>
+     * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
+     *
+     * @param node - the inital node to start with, must be a virtual host node.
+     * @throws javax.jcr.RepositoryException - In case cannot read required node/property from the repository.
+     */
     private void populateChannels(Node node) throws RepositoryException {
         NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
@@ -284,7 +284,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
         Map<String, Channel> result = new HashMap<String, Channel>();
         for (Map.Entry<String, Channel> entry : channels.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().clone());
+            result.put(entry.getKey(), new Channel(entry.getValue()));
         }
         return result;
     }

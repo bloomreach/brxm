@@ -56,7 +56,7 @@ public class BlueprintService implements Blueprint {
         if (bluePrint.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
             this.prototypeChannel = ChannelPropertyMapper.readChannel(bluePrint.getNode(HstNodeTypes.NODENAME_HST_CHANNEL));
         } else {
-            this.prototypeChannel = new Channel(null);
+            this.prototypeChannel = new Channel((String) null);
         }
     }
 
