@@ -260,7 +260,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         if (EVENT_SELECT_CHANNEL.equals(event)) {
             return new ExtEventAjaxBehavior(EVENT_SELECT_CHANNEL_PARAM_ID);
         } else if (EVENT_SAVE_CHANNEL.equals(event)) {
-            return new ExtEventAjaxBehavior(new String[0]);
+            return new ExtEventAjaxBehavior();
         }
         return super.newExtEventBehavior(event);
     }
