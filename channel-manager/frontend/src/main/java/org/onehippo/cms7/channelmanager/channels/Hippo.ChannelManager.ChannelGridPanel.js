@@ -102,12 +102,21 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                         beforeshow: function(tooltip) {
                             var v = this.getView();
                             var row = v.findRowIndex(tooltip.baseTarget);
-                            if (row) {
-                                var cell = v.findCellIndex(tooltip.baseTarget);
-                                if (cell) {
-                                    this.fireEvent("beforetooltipshow", this, row, cell);
-                                }
+                            if (row === false) {
+                                return false;
                             }
+                            var cell = v.findCellIndex(tooltip.baseTarget);
+                            if (cell === false) {
+                                return false;
+                            }
+                            var record = this.getStore().getAt(row);
+                            var colName = this.getColumnModel().getDataIndex(cell);
+                            var value = record.get(colName);
+                            if (value == '') {
+                                this.tooltip.hide();
+                                return false;
+                            }
+                            this.fireEvent("beforetooltipshow", this, value);
                         },
                         scope: this
                     }
@@ -115,10 +124,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             listeners: {
                 render: function(g) {
-                    g.on("beforetooltipshow", function(grid, row, col) {
-                        var record = grid.getStore().getAt(row);
-                        var colName = grid.getColumnModel().getDataIndex(col);
-                        var value = record.get(colName);
+                    g.on("beforetooltipshow", function(grid, value) {
                         grid.tooltip.body.update(value);
                     });
                 }
