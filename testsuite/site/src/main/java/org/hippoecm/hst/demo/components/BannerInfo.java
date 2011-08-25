@@ -20,7 +20,7 @@ package org.hippoecm.hst.demo.components;
 import java.util.Date;
 
 import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface BannerInfo {
 
