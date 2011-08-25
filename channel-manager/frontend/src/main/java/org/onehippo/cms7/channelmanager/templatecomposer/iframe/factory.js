@@ -122,7 +122,22 @@ jQuery.noConflict();
 
             getContainerMetaData : function(element) {
                 if (element.className === HST.CLASS.ITEM) {
-                    var childNodes = element.childNodes;
+                    var childNodes;
+                    if (element.tagName == 'TR') {
+                        var children = element.childNodes;
+                        childNodes = [];
+                        for (var i = 0; i < children.length; i++) {
+                            if (children[i].tagName != 'TD') {
+                                continue;
+                            }
+                            var descendants = children[i].childNodes;
+                            for (var j = 0; j < descendants.length; j++) {
+                                childNodes.push(descendants[j]);
+                            }
+                        }
+                    } else {
+                        childNodes = element.childNodes;
+                    }
                     for (var i=0, len=childNodes.length; i<len; i++) {
                         var hstMetaData = this.convertToHstMetaData(childNodes[i]);
                         if (hstMetaData !== null) {

@@ -464,7 +464,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             var composerMode = function(callback) {
                 Ext.Ajax.request({
                     url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
-                    method : 'POST',
                     success: callback,
                     failure: function(exceptionObject) {
                         if (exceptionObject.isTimeout) {
@@ -485,8 +484,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 } else {
                                     me.fireEvent.apply(me, ['iFrameException', {msg : 'Connection timed out. Unable to change to composermode. Please check if the site is online.'}]);
                                 }
-                                   });
-                 }
+                            });
+                        }
                     }
                 });
             };
@@ -617,6 +616,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     refreshIframe : function() {
         var iframe = Ext.getCmp('Iframe');
+        var frame = iframe.getFrame();
+        var window = frame.getWindow();
+        var scrollSave = {x: window.pageXOffset, y: window.pageYOffset};
+        this.on('afterIFrameDOMReady', function() {
+            window.scrollBy(scrollSave.x, scrollSave.y);
+        }, this, {single : true});
         this.resetIFrameState();
         // we don't need to reload the stores, so just share the data again with the iframe
         this.shareData();
@@ -668,6 +673,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             }
 
+            // TODO timeout
             for (var i = 0, len = this.iFrameJsHeadContributions.length; i < len; i++) {
                 var src = this.iFrameJsHeadContributions[i];
                 var responseText = this.iframeResourceCache[src];
@@ -1100,7 +1106,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         } catch(e) {
             console.error(e);
-            // throw e;
+            // TODO error handling
         }
     }
 });
@@ -1251,7 +1257,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                         if (record.get('type') === HST.CONTAINER) {
                             var id = record.get('id');
                             var el = frmDoc.getElementById(id + '-overlay');
-                            if (!frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
+                            if (el != null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
                                 var box = Ext.Element.fly(el).getBox();
                                 self.boxs.push({record: record, box: box});
                             }
@@ -1360,35 +1366,34 @@ Hippo.Msg = (function() {
     blockingType['show'] = false;
     blockingType['wait'] = false;
     blockingType['hide'] = false;
-    var blocking = false;
+    var blocked = false;
 
     var func = function(type, args) {
-        if (blocking) {
-            msgQueue.push(function() {
-                msg.apply(this, arguments);
-            });
+        if (blocked) {
+            if (blockingType[type]) {
+                msgQueue.push(function() {
+                    func.apply(this, args);
+                });
+            }
             return;
         }
         if (blockingType[type]) {
-            blocking = true;
-            if (msgQueue.length > 0) {
-                var nextFunction = msgQueue.shift();
-                if (args.length >= 3) {
-                    var oldFunction = args[2];
-                    var scope = this;
-                    if (args.length >= 4) {
-                        scope = args[3];
+            blocked = true;
+            if (args.length >= 3) {
+                var oldFunction = args[2];
+                var scope = this;
+                if (args.length >= 4) {
+                    scope = args[3];
+                }
+                args[2] = function() {
+                    oldFunction.apply(scope, arguments);
+                    blocked = false;
+                    if (msgQueue.length > 0) {
+                        var nextMessage = msgQueue.shift();
+                        nextMessage();
                     }
-                    args[2] = function() {
-                        oldFunction.apply(scope, arguments);
-                        nextFunction();
-                    }
-                } else {
-                    args = [args[0], args[1], nextFunction];
                 }
             }
-        } else {
-            blocking = false;
         }
         Ext.Msg[type].apply(Ext.Msg, args);
     };
@@ -1401,7 +1406,7 @@ Hippo.Msg = (function() {
             func('confirm', arguments);
         },
         prompt : function() {
-            func('pompt', aguments);
+            func('prompt', aguments);
         },
         show : function() {
             func('show', arguments);
