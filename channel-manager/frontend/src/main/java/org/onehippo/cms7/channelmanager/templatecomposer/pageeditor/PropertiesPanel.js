@@ -56,11 +56,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             method: 'POST' ,
             waitMsg: 'Saving properties ...',
             success: function () {
-                Ext.Msg.wait('Refreshing page ...');
-                var iframe = Ext.getCmp('Iframe');
-                iframe.setSrc(iframe.getFrameDocument().location.href);
+                Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
             }
-
         });
     },
 
@@ -105,26 +102,28 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                 {
                     text: 'Create Document',
                     handler:function () {
-			var createDocForm = Ext.getCmp('createDocumentForm').getForm()
-			createDocForm.submit();
-			options.docName = createDocForm.items.get(0).getValue();
-		
-			if(options.docName == '') return;
-		        createDocumentWindow.hide();
+                        var createDocForm = Ext.getCmp('createDocumentForm').getForm()
+                        createDocForm.submit();
+                        options.docName = createDocForm.items.get(0).getValue();
 
-                        Ext.Msg.wait("Creating Document ... ");
+                        if (options.docName == '') {
+                            return;
+                        }
+                        createDocumentWindow.hide();
+
+                        Hippo.Msg.wait("Creating Document ... ");
                         Ext.Ajax.request({
                             url: createUrl,
                             params: options,
                             success: function () {
-                                Ext.Msg.hide();
-				Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
-				Ext.Msg.wait("Refreshing page ... ");
-                                var iframe = Ext.getCmp('Iframe');
-                                iframe.setSrc(iframe.getFrameDocument().location.href);
-			    }
+                                Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
+                                Hippo.ChannelManager.TemplateComposer.Instance.on('iFrameInitialized', function() {
+                                    Hippo.Msg.hide();
+                                }, this, {single : true});
+                                Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
+                            }
                         });
-			
+
                     }
                 }]
         });

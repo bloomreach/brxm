@@ -296,7 +296,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('beforeInitComposer', function() {
-            Ext.Msg.wait('Loading...');
+            Hippo.Msg.wait('Loading...');
             this.previewMode = true;
             this.ids.pageId = null;
             this.ids.mountId = null;
@@ -317,7 +317,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('afterInitComposer', function() {
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
-            Ext.Msg.hide();
+            Hippo.Msg.hide();
         }, this);
 
         this.on('beforeModeChange', function(data) {
@@ -325,7 +325,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('pagePreviewButton').setDisabled(data.previewMode);
             Ext.getCmp('pageComposerButton').setDisabled(!data.previewMode);
             if (data.previewMode) {
-                Ext.Msg.wait('Loading...');
+                Hippo.Msg.wait('Loading...');
             }
         }, this);
 
@@ -335,7 +335,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.mainWindow.hide();
             } else {
                 this.mainWindow.show();
-                Ext.Msg.hide();
+                Hippo.Msg.hide();
             }
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
@@ -371,6 +371,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     initEditMount : function(mountId) {
         this.stores.toolkit = this.createToolkitStore(mountId);
+        this.stores.toolkit.on('exception', function(dataProxy, type, action, options, response, arg) {
+            if (type === 'response') {
+                console.error('Server returned status '+response.status+" for the toolkit store.");
+            } else if (type === 'remote') {
+                console.error('Error handling the response of the server for the toolkit store. Response is:\n'+response.responseText);
+            }
+            Hippo.Msg.alert("Toolkit Store Error", "Error occurred in the toolkit store. To prevent inconsistencies the site will we reloaded.", function(id) {
+                this.refreshIframe();
+            }, this);
+        }, this);
         this.stores.toolkit.load();
         if (this.mainWindow) {
             var grid = Ext.getCmp('ToolkitGrid');
@@ -383,6 +393,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     initEditPage : function(mountId, pageId) {
         this.stores.pageModel = this.createPageModelStore(mountId, pageId);
+        this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response, arg) {
+            if (type === 'response') {
+                console.error('Server returned status '+response.status+" for the page store.");
+            } else if (type === 'remote') {
+                console.error('Error handling the response of the server for the page store. Response is:\n'+response.responseText);
+            }
+            Hippo.Msg.alert("Page Store Error", "Error occurred in the page store. To prevent inconsistencies the site will we reloaded.", function(id) {
+                this.refreshIframe();
+            }, this);
+        }, this);
         this.stores.pageModel.load();
 
         if (this.mainWindow) {
@@ -456,17 +476,17 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 composerMode(callback);
                             }, 5000);
                         } else {
-                            Ext.Msg.hide();
-                            Ext.Msg.confirm('Timeout', 'The connection to the HST timed out. Do you want to retry to establish a connection?', function(id) {
+                            Hippo.Msg.hide();
+                            Hippo.Msg.confirm('Timeout', 'The connection to the HST timed out. Do you want to retry to establish a connection?', function(id) {
                                 if (id === 'yes') {
                                     retry = me.initialHstConnectionTimeout;
-                                    Ext.Msg.wait('Loading...');
+                                    Hippo.Msg.wait('Loading...');
                                     composerMode(callback);
                                 } else {
                                     me.fireEvent.apply(me, ['iFrameException', {msg : 'Connection timed out. Unable to change to composermode. Please check if the site is online.'}]);
                                 }
-                            });
-                        }
+                                   });
+                 }
                     }
                 });
             };
@@ -522,7 +542,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                Ext.Msg.alert('Failed to publish hst configuration. '+jsonData.message, function() {
+                Hippo.Msg.alert('Failed to publish hst configuration. '+jsonData.message, function() {
                     self.refreshIframe.call(self, null);
                 });
             }
@@ -561,9 +581,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             },
                             failure: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Ext.Msg.alert('Failed to create the preview hst configuration. '+jsonData.message);
-                                this.previewMode = true;
-                                self.refreshIframe.call(self, null);
+                                Hippo.Msg.alert('Failed to create the preview hst configuration. '+jsonData.message, function() {
+                                    self.previewMode = true;
+                                    self.refreshIframe.call(self, null);
+                                });
                             }
                         });
                     }
@@ -1023,7 +1044,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 text: 'Delete items',
                 handler: function() {
                     var msg = 'You are about to remove ' + children.length + ' items, are your sure?';
-                    Ext.Msg.confirm('Confirm delete', msg, function(btn, text) {
+                    Hippo.Msg.confirm('Confirm delete', msg, function(btn, text) {
                         if (btn == 'yes') {
                             var r = [children.length];
                             Ext.each(children, function(c) {
@@ -1044,7 +1065,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     removeByRecord: function(record) {
         var store = this.stores.pageModel;
-        Ext.Msg.confirm('Confirm delete', 'Are you sure you want to delete ' + record.get('name') + '?', function(btn, text) {
+        Hippo.Msg.confirm('Confirm delete', 'Are you sure you want to delete ' + record.get('name') + '?', function(btn, text) {
             if (btn == 'yes') {
                 store.remove(record);
             }
@@ -1152,14 +1173,12 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
             listeners : {
                 beforeload: {
                     fn: function (store, options) {
-                        if (!Ext.Msg.isVisible()) {
-                            Ext.Msg.wait("Loading page ...");
-                        }
+                        Hippo.Msg.wait("Loading page ...");
                     }
                 },
                 beforewrite : {
                     fn : function(proxy, action, rs, params) {
-                        Ext.Msg.wait("Updating configuration ... ");
+                        Hippo.Msg.wait("Updating configuration ... ");
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
@@ -1177,13 +1196,13 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 },
                 write :{
                     fn: function(store, action, result, res, rs) {
-                        Ext.Msg.hide();
+                        Hippo.Msg.hide();
                         Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
                     }
                 },
                 load : {
                     fn: function (store, records, options) {
-                        Ext.Msg.hide();
+                        Hippo.Msg.hide();
                     }
                 }
             }
@@ -1323,4 +1342,75 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
             });
         }
     };
+
+})();
+
+/**
+ * Hippo.Msg is decorating Ext.Msg and makes alert, confirm and prompt blocking.
+ * If a blocking message is waiting for user interaction, new fired messages will be queued
+ * (e. g. important for asynchronous requests which could trigger hide while we are waiting for user input).
+ */
+Hippo.Msg = (function() {
+    var msgQueue = [];
+
+    var blockingType = [];
+    blockingType['alert'] = true;
+    blockingType['confirm'] = true;
+    blockingType['prompt'] = true;
+    blockingType['show'] = false;
+    blockingType['wait'] = false;
+    blockingType['hide'] = false;
+    var blocking = false;
+
+    var func = function(type, args) {
+        if (blocking) {
+            msgQueue.push(function() {
+                msg.apply(this, arguments);
+            });
+            return;
+        }
+        if (blockingType[type]) {
+            blocking = true;
+            if (msgQueue.length > 0) {
+                var nextFunction = msgQueue.shift();
+                if (args.length >= 3) {
+                    var oldFunction = args[2];
+                    var scope = this;
+                    if (args.length >= 4) {
+                        scope = args[3];
+                    }
+                    args[2] = function() {
+                        oldFunction.apply(scope, arguments);
+                        nextFunction();
+                    }
+                } else {
+                    args = [args[0], args[1], nextFunction];
+                }
+            }
+        } else {
+            blocking = false;
+        }
+        Ext.Msg[type].apply(Ext.Msg, args);
+    };
+
+    return {
+        alert : function() {
+            func('alert', arguments);
+        },
+        confirm : function() {
+            func('confirm', arguments);
+        },
+        prompt : function() {
+            func('pompt', aguments);
+        },
+        show : function() {
+            func('show', arguments);
+        },
+        wait : function() {
+            func('wait', arguments);
+        },
+        hide : function() {
+            func('hide', arguments);
+        }
+    }
 })();
