@@ -176,7 +176,7 @@
   
   <servlet>
     <servlet-name>YUIResourceServlet</servlet-name>
-    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/org/onehippo/yui/inc/2.8.1</param-value>
@@ -184,20 +184,29 @@
   </servlet>
 
   <servlet>
-    <servlet-name>PageComposerResourceServlet</servlet-name>
-    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    <servlet-name>TemplateComposerResourceServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
     <init-param>
-    <param-name>jarPathPrefix</param-name>
-    <param-value>/META-INF/hst/pagecomposer</param-value>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/META-INF/hst/pagecomposer</param-value>
     </init-param>
   </servlet>
 
   <servlet>
     <servlet-name>SecurityResourceServlet</servlet-name>
-    <servlet-class>org.springframework.js.resource.ResourceServlet</servlet-class>
+    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
     <init-param>
-    <param-name>jarPathPrefix</param-name>
-    <param-value>/META-INF/hst/security</param-value>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/META-INF/hst/security</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
+    <servlet-name>HstResourceServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+    <init-param>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/META-INF/web-resources</param-value>
     </init-param>
   </servlet>
 
@@ -243,7 +252,7 @@
   </servlet-mapping>
   
   <servlet-mapping>
-    <servlet-name>PageComposerResourceServlet</servlet-name>
+    <servlet-name>TemplateComposerResourceServlet</servlet-name>
     <url-pattern>/hst/pagecomposer/sources/*</url-pattern>
   </servlet-mapping>
 
