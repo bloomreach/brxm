@@ -50,7 +50,7 @@ public class ChannelInfoClassTest {
         Map<String, Object> values = new HashMap<String, Object>();
         values.put(properties.get(0).getName(), "aap");
 
-        TestInfo info = (TestInfo) ChannelUtils.getChannelInfo(values, TestInfo.class);
+        TestInfo info = ChannelUtils.getChannelInfo(values, TestInfo.class);
         assertEquals("aap", info.getTestName());
     }
 
