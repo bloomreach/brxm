@@ -28,15 +28,6 @@ class ChannelUtil {
         }
     }
 
-    static <T extends ChannelInfo> T getChannelInfo(Channel channel) {
-        try {
-            return getChannelManager().getChannelInfo(channel);
-        } catch (ChannelException e) {
-            log.debug("No ChannelInfo found for channel '" + channel.getId() + "', returning null", e);
-        }
-        return null;
-    }
-
     static Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) {
         try {
             return getChannelManager().getChannelInfoClass(channel);
