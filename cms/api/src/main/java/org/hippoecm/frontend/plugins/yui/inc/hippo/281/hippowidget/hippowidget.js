@@ -99,18 +99,17 @@ YAHOO.namespace('hippo');
 
             render : function() {
                 this.unit = YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
-                if(this.unit != null) {
+                if (this.unit != null) {
                     this.resize(this.unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
                     //with a classname is used.
-                    var parent = Dom.getAncestorBy(el, function(node) {
-                       return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
+                    var parent = Dom.getAncestorBy(this.el, function(node) {
+                        return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
                     });
-                    if(parent != null) {
+                    if (parent != null) {
                         var reg = Dom.getRegion(parent);
-                        var margin = this.helper.getMargin(parent);
                         this.resize({wrap: {w: reg.width, h: reg.height}});
                     }
                 }
@@ -127,7 +126,7 @@ YAHOO.namespace('hippo');
             calculateWidthAndHeight : function(sizes) {
                 return {width: sizes.wrap.w, height: sizes.wrap.h};
             }
-        }
+        };
 
         YAHOO.hippo.WidgetManager = new YAHOO.hippo.WidgetManagerImpl();
 
