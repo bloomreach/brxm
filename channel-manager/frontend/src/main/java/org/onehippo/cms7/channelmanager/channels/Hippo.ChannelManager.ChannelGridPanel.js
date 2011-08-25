@@ -34,8 +34,6 @@ Ext.ToolTip.prototype.onMouseMove =
  */
 Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     constructor: function(config) {
-        var self = this;
-
         this.store = config.store;
         this.columns = config.columns;
         this.resources = config.resources;
@@ -164,12 +162,14 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
         sm.on('rowdeselect', function(sm) {
             if (!this.isSelectingRow) {
+                this.selectedChannelId = null;
                 this.fireEvent('channel-deselected');
             }
         }, this);
         sm.on('rowselect', function(sm, rowIndex, record) {
             this.isSelectingRow = false;
-            this.fireEvent('channel-selected', record.get('id'), record.get('name'), record);
+            this.selectedChannelId = record.get('id');
+            this.fireEvent('channel-selected', this.selectedChannelId, record.get('name'), record);
         }, this);
 
         // register keyboard navigation

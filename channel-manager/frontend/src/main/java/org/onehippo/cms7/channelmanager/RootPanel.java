@@ -86,7 +86,7 @@ public class RootPanel extends ExtPanel {
 
         final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
 
-        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, hstConfigEditor);
+        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, channelStore, hstConfigEditor);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         channelManagerCard.add(channelPropertiesPanel);
 

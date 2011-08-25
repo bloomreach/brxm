@@ -67,7 +67,7 @@ public class ChannelGridPanel extends ExtPanel {
         for (String storeFieldName : storeFieldNames) {
             fieldList.add(new ExtField(storeFieldName));
         }
-        this.store = new ChannelStore(fieldList, parseSortColumn(config, visibleFields), parseSortOrder(config));
+        this.store = new ChannelStore("channel-store", fieldList, parseSortColumn(config, visibleFields), parseSortOrder(config));
         add(this.store);
     }
 

@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -85,11 +86,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
     private transient Map<String, Channel> channels;
 
+    private String storeId;
     private String sortFieldName;
     private SortOrder sortOrder;
 
-    public ChannelStore(List<ExtField> fields, String sortFieldName, SortOrder sortOrder) {
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder) {
         super(fields);
+        this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
     }
@@ -99,6 +102,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         //Need the sortinfo and xaction params since we are using GroupingStore instead of
         //JsonStore
         final JSONObject props = super.getProperties();
+
+        props.put("storeId", this.storeId);
 
         final Map<String, String> sortInfo = new HashMap<String, String>();
         sortInfo.put("field", this.sortFieldName);
@@ -170,6 +175,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private static String getResourceValue(String key) {
         return new ClassResourceModel(key, ChannelStore.class).getObject();
+    }
+
+    public void reload() {
+        channels = null;
+
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            target.prependJavascript("Ext.StoreMgr.lookup('" + this.storeId + "').reload();");
+        }
     }
 
     @Override

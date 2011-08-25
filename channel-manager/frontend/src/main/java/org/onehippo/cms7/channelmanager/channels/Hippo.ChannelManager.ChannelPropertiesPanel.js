@@ -78,6 +78,8 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
         this.on('beforeexpand', function(self, animate) {
             return this.channelId != null;
         }, this);
+
+        this.addEvents('selectchannel', 'savechannel');
     },
 
     showPanel: function(channelId, channelName, record) {
@@ -107,7 +109,7 @@ Hippo.ChannelManager.ChannelPropertiesPanel = Ext.extend(Ext.Panel, {
     },
 
     saveChannel: function() {
-        this.fireEvent('save');
+        this.fireEvent('savechannel');
     }
 
 });

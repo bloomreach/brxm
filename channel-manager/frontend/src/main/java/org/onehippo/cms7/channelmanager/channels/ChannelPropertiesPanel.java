@@ -70,13 +70,17 @@ import org.wicketstuff.js.ext.form.ExtFormPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 
-@ExtClass("Hippo.ChannelManager.ChannelPropertiesPanel")
+@ExtClass(ChannelPropertiesPanel.EXT_CLASS)
 public class ChannelPropertiesPanel extends ExtFormPanel {
 
     static final Logger log = LoggerFactory.getLogger(ChannelPropertiesPanel.class);
 
     public static final String CHANNEL_PROPERTIES_PANEL_JS = "Hippo.ChannelManager.ChannelPropertiesPanel.js";
+    public static final String EXT_CLASS = "Hippo.ChannelManager.ChannelPropertiesPanel";
 
+    private static final String EVENT_SAVE_CHANNEL = "savechannel";
+    private static final String EVENT_SELECT_CHANNEL = "selectchannel";
+    private static final String EVENT_SELECT_CHANNEL_PARAM_ID = "id";
     private static final FieldGroup[] ZERO_FIELD_GROUPS = new FieldGroup[0];
 
     private Channel channel;
@@ -103,7 +107,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
     }
 
-    public ChannelPropertiesPanel(final IPluginContext context, final HstConfigEditor hstConfigEditor) {
+    public ChannelPropertiesPanel(final IPluginContext context, final ChannelStore channelStore, final HstConfigEditor hstConfigEditor) {
         super();
 
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
@@ -200,11 +204,11 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             }
         });
 
-        addEventListener("selectchannel", new ExtEventListener() {
+        addEventListener(EVENT_SELECT_CHANNEL, new ExtEventListener() {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                if (parameters.containsKey("id")) {
-                    JSONArray channelId = parameters.get("id");
+                if (parameters.containsKey(EVENT_SELECT_CHANNEL_PARAM_ID)) {
+                    JSONArray channelId = parameters.get(EVENT_SELECT_CHANNEL_PARAM_ID);
                     if (channelId.length() > 0) {
                         try {
                             channel = getChannel((String) channelId.get(0));
@@ -216,11 +220,13 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 target.addComponent(container);
             }
         });
-        addEventListener("save", new ExtEventListener() {
+        addEventListener(EVENT_SAVE_CHANNEL, new ExtEventListener() {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
                 save();
+                channelStore.reload();
             }
+
         });
     }
 
@@ -243,7 +249,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 }
             }, null);
         } catch (PrivilegedActionException e) {
-            log.error("Unable to save channel" + e.getException().getMessage(), e.getException());
+            log.error("Could not save channel", e.getException());
         } finally {
             HstSubject.clearSubject();
         }
@@ -251,13 +257,10 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     @Override
     protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
-        if ("selectchannel".equals(event)) {
-            return new ExtEventAjaxBehavior() {
-                @Override
-                public String[] getParameters() {
-                    return new String[]{"id"};
-                }
-            };
+        if (EVENT_SELECT_CHANNEL.equals(event)) {
+            return new ExtEventAjaxBehavior(EVENT_SELECT_CHANNEL_PARAM_ID);
+        } else if (EVENT_SAVE_CHANNEL.equals(event)) {
+            return new ExtEventAjaxBehavior(new String[0]);
         }
         return super.newExtEventBehavior(event);
     }
