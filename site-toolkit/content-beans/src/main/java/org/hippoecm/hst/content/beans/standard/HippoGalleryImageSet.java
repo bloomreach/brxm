@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 
 @Node(jcrType = "hippogallery:imageset")
-public class HippoGalleryImageSet extends HippoItem implements HippoGalleryImageSetBean {
+public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryImageSetBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoGalleryImageSet.class);
 
