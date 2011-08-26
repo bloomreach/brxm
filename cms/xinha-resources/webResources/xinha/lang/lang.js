@@ -15,6 +15,7 @@
 {
   "Bold": "Vet",
   "Italic": "Cursief",
+  "Clear MSOffice tags": "Haal MSOffice tags weg",
   "Underline": "Onderstrepen",
   "Strikethrough": "Doorhalen",
   "Subscript": "Subscript",
@@ -82,6 +83,7 @@
   "Other": "Ander",
   "Same frame (_self)": "Zelfde frame (_self)",
   "Target:": "Doel:",
+  "Toggle Borders": "Kanten aan/uit",
   "Title (tooltip):": "Titel (tooltip):",
   "Top frame (_top)": "Bovenste frame (_top)",
   "URL:": "URL:",
