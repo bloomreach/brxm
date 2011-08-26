@@ -41,7 +41,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>English</sv:value>
+        <sv:value>English...</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -52,7 +52,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Engels</sv:value>
+        <sv:value>Engels...</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -77,7 +77,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>French</sv:value>
+        <sv:value>French...</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -88,7 +88,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Frans</sv:value>
+        <sv:value>Frans...</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -113,7 +113,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Dutch</sv:value>
+        <sv:value>Dutch...</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -124,7 +124,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Nederlands</sv:value>
+        <sv:value>Nederlands...</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
