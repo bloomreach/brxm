@@ -18,45 +18,42 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
-<c:set var="nextpage" value="${searchResults.next}"/>
-<c:set var="offset" value="${(searchResults.currentPage -1) * searchResults.pageSize}"/>
-<c:set var="prevpage" value="${searchResults.previous}"/>
-<c:set var="firstpage" value="${searchResults.startPage}"/>
-<c:set var="lastpage" value="${searchResults.endPage}"/>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <hst:headContribution keyHint="title"><title>Archive</title></hst:headContribution>
 
 <div id="yui-u">
-        <h1>Archive</h1>
-        <h2>Displaying ${searchResults.startOffset +1} - ${searchResults.endOffset} of ${searchResults.total} results</h2>
-        
-        <c:forEach var="bean" items="${searchResults.items}" varStatus="indexer">
-          <ul class="list-overview">
-            <hst:link var="link" hippobean="${bean.item}"/>                         
-            <li class="title">
-                <a href="${link}">${bean.title}</a>
-                <div>
-                    <p><fmt:formatDate value="${bean.date.time}" type="Date" pattern="MMMM d, yyyy h:mm a" /></p>
-                    <p>${bean.text}</p>
-                </div>
-            </li>
-          </ul>
-        </c:forEach>
-        <c:if test="${not empty searchResults.pageNumbersArray}">
-	        <ul id="paging-nav">
-            <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}" varStatus="status">
-                <c:set var="active" value="" />
-                <c:if test="${searchResults.currentPage == pageNr}">
-                      <c:set var="active" value=" class=\"active\"" />
-                </c:if>
-                <hst:renderURL var="pagelink">
-                    <hst:param name="page" value="${pageNr}" />
-                    <hst:param name="query" value="${query}" />
-                </hst:renderURL>
-                <li${active}><a href="${pagelink}" title="${pageNr}">${pageNr}</a></li>
-            </c:forEach>
-	        </ul>
-        </c:if>
-    
-</div>
+  <h1>Archive</h1>
+  <h2><b>${result.totalSize}</b> results</h2>
+  
+  <c:forEach var="bean" items="${result.hippoBeans}" varStatus="indexer">
+    <ul class="list-overview">
+      <hst:link var="link" hippobean="${bean}" />
+      <li class="title"><a href="${link}">${bean.title}</a>
+      <div><c:if test="${hst:isReadable(bean, 'date')}">
+        <p><fmt:formatDate value="${bean.date.time}" type="Date"
+          pattern="MMMM d, yyyy h:mm a" /></p>
+      </c:if> <c:if test="${hst:isReadable(bean, 'summary')}">
+        <p>${bean.summary}</p>
+      </c:if></div>
+      </li>
+    </ul>
+  </c:forEach> <c:if test="${fn:length(pages) gt 0}">
+    <ul id="paging-nav">
+      <c:forEach var="page" items="${pages}">
+        <c:set var="active" value="" />
+        <c:choose>
+          <c:when test="${crPage == page}">
+            <li>${page}</li>
+          </c:when>
+          <c:otherwise>
+            <hst:renderURL var="pagelink">
+              <hst:param name="page" value="${page}" />
+              <hst:param name="query" value="${query}" />
+            </hst:renderURL>
+            <li><a href="${pagelink}" title="${page}">${page}</a></li>
+          </c:otherwise>
+        </c:choose>
+      </c:forEach>
+    </ul>
+</c:if></div>

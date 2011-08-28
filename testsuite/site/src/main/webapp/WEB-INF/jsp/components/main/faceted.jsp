@@ -19,12 +19,6 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<c:set var="nextpage" value="${searchResults.next}"/>
-<c:set var="offset" value="${(searchResults.currentPage -1) * searchResults.pageSize}"/>
-<c:set var="prevpage" value="${searchResults.previous}"/>
-<c:set var="firstpage" value="${searchResults.startPage}"/>
-<c:set var="lastpage" value="${searchResults.endPage}"/>
-
 <hst:headContribution keyHint="title"><title>Faceted Navigation Result</title></hst:headContribution>
 
 <div id="yui-u">

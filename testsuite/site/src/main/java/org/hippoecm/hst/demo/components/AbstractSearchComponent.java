@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
@@ -23,21 +26,15 @@ import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.demo.beans.BaseBean;
-import org.hippoecm.hst.demo.util.PageableCollection;
-import org.hippoecm.hst.demo.util.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSearchComponent extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(AbstractSearchComponent.class);
-
-    private static PageableCollection<SearchResult<HippoBean>> EMPTY_RESULTS = new PageableCollection<SearchResult<HippoBean>>(0);
 
     public static final int DEFAULT_PAGE_SIZE = 5;
 
@@ -54,7 +51,6 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
 
         if (scope == null) {
             log.error("Scope for search is null.");
-            request.setAttribute("searchResults", EMPTY_RESULTS);
             return;
         }
 
@@ -74,6 +70,9 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             } else {
                hstQuery = manager.createQuery(scope, nodeType);
             }
+
+            hstQuery.setLimit(pageSize);
+            hstQuery.setOffset((page - 1) * pageSize);
             
             if (sortBy != null) {
                 hstQuery.addOrderByDescending(sortBy);
@@ -87,51 +86,30 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             final HstQueryResult result = hstQuery.execute();
-            PageableCollection<SearchResult<HippoBean>> results = new PageableCollection<SearchResult<HippoBean>>(
-                    result.getSize());
-            results.setPageNumber(page);
-            results.setPageSize(pageSize);
-            int startAt = results.getStartOffset();
 
-            final HippoBeanIterator iterator = result.getHippoBeans();
-            // don't skip past unreachable item:
-            if (startAt < results.getTotal()) {
-                iterator.skip(startAt);
-            }
-            int count = 0;
-
-            while (iterator.hasNext() && count < pageSize) {
-                HippoBean bean = iterator.nextHippoBean();
-                // note: bean can be null
-                if (bean != null && bean instanceof BaseBean) {
-                    BaseBean pageBean = (BaseBean) bean;
-                    results.addItem(new SearchResult<HippoBean>(bean, pageBean.getTitle(), pageBean.getSummary(),
-                            pageBean.getDate()));
-                    count++;
-                }
-            }
-            request.setAttribute("searchResults", results);
+            request.setAttribute("result", result);
+            request.setAttribute("crPage", page);
             
+            // add pages
+            if(result.getTotalSize() > pageSize) {
+                List<Integer> pages = new ArrayList<Integer>();
+                int numberOfPages = result.getTotalSize() / pageSize ;
+                if(result.getTotalSize() % pageSize != 0) {
+                    numberOfPages++;
+                }
+                for(int i = 0; i < numberOfPages; i++) {
+                    pages.add(i + 1);
+                }
+                request.setAttribute("pages", pages);
+            }
 
         } catch (QueryException e) {
             log.error("Exception in searchComponent: ", e);
-            setError(request, "An error occurred, invalid query syntax?");
         }
         
     }
 
     
-    /**
-     * Set error message on request so we can display it to user
-     *
-     * @param errorMessage message to display
-     * @param request      HstRequest instance
-     */
-    public void setError(final HstRequest request, final String errorMessage) {
-        request.setAttribute("error", errorMessage);
-        request.setAttribute("searchResults", EMPTY_RESULTS);
-    }
-
     /**
      * Parses int value from string object.
      * If value is null or parsing error occures, it returns default value

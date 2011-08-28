@@ -94,9 +94,6 @@ site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageValidator.j
 site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ExampleServletContextAwareBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/SiteMapItemRedirectView.java -text
 site/src/main/java/org/hippoecm/hst/demo/util/DemoRepoBasedMenuItem.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/util/Pageable.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/util/PageableCollection.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/util/SearchResult.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/util/SimplePageErrorHandler.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.java -text
