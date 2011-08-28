@@ -190,6 +190,18 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <configuration>
+              <properties>
+                  <cargo.jvmargs>
+                    <!-- for more memory -->
+                    <!-- 
+                    <![CDATA[-Xmx1024m ]]>
+                    -->
+                    <!-- for attaching a profiler like yourkit. Replace the agentpath with the correct path to libyjpagent.so -->
+                    <!--  
+                    <![CDATA[ -agentpath:/home/usr/Yourkit/yjp-9.0.8/bin/linux-x86-32/libyjpagent.so]]>
+                    -->
+                  </cargo.jvmargs>
+                </properties>
                 <deployables>
                   <deployable>
                     <type>war</type>
