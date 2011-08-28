@@ -111,6 +111,22 @@
                 <sv:value>search</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="Wikipedia">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>wikipedia</sv:value>
+            </sv:property>
+            <sv:node sv:name="Archive">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>wikipedia/archive</sv:value>
+            </sv:property>
+        </sv:node>
+        </sv:node>
         <sv:node sv:name="Form Component Example">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>

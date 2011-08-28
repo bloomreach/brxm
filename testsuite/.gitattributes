@@ -72,6 +72,7 @@ site/src/main/java/org/hippoecm/hst/demo/components/RSS.java svneol=native#text/
 site/src/main/java/org/hippoecm/hst/demo/components/Right.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
@@ -108,6 +109,7 @@ site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExam
 site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
+site/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
 site/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
 site/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
 site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
@@ -149,6 +151,7 @@ site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#t
 site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/wikipedia.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage401.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage403.jsp -text
 site/src/main/webapp/WEB-INF/jsp/errorpages/component-error-page.jsp svneol=native#text/plain
