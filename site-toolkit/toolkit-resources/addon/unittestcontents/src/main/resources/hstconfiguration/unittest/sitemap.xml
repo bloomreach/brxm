@@ -40,6 +40,9 @@
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/homepage</sv:value>
         </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>common/homepage</sv:value>
+        </sv:property>
     </sv:node>
     
     
