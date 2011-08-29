@@ -57,17 +57,18 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     // the names are used to access
     // the getters of Channel via reflection
     public enum Column {
+        composerModeEnabled,
+        contentRoot,
+        hostname,
+        hstConfigPath,
+        hstMountPoint,
         id, // channel id
+        locale,
         mountId,
         name,
-        url,
-        contentRoot,
-        hstConfigPath,
-        hostname,
         subMountPath,
-        composerModeEnabled,
-        hstMountPoint,
-        type
+        type,
+        url
     }
     public static final List<String> ALL_COLUMN_NAMES = new ArrayList<String>();
     static {
