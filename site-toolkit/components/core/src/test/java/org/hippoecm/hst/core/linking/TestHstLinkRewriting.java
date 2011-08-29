@@ -18,12 +18,8 @@ package org.hippoecm.hst.core.linking;
 
 import static junit.framework.Assert.assertEquals;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -40,6 +36,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -49,6 +46,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         private HstManager hstSitesManager;
         private HstURLFactory hstURLFactory;
         private  ObjectConverter objectConverter;
+        private HstLinkCreator linkCreator;
 
         @Before
         public void setUp() throws Exception {
@@ -59,6 +57,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             this.hstSitesManager = getComponent(HstManager.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.objectConverter = getObjectConverter();
+            this.linkCreator = getComponent(HstLinkCreator.class.getName());;
         }
         
         @After
@@ -67,11 +66,11 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             
         }
 
-        public HstRequestContext getRequestContext(String requestURI) throws Exception {
+        public HstRequestContext getRequestContextWithResolvedSiteMapItem(String hostAndPort, String requestURI) throws Exception {
 
             HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
             HstMutableRequestContext requestContext = (HstMutableRequestContext)rcc.create(false);
-            HstContainerURL containerUrl = createContainerUrl(requestURI);
+            HstContainerURL containerUrl = createContainerUrl(hostAndPort, requestURI);
             requestContext.setBaseURL(containerUrl);
             ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
             requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
@@ -80,16 +79,17 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             return requestContext;
         }
         
-        public HstContainerURL createContainerUrl(String requestURI) throws Exception {
+        public HstContainerURL createContainerUrl(String hostAndPort, String requestURI) throws Exception {
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.setLocalPort(8081);
             request.setServerPort(8081);
             request.setScheme("http");
             request.setServerName("localhost");
-            request.addHeader("Host", "localhost:8081");
-            request.setRequestURI(requestURI);
+            request.addHeader("Host", hostAndPort);
             request.setContextPath("/site");
+            requestURI = "/site" + requestURI;
+            request.setRequestURI(requestURI);
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));
             return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
@@ -102,9 +102,8 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
      
         @Test
         public void testSimpleHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContext("/home");
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
-            HstLinkCreator linkCreator = getComponent(HstLinkCreator.class.getName());
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
             assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
@@ -118,29 +117,73 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             assertEquals("wrong fully qualified url for News/News1" ,"http://localhost:8081/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
         }
         
+        /**
+         * Linkrewriting with current context is news2 : Now, a link for news2 is expected
+         * @throws Exception
+         */
+        @Ignore
         @Test
         public void testContextAwareHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContext("/news2");
-            // TODO add context aware link rewriting here
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/news2");
+
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
+            HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
+            assertEquals("wrong link.getPath for News/News1","news2/News1.html", newsLink.getPath());
+            assertEquals("wrong absolute link for News/News1" ,"/site/news2/News1.html", (newsLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for News/News1" ,"http://localhost:8081/site/news2/News1.html", (newsLink.toUrlForm(requestContext, true)));
+     
         }
         
+        /**
+         * Linkrewriting with current context is newsCtxOnly/news : Now, a link for /newsCtxOnly/news is expected
+         * @throws Exception
+         */
+        @Ignore
+        @Test
+        public void testContextOnlyHstLinkForBean() throws Exception {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/newsCtxOnly/foo/news");
+
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
+            HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
+            assertEquals("wrong link.getPath for News/News1","newsCtxOnly/foo/news/News1.html", newsLink.getPath());
+            assertEquals("wrong absolute link for News/News1" ,"/site/newsCtxOnly/foo/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for News/News1" ,"http://localhost:8081/site/newsCtxOnly/foo/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
+     
+            
+        }
+        
+        /**
+         * Canonical link never gives a context only link. Since news2 and news are equally suited, the HST will return
+         * either a link for /news or for /news2
+         * @throws Exception
+         */
         @Test
         public void testCanonicalHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContext("/news2");
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/newsCtxOnly/news");
             // TODO add canonical link rewriting here
         }
+        
+        
+        @Test
+        public void testExcludedForLinkRewritingSitemapItem() throws Exception {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/news2");
+            // TODO add excluded link rewriting here
+        }
+        
         
 
         @Test
         public void testCrossDomainHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContext("/news2");
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/news2");
             // TODO add cross domain rewriting here
         }
         
 
         @Test
         public void testCrossDomainFallbackHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContext("/news2");
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItem("localhost:8081","/news2");
             // TODO add cross domain fallback link rewriting here
         }
         

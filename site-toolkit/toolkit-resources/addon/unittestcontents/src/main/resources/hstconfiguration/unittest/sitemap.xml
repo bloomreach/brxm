@@ -185,6 +185,127 @@
         </sv:node>
     </sv:node>
     
+    <sv:node sv:name="news2">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>News</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+            <sv:value>hst:pages/newsoverview</sv:value>
+        </sv:property>
+        <sv:node sv:name="_default_.html">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>News/${1}</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/standarddetail</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="_default_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>News/${1}</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/newsoverview</sv:value>
+            </sv:property>
+       </sv:node>
+       <sv:node sv:name="_any_">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>News/${1}</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/newsoverview</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="_any_.html">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>News/${1}</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/standarddetail</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+     <sv:node sv:name="newsCtxOnly">
+       <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemapitem</sv:value>
+       </sv:property>
+      <sv:node sv:name="_default_">
+         <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:sitemapitem</sv:value>
+         </sv:property>
+         <sv:node sv:name="news">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemapitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                <sv:value>News</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                <sv:value>hst:pages/newsoverview</sv:value>
+            </sv:property>
+            <sv:node sv:name="_default_.html">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                    <sv:value>News/${2}</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                    <sv:value>hst:pages/standarddetail</sv:value>
+                </sv:property>
+            </sv:node>
+            <sv:node sv:name="_default_">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                    <sv:value>News/${2}</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                    <sv:value>hst:pages/newsoverview</sv:value>
+                </sv:property>
+           </sv:node>
+           <sv:node sv:name="_any_">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                    <sv:value>News/${2}</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                    <sv:value>hst:pages/newsoverview</sv:value>
+                </sv:property>
+            </sv:node>
+            <sv:node sv:name="_any_.html">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+                    <sv:value>News/${2}</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+                    <sv:value>hst:pages/standarddetail</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
+      </sv:node>
+     </sv:node>
+     
     <sv:node sv:name="contact">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
