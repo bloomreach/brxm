@@ -282,13 +282,19 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('beforePageIdChange', function(data) {
             console.log('beforePageIdChange, previewMode: '+this.previewMode);
             if (!this.iframeInitialized) {
-                console.log('add beforeInitializeIFrameHead listener');
-                if (this.pageIdIFrameInitListener) {
-                    this.removeListener('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this);
-                }
+                console.log('add beforeInitializeIFrameHead listener for '+JSON.stringify(data));
                 this.pageIdIFrameInitListener = function() {
+                    console.log('pageIdIFrameInitListener '+JSON.stringify(data));
                     this.initEditPage(data.mountId, data.pageId);
                 };
+                // remove listener when new data is requested, needed for refresh if page uuid changes due to edit
+                this.on('beforeRequestHstMetaData', function() {
+                    if (this.pageIdIFrameInitListener) {
+                        console.log('remove previous pageIdIFrameInitListener '+JSON.stringify(data));
+                        this.removeListener('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this);
+                        this.pageIdIFrameInitListener = null;
+                    }
+                }, this, {single : true});
                 this.on('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this, {single: true});
             } else {
                 this.initEditPage(data.mountId, data.pageId);
@@ -377,8 +383,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (type === 'remote') {
                 console.error('Error handling the response of the server for the toolkit store. Response is:\n'+response.responseText);
             }
-            Hippo.Msg.alert("Toolkit Store Error", "Error occurred in the toolkit store. To prevent inconsistencies the site will we reloaded.", function(id) {
-                this.refreshIframe();
+            Hippo.Msg.alert("Toolkit Store Error", "Error occurred in the toolkit store. To prevent inconsistencies the site gets reloaded.", function(id) {
+                this.initComposer(this.renderHostSubMountPath, this.renderHost);
             }, this);
         }, this);
         this.stores.toolkit.load();
@@ -399,8 +405,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (type === 'remote') {
                 console.error('Error handling the response of the server for the page store. Response is:\n'+response.responseText);
             }
-            Hippo.Msg.alert("Page Store Error", "Error occurred in the page store. To prevent inconsistencies the site will we reloaded.", function(id) {
-                this.refreshIframe();
+            Hippo.Msg.alert("Page Store Error", "Error occurred in the page store. To prevent inconsistencies the site gets reloaded.", function(id) {
+                this.initComposer(this.renderHostSubMountPath, this.renderHost);
             }, this);
         }, this);
         this.stores.pageModel.load();
@@ -444,7 +450,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         );
     },
 
-    initComposer : function(channelName, renderHostSubMountPath, renderHost) {
+    initComposer : function(renderHostSubMountPath, renderHost) {
         this.fireEvent('beforeInitComposer');
         this.on('afterIFrameDOMReady', function() {
             this.fireEvent('afterInitComposer');
@@ -615,16 +621,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     refreshIframe : function() {
+        this.resetIFrameState();
+        // we don't need to reload the stores, so just share the data again with the iframe
+        this.shareData();
         var iframe = Ext.getCmp('Iframe');
         var frame = iframe.getFrame();
         var window = frame.getWindow();
         var scrollSave = {x: window.pageXOffset, y: window.pageYOffset};
-        this.on('afterIFrameDOMReady', function() {
+        this.on('beforeIFrameDOMReady', function() {
             window.scrollBy(scrollSave.x, scrollSave.y);
         }, this, {single : true});
-        this.resetIFrameState();
-        // we don't need to reload the stores, so just share the data again with the iframe
-        this.shareData();
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
     },
 
@@ -699,6 +705,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             method: "HEAD",
             url : options.url,
             success : function(responseObject) {
+                if (options.url !== self.frm.getDocumentURI()) {
+                    // response is out of date
+                    return;
+                }
                 self.fireEvent.apply(self, ["hstMetaDataResponse", {
                     url : options.url,
                     pageId : responseObject.getResponseHeader('HST-Page-Id'),
@@ -934,6 +944,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         console.log('shareData');
 
         var func = function() {
+            if (this.stores.pageModel == null) {
+                return;
+            }
             var self = this;
             console.log('shareData run');
             var facade = function() {
@@ -1367,6 +1380,7 @@ Hippo.Msg = (function() {
     blockingType['wait'] = false;
     blockingType['hide'] = false;
     var blocked = false;
+    var waitTimeout;
 
     var func = function(type, args) {
         if (blocked) {
@@ -1412,9 +1426,21 @@ Hippo.Msg = (function() {
             func('show', arguments);
         },
         wait : function() {
-            func('wait', arguments);
+            if (waitTimeout) {
+                return;
+            }
+            var args = arguments;
+            waitTimeout = window.setTimeout(function() {
+                waitTimeout = null;
+                func('wait', args);
+            }, 500);
         },
         hide : function() {
+            if (waitTimeout) {
+                console.log('clear wait timeout');
+                window.clearTimeout(waitTimeout);
+                waitTimeout = null;
+            }
             func('hide', arguments);
         }
     }
