@@ -32,6 +32,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
@@ -115,15 +116,25 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private void loadMounts(final Node configNode) throws RepositoryException {
-        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup)) {
-            Node virtualHosts = configNode.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup);
-            NodeIterator rootChannelNodes = virtualHosts.getNodes();
-            while (rootChannelNodes.hasNext()) {
-                Node hgNode = rootChannelNodes.nextNode();
-                populateChannels(hgNode);
-            }
-        } else { 
-            log.warn("Cannot load mounts because node '{}' does not exist", configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroup);
+        if (!configNode.hasNode(HstNodeTypes.NODENAME_HST_HOSTS)) {
+            log.warn("Cannot load mounts because node '{}' does not exist", configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_HOSTS);
+            return;
+        }
+
+        final Node hstHosts = configNode.getNode(HstNodeTypes.NODENAME_HST_HOSTS);
+        final String locale = getStringPropertyOrDefault(hstHosts, HstNodeTypes.GENERAL_PROPERTY_LOCALE, null);
+
+        if (!hstHosts.hasNode(hostGroup)) {
+            log.warn("Cannot load mounts because node '{}' does not exist", hstHosts.getPath() + "/" + hostGroup);
+            return;
+        }
+
+        final Node virtualHostGroup = hstHosts.getNode(this.hostGroup);
+
+        NodeIterator rootVirtualHostNodes = virtualHostGroup.getNodes();
+        while (rootVirtualHostNodes.hasNext()) {
+            Node virtualHost = rootVirtualHostNodes.nextNode();
+            populateChannels(virtualHost, locale);
         }
     }
 
@@ -134,19 +145,21 @@ public class ChannelManagerImpl implements ChannelManager {
 
     /**
      * Recursively populates the channels with URLs and other mount information.
-     * <p/>
      * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
      *
-     * @param node - the inital node to start with, must be a virtual host node.
-     * @throws javax.jcr.RepositoryException - In case cannot read required node/property from the repository.
+     * @param node the inital node to start with, must be a virtual host node.
+     * @param defaultLocale the locale to use for this node if it does not specify a locale itself
+     * @throws javax.jcr.RepositoryException In case cannot read required node/property from the repository.
      */
-    private void populateChannels(Node node) throws RepositoryException {
+    private void populateChannels(Node node, String defaultLocale) throws RepositoryException {
+        final String nodeLocale = getStringPropertyOrDefault(node, HstNodeTypes.GENERAL_PROPERTY_LOCALE, defaultLocale);
+
         NodeIterator nodes = node.getNodes();
         while (nodes.hasNext()) {
             Node currNode = nodes.nextNode();
 
             //Get the channels from the child node.
-            populateChannels(currNode);
+            populateChannels(currNode, nodeLocale);
 
             if (!currNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT) || !currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
                 continue;
@@ -190,6 +203,9 @@ public class ChannelManagerImpl implements ChannelManager {
             channel.setMountId(currNode.getIdentifier());
 
             setUrlFor(currNode, channel);
+
+            final String channelLocale = getStringPropertyOrDefault(currNode, HstNodeTypes.GENERAL_PROPERTY_LOCALE, nodeLocale);
+            channel.setLocale(channelLocale);
         }
     }
 
@@ -524,6 +540,14 @@ public class ChannelManagerImpl implements ChannelManager {
             return parent.getNode(nodeName);
         } else {
             return parent.addNode(nodeName, nodeType);
+        }
+    }
+
+    private static String getStringPropertyOrDefault(Node node, String propName, String defaultValue) throws RepositoryException {
+        try {
+            return node.getProperty(propName).getString();
+        } catch (PathNotFoundException propDoesNotExist) {
+            return defaultValue;
         }
     }
 

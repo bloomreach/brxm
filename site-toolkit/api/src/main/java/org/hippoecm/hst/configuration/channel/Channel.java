@@ -38,6 +38,7 @@ public class Channel implements Serializable {
     private final Map<String, Object> properties = new HashMap<String, Object>();
     private String channelInfoClassName;
     private String mountId;
+    private String locale;
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -70,6 +71,7 @@ public class Channel implements Serializable {
         this.properties.putAll(orig.properties);
         this.channelInfoClassName = orig.channelInfoClassName;
         this.mountId = orig.mountId;
+        this.locale = orig.locale;
     }
 
     /**
@@ -189,6 +191,14 @@ public class Channel implements Serializable {
         return this.mountId;
     }
 
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(final String locale) {
+        this.locale = locale;
+    }
+
     public int hashCode() {
         return id.hashCode() ^ 317;
     }
@@ -206,14 +216,19 @@ public class Channel implements Serializable {
 
     @Override
     public String toString() {
-        return "Channel{" +
-                "id=" + id +
-                ", title='" + name + '\'' +
-                ", url='" + url + '\'' +
-                ", type='" + type + '\'' +
-                ", hstConfigPath='" + hstConfigPath + '\'' +
-                ", contentRoot='" + contentRoot + '\'' +
-                '}';
+        StringBuilder b = new StringBuilder();
+
+        b.append("Channel{");
+        b.append("id=").append(id);
+        b.append(",name=").append(name);
+        b.append(",url=").append(url);
+        b.append(",type=").append(type);
+        b.append(",hstConfigPath=").append(hstConfigPath);
+        b.append(",contentRoot=").append(contentRoot);
+        b.append(",locale=").append(locale);
+        b.append('}');
+
+        return b.toString();
     }
 
 }

@@ -31,6 +31,9 @@
     <sv:property sv:name="hst:cmslocation" sv:type="String">
       <sv:value>http://localhost:8080/cms</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:locale" sv:type="String">
+        <sv:value>en_US</sv:value>
+    </sv:property>
     <sv:property sv:name="hst:pagenotfound" sv:type="String">
         <sv:value>pagenotfound</sv:value>
     </sv:property>
@@ -76,6 +79,9 @@
             </sv:property>
             <sv:property sv:name="hst:channelpath" sv:type="String">
               <sv:value>/hst:hst/hst:channels/testchannel</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:locale" sv:type="String">
+                <sv:value>en_EN</sv:value>
             </sv:property>
             <sv:node sv:name="examplecontextpathonly">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
