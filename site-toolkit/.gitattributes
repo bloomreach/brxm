@@ -843,12 +843,6 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestconfigur
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent-sites.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestvirtualhosts.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/components.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/pages.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sitemap.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sitemapitemhandlers.xml -text svneol=unset#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sitemenus.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/templates.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/components.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/pages.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/sitemap.xml svneol=native#text/plain
