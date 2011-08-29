@@ -679,15 +679,21 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             }
 
-            // TODO timeout
             for (var i = 0, len = this.iFrameJsHeadContributions.length; i < len; i++) {
                 var src = this.iFrameJsHeadContributions[i];
                 var responseText = this.iframeResourceCache[src];
-                frm.writeScript(responseText, {type: "text/javascript", "title" : src});
+                (function(src, responseText) {
+                    window.setTimeout(function() {
+                        frm.writeScript.apply(frm, [responseText, {type: "text/javascript", "title" : src}]);
+                    }, 0);
+                })(src, responseText);
             }
 
-            frm.execScript('Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ',' + this.previewMode + ')', true);
-            this.fireEvent('afterInitializeIFrameHead');
+            var self = this;
+            window.setTimeout(function() {
+                frm.execScript.apply(frm, ['Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ',' + this.previewMode + ')', true]);
+                self.fireEvent.call(self, 'afterInitializeIFrameHead');
+            }, 0);
         };
 
         if (this.iframeResourcesCached) {
@@ -1118,8 +1124,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.refreshIframe();
             }
         } catch(e) {
+            var self = this;
+            Hippo.Msg.alert("Error", "Error occurred handling a message from the iframe. The site gets reloaded to prevent inconsistencies.", function() {
+                self.refreshIframe.call(self);
+            });
             console.error(e);
-            // TODO error handling
         }
     }
 });
