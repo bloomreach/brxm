@@ -17,6 +17,8 @@ package org.hippoecm.hst.configuration.channel;
 
 public class ChannelException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public ChannelException(String message) {
         super(message);
     }
