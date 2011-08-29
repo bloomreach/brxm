@@ -41,7 +41,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        Node internalHostGroup = getSession().getNode("/hst:hst/hst:hosts/dev-local");
+        Node internalHostGroup = getSession().getNode("/hst:hst/hst:hosts/dev-localhost");
         if (internalHostGroup.hasNode("myhost")) {
             internalHostGroup.getNode("myhost").remove();
         }
@@ -107,7 +107,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                 return null;
             }
         });
-        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-local");
+        Node node = getSession().getNode("/hst:hst/hst:hosts/dev-localhost");
 
         assertTrue(node.hasNode("myhost/hst:root"));
 
@@ -148,7 +148,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Test
     public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException {
         Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
-        testNode.addNode("hst:hosts").addNode("dev-local", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
+        testNode.addNode("hst:hosts").addNode("dev-localhost", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
 
         Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, "hst:blueprints");
         Node bp = bpFolder.addNode("test-bp", "hst:blueprint");
@@ -202,7 +202,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         manager.setRepository(getRepository());
         // FIXME: use readonly credentials
         manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
-        manager.setHostGroup("dev-local");
+        manager.setHostGroup("dev-localhost");
         manager.setSites("hst:sites");
         return manager;
     }
