@@ -59,7 +59,7 @@
     <sv:property sv:name="hst:defaulthostname" sv:type="String">
         <sv:value>localhost</sv:value>
     </sv:property>
-    <sv:node sv:name="dev-local">
+    <sv:node sv:name="dev-localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
