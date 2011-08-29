@@ -20,17 +20,9 @@
 <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
-[unittestproject:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+[unittestproject:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document orderable
 
-[unittestproject:textpage] > unittestproject:basedocument
-- unittestproject:summary (string)
-- unittestproject:title (string)
-- unittestproject:date (date)
-+ unittestproject:body (hippostd:html)
+[unittestproject:textpage] > unittestproject:basedocument, hippostd:relaxed
 
-[unittestproject:newspage] > unittestproject:basedocument
-- unittestproject:summary (string)
-- unittestproject:title (string)
-- unittestproject:date (date)
-+ unittestproject:body (hippostd:html)
+[unittestproject:newspage] > unittestproject:basedocument, hippostd:relaxed
 

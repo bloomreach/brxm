@@ -25,10 +25,10 @@ public class BasicHstTestCase extends AbstractHstTestCase{
 
     public final static String TEST_VIRTURALHOSTS_PATH = "/hst:hst/hst:hosts";
     public final static String TEST_HSTCONFIGURATION_PATH = "/hst:hst/hst:configurations/unittest";
-    public final static String TEST_PREVIEW_SITE_PATH= "/hst:hst/hst:unittestsites/unittestproject-preview";
-    public final static String TEST_PREVIEW_SITE_CONTENT_PATH= "/hst:hst/hst:unittestsites/unittestproject-preview/hst:content";
-    public final static String TEST_LIVE_SITE_PATH= "/hst:hst/hst:unittestsites/unittestproject-live";
-    public final static String TEST_LIVE_SITE_CONTENT_PATH= "/hst:hst/hst:unittestsites/unittestproject-live/hst:content";
+    public final static String TEST_PREVIEW_SITE_PATH= "/hst:hst/hst:sites/unittestproject-preview";
+    public final static String TEST_PREVIEW_SITE_CONTENT_PATH= "/hst:hst/hst:sites/unittestproject-preview/hst:content";
+    public final static String TEST_LIVE_SITE_PATH= "/hst:hst/hst:sites/unittestproject";
+    public final static String TEST_LIVE_SITE_CONTENT_PATH= "/hst:hst/hst:sites/unittestproject/hst:content";
    
     
     /**

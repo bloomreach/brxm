@@ -45,7 +45,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         if (internalHostGroup.hasNode("myhost")) {
             internalHostGroup.getNode("myhost").remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:unittestsites").getNodes("channel-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:sites").getNodes("channel-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("channel-*"); ni.hasNext(); ) {
@@ -203,7 +203,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         // FIXME: use readonly credentials
         manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
         manager.setHostGroup("dev-local");
-        manager.setSites("hst:unittestsites");
+        manager.setSites("hst:sites");
         return manager;
     }
 
