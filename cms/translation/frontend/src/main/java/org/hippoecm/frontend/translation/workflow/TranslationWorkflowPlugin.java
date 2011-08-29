@@ -583,7 +583,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 final HippoLocale locale = item.getModelObject();
                 final String language = locale.getName();
                 if (!hasLocale(language)) {
-                    item.add(new AddTranslationAction("language", locale.getDisplayName(getLocale()), locale.getIcon(
+                    item.add(new AddTranslationAction("language", locale.getDisplayName(getLocale()) + "...", locale.getIcon(
                             IconSize.TINY, LocaleState.AVAILABLE), language, languageModel));
                 } else {
                     item.add(new DisplayTranslationAction("language", locale.getDisplayName(getLocale()), locale
