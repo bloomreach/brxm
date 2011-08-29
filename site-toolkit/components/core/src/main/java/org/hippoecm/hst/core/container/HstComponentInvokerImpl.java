@@ -18,13 +18,8 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -187,22 +182,6 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         try {
             setHstObjectAttributesForServlet(wrappedRequest, hstRequest, hstResponse);
             
-            // TODO : move the 'composer' logic to a better place
-            /*
-             * Below we check whether we need to output 'sample' content for the component instead of rendering the actual template. 
-             * We only show sample content if and only if:
-             * 1) There is already an HttpSession
-             * 2) On this HttpSession there is a attribute called ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW with value "true"
-             * 3) The component is of type CONTAINER_ITEM_COMPONENT
-             * 4) compInfo instanceof HstComponentConfigurationService
-             * 5) mount is of type ContainerConstants.COMPOSERMODE && of type ContainerConstants.COMPOSERMODE_TEMPLATE_VIEW
-             * 6) the container item component has sample content configured
-             */
-            
-            HstComponentConfiguration compInfo = ((HstComponentConfiguration)window.getComponentInfo());
-            Mount mount = hstRequest.getRequestContext().getResolvedMount().getMount();
-            // do not creaHstComponentConfigurationServicete a http session!!
-          
             if (!StringUtils.isBlank(dispatchUrl)) {
                 invokeDispatcher(requestContainerConfig, servletRequest, servletResponse, namedDispatching, dispatchUrl, window);
             } else {
