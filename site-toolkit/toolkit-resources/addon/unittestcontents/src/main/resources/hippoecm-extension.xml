@@ -102,7 +102,7 @@
       <sv:value>11057</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemap.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/sitemap.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
@@ -117,7 +117,7 @@
       <sv:value>11058</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/components.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/components.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
@@ -132,7 +132,7 @@
       <sv:value>11059</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/pages.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/pages.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
@@ -147,7 +147,7 @@
       <sv:value>11059</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/templates.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/templates.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
@@ -163,7 +163,7 @@
       <sv:value>11060</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemenus.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/sitemenus.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
@@ -178,7 +178,7 @@
       <sv:value>11061</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/sitemapitemhandlers.xml</sv:value>
+      <sv:value>hstconfiguration/unittest/sitemapitemhandlers.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:configurations/unittest</sv:value>
