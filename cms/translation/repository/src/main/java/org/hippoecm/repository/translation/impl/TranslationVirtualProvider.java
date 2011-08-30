@@ -92,7 +92,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         if (docId instanceof MirrorNodeId) {
             docId = ((MirrorNodeId) docId).getCanonicalId();
         } else {
-            String[] docbase = getProperty(docId, docbaseName);
+            String[] docbase = getProperty(docId, docbaseName, null);
             if (docbase != null && docbase.length > 0) {
                 try {
                     docId = new NodeId(UUID.fromString(docbase[0]));
@@ -102,7 +102,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
                 }
             }
         }
-        String[] ids = getProperty(docId, idName);
+        String[] ids = getProperty(docId, idName, null);
         if (ids == null || ids.length == 0) {
             return super.populate(context, state);
         }
@@ -134,7 +134,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
                     continue;
                 }
 
-                String[] languages = getProperty(t9nDocId, localeName);
+                String[] languages = getProperty(t9nDocId, localeName, null);
                 if (languages == null || languages.length != 1) {
                     continue;
                 }
@@ -184,7 +184,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         for (Map.Entry<Name, String> entry : view.entrySet()) {
             Name facet = entry.getKey();
             String value = entry.getValue();
-            String[] matching = getProperty(candidate, facet);
+            String[] matching = getProperty(candidate, facet, null);
             if (matching != null && matching.length > 0) {
                 if (value != null && !value.equals("") && !value.equals("*")) {
                     int i;
