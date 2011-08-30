@@ -32,7 +32,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
@@ -544,11 +543,10 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     private static String getStringPropertyOrDefault(Node node, String propName, String defaultValue) throws RepositoryException {
-        try {
+        if (node.hasProperty(propName)) {
             return node.getProperty(propName).getString();
-        } catch (PathNotFoundException propDoesNotExist) {
-            return defaultValue;
         }
+        return defaultValue;
     }
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
