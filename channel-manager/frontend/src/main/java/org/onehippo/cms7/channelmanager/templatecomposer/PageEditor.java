@@ -20,6 +20,7 @@ import java.util.Arrays;
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -59,7 +60,11 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     public Long initialHstConnectionTimeout = 60000L;
 
+    @ExtProperty
+    private String locale;
+
     private Channel channel;
+
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
@@ -72,6 +77,7 @@ public class PageEditor extends ExtPanel {
             this.previewMode = config.getBoolean("previewMode");
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
+        this.locale = Session.get().getLocale().toString();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());
@@ -87,6 +93,7 @@ public class PageEditor extends ExtPanel {
             }
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
+        this.locale = Session.get().getLocale().toString();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());

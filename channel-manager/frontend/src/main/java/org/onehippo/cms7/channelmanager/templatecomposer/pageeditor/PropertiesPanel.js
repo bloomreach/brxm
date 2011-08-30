@@ -113,7 +113,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                         }
                         createDocumentWindow.hide();
 
-                        Hippo.Msg.wait(this.resouces['create-new-document-message']);
+                        Hippo.Msg.wait(this.resources['create-new-document-message']);
                         Ext.Ajax.request({
                             url: createUrl,
                             params: options,
@@ -130,7 +130,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                 }
             ]
         });
-        createDocumentWindow.addButton({text: this.resouces['create-new-document-button-cancel']}, function() {
+        createDocumentWindow.addButton({text: this.resources['create-new-document-button-cancel']}, function() {
             this.hide();
         }, createDocumentWindow);
 
@@ -145,7 +145,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         var length = records.length;
         if (length == 0) {
             this.add({
-                html: "<div style='padding:5px' align='center'>"+this.resouces['properties-panel-no-properties']+"</div>",
+                html: "<div style='padding:5px' align='center'>"+this.resources['properties-panel-no-properties']+"</div>",
                 xtype: "panel",
                 autoWidth: true,
                 layout: 'fit'
@@ -218,15 +218,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         console.dir(arguments);
         this.removeAll();
 
-        var errorText = this.resouces['properties-panel-load-exception-text'].format(actions);
+        var errorText = this.resources['properties-panel-load-exception-text'].format(actions);
         if (type == 'response') {
-            errorText += '\n'+this.resouces['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
+            errorText += '\n'+this.resources['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
         }
 
         this.add({
             xtype: 'label',
             text: errorText,
-            fieldLabel: this.resouces['properties-panel-error-field-label']
+            fieldLabel: this.resources['properties-panel-error-field-label']
         });
 
         this.doLayout(false, true);
@@ -241,7 +241,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
-            url: this.composerRestMountUrl + id + './parameters'
+            url: this.composerRestMountUrl + id + './parameters/'+this.locale
         });
         store.on('load', this.loadProperties, this);
         store.on('exception', this.loadException, this);

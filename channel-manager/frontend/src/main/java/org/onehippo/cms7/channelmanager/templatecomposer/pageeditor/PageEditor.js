@@ -962,6 +962,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     region: 'center',
                     split: true,
                     resources: this.resources,
+                    locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
                     mountId: mountId
                 }
