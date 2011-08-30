@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -52,14 +54,27 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
 
 
     @GET
-    @Path("/parameters/")
+    @Path("/parameters/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentWrapper getParameters(@Context HttpServletRequest servletRequest,
-                                          @Context HttpServletResponse servletResponse) {
+                                          @Context HttpServletResponse servletResponse, @PathParam("locale") String localeString) {
 
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            return new ComponentWrapper(getRequestConfigNode(requestContext));
+            Locale locale = null;
+            if (localeString != null) {
+                String[] localeParts = localeString.split("_");
+                if (localeParts.length == 3) {
+                    locale = new Locale(localeParts[0], localeParts[1], localeParts[2]);
+                } else if (localeParts.length == 2) {
+                    locale = new Locale(localeParts[0], localeParts[1]);
+                } else if (localeParts.length == 1) {
+                    locale = new Locale(localeParts[0]);
+                } else {
+                    log.warn("Failed to create Locale from string '{}'", localeString);
+                }
+            }
+            return new ComponentWrapper(getRequestConfigNode(requestContext), locale);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -53,10 +54,11 @@ public class ComponentWrapper {
      * Constructs a component node wrapper
      *
      * @param node JcrNode for a component.
+     * @param locale the locale to get localized names, can be null
      * @throws RepositoryException    Thrown if the reposiotry exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
-    public ComponentWrapper(Node node) throws RepositoryException, ClassNotFoundException {
+    public ComponentWrapper(Node node, Locale locale) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
 
         //Get the parameter names and values from the component node.
@@ -80,11 +82,11 @@ public class ComponentWrapper {
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
                 // parse new style ParametersInfo
                 ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                properties = ParametersInfoProcessor.getProperties(parametersInfo);
+                properties = ParametersInfoProcessor.getProperties(parametersInfo, locale);
             } else if (componentClass.isAnnotationPresent(org.hippoecm.hst.configuration.components.ParametersInfo.class)) {
                 // parse deprecated old style ParametersInfo
                 org.hippoecm.hst.configuration.components.ParametersInfo parameterInfo = (org.hippoecm.hst.configuration.components.ParametersInfo) componentClass.getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
-                properties = OldParametersInfoProcessor.getProperties(parameterInfo);
+                properties = OldParametersInfoProcessor.getProperties(parameterInfo, locale);
             }
             if (hstParameters != null) {
                 for (Property prop : properties) {

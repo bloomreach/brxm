@@ -18,11 +18,16 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model.utils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.hippoecm.hst.configuration.components.Parameter;
 import org.hippoecm.hst.configuration.components.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Process the (deprecated) old-style parameter annotations in the package org.hippoecm.hst.components.
@@ -36,12 +41,27 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
 @Deprecated
 public class OldParametersInfoProcessor {
 
+     private static Logger log = LoggerFactory.getLogger(OldParametersInfoProcessor.class);
+
     public static List<Property> getProperties(ParametersInfo parameterInfo) {
+        return getProperties(parameterInfo, null);
+    }
+
+    public static List<Property> getProperties(ParametersInfo parameterInfo, Locale locale) {
         List<Property> properties = new ArrayList<Property>();
 
         final Class classType = parameterInfo.type();
         if (classType == null) {
             return properties;
+        }
+
+        ResourceBundle resourceBundle = null;
+        if (locale != null) {
+            try {
+                resourceBundle = ResourceBundle.getBundle(parameterInfo.type().getName(), locale);
+            } catch (MissingResourceException missingResourceException) {
+                log.warn("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{parameterInfo.type().getName(), locale});
+            }
         }
 
         for (Method method : parameterInfo.type().getMethods()) {
@@ -54,10 +74,14 @@ public class OldParametersInfoProcessor {
                 prop.setType(propAnnotation.typeHint());
                 prop.setDocType(propAnnotation.docType());
                 prop.setRequired(propAnnotation.required());
-                if (propAnnotation.displayName().equals("")) {
-                    prop.setLabel(propAnnotation.name());
+                if (resourceBundle != null && resourceBundle.containsKey(propAnnotation.name())) {
+                    prop.setLabel(resourceBundle.getString(propAnnotation.name()));
                 } else {
-                    prop.setLabel(propAnnotation.displayName());
+                    if (propAnnotation.displayName().equals("")) {
+                        prop.setLabel(propAnnotation.name());
+                    } else {
+                        prop.setLabel(propAnnotation.displayName());
+                    }
                 }
                 prop.setDocLocation(propAnnotation.docLocation());
                 prop.setAllowCreation(propAnnotation.allowCreation());
