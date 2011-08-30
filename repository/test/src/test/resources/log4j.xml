@@ -97,7 +97,7 @@
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.export">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   
