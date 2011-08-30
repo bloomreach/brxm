@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
@@ -127,7 +128,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
         String queryname;
         String docbase;
         String[] facets;
-        String[] search;
+        String[] search = null;
         long count = 0;
         if (nodeId instanceof FacetSearchNodeId) {
             FacetSearchNodeId facetSearchNodeId = (FacetSearchNodeId) nodeId;
@@ -137,12 +138,12 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             search = facetSearchNodeId.search;
             count = facetSearchNodeId.count;
         } else {
-            String[] property = getProperty(nodeId, querynameName);
+            String[] property = getProperty(nodeId, querynameName, null);
             queryname = (property != null && property.length > 0 ? property[0] : null);
             property = getProperty(nodeId, docbaseName);
             docbase = (property != null && property.length > 0 ? property[0] : null);
             facets = getProperty(nodeId, facetsName);
-            search = getProperty(nodeId, searchName);
+            search = getProperty(nodeId, searchName, null);
         }
 
         if (facets != null && facets.length > 0) {

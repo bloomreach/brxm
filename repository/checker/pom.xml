@@ -200,7 +200,7 @@
           <mainClass>org.hippoecm.checker.Main</mainClass>
           <arguments>
             <argument>jdbc:mysql://localhost:3306/hreptwo?user=hippo&amp;password=hippo</argument>
-            <argument>/alt/storage/workspaces/default/index</argument>
+            <argument>/home/berry/projects/duitslandweb/repackage/storage/workspaces/default/index</argument>
           </arguments>
         </configuration>
       </plugin>

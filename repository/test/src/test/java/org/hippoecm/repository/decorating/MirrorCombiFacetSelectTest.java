@@ -99,7 +99,7 @@ public class MirrorCombiFacetSelectTest extends TestCase {
         super.setUp();
         build(session, content1);
         session.save();
-        build(session, content2);;
+        build(session, content2);
         session.save();
     }
 

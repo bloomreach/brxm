@@ -29,6 +29,5 @@
 
   <modules>
     <module>testutils</module>
-    <module>documentation</module>
   </modules>
 </project>

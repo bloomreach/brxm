@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.WeakHashMap;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
@@ -376,12 +377,16 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         virtualStates.add(state);
                         forceStore(state);
                         return nodeState;
+                    } catch(InvalidItemStateException ex) {
+                        return nodeState;
                     } catch (RepositoryException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                         throw new ItemStateException("Failed to populate node state", ex);
                     }
                 }
             }
+        } catch(InvalidItemStateException ex) {
+            throw new ItemStateException("Source location has changed", ex);
         } finally {
             currentContext = null;
             editFakeMode = editPreviousMode;
@@ -443,7 +448,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
-                    state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                    try {
+                        state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                    } catch(InvalidItemStateException ex) {
+                        throw new ItemStateException("Node has been modified", ex);
+                    }
                 }
             } finally {
                 editFakeMode = editPreviousMode;
@@ -630,6 +639,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         } else {
                             virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate(null, (NodeState)state);
                         }
+                    } catch (InvalidItemStateException ex) {
+                        log.info(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     } catch (ItemStateException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     } catch (RepositoryException ex) {

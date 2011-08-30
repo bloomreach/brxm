@@ -16,6 +16,7 @@
 package org.hippoecm.repository.dataprovider;
 
 import java.util.UUID;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.RepositoryException;
 
@@ -73,7 +74,7 @@ public class HippoNodeId extends NodeId
         }
     }
 
-    public final NodeState populate(StateProviderContext context, NodeState state) {
+    public final NodeState populate(StateProviderContext context, NodeState state) throws InvalidItemStateException {
         if (context == null) {
             context = this.context;
         } else if (this.context == null) {
@@ -84,19 +85,23 @@ public class HippoNodeId extends NodeId
         }
         try {
             return provider.populate(context, state);
+        } catch (InvalidItemStateException ex) {
+            throw ex;
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             return null;
         }
     }
 
-    public final NodeState populate(HippoVirtualProvider provider, NodeState state) throws ItemStateException {
+    public final NodeState populate(HippoVirtualProvider provider, NodeState state) throws InvalidItemStateException, ItemStateException {
         try {
             if (provider != null) {
                 provider.populate((context != null ? context : new StateProviderContext()), state);
             } else {
                 state = populate(context, state);
             }
+        } catch (InvalidItemStateException ex) {
+            throw ex;
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             throw new ItemStateException("Failed to populate node state", ex);

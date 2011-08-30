@@ -18,6 +18,7 @@ package org.hippoecm.repository.dataprovider;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
@@ -150,7 +151,7 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         return stateMgr.createNew(propName, parentId);
     }
 
-    protected final String[] getProperty(NodeId nodeId, Name propName) throws RepositoryException {
+    protected final String[] getProperty(NodeId nodeId, Name propName) throws InvalidItemStateException, RepositoryException {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
             if(log.isDebugEnabled()) {
@@ -166,7 +167,33 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         return strings;
     }
 
-    protected final PropertyState getPropertyState(PropertyId propId) {
+    protected final String[] getProperty(NodeId nodeId, Name propName, String[] defaultValue) throws InvalidItemStateException, RepositoryException {
+        PropertyId propId = new PropertyId(nodeId, propName);
+        try {
+            PropertyState propState = (PropertyState) stateMgr.getItemState(propId);
+            InternalValue[] values = propState.getValues();
+            String[] strings = new String[values.length];
+            for (int i = 0; i < values.length; i++) {
+                strings[i] = values[i].getString();
+            }
+            return strings;
+        } catch (NoSuchItemStateException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected property state " + propId + " not found: " +
+                          ex.getClass().getName() + ": " + ex.getMessage());
+            }
+            return defaultValue;
+        } catch(ItemStateException ex) {
+            if(log.isDebugEnabled()) {
+                log.debug("possible expected property state " + propId + " not found: " +
+                          ex.getClass().getName()+": "+ex.getMessage());
+            }
+            throw new InvalidItemStateException(ex);
+        }
+    }
+
+
+    protected final PropertyState getPropertyState(PropertyId propId) throws InvalidItemStateException {
         try {
             return (PropertyState) stateMgr.getItemState(propId);
         } catch(NoSuchItemStateException ex) {
@@ -174,13 +201,13 @@ public abstract class HippoVirtualProvider implements DataProviderModule
                 log.debug("possible expected property state " + propId + " not found: " +
                           ex.getClass().getName() + ": " + ex.getMessage());
             }
-            return null;
+            throw new InvalidItemStateException(ex);
         } catch(ItemStateException ex) {
             if(log.isDebugEnabled()) {
                 log.debug("possible expected property state " + propId + " not found: " +
                           ex.getClass().getName()+": "+ex.getMessage());
             }
-            return null;
+            throw new InvalidItemStateException(ex);
         }
     }
 

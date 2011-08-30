@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
@@ -95,15 +96,15 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
             }
         } catch (NumberFormatException e) {
             // no limit configured, ignore
+        } catch (InvalidItemStateException e) {
+            // no limit configured, ignore
         }
 
-        String[] facets = getProperty(nodeId, facetsName);
-        String[] facetNodeNames = getProperty(nodeId, facetNodeNamesName);
-        
-        String[] sortbys = getProperty(nodeId, facetSortBy);
-        String[] sortorders = getProperty(nodeId, facetSortOrder);
-        
-        String[] filters = getProperty(nodeId, facetFilters);
+        String[] facets = getProperty(nodeId, facetsName, null);
+        String[] facetNodeNames = getProperty(nodeId, facetNodeNamesName, null);
+        String[] sortbys = getProperty(nodeId, facetSortBy, null);
+        String[] sortorders = getProperty(nodeId, facetSortOrder, null);
+        String[] filters = getProperty(nodeId, facetFilters, null);
         
         String facetedFiltersString = null;
         if(filters != null) {
@@ -271,7 +272,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         return;
     }
     
-    protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException, RepositoryException {
+    protected final int getPropertyAsInt(NodeId nodeId, Name propName) throws NumberFormatException, InvalidItemStateException, RepositoryException {
         PropertyState propState = getPropertyState(new PropertyId(nodeId, propName));
         if(propState == null) {
             if(log.isDebugEnabled()) {

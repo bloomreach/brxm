@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.RepositoryException;
 
@@ -207,7 +208,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
-        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        String[] docbase = getProperty(state.getNodeId(), docbaseName, null);
         return populate(context, this, state, docbase, null, null, null, false);
     }
 
@@ -215,7 +216,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         for (Map.Entry<Name, String> entry : view.entrySet()) {
             Name facet = entry.getKey();
             String value = entry.getValue();
-            String[] matching = getProperty(candidate, facet);
+            String[] matching = getProperty(candidate, facet, null);
             if (matching != null) {
                 if (value != null && !value.equals("") && !value.equals("*")) {
                     int i;

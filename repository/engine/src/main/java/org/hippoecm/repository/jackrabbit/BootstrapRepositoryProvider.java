@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.RepositoryException;
 
@@ -72,10 +73,12 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
         NodeState upstream = getNodeState(new NodeId(UUID.fromString(docbase)), context);
-        for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
-            NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
-            state.addChildNodeEntry(entry.getName(), childNodeId);
+        if (upstream != null) {
+            for (Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+                ChildNodeEntry entry = (ChildNodeEntry)iter.next();
+                NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
+                state.addChildNodeEntry(entry.getName(), childNodeId);
+            }
         }
         return state;
     }
@@ -83,6 +86,8 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     @Override
     public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState upstream = getNodeState(((BootstrapNodeId)nodeId).upstream, context);
+        if (upstream == null)
+            throw new InvalidItemStateException("cannot populate top bootstrap node");
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
 

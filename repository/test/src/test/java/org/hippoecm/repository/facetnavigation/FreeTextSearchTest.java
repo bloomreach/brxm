@@ -139,9 +139,7 @@ public class FreeTextSearchTest extends TestCase {
 
     @Test
     public void testDirectAccess() throws RepositoryException {
-        System.err.println("-----");
         verify((Node)session.getItem("/test/facetnavigation/hippo:navigation[{jumps}]"));
-        System.err.println("-----");
     }
 
     @Test
