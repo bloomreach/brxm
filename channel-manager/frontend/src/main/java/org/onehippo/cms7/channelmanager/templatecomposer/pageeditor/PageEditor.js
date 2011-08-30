@@ -172,8 +172,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         },
                         'exception' : {
                             fn: function(frm, e) {
-                                // TODO
-                                console.error(e); //ignore for now..
+                                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], e.message, function() {
+                                    this.refreshIframe();
+                                });
+                                console.error(e);
                             },
                             scope: this
                         },
