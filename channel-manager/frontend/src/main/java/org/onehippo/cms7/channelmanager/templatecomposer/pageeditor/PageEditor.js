@@ -255,28 +255,45 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('beforeInitializeIFrameHead', function() {
+            this.initializingIFrameHead = true;
             console.log('beforeInitializeIFrameHead');
         }, this);
 
         this.on('iFrameInitialized', function() {
             console.log('onIFrameInitialized');
+            this.initializingIFrameHead = false;
             this.iframeInitialized = true;
         }, this);
 
         this.on('hstMetaDataResponse', this.onHstMetaDataResponse, this);
 
         this.on('beforeMountIdChange', function(data) {
-            if (!this.iframeInitialized) {
-                console.log('add beforeInitializeIFrameHead listener');
-                if (this.mountIdIFrameInitListener) {
-                    this.removeListener('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this);
+            if (!this.preview && !data.isPreviewHstConfig && this.isPreviewHstConfig != data.isPreviewHstConfig) {
+                // switching mount when edit is active and no preview available on the new mount
+                if (this.initializingIFrameHead) {
+                    this.on('iFrameInitialized', function() {
+                        Ext.getCmp('pagePreviewButton').toggle(true);
+                        this.refreshIframe();
+                    }, this, {single : true});
+                } else {
+                    Ext.getCmp('pagePreviewButton').toggle(true);
+                    this.refreshIframe();
                 }
-                this.mountIdIFrameInitListener = function() {
-                    this.initEditMount(data.mountId)
-                };
-                this.on('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this, {single: true});
             } else {
-                this.initEditMount(data.mountId);
+                if (!this.iframeInitialized) {
+                    console.log('add beforeInitializeIFrameHead listener');
+                    this.mountIdIFrameInitListener = function() {
+                        this.initEditMount(data.mountId)
+                    };
+                    this.on('beforeRequestHstMetaData', function() {
+                        if (this.mountIdIFrameInitListener) {
+                            this.removeListener('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this);
+                        }
+                    }, this, {single : true});
+                    this.on('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this, {single: true});
+                } else {
+                    this.initEditMount(data.mountId);
+                }
             }
         }, this);
 
@@ -736,25 +753,25 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         console.log('hstMetaDataResponse '+JSON.stringify(data));
         var pageId = data.pageId;
         var mountId = data.mountId;
+        var hasPreviewConfig = this.getBoolean(data.hasPreviewConfig);
 
         if (mountId != this.ids.mountId) {
-            if (this.fireEvent('beforeMountIdChange', {mountId: mountId, oldMountId: this.ids.mountId, pageId: pageId})) {
+            if (this.fireEvent('beforeMountIdChange', {mountId: mountId, oldMountId: this.ids.mountId, pageId: pageId, isPreviewHstConfig: hasPreviewConfig})) {
                 this.ids.mountId = mountId;
             }
         }
 
         if (pageId != this.ids.pageId) {
-            if (this.fireEvent('beforePageIdChange', {mountId: mountId, pageId: pageId, oldPageId: this.ids.pageId})) {
+            if (this.fireEvent('beforePageIdChange', {mountId: mountId, pageId: pageId, oldPageId: this.ids.pageId, isPreviewHstConfig: hasPreviewConfig})) {
                 this.ids.pageId = pageId;
                 console.log('set pageUrl to '+data.url)
                 this.ids.pageUrl = data.url;
             }
         }
 
-        var hasPreviewConfig = this.getBoolean(data.hasPreviewConfig);
         if (this.isPreviewHstConfig !== hasPreviewConfig) {
             this.isPreviewHstConfig = hasPreviewConfig;
-            this.fireEvent('isPreviewHstConfigChanged', { isPreviewHstConfig : hasPreviewConfig });
+            this.fireEvent('isPreviewHstConfigChanged', {mountId: mountId, pageId: pageId, isPreviewHstConfig: hasPreviewConfig });
         }
     },
 
