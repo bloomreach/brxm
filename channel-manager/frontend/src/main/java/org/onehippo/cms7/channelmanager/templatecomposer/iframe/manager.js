@@ -59,7 +59,7 @@ jQuery.noConflict();
             var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
             var o = factory.getById(element.getAttribute(HST.ATTR.ID));
             if (o == null) {
-                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.recources['manager-opject-not-found'].format(data.id));
+                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-opject-not-found'].format(data.id));
             }
             return o;
         },

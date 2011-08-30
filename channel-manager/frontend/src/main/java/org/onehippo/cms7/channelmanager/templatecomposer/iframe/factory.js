@@ -37,12 +37,12 @@ jQuery.noConflict();
             _create : function(data, verify) {
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
-                    die(this.recources['factory-xtype-not-found'].format(data.xtype));
+                    die(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
                 var c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if(verify) {
                     if (!c instanceof data.base) {
-                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.recources['factory-inheritance-error'].format(data.id, data.base));
+                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['factory-inheritance-error'].format(data.id, data.base));
                     }
                 }
                 this.objects[c.id] = c;
@@ -54,12 +54,12 @@ jQuery.noConflict();
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    die(this.recources['factory-no-hst-meta-data']);
+                    die(this.resources['factory-no-hst-meta-data']);
                 }
 
                 var id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die(this.recources['factory-attribute-not-found'].format(HST.ATTR.ID));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID));
                 }
 
                 element.id = id;
@@ -67,7 +67,7 @@ jQuery.noConflict();
 
                 var type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die(this.recources['factory-attribute-not-found'].format(HST.ATTR.TYPE));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
