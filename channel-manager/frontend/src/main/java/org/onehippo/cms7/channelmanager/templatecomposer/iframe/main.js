@@ -19,16 +19,12 @@ jQuery.noConflict();
 
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame');
 
-    var Main = function() {
-        this.debug = false;
-    };
+    var Main = function() {};
 
     Main.prototype = {
 
-        init: function(debug, preview) {
-            this.debug = debug;
-
-            var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(preview);
+        init: function(options) {
+            var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(options);
 
             onhostmessage(function(msg) {
                 manager.getOverlay().toggle();
@@ -93,11 +89,15 @@ jQuery.noConflict();
             if(Hippo.ChannelManager.TemplateComposer.IFrame.Main.isDebug()) {//global reference for scope simplicity
                 console.error(msg);
             } else {
-                throw new Error(msg);
+                sendMessage({msg: msg}, "iframeexception");
             }
-        }
+       }
     };
 
     Hippo.ChannelManager.TemplateComposer.IFrame.Main = new Main();
+    onhostmessage(function(msg) {
+        Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.setResources(msg.data.resources);
+        Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(msg.data);
+    }, this, false, 'init');
 
 })(jQuery);

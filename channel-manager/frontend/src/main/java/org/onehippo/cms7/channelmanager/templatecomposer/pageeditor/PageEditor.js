@@ -83,7 +83,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: [
                         {
-                            text : '< Channel summary',
+                            text : config.resources['back-to-channel-manager-button'],
                             id : "channelManager",
                             listeners : {
                                 'click' : {
@@ -95,7 +95,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             }
                         },
                         {
-                            text: 'Preview',
+                            text: config.resources['preview-button'],
                             iconCls: 'title-button',
                             id: 'pagePreviewButton',
                             toggleGroup : 'composerMode',
@@ -105,7 +105,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             disabled: true
                         },
                         {
-                            text: 'Edit',
+                            text: config.resources['edit-button'],
                             iconCls: 'title-button',
                             id: 'pageComposerButton',
                             enableToggle: true,
@@ -122,7 +122,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             }
                         },
                         {
-                            text: 'Publish',
+                            text: config.resources['publish-button'],
                             iconCls: 'title-button',
                             id: 'publishHstConfig',
                             width: 150,
@@ -172,6 +172,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         },
                         'exception' : {
                             fn: function(frm, e) {
+                                // TODO
                                 console.error(e); //ignore for now..
                             },
                             scope: this
@@ -302,7 +303,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('beforeInitComposer', function() {
-            Hippo.Msg.wait('Loading...');
+            Hippo.Msg.wait(this.resources['loading-message']);
             this.previewMode = true;
             this.ids.pageId = null;
             this.ids.mountId = null;
@@ -383,7 +384,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (type === 'remote') {
                 console.error('Error handling the response of the server for the toolkit store. Response is:\n'+response.responseText);
             }
-            Hippo.Msg.alert("Toolkit Store Error", "Error occurred in the toolkit store. To prevent inconsistencies the site gets reloaded.", function(id) {
+            Hippo.Msg.alert(this.resources['toolkit-store-error-message-title'], this.resources['toolkit-store-error-message'], function(id) {
                 this.initComposer(this.renderHostSubMountPath, this.renderHost);
             }, this);
         }, this);
@@ -405,7 +406,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (type === 'remote') {
                 console.error('Error handling the response of the server for the page store. Response is:\n'+response.responseText);
             }
-            Hippo.Msg.alert("Page Store Error", "Error occurred in the page store. To prevent inconsistencies the site gets reloaded.", function(id) {
+            Hippo.Msg.alert(this.resources['page-store-error-message-title'], this.resources['page-store-error-message'], function(id) {
                 this.initComposer(this.renderHostSubMountPath, this.renderHost);
             }, this);
         }, this);
@@ -438,7 +439,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     requestContents(queueEmptyCallback);
                 },
                 failure : function(result, request) {
-                    self.fireEvent.apply(self, ['iFrameException', {msg : 'Pre-caching resource \''+src+'\' failed. Please try to refresh your browser and access the channel manager again.'}]);
+                    self.fireEvent.apply(self, ['iFrameException', {msg : self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
                 }
             });
         };
@@ -482,13 +483,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             }, 5000);
                         } else {
                             Hippo.Msg.hide();
-                            Hippo.Msg.confirm('Timeout', 'The connection to the HST timed out. Do you want to retry to establish a connection?', function(id) {
+                            Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
                                 if (id === 'yes') {
                                     retry = me.initialHstConnectionTimeout;
                                     Hippo.Msg.wait('Loading...');
                                     composerMode(callback);
                                 } else {
-                                    me.fireEvent.apply(me, ['iFrameException', {msg : 'Connection timed out. Unable to change to composermode. Please check if the site is online.'}]);
+                                    me.fireEvent.apply(me, ['iFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
                                 }
                             });
                         }
@@ -523,7 +524,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.channelName = name;
         var channelNameText = Ext.getCmp('channelName');
         if (typeof oldName !== 'undefined' && oldName !== null) {
-            channelNameText.setText('You switched from "'+oldName+'" to "'+name+'"');
+            channelNameText.setText(this.resources['channel-switch-text'].format(oldName, name));
             this.showTitleSwitchTimeout = window.setTimeout(function() {
                 channelNameText.setText(name);
             }, 5000);
@@ -547,7 +548,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                Hippo.Msg.alert('Failed to publish hst configuration. '+jsonData.message, function() {
+                Hippo.Msg.alert(self.resources['published-hst-config-failed-message']+' '+jsonData.message, function() {
                     self.refreshIframe.call(self, null);
                 });
             }
@@ -586,7 +587,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             },
                             failure: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Hippo.Msg.alert('Failed to create the preview hst configuration. '+jsonData.message, function() {
+                                Hippo.Msg.alert(this.resouces['preview-hst-config-creation-failed']+' '+jsonData.message, function() {
                                     self.previewMode = true;
                                     self.refreshIframe.call(self, null);
                                 });
@@ -605,7 +606,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 // once the composer javascript in the iframe is injected and initialised we send a toggle
                 // message which shows/hides the drag and drop overlay in the iframe
                 var iframe = Ext.getCmp('Iframe');
-                iframe.sendMessage({}, 'toggle');
+                iframe.getFrame().sendMessage({}, 'toggle');
                 this.previewMode = !this.previewMode;
                 this.fireEvent('modeChanged', { previewMode : this.previewMode});
             }
@@ -691,7 +692,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
             var self = this;
             window.setTimeout(function() {
-                frm.execScript.apply(frm, ['Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(' + Hippo.ChannelManager.TemplateComposer.Instance.debug + ',' + this.previewMode + ')', true]);
+                frm.sendMessage({debug: self.debug,
+                                 previewMode: self.previewMode,
+                                 resources: self.resources}, 'init');
                 self.fireEvent.call(self, 'afterInitializeIFrameHead');
             }, 0);
         };
@@ -724,7 +727,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }]);
             },
             failure : function(responseObject) {
-                self.fireEvent.apply(self, ['iFrameException', { msg: 'Requesting HST meta-data failed. Please check if the site is online.'}]);
+                self.fireEvent.apply(self, ['iFrameException', { msg: self.resources['hst-meta-data-request-failed']}]);
             }
         });
     },
@@ -788,6 +791,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             mountId: mountId,
             pageId: pageId,
             composerRestMountUrl: this.composerRestMountUrl,
+            resources: this.resources,
             listeners: {
                 write : {
                     fn: function(store, action, result, res, records) {
@@ -881,11 +885,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             xtype: 'h_base_grid',
                             flex:2,
                             id: 'ToolkitGrid',
-                            title: 'Toolkit',
+                            title: this.resources['toolkit-grid-title'],
                             store: this.stores.toolkit,
                             cm: new Ext.grid.ColumnModel({
                                 columns: [
-                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 40}}
+                                    { header: this.resources['toolkit-grid-column-header-name'], dataIndex: 'name', id:'name', viewConfig :{width: 40}}
 //                                    { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
 //                                    { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
                                 ],
@@ -902,7 +906,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             xtype: 'h_base_grid',
                             flex: 3,
                             id: 'PageModelGrid',
-                            title: 'Containers',
+                            title: this.resources['page-model-grid-title'],
                             store: this.stores.pageModel,
                             sm: new Ext.grid.RowSelectionModel({
                                 singleSelect: true,
@@ -919,9 +923,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             }),
                             cm : new Ext.grid.ColumnModel({
                                 columns: [
-                                    { header: "Name", dataIndex: 'name', id:'name', viewConfig :{width: 120}},
-                                    { header: "Type", dataIndex: 'type', id:'type'},
-                                    { header: "Template", dataIndex: 'template', id:'template'}
+                                    { header: this.resources['page-model-grid-column-header-name'], dataIndex: 'name', id:'name', viewConfig :{width: 120}},
+                                    { header: this.resources['page-model-grid-column-header-type'], dataIndex: 'type', id:'type'},
+                                    { header: this.resources['page-model-grid-column-header-template'], dataIndex: 'template', id:'template'}
                                 ],
                                 defaults: {
                                     sortable: false,
@@ -937,6 +941,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     xtype:'h_properties_panel',
                     region: 'center',
                     split: true,
+                    resources: this.resources,
                     composerRestMountUrl: this.composerRestMountUrl,
                     mountId: mountId
                 }
@@ -1056,7 +1061,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var type = record.get('type');
         if (type == HST.CONTAINERITEM) {
             actions.push(new Ext.Action({
-                text: 'Delete',
+                text: this.resources['context-menu-action-delete'],
                 handler: function() {
                     this.removeByRecord(record)
                 },
@@ -1066,10 +1071,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var children = record.get('children');
         if (type == HST.CONTAINER && children.length > 0) {
             actions.push(new Ext.Action({
-                text: 'Delete items',
+                text: this.resources['context-menu-delete-items'],
                 handler: function() {
-                    var msg = 'You are about to remove ' + children.length + ' items, are your sure?';
-                    Hippo.Msg.confirm('Confirm delete', msg, function(btn, text) {
+                    var msg = this.resources['context-menu-delete-items-message'].format(children.length);
+                    Hippo.Msg.confirm(this.resources['context-menu-delete-items-message-title'], msg, function(btn, text) {
                         if (btn == 'yes') {
                             var r = [children.length];
                             Ext.each(children, function(c) {
@@ -1090,7 +1095,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     removeByRecord: function(record) {
         var store = this.stores.pageModel;
-        Hippo.Msg.confirm('Confirm delete', 'Are you sure you want to delete ' + record.get('name') + '?', function(btn, text) {
+        Hippo.Msg.confirm(this.resources['delete-message-title'], this.resources['delete-message'].format(record.get('name')), function(btn, text) {
             if (btn == 'yes') {
                 store.remove(record);
             }
@@ -1122,10 +1127,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.fireEvent('iFrameInitialized', msg.data);
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
+            } else if (msg.tag == 'iframeexception') {
+                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], msg.data.message, function() {
+                    self.refreshIframe.call(self);
+                });
             }
         } catch(e) {
             var self = this;
-            Hippo.Msg.alert("Error", "Error occurred handling a message from the iframe. The site gets reloaded to prevent inconsistencies.", function() {
+            Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
                 self.refreshIframe.call(self);
             });
             console.error(e);
@@ -1201,12 +1210,12 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
             listeners : {
                 beforeload: {
                     fn: function (store, options) {
-                        Hippo.Msg.wait("Loading page ...");
+                        Hippo.Msg.wait(config.resources['page-model-store-before-load-message']);
                     }
                 },
                 beforewrite : {
                     fn : function(proxy, action, rs, params) {
-                        Hippo.Msg.wait("Updating configuration ... ");
+                        Hippo.Msg.wait(config.resources['page-model-store-before-write-message']);
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');

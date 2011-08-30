@@ -37,12 +37,12 @@ jQuery.noConflict();
             _create : function(data, verify) {
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
-                    die('No implementation found for xtype=' + data.xtype);
+                    die(this.recources['factory-xtype-not-found'].format(data.xtype));
                 }
-                var c = new this.registry[data.xtype](data.id, data.element);
+                var c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if(verify) {
                     if (!c instanceof data.base) {
-                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die('Instance with id ' + data.id + ' should be a subclass of ' + data.base);
+                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.recources['factory-inheritance-error'].format(data.id, data.base));
                     }
                 }
                 this.objects[c.id] = c;
@@ -54,12 +54,12 @@ jQuery.noConflict();
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    die("hstContainerMetaData is undefined or null for element");
+                    die(this.recources['factory-no-hst-meta-data']);
                 }
 
                 var id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die('Attribute '+HST.ATTR.ID+' not found on hstContainerMetaData');
+                    die(this.recources['factory-attribute-not-found'].format(HST.ATTR.ID));
                 }
 
                 element.id = id;
@@ -67,7 +67,7 @@ jQuery.noConflict();
 
                 var type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die('Attribute type not found');
+                    die(this.recources['factory-attribute-not-found'].format(HST.ATTR.TYPE));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
@@ -158,6 +158,7 @@ jQuery.noConflict();
             },
 
             convertToHstMetaData : function(element) {
+                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (element.nodeType !== 8) {
                     return null;
                 }
@@ -176,9 +177,13 @@ jQuery.noConflict();
                         return commentJsonObject;
                     }
                 } catch(exception) {
-                    console.error('Error parsing container meta data from comment data:\''+element.data+'\'. '+exception);
+                    die(this.resources['factory-error-parsing-hst-data'].format(element.data) +' '+ exception);
                 }
                 return null;
+            },
+
+            setResources: function(resources) {
+                this.resources = resources;
             }
 
         };

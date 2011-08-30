@@ -20,11 +20,12 @@ jQuery.noConflict();
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget = Class.extend({
-        init : function(id, element) {
+        init : function(id, element, resources) {
             this.id = id;
             this.overlayId = id + '-overlay';
             this.element = element;
             this.el = $(element);
+            this.resources = resources;
 
             this.parent = null;
 
@@ -205,8 +206,8 @@ jQuery.noConflict();
     });
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.items = new Hippo.Util.OrderedMap();
 
@@ -576,8 +577,8 @@ jQuery.noConflict();
     //Container implementations
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Table = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.sel.append.item = this.sel.container + ' > tbody > tr.' + this.cls.item;
             this.sel.append.container = this.sel.container + ' > tbody';
@@ -594,8 +595,8 @@ jQuery.noConflict();
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.UnorderedList = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
             this.sel.append.container = this.sel.container;
@@ -611,8 +612,8 @@ jQuery.noConflict();
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.OrderedList = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
             this.sel.append.container = this.sel.container;
@@ -628,8 +629,8 @@ jQuery.noConflict();
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.VerticalBox = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
 
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.sel.append.item = this.sel.container + ' > div.' + this.cls.item;
             this.sel.append.container = this.sel.container;
@@ -645,8 +646,8 @@ jQuery.noConflict();
 
     //Container items
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
-        init : function(id, element) {
-            this._super(id, element);
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
 
             this.cls.selected = this.cls.selected + '-containerItem';
             this.cls.activated = this.cls.activated + '-containerItem';
@@ -656,11 +657,11 @@ jQuery.noConflict();
             var tmp = el.attr("hst:temporary");
             this.isTemporary = typeof tmp !== 'undefined';
             if(this.isTemporary) {
-                el.html('Click to refresh');
+                el.html(this.resources['base-container-item-temporary']);
             }
 
             this.data = {
-                name : 'loading..'
+                name : this.resources['base-container-item-label-loading']
             };
         },
 

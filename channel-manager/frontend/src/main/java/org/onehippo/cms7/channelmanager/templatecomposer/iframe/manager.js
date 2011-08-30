@@ -18,12 +18,13 @@ jQuery.noConflict();
 
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager = function(preview) {
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager = function(options) {
         this.current = null;
         this.containers = {};
         this.dropIndicator = null;
         this.syncRequested = false;
-        this.preview = preview;
+        this.preview = options.previewMode;
+        this.resources = options.resources;
         this.init();
     };
 
@@ -43,9 +44,8 @@ jQuery.noConflict();
                 $('.'+HST.CLASS.CONTAINER).each(function(index) {
                     self._createContainer(this);
                 });
-
             } catch(e) {
-                console.error(e);
+                sendMessage({msg: e.message}, "iframeexception");
             }
         },
 
@@ -59,7 +59,7 @@ jQuery.noConflict();
             var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
             var o = factory.getById(element.getAttribute(HST.ATTR.ID));
             if (o == null) {
-                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die('Object with id ' + data.id + ' not found in registry');
+                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.recources['manager-opject-not-found'].format(data.id));
             }
             return o;
         },

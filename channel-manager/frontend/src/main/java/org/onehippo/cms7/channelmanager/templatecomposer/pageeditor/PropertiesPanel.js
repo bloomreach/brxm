@@ -32,13 +32,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
 
             buttons:[
                 {
-                    text: "Save",
+                    text: this.resources['properties-panel-button-save'],
                     hidden: true,
                     handler: this.submitForm,
                     scope: this
                 },
                 {
-                    text: "Reset",
+                    text: this.resources['properties-panel-button-reset'],
                     scope: this,
                     hidden: true,
                     handler: function () {
@@ -54,7 +54,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         this.getForm().submit({
             url: this.composerRestMountUrl + this.id + './parameters',
             method: 'POST' ,
-            waitMsg: 'Saving properties ...',
+            waitMsg: this.resources['properties-panel-submit-form-message'],
             success: function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
             }
@@ -66,19 +66,20 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
     },
 
     createDocument: function (ev, target, options) {
-	  
+
         var createUrl = this.composerRestMountUrl + this.mountId + './create';
         var createDocumentWindow = new Ext.Window({
-            title: "Create a new document",
+            title: this.resources['create-new-document-window-title'],
             height: 150,
             width: 400,
             modal: true,
-            items:[{
+            items:[
+                {
                     xtype: 'form',
                     height: 150,
                     padding: 10,
                     labelWidth: 120,
-		    id: 'createDocumentForm',
+                    id: 'createDocumentForm',
                     defaults:{
                         labelSeparator: '',
                         anchor: '100%'
@@ -86,21 +87,22 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                     items:[
                         {
                             xtype: 'textfield',
-                            fieldLabel:'Document Name',
+                            fieldLabel: this.resources['create-new-document-field-name'],
                             allowBlank: false
                         },
                         {
-			    xtype: 'textfield',
+                            xtype: 'textfield',
                             disabled: true,
-                            fieldLabel:'Document Location',
+                            fieldLabel: this.resources['create-new-document-field-location'],
                             value: options.docLocation
                         }
                     ]
-                }],
+                }
+            ],
             layout: 'fit',
             buttons:[
                 {
-                    text: 'Create Document',
+                    text: this.resources['create-new-document-button'],
                     handler:function () {
                         var createDocForm = Ext.getCmp('createDocumentForm').getForm()
                         createDocForm.submit();
@@ -111,7 +113,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                         }
                         createDocumentWindow.hide();
 
-                        Hippo.Msg.wait("Creating Document ... ");
+                        Hippo.Msg.wait(this.resouces['create-new-document-message']);
                         Ext.Ajax.request({
                             url: createUrl,
                             params: options,
@@ -125,10 +127,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                         });
 
                     }
-                }]
+                }
+            ]
         });
-	createDocumentWindow.addButton({text: 'Cancel'},function(){this.hide();},createDocumentWindow);
-	
+        createDocumentWindow.addButton({text: this.resouces['create-new-document-button-cancel']}, function() {
+            this.hide();
+        }, createDocumentWindow);
+
 
         createDocumentWindow.show();
 
@@ -140,7 +145,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         var length = records.length;
         if (length == 0) {
             this.add({
-                html: "<div style='padding:5px' align='center'>No editable properties found for this component</div>",
+                html: "<div style='padding:5px' align='center'>"+this.resouces['properties-panel-no-properties']+"</div>",
                 xtype: "panel",
                 autoWidth: true,
                 layout: 'fit'
@@ -175,7 +180,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                             bodyCfg: {
                                 tag: 'div',
                                 cls: 'create-document-link',
-                                html: 'Or <a href="#" id="combo' + i  +'" >&nbsp;Create Document&nbsp;</a>&nbsp;'
+                                html: this.resources['create-document-link-text'].format('<a href="#" id="combo'+ i +'">&nbsp;', '&nbsp;</a>&nbsp;')
                             },
                             border: false
 
@@ -213,16 +218,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         console.dir(arguments);
         this.removeAll();
 
-        var errorText = 'Error during ' + actions + '. ';
+        var errorText = this.resouces['properties-panel-load-exception-text'].format(actions);
         if (type == 'response') {
-            errorText += '\nServer returned statusText: ' + response.statusText + ', statusCode: '
-                    + response.status + ' for request.url=' + options.url;
+            errorText += '\n'+this.resouces['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
         }
 
         this.add({
             xtype: 'label',
             text: errorText,
-            fieldLabel: 'Error information'
+            fieldLabel: this.resouces['properties-panel-error-field-label']
         });
 
         this.doLayout(false, true);
