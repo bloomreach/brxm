@@ -359,9 +359,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('modeChanged', function(data) {
             console.log('mode changed');
             if (data.previewMode) {
-                this.mainWindow.hide();
+                if (this.mainWindow) {
+                    this.mainWindow.hide();
+                }
             } else {
-                this.mainWindow.show();
+                if (this.mainWindow) {
+                    this.mainWindow.show();
+                }
                 Hippo.Msg.hide();
             }
             Ext.getCmp('pagePreviewButton').setDisabled(false);
@@ -374,6 +378,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('beforePublishHstConfiguration', function() {
+            Ext.getCmp('publishHstConfig').setDisabled(true);
             Ext.getCmp('pagePreviewButton').setDisabled(true);
             Ext.getCmp('pageComposerButton').setDisabled(true);
         }, this);
