@@ -288,6 +288,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     this.on('beforeRequestHstMetaData', function() {
                         if (this.mountIdIFrameInitListener) {
                             this.removeListener('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this);
+                            this.mountIdIFrameInitListener = null;
                         }
                     }, this, {single : true});
                     this.on('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this, {single: true});
