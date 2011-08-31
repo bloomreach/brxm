@@ -32,7 +32,6 @@
  * v1.0.1
  * 	The 1st version - based on $.post/$.get
  */
-jQuery.noConflict();
 (function ($) {
     $.extend({
         /* STH: 2010-09-17, Added method "exists" which takes an URL and a callback function.
