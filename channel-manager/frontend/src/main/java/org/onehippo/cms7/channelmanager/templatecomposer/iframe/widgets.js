@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-jQuery.noConflict();
+"use strict";
 (function($) {
 
+    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget = Class.extend({

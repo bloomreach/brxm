@@ -13,10 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-jQuery.noConflict();
+"use strict";
 (function($) {
-
+    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
     if (!Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory) {
@@ -165,7 +164,7 @@ jQuery.noConflict();
                 try {
                     if (!element.data || element.data.length == 0
                             || !element.data.indexOf(HST.ATTR.ID) === -1
-                            || !element.data.indexOf(HST.ATTR.TYPE === -1)
+                            || !element.data.indexOf(HST.ATTR.TYPE) === -1
                             || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
                         return null;
                     }

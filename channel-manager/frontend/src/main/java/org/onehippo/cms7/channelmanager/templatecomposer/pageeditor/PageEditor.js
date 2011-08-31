@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
+"use strict";
 Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
 Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
@@ -1462,7 +1462,7 @@ Hippo.Msg = (function() {
             func('confirm', arguments);
         },
         prompt : function() {
-            func('prompt', aguments);
+            func('prompt', arguments);
         },
         show : function() {
             func('show', arguments);

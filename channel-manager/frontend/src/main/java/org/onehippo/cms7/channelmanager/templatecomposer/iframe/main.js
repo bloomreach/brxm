@@ -13,10 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-jQuery.noConflict();
+"use strict";
 (function($) {
-
+    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame');
 
     var Main = function() {};
@@ -101,3 +100,6 @@ jQuery.noConflict();
     }, this, false, 'init');
 
 })(jQuery);
+
+// remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
+jQuery.noConflict(true);

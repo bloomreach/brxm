@@ -13,10 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-jQuery.noConflict();
+"use strict";
 (function($) {
-
+    var jQuery = $;
     $.namespace('Hippo.Util');
 
     Hippo.Util.Map = Class.extend({

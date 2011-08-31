@@ -13,9 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-jQuery.noConflict();
+"use strict";
 (function($) {
 
+    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager = function(options) {
@@ -59,7 +60,7 @@ jQuery.noConflict();
             var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
             var o = factory.getById(element.getAttribute(HST.ATTR.ID));
             if (o == null) {
-                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-opject-not-found'].format(data.id));
+                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-object-not-found']);
             }
             return o;
         },
@@ -184,6 +185,3 @@ jQuery.noConflict();
     };
 
 })(jQuery);
-
-
-
