@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface ImageSetLink {
+public @interface ImageSetPath {
 
     /**
      * The variant in the image set to use as the preview image in the CMS (i.e. the CND child node name).

@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.ImageSetLink;
+import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
@@ -43,7 +43,7 @@ public class ParametersInfoProcessorTest {
         String getDocumentLocation();
 
         @Parameter(name="image", defaultValue = "/content/gallery/default.png")
-        @ImageSetLink
+        @ImageSetPath
         String getImage();
 
         @Parameter(name="start")
