@@ -184,13 +184,13 @@ public class ImageUtils {
         do {
             if (highQuality && width > targetWidth) {
                 width /= 2;
-                width = Math.max(width, targetWidth);
             }
+            width = Math.max(width, targetWidth);
 
             if (highQuality && height > targetHeight) {
                 height /= 2;
-                height = Math.max(height, targetHeight);
             }
+            height = Math.max(height, targetHeight);
 
             BufferedImage tmp = new BufferedImage(width, height, type);
 
