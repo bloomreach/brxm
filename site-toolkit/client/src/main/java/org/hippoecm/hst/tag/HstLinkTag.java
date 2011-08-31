@@ -203,7 +203,7 @@ public class HstLinkTag extends ParamContainerTag {
            if(mount == null) {
                if (log.isWarnEnabled()) {
                    String logMsg = MessageFormatter.arrayFormat("Cannot resolve mount with alias '{}' (type '{}') for current request. Cannot create a link for '{}'. Return page not found Link for current Mount", 
-                           new Object [] { mountAlias, mountType, path });
+                           new Object [] { mountAlias, mountType, path }).getMessage();
                    log.warn(logMsg);
                }
                Mount requestedMount = reqContext.getResolvedMount().getMount();
