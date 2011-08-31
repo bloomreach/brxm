@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.security.PrivilegedActionException;
@@ -205,6 +204,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // set channel parameters
         newChannel.setName(record.getString("name"));
         newChannel.setUrl(record.getString("url"));
+        newChannel.setContentRoot(record.getString("contentroot"));
 
         // save channel (FIXME: move boilerplate to CMS engine)
         UserSession session = (UserSession) org.apache.wicket.Session.get();

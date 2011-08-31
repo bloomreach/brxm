@@ -43,7 +43,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     defaults: {
                         labelAlign: 'top',
                         width: 450,
-                        labelWidth: 75
+                        labelWidth: 100
                     },
                     items:[
                         {
@@ -77,6 +77,18 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                             xtype: 'textarea',
                             fieldLabel: 'Description',
                             id: 'description'
+                        },
+                        {
+                            xtype: 'linkpicker',
+                            fieldLabel: 'Content Root',
+                            id: 'contentroot',
+                            style: {
+                                marginLeft: '69px'
+                            },
+                            pickerConfig: {
+                                configuration: "cms-pickers/folders",
+                                selectableNodeTypes: "hippostd:folder"
+                            }
                         }
                     ]
                 };

@@ -11,7 +11,7 @@ class ChannelResourceModel extends LoadableDetachableModel<String> {
     private final Channel channel;
     private final String key;
 
-    public ChannelResourceModel(Channel channel, String key) {
+    ChannelResourceModel(Channel channel, String key) {
         this.channel = channel;
         this.key = key;
     }

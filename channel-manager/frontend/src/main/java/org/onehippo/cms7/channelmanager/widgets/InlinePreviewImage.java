@@ -1,5 +1,5 @@
 /*
- *  Copyright 201108 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.channels;
+package org.onehippo.cms7.channelmanager.widgets;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * primary item of the image set is used instead. The width and height of the preview image are read from its meta-data.
  * If no meta-data is available (e.g. with older imageset types) no width and height are set.
  */
-public class InlinePreviewImage extends WebComponent {
+class InlinePreviewImage extends WebComponent {
 
     private static final long serialVersionUID = 1L;
     private static final String BASE_PATH_BINARIES = "binaries";
@@ -47,7 +47,7 @@ public class InlinePreviewImage extends WebComponent {
 
     private String variantName;
 
-    public InlinePreviewImage(String id, IModel<String> uuidModel, String variantName) {
+    InlinePreviewImage(String id, IModel<String> uuidModel, String variantName) {
         super(id, uuidModel);
         this.variantName = variantName;
 

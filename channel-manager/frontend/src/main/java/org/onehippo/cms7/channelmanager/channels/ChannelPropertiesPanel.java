@@ -25,11 +25,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -49,18 +46,22 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
-import org.hippoecm.hst.core.parameters.AssetLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.HstValueType;
-import org.hippoecm.hst.core.parameters.ImageSetLink;
+import org.hippoecm.hst.core.parameters.ImageSetPath;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
+import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
+import org.onehippo.cms7.channelmanager.widgets.DropDownListWidget;
+import org.onehippo.cms7.channelmanager.widgets.ImageSetPathWidget;
+import org.onehippo.cms7.channelmanager.widgets.JcrPathWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtBoxComponent;
@@ -145,7 +146,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                         HstPropertyDefinition propDef = getPropertyDefinition(key);
 
                         if (propDef == null) {
-                            log.warn("Ignoring property '{}': no definition found");
+                            log.warn("Ignoring property '{}': no definition found", key);
                             return;
                         }
 
@@ -154,18 +155,20 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                         HstValueType propType = propDef.getValueType();
 
                         // render an image set field?
-                        ImageSetLink imageSetLink = propDef.getAnnotation(ImageSetLink.class);
-                        if (imageSetLink != null && propType.equals(HstValueType.STRING)) {
-                            IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
-                            item.add(new ImageSetFieldWidget(context, "value", imageSetLink, model));
+                        ImageSetPath imageSetPath = propDef.getAnnotation(ImageSetPath.class);
+                        if (imageSetPath != null && propType.equals(HstValueType.STRING)) {
+                            IModel<String> delegate = new StringModel(channel.getProperties(), key);
+                            IModel<String> model = new UuidFromPathModel(delegate);
+                            item.add(new ImageSetPathWidget(context, "value", imageSetPath, model));
                             return;
                         }
 
-                        // render an asset field?
-                        AssetLink assetLink = propDef.getAnnotation(AssetLink.class);
-                        if (assetLink != null && propType.equals(HstValueType.STRING)) {
-                            IModel<String> model = new UuidFromPathModel(channel.getProperties(), key);
-                            item.add(new AssetFieldWidget(context, "value", assetLink, model));
+                        // render a JCR path field?
+                        JcrPath jcrPath = propDef.getAnnotation(JcrPath.class);
+                        if (jcrPath != null && propType.equals(HstValueType.STRING)) {
+                            IModel<String> delegate = new StringModel(channel.getProperties(), key);
+                            IModel<String> model = new UuidFromPathModel(delegate);
+                            item.add(new JcrPathWidget(context, "value", jcrPath, model));
                             return;
                         }
 
@@ -392,53 +395,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         @Override
         public void setObject(final Boolean b) {
             setObjectFromString(b.toString());
-        }
-
-    }
-
-    /**
-     * Model that converts JCR UUIDs to JCR paths and stores the paths.
-     */
-    private class UuidFromPathModel extends AbstractPropertiesModel<String> implements IModel<String> {
-
-        UuidFromPathModel(final Map<String, Object> properties, final String key) {
-            super(properties, key);
-        }
-
-        @Override
-        public String getObject() {
-            final Object pathObj = properties.get(key);
-
-            if (pathObj != null) {
-                final String path = pathObj.toString();
-                if (StringUtils.isNotEmpty(path)) {
-                    javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                    try {
-                        Node node = session.getNode(path);
-                        return node.getIdentifier();
-                    } catch (RepositoryException e) {
-                        log.warn("Cannot retrieve UUID from '" + path + "'", e);
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        public void setObject(final String uuid) {
-            if (uuid == null) {
-                setObjectFromString(null);
-            } else {
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-
-                try {
-                    Node node = session.getNodeByIdentifier(uuid);
-                    setObjectFromString(node.getPath());
-                } catch (RepositoryException e) {
-                    log.warn("Cannot retrieve node with UUID '" + uuid + "'", e);
-                }
-            }
         }
 
     }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.channels;
+package org.onehippo.cms7.channelmanager.widgets;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -39,55 +39,42 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.hst.core.parameters.AssetLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Renders a widget to select an asset. The given model is used to store the UUID of the selected asset. The selected
- * asset can also be removed again, which will store null in the model. The given dialog service is used to create
- * the dialog in which the asset can be selected.
+ * Renders a widget to select a JCR path. The given model is used to store the UUID of the selected path. The selected
+ * path can also be removed again, which will store null in the model. The given dialog service is used to create
+ * the dialog in which the path can be selected.
  *
- * The widget shows the JCR node name of the selected asset and two Ajax links: one link to select a new asset,
- * and another link to 'remove' the current one. When no asset is selected, the 'remove' link will not be shown.
+ * The widget shows the selected JCR path as a string and two Ajax links: one link to select a new path,
+ * and another link to 'remove' the current one. When no path is selected, the 'remove' link will not be shown.
  */
-public class AssetFieldWidget extends Panel {
+public class JcrPathWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    private final Logger log = LoggerFactory.getLogger(AssetFieldWidget.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrPathWidget.class);
 
     private IModel<String> model;
-    private String previewAssetName;
+    private String previewPath;
     private AjaxLink<Void> remove;
 
-    public AssetFieldWidget(final IPluginContext context, final String id, final AssetLink assetLink, final IModel<String> model) {
+    public JcrPathWidget(final IPluginContext context, final String id, final JcrPath path, final IModel<String> model) {
         super(id);
 
         this.model = model;
 
-        JavaPluginConfig pickerConfig = new JavaPluginConfig();
-        pickerConfig.put("cluster.name", assetLink.pickerConfiguration());
-        pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(assetLink.pickerRemembersLastVisited()));
-        pickerConfig.put(NodePickerControllerSettings.SELECTABLE_NODETYPES, assetLink.pickerSelectableNodeTypes());
-
-        String pickerInitialPath = assetLink.pickerInitialPath();
-        if (pickerInitialPath != null && !"".equals(pickerInitialPath)) {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            try {
-                Node node = session.getNode(pickerInitialPath);
-                pickerConfig.put(NodePickerControllerSettings.BASE_UUID, node.getIdentifier());
-            } catch (PathNotFoundException e) {
-                log.warn("Initial asset picker path not found: '{}'. Using the default initial path of '{}' instead.",
-                        pickerInitialPath, assetLink.pickerConfiguration());
-            } catch (RepositoryException e) {
-                log.error("Could not retrieve the UUID of initial asset picker path node '" + pickerInitialPath
-                        + "'. Using the default initial path of '" + assetLink.pickerConfiguration() + "' instead.", e);
-            }
-        }
+        JavaPluginConfig pickerConfig = createPickerConfig(
+                path.pickerConfiguration(),
+                path.pickerRemembersLastVisited(),
+                path.pickerSelectableNodeTypes(),
+                path.pickerInitialPath()
+        );
 
         IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, model);
-        IModel<String> selectLabelModel = new StringResourceModel("asset.select", this, null);
+        IModel<String> selectLabelModel = new StringResourceModel("path.select", this, null);
 
         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
         DialogLink select = new DialogLink("select", selectLabelModel, dialogFactory, dialogService);
@@ -98,57 +85,80 @@ public class AssetFieldWidget extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                AssetFieldWidget.this.updateDisplay(null);
-                target.addComponent(AssetFieldWidget.this);
+                JcrPathWidget.this.updateDisplay(null);
+                target.addComponent(JcrPathWidget.this);
             }
 
         };
-        remove.add(new Label("remove-link-text", new StringResourceModel("asset.remove", this, null)));
+        remove.add(new Label("remove-link-text", new StringResourceModel("path.remove", this, null)));
         add(remove);
 
-        previewAssetName = resolvePreviewAssetName(model.getObject());
+        previewPath = resolvePreviewPath(model.getObject());
 
-        Label previewAsset = new Label("preview-asset", new PropertyModel<String>(this, "previewAssetName"));
-        add(previewAsset);
+        Label previewLabel = new Label("preview-path", new PropertyModel<String>(this, "previewPath"));
+        add(previewLabel);
 
         updateDisplay(model.getObject());
 
         setOutputMarkupId(true);
     }
 
-    String getPreviewAssetName() {
-        return previewAssetName;
+    static JavaPluginConfig createPickerConfig(String pickerConfigPath, boolean remembersLastVisited,
+                                        String[] selectableNodeTypes, String initialPath) {
+        JavaPluginConfig pickerConfig = new JavaPluginConfig();
+        pickerConfig.put("cluster.name", pickerConfigPath);
+        pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(remembersLastVisited));
+        pickerConfig.put(NodePickerControllerSettings.SELECTABLE_NODETYPES, selectableNodeTypes);
+
+        if (initialPath != null && !"".equals(initialPath)) {
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            try {
+                Node node = session.getNode(initialPath);
+                pickerConfig.put(NodePickerControllerSettings.BASE_UUID, node.getIdentifier());
+            } catch (PathNotFoundException e) {
+                log.warn("Initial folder picker path not found: '{}'. Using the default initial path of '{}' instead.",
+                        initialPath, pickerConfigPath);
+            } catch (RepositoryException e) {
+                log.error("Could not retrieve the UUID of initial folder picker path node '" + initialPath
+                        + "'. Using the default initial path of '" + pickerConfigPath + "' instead.", e);
+            }
+        }
+        return pickerConfig;
+    }
+
+    String getPreviewPath() {
+        return previewPath;
     }
 
     /**
-     * Updates the display of this widget. When an asset is selected, a small preview and the 'remove' link will
-     * be shown. If no asset is selected, the preview and 'remove' link are hidden. The caller should take care
+     * Updates the display of this widget. When a path is selected, its string value and the 'remove' link will
+     * be shown. If no path is selected, the path and 'remove' link are hidden. The caller should take care
      * of re-rendering this widget, if necessary (e.g. in an Ajax call).
      *
-     * @param assetUuid the UUID of the selected asset, or null of no asset is selected
+     * @param uuid the UUID of the selected path, or null of no path is selected
      */
-    private void updateDisplay(String assetUuid) {
-        model.setObject(assetUuid);
+    private void updateDisplay(String uuid) {
+        model.setObject(uuid);
 
-        previewAssetName = resolvePreviewAssetName(assetUuid);
+        previewPath = resolvePreviewPath(uuid);
 
-        if (assetUuid != null) {
+        if (uuid != null) {
             remove.setVisible(true);
         } else {
             remove.setVisible(false);
         }
     }
 
-    private String resolvePreviewAssetName(String assetUuid) {
-        if (StringUtils.isBlank(assetUuid)) {
+    private String resolvePreviewPath(String uuid) {
+        if (StringUtils.isBlank(uuid)) {
             return StringUtils.EMPTY;
         }
         final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
         try {
-            Node handle = session.getNodeByIdentifier(assetUuid);
-            return handle.getName();
+            Node node = session.getNodeByIdentifier(uuid);
+            return node.getPath();
         } catch (RepositoryException e) {
-            log.warn("Cannot retrieve asset handle UUID '" + assetUuid + "'", e);
+            log.warn("Cannot retrieve node with UUID '" + uuid + "'", e);
         }
         return StringUtils.EMPTY;
     }
@@ -168,7 +178,7 @@ public class AssetFieldWidget extends Panel {
 
                     public void setObject(String uuid) {
                         updateDisplay(uuid);
-                        AjaxRequestTarget.get().addComponent(AssetFieldWidget.this);
+                        AjaxRequestTarget.get().addComponent(JcrPathWidget.this);
                     }
 
                     public IModel<?> getChainedModel() {
