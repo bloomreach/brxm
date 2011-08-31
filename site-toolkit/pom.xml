@@ -61,8 +61,6 @@
     
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <junit.version>4.5</junit.version>
-    <slf4j.version>1.5.6</slf4j.version>
     <easymock.version>2.4</easymock.version>
 
     <xerces.version>2.4.0</xerces.version>
