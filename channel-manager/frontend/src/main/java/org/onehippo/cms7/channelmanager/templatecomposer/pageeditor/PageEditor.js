@@ -275,17 +275,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 Ext.getCmp('pagePreviewButton').toggle(true);
             } else {
                 if (!this.iframeInitialized) {
-                    console.log('add beforeInitializeIFrameHead listener');
-                    this.mountIdIFrameInitListener = function() {
+                    console.log('add beforeInitializeIFrameHead listener '+JSON.stringify(data));
+                    var mountIdIFrameInitListener = function() {
+                        console.log('mountIdIFrameInitListener '+JSON.stringify(data));
                         this.initEditMount(data.mountId)
                     };
-                    this.on('beforeRequestHstMetaData', function() {
-                        if (this.mountIdIFrameInitListener) {
-                            this.removeListener('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this);
-                            this.mountIdIFrameInitListener = null;
-                        }
+                    this.on('beforeMountIdChange', function() {
+                            this.removeListener('beforeInitializeIFrameHead', mountIdIFrameInitListener, this);
                     }, this, {single : true});
-                    this.on('beforeInitializeIFrameHead', this.mountIdIFrameInitListener, this, {single: true});
+                    this.on('beforeInitializeIFrameHead', mountIdIFrameInitListener, this, {single: true});
                 } else {
                     this.initEditMount(data.mountId);
                 }
@@ -296,19 +294,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('beforePageIdChange, previewMode: '+this.previewMode);
             if (!this.iframeInitialized) {
                 console.log('add beforeInitializeIFrameHead listener for '+JSON.stringify(data));
-                this.pageIdIFrameInitListener = function() {
+                var pageIdIFrameInitListener = function() {
                     console.log('pageIdIFrameInitListener '+JSON.stringify(data));
                     this.initEditPage(data.mountId, data.pageId);
                 };
-                // remove listener when new data is requested, needed for refresh if page uuid changes due to edit
-                this.on('beforeRequestHstMetaData', function() {
-                    if (this.pageIdIFrameInitListener) {
-                        console.log('remove previous pageIdIFrameInitListener '+JSON.stringify(data));
-                        this.removeListener('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this);
-                        this.pageIdIFrameInitListener = null;
-                    }
+                this.on('beforePageIdChange', function() {
+                    console.log('remove previous pageIdIFrameInitListener '+JSON.stringify(data));
+                    this.removeListener('beforeInitializeIFrameHead', pageIdIFrameInitListener, this);
                 }, this, {single : true});
-                this.on('beforeInitializeIFrameHead', this.pageIdIFrameInitListener, this, {single: true});
+                this.on('beforeInitializeIFrameHead', pageIdIFrameInitListener, this, {single: true});
             } else {
                 this.initEditPage(data.mountId, data.pageId);
             }
