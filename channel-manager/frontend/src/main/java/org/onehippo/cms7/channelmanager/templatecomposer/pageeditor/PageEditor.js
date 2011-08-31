@@ -272,15 +272,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('beforeMountIdChange', function(data) {
             if (!this.preview && !data.isPreviewHstConfig && this.isPreviewHstConfig != data.isPreviewHstConfig) {
                 // switching mount when edit is active and no preview available on the new mount
-                if (this.initializingIFrameHead) {
-                    this.on('iFrameInitialized', function() {
-                        Ext.getCmp('pagePreviewButton').toggle(true);
-                        this.refreshIframe();
-                    }, this, {single : true});
-                } else {
-                    Ext.getCmp('pagePreviewButton').toggle(true);
-                    this.refreshIframe();
-                }
+                Ext.getCmp('pagePreviewButton').toggle(true);
             } else {
                 if (!this.iframeInitialized) {
                     console.log('add beforeInitializeIFrameHead listener');
@@ -668,10 +660,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     onIframeDOMReady : function(frm) {
         this.fireEvent('beforeIFrameDOMReady');
         this.frm = frm;
+        var initializeIFrame = function(data) {
+            if (!this.previewMode && data.hasPreviewConfig) {
+                this.initializeIFrameHead(frm);
+            }
+        };
+        this.on('beforeIFrameDOMReady', function() {
+            this.removeListener('hstMetaDataResponse', initializeIFrame, this);
+        }, this, {single: true})
+        this.on('hstMetaDataResponse', initializeIFrame, this, {single: true});
         this.requestHstMetaData( { url: frm.getDocumentURI() } );
-        if (!this.previewMode) {
-            this.initializeIFrameHead(frm);
-        }
         this.fireEvent('afterIFrameDOMReady');
     },
 
