@@ -33,7 +33,6 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.TrivialServerTest.class
 })
 public class AppserverTest extends Suite
-    // used to extends junit.framework.TestCase
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

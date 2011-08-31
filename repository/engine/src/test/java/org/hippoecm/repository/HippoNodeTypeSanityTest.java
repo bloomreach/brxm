@@ -29,37 +29,17 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class HippoNodeTypeSanityTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
     private static final String PREFIX = "hippo:";
 
-    private HippoRepository server;
-    private Session session;
-
-    public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-    }
-
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-        session.logout();
-        server.close();
-    }
-
+    @Test
     public void testSanity() throws Exception {
         Workspace workspace = session.getWorkspace();
         NodeTypeManager ntmanager = workspace.getNodeTypeManager();

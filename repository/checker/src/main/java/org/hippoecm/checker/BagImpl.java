@@ -49,9 +49,9 @@ public class BagImpl<K, V> implements Bag<K, V> {
                 values = backingValuesClass.newInstance();
                 backingMap.put(k, values);
             } catch (InstantiationException ex) {
-                ex.printStackTrace(System.err);
+                throw new RuntimeException(ex);
             } catch (IllegalAccessException ex) {
-                ex.printStackTrace(System.err);
+                throw new RuntimeException(ex);
             }
         }
         values.add(v);
@@ -64,9 +64,9 @@ public class BagImpl<K, V> implements Bag<K, V> {
                 values = backingValuesClass.newInstance();
                 backingMap.put(k, values);
             } catch (InstantiationException ex) {
-                ex.printStackTrace(System.err);
+                throw new RuntimeException(ex);
             } catch (IllegalAccessException ex) {
-                ex.printStackTrace(System.err);
+                throw new RuntimeException(ex);
             }
         }
         values.addAll(collection);

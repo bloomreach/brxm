@@ -15,7 +15,6 @@
  */
 package org.hippoecm.checker;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -25,6 +24,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import org.apache.jackrabbit.core.RepositoryImpl;
 
 public class Traverse {
     @SuppressWarnings("unused")
@@ -35,10 +35,6 @@ public class Traverse {
     protected final Bag<UUID, UUID> childParentRelation = createChildParentBag();
     protected final Bag<UUID, UUID> parentChildRelation = createParentChildBag();
     protected final Bag<UUID, UUID> sourceTargetRelation = createSourceTargetBag();
-
-    PrintStream progressOut = System.out;
-    PrintStream reportOut = System.err;
-    PrintStream verboseOut = System.err;
 
     protected Bag<UUID, UUID> createChildParentBag() {
         return new BagImpl<UUID, UUID>(new TreeMap<UUID, Collection<UUID>>(), TreeSet.class);
@@ -51,8 +47,9 @@ public class Traverse {
     protected Bag<UUID, UUID> createSourceTargetBag() {
         return new BagImpl<UUID, UUID>(new TreeMap<UUID, Collection<UUID>>(), TreeSet.class);
     }
-    protected Bag<UUID, UUID> createSourceTargetCopyBag(Bag<UUID,UUID> original) {
-        if(original == null) {
+
+    protected Bag<UUID, UUID> createSourceTargetCopyBag(Bag<UUID, UUID> original) {
+        if (original == null) {
             return new BagImpl<UUID, UUID>(new TreeMap<UUID, Collection<UUID>>(), TreeSet.class);
         } else {
             return new BagImpl<UUID, UUID>(new TreeMap<UUID, Collection<UUID>>(), TreeSet.class, original);
@@ -104,16 +101,16 @@ public class Traverse {
             boolean needsReindex = false;
             if (!all.contains(current)) {
                 ++nonexistentCount;
-                // System.err.println("  nonexistent node " + current + " parented by " + parent);
+                Checker.log.warn("  nonexistent node " + current + " parented by " + parent);
                 needsReindex = true;
             } else {
                 if (!parentChildRelation.contains(parent, current)) {
                     needsReindex = true;
-                    //System.err.println("  inconsitent node " + current + " not below parent " + parent);
+                    Checker.log.warn("  inconsitent node " + current + " not below parent " + parent);
                 }
                 if (!childParentRelation.contains(current, parent)) {
                     needsReindex = true;
-                    //System.err.println("  inconsitent node " + current + " does not have correct parent " + parent);
+                    Checker.log.warn("  inconsitent node " + current + " does not have correct parent " + parent);
                 }
                 if (needsReindex) {
                     ++misparentedCount;
@@ -124,45 +121,96 @@ public class Traverse {
                 corrupted.add(current);
             }
         }
-        System.err.println("FOUND " + nonexistentCount + " INDEXED NON EXISTENT NODES");
-        System.err.println("FOUND " + misparentedCount + " INDEXED NODES WITH WRONG PARENT");
-        System.err.println("FOUND " + unvisited.size() + " UNINDEXED NODES ");
+        if (nonexistentCount > 0) {
+            Checker.log.warn("FOUND " + nonexistentCount + " INDEXED NON EXISTENT NODES");
+        } else {
+            Checker.log.info("FOUND " + nonexistentCount + " INDEXED NON EXISTENT NODES");
+        }
+        if (misparentedCount > 0) {
+            Checker.log.warn("FOUND " + misparentedCount + " INDEXED NODES WITH WRONG PARENT");
+        } else {
+            Checker.log.info("FOUND " + misparentedCount + " INDEXED NODES WITH WRONG PARENT");
+        }
+        if (unvisited.size() > 0) {
+            Checker.log.warn("FOUND " + unvisited.size() + " UNINDEXED NODES ");
+        } else {
+            Checker.log.info("FOUND " + unvisited.size() + " UNINDEXED NODES ");
+        }
         /*for (UUID current : unvisited) {
-            corrupted.add(current);
-            System.err.println("  node " + current + " not indexed");
+        corrupted.add(current);
+        Checker.log.warn("  node " + current + " not indexed");
         }*/
         return corrupted;
     }
 
-    void checkReferences(Iterable<NodeReference> references) {
+    boolean checkReferences(Iterable<NodeReference> references) {
+        boolean clean = true;
         Set<UUID> missingSources = new TreeSet<UUID>();
         Set<UUID> missingTargets = new TreeSet<UUID>();
-        Bag<UUID, UUID> refs = createSourceTargetCopyBag(sourceTargetRelation);
+        Bag<UUID, UUID> existingReferences = createSourceTargetCopyBag(sourceTargetRelation);
+        Bag<UUID, UUID> missingReferences = createSourceTargetCopyBag(sourceTargetRelation);
         for (NodeReference item : references) {
             if (!all.contains(item.getSource())) {
                 missingSources.add(item.getSource());
             } else if (!all.contains(item.getTarget())) {
                 missingTargets.add(item.getTarget());
-            } else if (!refs.contains(item.getSource(), item.getTarget())) {
-                //System.err.println("  bad reference from "+item.getSource()+" to "+item.getTarget());
+            } else if (!existingReferences.contains(item.getSource(), item.getTarget())) {
+                missingReferences.put(item.getSource(), item.getTarget());
             } else {
-                refs.remove(item.getSource(), item.getTarget());
+                existingReferences.remove(item.getSource(), item.getTarget());
             }
         }
-        System.err.println("MISSING REFERENCE SOURCES " + missingSources.size());
-        System.err.println("MISSING REFERENCE TARGETS " + missingTargets.size());
-        System.err.println("ORPHANED REFERENCES " + refs.size());
+        if (missingSources.size() > 0) {
+            clean = false;
+            Checker.log.warn("MISSING REFERENCE " + missingSources.size());
+            for(Map.Entry<UUID,UUID> reference : missingReferences) {
+                Checker.log.warn("  bad reference from "+reference.getKey()+" to "+reference.getValue());
+            }
+        } else {
+            Checker.log.info("MISSING REFERENCE " + missingSources.size());
+        }
+        if (missingSources.size() > 0) {
+            clean = false;
+            Checker.log.warn("MISSING REFERENCE SOURCES " + missingSources.size());
+            for(UUID referer : missingSources) {
+                Checker.log.warn("  referring "+referer+" no longer present");
+            }
+        } else {
+            Checker.log.info("MISSING REFERENCE SOURCES " + missingSources.size());
+        }
+        if (missingTargets.size() > 0) {
+            clean = false;
+            Checker.log.warn("MISSING REFERENCE TARGETS " + missingTargets.size());
+            for(UUID referenced : missingTargets) {
+                Checker.log.warn("  referenced "+referenced+" no longer present");
+            }
+        } else {
+            Checker.log.info("MISSING REFERENCE TARGETS " + missingTargets.size());
+        }
+        /*
+        if (existingReferences.size() > 0) {
+            Checker.log.warn("ORPHANED REFERENCES " + existingReferences.size());
+            for(Map.Entry<UUID,UUID> reference : existingReferences) {
+                Checker.log.warn("  reference source "+reference.getKey()+" target "+reference.getValue()+" no longer present");
+            }
+        } else {
+            Checker.log.info("ORPHANED REFERENCES " + existingReferences.size());
+        }
+        */
+        return clean;
     }
 
-    void checkVersionBundles(Iterable<NodeDescription> allIterable) {
-        System.err.println("Reading version bundle information");
+    boolean checkVersionBundles(Iterable<NodeDescription> allIterable) {
+        Checker.log.info("Reading version bundle information");
         for (NodeDescription item : allIterable) {
             version.add(item.getNode()); // all.add(item.getNode());
         }
+        return true;
     }
 
-    void checkBundles(Iterable<NodeDescription> allIterable) {
-        System.err.println("Reading bundle information");
+    boolean checkBundles(Iterable<NodeDescription> allIterable) {
+        boolean clean = true;
+        Checker.log.info("Reading bundle information");
         for (NodeDescription item : allIterable) {
             all.add(item.getNode());
             childParentRelation.put(item.getNode(), item.getParent());
@@ -180,7 +228,6 @@ public class Traverse {
                     Set<UUID> unvisited = createSetUnvisitedNodes();
                     Set<UUID> visited = createSetVisitedNodes();
                     unvisited.addAll(all);
-                    System.out.println("Traversing up");
 
                     Progress progress = new Progress(unvisited.size());
                     for (UUID current = null; !unvisited.isEmpty() || current != null;) {
@@ -232,46 +279,61 @@ public class Traverse {
                     assert (visited.size() == all.size());
                     assert (unvisited.size() == 0);
                 }
-                System.err.println("FOUND " + roots.size() + " " + (roots.size() == 1 ? "ROOT" : " ROOTS"));
-                /* for (UUID root: roots) {
-                    System.err.println("  "+root);
-                } */
-                System.err.println("FOUND " + cyclic.size() + " CYCLIC REFERENCES");
-                for (UUID cycleStart : cyclic) {
-                    System.err.println("Cyclic reference:");
-                    List<UUID> cycle = new LinkedList<UUID>();
-                    for (UUID current = cycleStart; !cycle.contains(current); current = childParentRelation.getFirst(current)) {
-                        System.err.println("  " + current);
-                        cycle.add(current);
-                    }
-                    boolean cycleBroken = false;
-                    for (UUID current : cycle) {
-                        if (!parentChildRelation.contains(childParentRelation.getFirst(current), current)) {
-                            childParentRelation.remove(current);
-                            cycleBroken = true;
-                            orphaned.add(current);
-                        }
-                    }
-                    if (!cycleBroken) {
-                        UUID arbritraty = cycle.iterator().next();
-                        childParentRelation.remove(arbritraty);
+                if(roots.size() != 1) {
+                    Checker.log.warn("FOUND " + roots.size() + " ROOTS");
+                } else {
+                    Checker.log.info("FOUND SINGLE ROOT " + roots.iterator().next().toString());
+                }
+                if (roots.size() != 1) {
+                    clean = false;
+                    for (UUID root: roots) {
+                        Checker.log.warn("  Duplicate root "+root.toString());
                     }
                 }
-                System.err.println("FOUND " + orphaned.size() + " ORPHANED PATHS");
+                if (cyclic.size() > 0) {
+                    Checker.log.warn("FOUND "+cyclic.size() + " CYCLIC PATHS");
+                    clean = false;
+                    for (UUID cycleStart : cyclic) {
+                        Checker.log.warn("Cyclic reference:");
+                        List<UUID> cycle = new LinkedList<UUID>();
+                        for (UUID current = cycleStart; !cycle.contains(current); current = childParentRelation.getFirst(current)) {
+                            Checker.log.warn("  " + current);
+                            cycle.add(current);
+                        }
+                        boolean cycleBroken = false;
+                        for (UUID current : cycle) {
+                            if (!parentChildRelation.contains(childParentRelation.getFirst(current), current)) {
+                                childParentRelation.remove(current);
+                                cycleBroken = true;
+                                orphaned.add(current);
+                            }
+                        }
+                        if (!cycleBroken) {
+                            UUID arbritraty = cycle.iterator().next();
+                            childParentRelation.remove(arbritraty);
+                        }
+                    }
+                } else {
+                    Checker.log.info("FOUND "+cyclic.size() + " CYCLIC PATHS");
+                }
                 if (orphaned.size() > 0) {
-                    /*System.err.println("Orphaned reference:");
+                    Checker.log.warn("FOUND " + orphaned.size() + " ORPHANED PATHS");
+                    clean = false;
+                    Checker.log.warn("Orphaned reference:");
                     for (UUID orphan : orphaned) {
-                        System.err.println("  orphaned node "+ orphan);
-                    }*/
-                    /*for (UUID orphanedStart : orphaned) {
+                        Checker.log.warn("  orphaned node " + orphan);
+                    }
+                    for (UUID orphanedStart : orphaned) {
                         LinkedList<UUID> orphanedPath = new LinkedList<UUID>();
                         for (UUID current = orphanedStart; current != null; current = parentChildRelation.getFirst(current)) {
                             orphanedPath.addFirst(current);
                         }
                         for (UUID current : orphanedPath) {
-                            System.err.println("  " + current);
+                            Checker.log.warn("    " + current);
                         }
-                    }*/
+                    }
+                } else {
+                    Checker.log.info("FOUND " + orphaned.size() + " ORPHANED PATHS");                    
                 }
                 Map<UUID, UUID> missing = new TreeMap<UUID, UUID>();
                 Map<UUID, UUID> disconnected = new TreeMap<UUID, UUID>();
@@ -284,48 +346,60 @@ public class Traverse {
                         disconnected.put(child, parent);
                     }
                 }
-                System.err.println("FOUND " + missing.size() + " MISSING CHILD NODES");
-                /*for (Map.Entry<UUID, UUID> entry : missing.entrySet()) {
-                    UUID child = entry.getKey();
-                    UUID parent = entry.getValue();
-                    System.err.println("  node " + parent + " references inexistent child " + child);
-                }*/
-                System.err.println("FOUND " + disconnected.size() + " DISCONNECTED CHILD NODES");
-                for (Map.Entry<UUID, UUID> entry : disconnected.entrySet()) {
-                    UUID child = entry.getKey();
-                    UUID parent = entry.getValue();
-                    UUID childParent = childParentRelation.getFirst(child);
-                    /*if (parentChildRelation.contains(childParent, child)) {
-                        System.err.println("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
-                    } else if (all.contains(parent)) {
-                        System.err.println("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
-                    } else {
-                        System.err.println("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
-                    }*/
+                missing.remove(UUID.fromString(RepositoryImpl.NODETYPES_NODE_ID.toString()));
+                missing.remove(UUID.fromString(RepositoryImpl.ACTIVITIES_NODE_ID.toString()));
+                missing.remove(UUID.fromString(RepositoryImpl.VERSION_STORAGE_NODE_ID.toString()));
+                if (missing.size() > 0) {
+                    Checker.log.warn("FOUND " + missing.size() + " MISSING CHILD NODES");
+                    clean = false;
+                    for (Map.Entry<UUID, UUID> entry : missing.entrySet()) {
+                        UUID child = entry.getKey();
+                        UUID parent = entry.getValue();
+                        Checker.log.warn("  node " + parent + " references inexistent child " + child);
+                    }
+                } else {
+                    Checker.log.info("FOUND " + missing.size() + " MISSING CHILD NODES");                    
+                }
+                if (disconnected.size() > 0) {
+                    Checker.log.warn("FOUND " + disconnected.size() + " DISCONNECTED CHILD NODES");
+                    clean = false;
+                    for (Map.Entry<UUID, UUID> entry : disconnected.entrySet()) {
+                        UUID child = entry.getKey();
+                        UUID parent = entry.getValue();
+                        UUID childParent = childParentRelation.getFirst(child);
+                        /*if (parentChildRelation.contains(childParent, child)) {
+                        Checker.log.warn("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
+                        } else if (all.contains(parent)) {
+                        Checker.log.warn("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
+                        } else {
+                        Checker.log.warn("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
+                        }*/
+                    }
+                } else {
+                    Checker.log.info("FOUND " + disconnected.size() + " DISCONNECTED CHILD NODES");
                 }
             }
         }
 
         Bag<UUID, UUID> danglingReferences = createSourceTargetCopyBag(null);
-        for(Map.Entry<UUID,UUID> reference : sourceTargetRelation) {
+        for (Map.Entry<UUID, UUID> reference : sourceTargetRelation) {
             UUID source = reference.getKey();
             UUID target = reference.getValue();
-            if(!all.contains(target) && !version.contains(target)) {
+            if (!all.contains(target) && !version.contains(target)) {
                 danglingReferences.put(source, target);
             }
         }
-        System.err.println("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
-        /*for(Map.Entry<UUID,UUID> reference : danglingReferences) {
+        if (danglingReferences.size() > 0) {
+            Checker.log.warn("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
+            clean = false;
+            /*for(Map.Entry<UUID,UUID> reference : danglingReferences) {
             UUID source = reference.getKey();
             UUID target = reference.getValue();
-            System.err.println("  dangling reference from "+source+" to "+target);
-        }*/
+            Checker.log.warn("  dangling reference from "+source+" to "+target);
+            }*/
+        } else {
+            Checker.log.info("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
+        }
+        return clean;
     }
 }
-
-/*
-cafebabe-cafe-babe-cafe-babecafebabe - the root node
-deadbeef-cafe-babe-cafe-babecafebabe - /jcr:system
-deadbeef-face-babe-cafe-babecafebabe - /jcr:system/jcr:versionStorage
-deadbeef-cafe-cafe-cafe-babecafebabe - /jcr:system/jcr:nodeTypes
- */

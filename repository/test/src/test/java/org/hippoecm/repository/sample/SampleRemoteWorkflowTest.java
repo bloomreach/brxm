@@ -24,8 +24,6 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
-import junit.framework.TestCase;
-
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
@@ -36,15 +34,19 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class SampleRemoteWorkflowTest extends TestCase {
+public class SampleRemoteWorkflowTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private HippoRepositoryServer backgroundServer;
     private HippoRepository server;
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         backgroundServer = new HippoRepositoryServer();
@@ -53,7 +55,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         server.close();
         backgroundServer.close();
@@ -68,6 +70,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         return new UserTransactionManager();
     }
 
+    @Test
     public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
@@ -118,6 +121,7 @@ public class SampleRemoteWorkflowTest extends TestCase {
         }
     }
 
+    @Test
     public void testReturnDocument() throws RepositoryException, WorkflowException, IOException, Exception {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
@@ -162,5 +166,4 @@ public class SampleRemoteWorkflowTest extends TestCase {
             SampleWorkflowSetup.commonEnd(backgroundServer);
         }
     }
-
 }

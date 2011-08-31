@@ -29,7 +29,7 @@ import javax.jcr.version.VersionException;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.query.lucene.HippoDateTools;
 
-public abstract class AbstractRangesFacetNavigationTest extends TestCase{
+public abstract class AbstractRangesFacetNavigationTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
    

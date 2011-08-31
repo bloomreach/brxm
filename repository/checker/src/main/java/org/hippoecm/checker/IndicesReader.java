@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.UUID;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -43,7 +42,7 @@ public class IndicesReader implements Visitable<NodeIndexed> {
 
     public void accept(Visitor<NodeIndexed> visitor) {
         try {
-            System.err.println("Reading indices " + basedir.getPath());
+            Checker.log.info("Reading indices " + basedir.getPath());
             FileInputStream in = new FileInputStream(new File(basedir, "indexes"));
             DataInputStream di = new DataInputStream(in);
             int counter = di.readInt();
@@ -54,20 +53,18 @@ public class IndicesReader implements Visitable<NodeIndexed> {
             }
             in.close();
         } catch (IOException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
     void readIndex(File directory, Visitor<NodeIndexed> visitor) throws IOException {
-        System.err.println("Reading index " + directory.getPath());
+        Checker.log.info("Reading index " + directory.getPath());
         Directory luceneDirectory = FSDirectory.getDirectory(directory);
         IndexReader reader = IndexReader.open(luceneDirectory);
         for (int i = 0; i < reader.maxDoc() - 1; i++) {
             if (!reader.isDeleted(i)) {
                 Document document = reader.document(i);
                 if (document != null) {
-                    //System.err.println("DOCUMENT");
                     final String nodeUUID = document.getField("_:UUID").stringValue();
                     final String parentUUID = document.getField("_:PARENT").stringValue();
                     for (Iterator iter = document.getFields().iterator(); iter.hasNext();) {
@@ -93,7 +90,7 @@ public class IndicesReader implements Visitable<NodeIndexed> {
     }
 
     void writeIndex(File directory, UUID uuid, UUID parent) throws IOException {
-        System.err.println("Reading index " + directory.getPath());
+        Checker.log.info("Reading index " + directory.getPath());
         Directory luceneDirectory = FSDirectory.getDirectory(directory);
         Document document = null;
 

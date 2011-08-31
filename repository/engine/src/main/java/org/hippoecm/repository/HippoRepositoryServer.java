@@ -41,10 +41,12 @@ public class HippoRepositoryServer extends LocalHippoRepository {
 
     public HippoRepositoryServer() throws RepositoryException {
         super();
+        initialize();
     }
 
     public HippoRepositoryServer(String location) throws RepositoryException {
         super(location);
+        initialize();
     }
 
     @Override

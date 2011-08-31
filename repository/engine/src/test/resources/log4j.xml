@@ -49,19 +49,23 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
-      <level value="error"/>
-      <appender-ref ref="root"/>
-    </category>
-    <category additivity="false" name="org.hippoecm.repository.export">
+  <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.export">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
@@ -76,33 +80,27 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
+  <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
     <level value="error"/>
     <appender-ref ref="console"/>
   </category>
-
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetSearchProvider">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetResultSetProvider">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
-
-  <category additivity="true" name="org.hippoecm.repository.security.HippoAccessManager">
+  <category additivity="false" name="org.hippoecm.repository.security.HippoAccessManager">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.security.HippoLoginModule">
+  <category additivity="false" name="org.hippoecm.repository.security.HippoLoginModule">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.updater">
+  <category additivity="false" name="org.hippoecm.repository.updater">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  
+  <category additivity="false" name="org.hippoecm.checker">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

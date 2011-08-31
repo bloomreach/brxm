@@ -61,6 +61,14 @@
     <level value="error"/>
     <appender-ref ref="root"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.export">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
 
   <category additivity="false" name="org.jpox.util">
     <level value="warn"/>
@@ -72,38 +80,28 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetSearchProvider">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
+  <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
+    <level value="error"/>
+    <appender-ref ref="console"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit.FacetResultSetProvider">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
-  
-  <category additivity="true" name="org.hippoecm.repository.security.HippoAccessManager">
+  <category additivity="false" name="org.hippoecm.repository.security.HippoAccessManager">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.security.HippoLoginModule">
+  <category additivity="false" name="org.hippoecm.repository.security.HippoLoginModule">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
 
   <!-- surpress classcast waringing in dispose() method over SPI -->
-  <category additivity="true" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager">
+  <category additivity="false" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager">
     <level value="error"/>
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.hippoecm.repository.export">
+  <category additivity="false" name="org.hippoecm.checker">
     <level value="warn"/>
     <appender-ref ref="console"/>
-  </category>
-  
-  <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="INFO"/>
-    <appender-ref ref="root"/>
   </category>
 
   <root>

@@ -54,6 +54,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-checker</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -107,6 +112,18 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
       <scope>test</scope>
     </dependency>
 

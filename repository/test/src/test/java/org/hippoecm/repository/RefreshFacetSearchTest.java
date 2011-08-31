@@ -36,18 +36,12 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RefreshFacetSearchTest {
+public class RefreshFacetSearchTest extends TestCase{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     @Test
     public void testRefreshAfterAddingNodes() throws RepositoryException {
-        Repository repository = HippoRepositoryFactory.getHippoRepository().getRepository();
-        Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
         Node node = session.getRootNode().addNode("test");
         node.addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
         session.save();
@@ -72,14 +66,6 @@ public class RefreshFacetSearchTest {
 
     @Test
     public void testRefreshIndexAfterPropertyChange() throws RepositoryException {
-        Repository repository = HippoRepositoryFactory.getHippoRepository().getRepository();
-
-        Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-
         Node test = session.getRootNode().addNode("test");
         test.addMixin("mix:referenceable");
         Node documents = test.addNode("documents", "nt:unstructured");
@@ -120,5 +106,4 @@ public class RefreshFacetSearchTest {
         assertTrue(nodes.hasNext());
         assertTrue(nodes.nextNode().isSame(navigation));
     }
-
 }

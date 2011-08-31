@@ -71,10 +71,13 @@ public class HippoRepositoryFactory {
             return getHippoRepository(defaultLocation);
         }
         try {
-            defaultRepository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").newInstance();
-        } catch(ClassNotFoundException ex) {
+            Class cls = Class.forName("org.hippoecm.repository.LocalHippoRepository");
+            defaultRepository = (HippoRepository) cls.getMethod("create", new Class[] { String.class } ).invoke(null, (String)null);
+        } catch(NoSuchMethodException ex) {
             throw new RepositoryException(ex);
-        } catch(InstantiationException ex) {
+        } catch(InvocationTargetException ex) {
+            throw new RepositoryException(ex);
+        } catch(ClassNotFoundException ex) {
             throw new RepositoryException(ex);
         } catch(IllegalAccessException ex) {
             throw new RepositoryException(ex);

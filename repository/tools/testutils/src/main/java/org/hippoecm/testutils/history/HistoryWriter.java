@@ -50,7 +50,12 @@ public class HistoryWriter extends Suite implements XmlConstants {
         super(klass);
         this.timeStamp = System.currentTimeMillis();
         this.history = System.getProperty("history.points");
-        history = (history == null ? null : history.startsWith("${") ? null : history);
+        if (history != null && history.startsWith("${")) {
+            history = null;
+        }
+        if (history != null && history.trim().equals("")) {
+            history = null;
+        }
     }
 
     public static HistoryWriter currentHistoryWriter;

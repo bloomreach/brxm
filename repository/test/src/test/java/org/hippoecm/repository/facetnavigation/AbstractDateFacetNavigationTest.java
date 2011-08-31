@@ -31,7 +31,7 @@ import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.After;
 import org.junit.Before;
 
-public abstract class AbstractDateFacetNavigationTest extends TestCase{
+public abstract class AbstractDateFacetNavigationTest extends TestCase {
    
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

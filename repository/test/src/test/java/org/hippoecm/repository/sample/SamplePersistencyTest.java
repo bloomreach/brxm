@@ -15,36 +15,31 @@
  */
 package org.hippoecm.repository.sample;
 
-import java.io.IOException;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import org.hippoecm.repository.TestCase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-public class SamplePersistencyTest {
+public class SamplePersistencyTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private HippoRepository server;
-
     @Before
-    public void setUp() throws RepositoryException, IOException {
-        server = HippoRepositoryFactory.getHippoRepository();
+    public void setUp() throws Exception {
+        super.setUp();
         SampleWorkflowSetup.commonStart(server);
     }
 
     @After
-    public void tearDown() throws RepositoryException {
+    public void tearDown() throws Exception {
         SampleWorkflowSetup.commonEnd(server);
-        server.close();
+        super.tearDown();
     }
 
     @Test

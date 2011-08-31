@@ -19,10 +19,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.persistence.pool.Access;
+import org.apache.jackrabbit.core.persistence.pool.BundleDbPersistenceManager;
 import org.apache.jackrabbit.core.util.StringIndex;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
@@ -35,14 +37,12 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
 
     static final Logger log = LoggerFactory.getLogger(BundleReader.class);
 
-    Connection connection;
-    String schemaObjectPrefix;
+    Access access;
     StringIndex nameIndex = new TrivialStringIndex();
     StringIndex nsIndex = new TrivialStringIndex();
 
-    public DatabaseDelegate(Connection connection, String schemaObjectPrefix) {
-        this.connection = connection;
-        this.schemaObjectPrefix = schemaObjectPrefix;
+    public DatabaseDelegate(PersistenceManager persistMgr) {
+        access = new Access((BundleDbPersistenceManager)persistMgr);
     }
 
     public abstract void accept(Visitor<T> visitor);

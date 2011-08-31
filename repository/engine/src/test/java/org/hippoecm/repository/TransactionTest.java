@@ -22,27 +22,20 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import junit.framework.TestCase;
-
 import com.atomikos.icatch.jta.UserTransactionManager; // FIXME
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TransactionTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
 
     /**
      * Handle atomikos setup and create transaction test node
      */
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties"); // FIXME
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        super.setUp();
         Node root = session.getRootNode();
         root.addNode("transactiontest");
         session.save();
@@ -51,8 +44,7 @@ public class TransactionTest extends TestCase {
     public void tearDown() throws Exception {
         session.getRootNode().getNode("transactiontest").remove();
         session.save();
-        session.logout();
-        server.close();
+        super.tearDown();
     }
 
     /**
@@ -65,6 +57,7 @@ public class TransactionTest extends TestCase {
         return tm;
     }
 
+    @Test
     public void testTransactionCommit() throws Exception {
         boolean rollback = true;
         UserTransaction ut = null;

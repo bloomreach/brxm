@@ -67,6 +67,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
+import org.hippoecm.checker.Checker;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -147,20 +148,19 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     protected LocalHippoRepository() throws RepositoryException {
         super();
-        initialize();
     }
 
     protected LocalHippoRepository(String location) throws RepositoryException {
         super(location);
-        initialize();
     }
 
     public static HippoRepository create(String location) throws RepositoryException {
-        HippoRepository localHippoRepository;
+        LocalHippoRepository localHippoRepository;
         if(location == null)
             localHippoRepository = new LocalHippoRepository();
         else
             localHippoRepository = new LocalHippoRepository(location);
+        localHippoRepository.initialize();
         VMHippoRepository.register(location, localHippoRepository);
         return localHippoRepository;
     }
@@ -207,7 +207,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * @return InputStream to the repository config
      * @throws RepositoryException
      */
-    private InputStream getRepositoryConfigAsStream() throws RepositoryException {
+    private static InputStream getRepositoryConfigAsStream() throws RepositoryException {
         // get config from system prop
         String configName = System.getProperty(SYSTEM_CONFIG_PROPERTY);
 
@@ -219,13 +219,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         // if still not set use default
         if (configName == null || "".equals(configName)) {
             log.info("Using default repository config: " + DEFAULT_REPOSITORY_CONFIG);
-            return getClass().getResourceAsStream(DEFAULT_REPOSITORY_CONFIG);
+            return LocalHippoRepository.class.getResourceAsStream(DEFAULT_REPOSITORY_CONFIG);
         }
 
         // resource
         if (!configName.startsWith("file:")) {
             log.info("Using resource repository config: " + configName);
-            return getClass().getResourceAsStream(configName);
+            return LocalHippoRepository.class.getResourceAsStream(configName);
         }
 
         // parse file name
@@ -246,6 +246,19 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (FileNotFoundException e) {
             throw new RepositoryException("Repository config not found: file:/" + configName);
         }
+    }
+    
+    public static boolean check(String location, boolean fix) throws RepositoryException {
+        LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
+        RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
+        Checker checker = new Checker(repConfig);
+        return checker.check();
+    }
+
+    public boolean check(boolean fix) throws RepositoryException {
+        RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
+        Checker checker = new Checker(repConfig);
+        return checker.check();
     }
 
     private class LocalRepositoryImpl extends RepositoryImpl {
@@ -274,7 +287,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private void initialize() throws RepositoryException {
+    protected void initialize() throws RepositoryException {
         initializeStartup();
         if(needsRestart) {
             log.warn("restarting repository after upgrade cycle");

@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import org.apache.jackrabbit.core.id.ItemId;
+import org.junit.Ignore;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

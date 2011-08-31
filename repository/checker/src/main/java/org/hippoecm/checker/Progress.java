@@ -15,6 +15,8 @@
  */
 package org.hippoecm.checker;
 
+import org.slf4j.Logger;
+
 public class Progress {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -25,42 +27,60 @@ public class Progress {
     long updateDelay  = 5000;
     long initialDelay = 10000;
     long currentDelay;
+    Logger logger;
+
     public Progress() {
         this.maximum = -1;
         timestamp = System.currentTimeMillis();
         currentDelay = initialDelay;
     }
+
     public Progress(int maximum) {
         this.maximum = maximum;
         timestamp = System.currentTimeMillis();
         currentDelay = initialDelay;
     }
+    
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+    
     public void setInitialDelay(long millis) {
         initialDelay = millis;
     }
+
     public void setUpdateDelay(long millis) {
         updateDelay = millis;
     }
+
     public void setProgress(int current) {
         this.current = current;
         updateIfNeeded();
     }
+
     private void updateIfNeeded() {
         long currentTime = System.currentTimeMillis();
-        if(currentTime < timestamp || currentTime - timestamp >= currentDelay) {
+        if (currentTime < timestamp || currentTime - timestamp >= currentDelay) {
             timestamp = currentTime;
             update();
         }
-     }
+    }
+
     public boolean needsUpdate() {
         long currentTime = System.currentTimeMillis();
         return currentTime < timestamp || currentTime - timestamp >= currentDelay;
     }
+
     protected void update() {
-        if(maximum >= 0) {
-            System.err.println(current + "/" + maximum);
+        if (maximum >= 0) {
+            if (logger == null) {
+                System.err.println(current + "/" + maximum);
+            } else {
+                logger.info(current + "/" + maximum);
+            }
         }
     }
+
     public void close() {
         // System.err.println();
     }

@@ -20,8 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,10 +30,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
@@ -44,21 +41,19 @@ import org.junit.Test;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
 
-public class SampleWorkflowTest {
+public class SampleWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private HippoRepository server;
 
     @Before
     public void setUp() throws Exception {
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
-        server = HippoRepositoryFactory.getHippoRepository();
+        super.setUp();
     }
 
     @After
     public void tearDown() throws Exception {
-        server.close();
+        super.tearDown();
     }
 
     /**

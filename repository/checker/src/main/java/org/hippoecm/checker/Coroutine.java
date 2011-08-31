@@ -87,7 +87,7 @@ class Coroutine {
                             } catch (InterruptedException ex) {
                             }
                         }
-                        return !done;
+                        return queue.size() > 0;
                     }
                 }
 
@@ -100,7 +100,7 @@ class Coroutine {
                             }
                         }
                     }
-                    if (!done) {
+                    if (queue.size() > 0) {
                         try {
                             progress.setProgress(++count);
                             return queue.take();

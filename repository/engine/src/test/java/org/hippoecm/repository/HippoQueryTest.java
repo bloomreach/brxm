@@ -15,36 +15,27 @@
  */
 package org.hippoecm.repository;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-
-import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class HippoQueryTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    private HippoRepository server;
-    private Session session;
     private QueryManager qmgr;
 
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        super.setUp();
         Node root = session.getRootNode();
         Node doc, node = root.addNode("test");
         node = node.addNode("docs");
@@ -56,12 +47,13 @@ public class HippoQueryTest extends TestCase {
         qmgr = session.getWorkspace().getQueryManager();
     }
 
+    @After
     public void tearDown() throws Exception {
         session.save();
-        session.logout();
-        server.close();
+        super.tearDown();
     }
 
+    @Test
     public void testStoreAsNodeWithType() throws RepositoryException {
         Query query;
         Node node, parent;

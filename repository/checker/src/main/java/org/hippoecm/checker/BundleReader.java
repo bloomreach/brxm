@@ -20,12 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.jcr.PropertyType;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.util.BundleBinding;
 import org.apache.jackrabbit.core.persistence.util.ErrorHandling;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
@@ -49,31 +51,25 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
     private final static String SVN_ID = "$Id$";
 
     boolean onlyReferenceable;
-    int batchSize=1000000;
 
-    BundleReader(Connection connection, String schemaObjectPrefix, boolean onlyReferenceable) {
-        super(connection, schemaObjectPrefix);
+    BundleReader(PersistenceManager persistMgr, boolean onlyReferenceable) {
+        super(persistMgr);
         this.onlyReferenceable = onlyReferenceable;
     }
 
     public int getSize() {
         int size = -1;
         try {
-            String bundleCountSQL = "select COUNT(*) from " + schemaObjectPrefix + "BUNDLE";
-            Statement stmt = connection.createStatement();
-            stmt.execute(bundleCountSQL);
-            ResultSet rs = stmt.getResultSet();
+            ResultSet rs = access.getConnectionHelper().exec(access.getBundleSelectCountSQL(), new String[] { }, false, 0);
             if (rs.next()) {
                 size = rs.getInt(1);
             } else {
                 size = -1;
             }
             rs.close();
-            stmt.close();
             return size;
         } catch (SQLException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             return 0;
         }
     }
@@ -81,17 +77,30 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
     public void accept(Visitor<NodeDescription> visitor) {
         try {
             int totalSize = getSize();
-            for (int position = 0; position < totalSize; position += batchSize) {
-                String bundleSelectAllSQL = "select NODE_ID, BUNDLE_DATA from " + schemaObjectPrefix + "BUNDLE LIMIT " + position + "," + batchSize;
-                Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-                stmt.execute(bundleSelectAllSQL);
-                ResultSet rs = stmt.getResultSet();
+            int batchSize = access.getBundleBatchSize();
+            int incrementSize = (batchSize <= 0 ? totalSize : batchSize);
+            for (int position = 0; position < totalSize; position += incrementSize) {
+                ResultSet rs;
+                rs = access.getConnectionHelper().exec(access.getBundleSelectAllSQL(), new String[] { Integer.toString(position) }, false, 0);
+                
                 while (rs.next()) {
-                    byte[] nodeIdBytes = rs.getBytes(1);
-                    Blob blob = rs.getBlob(2);
-                    final NodeId nodeId = new NodeId(nodeIdBytes);
-                    byte[] bytes = getBytes(blob);
-                    DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
+                    int column = 0;
+                    final NodeId nodeId;
+                    //if(pm.getStorageModel() == SM_BINARY_KEYS) {
+                    if(true == false) {
+                        byte[] nodeIdBytes = rs.getBytes(++column);
+                        nodeId = new NodeId(nodeIdBytes);
+                    } else {
+                        long high = rs.getLong(++column);
+                        long low = rs.getLong(++column);
+                        nodeId = new NodeId(high, low);
+                    }
+                    InputStream in;
+                    if (rs.getMetaData().getColumnType(++column) == Types.BLOB) {
+                        in = rs.getBlob(column).getBinaryStream();
+                    } else {
+                        in = rs.getBinaryStream(column);
+                    }
                     if (onlyReferenceable) {
                         readBundle(nodeId, in, visitor, onlyReferenceable);
                     } else {
@@ -99,18 +108,17 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     }
                 }
                 rs.close();
-                stmt.close();
             }
         } catch (SQLException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
     void repair(final NodeId nodeId, UUID parent, Collection<UUID> children) throws IOException {
+        String schemaObjectPrefix = "DEFAULT_";
+        Connection connection = null;
         try {
             String bundleSelectSQL = "select BUNDLE_DATA from " + schemaObjectPrefix + "BUNDLE WHERE NODE_ID = ?";
             PreparedStatement stmt = connection.prepareStatement(bundleSelectSQL);
@@ -152,15 +160,13 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             stmt2.clearWarnings();
             stmt2.executeUpdate();
         } catch (SQLException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
-    void readBundle(final NodeId nodeId, DataInputStream istream, Visitor<NodeDescription> visitor, boolean onlyReferenceable) throws IOException {
+    void readBundle(final NodeId nodeId, InputStream istream, Visitor<NodeDescription> visitor, boolean onlyReferenceable) throws IOException {
         BundleBinding bundleBinding = new BundleBinding(new ErrorHandling(ErrorHandling.IGNORE_MISSING_BLOBS), null, nsIndex, nameIndex, null);
         final NodePropBundle bundle = bundleBinding.readBundle(istream, nodeId);
         if (!onlyReferenceable || bundle.isReferenceable()) {
@@ -176,6 +182,9 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                 public Collection<UUID> getChildren() {
                     List<UUID> children = new LinkedList<UUID>();
                     for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
+                        if(children.contains(create(child.getId()))) {
+                            Thread.currentThread().dumpStack();
+                        }
                         children.add(create(child.getId()));
                     }
                     return children;
@@ -194,242 +203,5 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                 }
             });
         }
-    }
-
-    void readBundle(final NodeId nodeId, DataInputStream in, Visitor<NodeDescription> visitor) throws IOException {
-                int version;
-                // read version and primary type...special handling
-                int index = in.readInt();
-                // get version
-                version = (index >> 24) & 0xff;
-                index &= 0x00ffffff;
-                String uri = nsIndex.indexToString(index);
-                String local = nameIndex.indexToString(in.readInt());
-                Name nodeTypeName = NameFactoryImpl.getInstance().create(uri, local);
-                log.debug("Serialzation Version: " + version);
-                log.debug("NodeTypeName: " + nodeTypeName);
-                final NodeId parentId = readID(in);
-                log.debug("ParentUUID: " + parentId);
-                String definitionId = in.readUTF();
-                log.debug("DefinitionId: " + definitionId);
-                Name mixinName = readIndexedQName(in);
-                while (mixinName != null) {
-                    log.debug("MixinTypeName: " + mixinName);
-                    mixinName = readIndexedQName(in);
-                }
-                Name propName = readIndexedQName(in);
-                final Collection<UUID> refsIds = new LinkedList<UUID>();
-                while (propName != null) {
-                    log.debug("PropertyName: " + propName);
-                    if (!checkPropertyState(in, refsIds)) {
-                        throw new IOException();
-                    }
-                    propName = readIndexedQName(in);
-                }
-                boolean hasUUID = in.readBoolean();
-                log.debug("hasUUID: " + hasUUID);
-                final Collection<UUID> cneIds = new LinkedList<UUID>();
-                for (;;) {
-                    final NodeId cneId = readID(in);
-                    if (cneId == null) {
-                        break;
-                    }
-                    Name cneName = readQName(in);
-                    log.debug("ChildNodentry: " + cneId + ":" + cneName);
-                    cneIds.add(create(cneId));
-                }
-                if (version >= 1) {
-                    short modCount = in.readShort();
-                    log.debug("modCount: " + modCount);
-                }
-                // read shared set, since version 2.0
-                Set<NodeId> sharedSet = new HashSet<NodeId>();
-                if (version >= 2) {
-                    // shared set (list of parent uuids)
-                    NodeId sharedParentId = readID(in);
-                    while (sharedParentId != null) {
-                        sharedSet.add(sharedParentId);
-                        sharedParentId = readID(in);
-                    }
-                }
-                visitor.visit(new NodeDescription() {
-                    public UUID getNode() {
-                        return create(nodeId);
-                    }
-                    public UUID getParent() {
-                        return create(parentId);
-                    }
-                    public Collection<UUID> getChildren() {
-                        return cneIds;
-                    }
-                    public Collection<UUID> getReferences() {
-                        return refsIds;
-                    }
-                });
-    }
-
-    private boolean checkPropertyState(DataInputStream in, Collection<UUID> refsIds) {
-        final int BINARY_IN_BLOB_STORE = -1;
-        final int BINARY_IN_DATA_STORE = -2;
-        int type;
-        try {
-            type = in.readInt();
-            short modCount = (short) ((type >> 16) | 0xffff);
-            type &= 0xffff;
-            log.debug("  PropertyType: " + PropertyType.nameFromValue(type));
-            log.debug("  ModCount: " + modCount);
-        } catch (IOException e) {
-            log.error("Error while reading property type: " + e);
-            return false;
-        }
-        try {
-            boolean isMV = in.readBoolean();
-            log.debug("  MultiValued: " + isMV);
-        } catch (IOException e) {
-            log.error("Error while reading multivalued: " + e);
-            return false;
-        }
-        try {
-            String defintionId = in.readUTF();
-            log.debug("  DefinitionId: " + defintionId);
-        } catch (IOException e) {
-            log.error("Error while reading definition id: " + e);
-            return false;
-        }
-
-        int count;
-        try {
-            count = in.readInt();
-            log.debug("  num values: " + count);
-        } catch (IOException e) {
-            log.error("Error while reading number of values: " + e);
-            return false;
-        }
-        for (int i = 0; i < count; i++) {
-            switch (type) {
-                case PropertyType.BINARY:
-                    int size;
-                    try {
-                        size = in.readInt();
-                        log.debug("  binary size: " + size);
-                    } catch (IOException e) {
-                        log.error("Error while reading size of binary: " + e);
-                        return false;
-                    }
-                    if (size == BINARY_IN_DATA_STORE) {
-                        try {
-                            String s = in.readUTF();
-                            // truncate log output
-                            if (s.length() > 80) {
-                                s = s.substring(80) + "...";
-                            }
-                            log.debug("  global data store id: " + s);
-                        } catch (IOException e) {
-                            log.error("Error while reading blob id: " + e);
-                            return false;
-                        }
-                    } else if (size == BINARY_IN_BLOB_STORE) {
-                        try {
-                            String s = in.readUTF();
-                            log.debug("  blobid: " + s);
-                        } catch (IOException e) {
-                            log.error("Error while reading blob id: " + e);
-                            return false;
-                        }
-                    } else {
-                        // short values into memory
-                        byte[] data = new byte[size];
-                        try {
-                            in.readFully(data);
-                            log.debug("  binary: " + data.length + " bytes");
-                        } catch (IOException e) {
-                            log.error("Error while reading inlined binary: " + e);
-                            return false;
-                        }
-                    }
-                    break;
-                case PropertyType.DOUBLE:
-                    try {
-                        double d = in.readDouble();
-                        log.debug("  double: " + d);
-                    } catch (IOException e) {
-                        log.error("Error while reading double value: " + e);
-                        return false;
-                    }
-                    break;
-                /*case PropertyType.DECIMAL:
-                try {
-                BigDecimal d = readDecimal(in);
-                log.debug("  decimal: " + d);
-                } catch (IOException e) {
-                log.error("Error while reading decimal value: " + e);
-                return false;
-                }
-                break;*/
-                case PropertyType.LONG:
-                    try {
-                        double l = in.readLong();
-                        log.debug("  long: " + l);
-                    } catch (IOException e) {
-                        log.error("Error while reading long value: " + e);
-                        return false;
-                    }
-                    break;
-                case PropertyType.BOOLEAN:
-                    try {
-                        boolean b = in.readBoolean();
-                        log.debug("  boolean: " + b);
-                    } catch (IOException e) {
-                        log.error("Error while reading boolean value: " + e);
-                        return false;
-                    }
-                    break;
-                case PropertyType.NAME:
-                    try {
-                        Name name = readQName(in);
-                        log.debug("  name: " + name);
-                    } catch (IOException e) {
-                        log.error("Error while reading name value: " + e);
-                        return false;
-                    }
-                    break;
-                /*case PropertyType.WEAKREFERENCE:*/
-                case PropertyType.REFERENCE:
-                    try {
-                        NodeId id = readID(in);
-                        refsIds.add(create(id));
-                        log.debug("  reference: " + id);
-                    } catch (IOException e) {
-                        log.error("Error while reading reference value: " + e);
-                        return false;
-                    }
-                    break;
-                default:
-                    // because writeUTF(String) has a size limit of 64k,
-                    // Strings are serialized as <length><byte[]>
-                    int len;
-                    try {
-                        len = in.readInt();
-                        log.debug("  size of string value: " + len);
-                    } catch (IOException e) {
-                        log.error("Error while reading size of string value: " + e);
-                        return false;
-                    }
-                    try {
-                        byte[] bytes = new byte[len];
-                        in.readFully(bytes);
-                        String s = new String(bytes, "UTF-8");
-                        // truncate log output
-                        if (s.length() > 80) {
-                            s = s.substring(80) + "...";
-                        }
-                        log.debug("  string: " + s);
-                    } catch (IOException e) {
-                        log.error("Error while reading string value: " + e);
-                        return false;
-                    }
-            }
-        }
-        return true;
     }
 }

@@ -17,31 +17,28 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class HREPTWO456Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
-
+    @Before
     public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        super.setUp();
         if(session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
         session.save();
     }
 
+    @After
     public void tearDown() throws Exception {
         session.refresh(false);
         if(session.getRootNode().hasNode("test")) {
@@ -49,19 +46,15 @@ public class HREPTWO456Test extends TestCase {
             session.save();
             session.refresh(false);
         }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
+        super.tearDown();
     }
 
+    @Test
     public void testIssue() throws RepositoryException {
         Node node = session.getRootNode().addNode("test","nt:unstructured");
         node.addMixin("mix:referenceable");
         node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
