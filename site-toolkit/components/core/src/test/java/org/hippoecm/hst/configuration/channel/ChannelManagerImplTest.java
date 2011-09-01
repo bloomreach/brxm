@@ -54,6 +54,9 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:channels").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
+        if (getSession().nodeExists("/test")) {
+            getSession().getNode("/test").remove();
+        }
         internalHostGroup.getSession().save();
         super.tearDown();
     }
@@ -96,7 +99,9 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         final Channel channel = blueprint.createChannel("cmit-channel");
         channel.setUrl("http://myhost");
-        channel.setContentRoot("/content/documents");
+        channel.setContentRoot("/unittestcontent/documents");
+        channel.setLocale("nl_NL");
+
         asAdmin(new PrivilegedAction<ChannelException>() {
             @Override
             public ChannelException run() {
@@ -115,7 +120,11 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey(channel.getId()));
-        assertEquals("http://myhost", channels.get(channel.getId()).getUrl());
+
+        Channel created = channels.get(channel.getId());
+        assertEquals("http://myhost", created.getUrl());
+        assertEquals("/unittestcontent/documents", created.getContentRoot());
+        assertEquals("nl_NL", created.getLocale());
     }
 
     @Test(expected = MountNotFoundException.class)
@@ -150,6 +159,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException {
         Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
         testNode.addNode("hst:hosts").addNode("dev-localhost", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
+        testNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
 
         Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, "hst:blueprints");
         Node bp = bpFolder.addNode("test-bp", "hst:blueprint");

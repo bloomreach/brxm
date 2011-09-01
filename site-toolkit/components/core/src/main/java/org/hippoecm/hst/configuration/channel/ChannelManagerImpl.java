@@ -487,6 +487,11 @@ public class ChannelManagerImpl implements ChannelManager {
                     contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
                 }
             }
+
+            final String locale = channel.getLocale();
+            if (locale != null) {
+                mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
+            }
         } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
         }
