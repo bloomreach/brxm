@@ -24,6 +24,17 @@
         return formatted;
     };
 
+    if (typeof JSON === 'undefined') {
+        window.JSON = {
+            stringify : function() {
+                return "";
+            },
+            parse : function() {
+                return null;
+            }
+        }
+    };
+
     if (typeof window.console === 'undefined') {
         window.console = {
             log : function() {

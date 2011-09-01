@@ -58,9 +58,10 @@
 
         _retrieve : function(element) {
             var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
-            var o = factory.getById(element.getAttribute(HST.ATTR.ID));
+            var id = element.getAttribute(HST.ATTR.ID);
+            var o = factory.getById(id);
             if (o == null) {
-                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-object-not-found']);
+                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-object-not-found'].format(id));
             }
             return o;
         },

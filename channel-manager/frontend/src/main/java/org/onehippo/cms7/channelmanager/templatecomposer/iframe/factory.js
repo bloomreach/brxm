@@ -53,12 +53,12 @@
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    die(this.resources['factory-no-hst-meta-data']);
+                    die(this.resources['factory-no-hst-meta-data'].format(this.getElementPath(element)));
                 }
 
                 var id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, this.getElementPath(element)));
                 }
 
                 element.id = id;
@@ -66,7 +66,7 @@
 
                 var type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, this.getElementPath(element)));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
@@ -120,6 +120,7 @@
             },
 
             getContainerMetaData : function(element) {
+                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (element.className === HST.CLASS.ITEM) {
                     var childNodes;
                     if (element.tagName == 'TR') {
@@ -138,18 +139,26 @@
                         childNodes = element.childNodes;
                     }
                     for (var i=0, len=childNodes.length; i<len; i++) {
-                        var hstMetaData = this.convertToHstMetaData(childNodes[i]);
-                        if (hstMetaData !== null) {
-                            return hstMetaData;
+                        try {
+                            var hstMetaData = this.convertToHstMetaData(childNodes[i]);
+                            if (hstMetaData !== null) {
+                                return hstMetaData;
+                            }
+                        } catch (exception) {
+                            die(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, this.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
                     var tmpElement = element;
                     while (tmpElement.previousSibling !== null) {
                         tmpElement = tmpElement.previousSibling;
-                        var hstMetaData = this.convertToHstMetaData(tmpElement);
-                        if (hstMetaData !== null) {
-                            return hstMetaData;
+                        try {
+                            var hstMetaData = this.convertToHstMetaData(tmpElement);
+                            if (hstMetaData !== null) {
+                                return hstMetaData;
+                            }
+                        } catch (exception) {
+                            die(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, this.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 }
@@ -157,32 +166,47 @@
             },
 
             convertToHstMetaData : function(element) {
-                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (element.nodeType !== 8) {
                     return null;
                 }
-                try {
-                    if (!element.data || element.data.length == 0
-                            || !element.data.indexOf(HST.ATTR.ID) === -1
-                            || !element.data.indexOf(HST.ATTR.TYPE) === -1
-                            || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
-                        return null;
-                    }
-                    var commentJsonObject = JSON.parse(element.data);
-                    if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
-                        && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
-                        && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {
-                        element.parentNode.removeChild(element);
-                        return commentJsonObject;
-                    }
-                } catch(exception) {
-                    die(this.resources['factory-error-parsing-hst-data'].format(element.data) +' '+ exception);
+                if (!element.data || element.data.length == 0
+                        || !element.data.indexOf(HST.ATTR.ID) === -1
+                        || !element.data.indexOf(HST.ATTR.TYPE) === -1
+                        || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
+                    return null;
+                }
+                var commentJsonObject = JSON.parse(element.data);
+                if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
+                    && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
+                    && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {
+                    element.parentNode.removeChild(element);
+                    return commentJsonObject;
                 }
                 return null;
             },
 
             setResources: function(resources) {
                 this.resources = resources;
+            },
+
+            getElementPath: function(element) {
+                var path = "";
+                var nodeString = "";
+                var node = element;
+                while (node.parentNode != null) {
+                    nodeString = node.tagName;
+                    if (node.id) {
+                        nodeString += "[id="+node.id+"]";
+                    } else if (node.className) {
+                        nodeString += "[class="+node.className+"]";
+                    }
+                    if (path.length > 0) {
+                        path = " > " + path;
+                    }
+                    path = nodeString + path;
+                    node = node.parentNode;
+                }
+                return path;
             }
 
         };

@@ -172,9 +172,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         },
                         'exception' : {
                             fn: function(frm, e) {
-                                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], e.message, function() {
-                                    this.refreshIframe();
-                                });
                                 console.error(e);
                             },
                             scope: this
@@ -497,7 +494,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
                                 if (id === 'yes') {
                                     retry = me.initialHstConnectionTimeout;
-                                    Hippo.Msg.wait('Loading...');
+                                    Hippo.Msg.wait(me.resources['loading-message']);
                                     composerMode(callback);
                                 } else {
                                     me.fireEvent.apply(me, ['iFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
@@ -598,7 +595,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             },
                             failure: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Hippo.Msg.alert(this.resouces['preview-hst-config-creation-failed']+' '+jsonData.message, function() {
+                                Hippo.Msg.alert(self.resouces['preview-hst-config-creation-failed']+' '+jsonData.message, function() {
                                     self.previewMode = true;
                                     self.refreshIframe.call(self, null);
                                 });
@@ -879,7 +876,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     createMainWindow : function(mountId) {
         var window1 = new Hippo.ux.window.FloatingWindow({
-            title: 'Configuration',
+            title: this.resources['main-window-title'],
             x:10, y: 35,
             width: 310,
             height: 650,
@@ -1132,6 +1129,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
      * get it to work.. So do like this instead.....
      */
     handleFrameMessages : function(frm, msg) {
+        var self = this;
         try {
             if (msg.tag == 'rearrange') {
                 this.onRearrangeContainer(msg.data.id, msg.data.children);
@@ -1146,12 +1144,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
             } else if (msg.tag == 'iframeexception') {
-                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], msg.data.message, function() {
+                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'], + msg.data.message, function() {
                     self.refreshIframe.call(self);
                 });
             }
         } catch(e) {
-            var self = this;
             Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
                 self.refreshIframe.call(self);
             });
