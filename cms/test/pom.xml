@@ -168,6 +168,12 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>rep.home</name>
+              <value>${project.build.directory}</value>
+            </property>
+          </systemProperties>
           <excludes>
             <exclude>**/*$*</exclude>
             <exclude>**/PluginConfigTest.java</exclude>
