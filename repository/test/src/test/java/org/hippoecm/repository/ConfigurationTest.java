@@ -36,7 +36,7 @@ public class ConfigurationTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
@@ -51,7 +51,7 @@ public class ConfigurationTest extends TestCase {
             session.getRootNode().getNode("hippo:configuration/hippo:initialize/testnode").remove();
             session.save();
         }
-        super.tearDown(true);
+        super.tearDown();
     }
     private boolean updateDone;
 

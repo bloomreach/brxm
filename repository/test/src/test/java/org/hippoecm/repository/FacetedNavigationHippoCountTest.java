@@ -17,11 +17,7 @@ package org.hippoecm.repository;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.jcr.RepositoryException;
-
 import org.junit.Test;
-import org.junit.After;
-import org.junit.Before;
 
 public class FacetedNavigationHippoCountTest extends TestCase
 {

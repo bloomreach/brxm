@@ -29,6 +29,9 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -54,34 +57,22 @@ public class UpdaterTest extends TestCase {
     };
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp(true);
         build(session, content);
         session.save();
     }
 
-    @Test
-    public void test() throws RepositoryException {
-        UpdaterModule module = new UpdaterModule() {
-            public void register(UpdaterContext context) {
-                context.registerVisitor(new UpdaterItemVisitor.Default() {
-                    @Override
-                    public void leaving(Node visit, int level) throws RepositoryException {
-                        if(visit.hasProperty("hippo:x")) {
-                            visit.getProperty("hippo:x").remove();
-                        }
-                        if (visit.getPath().equals("/test/docs/d/d")) {
-                            ((UpdaterNode) visit).setPrimaryNodeType("hippo:testdocument");
-                            visit.setProperty("hippo:y", "bla");
-                        }
-                    }
-                });
-            }
-        };
-        List list = new LinkedList();
-        list.add(module);
-        Modules modules = new Modules(list);
-        UpdaterEngine.migrate(session, modules);
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        TestCase.tearDownClass(true);
     }
 
     @Test
@@ -114,6 +105,32 @@ public class UpdaterTest extends TestCase {
             names.add(node.getName());
         }
         assertEquals("node was not moved to end", names.size() - 1, names.indexOf("b"));
+    }
+
+    @Test
+    public void testMigrate() throws RepositoryException {
+        UpdaterModule module = new UpdaterModule() {
+            public void register(UpdaterContext context) {
+                context.registerVisitor(new UpdaterItemVisitor.Default() {
+                    @Override
+                    public void leaving(Node visit, int level) throws RepositoryException {
+                        if(visit.hasProperty("hippo:x")) {
+                            visit.getProperty("hippo:x").remove();
+                        }
+                        if (visit.getPath().equals("/test/docs/d/d")) {
+                            ((UpdaterNode) visit).setPrimaryNodeType("hippo:testdocument");
+                            visit.setProperty("hippo:y", "bla");
+                        }
+                    }
+                });
+            }
+        };
+        List list = new LinkedList();
+        list.add(module);
+        Modules modules = new Modules(list);
+        UpdaterEngine.migrate(session, modules);
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
 
     @Test
@@ -175,7 +192,6 @@ public class UpdaterTest extends TestCase {
         String uuid = refA.getNode("linkA").getProperty("hippo:docbase").getString();
         assertEquals(A.getUUID(), uuid);
 
-
         // verify forward references
 
         refB = session.getRootNode().getNode("test/refB");
@@ -185,5 +201,4 @@ public class UpdaterTest extends TestCase {
         uuid = refB.getNode("linkB").getProperty("hippo:docbase").getString();
         assertEquals(B.getUUID(), uuid);
     }
-
 }

@@ -111,7 +111,6 @@ public class MirrorCombiFacetSelectTest extends TestCase {
 
     @Test
     public void testMirrorInheritFilterFromFacetSelect() throws Exception {
-        
         session.refresh(false);
  
         // directly to the mirror, then below the 'brave-new-world' handle, we expect 2 document variants

@@ -123,6 +123,4 @@ public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTes
        assertEquals(1L, nav3.getNode("year").getNodes().nextNode().getProperty(HippoNodeType.HIPPO_COUNT).getLong());
        
    }
-   
-
 }

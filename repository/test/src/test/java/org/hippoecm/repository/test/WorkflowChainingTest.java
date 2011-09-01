@@ -40,7 +40,7 @@ public class WorkflowChainingTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
 
         Node node, root = session.getRootNode();
 
@@ -86,7 +86,7 @@ public class WorkflowChainingTest extends TestCase {
         if (session.getRootNode().hasNode("hippo:configuration/hippo:workflows/test")) {
             session.getRootNode().getNode("hippo:configuration/hippo:workflows/test").remove();
         }
-        super.tearDown(true);
+        super.tearDown();
     }
 
     @Test

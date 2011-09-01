@@ -26,6 +26,7 @@ import javax.jcr.observation.ObservationManager;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class HREPTWO2655IssueTest extends TestCase {
     }
 
     @Override
-    @Before
+    @After
     public void tearDown() throws Exception {
         super.tearDown(true);
     }

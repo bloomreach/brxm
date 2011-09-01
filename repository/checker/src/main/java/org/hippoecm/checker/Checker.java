@@ -25,6 +25,7 @@ import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.persistence.pool.Access;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +41,14 @@ public class Checker {
 
     public boolean check() {
         boolean clean = true;
+        PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
             Traverse traverse = new Traverse();
             {
                 VersioningConfig wspConfig = repConfig.getVersioningConfig();
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
-                PersistenceManager persistMgr = pmConfig.newInstance(PersistenceManager.class);
+                persistMgr = pmConfig.newInstance(PersistenceManager.class);
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
@@ -63,7 +65,7 @@ public class Checker {
             }
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
-                PersistenceManager persistMgr = pmConfig.newInstance(PersistenceManager.class);
+                persistMgr = pmConfig.newInstance(PersistenceManager.class);
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
@@ -93,6 +95,10 @@ public class Checker {
             return false;
         } catch (Exception ex) {
             return false;
+        } finally {
+            if (persistMgr != null) {
+                Access.close(persistMgr);
+            }
         }
         return clean;
     }

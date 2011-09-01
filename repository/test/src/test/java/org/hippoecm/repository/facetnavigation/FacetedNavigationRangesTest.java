@@ -29,6 +29,8 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
+import org.junit.Before;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -36,7 +38,17 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
 
     @Ignore
     public void testDateRanges() throws RepositoryException, IOException {

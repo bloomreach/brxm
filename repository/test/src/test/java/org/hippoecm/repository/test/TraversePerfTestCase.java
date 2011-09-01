@@ -118,10 +118,10 @@ public class TraversePerfTestCase extends TestCase {
                 session.getRootNode().getNode("test").remove();
             }
         }
-        super.tearDown(true);
+        super.tearDown();
     }
 
-    @Test
+    @Ignore
     public void testBase() throws Exception {
         tearDown(true);
         org.apache.jackrabbit.core.RepositoryImpl repository = null;
@@ -157,7 +157,7 @@ public class TraversePerfTestCase extends TestCase {
         HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
     }
 
-    @Test
+    @Ignore
     public void testRemote() throws Exception {
         tearDown();
         HippoRepositoryServer backgroundServer = null;

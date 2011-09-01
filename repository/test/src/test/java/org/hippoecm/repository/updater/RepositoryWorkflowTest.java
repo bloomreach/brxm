@@ -26,6 +26,7 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.TestCase;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -75,7 +76,12 @@ public class RepositoryWorkflowTest extends TestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        super.tearDown(true);
+        super.tearDown();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        TestCase.tearDownClass(true);
     }
 
     private RepositoryWorkflow getWorkflow() throws RepositoryException {

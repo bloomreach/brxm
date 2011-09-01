@@ -1,18 +1,25 @@
 package org.apache.jackrabbit.core.persistence.pool;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 
 public class Access {
     private BundleDbPersistenceManager pm;
+
     public Access(BundleDbPersistenceManager pm) {
         this.pm = pm;
     }
+
     public String getNodeReferencesSelectAllSQL() {
         return "select * from " + pm.schemaObjectPrefix + "REFS";
     }
+
     public String getNodeReferencesSelectCountSQL() {
         return "select COUNT(*) from " + pm.schemaObjectPrefix + "REFS";
     }
+
     public String getBundleSelectAllSQL() {
         String sql = pm.bundleSelectAllIdsSQL;
         sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
@@ -25,6 +32,7 @@ public class Access {
         // for MySQL we would like have to add on the createStatement: ResultSet.TYPE_FORWARD_ONLY and ResultSet.CONCUR_READ_ONLY
         return sql;
     }
+
     public int getBundleBatchSize() {
          if("derby".equals(pm.getDatabaseType())) {
             return 16;
@@ -34,6 +42,7 @@ public class Access {
             return 0;
         }
     }
+
     public String getBundleSelectCountSQL() {
         String sql = pm.bundleSelectAllIdsSQL;
         sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "COUNT(*)");
@@ -41,7 +50,22 @@ public class Access {
 
         return sql;
     }
+
     public ConnectionHelper getConnectionHelper() {
         return pm.conHelper;
+    }
+
+    public static void close(PersistenceManager persistMgr) {
+        try {
+            persistMgr.close();
+        } catch (Exception ex) {
+        }
+        if (persistMgr instanceof BundleDbPersistenceManager && "derby".equals(((BundleDbPersistenceManager)persistMgr).getDatabaseType())) {
+            try {
+                DriverManager.getConnection("jdbc:derby:;shutdown=true;deregister=true");
+            } catch (SQLException e) {
+                // a shutdown command always raises a SQLException
+            }
+        }
     }
 }

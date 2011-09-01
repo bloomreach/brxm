@@ -46,7 +46,7 @@ public class FreeTextSearchTest extends TestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
 
         start.set(2009, 11, 23, 10, 46);
         onehourearlier.set(2009, 11, 23, 9, 46);

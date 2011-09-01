@@ -20,14 +20,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -59,7 +55,6 @@ import org.junit.BeforeClass;
         </code>
  */
 public abstract class TestCase
-    // used to extends junit.framework.TestCase
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -141,7 +136,8 @@ public abstract class TestCase
         external = repository;
     }
 
-    @BeforeClass public static void setUpClass() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
     }
 
     protected static void setUpClass(boolean clearRepository) throws Exception {
@@ -149,7 +145,8 @@ public abstract class TestCase
             clear();
     }
 
-    @AfterClass public static void tearDownClass() throws Exception {
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         tearDownClass(false);
     }
 
@@ -212,6 +209,13 @@ public abstract class TestCase
         }
         if (external == null && server != null) {
             server.close();
+            if (server instanceof LocalHippoRepository) {
+                if (!((LocalHippoRepository)server).check(false)) {
+                    server = null;
+                    clear();
+                    throw new Exception("Repository inconsistent");
+                }
+            }
             server = null;
         }
         if(clearRepository) {
