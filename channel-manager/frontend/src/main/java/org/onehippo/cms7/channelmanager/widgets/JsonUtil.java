@@ -41,7 +41,7 @@ class JsonUtil {
                 try {
                     return array.get(0).toString();
                 } catch (JSONException e) {
-                    log.error("Could not parse JSON string parameter '" + parameterName + "'", e);
+                    log.info("Could not parse JSON string parameter '" + parameterName + "': {}'", e.getMessage());
                 }
             }
         }
@@ -53,27 +53,13 @@ class JsonUtil {
             JSONArray array = parameters.get(parameterName);
             if (array.length() > 0) {
                 try {
-                    Object o = array.getJSONObject(0);
-                    return (JSONObject)o;
+                    return array.getJSONObject(0);
                 } catch (JSONException e) {
-                    log.error("Could not parse JSON object parameter '" + parameterName + "'", e);
+                    log.info("Could not parse JSON object parameter '" + parameterName + "': {}", e.getMessage());
                 }
             }
         }
         return null;
-    }
-
-    static String[] getStringArray(JSONObject json, String name, String[] defaultValue) throws JSONException {
-        JSONArray jsonArray = json.optJSONArray(name);
-        if (jsonArray == null) {
-            return defaultValue;
-        }
-
-        String[] result = new String[jsonArray.length()];
-        for (int i = 0; i < jsonArray.length(); i++) {
-            result[i] = jsonArray.getString(i);
-        }
-        return result;
     }
 
 }
