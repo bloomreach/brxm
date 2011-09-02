@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
@@ -97,7 +98,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
-        final Channel channel = blueprint.createChannel("cmit-channel");
+        final Channel channel = blueprint.createChannel();
         channel.setUrl("http://myhost");
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
@@ -106,7 +107,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             @Override
             public ChannelException run() {
                 try {
-                    manager.persist(blueprint.getId(), channel);
+                    manager.persist(blueprint.getId(), "cmit-channel", channel);
                 } catch (ChannelException ce) {
                     return ce;
                 }
@@ -119,9 +120,10 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
-        assertTrue(channels.containsKey(channel.getId()));
+        assertTrue(channels.containsKey("cmit-channel"));
 
-        Channel created = channels.get(channel.getId());
+        Channel created = channels.get("cmit-channel");
+        assertNotNull(created);
         assertEquals("http://myhost", created.getUrl());
         assertEquals("/unittestcontent/documents", created.getContentRoot());
         assertEquals("nl_NL", created.getLocale());
@@ -135,13 +137,13 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
-        final Channel channel = blueprint.createChannel("cmit-channel");
+        final Channel channel = blueprint.createChannel();
         channel.setUrl("http://myhost/newmount");
         asAdmin(new PrivilegedAction<ChannelException>() {
             @Override
             public ChannelException run() {
                 try {
-                    manager.persist(blueprint.getId(), channel);
+                    manager.persist(blueprint.getId(), "cmit-channel", channel);
                 } catch (ChannelException ce) {
                     return ce;
                 }
@@ -161,8 +163,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         testNode.addNode("hst:hosts").addNode("dev-localhost", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
         testNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
 
-        Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, "hst:blueprints");
-        Node bp = bpFolder.addNode("test-bp", "hst:blueprint");
+        Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, HstNodeTypes.NODETYPE_HST_BLUEPRINTS);
+        Node bp = bpFolder.addNode("test-bp", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
         Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
         channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
         Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
@@ -172,7 +174,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         final ChannelManagerImpl manager = createManager();
         manager.setRootPath(testNode.getPath());
 
-        final Channel channel = manager.getBlueprint("test-bp").createChannel("cmit-channel");
+        final Channel channel = manager.getBlueprint("test-bp").createChannel();
         channel.setUrl("http://localhost");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
@@ -182,7 +184,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             @Override
             public ChannelException run() {
                 try {
-                    manager.persist("test-bp", channel);
+                    manager.persist("test-bp", "cmit-channel", channel);
                 } catch (ChannelException ce) {
                     return ce;
                 }

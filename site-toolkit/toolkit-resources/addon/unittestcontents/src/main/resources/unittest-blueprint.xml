@@ -3,6 +3,12 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:blueprint</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:name" sv:type="String">
+    <sv:value>Test Blueprint</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:description" sv:type="String">
+    <sv:value>Blueprint for unit tests</sv:value>
+  </sv:property>
   <sv:node sv:name="hst:configuration">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
@@ -101,9 +107,6 @@
     </sv:property>
     <sv:property sv:name="hst:alias" sv:type="String">
       <sv:value>site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:mountpoint" sv:type="String">
-      <sv:value>/hst:hst/hst:sites/blueprint-site</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hst:channel">

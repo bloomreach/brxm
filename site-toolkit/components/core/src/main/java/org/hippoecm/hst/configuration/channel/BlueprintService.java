@@ -15,13 +15,13 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.Map;
-
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,27 +36,70 @@ public class BlueprintService implements Blueprint {
 
     private final Channel prototypeChannel;
 
-    public BlueprintService(final Node bluePrint) throws RepositoryException {
-        path = bluePrint.getPath();
+    public BlueprintService(final Node blueprint) throws RepositoryException {
+        path = blueprint.getPath();
 
-        id = bluePrint.getName();
+        id = blueprint.getName();
 
-        if (bluePrint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME)) {
-            this.name = bluePrint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME).getString();
+        if (blueprint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME)) {
+            this.name = blueprint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_NAME).getString();
         } else {
             this.name = this.id;
         }
 
-        if (bluePrint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION)) {
-            this.description = bluePrint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION).getString();
+        if (blueprint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION)) {
+            this.description = blueprint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION).getString();
         } else {
             this.description = null;
         }
 
-        if (bluePrint.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
-            this.prototypeChannel = ChannelPropertyMapper.readChannel(bluePrint.getNode(HstNodeTypes.NODENAME_HST_CHANNEL));
+        if (blueprint.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
+            this.prototypeChannel = ChannelPropertyMapper.readChannel(blueprint.getNode(HstNodeTypes.NODENAME_HST_CHANNEL), null);
         } else {
             this.prototypeChannel = new Channel((String) null);
+        }
+
+        final boolean hasSite = readSite(blueprint);
+        readMount(blueprint, hasSite);
+    }
+
+    private boolean readSite(final Node blueprint) throws RepositoryException {
+        if (blueprint.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            final Node siteNode = blueprint.getNode(HstNodeTypes.NODENAME_HST_SITE);
+
+            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+                this.prototypeChannel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
+            }
+            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
+                final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                final String docbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+
+                // assumption: docbase is always a UUID
+                try {
+                    Node ref = contentNode.getSession().getNodeByIdentifier(docbase);
+                    this.prototypeChannel.setContentRoot(ref.getPath());
+                } catch (ItemNotFoundException e) {
+                    log.warn("Blueprint '{}' contains a site node with a broken content root reference (UUID='{}'). This content root will be ignored.",
+                            blueprint.getPath(), docbase);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void readMount(final Node blueprint, final boolean hasSite) throws RepositoryException {
+        if (blueprint.hasNode(HstNodeTypes.NODENAME_HST_MOUNT)) {
+            final Node prototypeMount = blueprint.getNode(HstNodeTypes.NODENAME_HST_MOUNT);
+            if (prototypeMount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
+                final String mountPoint = prototypeMount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
+                if (hasSite) {
+                    log.warn("Blueprint '{}' will ignore the static mount point '{}' because it also has a site node. Each channel created from this blueprint will therefore get a copy of the site node as its mount point.",
+                            blueprint.getPath(), mountPoint);
+                } else {
+                    this.prototypeChannel.setHstMountPoint(mountPoint);
+                }
+            }
         }
     }
 
@@ -75,15 +118,8 @@ public class BlueprintService implements Blueprint {
         return this.description;
     }
 
-    public Channel createChannel(String channelId) {
-        Channel channel = new Channel(channelId);
-        channel.setName(channelId);
-        channel.setChannelInfoClassName(prototypeChannel.getChannelInfoClassName());
-
-        Map<String, Object> properties = channel.getProperties();
-        properties.putAll(prototypeChannel.getProperties());
-
-        return channel;
+    public Channel createChannel() {
+        return new Channel(prototypeChannel);
     }
 
     public Node getNode(final Session session) throws RepositoryException {

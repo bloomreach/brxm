@@ -42,7 +42,11 @@ public class ChannelPropertyMapper {
     }
 
     public static Channel readChannel(Node channelNode) throws RepositoryException {
-        Channel channel = new Channel(channelNode.getName());
+        return readChannel(channelNode, channelNode.getName());
+    }
+
+    static Channel readChannel(Node channelNode, String channelId) throws RepositoryException {
+        Channel channel = new Channel(channelId);
         channel.setName(channelNode.getName());
         if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
             channel.setName(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).getString());

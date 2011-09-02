@@ -43,11 +43,10 @@ public interface Blueprint {
     String getDescription();
 
     /**
-     * Creates a channel.  The channel can be persisted using {@link ChannelManager#persist}.
+     * Creates a new channel with ID 'null'. The channel can be persisted using {@link ChannelManager#persist}.
      *
-     * @return
-     * @throws ChannelException when the blueprint is not valid
+     * @return a new, unpersisted channel
      */
-    Channel createChannel(String id) throws ChannelException;
+    Channel createChannel();
 
 }

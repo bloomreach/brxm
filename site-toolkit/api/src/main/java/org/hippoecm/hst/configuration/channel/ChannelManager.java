@@ -37,12 +37,16 @@ public interface ChannelManager {
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
      * to persist the channel.
      * </p>
+     * <p>
+     * The persisted channel can be retrieved again via {@link #getChannels#get(String)}.
+     * </p>
      *
      * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
+     * @param channelId the ID to assign to the persisted channel
      * @param channel a channel instance to be persisted
-     * @throws ChannelException when the channel id already exists, or the channel could not be persisted.
+     * @throws ChannelException when the channel ID already exists, or the channel could not be persisted.
      */
-    void persist(String blueprintId, Channel channel) throws ChannelException;
+    void persist(String blueprintId, String channelId, Channel channel) throws ChannelException;
 
     /**
      * Save channel properties.  If the URL path of the new channel is not empty, all

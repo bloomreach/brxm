@@ -305,7 +305,7 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public synchronized void persist(final String blueprintId, Channel channel) throws ChannelException {
+    public synchronized void persist(final String blueprintId, final String channelId, Channel channel) throws ChannelException {
         load();
 
         if (!blueprints.containsKey(blueprintId)) {
@@ -317,7 +317,7 @@ public class ChannelManagerImpl implements ChannelManager {
         try {
             session = getSession(true);
             Node configNode = session.getNode(rootPath);
-            createChannel(configNode, bps, session, channel);
+            createChannel(configNode, bps, session, channelId, channel);
 
             channels = null;
 
@@ -435,7 +435,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
     // private - internal - methods
 
-    private void createChannel(Node configRoot, BlueprintService bps, Session session, final Channel channel) throws ChannelException, RepositoryException {
+    private void createChannel(Node configRoot, BlueprintService bps, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
         Node blueprintNode = bps.getNode(session);
 
         URI channelUri = getChannelUri(channel);
@@ -443,10 +443,10 @@ public class ChannelManagerImpl implements ChannelManager {
 
         // create mount
         Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channel.getId());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
         if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-                mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channel.getId());
+                mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channelId);
             } else {
                 mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
             }
@@ -455,12 +455,12 @@ public class ChannelManagerImpl implements ChannelManager {
         if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
             configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
         }
-        Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channel.getId(), HstNodeTypes.NODETYPE_HST_CHANNEL);
+        Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channelId, HstNodeTypes.NODETYPE_HST_CHANNEL);
         ChannelPropertyMapper.saveChannel(channelNode, channel);
 
         Session jcrSession = configRoot.getSession();
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE), configRoot.getNode(sites), channel.getId());
+            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE), configRoot.getNode(sites), channelId);
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
             channel.setHstMountPoint(siteNode.getPath());
 
@@ -471,7 +471,8 @@ public class ChannelManagerImpl implements ChannelManager {
                     // reuse the configuration path specified in the hst:site node, if it exists
                     String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
                     if (!jcrSession.nodeExists(configurationPath)) {
-                        throw new ChannelException("The hst:site node in blueprint '{}' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
+                        throw new ChannelException("The hst:site node in blueprint '" + blueprintNode.getPath()
+                                + "' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
                     }
                 }
                 channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
