@@ -21,11 +21,7 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
         if (config.eventHandlerId !== undefined) {
             Hippo.ChannelManager.ExtLinkPickerContainer.prototype.eventHandlerId = config.eventHandlerId;
         }
-
         this.pickerConfig = config.pickerConfig;
-
-        console.log("PICKER CONFIG:");
-        console.log(this.pickerConfig);
 
         Hippo.ChannelManager.ExtLinkPickerContainer.superclass.constructor.call(this, config);
     },
