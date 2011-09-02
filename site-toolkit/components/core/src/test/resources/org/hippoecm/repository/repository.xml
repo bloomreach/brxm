@@ -50,9 +50,10 @@
       <param name="path" value="${wsp.home}"/>
     </FileSystem>
 
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager">
+    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
       <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
@@ -123,8 +124,8 @@
       <param name="maxFieldLength" value="10000"/>
       <param name="bufferSize" value="1000"/>
       <param name="cacheSize" value="1000"/>
-      <param name="forceConsistencyCheck" value="true"/>
-      <param name="enableConsistencyCheck" value="true"/>
+      <param name="forceConsistencyCheck" value="false"/>
+      <param name="enableConsistencyCheck" value="false"/>
       <param name="autoRepair" value="true"/>
       <param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
       <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
@@ -137,6 +138,9 @@
       <param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/>
       <param name="supportHighlighting" value="true"/>
     </SearchIndex>
+
+    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
+
   </Workspace>
 
   <Versioning rootPath="${rep.home}/version">
@@ -144,10 +148,12 @@
       <param name="path" value="${rep.home}/version"/>
     </FileSystem>
 
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager">
+    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
       <param name="schemaObjectPrefix" value="version_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
+    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
 
 </Repository>
