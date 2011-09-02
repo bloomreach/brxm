@@ -291,6 +291,7 @@ client/src/main/java/org/hippoecm/hst/tag/HeadContributionTag.java svneol=native
 client/src/main/java/org/hippoecm/hst/tag/HeadContributionsTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstActionURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstAttributeTag.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/tag/HstEditTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/HstElementTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstFacetNavigationLinkTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstHtmlTag.java svneol=native#text/plain
@@ -299,6 +300,7 @@ client/src/main/java/org/hippoecm/hst/tag/HstLinkTag.java svneol=native#text/pla
 client/src/main/java/org/hippoecm/hst/tag/HstRenderURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstResourceURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstSurfAndEditTag.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/tag/HstSurfAndEditTagSupport.java -text
 client/src/main/java/org/hippoecm/hst/tag/HstTagSupport.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/tag/NamespaceTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamContainerTag.java -text svneol=unset#text/plain
@@ -309,6 +311,7 @@ client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/pl
 client/src/main/java/org/hippoecm/hst/utils/EncodingUtils.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
+client/src/main/resources/preview-messages.properties -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/AColorPropertyEditor.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponent.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponentParametersInfo.java -text

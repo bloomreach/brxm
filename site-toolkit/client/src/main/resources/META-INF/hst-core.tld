@@ -428,6 +428,22 @@
     </tag>
 
     <tag>
+        <name>surfandedit</name>
+        <tag-class>org.hippoecm.hst.tag.HstEditTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>This tag can be used to create an edit button. Only in preview mode, the
+          tag will output something. In live, it will be ignored.</description>
+        <attribute>
+            <name>hippobean</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+            <description>A HippoBean object. This is typically one of your bean mapped
+            objects</description>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>html</name>
         <tag-class>org.hippoecm.hst.tag.HstHtmlTag</tag-class>
         <tei-class>org.hippoecm.hst.tag.HstHtmlTag$TEI</tei-class>
