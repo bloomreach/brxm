@@ -281,18 +281,17 @@ public class JcrObservationManager implements ObservationManager {
 
         boolean isvirtual;
         List<String> fixed;
-        List<Event> events;
+        final List<Event> events = Collections.synchronizedList(new LinkedList<Event>());
         Session session;
         FacetRootsObserver fro;
         WeakReference<UserSession> sessionRef;
 
         JcrListener(UserSession userSession, EventListener upstream) {
             super(upstream, listenerQueue);
-            this.events = new LinkedList<Event>();
             sessionRef = new WeakReference<UserSession>(userSession);
         }
 
-        synchronized public void onEvent(EventIterator events) {
+        public void onEvent(EventIterator events) {
             while (events.hasNext()) {
                 this.events.add(events.nextEvent());
             }
@@ -650,7 +649,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        synchronized void getChanges(Set<String> paths) {
+        void getChanges(Set<String> paths) {
             try {
                 checkSession();
             } catch (ObservationException e1) {
@@ -731,7 +730,7 @@ public class JcrObservationManager implements ObservationManager {
             }
         }
 
-        synchronized List<Event> getEvents(Map<String, NodeState> dirty) {
+        List<Event> getEvents(Map<String, NodeState> dirty) {
             List<Event> events = new LinkedList<Event>(this.events);
             this.events.clear();
 
