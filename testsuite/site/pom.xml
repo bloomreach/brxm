@@ -42,7 +42,12 @@
         <version>2.9.1</version>
         <scope>compile</scope>
     </dependency>
-        
+
+    <dependency>
+      <groupId>org.onehippo.yui</groupId>
+      <artifactId>yui-2.xx-sources</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-server-dependencies</artifactId>
