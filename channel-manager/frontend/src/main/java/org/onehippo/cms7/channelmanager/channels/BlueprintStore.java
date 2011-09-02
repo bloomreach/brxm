@@ -16,11 +16,13 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.site.HstServices;
@@ -34,11 +36,14 @@ import org.wicketstuff.js.ext.data.ExtJsonStore;
 
 public class BlueprintStore extends ExtJsonStore<Object> {
 
+    private static final String FIELD_NAME = "name";
+    private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_CONTENT_ROOT = "contentRoot";
     private long total;
     private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
-    public BlueprintStore(List<ExtField> fields) {
-        super(fields);
+    public BlueprintStore() {
+        super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_CONTENT_ROOT)));
     }
 
     @Override
@@ -64,8 +69,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         for (Blueprint blueprint : blueprints) {
             JSONObject object = new JSONObject();
             object.put("id", blueprint.getId());
-            object.put("description", blueprint.getDescription());
-            object.put("name", blueprint.getName());
+            object.put(FIELD_NAME, blueprint.getName());
+            object.put(FIELD_DESCRIPTION, blueprint.getDescription());
+
+            Channel channel = blueprint.createChannel();
+            object.put(FIELD_CONTENT_ROOT, channel.getContentRoot());
+
             data.put(object);
         }
         return data;

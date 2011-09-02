@@ -81,7 +81,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                         {
                             xtype: 'linkpicker',
                             fieldLabel: 'Content Root',
-                            id: 'contentroot',
+                            id: 'contentRoot',
                             style: {
                                 marginLeft: '69px'
                             },
@@ -101,6 +101,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
                     Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
                     Ext.getCmp('blueprintId').setValue(blueprint.id);
+                    Ext.getCmp('contentRoot').setValue(blueprint.get('contentRoot'));
                 }, this);
                 this.doLayout();
             },

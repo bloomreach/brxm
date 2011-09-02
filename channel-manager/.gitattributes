@@ -29,6 +29,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.jav
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelPropertiesPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.HstConfigEditor.js -text

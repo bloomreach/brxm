@@ -110,7 +110,7 @@ public class JcrPathWidget extends Panel {
         pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(remembersLastVisited));
         pickerConfig.put(NodePickerControllerSettings.SELECTABLE_NODETYPES, selectableNodeTypes);
 
-        if (initialPath != null && !"".equals(initialPath)) {
+        if (StringUtils.isNotEmpty(initialPath)) {
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
                 Node node = session.getNode(initialPath);

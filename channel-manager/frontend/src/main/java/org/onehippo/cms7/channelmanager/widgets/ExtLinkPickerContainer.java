@@ -44,6 +44,7 @@ public class ExtLinkPickerContainer extends ExtPanel {
     private static final String DEFAULT_PICKER_INITIAL_PATH = "";
     private static final String EVENT_PICK = "pick";
     private static final String EVENT_PICK_PARAM_CALLBACK_ID = "callbackId";
+    private static final String EVENT_PICK_PARAM_CURRENT = "current";
     private static final String EVENT_PICK_PARAM_PICKER_CONFIG = "pickerConfig";
 
     private final Logger log = LoggerFactory.getLogger(ExtLinkPickerContainer.class);
@@ -64,7 +65,9 @@ public class ExtLinkPickerContainer extends ExtPanel {
                     return;
                 }
 
-                IPluginConfig pickerConfig = parsePickerConfig(parameters, EVENT_PICK_PARAM_PICKER_CONFIG);
+                String current = JsonUtil.getStringParameter(parameters, EVENT_PICK_PARAM_CURRENT);
+
+                IPluginConfig pickerConfig = parsePickerConfig(parameters, EVENT_PICK_PARAM_PICKER_CONFIG, current);
                 if (pickerConfig == null) {
                     log.error("Cannot open link picker: no picker configuration specified");
                 }
@@ -74,12 +77,15 @@ public class ExtLinkPickerContainer extends ExtPanel {
         });
     }
 
-    IPluginConfig parsePickerConfig(final Map<String, JSONArray> parameters, String parameterName) {
+    IPluginConfig parsePickerConfig(final Map<String, JSONArray> parameters, String parameterName, String current) {
         JSONObject json = JsonUtil.getJsonObject(parameters, parameterName);
         if (json != null) {
             String configuration = json.optString("configuration", DEFAULT_PICKER_CONFIGURATION);
             boolean remembersLastVisited = json.optBoolean("remembersLastVisited", DEFAULT_PICKER_REMEMBERS_LAST_VISITED);
             String initialPath = json.optString("initialPath", DEFAULT_PICKER_INITIAL_PATH);
+            if (remembersLastVisited && StringUtils.isEmpty(initialPath) && StringUtils.isNotEmpty(current)) {
+                initialPath = current;
+            }
 
             String[] selectableNodeTypes = StringUtils.split(json.optString("selectableNodeTypes"), ", ");
             if (selectableNodeTypes == null || selectableNodeTypes.length == 0) {
@@ -99,7 +105,7 @@ public class ExtLinkPickerContainer extends ExtPanel {
     @Override
     protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
         if (EVENT_PICK.equals(event)) {
-            return new ExtEventAjaxBehavior(EVENT_PICK_PARAM_CALLBACK_ID, EVENT_PICK_PARAM_PICKER_CONFIG);
+            return new ExtEventAjaxBehavior(EVENT_PICK_PARAM_CALLBACK_ID, EVENT_PICK_PARAM_CURRENT, EVENT_PICK_PARAM_PICKER_CONFIG);
         }
         return super.newExtEventBehavior(event);
     }

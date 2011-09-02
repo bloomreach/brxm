@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
@@ -30,7 +27,6 @@ import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPickerContainer;
 import org.wicketstuff.js.ext.ExtPanel;
-import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
@@ -78,7 +74,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setLayout(new BorderLayout());
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
-        final ChannelGridPanel channelPanel = new ChannelGridPanel(channelListConfig);
+        final ChannelGridPanel channelPanel = new ChannelGridPanel(context, channelListConfig);
         channelPanel.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelPanel);
 
@@ -91,10 +87,7 @@ public class RootPanel extends ExtPanel {
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         channelManagerCard.add(channelPropertiesPanel);
 
-        final List<ExtField> blueprintFieldList = new ArrayList<ExtField>();
-        blueprintFieldList.add(new ExtField("name"));
-        blueprintFieldList.add(new ExtField("description"));
-        this.blueprintStore = new BlueprintStore(blueprintFieldList);
+        this.blueprintStore = new BlueprintStore();
         channelManagerCard.add(this.blueprintStore);
 
         add(channelManagerCard);

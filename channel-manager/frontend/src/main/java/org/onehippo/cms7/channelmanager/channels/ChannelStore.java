@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -86,15 +89,17 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
     private transient Map<String, Channel> channels;
 
-    private String storeId;
-    private String sortFieldName;
-    private SortOrder sortOrder;
+    private final String storeId;
+    private final String sortFieldName;
+    private final SortOrder sortOrder;
+    private final LocaleResolver localeResolver;
 
-    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder) {
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
+        this.localeResolver = localeResolver;
     }
 
     @Override
@@ -194,7 +199,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
         try {
-            newChannel = channelManager.getBlueprint(blueprintId).createChannel(record.getString("name"));
+            newChannel = channelManager.getBlueprint(blueprintId).createChannel();
         } catch (ChannelException e) {
             final String errorMsg = "Could not create new channel with blueprint '" + blueprintId + "'";
             log.warn(errorMsg, e);
@@ -202,9 +207,19 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // set channel parameters
-        newChannel.setName(record.getString("name"));
+        final String channelName = record.getString("name");
+        newChannel.setName(channelName);
         newChannel.setUrl(record.getString("url"));
-        newChannel.setContentRoot(record.getString("contentroot"));
+
+        final String contentRoot = record.getString("contentRoot");
+        if (StringUtils.isNotEmpty(contentRoot)) {
+            newChannel.setContentRoot(contentRoot);
+
+            Locale locale = getLocale(contentRoot);
+            if (locale != null) {
+                newChannel.setLocale(locale.toString());
+            }
+        }
 
         // save channel (FIXME: move boilerplate to CMS engine)
         UserSession session = (UserSession) org.apache.wicket.Session.get();
@@ -216,7 +231,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                         public Void run() throws ChannelException {
-                            channelManager.persist(blueprintId, newChannel);
+                            channelManager.persist(blueprintId, channelName, newChannel);
                             return null;
                         }
                     }, null);
@@ -284,4 +299,22 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
         return channels;
     }
+
+    private Locale getLocale(String absPath) {
+        if (StringUtils.isEmpty(absPath)) {
+            return null;
+        }
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        try {
+            if (!session.nodeExists(absPath)) {
+                return null;
+            }
+            Node node = session.getNode(absPath);
+            return localeResolver.getLocale(node);
+        } catch (RepositoryException e) {
+            log.warn("Could not retrieve the locale of node '" + absPath + "'", e);
+        }
+        return null;
+    }
+
 }

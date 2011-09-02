@@ -57,7 +57,7 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
         }
         var eventHandler = Ext.getCmp(this.eventHandlerId);
         if (eventHandler !== undefined) {
-            eventHandler.fireEvent('pick', this.getId(), Ext.util.JSON.encode(this.pickerConfig));
+            eventHandler.fireEvent('pick', this.getId(), this.el.dom.value, Ext.util.JSON.encode(this.pickerConfig));
         } else {
             console.error("No picker event handler registered with id '" + this.eventHandlerId);
         }

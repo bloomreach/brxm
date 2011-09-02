@@ -22,7 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +51,7 @@ public class ChannelGridPanel extends ExtPanel {
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
 
-    public ChannelGridPanel(IPluginConfig config) {
+    public ChannelGridPanel(IPluginContext context, IPluginConfig config) {
         super();
 
         visibleFields = parseChannelFields(config);
@@ -62,12 +64,22 @@ public class ChannelGridPanel extends ExtPanel {
             storeFieldNames.add(channelField.name());
         }
 
-        // then create and add a store with all the Ext fields in the set
+        // then create a list of all the Ext fields in the store
         List<ExtField> fieldList = new ArrayList<ExtField>();
         for (String storeFieldName : storeFieldNames) {
             fieldList.add(new ExtField(storeFieldName));
         }
-        this.store = new ChannelStore("channel-store", fieldList, parseSortColumn(config, visibleFields), parseSortOrder(config));
+
+        // get the Hippo locale provider to resolve locales of new channels
+        String localeProviderServiceId = config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName());
+        ILocaleProvider localeProvider = context.getService(localeProviderServiceId, ILocaleProvider.class);
+        if (localeProvider == null) {
+            throw new IllegalStateException("Cannot find locale provider service with ID '" + localeProviderServiceId + "'");
+        }
+
+        // create the store
+        this.store = new ChannelStore("channel-store", fieldList, parseSortColumn(config, visibleFields),
+                parseSortOrder(config), new LocaleResolver(localeProvider));
         add(this.store);
     }
 
