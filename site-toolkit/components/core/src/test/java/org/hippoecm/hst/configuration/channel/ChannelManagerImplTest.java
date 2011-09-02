@@ -55,9 +55,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:channels").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        if (getSession().nodeExists("/test")) {
-            getSession().getNode("/test").remove();
-        }
         internalHostGroup.getSession().save();
         super.tearDown();
     }

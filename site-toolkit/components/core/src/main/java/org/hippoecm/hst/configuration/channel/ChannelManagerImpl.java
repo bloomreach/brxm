@@ -497,7 +497,7 @@ public class ChannelManagerImpl implements ChannelManager {
             mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
         }
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channel.getId());
+            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channelId);
         }
     }
 
