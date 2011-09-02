@@ -40,14 +40,34 @@
 
             //do try/catch because else errors will disappear
             try {
+                //replace edit link with cms styled button
+                var self = this;
+                $('.' + HST.CLASS.EDITLINK).each(function(index) {
+                    self._createSurfAndEditLink(this);
+                });
+            } catch(e) {
+                sendMessage({msg: e.message}, "iframeexception");
+            }
+
+            //do try/catch because else errors will disappear
+            try {
                 //attach mouseover/mouseclick for components
                 var self = this;
-                $('.'+HST.CLASS.CONTAINER).each(function(index) {
+                $('.' + HST.CLASS.CONTAINER).each(function(index) {
                     self._createContainer(this);
                 });
             } catch(e) {
                 sendMessage({msg: e.message}, "iframeexception");
             }
+        },
+
+        _createSurfAndEditLink : function(element) {
+            var link = Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.createLink(element);
+
+            $(link).click(function() {
+                sendMessage({uuid: $(this).attr(HST.ATTR.ID)}, "edit-document");
+                return false;
+            });
         },
 
         _createContainer : function(element) {

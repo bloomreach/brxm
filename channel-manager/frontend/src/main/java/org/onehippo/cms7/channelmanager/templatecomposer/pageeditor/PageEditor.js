@@ -652,9 +652,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.fireEvent('beforeIFrameDOMReady');
         this.frm = frm;
         var initializeIFrame = function(data) {
-            if (!this.previewMode && data.hasPreviewConfig) {
-                this.initializeIFrameHead(frm);
-            }
+            this.initializeIFrameHead(frm);
         };
         this.on('beforeIFrameDOMReady', function() {
             this.removeListener('hstMetaDataResponse', initializeIFrame, this);
@@ -1123,6 +1121,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.removeByRecord(store.getAt(index))
     },
 
+    handleEdit : function(uuid) {
+        this.fireEvent('edit-document', uuid);
+    },
+
     /**
      * It's not possible to register message:afterselect style listeners..
      * This should work and I'm probably doing something stupid, but I could not
@@ -1147,6 +1149,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'], + msg.data.message, function() {
                     self.refreshIframe.call(self);
                 });
+            } else if (msg.tag == 'edit-document') {
+                this.handleEdit(msg.data.uuid);
             }
         } catch(e) {
             Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {

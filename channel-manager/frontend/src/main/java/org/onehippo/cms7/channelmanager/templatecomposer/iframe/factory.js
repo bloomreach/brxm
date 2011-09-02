@@ -53,12 +53,12 @@
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    die(this.resources['factory-no-hst-meta-data'].format(this.getElementPath(element)));
+                    die(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
                 }
 
                 var id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, this.getElementPath(element)));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
                 }
 
                 element.id = id;
@@ -66,7 +66,7 @@
 
                 var type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, this.getElementPath(element)));
+                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
@@ -145,7 +145,7 @@
                                 return hstMetaData;
                             }
                         } catch (exception) {
-                            die(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, this.getElementPath(element)) + ' ' + exception);
+                            die(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
@@ -158,7 +158,7 @@
                                 return hstMetaData;
                             }
                         } catch (exception) {
-                            die(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, this.getElementPath(element)) + ' ' + exception);
+                            die(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 }
@@ -187,26 +187,6 @@
 
             setResources: function(resources) {
                 this.resources = resources;
-            },
-
-            getElementPath: function(element) {
-                var path = "";
-                var nodeString = "";
-                var node = element;
-                while (node.parentNode != null) {
-                    nodeString = node.tagName;
-                    if (node.id) {
-                        nodeString += "[id="+node.id+"]";
-                    } else if (node.className) {
-                        nodeString += "[class="+node.className+"]";
-                    }
-                    if (path.length > 0) {
-                        path = " > " + path;
-                    }
-                    path = nodeString + path;
-                    node = node.parentNode;
-                }
-                return path;
             }
 
         };

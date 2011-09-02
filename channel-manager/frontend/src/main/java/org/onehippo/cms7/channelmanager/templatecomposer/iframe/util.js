@@ -204,6 +204,26 @@
         }
     });
 
+    Hippo.Util.getElementPath = function(element) {
+        var path = "";
+        var nodeString = "";
+        var node = element;
+        while (node.parentNode != null) {
+            nodeString = node.tagName;
+            if (node.id) {
+                nodeString += "[id="+node.id+"]";
+            } else if (node.className) {
+                nodeString += "[class="+node.className+"]";
+            }
+            if (path.length > 0) {
+                path = " > " + path;
+            }
+            path = nodeString + path;
+            node = node.parentNode;
+        }
+        return path;
+    };
+
 })(jQuery);
 
 

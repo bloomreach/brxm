@@ -66,7 +66,8 @@
 
         CLASS : {
             CONTAINER : 'hst-container',
-            ITEM : 'hst-container-item'
+            ITEM : 'hst-container-item',
+            EDITLINK : 'hst-surfandedit'
         },
 
         DIR : {

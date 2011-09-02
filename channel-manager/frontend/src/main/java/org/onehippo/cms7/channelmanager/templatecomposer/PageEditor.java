@@ -16,25 +16,42 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.Arrays;
+import java.util.Map;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtProperty;
 
 @ExtClass("Hippo.ChannelManager.TemplateComposer.PageEditor")
 public class PageEditor extends ExtPanel {
+
+    static final Logger log = LoggerFactory.getLogger(PageEditor.class);
 
     @ExtProperty
     public Boolean debug = false;
@@ -65,28 +82,20 @@ public class PageEditor extends ExtPanel {
 
     private Channel channel;
 
+    private IPluginContext context;
+
+    public PageEditor(final IPluginContext context, final IPluginConfig config) {
+        this("item", config);
+        this.context = context;
+    }
 
     public PageEditor(final String id, final IPluginConfig config) {
         super(id);
-        this.composerMountUrl = config.getString("composerMountUrl", "/site/");
-        this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
-        this.renderHost = config.getString("renderHost", "localhost");
-        this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
-        this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
-        if (config.get("previewMode") != null) {
-            this.previewMode = config.getBoolean("previewMode");
-        }
-        this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
-        this.locale = Session.get().getLocale().toString();
-
-        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
-        add(new TemplateComposerResourceBehavior());
-    }
-
-    public PageEditor(final IPluginConfig config) {
         if (config != null) {
             this.composerMountUrl = config.getString("composerMountUrl", "/site/");
             this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
+            this.renderHost = config.getString("renderHost", "localhost");
+            this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
@@ -97,6 +106,36 @@ public class PageEditor extends ExtPanel {
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());
+
+        addEventListener("edit-document", new ExtEventListener() {
+            @Override
+            public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+                if (context == null) {
+                    return;
+                }
+
+                JSONArray values = parameters.get("uuid");
+                if (values == null || values.length() == 0) {
+                    return;
+                }
+                try {
+                    final Object value = values.get(0);
+                    IBrowseService browseService = context.getService("service.browse", IBrowseService.class);
+                    if (browseService != null) {
+                        browseService.browse(new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(value.toString())));
+                    } else {
+                        log.warn("Could not find document " + value);
+                    }
+                } catch (JSONException e) {
+                    throw new WicketRuntimeException("Invalid JSON parameters", e);
+                } catch (ItemNotFoundException e) {
+                    log.warn("Could not find document to browse to", e);
+                } catch (RepositoryException e) {
+                    log.error("Internal error when browsing to document", e);
+                }
+
+            }
+        });
     }
 
     @Override
@@ -117,7 +156,8 @@ public class PageEditor extends ExtPanel {
             rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()
         ));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString()
+            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(),
+            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()
         ));
         if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
@@ -128,6 +168,7 @@ public class PageEditor extends ExtPanel {
 
                 rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MANAGER)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
@@ -139,6 +180,14 @@ public class PageEditor extends ExtPanel {
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()
             ));
         }
+    }
+
+    @Override
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        if ("edit-document".equals(event)) {
+            return new ExtEventAjaxBehavior("uuid");
+        }
+        return super.newExtEventBehavior(event);
     }
 
     public String getRenderHost() {

@@ -96,6 +96,7 @@
     Hippo.ChannelManager.TemplateComposer.IFrame.Main = new Main();
     onhostmessage(function(msg) {
         Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.setResources(msg.data.resources);
+        Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.setResources(msg.data.resources);
         Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(msg.data);
     }, this, false, 'init');
 

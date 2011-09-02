@@ -94,7 +94,7 @@ public class RootPanel extends ExtPanel {
 
         // card 1: template composer
         final IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        pageEditor = new PageEditor(pageEditorConfig);
+        pageEditor = new PageEditor(context, pageEditorConfig);
         add(pageEditor);
 
         // card 2: HST config editor

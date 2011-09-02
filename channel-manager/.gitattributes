@@ -45,8 +45,11 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/error.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/editbutton.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/surfandedit.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/manager.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/surfandedit.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js -text
