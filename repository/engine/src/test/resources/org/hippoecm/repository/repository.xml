@@ -53,6 +53,7 @@
     <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
       <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
@@ -153,6 +154,7 @@
     <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
       <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
       <param name="schemaObjectPrefix" value="version_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
