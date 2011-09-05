@@ -34,11 +34,7 @@
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager.prototype = {
         init: function() {
             this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
-            if (this.preview) {
-                this.overlay.hide();
-            }
 
-            //do try/catch because else errors will disappear
             try {
                 //replace edit link with cms styled button
                 var self = this;
@@ -49,16 +45,6 @@
                 sendMessage({msg: e.message}, "iframeexception");
             }
 
-            //do try/catch because else errors will disappear
-            try {
-                //attach mouseover/mouseclick for components
-                var self = this;
-                $('.' + HST.CLASS.CONTAINER).each(function(index) {
-                    self._createContainer(this);
-                });
-            } catch(e) {
-                sendMessage({msg: e.message}, "iframeexception");
-            }
         },
 
         _createSurfAndEditLink : function(element) {
@@ -68,6 +54,18 @@
                 sendMessage({uuid: $(this).attr(HST.ATTR.ID)}, "edit-document");
                 return false;
             });
+        },
+
+        createContainers : function() {
+            try {
+                //attach mouseover/mouseclick for components
+                var self = this;
+                $('.' + HST.CLASS.CONTAINER).each(function(index) {
+                    self._createContainer(this);
+                });
+            } catch(e) {
+                sendMessage({msg: e.message}, "iframeexception");
+            }
         },
 
         _createContainer : function(element) {

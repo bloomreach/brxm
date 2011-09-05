@@ -26,12 +26,18 @@
             var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(options);
 
             onhostmessage(function(msg) {
-                manager.getOverlay().toggle();
-                $('.empty-container-placeholder').toggle();
+                manager.getOverlay().show();
+                $('.empty-container-placeholder').show();
                 manager.requestSync();
                 manager.sync();
                 return false;
-            }, this, false, 'toggle');
+            }, this, false, 'showoverlay')
+
+            onhostmessage(function(msg) {
+                manager.getOverlay().hide();
+                $('.empty-container-placeholder').hide();
+                return false;
+            }, this, false, 'hideoverlay');
 
             //register to listen to iframe-messages
             onhostmessage(function(msg) {
@@ -65,6 +71,7 @@
             }, this, false, 'unhighlight');
 
             onhostmessage(function(msg) {
+                manager.createContainers();
                 var facade = msg.data;
                 manager.updateSharedData(facade);
                 return false;
@@ -77,7 +84,7 @@
             }, this, false, 'resize');
 
             this.manager = manager;
-            sendMessage({}, "afterinit");
+            sendMessage({preview: options.preview}, "afterinit");
         },
 
         isDebug: function() {
@@ -95,6 +102,7 @@
 
     Hippo.ChannelManager.TemplateComposer.IFrame.Main = new Main();
     onhostmessage(function(msg) {
+        console.log('IFrame Init Message '+JSON.stringify(msg.data));
         Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.setResources(msg.data.resources);
         Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.setResources(msg.data.resources);
         Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(msg.data);

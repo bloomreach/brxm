@@ -140,7 +140,7 @@ public class PageEditor extends ExtPanel {
 
     @Override
     public void buildInstantiationJs(StringBuilder js, String extClass, JSONObject properties) {
-        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert(e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
+        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert('Error', 'Error instantiating template composer. '+e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
     }
 
     @Override

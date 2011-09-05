@@ -43,6 +43,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.hstInComposerMode = false;
         this.isPreviewHstConfig = false;
+        this.composerInitialized = false;
 
         this.addEvents('beforePreCacheIFrameResources', 'afterPreCacheIFrameResources',
                        'beforePageIdChange', 'beforeMountIdChange',
@@ -144,45 +145,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 marginLeft: '150px'
                             }
                         }
-                    ],
-                    listeners: {
-                        'message': {
-                            fn: this.handleFrameMessages,
-                            scope:this
-                        },
-                        'documentloaded' : {
-                            fn: function(frm) {
-                                //Only called after the first load. Every refresh within a running iframe result in
-                                //a domready event only
-                                if (Ext.isSafari || Ext.isChrome) {
-                                    this.onIframeDOMReady(frm);
-                                }
-                            },
-                            scope: this
-                        },
-                        'domready' : {
-                            fn: function(frm) {
-                                //Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
-                                //in 'undefined' errors.
-                                if (Ext.isGecko || Ext.isIE) {
-                                    this.onIframeDOMReady(frm);
-                                }
-                            },
-                            scope: this
-                        },
-                        'exception' : {
-                            fn: function(frm, e) {
-                                console.error(e);
-                            },
-                            scope: this
-                        },
-                        'resize' : {
-                            fn: function() {
-                                this.sendFrameMessage({}, 'resize');
-                            },
-                            scope: this
-                        }
-                    }
+                    ]
                 }
             ]
         });
@@ -246,6 +209,19 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('beforeIFrameDOMReady');
             this.iframeDOMReady = false;
             this.iframeInitialized = false;
+            var hideLoading = function() {
+                Hippo.Msg.hide();
+                Ext.getCmp('pagePreviewButton').setDisabled(false);
+                Ext.getCmp('pageComposerButton').setDisabled(false);
+            };
+            if (this.previewMode) {
+                this.on('iFrameInitialized', hideLoading, this, {single : true});
+            } else {
+                this.on('afterShareDataWithIFrame', hideLoading, this, {single : true});
+            }
+            Ext.getCmp('pagePreviewButton').setDisabled(true);
+            Ext.getCmp('pageComposerButton').setDisabled(true);
+            Hippo.Msg.wait(this.resources['loading-message']);
         }, this);
 
         this.on('afterIFrameDOMReady', function() {
@@ -270,39 +246,33 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             if (!this.preview && !data.isPreviewHstConfig && this.isPreviewHstConfig != data.isPreviewHstConfig) {
                 // switching mount when edit is active and no preview available on the new mount
                 Ext.getCmp('pagePreviewButton').toggle(true);
+            } else if (!this.previewMode) {
+                this.initEditMount(data.mountId);
             } else {
-                if (!this.iframeInitialized) {
-                    console.log('add beforeInitializeIFrameHead listener '+JSON.stringify(data));
-                    var mountIdIFrameInitListener = function() {
-                        console.log('mountIdIFrameInitListener '+JSON.stringify(data));
-                        this.initEditMount(data.mountId)
-                    };
-                    this.on('beforeMountIdChange', function() {
-                            this.removeListener('beforeInitializeIFrameHead', mountIdIFrameInitListener, this);
-                    }, this, {single : true});
-                    this.on('beforeInitializeIFrameHead', mountIdIFrameInitListener, this, {single: true});
-                } else {
+                var initEditMountClosure = function() {
                     this.initEditMount(data.mountId);
-                }
+                };
+                this.removeListener('beforeModeChange', initEditMountClosure, this);
+                this.on('beforeModeChange', initEditMountClosure, this, {single : true});
             }
         }, this);
 
         this.on('beforePageIdChange', function(data) {
             console.log('beforePageIdChange, previewMode: '+this.previewMode);
-            if (!this.iframeInitialized) {
-                console.log('add beforeInitializeIFrameHead listener for '+JSON.stringify(data));
-                var pageIdIFrameInitListener = function() {
-                    console.log('pageIdIFrameInitListener '+JSON.stringify(data));
-                    this.initEditPage(data.mountId, data.pageId);
-                };
-                this.on('beforePageIdChange', function() {
-                    console.log('remove previous pageIdIFrameInitListener '+JSON.stringify(data));
-                    this.removeListener('beforeInitializeIFrameHead', pageIdIFrameInitListener, this);
-                }, this, {single : true});
-                this.on('beforeInitializeIFrameHead', pageIdIFrameInitListener, this, {single: true});
-            } else {
+            this.dataSharedWithIFrame = false;
+            if (!this.previewMode) {
                 this.initEditPage(data.mountId, data.pageId);
+            } else {
+               var initEditPageClosure = function() {
+                   this.initEditPage(data.mountId, data.pageId);
+               };
+               this.removeListener('beforeModeChange', initEditPageClosure, this);
+               this.on('beforeModeChange', initEditPageClosure, this, {single : true});
             }
+        }, this);
+
+        this.on('afterShareDataWithIFrame', function(data) {
+            this.dataSharedWithIFrame = true;
         }, this);
 
         this.on('beforeInitComposer', function() {
@@ -328,15 +298,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
             Hippo.Msg.hide();
+            this.composerInitialized = true;
         }, this);
 
         this.on('beforeModeChange', function(data) {
             console.log('beforeModeChange');
             Ext.getCmp('pagePreviewButton').setDisabled(data.previewMode);
             Ext.getCmp('pageComposerButton').setDisabled(!data.previewMode);
-            if (data.previewMode) {
-                Hippo.Msg.wait('Loading...');
-            }
+            Hippo.Msg.wait(this.resources['loading-message']);
         }, this);
 
         this.on('modeChanged', function(data) {
@@ -349,10 +318,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 if (this.mainWindow) {
                     this.mainWindow.show();
                 }
-                Hippo.Msg.hide();
             }
             Ext.getCmp('pagePreviewButton').setDisabled(false);
             Ext.getCmp('pageComposerButton').setDisabled(false);
+            Hippo.Msg.hide();
         }, this);
 
         this.on('isPreviewHstConfigChanged', function(data) {
@@ -461,7 +430,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     initComposer : function(renderHostSubMountPath, renderHost) {
         this.fireEvent('beforeInitComposer');
-        this.on('afterIFrameDOMReady', function() {
+        this.on('iFrameInitialized', function() {
             this.fireEvent('afterInitComposer');
         }, this, {single : true});
         if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
@@ -470,6 +439,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.renderHostSubMountPath = renderHostSubMountPath;
         }
         this.renderHost = renderHost;
+
+        this.initIFrameListeners();
 
         var retry = this.initialHstConnectionTimeout;
         if (!this.hstInComposerMode) {
@@ -524,6 +495,30 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     },
 
+    initIFrameListeners : function() {
+        var iFrame = Ext.getCmp('Iframe');
+        iFrame.purgeListeners();
+        iFrame.on('message', this.handleFrameMessages, this);
+        iFrame.on('documentloaded', function(frm) {
+            if (Ext.isSafari || Ext.isChrome) {
+                this.onIframeDOMReady(frm);
+            }
+        }, this);
+        iFrame.on('domready', function(frm) {
+            // Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
+            // in 'undefined' errors.
+            if (Ext.isGecko || Ext.isIE) {
+                this.onIframeDOMReady(frm);
+            }
+        }, this);
+        iFrame.on('exception', function(frm, e) {
+            console.error(e);
+        }, this);
+        iFrame.on('resize', function() {
+            this.sendFrameMessage({}, 'resize');
+        }, this);
+    },
+
     setChannelName : function(name) {
         if (typeof this.showTitleSwitchTimeout !== 'undefined') {
             window.clearTimeout(this.showTitleSwitchTimeout);
@@ -567,56 +562,57 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.fireEvent('beforeModeChange', {previewMode : this.previewMode});
 
         var func = function() {
-            // first time switch to template composer mode
-            // initialize iframe head for drag and drop...
-            if (this.previewMode && !this.iframeInitialized) {
-
-                this.previewMode = false;
-                var initialize = function(mountId, pageId) {
-                    console.log('this.editingUnpublishedHstConfig:' + this.isPreviewHstConfig);
-                    if (this.isPreviewHstConfig) {
+            this.previewMode = !this.previewMode;
+            var toggleModeClosure = function(mountId, pageId, isPreviewHstConfig) {
+                console.log('isPreviewHstConfig:' + isPreviewHstConfig);
+                if (isPreviewHstConfig) {
+                    var iFrame = Ext.getCmp('Iframe');
+                    if (!this.iframeInitialized) {
                         this.on('iFrameInitialized', function() {
+                            iFrame.getFrame().sendMessage({}, (this.previewMode ? 'hideoverlay' : 'showoverlay'));
+                        }, this);
+                    } else {
+                        iFrame.getFrame().sendMessage({}, (this.previewMode ? 'hideoverlay' : 'showoverlay'));
+                    }
+
+                    if (this.dataSharedWithIFrame) {
+                        this.fireEvent('modeChanged', {previewMode : this.previewMode});
+                    } else {
+                        this.on('afterShareDataWithIFrame', function() {
                             this.fireEvent('modeChanged', {previewMode : this.previewMode});
                         }, this, { single: true});
-                        this.initializeIFrameHead(this.frm);
-                    } else {
-                        // create new preview hst configuration
-                        var self = this;
-                        Ext.Ajax.request({
-                            method: 'POST',
-                            url: this.composerRestMountUrl + mountId + './edit',
-                            success: function () {
-                                // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                                // the editor for editing with the refresh
-                                self.on('afterShareDataWithIFrame', function() {
-                                    self.fireEvent('modeChanged', {previewMode : self.previewMode});
-                                }, self, { single: true});
-                                self.refreshIframe.call(self, null);
-                            },
-                            failure: function(result) {
-                                var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Hippo.Msg.alert(self.resouces['preview-hst-config-creation-failed']+' '+jsonData.message, function() {
-                                    self.previewMode = true;
-                                    self.refreshIframe.call(self, null);
-                                });
-                            }
-                        });
                     }
-                };
-                if (this.isHstMetaDataLoaded()) {
-                    initialize.apply(this, [this.ids.mountId, this.ids.pageId]);
                 } else {
-                    this.on('hstMetaDataResponse', function(data) {
-                        initialize.apply(this, [data.mountId, data.pageId]);
-                    }, this, {single : true});
+                    // create new preview hst configuration
+                    var self = this;
+                    Ext.Ajax.request({
+                        method: 'POST',
+                        url: this.composerRestMountUrl + mountId + './edit',
+                        success: function () {
+                            // refresh iframe to get new hst config uuids. previewMode=false will initialize
+                            // the editor for editing with the refresh
+                            self.on('afterShareDataWithIFrame', function() {
+                                self.fireEvent('modeChanged', {previewMode : self.previewMode});
+                            }, self, { single: true});
+                            self.refreshIframe.call(self, null);
+                        },
+                        failure: function(result) {
+                            var jsonData = Ext.util.JSON.decode(result.responseText);
+                            Hippo.Msg.alert(self.resouces['preview-hst-config-creation-failed']+' '+jsonData.message, function() {
+                                self.previewMode = true;
+                                self.refreshIframe.call(self, null);
+                            });
+                        }
+                    });
                 }
+            };
+            if (this.isHstMetaDataLoaded()) {
+                toggleModeClosure.apply(this, [this.ids.mountId, this.ids.pageId, this.isPreviewHstConfig]);
             } else {
-                // once the composer javascript in the iframe is injected and initialised we send a toggle
-                // message which shows/hides the drag and drop overlay in the iframe
-                var iframe = Ext.getCmp('Iframe');
-                iframe.getFrame().sendMessage({}, 'toggle');
-                this.previewMode = !this.previewMode;
-                this.fireEvent('modeChanged', { previewMode : this.previewMode});
+                this.on('hstMetaDataResponse', function(data) {
+                    var isPreviewHstConfig = this.getBoolean(data.hasPreviewConfig);
+                    toggleModeClosure.apply(this, [data.mountId, data.pageId, isPreviewHstConfig]);
+                }, this, {single : true});
             }
         }
 
@@ -968,7 +964,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         console.log('shareData');
 
         var func = function() {
-            if (this.stores.pageModel == null) {
+            if (this.previewMode || this.stores.pageModel == null) {
                 return;
             }
             var self = this;
