@@ -40,9 +40,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.21.01-alpha/checker</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.21.01-alpha/checker</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.21.01-alpha/checker</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk/checker</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk/checker</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk/checker</url>
   </scm>
 
   <developers>
