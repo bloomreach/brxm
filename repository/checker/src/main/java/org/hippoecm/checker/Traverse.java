@@ -362,18 +362,23 @@ public class Traverse {
                 }
                 if (disconnected.size() > 0) {
                     Checker.log.warn("FOUND " + disconnected.size() + " DISCONNECTED CHILD NODES");
-                    clean = false;
                     for (Map.Entry<UUID, UUID> entry : disconnected.entrySet()) {
                         UUID child = entry.getKey();
                         UUID parent = entry.getValue();
                         UUID childParent = childParentRelation.getFirst(child);
-                        /*if (parentChildRelation.contains(childParent, child)) {
-                        Checker.log.warn("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
+                        if (parentChildRelation.contains(childParent, child)) {
+                            // FIXME: there are causes when a parent node can still reference a moved child node.
+                            // This is transparent to jackrabbit and causes no errors and is corrected automatically.
+                            // but this needs to be sorted out
+                            // clean = false;
+                            Checker.log.warn("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
                         } else if (all.contains(parent)) {
-                        Checker.log.warn("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
+                            clean = false;
+                            Checker.log.warn("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
                         } else {
-                        Checker.log.warn("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
-                        }*/
+                            clean = false;
+                            Checker.log.warn("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
+                        }
                     }
                 } else {
                     Checker.log.info("FOUND " + disconnected.size() + " DISCONNECTED CHILD NODES");
