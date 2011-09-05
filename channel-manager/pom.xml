@@ -9,7 +9,7 @@
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>1.01.02-SNAPSHOT</version>
+  <version>1.01.02-alpha</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -61,9 +61,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-1.01.02-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-1.01.02-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-1.01.02-alpha</url>
   </scm>
 
 </project>
