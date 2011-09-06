@@ -45,6 +45,8 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +67,11 @@ public class ChannelManagerImpl implements ChannelManager {
     private Credentials credentials;
     private Repository repository;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
+
+    /**
+     * The codec which is used for the channel ID
+     */
+    private StringCodec channelIdCodec = new StringCodecFactory.UriEncoding();
 
     public ChannelManagerImpl() {
     }
@@ -305,8 +312,8 @@ public class ChannelManagerImpl implements ChannelManager {
     }
 
     @Override
-    public synchronized void persist(final String blueprintId, final String channelId, Channel channel) throws ChannelException {
-        load();
+    public synchronized String persist(final String blueprintId, Channel channel) throws ChannelException {
+        String channelId = createUniqueChannelId(channel.getName());
 
         if (!blueprints.containsKey(blueprintId)) {
             throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
@@ -322,6 +329,8 @@ public class ChannelManagerImpl implements ChannelManager {
             channels = null;
 
             session.save();
+
+            return channelId;
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
         } finally {
@@ -329,6 +338,27 @@ public class ChannelManagerImpl implements ChannelManager {
                 session.logout();
             }
         }
+    }
+
+    String createUniqueChannelId(String channelName) throws ChannelException {
+        if (StringUtils.isBlank(channelName)) {
+            throw new ChannelException("Cannot create channel ID: channel name is blank");
+        }
+
+        load();
+
+        String channelId = channelIdCodec.encode(channelName);
+        int retries = 0;
+
+        while (channels.containsKey(channelId)) {
+            retries += 1;
+            StringBuilder builder = new StringBuilder(channelName);
+            builder.append('-');
+            builder.append(retries);
+            channelId = channelIdCodec.encode(builder.toString());
+        }
+
+        return channelId;
     }
 
     @Override

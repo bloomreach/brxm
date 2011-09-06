@@ -15,7 +15,8 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
 
@@ -49,14 +51,31 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:sites").getNodes("channel-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
+        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:sites").getNodes("cmit-*"); ni.hasNext(); ) {
+            ni.nextNode().remove();
+        }
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("channel-*"); ni.hasNext(); ) {
+            ni.nextNode().remove();
+        }
+        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
         for (NodeIterator ni = getSession().getNode("/hst:hst/hst:channels").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        internalHostGroup.getSession().save();
+        getSession().save();
         super.tearDown();
+    }
+
+    @Test
+    public void createUniqueChannelId() throws RepositoryException, ChannelException {
+        ChannelManagerImpl manager = createManager();
+
+        assertEquals("test", manager.createUniqueChannelId("test"));
+        assertEquals("name-with-spaces", manager.createUniqueChannelId("Name with Spaces"));
+        assertEquals("special-characters--and---and", manager.createUniqueChannelId("Special Characters: % and / and []"));
+        assertEquals("'testchannel' already exists in the default unit test content, so the new channel ID should get a suffix",
+                "testchannel-1", manager.createUniqueChannelId("testchannel"));
     }
 
     @Test
@@ -87,7 +106,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelIsCreatedFromBlueprint() throws ChannelException, RepositoryException {
+    public void channelIsCreatedFromBlueprint() throws ChannelException, RepositoryException, PrivilegedActionException {
         final ChannelManagerImpl manager = createManager();
         int numberOfChannels = manager.getChannels().size();
 
@@ -96,38 +115,37 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         final Blueprint blueprint = bluePrints.get(0);
 
         final Channel channel = blueprint.createChannel();
+        channel.setName("CMIT Test Channel: with special and/or specific characters");
         channel.setUrl("http://myhost");
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
 
-        asAdmin(new PrivilegedAction<ChannelException>() {
+        String channelId = HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
             @Override
-            public ChannelException run() {
-                try {
-                    manager.persist(blueprint.getId(), "cmit-channel", channel);
-                } catch (ChannelException ce) {
-                    return ce;
-                }
-                return null;
+            public String run() throws ChannelException {
+                return manager.persist(blueprint.getId(), channel);
             }
-        });
+        }, null);
+        assertEquals("cmit-test-channel-with-special-and-or-specific-characters", channelId);
         Node node = getSession().getNode("/hst:hst/hst:hosts/dev-localhost");
 
         assertTrue(node.hasNode("myhost/hst:root"));
 
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
-        assertTrue(channels.containsKey("cmit-channel"));
+        assertTrue(channels.containsKey("cmit-test-channel-with-special-and-or-specific-characters"));
 
-        Channel created = channels.get("cmit-channel");
+        Channel created = channels.get("cmit-test-channel-with-special-and-or-specific-characters");
         assertNotNull(created);
+        assertEquals("cmit-test-channel-with-special-and-or-specific-characters", created.getId());
+        assertEquals("CMIT Test Channel: with special and/or specific characters", created.getName());
         assertEquals("http://myhost", created.getUrl());
         assertEquals("/unittestcontent/documents", created.getContentRoot());
         assertEquals("nl_NL", created.getLocale());
     }
 
-    @Test(expected = MountNotFoundException.class)
-    public void ancestorMountsMustExist() throws ChannelException, RepositoryException {
+    @Test
+    public void ancestorMountsMustExist() throws ChannelException, RepositoryException, PrivilegedActionException {
         final ChannelManagerImpl manager = createManager();
 
         List<Blueprint> bluePrints = manager.getBlueprints();
@@ -135,18 +153,20 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         final Blueprint blueprint = bluePrints.get(0);
 
         final Channel channel = blueprint.createChannel();
+        channel.setName("cmit-channel");
         channel.setUrl("http://myhost/newmount");
-        asAdmin(new PrivilegedAction<ChannelException>() {
-            @Override
-            public ChannelException run() {
-                try {
-                    manager.persist(blueprint.getId(), "cmit-channel", channel);
-                } catch (ChannelException ce) {
-                    return ce;
+
+        try {
+            HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
+                @Override
+                public String run() throws ChannelException {
+                    return manager.persist(blueprint.getId(), channel);
                 }
-                return null;
-            }
-        });
+            }, null);
+            fail("Expected a " + MountNotFoundException.class.getName());
+        } catch (PrivilegedActionException e) {
+            assertEquals(MountNotFoundException.class, e.getCause().getClass());
+        }
     }
 
     public static interface TestInfoClass extends ChannelInfo {
@@ -155,7 +175,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException {
+    public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException, PrivilegedActionException {
         Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
         testNode.addNode("hst:hosts").addNode("dev-localhost", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
         testNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
@@ -172,32 +192,20 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         manager.setRootPath(testNode.getPath());
 
         final Channel channel = manager.getBlueprint("test-bp").createChannel();
+        channel.setName("cmit-channel");
         channel.setUrl("http://localhost");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
 
-        asAdmin(new PrivilegedAction<ChannelException>() {
+        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
             @Override
-            public ChannelException run() {
-                try {
-                    manager.persist("test-bp", "cmit-channel", channel);
-                } catch (ChannelException ce) {
-                    return ce;
-                }
-                return null;
+            public String run() throws ChannelException {
+                return manager.persist("test-bp", channel);
             }
-        });
+        }, null);
         TestInfoClass channelInfo = manager.getChannelInfo(channel);
         assertEquals("noot", channelInfo.getGetme());
-    }
-
-    private <T extends Exception> void asAdmin(PrivilegedAction<T> action) throws T {
-        T ce = HstSubject.doAs(createSubject(), action);
-        HstSubject.clearSubject();
-        if (ce != null) {
-            throw ce;
-        }
     }
 
     private Subject createSubject() {

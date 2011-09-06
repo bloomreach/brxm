@@ -32,21 +32,21 @@ public interface ChannelManager {
     Map<String, Channel> getChannels() throws ChannelException;
 
     /**
-     * Persist a channel; will create the mounts, sites and configuration when the channel is new.
+     * Persists a channel. Will create the mounts, sites and configuration when the channel is new.
      * <p>
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
      * to persist the channel.
      * </p>
      * <p>
-     * The persisted channel can be retrieved again via {@link #getChannels#get(String)}.
+     * The persisted channel can be retrieved again via {@link #getChannels#get(String)} with the returned channel ID.
      * </p>
      *
      * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
-     * @param channelId the ID to assign to the persisted channel
      * @param channel a channel instance to be persisted
+     * @return the channel ID of the created channel
      * @throws ChannelException when the channel ID already exists, or the channel could not be persisted.
      */
-    void persist(String blueprintId, String channelId, Channel channel) throws ChannelException;
+    String persist(String blueprintId, Channel channel) throws ChannelException;
 
     /**
      * Save channel properties.  If the URL path of the new channel is not empty, all
