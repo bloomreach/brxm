@@ -228,12 +228,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         subject.setReadOnly();
 
         try {
-            HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
-                        public Void run() throws ChannelException {
-                            channelManager.persist(blueprintId, channelName, newChannel);
-                            return null;
+            String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
+                        public String run() throws ChannelException {
+                            return channelManager.persist(blueprintId, newChannel);
                         }
                     }, null);
+            log.info("Created new channel with ID '{}'", channelId);
         } catch (PrivilegedActionException e) {
             final String errorMsg = "Could not save channel '" + newChannel.getName() + "'";
             log.error(errorMsg, e.getException());
