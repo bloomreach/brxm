@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
 
 Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
 
@@ -22,7 +23,6 @@ Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
  */
 Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
     constructor: function(config) {
-        var self = this;
         this.resources = config.resources;
 
         Ext.apply(config, {

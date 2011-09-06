@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use strict";
+
 Ext.namespace('Hippo.ChannelManager');
 
 Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerField,  {
