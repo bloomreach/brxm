@@ -102,7 +102,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
                     Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
                     Ext.getCmp('blueprintId').setValue(blueprint.id);
-                    Ext.getCmp('contentRoot').setValue(blueprint.get('contentRoot'));
+                    Ext.getCmp('contentRoot').setDefaultValue(blueprint.get('contentRoot'));
                 }, this);
                 this.doLayout();
             },

@@ -24,6 +24,8 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
             Hippo.ChannelManager.ExtLinkPickerContainer.prototype.eventHandlerId = config.eventHandlerId;
         }
         this.pickerConfig = config.pickerConfig;
+        this.defaultValue = config.defaultValue;
+        this.setValue(this.defaultValue);
 
         Hippo.ChannelManager.ExtLinkPickerContainer.superclass.constructor.call(this, config);
     },
@@ -34,39 +36,58 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
         this.addEvents('picked');
 
         this.on('picked', this.picked);
+        this.on('afterrender', this.updateClearButton);
     },
 
     editable: false,
     trigger1Class: 'x-form-clear-trigger',
     trigger2Class: 'x-form-search-trigger',
 
-    onDestroy : function(){
-        Hippo.ChannelManager.ExtLinkPickerContainer.superclass.onDestroy.call(this);
-    },
-    
-    afterRender: function(){
-        Hippo.ChannelManager.ExtLinkPickerContainer.superclass.afterRender.call(this);
+    onTriggerClick: function() {
+        this.openPicker();
     },
 
-    onTrigger1Click : function() {
-        this.el.dom.value = '';
+    onTrigger1Click: function() {
+        this.picked(this.defaultValue);
     },
 
-    onTrigger2Click : function() {
+    onTrigger2Click: function() {
+        this.openPicker();
+    },
+
+    setDefaultValue: function(value) {
+        var oldDefaultValue = this.defaultValue;
+        this.defaultValue = value;
+        if (this.getValue() === oldDefaultValue) {
+            this.setValue(this.defaultValue);
+        }
+    },
+
+    openPicker: function() {
         if (this.eventHandlerId === undefined) {
             console.error("Cannot open picker dialog: no picker event handler registered");
             return;
         }
         var eventHandler = Ext.getCmp(this.eventHandlerId);
         if (eventHandler !== undefined) {
-            eventHandler.fireEvent('pick', this.getId(), this.el.dom.value, Ext.util.JSON.encode(this.pickerConfig));
+            eventHandler.fireEvent('pick', this.getId(), this.getValue(), Ext.util.JSON.encode(this.pickerConfig));
         } else {
             console.error("No picker event handler registered with id '" + this.eventHandlerId);
         }
     },
 
     picked: function(value) {
-        this.el.dom.value = value;
+        this.setValue(value);
+        this.updateClearButton();
+    },
+
+    updateClearButton: function() {
+        var clearTrigger = this.getTrigger(0);
+        if (this.getValue() === this.defaultValue) {
+            clearTrigger.hide();
+        } else {
+            clearTrigger.show();
+        }
     }
 
 });
