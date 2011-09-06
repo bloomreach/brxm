@@ -684,8 +684,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     onIframeDOMReady : function(frm) {
         this.fireEvent('beforeIFrameDOMReady');
         this.frm = frm;
-        this.initializeIFrameHead(frm);
         this.requestHstMetaData( { url: frm.getDocumentURI() } );
+        this.initializeIFrameHead(frm);
         this.fireEvent('afterIFrameDOMReady');
     },
 
