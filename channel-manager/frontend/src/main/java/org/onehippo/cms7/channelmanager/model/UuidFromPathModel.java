@@ -72,6 +72,7 @@ public class UuidFromPathModel implements IModel<String> {
 
     @Override
     public void detach() {
+        delegate.detach();
     }
 
 }
