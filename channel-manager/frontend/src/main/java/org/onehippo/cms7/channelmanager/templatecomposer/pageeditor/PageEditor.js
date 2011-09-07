@@ -474,7 +474,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
             var composerMode = function(callback) {
                 Ext.Ajax.request({
-                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode',
+                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/',
                     success: callback,
                     failure: function(exceptionObject) {
                         if (exceptionObject.isTimeout) {
@@ -504,7 +504,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 me.hstInComposerMode = true;
                 var iFrame = Ext.getCmp('Iframe');
                 iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath + "?" + me.renderHostParameterName + "=" + me.renderHost);
+                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath);
 
                 // keep session active
                 Ext.TaskMgr.start({
