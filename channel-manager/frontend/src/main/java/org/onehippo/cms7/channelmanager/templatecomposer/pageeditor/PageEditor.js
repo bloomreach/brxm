@@ -576,8 +576,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                Hippo.Msg.alert(self.resources['published-hst-config-failed-message']+' '+jsonData.message, function() {
-                    self.refreshIframe.call(self, null);
+                Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message']+' '+jsonData.message, function() {
+                    this.initComposer(this.renderHostSubMountPath, this.renderHost);
                 });
             }
         });
@@ -635,9 +635,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             },
                             failure: function(result) {
                                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Hippo.Msg.alert(self.resouces['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
-                                    self.previewMode = true;
-                                    self.refreshIframe.call(self, null);
+                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
+                                    self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
                                 });
                             }
                         });
@@ -1181,14 +1180,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.refreshIframe();
             } else if (msg.tag == 'iframeexception') {
                 Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'], + msg.data.message, function() {
-                    self.refreshIframe.call(self);
+                    self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
                 });
             } else if (msg.tag == 'edit-document') {
                 this.handleEdit(msg.data.uuid);
             }
         } catch(e) {
             Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
-                self.refreshIframe.call(self);
+                self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
             });
             console.error(e);
         }
