@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Renders a widget to select a JCR path. The given model is used to store the UUID of the selected path. The selected
- * path can also be removed again, which will store null in the model. The given dialog service is used to create
- * the dialog in which the path can be selected.
+ * path can also be removed again, which will store null in the model.
  *
  * The widget shows the selected JCR path as a string and two Ajax links: one link to select a new path,
  * and another link to 'remove' the current one. When no path is selected, the 'remove' link will not be shown.
@@ -57,14 +56,11 @@ public class JcrPathWidget extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPathWidget.class);
 
-    private IModel<String> model;
     private String previewPath;
     private AjaxLink<Void> remove;
 
     public JcrPathWidget(final IPluginContext context, final String id, final JcrPath path, final IModel<String> model) {
-        super(id);
-
-        this.model = model;
+        super(id, model);
 
         JavaPluginConfig pickerConfig = createPickerConfig(
                 path.pickerConfiguration(),
@@ -138,7 +134,7 @@ public class JcrPathWidget extends Panel {
      * @param uuid the UUID of the selected path, or null of no path is selected
      */
     private void updateDisplay(String uuid) {
-        model.setObject(uuid);
+        this.setDefaultModelObject(uuid);
 
         previewPath = resolvePreviewPath(uuid);
 
