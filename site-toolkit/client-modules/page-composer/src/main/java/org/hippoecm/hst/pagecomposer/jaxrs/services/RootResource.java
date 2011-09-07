@@ -15,18 +15,18 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+    import javax.servlet.http.HttpServletRequest;
+    import javax.servlet.http.HttpServletResponse;
+    import javax.servlet.http.HttpSession;
+    import javax.ws.rs.GET;
+    import javax.ws.rs.Path;
+    import javax.ws.rs.PathParam;
+    import javax.ws.rs.Produces;
+    import javax.ws.rs.core.Context;
+    import javax.ws.rs.core.MediaType;
+    import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.core.container.ContainerConstants;
+    import org.hippoecm.hst.core.container.ContainerConstants;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -44,37 +44,26 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/composermode/")
+    @Path("/composermode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
+                                             @Context HttpServletResponse servletResponse,
+                                             @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
+        session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         return ok("Composer-Mode successful", null);
     }
     
-    @POST
-    @Path("/composermode/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response composerMode(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
-        HttpSession session = servletRequest.getSession(true);
-        session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
-        return ok("Composer-Mode successful", null);
-    }
-
-    @POST
-    @Path("/previewmode/")
+    @GET
+    @Path("/previewmode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response previewMode(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
+                                             @Context HttpServletResponse servletResponse,
+                                             @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
-        if (session == null) {
-            return error("Cannot set into composer mode, no httpSession");
-        }
-
+        session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
-
         return ok("Preview-Mode successful", null);
     }
 

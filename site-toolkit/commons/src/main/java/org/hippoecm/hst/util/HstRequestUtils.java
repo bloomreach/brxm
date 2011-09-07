@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -181,10 +182,11 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
-        String host;  
-        if(checkRenderHost && request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
-            host = request.getParameter(ContainerConstants.RENDERING_HOST);
-        } else {
+        String host = null;
+        if(checkRenderHost) {
+            host = getRenderingHost(request);
+        }
+        if (host == null) {
             host = request.getHeader("X-Forwarded-Host");
         } 
         if (host != null) {
@@ -199,7 +201,28 @@ public class HstRequestUtils {
             return new String [] { request.getHeader("Host") };
         }
     }
-    
+
+    /**
+     * Returns the rendering host of the current request, i.e. the host at which the request output is rendered.
+     * The rendering host can be set as a request parameter, or be present in the HTTP session. The request paramater
+     * value has precedence over the value in the HTTP session.
+     *
+     * @param request the servlet request
+     * @return the rendering host for the current request
+     */
+    public static String getRenderingHost(final HttpServletRequest request) {
+        String requestParam = request.getParameter(ContainerConstants.RENDERING_HOST);
+        if (requestParam != null) {
+            return requestParam;
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return (String)session.getAttribute(ContainerConstants.RENDERING_HOST);
+        }
+        return null;
+    }
+
     /**
      * Returns the original host informations requested by the client or the proxies 
      * in the Host HTTP request headers.

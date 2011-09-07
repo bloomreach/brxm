@@ -127,22 +127,11 @@ public class HstLinkImpl implements HstLink {
          * 2) The virtualhost from current request Mount is different than the Mount for this link
          * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
          */
-        String renderHost = requestContext.getRenderHost();
+        String renderHost = null;
         if(mount != null) {
-            if(requestContext.getRenderHost() != null) {
-                // when renderhost is not null, we never create fully qualified URLs any more: Cross-domain is not a use case.
-                if(requestMount != mount) {
-                    // URL is cross mount. Check whether we should return # or a cross mount link:
-                    // TODO: for now, we never return a cross mount link when having a render host. When we want to support a 
-                    // preview from the cms, we might need a switch to support cross mount linking in combination with a renderhost.
-                    boolean enableCrossMountLink = true;
-                    if(enableCrossMountLink) {
-                        // return the url with renderHost which might be a different host.
-                        renderHost =  mount.getVirtualHost().getHostName(); 
-                    } else {
-                        return "#";
-                    }
-                }
+            if(requestContext.getRenderHost() != null && requestMount != mount) {
+                // the link is cross-domain, so set the render host
+                renderHost =  mount.getVirtualHost().getHostName();
             } else if(requestContext.isFullyQualifiedURLs() || fullyQualified || requestMount.getVirtualHost() != mount.getVirtualHost()
                          || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
                          || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
@@ -167,15 +156,14 @@ public class HstLinkImpl implements HstLink {
             }
         }
         
-        // TODO HSTTWO-1599 improve below as this does not work for navigationStateful links
-        if(renderHost != null && !this.containerResource) {
+        if (renderHost != null && !this.containerResource) {
             // we need to append the render host as a request parameter but it is not needed for resources
-            if(urlString.contains("?")) {
+            if (urlString.contains("?")) {
                 urlString += "&";
             } else {
                 urlString += "?";
             }
-            urlString += ContainerConstants.RENDERING_HOST +"=" + renderHost;
+            urlString += ContainerConstants.RENDERING_HOST + "=" + renderHost;
         }
         
         return urlString;

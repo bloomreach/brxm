@@ -324,14 +324,15 @@ public class HstFilter implements Filter {
                     if(resolvedMount != null) {
                         requestContext.setResolvedMount(resolvedMount);
                         // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
-                        if(request.getParameter(ContainerConstants.RENDERING_HOST) != null) {
-                            String xfh = request.getParameter(ContainerConstants.RENDERING_HOST);
-                            requestContext.setRenderHost(xfh);
+                        String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
+                        if (renderingHost != null) {
+                            requestContext.setRenderHost(renderingHost);
                             requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
                             // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
                             HttpSession session = containerRequest.getSession(false);
                             if(session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED ))) {
-                                // we are in a CMS SSO context. 
+                                // we are in a CMS SSO context.
+                                session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                                 if(resolvedMount instanceof MutableResolvedMount) {
                                     Mount mount = resolvedMount.getMount();
                                     if(!(mount instanceof ContextualizableMount)) {
