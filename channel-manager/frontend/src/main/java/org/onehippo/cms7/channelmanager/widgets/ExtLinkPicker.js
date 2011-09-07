@@ -13,29 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+//"use strict";
 
 Ext.namespace('Hippo.ChannelManager');
 
-Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerField,  {
+Hippo.ChannelManager.ExtLinkPickerFactory = Ext.extend(Ext.util.Observable, {
 
     constructor : function(config) {
-        if (config.eventHandlerId !== undefined) {
-            Hippo.ChannelManager.ExtLinkPickerContainer.prototype.eventHandlerId = config.eventHandlerId;
-        }
+        Hippo.ChannelManager.ExtLinkPickerFactory.Instance = this;
+
+        this.addEvents('pick', 'picked');
+
+        this.listeners = config.listeners;
+
+        Hippo.ChannelManager.ExtLinkPickerFactory.superclass.constructor.call(this, config);
+    },
+
+    openPicker: function(currentValue, pickerConfig, cb) {
+        this.on('picked', cb, {single: true});
+        this.fireEvent('pick', currentValue, Ext.util.JSON.encode(pickerConfig));
+    }
+});
+
+Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
+
+    constructor : function(config) {
         this.pickerConfig = config.pickerConfig;
         this.defaultValue = config.defaultValue;
         this.setValue(this.defaultValue);
 
-        Hippo.ChannelManager.ExtLinkPickerContainer.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.ExtLinkPicker.superclass.constructor.call(this, config);
     },
 
     initComponent : function() {
-        Hippo.ChannelManager.ExtLinkPickerContainer.superclass.initComponent.call(this);
+        Hippo.ChannelManager.ExtLinkPicker.superclass.initComponent.call(this);
 
-        this.addEvents('picked');
-
-        this.on('picked', this.picked);
         this.on('afterrender', this.updateClearButton);
     },
 
@@ -64,16 +76,11 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
     },
 
     openPicker: function() {
-        if (this.eventHandlerId === undefined) {
-            console.error("Cannot open picker dialog: no picker event handler registered");
-            return;
-        }
-        var eventHandler = Ext.getCmp(this.eventHandlerId);
-        if (eventHandler !== undefined) {
-            eventHandler.fireEvent('pick', this.getId(), this.getValue(), Ext.util.JSON.encode(this.pickerConfig));
-        } else {
-            console.error("No picker event handler registered with id '" + this.eventHandlerId);
-        }
+        Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(
+                this.getValue(),
+                this.pickerConfig,
+                Ext.createDelegate(this.picked, this)
+        );
     },
 
     picked: function(value) {
@@ -92,4 +99,4 @@ Hippo.ChannelManager.ExtLinkPickerContainer = Ext.extend(Ext.form.TwinTriggerFie
 
 });
 
-Ext.reg('linkpicker', Hippo.ChannelManager.ExtLinkPickerContainer);
+Ext.reg('linkpicker', Hippo.ChannelManager.ExtLinkPicker);

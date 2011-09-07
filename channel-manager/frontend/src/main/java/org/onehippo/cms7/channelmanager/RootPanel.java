@@ -25,7 +25,7 @@ import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.onehippo.cms7.channelmanager.widgets.ExtLinkPickerContainer;
+import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -101,7 +101,7 @@ public class RootPanel extends ExtPanel {
         add(hstConfigEditor);
 
         // card 3: folder picker
-        add(new ExtLinkPickerContainer(context, "channel-manager-link-picker"));
+        add(new ExtLinkPicker(context));
     }
 
     @Override

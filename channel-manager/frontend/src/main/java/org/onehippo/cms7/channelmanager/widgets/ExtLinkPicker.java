@@ -15,12 +15,14 @@
  */
 package org.onehippo.cms7.channelmanager.widgets;
 
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -28,74 +30,114 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
+import org.wicketstuff.js.ext.ExtObservable;
+import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtEventListener;
 
 /**
- * Link picker dialog that returns the picked path via a 'picked' event to an ExtJS component.
+ * Factory and event hub for link picker dialogs opened from ExtJS. A link picker widget is available via the ExtJS
+ * xtype 'linkpicker'. The widget will generate a 'pick' event when clicked, which opens a link picker with a certain
+ * configuration. Available javascript picker configuration options are:
+ * <ul>
+ * <li>'configuration': The root path of the CMS configuration to use for the picker, relative to
+ * '/hippo:configuration/hippo:frontend/cms'. The default configuration is "cms-pickers/documents"</li>
+ * <li>'remembersLastVisited': Whether the picker remembers the last visited path. The default is 'true'</li>
+ * <li>'initialPath': The initial path to use in the picker if nothing has been selected yet. The default is ""
+ * (no initial path)</li>
+ * <li>'selectableNodeTypes': string array of node type names to be able to select in the picker. The default is
+ * ['hippo:document']</li>
+ * </ul>
+ * Once a path has been picked a 'picked' event will be generated that updates the ExtJS widget with the selected path.
  */
-public class ExtLinkPicker extends Panel implements IModel<String> {
+@ExtClass("Hippo.ChannelManager.ExtLinkPickerFactory")
+public class ExtLinkPicker extends ExtObservable {
 
-    private Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
+    private static final String DEFAULT_PICKER_CONFIGURATION = "cms-pickers/documents";
+    private static final boolean DEFAULT_PICKER_REMEMBERS_LAST_VISITED = true;
+    private static final String[] DEFAULT_PICKER_SELECTABLE_NODE_TYPES = new String[]{"hippo:document"};
+    private static final String DEFAULT_PICKER_INITIAL_PATH = "";
+    private static final String EVENT_PICK = "pick";
+    private static final String EVENT_PICK_PARAM_CURRENT = "current";
+    private static final String EVENT_PICK_PARAM_PICKER_CONFIG = "pickerConfig";
 
-    private final IPluginContext context;
-    private final WebMarkupContainer container;
-    private final Component picker;
-    private String activeComponentId;
-    private String pickedPath;
+    private final Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
 
-    public ExtLinkPicker(IPluginContext context, String id) {
-        super(id);
+    public ExtLinkPicker(final IPluginContext context) {
+        addEventListener(EVENT_PICK, new ExtEventListener() {
+            @Override
+            public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+                String current = JsonUtil.getStringParameter(parameters, EVENT_PICK_PARAM_CURRENT);
 
-        this.context = context;
+                IPluginConfig pickerConfig = parsePickerConfig(parameters, EVENT_PICK_PARAM_PICKER_CONFIG, current);
+                if (pickerConfig == null) {
+                    log.error("Cannot open link picker: no picker configuration specified");
+                }
 
-        picker = new EmptyPanel("picker");
-        picker.setOutputMarkupId(true);
+                Model<String> pathModel = new Model<String>(current) {
+                    @Override
+                    public void setObject(final String pickedPath) {
+                        super.setObject(pickedPath);
+                        AjaxRequestTarget target = AjaxRequestTarget.get();
+                        if (target == null) {
+                            log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", pickedPath);
+                            return;
+                        }
+                        target.prependJavascript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '" + pickedPath + "')");
+                    }
+                };
 
-        container = new WebMarkupContainer("container");
-        container.setOutputMarkupId(true);
-        container.add(picker);
-        add(container);
+                final IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, new UuidFromPathModel(pathModel));
+                final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
-        setOutputMarkupId(true);
+                final DialogAction action = new DialogAction(dialogFactory, dialogService);
+                action.execute();
+            }
+        });
     }
 
     @Override
-    public String getObject() {
-        return pickedPath;
+    public void bind(final Component component) {
+        super.bind(component);
+        component.add(JavascriptPackageResource.getHeaderContribution(ExtLinkPicker.class, "ExtLinkPicker.js"));
+    }
+
+    IPluginConfig parsePickerConfig(final Map<String, JSONArray> parameters, String parameterName, String current) {
+        JSONObject json = JsonUtil.getJsonObject(parameters, parameterName);
+        if (json != null) {
+            String configuration = json.optString("configuration", DEFAULT_PICKER_CONFIGURATION);
+            boolean remembersLastVisited = json.optBoolean("remembersLastVisited", DEFAULT_PICKER_REMEMBERS_LAST_VISITED);
+            String initialPath = json.optString("initialPath", DEFAULT_PICKER_INITIAL_PATH);
+            if (remembersLastVisited && StringUtils.isEmpty(initialPath) && StringUtils.isNotEmpty(current)) {
+                initialPath = current;
+            }
+
+            String[] selectableNodeTypes = StringUtils.split(json.optString("selectableNodeTypes"), ", ");
+            if (selectableNodeTypes == null || selectableNodeTypes.length == 0) {
+                selectableNodeTypes = DEFAULT_PICKER_SELECTABLE_NODE_TYPES;
+            }
+
+            return JcrPathWidget.createPickerConfig(configuration, remembersLastVisited, selectableNodeTypes, initialPath);
+        }
+
+        return JcrPathWidget.createPickerConfig(
+                DEFAULT_PICKER_CONFIGURATION,
+                DEFAULT_PICKER_REMEMBERS_LAST_VISITED,
+                DEFAULT_PICKER_SELECTABLE_NODE_TYPES,
+                DEFAULT_PICKER_INITIAL_PATH);
     }
 
     @Override
-    public void setObject(final String pickedPath) {
-        this.pickedPath = pickedPath;
-
-        if (this.activeComponentId == null) {
-            log.warn("Picked '{}' but got not div id to invoke a callback on", this.pickedPath);
-            return;
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        if (EVENT_PICK.equals(event)) {
+            return new ExtEventAjaxBehavior(EVENT_PICK_PARAM_CURRENT, EVENT_PICK_PARAM_PICKER_CONFIG);
         }
-
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target == null) {
-            log.warn("Cannot invoke callback on div id '{}' for picked path '{}': no ajax request target available",
-                    this.activeComponentId, this.pickedPath);
-            return;
-        }
-
-        target.prependJavascript("Ext.getCmp('" + this.activeComponentId + "').fireEvent('picked', '" + this.pickedPath + "')");
-        this.activeComponentId = null;
-    }
-
-    public void pickFolder(AjaxRequestTarget target, String componentId, IPluginConfig pickerConfig) {
-        this.activeComponentId = componentId;
-
-        final IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, new UuidFromPathModel(this));
-        final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-
-        final DialogAction action = new DialogAction(dialogFactory, dialogService);
-        action.execute();
-
-        target.addComponent(container);
+        return super.newExtEventBehavior(event);
     }
 
     private static IDialogFactory createDialogFactory(final IPluginContext context, final IPluginConfig config, final IModel<String> model) {
