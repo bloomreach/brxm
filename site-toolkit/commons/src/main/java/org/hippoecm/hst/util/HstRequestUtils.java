@@ -227,6 +227,11 @@ public class HstRequestUtils {
     }
 
     private static String getRenderingHostName(final HttpServletRequest request) {
+        String ignoreRenderingHost = request.getParameter(ContainerConstants.IGNORE_RENDERING_HOST);
+        if (Boolean.parseBoolean(ignoreRenderingHost) == Boolean.TRUE) {
+            return null;
+        }
+
         String requestParam = request.getParameter(ContainerConstants.RENDERING_HOST);
         if (requestParam != null) {
             return requestParam;
