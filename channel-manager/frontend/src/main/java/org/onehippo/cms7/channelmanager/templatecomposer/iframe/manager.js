@@ -49,11 +49,25 @@
 
         _createSurfAndEditLink : function(element) {
             var link = Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.createLink(element);
+            var uuid = $(link).attr(HST.ATTR.ID);
 
-            $(link).click(function() {
-                sendMessage({uuid: $(this).attr(HST.ATTR.ID)}, "edit-document");
-                return false;
-            });
+            /**
+             * use plain old javascript event listener to prevent other jQuery instances hijacking the event.
+             */
+            if (link.addEventListener) {
+                link.addEventListener('click', function(event) {
+                    sendMessage({uuid: uuid}, "edit-document");
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return false;
+                });
+            } else if (link.attachEvent) {
+                link.attachEvent('onclick', function(event) {
+                    sendMessage({uuid: uuid}, "edit-document");
+                    event.cancelBubble = true;
+                    return false;
+                });
+            }
         },
 
         createContainers : function() {
