@@ -348,9 +348,9 @@ public class VirtualHostService implements VirtualHost {
         if (scheme == null) {
             scheme = "http";
         }
-        
-        String serverName = HstRequestUtils.getFarthestRequestHost(request);
-        
+
+        String serverName = HstRequestUtils.getFarthestRequestHost(request, false);
+
         builder.append(scheme);
         builder.append("://").append(serverName);
        
