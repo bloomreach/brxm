@@ -183,7 +183,7 @@ public class HstRequestUtils {
      */
     public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
         String host = null;
-        if(checkRenderHost) {
+        if (checkRenderHost) {
             host = getRenderingHost(request);
         }
         if (host == null) {
@@ -211,6 +211,22 @@ public class HstRequestUtils {
      * @return the rendering host for the current request
      */
     public static String getRenderingHost(final HttpServletRequest request) {
+        String hostName = getRenderingHostName(request);
+        if (hostName == null) {
+            return null;
+        }
+
+        if (!containsPort(hostName)) {
+            int serverPort = request.getServerPort();
+            if (serverPort != 80 && serverPort != 443) {
+                hostName += ":" + serverPort;
+            }
+        }
+
+        return hostName;
+    }
+
+    private static String getRenderingHostName(final HttpServletRequest request) {
         String requestParam = request.getParameter(ContainerConstants.RENDERING_HOST);
         if (requestParam != null) {
             return requestParam;
@@ -221,6 +237,13 @@ public class HstRequestUtils {
             return (String)session.getAttribute(ContainerConstants.RENDERING_HOST);
         }
         return null;
+    }
+
+    private static boolean containsPort(String host) {
+        if (host == null) {
+            return false;
+        }
+        return host.matches(".+:\\d+$");
     }
 
     /**
