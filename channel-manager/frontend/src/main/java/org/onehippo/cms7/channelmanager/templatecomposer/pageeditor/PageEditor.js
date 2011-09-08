@@ -66,7 +66,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     //Keeps the session alive every minute
     keepAlive : function() {
         Ext.Ajax.request({
-            url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive',
+            url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive?'+this.ignoreRenderHostParameterName+'=true',
             success: function () {
                 // Do nothing
             }
@@ -474,17 +474,17 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             // go ahead with the actual host which we want to edit (for which we need to be authenticated)
             var composerMode = function(callback) {
                 Ext.Ajax.request({
-                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/',
+                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/?'+me.ignoreRenderHostParameterName+'=true',
                     success: callback,
                     failure: function(exceptionObject) {
                         if (exceptionObject.isTimeout) {
                             retry = retry - Ext.Ajax.timeout;
                         }
                         if (retry > 0) {
-                            retry = retry - 5000;
+                            retry = retry - Ext.Ajax.timeout;
                             window.setTimeout(function() {
                                 composerMode(callback);
-                            }, 5000);
+                            }, Ext.Ajax.timeout);
                         } else {
                             Hippo.Msg.hide();
                             Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
@@ -566,7 +566,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var self = this;
         Ext.Ajax.request({
             method: 'POST',
-            url: this.composerRestMountUrl + this.ids.mountId + './publish',
+            url: this.composerRestMountUrl + this.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
             success: function () {
                 Ext.getCmp('pagePreviewButton').toggle(true);
                 self.on.apply(self, ['afterIFrameDOMReady', function() {
@@ -624,7 +624,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         var self = this;
                         Ext.Ajax.request({
                             method: 'POST',
-                            url: this.composerRestMountUrl + mountId + './edit',
+                            url: this.composerRestMountUrl + mountId + './edit?'+this.ignoreRenderHostParameterName+'=true',
                             success: function () {
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
@@ -827,7 +827,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     createToolkitStore : function(mountId) {
         return new Hippo.ChannelManager.TemplateComposer.ToolkitStore({
             mountId : mountId,
-            composerRestMountUrl : this.composerRestMountUrl
+            composerRestMountUrl : this.composerRestMountUrl,
+            ignoreRenderHostParameterName: this.ignoreRenderHostParameterName
         });
     },
 
@@ -837,6 +838,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             mountId: mountId,
             pageId: pageId,
             composerRestMountUrl: this.composerRestMountUrl,
+            ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
             resources: this.resources,
             listeners: {
                 write : {
@@ -990,6 +992,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     resources: this.resources,
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
+                    ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
                     mountId: mountId
                 }
             ]
@@ -1223,10 +1226,9 @@ Hippo.ChannelManager.TemplateComposer.RestStore = Ext.extend(Ext.data.Store, {
 Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
-
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : config.composerRestMountUrl + config.mountId + './toolkit'
+                read     : config.composerRestMountUrl + config.mountId + './toolkit?'+config.ignoreRenderHostParameterName+'=true'
                 ,create  : '#'
                 ,update  : '#'
                 ,destroy : '#'
@@ -1250,10 +1252,11 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
     constructor : function(config) {
 
         var composerRestMountUrl = config.composerRestMountUrl;
+        var ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read     : composerRestMountUrl + config.mountId + './pagemodel/'+config.pageId+"/"
+                read     : composerRestMountUrl + config.mountId + './pagemodel/'+config.pageId+"/?"+ignoreRenderHostParameterName+'=true'
                 ,create  : '#' // see beforewrite
                 ,update  : '#'
                 ,destroy : '#'
@@ -1271,15 +1274,15 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                         if (action == 'create') {
                             var prototypeId = rs.get('id');
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './create/' + prototypeId, method: 'POST'});
+                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './create/' + prototypeId + '?' + ignoreRenderHostParameterName + '=true', method: 'POST'});
                         } else if (action == 'update') {
                             //Ext appends the item ID automatically
                             var id = rs.get('id');
-                            proxy.setApi(action, {url: composerRestMountUrl + id + './update', method: 'POST'});
+                            proxy.setApi(action, {url: composerRestMountUrl + id + './update' + '?' + ignoreRenderHostParameterName + '=true', method: 'POST'});
                         } else if (action == 'destroy') {
                             //Ext appends the item ID automatically
                             var parentId = rs.get('parentId');
-                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete', method: 'GET'});
+                            proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete' + '?' + ignoreRenderHostParameterName + '=true', method: 'GET'});
                         }
                     }
                 },
