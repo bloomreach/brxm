@@ -765,7 +765,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     oldMountId : self.ids.oldMountId,
                     siteId : responseObject.getResponseHeader('HST-Site-Id'),
                     oldSiteId : self.ids.oldSiteId,
-                    isPreviewHstConfig : self.getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig')),
+                    isPreviewHstConfig : self.getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'))
                 };
 
                 self.fireEvent.apply(self, ['beforeHstMetaDataResponse', data]);

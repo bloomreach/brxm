@@ -41,6 +41,7 @@
                 $(element).text(this.resources['edit-document']);
 
                 element.setAttribute(HST.ATTR.ID, id);
+                element.setAttribute("href", "");
 
                 return element;
             },
