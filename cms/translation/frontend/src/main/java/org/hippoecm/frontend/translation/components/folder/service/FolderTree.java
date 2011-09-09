@@ -18,7 +18,6 @@ package org.hippoecm.frontend.translation.components.folder.service;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -80,7 +79,7 @@ public final class FolderTree extends ExtTreeLoader {
 
                     if (parentLang == null) {
                         HippoLocale locale = provider.getLocale(nodeLanguage);
-                        if (locale != null) {
+                        if (!"".equals(locale.getLocale().getCountry())) {
                             folderNode.setIconCls("hippo-translation-country-" + locale.getLocale().getCountry().toLowerCase());
                         }
                     }

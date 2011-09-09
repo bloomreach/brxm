@@ -109,9 +109,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                         while (translationNodes.hasNext()) {
                             Node translation = translationNodes.nextNode();
                             HippoLocale locale = provider.getLocale(translation.getName());
-                            if (locale != null) {
-                                locales.put(locale.getName(), locale);
-                            }
+                            locales.put(locale.getName(), locale);
                         }
                     } catch (RepositoryException ex) {
                         log.error("Error retrieving translations of document " + model.getItemModel().getPath());

@@ -33,7 +33,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
 import org.slf4j.Logger;
@@ -52,6 +51,38 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
+
+    static final HippoLocale UNKNOWN_LOCALE = new HippoLocale(Locale.ROOT, "unknown") {
+
+        @Override
+        public ResourceReference getIcon(final IconSize size, final LocaleState state) {
+            final String country = "_unknown";
+            String resourceName;
+            switch (state) {
+                case AVAILABLE:
+                    resourceName = "plus/flag-plus-" + size.getSize() + country + ".png";
+                    break;
+                case DOCUMENT:
+                    resourceName = "document/flag-document-" + size.getSize() + country + ".png";
+                    break;
+                case FOLDER:
+                    resourceName = "folder_closed/folder-closed-" + size.getSize() + country + ".png";
+                    break;
+                case FOLDER_OPEN:
+                    resourceName = "folder_open/folder-open-" + size.getSize() + country + ".png";
+                    break;
+                default:
+                    resourceName = "flags/flag-" + size.getSize() + country + ".png";
+                    break;
+            }
+            return new ResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, getLocale(), getName());
+        }
+
+        @Override
+        public String getDisplayName(final Locale locale) {
+            return getLocale().getDisplayLanguage(locale);
+        }
+    };
 
     private transient Map<String, HippoLocale> locales;
 
@@ -94,7 +125,12 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         if (locales == null) {
             locales = loadLocales();
         }
-        return locales.get(name);
+        if (locales.containsKey(name)) {
+            return locales.get(name);
+        } else {
+            log.warn("Unknown locale {}", name);
+            return UNKNOWN_LOCALE;
+        }
     }
 
     public void detach() {

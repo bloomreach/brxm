@@ -561,15 +561,9 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             public Component getLabel() {
                 Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
                 HippoLocale locale = localeProvider.getLocale(languageModel.getObject());
-                if (locale != null) {
-                    ResourceReference resourceRef = locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
-                    fragment.add(new Image("img", resourceRef));
-                    fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
-                } else {
-                    setVisible(false);
-                    fragment.add(new Image("img", new ResourceReference(getClass(), "translate-16.png")));
-                    fragment.add(new Label("current-language"));
-                }
+                ResourceReference resourceRef = locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+                fragment.add(new Image("img", resourceRef));
+                fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
                 return fragment;
             }
 

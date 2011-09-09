@@ -113,14 +113,11 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
 
     private ResourceReference getIcon(TreeNode treeNode, ITreeState state, String locale) {
         HippoLocale hippoLocale = locales.getLocale(locale);
-        if (hippoLocale != null) {
-            if (state.isNodeExpanded(treeNode)) {
-                return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN);
-            } else {
-                return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER);
-            }
+        if (state.isNodeExpanded(treeNode)) {
+            return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER_OPEN);
+        } else {
+            return hippoLocale.getIcon(IconSize.TINY, LocaleState.FOLDER);
         }
-        return null;
     }
 
 }
