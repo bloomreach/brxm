@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -99,7 +101,16 @@ public abstract class HstSurfAndEditTagSupport extends TagSupport {
 
         String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, hstRequest);
         String surfAndEditLink = "";
-        String cmsBaseUrl = hstRequestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+
+        ContextualizableMount mount = (ContextualizableMount) hstRequest.getRequestContext().getResolvedMount().getMount();
+        String cmsBaseUrl;
+        if (StringUtils.isEmpty(mount.getCmsLocation())) {
+            log.warn("Using deprecated hst-config.property 'cms.location' . Configure the 'hst:cmslocation' property on virtualhosts, virtualhost or mount level");
+            cmsBaseUrl = hstRequestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+        } else {
+            cmsBaseUrl = mount.getCmsLocation();
+        }
+
         if (cmsBaseUrl != null && !"".equals(cmsBaseUrl)) {
             if (cmsBaseUrl.endsWith("/")) {
                 cmsBaseUrl = cmsBaseUrl.substring(0, cmsBaseUrl.length() - 1);
