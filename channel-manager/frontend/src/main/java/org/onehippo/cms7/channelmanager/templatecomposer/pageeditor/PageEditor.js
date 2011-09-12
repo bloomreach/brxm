@@ -41,7 +41,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             config.renderHostSubMountPath = config.renderHostSubMountPath.substr(1);
         }
 
-        this.hstInComposerMode = false;
         this.isPreviewHstConfig = false;
         this.composerInitialized = false;
 
@@ -468,56 +467,49 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.initIFrameListeners();
 
         var retry = this.initialHstConnectionTimeout;
-        if (!this.hstInComposerMode) {
-            var me = this;
-            // do initial handshake with CmsSecurityValve of the composer mount and
-            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-            var composerMode = function(callback) {
-                Ext.Ajax.request({
-                    url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/?'+me.ignoreRenderHostParameterName+'=true',
-                    success: callback,
-                    failure: function(exceptionObject) {
-                        if (exceptionObject.isTimeout) {
-                            retry = retry - Ext.Ajax.timeout;
-                        }
-                        if (retry > 0) {
-                            retry = retry - Ext.Ajax.timeout;
-                            window.setTimeout(function() {
-                                composerMode(callback);
-                            }, Ext.Ajax.timeout);
-                        } else {
-                            Hippo.Msg.hide();
-                            Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
-                                if (id === 'yes') {
-                                    retry = me.initialHstConnectionTimeout;
-                                    Hippo.Msg.wait(me.resources['loading-message']);
-                                    composerMode(callback);
-                                } else {
-                                    me.fireEvent.apply(me, ['iFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
-                                }
-                            });
-                        }
+        var me = this;
+        // do initial handshake with CmsSecurityValve of the composer mount and
+        // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+        var composerMode = function(callback) {
+            Ext.Ajax.request({
+                url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/?'+me.ignoreRenderHostParameterName+'=true',
+                success: callback,
+                failure: function(exceptionObject) {
+                    if (exceptionObject.isTimeout) {
+                        retry = retry - Ext.Ajax.timeout;
                     }
-                });
-            };
-            composerMode(function() {
-                me.hstInComposerMode = true;
-                var iFrame = Ext.getCmp('Iframe');
-                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-                iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath);
-
-                // keep session active
-                Ext.TaskMgr.start({
-                    run: me.keepAlive,
-                    interval: 60000,
-                    scope: me
-                });
+                    if (retry > 0) {
+                        retry = retry - Ext.Ajax.timeout;
+                        window.setTimeout(function() {
+                            composerMode(callback);
+                        }, Ext.Ajax.timeout);
+                    } else {
+                        Hippo.Msg.hide();
+                        Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
+                            if (id === 'yes') {
+                                retry = me.initialHstConnectionTimeout;
+                                Hippo.Msg.wait(me.resources['loading-message']);
+                                composerMode(callback);
+                            } else {
+                                me.fireEvent.apply(me, ['iFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
+                            }
+                        });
+                    }
+                }
             });
-        } else {
+        };
+        composerMode(function() {
             var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-            iFrame.setSrc(this.composerMountUrl + this.renderHostSubMountPath + "?" + this.renderHostParameterName + "=" + this.renderHost);
-        }
+            iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath);
+
+            // keep session active
+            Ext.TaskMgr.start({
+                run: me.keepAlive,
+                interval: 60000,
+                scope: me
+            });
+        });
     },
 
     initIFrameListeners : function() {
