@@ -133,7 +133,37 @@ public class StringCodecFactory {
                         case 0xBC:                         break;
                         case 0xBD:                         break;
                         case 0xBE:                         break;
+
+                        case 0xC0: sb.append('a');         break; // 192 À
+                        case 0xC1: sb.append('a');         break; // 193 Á
+                        case 0xC2: sb.append('a');         break; // 194 Â
+                        case 0xC3: sb.append('a');         break; // 195 Ã
+                        case 0xC4: sb.append('a');         break; // 196 Ä
+                        case 0xC5: sb.append('a');         break; // 197 Å
+
+                        case 0xC6: sb.append("ae");        break; // 198 Æ
+                        case 0xC7: sb.append('c');         break; // 199 Ç
+
+                        case 0xC8: sb.append('e');         break; // 200 È
+                        case 0xC9: sb.append('e');         break; // 201 É
+                        case 0xCA: sb.append('e');         break; // 202 Ê
+                        case 0xCB: sb.append('e');         break; // 203 Ë
+
+                        case 0xCC: sb.append('i');         break; // 204 Ì
+                        case 0xCD: sb.append('i');         break; // 205 Í
+                        case 0xCE: sb.append('i');         break; // 206 Î
+                        case 0xCF: sb.append('i');         break; // 207 Ï
+
                         case 0xD0: sb.append("d");         break;
+
+                        case 0xD1: sb.append("n");         break; // 209 Ñ
+                        case 0xD2: sb.append("o");         break; // 210 Ò
+                        case 0xD3: sb.append("o");         break; // 211 Ó
+                        case 0xD4: sb.append("o");         break; // 212 Ô
+                        case 0xD5: sb.append("o");         break; // 213 Õ
+                        case 0xD6: sb.append("o");         break; // 214 Ö
+                        case 0xD7: sb.append("x");         break; // 215 ×
+
                         case 0xD8: sb.append("o");         break;
                         case 0xD9: sb.append("u");         break;
                         case 0xDA: sb.append("u");         break;
