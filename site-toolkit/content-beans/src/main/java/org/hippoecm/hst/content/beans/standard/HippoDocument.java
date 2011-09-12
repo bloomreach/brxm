@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,10 +31,10 @@ import org.slf4j.LoggerFactory;
 public class HippoDocument extends HippoItem implements HippoDocumentBean{
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
+
+    private BeansWrapper<HippoHtml> htmls;
+    private BeansWrapper<HippoCompoundBean> compounds;
     
-    private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
-    
-    private String canonicalHandleUUID;
     private javax.jcr.Node canonicalHandleNode;
 
     private boolean availableTranslationsBeanMappingClassInitialized;
@@ -47,30 +45,29 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        BeanWrapper<HippoHtml> wrapped = htmls.get(relPath);
-        if(wrapped != null) {
-            return wrapped.getBean();
-        } else {
-            Object o = getBean(relPath);
-            if(o == null) {
-                if(log.isDebugEnabled()) {
-                    log.debug("No bean found for relPath '{}' at '{}'", relPath, this.getPath());
-                }
-                wrapped = new BeanWrapper<HippoHtml>(null);
-                htmls.put(relPath, wrapped);
-                return null;
-            } else if(o instanceof HippoHtml) { 
-                wrapped = new BeanWrapper<HippoHtml>((HippoHtml)o);
-                htmls.put(relPath, wrapped);
-                return wrapped.getBean();
-            } else {
-                log.warn("Cannot get HippoHtml bean for relPath '{}' at '{}' because returned bean is not of type HippoHtml but is '"+o.getClass().getName()+"'", relPath, this.getPath());
-                // even when null, put it in the map to avoid being refetched
-                wrapped = new BeanWrapper<HippoHtml>(null);
-                htmls.put(relPath, wrapped);
-                return null;
-            }
+        if(htmls == null) {
+            htmls = new BeansWrapper<HippoHtml>(this);
         }
+        return htmls.getBean(relPath, HippoHtml.class);
+    }
+    
+    /**
+     * @param <T>
+     * @param relPath
+     * @param beanMappingClass
+     * @return the {@link HippoCompoundBean} at <code>relPath</code> if there is a compound of type <code>beanMappingClass</code> and <code>null</code> otherwise
+     */
+    public <T extends HippoCompoundBean> T getHippoCompound(String relPath, Class<T> beanMappingClass) {
+        if(compounds == null) {
+            compounds = new BeansWrapper<HippoCompoundBean>(this);
+        }
+        HippoBean compound = compounds.getBean(relPath, HippoCompoundBean.class);
+        if(beanMappingClass.isAssignableFrom(compound.getClass())) {
+            return (T)compound;
+        } else {
+            log.debug("Cannot return compound of type '"+beanMappingClass.getName()+"' for relPath '{}' at '{}' because the compound is of type '"+compound.getClass().getName()+"'", relPath, this.getPath());
+        }
+        return null;
     }
 
     @Override
@@ -153,17 +150,14 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     @Override
     public void detach(){
         super.detach();
-        for(BeanWrapper<HippoHtml> wrapper : this.htmls.values()) {
-            if(wrapper.getBean() != null) {
-                wrapper.getBean().detach();
-            }
-        }
+        htmls.detach();
     }
     
     @Override
     public void attach(Session session){
         super.attach(session);
-        this.htmls.clear();
+        // htmls need to be refetched
+        htmls = null;
     }
 
     

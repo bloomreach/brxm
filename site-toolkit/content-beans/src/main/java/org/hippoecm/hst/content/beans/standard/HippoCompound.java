@@ -15,52 +15,29 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.BeanWrapper;
-import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-
-@Node(jcrType="hippo:compound")
-public class HippoCompound extends HippoItem {
-    @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(HippoCompound.class);
-
-    private Map<String, BeanWrapper<HippoHtml>> htmls = new HashMap<String, BeanWrapper<HippoHtml>>();
-
+/**
+ *  <p>
+ *  The abstract base bean that can (not should) be used for all HippoCompound types. 
+ *  </p>
+ *  <p>
+ *  By default there is a getHippoHtml method added. This one can be used for compounds that have an html field. If you have 
+ *  a compound that does not contain a html field, you can choose to not extend this abstract class but extend from HippoItem but
+ *  make sure you implement the marker {@link HippoCompoundBean} interface
+ *  </p>
+ */
+public abstract class HippoCompound extends HippoItem implements HippoCompoundBean {
+    
+    private BeansWrapper<HippoHtml> htmls;
+   
     /**
      * @param relPath
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        BeanWrapper<HippoHtml> wrapped = htmls.get(relPath);
-        if(wrapped != null) {
-            return wrapped.getBean();
-        } else {
-            Object o = getBean(relPath);
-            if(o == null) {
-                if(log.isDebugEnabled()) {
-                    log.debug("No bean found for relPath '{}' at '{}'", relPath, this.getPath());
-                }
-                wrapped = new BeanWrapper<HippoHtml>(null);
-                htmls.put(relPath, wrapped);
-                return null;
-            } else if(o instanceof HippoHtml) {
-                wrapped = new BeanWrapper<HippoHtml>((HippoHtml)o);
-                htmls.put(relPath, wrapped);
-                return wrapped.getBean();
-            } else {
-                log.warn("Cannot get HippoHtml bean for relPath '{}' at '{}' because returned bean is not of type HippoHtml but is '"+o.getClass().getName()+"'", relPath, this.getPath());
-                // even when null, put it in the map to avoid being refetched
-                wrapped = new BeanWrapper<HippoHtml>(null);
-                htmls.put(relPath, wrapped);
-                return null;
-            }
+        if(htmls == null) {
+            htmls = new BeansWrapper<HippoHtml>(this);
         }
+        return htmls.getBean(relPath, HippoHtml.class);
     }
 
 }
