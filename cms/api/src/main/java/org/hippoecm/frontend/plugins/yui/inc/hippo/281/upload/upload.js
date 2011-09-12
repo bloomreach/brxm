@@ -4,7 +4,7 @@
  * Provides a singleton upload helper
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, hippoajax, uploader, progressbar, datatable, button, ajaxindicator, hashmap
+ * @requires yahoo, dom, hippoajax, uploader, progressbar, datatable, datasource, button, ajaxindicator, hashmap
  * @module upload
  * @beta
  */
@@ -123,19 +123,19 @@ if (!YAHOO.hippo.Upload) {
 
             initializeUploader : function() {
                 this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);
-                this.uploader.addListener('contentReady', this.handleContentReady, this, true);
-                this.uploader.addListener('fileSelect', this.onFileSelect, this, true);
-                this.uploader.addListener('uploadStart', this.onUploadStart, this, true);
-                this.uploader.addListener('uploadProgress', this.onUploadProgress, this, true);
-                this.uploader.addListener('uploadCancel', this.onUploadCancel, this, true);
-                this.uploader.addListener('uploadComplete', this.onUploadComplete, this, true);
-                this.uploader.addListener('uploadCompleteData', this.onUploadResponse, this, true);
-                this.uploader.addListener('uploadError', this.onUploadError, this, true);
-                this.uploader.addListener('rollOver', this.handleRollOver, this, true);
-                this.uploader.addListener('rollOut', this.handleRollOut, this, true);
-                this.uploader.addListener('click', this.handleClick, this, true);
-                this.uploader.addListener('mouseDown', this.handleMouseDown, this, true);
-                this.uploader.addListener('mouseUp', this.handleMouseUp, this, true);
+                this.uploader.subscribe('contentReady', this.handleContentReady, this, true);
+                this.uploader.subscribe('fileSelect', this.onFileSelect, this, true);
+                this.uploader.subscribe('uploadStart', this.onUploadStart, this, true);
+                this.uploader.subscribe('uploadProgress', this.onUploadProgress, this, true);
+                this.uploader.subscribe('uploadCancel', this.onUploadCancel, this, true);
+                this.uploader.subscribe('uploadComplete', this.onUploadComplete, this, true);
+                this.uploader.subscribe('uploadCompleteData', this.onUploadResponse, this, true);
+                this.uploader.subscribe('uploadError', this.onUploadError, this, true);
+                this.uploader.subscribe('rollOver', this.handleRollOver, this, true);
+                this.uploader.subscribe('rollOut', this.handleRollOut, this, true);
+                this.uploader.subscribe('click', this.handleClick, this, true);
+                this.uploader.subscribe('mouseDown', this.handleMouseDown, this, true);
+                this.uploader.subscribe('mouseUp', this.handleMouseUp, this, true);
             },
 
             upload : function() {
@@ -297,10 +297,10 @@ if (!YAHOO.hippo.Upload) {
 
                     this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
                 } else if (this.initializationAttempts++ < 20) {
-                    var that = this;
+                    var self = this;
                     window.setTimeout(function() {
-                        that.uploader.destroy();
-                        that.initializeUploader();
+                        self.uploader.destroy();
+                        self.initializeUploader.call(self);
                     }, 100);
                 }
             },
@@ -360,8 +360,8 @@ if (!YAHOO.hippo.Upload) {
                     {key:"id", label: "", sortable:false, width: 20, formatter: "removeFormatter"}
                 ];
 
-                var myDataSource = new YAHOO.util.DataSource(this.dataArr);
-                myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+                var myDataSource = new YAHOO.util.LocalDataSource(this.dataArr);
+                myDataSource.responseType = YAHOO.util.LocalDataSource.TYPE_JSARRAY;
                 myDataSource.responseSchema = {
                   fields: ["id",{key:"name", parser:"string"},"created","modified","type", {key:"size", parser:"number"}, "progress"]
                 };
