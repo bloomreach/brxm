@@ -374,7 +374,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     @Override
-    protected void addStringValue(Document doc, String fieldName, Object internalValue, boolean tokenized,
+    protected void addStringValue(Document doc, String fieldName, String internalValue, boolean tokenized,
             boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
         if (!addedAllExcludeFieldNames) {
             // init only when not all excluded nodenames have been resolved before

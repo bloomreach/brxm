@@ -1,7 +1,7 @@
 #
 # The following patches are to be applied against
-# Jackrabbit version 2.2.5 available at
-# <URL:http://svn.apache.org/repos/asf/jackrabbit/tags/2.2.5/>
+# Jackrabbit version 2.2.8 available at
+# <URL:http://svn.apache.org/repos/asf/jackrabbit/tags/2.2.8/>
 # The patchfile below is divided into sections per
 # functionality/fix/workaround added.  Each section contains a header
 # with Jira issue key with as task to be able to get rid of these patches.
@@ -16,7 +16,7 @@
 # The following patches are intended to set a hippo-specific
 # suffix to the version numbers of the produced artifacts.
 # There are two changes with this patch, first the version
-# number is changed from 2.2.5 to 2.2.5-h5 and secondly the
+# number is changed from 2.2.8 to 2.2.8-h1 and secondly the
 # maven repository to upload these artifacts to is set to the
 # Hippo nexus server.
 #
@@ -29,7 +29,7 @@ Index: jackrabbit-jcr-commons/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-commons</artifactId>
@@ -37,7 +37,7 @@ Index: jackrabbit-jcr-commons/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-commons</artifactId>
@@ -50,7 +50,7 @@ Index: jackrabbit-core/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-core</artifactId>
@@ -58,7 +58,7 @@ Index: jackrabbit-core/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-core</artifactId>
@@ -67,28 +67,28 @@ Index: jackrabbit-core/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier />
       </dependency>
         <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
@@ -96,28 +96,28 @@ Index: jackrabbit-core/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier />
       </dependency>
         <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
@@ -126,7 +126,7 @@ Index: jackrabbit-core/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <optional>true</optional>
       </dependency>
       <dependency>
@@ -134,7 +134,7 @@ Index: jackrabbit-core/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <optional>true</optional>
       </dependency>
       <dependency>
@@ -147,7 +147,7 @@ Index: jackrabbit-standalone/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-standalone</artifactId>
@@ -155,7 +155,7 @@ Index: jackrabbit-standalone/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-standalone</artifactId>
@@ -164,19 +164,19 @@ Index: jackrabbit-standalone/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webapp</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webapp</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2dav</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
@@ -184,19 +184,19 @@ Index: jackrabbit-standalone/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webapp</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webapp</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2dav</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.mortbay.jetty</groupId>
@@ -209,7 +209,7 @@ Index: jackrabbit-parent/pom.xml
   
     <artifactId>jackrabbit-parent</artifactId>
     <name>Jackrabbit Parent POM</name>
-!   <version>2.2.5</version>
+!   <version>2.2.8</version>
     <packaging>pom</packaging>
     <issueManagement>
       <system>Jira</system>
@@ -217,7 +217,7 @@ Index: jackrabbit-parent/pom.xml
   
     <artifactId>jackrabbit-parent</artifactId>
     <name>Jackrabbit Parent POM</name>
-!   <version>2.2.5-h5</version>
+!   <version>2.2.8-h1</version>
     <packaging>pom</packaging>
     <issueManagement>
       <system>Jira</system>
@@ -267,7 +267,7 @@ Index: jackrabbit-jcr-client/pom.xml
       <parent>
           <groupId>org.apache.jackrabbit</groupId>
           <artifactId>jackrabbit-parent</artifactId>
-!         <version>2.2.5</version>
+!         <version>2.2.8</version>
           <relativePath>../jackrabbit-parent/pom.xml</relativePath>
       </parent>
       <artifactId>jackrabbit-jcr-client</artifactId>
@@ -275,7 +275,7 @@ Index: jackrabbit-jcr-client/pom.xml
       <parent>
           <groupId>org.apache.jackrabbit</groupId>
           <artifactId>jackrabbit-parent</artifactId>
-!         <version>2.2.5-h5</version>
+!         <version>2.2.8-h1</version>
           <relativePath>../jackrabbit-parent/pom.xml</relativePath>
       </parent>
       <artifactId>jackrabbit-jcr-client</artifactId>
@@ -284,37 +284,37 @@ Index: jackrabbit-jcr-client/pom.xml
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-jcr2spi</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi2dav</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi2jcr</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-core</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi-commons</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi</artifactId>
-!             <version>2.2.5</version>
+!             <version>2.2.8</version>
               <scope>test</scope>
           </dependency>
           <dependency>
@@ -322,37 +322,37 @@ Index: jackrabbit-jcr-client/pom.xml
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-jcr2spi</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi2dav</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi2jcr</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-core</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi-commons</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
               <groupId>org.apache.jackrabbit</groupId>
               <artifactId>jackrabbit-spi</artifactId>
-!             <version>2.2.5-h5</version>
+!             <version>2.2.8-h1</version>
               <scope>test</scope>
           </dependency>
           <dependency>
@@ -365,7 +365,7 @@ Index: jackrabbit-jcr2dav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr2dav</artifactId>
@@ -373,7 +373,7 @@ Index: jackrabbit-jcr2dav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr2dav</artifactId>
@@ -382,37 +382,37 @@ Index: jackrabbit-jcr2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi2dav</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
   
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.jackrabbit</groupId>
          <artifactId>jackrabbit-jcr2spi</artifactId>
-!        <version>2.2.5</version>
+!        <version>2.2.8</version>
          <classifier>tests</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-server</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -420,37 +420,37 @@ Index: jackrabbit-jcr2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi2dav</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
   
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.jackrabbit</groupId>
          <artifactId>jackrabbit-jcr2spi</artifactId>
-!        <version>2.2.5-h5</version>
+!        <version>2.2.8-h1</version>
          <classifier>tests</classifier>
          <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-server</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -463,7 +463,7 @@ Index: jackrabbit-spi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi</artifactId>
@@ -471,7 +471,7 @@ Index: jackrabbit-spi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi</artifactId>
@@ -484,7 +484,7 @@ Index: jackrabbit-jca/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jca</artifactId>
@@ -492,7 +492,7 @@ Index: jackrabbit-jca/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jca</artifactId>
@@ -501,7 +501,7 @@ Index: jackrabbit-jca/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -509,7 +509,7 @@ Index: jackrabbit-jca/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -522,7 +522,7 @@ Index: jackrabbit-jcr-servlet/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -530,7 +530,7 @@ Index: jackrabbit-jcr-servlet/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -539,18 +539,18 @@ Index: jackrabbit-jcr-servlet/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <optional>true</optional>
       </dependency>
     </dependencies>
@@ -558,18 +558,18 @@ Index: jackrabbit-jcr-servlet/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <optional>true</optional>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <optional>true</optional>
       </dependency>
     </dependencies>
@@ -582,7 +582,7 @@ Index: pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -590,7 +590,7 @@ Index: pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -603,7 +603,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -611,7 +611,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
   
@@ -620,7 +620,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!         <version>2.2.5</version>
+!         <version>2.2.8</version>
         <scope>provided</scope>
       </dependency>
       
@@ -628,7 +628,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!         <version>2.2.5-h5</version>
+!         <version>2.2.8-h1</version>
         <scope>provided</scope>
       </dependency>
       
@@ -637,7 +637,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!         <version>2.2.5</version>
+!         <version>2.2.8</version>
         <scope>provided</scope>
       </dependency>
   
@@ -645,7 +645,7 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!         <version>2.2.5-h5</version>
+!         <version>2.2.8-h1</version>
         <scope>provided</scope>
       </dependency>
   
@@ -654,13 +654,13 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -668,13 +668,13 @@ Index: jackrabbit-jcr-rmi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -687,7 +687,7 @@ Index: jackrabbit-spi-commons/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi-commons</artifactId>
@@ -695,7 +695,7 @@ Index: jackrabbit-spi-commons/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi-commons</artifactId>
@@ -704,12 +704,12 @@ Index: jackrabbit-spi-commons/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>
@@ -717,12 +717,12 @@ Index: jackrabbit-spi-commons/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>
@@ -735,7 +735,7 @@ Index: jackrabbit-webdav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-webdav</artifactId>
@@ -743,7 +743,7 @@ Index: jackrabbit-webdav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-webdav</artifactId>
@@ -752,7 +752,7 @@ Index: jackrabbit-webdav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -760,7 +760,7 @@ Index: jackrabbit-webdav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -773,7 +773,7 @@ Index: jackrabbit-spi2dav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi2dav</artifactId>
@@ -781,7 +781,7 @@ Index: jackrabbit-spi2dav/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi2dav</artifactId>
@@ -790,23 +790,23 @@ Index: jackrabbit-spi2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier />
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webdav</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -814,23 +814,23 @@ Index: jackrabbit-spi2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier />
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webdav</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -839,20 +839,20 @@ Index: jackrabbit-spi2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier />
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
@@ -860,20 +860,20 @@ Index: jackrabbit-spi2dav/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier />
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
@@ -882,7 +882,7 @@ Index: jackrabbit-spi2dav/pom.xml
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
         <classifier>tests</classifier>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -890,7 +890,7 @@ Index: jackrabbit-spi2dav/pom.xml
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
         <classifier>tests</classifier>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -903,7 +903,7 @@ Index: jackrabbit-api/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-api</artifactId>
@@ -911,7 +911,7 @@ Index: jackrabbit-api/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-api</artifactId>
@@ -924,7 +924,7 @@ Index: jackrabbit-jcr2spi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr2spi</artifactId>
@@ -932,7 +932,7 @@ Index: jackrabbit-jcr2spi/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr2spi</artifactId>
@@ -941,23 +941,23 @@ Index: jackrabbit-jcr2spi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <!-- tmp dependency to jackrabbit-api until jsr 283 is released -->
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <!-- end of tmp dependency -->
       <dependency>
@@ -965,23 +965,23 @@ Index: jackrabbit-jcr2spi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <!-- tmp dependency to jackrabbit-api until jsr 283 is released -->
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <!-- end of tmp dependency -->
       <dependency>
@@ -990,7 +990,7 @@ Index: jackrabbit-jcr2spi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -998,7 +998,7 @@ Index: jackrabbit-jcr2spi/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1011,7 +1011,7 @@ Index: jackrabbit-spi2jcr/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi2jcr</artifactId>
@@ -1019,7 +1019,7 @@ Index: jackrabbit-spi2jcr/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-spi2jcr</artifactId>
@@ -1028,25 +1028,25 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier />
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -1054,25 +1054,25 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier />
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -1081,7 +1081,7 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1089,7 +1089,7 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1098,20 +1098,20 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <classifier />
         <scope>test</scope>
       </dependency>
@@ -1119,20 +1119,20 @@ Index: jackrabbit-spi2jcr/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr2spi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <classifier />
         <scope>test</scope>
       </dependency>
@@ -1145,7 +1145,7 @@ Index: jackrabbit-jcr-tests/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-tests</artifactId>
@@ -1153,7 +1153,7 @@ Index: jackrabbit-jcr-tests/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-tests</artifactId>
@@ -1166,7 +1166,7 @@ Index: jackrabbit-webapp/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-webapp</artifactId>
@@ -1174,7 +1174,7 @@ Index: jackrabbit-webapp/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-webapp</artifactId>
@@ -1183,7 +1183,7 @@ Index: jackrabbit-webapp/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <exclusions>
           <exclusion>
             <groupId>log4j</groupId>
@@ -1191,7 +1191,7 @@ Index: jackrabbit-webapp/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <exclusions>
           <exclusion>
             <groupId>log4j</groupId>
@@ -1200,17 +1200,17 @@ Index: jackrabbit-webapp/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-server</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-servlet</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
@@ -1218,17 +1218,17 @@ Index: jackrabbit-webapp/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-server</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-servlet</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
@@ -1241,7 +1241,7 @@ Index: jackrabbit-jcr-server/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5</version>
+!     <version>2.2.8</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-server</artifactId>
@@ -1249,7 +1249,7 @@ Index: jackrabbit-jcr-server/pom.xml
     <parent>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-parent</artifactId>
-!     <version>2.2.5-h5</version>
+!     <version>2.2.8-h1</version>
       <relativePath>../jackrabbit-parent/pom.xml</relativePath>
     </parent>
     <artifactId>jackrabbit-jcr-server</artifactId>
@@ -1258,12 +1258,12 @@ Index: jackrabbit-jcr-server/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webdav</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tika</groupId>
@@ -1271,12 +1271,12 @@ Index: jackrabbit-jcr-server/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webdav</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tika</groupId>
@@ -1285,7 +1285,7 @@ Index: jackrabbit-jcr-server/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5</version>
+!       <version>2.2.8</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1293,7 +1293,7 @@ Index: jackrabbit-jcr-server/pom.xml
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-!       <version>2.2.5-h5</version>
+!       <version>2.2.8-h1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1355,58 +1355,6 @@ Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/security/authent
   
           try {
               if (!(module.login() && module.commit())) {
-#
-# REPO-187: Improved logging 
-# The following patches are intended to log or throw exceptions with a
-# little bit more detail information in cases they do occur, functionally
-# they are equivalent.
-#
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java	(revision 1094606)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/ItemSaveOperation.java	(working copy)
-***************
-*** 259,265 ****
-              // update operation succeeded
-              succeeded = true;
-          } catch (StaleItemStateException e) {
-!             throw new InvalidItemStateException(e.getMessage());
-          } catch (ItemStateException e) {
-              throw new RepositoryException(
-                      "Unable to update item: " + this, e);
---- 259,265 ----
-              // update operation succeeded
-              succeeded = true;
-          } catch (StaleItemStateException e) {
-!             throw new InvalidItemStateException(e.getMessage(), e);
-          } catch (ItemStateException e) {
-              throw new RepositoryException(
-                      "Unable to update item: " + this, e);
-Index: jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java
-===================================================================
-*** jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java	(revision 1094606)
---- jackrabbit-core/src/main/java/org/apache/jackrabbit/core/state/SharedItemStateManager.java	(working copy)
-***************
-*** 1054,1060 ****
-                          // same UUID, i.e. the node is still referenceable.
-                          if (refs.hasReferences() && !local.has(targetId)) {
-                              String msg = node.getNodeId()
-!                                     + ": the node cannot be removed because it is still being referenced.";
-                              log.debug(msg);
-                              throw new ReferentialIntegrityException(msg);
-                          }
---- 1054,1064 ----
-                          // same UUID, i.e. the node is still referenceable.
-                          if (refs.hasReferences() && !local.has(targetId)) {
-                              String msg = node.getNodeId()
-!                                     + ": the node cannot be removed because it is still being referenced from";
-!                             for(Iterator refsIter=refs.getReferences().iterator(); refsIter.hasNext(); ) {
-!                                 PropertyId propertyId = (PropertyId) refsIter.next();
-!                                 msg += " " + propertyId;
-!                             }
-                              log.debug(msg);
-                              throw new ReferentialIntegrityException(msg);
-                          }
 #
 # REPO-182: store mixintypes also in persistent store
 # The following patches are a fix for JCR-2633.
