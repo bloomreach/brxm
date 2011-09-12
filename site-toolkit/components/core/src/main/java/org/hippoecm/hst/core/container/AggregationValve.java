@@ -299,39 +299,37 @@ public class AggregationValve extends AbstractValve {
             HttpSession session = request.getSession(false);
             
             if(session != null ) {
-                Mount mount = request.getRequestContext().getResolvedMount().getMount();
-
-                // We are in render host mode, add identifiers for client.
-                HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                if (window == rootWindow) {
-                    rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
-                    rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
-                    rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
-                    boolean isPreviewConfig = false;
-                    if(mount.getHstSite().getConfigurationPath().endsWith("-"+Mount.PREVIEW_NAME)) {
-                        isPreviewConfig = true;
-                    }
-                    rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(isPreviewConfig));
-                    //"-" + Mount.PREVIEW_NAME;
-                } else {
-                    // Add the wrapper elements that are needed for the composer around all components
-                    Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
-                    if(Boolean.TRUE.equals(composerMode)) {
+                Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
+                if (composerMode != null) {
+                    Mount mount = request.getRequestContext().getResolvedMount().getMount();
+                    // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
+                    HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
+                    if (window == rootWindow) {
+                        rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
+                        rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
+                        rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
+                        boolean isPreviewConfig = false;
+                        if(mount.getHstSite().getConfigurationPath().endsWith("-"+Mount.PREVIEW_NAME)) {
+                            isPreviewConfig = true;
+                        }
+                        rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(isPreviewConfig));
+                        //"-" + Mount.PREVIEW_NAME;
+                    } else if(Boolean.TRUE.equals(composerMode)) {
                          // TODO replace by json marshaller
-
+                        
                         HashMap<String, String> attributes = new HashMap<String, String>();
                         attributes.put("uuid", compConfig.getCanonicalIdentifier());
                         if(compConfig.getXType() != null) {
                             attributes.put("xtype", compConfig.getXType());
                         }
                         if(compConfig.isInherited()) {
-                            attributes.put("inherited", "true");
+                            attributes.put("inherited", "true"); 
                         }
                         attributes.put("type", compConfig.getComponentType().toString());
                         Comment comment = createCommentWithAttr(attributes, response);
                         response.addPreamble(comment);
                     }
-                }
+                } 
             }
         }
     }
