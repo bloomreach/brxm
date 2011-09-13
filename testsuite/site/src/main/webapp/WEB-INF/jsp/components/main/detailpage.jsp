@@ -49,7 +49,9 @@
 </c:if>
 
 <div class="yui-u">
-  <a href="<hst:surfandeditlink hippobean="${document}"/>" target="_blank">[surf&amp;edit]</a>
+  <c:if test="${isPreview}">
+    <hst:cmseditlink hippobean="${document}"/>
+  </c:if>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
     <p>

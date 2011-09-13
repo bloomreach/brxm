@@ -49,9 +49,8 @@ ${document.title}
 </#if>
 
 <div class="yui-u">
-  <@hst.surfandeditlink var="surfandedit" hippobean=document/>
-  <#if "${surfandedit!}" != "">
-  	<a href="<@hst.surfandeditlink hippobean=document/>">[surf&amp;edit]</a>
+  <#if isPreview>
+      <@hst.cmseditlink hippobean=document/>
   </#if>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
