@@ -23,15 +23,23 @@ import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Symmetric cipher that encrypts and decrypts jcr {@link Credentials}. It's key is generated dynamically, being unique
@@ -42,16 +50,34 @@ import javax.jcr.SimpleCredentials;
  */
 public final class CredentialCipher {
 
+    static final Logger log = LoggerFactory.getLogger(CredentialCipher.class);
+
     private final static CredentialCipher instance = new CredentialCipher();
+
+    public static final String HIPPO_CLUSTER_KEY = "hippo.cluster.sso.key";
 
     public static CredentialCipher getInstance() {
         return instance;
     }
 
-    private final SecretKeySpec secret;
+    private SecretKeySpec secret;
 
-    private CredentialCipher() {
-        KeyGenerator kgen = null;
+    CredentialCipher() {
+        String sharedKey = System.getProperty(HIPPO_CLUSTER_KEY);
+        if (sharedKey != null) {
+            try {
+                SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                KeySpec spec = new PBEKeySpec(sharedKey.toCharArray(), HIPPO_CLUSTER_KEY.getBytes(), 1024, 128);
+                SecretKey tmp = factory.generateSecret(spec);
+                secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+                return;
+            } catch (InvalidKeySpecException e) {
+                log.error("Could not initialize secret from shared secret in system property ''" + HIPPO_CLUSTER_KEY + "', generating own key", e);
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Could not initialize secret from shared secret in system property ''" + HIPPO_CLUSTER_KEY + "', generating own key", e);
+            }
+        }
+        KeyGenerator kgen;
         try {
             kgen = KeyGenerator.getInstance("AES");
             kgen.init(128);
@@ -59,7 +85,6 @@ public final class CredentialCipher {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Encryption method AES could not be found", e);
         }
-
     }
 
     public byte[] encrypt(String key, SimpleCredentials credentials) {
