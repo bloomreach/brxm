@@ -68,8 +68,8 @@ public class MountResource extends AbstractConfigResource {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
             final HstSite editingHstSite = getEditingHstSite(requestContext);
             if (editingHstSite == null) {
-                log.error("Could not get the editing site to create the pate model representation.");
-                return error("Could not get the editing site to create the pate model representation.");
+                log.error("Could not get the editing site to create the page model representation.");
+                return error("Could not get the editing site to create the page model representation.");
             }
             final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingHstSite, pageId);
             return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
@@ -145,7 +145,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Config path cannot be null");
         }
         
-        return ok("Site can be editted now");
+        return ok("Site can be edited now");
     }
     
     /**
