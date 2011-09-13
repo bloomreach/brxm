@@ -524,6 +524,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.properties svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.xml svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintServiceTest.java -text
@@ -568,6 +569,7 @@ components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=n
 components/core/src/test/resources/META-INF/assembly/simple-beans-4.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-config.properties svneol=native#text/plain
 components/core/src/test/resources/log4j.xml -text
+components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestMatchHostAndURL.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestSiteMapItemHandler.xml -text svneol=unset#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/GeneralBasicPoolingRepository.xml svneol=native#text/plain
