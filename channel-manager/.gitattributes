@@ -37,6 +37,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEdito
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
@@ -85,3 +86,11 @@ frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.jav
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
 repository/src/main/resources/hippoecm-extension.xml eol=lf
+test/pom.xml -text
+test/src/main/webapp/WEB-INF/web.xml -text
+test/src/main/webapp/test.html -text
+test/src/test/java/ActualTest.java -text
+test/src/test/java/ChannelManagerTest.java -text
+test/src/test/java/initMiFrameMessageMock.js -text
+test/src/test/resources/log4j.dtd -text
+test/src/test/resources/log4j.xml -text

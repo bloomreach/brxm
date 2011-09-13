@@ -58,6 +58,7 @@
   <modules>
     <module>frontend</module>
     <module>repository</module>
+    <module>test</module>
   </modules>
 
   <scm>
