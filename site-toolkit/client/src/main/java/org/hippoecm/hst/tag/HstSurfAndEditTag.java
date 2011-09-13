@@ -19,113 +19,40 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.hippoecm.hst.core.component.HstRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract supporting class for Hst Link tags
+ * @deprecated Use {@link HstCmsEditLinkTag} instead. 
  */
 
-public class HstSurfAndEditTag extends HstSurfAndEditTagSupport {
+@Deprecated
+public class HstSurfAndEditTag extends HstCmsEditLinkTag {
 
     private final static Logger log = LoggerFactory.getLogger(HstSurfAndEditTag.class);
     
     private static final long serialVersionUID = 1L;
-
-    protected String var;
-    
-    protected String scope;
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
     @Override
     public int doStartTag() throws JspException{
-        if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
-        }
-        
-        return EVAL_BODY_INCLUDE;
+        log.warn("Using deprecated HstSurfAndEditTag (tld 'surfandeditlink' tag has been deprecated). Use 'cmseditlink' tag instead, " +
+        		"and specify a 'var' attribute to store the link in to retain the same behaviour as for the 'surfandeditlink' tag");
+        return super.doStartTag(); 
     }
-    
-    
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
-     */
+   
     @Override
-    protected void doRender(final HstRequest hstRequest, final String nodeId, String surfAndEditLink) throws JspException {
-        if (var == null) {
-            try {               
-                JspWriter writer = pageContext.getOut();
-                writer.print(surfAndEditLink);
-            } catch (IOException ioe) {
-                throw new JspException(
-                    "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
-            }
-        } 
-        else {
-            int varScope = PageContext.PAGE_SCOPE;
-            
-            if (this.scope != null) {
-                if ("request".equals(this.scope)) {
-                    varScope = PageContext.REQUEST_SCOPE;
-                } else if ("session".equals(this.scope)) {
-                    varScope = PageContext.SESSION_SCOPE;
-                } else if ("application".equals(this.scope)) {
-                    varScope = PageContext.APPLICATION_SCOPE;
-                }
-            }
-            
-            pageContext.setAttribute(var, surfAndEditLink, varScope);
-        }
-        
-        /*cleanup*/
-        var = null;
-        scope = null;
-    }
-
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#release()
-     */
-    @Override
-    public void release(){
-        super.release();        
+    protected void write(String link, String nodeId) throws IOException {
+         JspWriter writer = pageContext.getOut();
+         writer.print(link);
     }
     
-    /**
-     * Returns the var property.
-     * @return String
-     */
-    public String getVar() {
-        return var;
-    }
-    
-    public String getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets the var property.
-     * @param var The var to set
-     * @return void
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
-    
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-    
-    
-    /* -------------------------------------------------------------------*/
-        
     /**
      * TagExtraInfo class for HstSurfAndEditTag.
      */

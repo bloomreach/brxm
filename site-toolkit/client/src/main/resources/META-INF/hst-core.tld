@@ -408,7 +408,9 @@
         <tag-class>org.hippoecm.hst.tag.HstSurfAndEditTag</tag-class>
         <tei-class>org.hippoecm.hst.tag.HstSurfAndEditTag$TEI</tei-class>
         <body-content>JSP</body-content>
-        <description>This tag can be used to create a surfandedit cms url. Only in preview mode, the 
+        <description>Deprecated: Use 'cmseditlink' tag instead, and make sure you add a 'var=someVar' attribute. Then, the someVar
+        will contain the URL (link) that this tag used to return.   
+        This tag can be used to create a surfandedit cms url. Only in preview mode, the 
         tag will output something. In live, it will be ignored.</description>
         <attribute>
             <name>var</name>
@@ -428,11 +430,17 @@
     </tag>
 
     <tag>
-        <name>surfandedit</name>
-        <tag-class>org.hippoecm.hst.tag.HstEditTag</tag-class>
+        <name>cmseditlink</name>
+        <tag-class>org.hippoecm.hst.tag.HstCmsEditLinkTag</tag-class>
+        <tei-class>org.hippoecm.hst.tag.HstCmsEditLinkTag$TEI</tei-class>
         <body-content>JSP</body-content>
-        <description>This tag can be used to create an edit button. Only in preview mode, the
-          tag will output something. In live, it will be ignored.</description>
+        <description>This tag can be used to create a cms edit link or url. Only in preview mode, the
+          tag will output something. In live, it will be ignored. When there is *NOT* an attribute 'var' used, then, directly to 
+          the output a HTML link tag with href will be written. Also a HTML comment will be direcly written. This mode is useful for
+          a surfandedit link that is to be used in the cms template composer. 
+          When there *IS* an attribute 'var' used, then *NOT* an HTML comment and HTML link are written to the output, *BUT* instead, 
+          a surfandedit url (String) is stored on the var attribute.  
+          </description>
         <attribute>
             <name>hippobean</name>
             <required>false</required>
@@ -440,6 +448,13 @@
             <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
             <description>A HippoBean object. This is typically one of your bean mapped
             objects</description>
+        </attribute>
+        <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <type>java.lang.String</type>
+            <description>The variable name of the surf and edit url.</description>
         </attribute>
     </tag>
 
