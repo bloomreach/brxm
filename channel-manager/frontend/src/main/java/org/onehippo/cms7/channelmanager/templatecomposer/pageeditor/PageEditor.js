@@ -675,6 +675,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     onIframeDOMReady : function(frm) {
         this.fireEvent('beforeIFrameDOMReady');
         this.frm = frm;
+        if (!this.previewMode) {
+            // if the pageId is not changing but navigating in e. g. pagination the data
+            // needs to be shared again with the iframe
+            this.shareData();
+        }
         this.requestHstMetaData( { url: frm.getDocumentURI() } );
         this.initializeIFrameHead(frm);
         this.fireEvent('afterIFrameDOMReady');
