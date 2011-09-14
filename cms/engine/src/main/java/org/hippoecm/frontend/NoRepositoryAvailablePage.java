@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend;
 
-import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public class NoRepositoryAvailablePage extends PluginPage {
     @SuppressWarnings("unused")
