@@ -66,9 +66,9 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
             Node configNode = session.getNode("/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:moduleconfig");
             if (configNode.hasProperty("wfdropbox:delay")) {
                 initialDelay = configNode.getProperty("wfdropbox:delay").getLong();
-                if(intialDelay <= MINIMAL_INITIAL_DELAY) {
+                if(initialDelay <= MINIMAL_INITIAL_DELAY) {
                     // too small. Log warning that default is used because to small
-                    intialDelay = DEFAULT_INITIAL_DELAY;
+                    initialDelay = DEFAULT_INITIAL_DELAY;
                 }
             }
             if (configNode.hasProperty("wfdropbox:interval")) {
