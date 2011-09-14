@@ -32,7 +32,13 @@ import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 
 import java.util.Collection;
 
+/**
+ * Widget for uploading files. This widget allows both flash and non-flash uploads based on the configuration.
+ * By default the flash upload is used. For more configuration options please take a look at
+ * {@link FileUploadWidgetSettings}.
+ */
 public class FileUploadWidget extends Panel {
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     private static final String COMPONENT_ID = "component";
@@ -58,24 +64,30 @@ public class FileUploadWidget extends Panel {
     protected void onBeforeRender() {
         super.onBeforeRender();
 
-        if (detectedFlash == null) {
-            Page page = getPage();
-            for (IBehavior behavior : page.getBehaviors()) {
-                if (behavior instanceof WebAppBehavior) {
-                    WebAppBehavior webapp = (WebAppBehavior) behavior;
-                    detectedFlash = webapp.getFlash();
+        if(settings.isFlashUploadEnabled()) {
+            if (detectedFlash == null) {
+                Page page = getPage();
+                for (IBehavior behavior : page.getBehaviors()) {
+                    if (behavior instanceof WebAppBehavior) {
+                        WebAppBehavior webapp = (WebAppBehavior) behavior;
+                        detectedFlash = webapp.getFlash();
+                    }
                 }
             }
         }
 
-        if (isFlash()) {
+        if (isFlashUpload()) {
             renderFlashUpload();
         } else {
             renderJavascriptUpload();
         }
     }
 
-    public boolean isFlash() {
+    /**
+     * Detect if flash is installed and if the correct version of the flash plugin is found.
+     * @return <code>true</code> if flash and the correct version is detected, <code>false</code> otherwise
+     */
+    public boolean isFlashUpload() {
         return detectedFlash != null && detectedFlash.isValid(VALID_FLASH);
     }
 
@@ -127,7 +139,7 @@ public class FileUploadWidget extends Panel {
     }
 
     public void handleNonFlashSubmit() {
-        if (!isFlash()) {
+        if (!isFlashUpload()) {
             Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
             if (uploads != null) {
                 for (FileUpload upload : uploads) {

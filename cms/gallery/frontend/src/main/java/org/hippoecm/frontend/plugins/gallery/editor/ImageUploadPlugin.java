@@ -22,17 +22,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -45,6 +41,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Plugin for uploading images. The plugin can be configured by setting configuration options found in the
+ * {@link FileUploadWidgetSettings}.
+ *
+ */
 public class ImageUploadPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -54,7 +55,6 @@ public class ImageUploadPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(ImageUploadPlugin.class);
 
     private IValueMap types;
-    private FileUploadForm form;
 
     public ImageUploadPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -65,7 +65,8 @@ public class ImageUploadPlugin extends RenderPlugin {
             types = new ValueMap(typesConfig);
         }
 
-        add(form = new FileUploadForm("form", context));
+        FileUploadForm form = new FileUploadForm("form");
+        add(form);
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
 
@@ -78,10 +79,10 @@ public class ImageUploadPlugin extends RenderPlugin {
 
         private FileUploadWidget widget;
 
-        public FileUploadForm(String name, final IPluginContext context) {
+        public FileUploadForm(String name) {
             super(name);
 
-            FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
+            FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
             settings.setAutoUpload(true);
             settings.setClearAfterUpload(true);
             settings.setClearTimeout(1000);
@@ -91,12 +92,11 @@ public class ImageUploadPlugin extends RenderPlugin {
             add(widget = new FileUploadWidget("multifile", settings) {
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {
-                    handleUpload(fileUpload, context);
+                    handleUpload(fileUpload);
                 }
 
             });
         }
-
 
         @Override
         protected void onSubmit() {
@@ -106,7 +106,7 @@ public class ImageUploadPlugin extends RenderPlugin {
     }
 
 
-    private void handleUpload(FileUpload upload, IPluginContext context) {
+    private void handleUpload(FileUpload upload) {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
 
@@ -128,7 +128,7 @@ public class ImageUploadPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) ImageUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
-                GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
+                GalleryProcessor processor = getPluginContext().getService(getPluginConfig().getString("gallery.processor.id",
                         "gallery.processor.service"), GalleryProcessor.class);
                 if (processor == null) {
                     processor = new DefaultGalleryProcessor();

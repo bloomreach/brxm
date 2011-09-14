@@ -78,8 +78,8 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     public class UploadDialog extends MultiFileUploadDialog {
         private static final long serialVersionUID = 1L;
 
-        public UploadDialog(String[] fileExtensions) {
-            super(fileExtensions);
+        public UploadDialog(IPluginConfig pluginConfig) {
+            super(pluginConfig);
         }
 
         public IModel getTitle() {
@@ -139,7 +139,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 String localName = getLocalizeCodec().encode(filename);
                 Document document = workflow.createGalleryItem(nodeName, type);
                 node = (HippoNode) (((UserSession) Session.get())).getJcrSession()
-                        .getNodeByUUID(document.getIdentity());
+                        .getNodeByIdentifier(document.getIdentity());
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!node.getLocalizedName().equals(localName)) {
                     defaultWorkflow.localizeName(localName);
@@ -265,12 +265,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             typeComponent = new Label("type", "default").setVisible(false);
         }
 
-        String[] fileExtensions = new String[0];
-        if (getPluginConfig().containsKey("file.extensions")) {
-            fileExtensions = getPluginConfig().getStringArray("file.extensions");
-        }
-
-        UploadDialog dialog = new UploadDialog(fileExtensions);
+        UploadDialog dialog = new UploadDialog(getPluginConfig());
         dialog.add(typeComponent);
         return dialog;
     }

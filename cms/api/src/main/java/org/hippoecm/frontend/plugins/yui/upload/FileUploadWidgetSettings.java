@@ -16,23 +16,45 @@
 package org.hippoecm.frontend.plugins.yui.upload;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
+/**
+ * Settings for file uploads. Currently allowed configurable settings are:
+ * <ul>
+ *     <li>fileupload.flashEnabled = <code>true</code> for flash or <code>false</code> for javascript upload</li>
+ *     <li>fileupload.maxItems = maximum allowed file uploads at the same time</li>
+ *     <li>file.extensions = allowed upload file extensions (backwards compatibility)</li>
+ *     <li>fileupload.allowedExtensions = allowed upload file extensions</li>
+ *     <li>fileupload.autoUpload = if <code>true</code> the plugin will automatically upload the files</li>
+ * </ul>
+ */
 public class FileUploadWidgetSettings implements IClusterable{
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    private String[] fileExtensions;
-    private int maxNumberOfFiles;
+    public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";
+    public static final String FILEUPLOAD_MAX_ITEMS_SETTING = "fileupload.maxItems";
+    public static final String FILEUPLOAD_AUTOUPLOAD_SETTING = "fileupload.autoUpload";
+    public static final String FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING = "fileupload.allowedExtensions";
+
+    //backwards compatibility
+    public static final String FILE_EXTENSIONS_SETTING = "file.extensions";
+
+    private String[] fileExtensions = new String[0];
+    private int maxNumberOfFiles = 1;
     private boolean autoUpload;
     private boolean clearAfterUpload;
-    private int clearTimeout;
+    private int clearTimeout = 1000;
     private boolean hideBrowseDuringUpload;
     private String buttonWidth;
     private String buttonHeight;
+    private boolean flashUploadEnabled = true;
 
     public FileUploadWidgetSettings() {
-        fileExtensions = new String[0];
-        maxNumberOfFiles = 1;
-        clearTimeout = 1000;
+    } 
+
+    public FileUploadWidgetSettings(IPluginConfig pluginConfig) {
+        parsePluginConfig(pluginConfig);
     }
 
     public void setFileExtensions(String[] fileExtensions) {
@@ -97,6 +119,42 @@ public class FileUploadWidgetSettings implements IClusterable{
 
     public void setButtonHeight(String buttonHeight) {
         this.buttonHeight = buttonHeight;
+    }
+
+    /**
+     * Indicates if the upload widget should use Flash.
+     * @return <code>true</code> if flash should be used, <code>false</code> otherwise
+     */
+    public boolean isFlashUploadEnabled() {
+        return flashUploadEnabled;
+    }
+
+    /**
+     * If set to <code>true</code> (default) the upload plugin will use flash for file uploads, otherwise it will use a plain
+     * Javascript upload.
+     * @param flashUploadEnabled boolean indicating if flash should be used for file uploads.
+     */
+    public void setFlashUploadEnabled(boolean flashUploadEnabled) {
+        this.flashUploadEnabled = flashUploadEnabled;
+    }
+
+    private void parsePluginConfig(final IPluginConfig pluginConfig) {
+        if(pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
+            this.flashUploadEnabled = pluginConfig.getAsBoolean(FILEUPLOAD_FLASH_ENABLED_SETTING);
+        }
+        if(pluginConfig.containsKey(FILEUPLOAD_MAX_ITEMS_SETTING)) {
+            this.maxNumberOfFiles = pluginConfig.getAsInteger(FILEUPLOAD_MAX_ITEMS_SETTING);
+        }
+        // for backwards compatibility
+        if (pluginConfig.containsKey(FILE_EXTENSIONS_SETTING)) {
+            this.fileExtensions = pluginConfig.getStringArray(FILE_EXTENSIONS_SETTING);
+        }
+        if (pluginConfig.containsKey(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING)) {
+            this.fileExtensions = pluginConfig.getStringArray(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING);
+        }
+        if (pluginConfig.containsKey(FILEUPLOAD_AUTOUPLOAD_SETTING)) {
+            this.autoUpload = pluginConfig.getAsBoolean(FILEUPLOAD_AUTOUPLOAD_SETTING);
+        }
     }
 
 }

@@ -22,7 +22,11 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
+/**
+ * A multi file upload dialog that can be configured by means of the {@link FileUploadWidgetSettings}.
+ */
 public abstract class MultiFileUploadDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +36,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     private FileUploadWidget widget;
     private AjaxButton ajaxButton;
 
-    protected MultiFileUploadDialog(String[] fileExtensions) {
+    protected MultiFileUploadDialog(IPluginConfig pluginConfig) {
         setOutputMarkupId(true);
 
         setNonAjaxSubmit();
@@ -54,9 +58,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         ajaxButton.setVisible(false);
         addButton(ajaxButton);
 
-        FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
-        settings.setFileExtensions(fileExtensions);
-        settings.setMaxNumberOfFiles(25);
+        FileUploadWidgetSettings settings = new FileUploadWidgetSettings(pluginConfig);
         widget = new FileUploadWidget("uploadWidget", settings) {
 
             @Override
@@ -105,7 +107,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
 
     @Override
     protected void onOk() {
-        if (widget.isFlash()) {
+        if (widget.isFlashUpload()) {
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
                 ajaxButton.setEnabled(false);

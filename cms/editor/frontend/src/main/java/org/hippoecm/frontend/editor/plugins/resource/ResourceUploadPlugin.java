@@ -17,8 +17,6 @@ package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Collection;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -38,7 +35,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
-import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +53,6 @@ public class ResourceUploadPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(ResourceUploadPlugin.class);
 
     private IValueMap types;
-    private FileUploadForm form;
 
     public ResourceUploadPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);        
@@ -68,7 +63,8 @@ public class ResourceUploadPlugin extends RenderPlugin {
             types = new ValueMap(typesConfig);
         }
 
-        add(form = new FileUploadForm("form"));
+        FileUploadForm form = new FileUploadForm("form");
+        add(form);
         String mode = config.getString("mode", "edit");
         form.setVisible("edit".equals(mode));
 
@@ -79,13 +75,12 @@ public class ResourceUploadPlugin extends RenderPlugin {
     private class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
 
-        //private FileUploadField fileUploadField;
         private FileUploadWidget widget;
 
         public FileUploadForm(String name) {
             super(name);
 
-            FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
+            FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
             settings.setAutoUpload(true);
             settings.setClearAfterUpload(true);
             settings.setClearTimeout(1000);
