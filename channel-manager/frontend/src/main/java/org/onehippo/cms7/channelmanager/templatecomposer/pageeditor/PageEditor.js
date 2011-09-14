@@ -1030,23 +1030,27 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (this.iframeInitialized && this.isHstMetaDataLoaded()) {
             shareDataIFrameInitializedListener.call(this);
         } else {
-            this.on('beforeShareDataWithIFrame', function() {
-                this.removeListener('iFrameInitialized', shareDataIFrameInitializedListener, this);
-                this.removeListener('afterHstMetaDataResponse', shareDataIFrameInitializedListener, this);
-            }, this);
             if (!this.iframeInitialized) {
-                this.on('iFrameInitialized', function() {
+                var iFrameInitializedListener = function() {
                     if (this.isHstMetaDataLoaded()) {
                         shareDataIFrameInitializedListener.call(this);
                     }
+                };
+                this.on('beforeShareDataWithIFrame', function() {
+                    this.removeListener('iFrameInitialized', iFrameInitializedListener, this);
                 }, this, {single : true});
+                this.on('iFrameInitialized', iFrameInitializedListener, this, {single : true});
             }
             if (!this.isHstMetaDataLoaded()) {
-                this.on('afterHstMetaDataResponse', function() {
+                var hstMetaDataResponseListener = function() {
                     if (this.iframeInitialized) {
                         shareDataIFrameInitializedListener.call(this);
                     }
+                };
+                this.on('beforeShareDataWithIFrame', function() {
+                    this.removeListener('afterHstMetaDataResponse', hstMetaDataResponseListener, this);
                 }, this, {single : true});
+                this.on('afterHstMetaDataResponse', hstMetaDataResponseListener, this, {single : true});
             }
         }
     },
