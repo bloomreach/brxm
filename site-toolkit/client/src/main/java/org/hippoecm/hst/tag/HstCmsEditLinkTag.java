@@ -213,7 +213,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
         Map<String, String> editParameters = new HashMap<String, String>(2);
         editParameters.put("uuid", nodeId);
         writer.print(createCommentWithAttr(editParameters));
-        writer.print("<a href='" + link + "' class=\"hst-surfandedit\" target=\"CMS\">" + LocaleSupport.getLocalizedMessage(pageContext, "hst.cmseditlink.label", "preview-messages") + "</a>");
+        writer.print("<a href='" + link + "' class=\"hst-cmseditlink\" target=\"CMS\">" + LocaleSupport.getLocalizedMessage(pageContext, "hst.cmseditlink.label", "preview-messages") + "</a>");
     }
 
 
