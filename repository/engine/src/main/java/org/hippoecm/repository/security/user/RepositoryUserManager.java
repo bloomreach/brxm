@@ -33,11 +33,11 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+    private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     
-    private final static long ONEDAYMS = 1000 * 3600 * 24;
+    private static final long ONEDAYMS = 1000 * 3600 * 24;
     
     private boolean maintenanceMode = false;
     

@@ -23,18 +23,18 @@ public class FacetAuthConstants {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** The wildcard to match everything */
-    public final static String WILDCARD = "*";
+    public static final String WILDCARD = "*";
 
     /** Expander for user */
-    public final static String EXPANDER_USER = "__user__";
+    public static final String EXPANDER_USER = "__user__";
 
     /** Expander for group */
-    public final static String EXPANDER_GROUP = "__group__";
+    public static final String EXPANDER_GROUP = "__group__";
 
     /** Expander for role */
-    public final static String EXPANDER_ROLE = "__role__";
+    public static final String EXPANDER_ROLE = "__role__";
 
 }

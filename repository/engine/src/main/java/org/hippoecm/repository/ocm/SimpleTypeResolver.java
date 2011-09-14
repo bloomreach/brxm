@@ -19,7 +19,7 @@ import javax.jcr.RepositoryException;
 
 public class SimpleTypeResolver implements TypeResolver {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
     
     @Override
     public String[] resolve(String className) throws RepositoryException {

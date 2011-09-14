@@ -36,7 +36,7 @@ import javax.jcr.version.VersionException;
 
 public abstract class UpdaterItem implements Item {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Item origin;
     UpdaterNode parent;

@@ -48,7 +48,7 @@ import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 
 class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitable<NodeDescription> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     boolean onlyReferenceable;
 

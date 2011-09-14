@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 public class AuthorizationQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The logger instance for this class
@@ -68,7 +68,7 @@ public class AuthorizationQuery {
     private final ServicingIndexingConfiguration indexingConfig;
     private final Set<String> memberships = new HashSet<String>();
     private final SessionImpl session;
-    private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
+    private static final String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
     public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig,
                               NodeTypeManager ntMgr, Session session) throws RepositoryException {

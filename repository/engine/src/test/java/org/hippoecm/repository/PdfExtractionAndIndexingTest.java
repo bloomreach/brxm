@@ -41,14 +41,14 @@ import org.junit.Test;
 
 public class PdfExtractionAndIndexingTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
    
-    public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
+    public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
-    private final static String TEST_PATH = "test";
-    private final static String UNIQUE_WORD_IN_PLAIN_TEXT = "uniquestringabcd";
-    private final static String UNIQUE_WORD_IN_UNNITTEST_PDF = "foobarlux";
-    private final static String UNITTEST_PDF_FILE_NAME = "unittest.pdf";
+    private static final String TEST_PATH = "test";
+    private static final String UNIQUE_WORD_IN_PLAIN_TEXT = "uniquestringabcd";
+    private static final String UNIQUE_WORD_IN_UNNITTEST_PDF = "foobarlux";
+    private static final String UNITTEST_PDF_FILE_NAME = "unittest.pdf";
     
     private Node testPath;
 

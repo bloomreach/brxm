@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
 public class LdapUtils {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(LdapUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     /**
      * Private constructor to prevent instantiation

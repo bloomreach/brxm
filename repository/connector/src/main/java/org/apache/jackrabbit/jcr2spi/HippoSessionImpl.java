@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HippoSessionImpl extends SessionImpl implements NamespaceResolver, ManagerProvider {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 

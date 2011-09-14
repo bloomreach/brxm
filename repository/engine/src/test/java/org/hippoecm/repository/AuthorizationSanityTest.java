@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class AuthorizationSanityTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private void visit(Node node, Session check) throws RepositoryException {
         if(node.getDepth() > 0 && check.itemExists(node.getPath())) {

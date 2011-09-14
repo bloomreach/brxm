@@ -27,7 +27,7 @@ public interface HippoWorkspace extends Workspace {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * The document manager service allows the representation of a document stored as a subtree of a {link javax.jcr.Node} as a Java object.

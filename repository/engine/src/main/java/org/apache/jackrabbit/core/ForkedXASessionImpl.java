@@ -47,7 +47,7 @@ import java.util.Map;
 @SuppressWarnings("deprecation")
 public class ForkedXASessionImpl extends SessionImpl implements XASession, XAResource {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Logger instance

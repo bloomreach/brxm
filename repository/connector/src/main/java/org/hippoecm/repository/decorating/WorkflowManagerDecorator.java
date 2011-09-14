@@ -22,7 +22,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 
 public abstract class WorkflowManagerDecorator implements WorkflowManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Session session;
 

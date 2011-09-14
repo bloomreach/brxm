@@ -28,7 +28,7 @@ public interface HippoNode extends Node {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /*
      * Other (future) extensions to the interface may include:

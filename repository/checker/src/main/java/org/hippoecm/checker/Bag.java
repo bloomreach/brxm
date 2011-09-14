@@ -22,7 +22,7 @@ import java.util.Set;
 
 public interface Bag<K, V> extends Iterable<Map.Entry<K, V>> {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public void put(K k, V v);
 

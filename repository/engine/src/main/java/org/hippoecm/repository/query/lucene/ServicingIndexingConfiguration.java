@@ -21,7 +21,7 @@ import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
 import org.apache.jackrabbit.spi.Name;
 
 public interface ServicingIndexingConfiguration extends IndexingConfiguration {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Returns <code>true</code> if the property with the given name is a facet

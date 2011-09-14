@@ -94,7 +94,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
         FacetedNavigationEngine<FacetedNavigationEngineThirdImpl.QueryImpl, FacetedNavigationEngineThirdImpl.ContextImpl> {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     class QueryAndSort {
         org.apache.lucene.search.Query query;

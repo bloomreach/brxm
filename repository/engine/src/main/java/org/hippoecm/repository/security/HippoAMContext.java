@@ -37,7 +37,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 public class HippoAMContext extends AMContext {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * NodeTypeManager for resolving superclass node types

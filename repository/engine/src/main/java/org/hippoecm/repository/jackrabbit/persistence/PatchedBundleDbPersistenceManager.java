@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 public class PatchedBundleDbPersistenceManager extends BundleDbPersistenceManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** the default logger */
     private static Logger log = LoggerFactory.getLogger(PatchedBundleDbPersistenceManager.class);

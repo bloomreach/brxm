@@ -29,9 +29,9 @@ import org.junit.Test;
 
 public class SearchOnNodeNameTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
    
-    private final static String TEST_PATH = "test";
+    private static final String TEST_PATH = "test";
     private Node testPath;
 
     private List<String> names;

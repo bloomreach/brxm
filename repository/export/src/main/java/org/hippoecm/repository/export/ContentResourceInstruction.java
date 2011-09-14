@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
 
 class ContentResourceInstruction extends ResourceInstruction {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     private final String contentresource;
     private final String root;

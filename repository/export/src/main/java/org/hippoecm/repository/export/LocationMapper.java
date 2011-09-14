@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
  */
 class LocationMapper {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
-    private final static List<Entry> ENTRIES = new ArrayList<Entry>();
-    private final static String NAME = "([\\w:-]+)";
-    private final static String ANY = "(.*)";
+    private static final List<Entry> ENTRIES = new ArrayList<Entry>();
+    private static final String NAME = "([\\w:-]+)";
+    private static final String ANY = "(.*)";
     // cache the result of the last invocation 
     private static CachedItem LAST_RESULT = new CachedItem(null, null, null);
 

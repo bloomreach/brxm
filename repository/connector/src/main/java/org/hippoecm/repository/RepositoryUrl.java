@@ -22,15 +22,15 @@ import java.rmi.registry.Registry;
 
 public class RepositoryUrl {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // defaults
-    public final static String DEFAULT_RMI_NAME = "hipporepository";
-    public final static String RMI_PREFIX = "rmi";
+    public static final String DEFAULT_RMI_NAME = "hipporepository";
+    public static final String RMI_PREFIX = "rmi";
 
-    public final static int RMI_PORT = 1099;
-    public final static String RMI_HOST = "localhost";
-    public final static String RMI_NAME = "hipporepository";
+    public static final int RMI_PORT = 1099;
+    public static final String RMI_HOST = "localhost";
+    public static final String RMI_NAME = "hipporepository";
 
     private String name;
     private String host;

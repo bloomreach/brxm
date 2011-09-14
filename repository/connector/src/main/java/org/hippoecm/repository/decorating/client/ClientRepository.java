@@ -19,7 +19,7 @@ import org.hippoecm.repository.decorating.remote.RemoteRepository;
 
 public class ClientRepository extends org.apache.jackrabbit.rmi.client.ClientRepository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private RemoteRepository remote;
 

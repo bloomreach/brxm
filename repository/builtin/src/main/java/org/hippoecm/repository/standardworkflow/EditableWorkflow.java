@@ -24,7 +24,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface EditableWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Request this editable copy of the document.

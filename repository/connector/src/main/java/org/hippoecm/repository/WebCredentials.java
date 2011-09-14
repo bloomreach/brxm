@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class WebCredentials implements Credentials, CallbackHandler {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     private String username = null;
     private char[] password = null;

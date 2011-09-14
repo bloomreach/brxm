@@ -80,7 +80,7 @@ import java.util.regex.Pattern;
  */
 public final class NodeNameCodec {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** Pattern on an encoded character */
     private static final Pattern ENCODE_PATTERN = Pattern.compile("_x\\p{XDigit}{4}_");
@@ -99,7 +99,7 @@ public final class NodeNameCodec {
      * @param name the name to encode
      * @return the encoded name
      */
-    public final static String encode(final String name) {
+    public static final String encode(final String name) {
         return encode(name, false);
     }
 
@@ -110,7 +110,7 @@ public final class NodeNameCodec {
      * @param c the char to encode
      * @return the encoded char as string
      */
-    public final static String encode(final char c) {
+    public static final String encode(final char c) {
         return encodeOneCharSimpleName(c);
     }
 
@@ -127,7 +127,7 @@ public final class NodeNameCodec {
      * @return the encoded name
      */
 
-    public final static String encode(final String name, final boolean forceSimpleName) {
+    public static final String encode(final String name, final boolean forceSimpleName) {
         if (name == null) {
             throw new IllegalArgumentException("Node name can not be null.");
         }
@@ -157,7 +157,7 @@ public final class NodeNameCodec {
      * @param name the name to decode
      * @return the decoded name
      */
-    public final static String decode(final String name) {
+    public static final String decode(final String name) {
         // quick check
         if (name.indexOf("_x") < 0) {
             // not encoded
@@ -177,7 +177,7 @@ public final class NodeNameCodec {
         return decoded.toString();
     }
 
-    private final static String encodeOneCharSimpleName(final char c) {
+    private static final String encodeOneCharSimpleName(final char c) {
         if (!isOneCharSimpleName(c)) {
             return ISO9075Encode(c);
         } else {
@@ -187,7 +187,7 @@ public final class NodeNameCodec {
         }
     }
 
-    private final static String encodeTwoCharSimpleName(final char first, final char second) {
+    private static final String encodeTwoCharSimpleName(final char first, final char second) {
         if (first == '.') {
             return "." + encodeOneCharSimpleName(second);
         } else if (second == '.') {
@@ -197,7 +197,7 @@ public final class NodeNameCodec {
         }
     }
 
-    private final static String encodeThreeOrMoreCharName(final String name) {
+    private static final String encodeThreeOrMoreCharName(final String name) {
         int last = name.length() - 1;
         StringBuilder sb = new StringBuilder(last + 13); // reserve space
 

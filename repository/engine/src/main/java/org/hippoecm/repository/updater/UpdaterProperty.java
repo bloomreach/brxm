@@ -44,7 +44,7 @@ import javax.jcr.version.VersionException;
 
 final public class UpdaterProperty extends UpdaterItem implements Property {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     boolean isWeakReference;
     Value value;

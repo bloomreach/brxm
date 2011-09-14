@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractInstruction implements Instruction {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     final String name;

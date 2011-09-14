@@ -35,7 +35,7 @@ import org.junit.runners.Suite;
 public class AppserverTest extends Suite
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public AppserverTest(Class<?> klass) throws InitializationError {
         super(klass);

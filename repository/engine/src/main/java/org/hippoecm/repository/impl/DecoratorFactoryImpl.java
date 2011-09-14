@@ -35,9 +35,9 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.DecoratorFactoryImpl implements DecoratorFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
 
     SessionDecorator decoratedSession;
     WorkspaceDecorator decoratedWorkspace;

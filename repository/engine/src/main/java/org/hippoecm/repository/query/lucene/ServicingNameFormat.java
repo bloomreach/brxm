@@ -23,7 +23,7 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 public class ServicingNameFormat {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private ServicingNameFormat() {
         // private constructor: only static methods

@@ -37,7 +37,7 @@ import org.hippoecm.repository.decorating.remote.RemoteQuery;
 
 public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery implements HippoQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private RemoteQuery remote;
     private Session session;

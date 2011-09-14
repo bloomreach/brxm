@@ -31,7 +31,7 @@ import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public RemoteDocumentManager getRemoteDocumentManager(DocumentManager documentManager) throws RemoteException;
     public RemoteWorkflowManager getRemoteWorkflowManager(WorkflowManager workflowManager) throws RemoteException;

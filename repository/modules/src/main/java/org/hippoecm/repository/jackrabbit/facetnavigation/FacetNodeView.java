@@ -27,7 +27,7 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigatio
 
 public class FacetNodeView implements Cloneable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     
     String facet;
@@ -142,7 +142,7 @@ public class FacetNodeView implements Cloneable {
         try {
             FacetNodeView clone = (FacetNodeView) super.clone();
             // note that the clone shares the same comparator instance, but this is never an issue as many instances share
-            // the same comparator instances (they are final static's)
+            // the same comparator instances (they are static final's)
             return clone;
         } catch (CloneNotSupportedException e) {
             // this cannot happen, since we are Cloneable

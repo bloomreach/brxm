@@ -27,7 +27,7 @@ import org.apache.jackrabbit.spi.Path;
 public class Reference {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** this implementation requires a property that can be set on a parent node.  Because this
      * node isn't actually persisted, there will be no constraint violation, but this property
@@ -40,13 +40,13 @@ public class Reference {
      */
 
     /** '*' is not valid in property name, but can of course be used in value */
-    final static String SEPARATOR = "*";
+    static final String SEPARATOR = "*";
 
     /** indicate whether original reference property was a multi valued property */
-    final static String MULTI_VALUE = "m";
+    static final String MULTI_VALUE = "m";
 
     /** indicate whether original reference property was a single valued property */
-    final static String SINGLE_VALUE = "s";
+    static final String SINGLE_VALUE = "s";
 
     private final boolean isMulti;
 

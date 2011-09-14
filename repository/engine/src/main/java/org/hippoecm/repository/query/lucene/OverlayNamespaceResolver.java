@@ -27,7 +27,7 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 public class OverlayNamespaceResolver implements NamespaceResolver {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     
     private final Map<String,String> overlayPrefixToURI = new HashMap<String,String>();
 

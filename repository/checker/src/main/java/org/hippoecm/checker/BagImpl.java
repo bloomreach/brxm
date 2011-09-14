@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class BagImpl<K, V> implements Bag<K, V> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Map<K, Collection<V>> backingMap;
     Class<? extends Collection<V>> backingValuesClass;

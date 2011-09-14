@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
 

@@ -20,7 +20,7 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class PostProcessWorkflowImpl extends WorkflowImpl implements PostProcessWorkflow {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private long identifier;
 

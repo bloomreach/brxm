@@ -31,7 +31,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 public class StandardHippoAnalyzer extends Analyzer{
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     @Override
     public TokenStream tokenStream(String fieldName, Reader reader) {
@@ -74,16 +74,16 @@ public class StandardHippoAnalyzer extends Analyzer{
     }
 
     
-    public final static String[] CJK_STOP_WORDS = { "a", "and", "are", "as", "at", "be", "but", "by", "for", "if",
+    public static final String[] CJK_STOP_WORDS = { "a", "and", "are", "as", "at", "be", "but", "by", "for", "if",
             "in", "into", "is", "it", "no", "not", "of", "on", "or", "s", "such", "t", "that", "the", "their", "then",
             "there", "these", "they", "this", "to", "was", "will", "with", "", "www" };
 
-    public final static String[] SPANISH_STOP_WORDS = { " a ", " ante ", " bajo ", " con ", " de ", " desde ",
+    public static final String[] SPANISH_STOP_WORDS = { " a ", " ante ", " bajo ", " con ", " de ", " desde ",
             " durante ", " en ", " entre ", " excepto ", " hacia ", " hasta ", " mediante ", " para ", " por ",
             " salvo ", " segun ", " según ", " sin ", " sobre ", " y ", " o ", " u ", " tras ", " el ", " la ", " lo ",
             " los ", " las ", " un ", " una ", " unos ", " unas " };
 
-    public final static String[] DUTCH_STOP_SET = { "de", "en", "van", "ik", "te", "dat", "die", "in", "een", "hij",
+    public static final String[] DUTCH_STOP_SET = { "de", "en", "van", "ik", "te", "dat", "die", "in", "een", "hij",
             "het", "niet", "zijn", "is", "was", "op", "aan", "met", "als", "voor", "had", "er", "maar", "om", "hem",
             "dan", "zou", "of", "wat", "mijn", "men", "dit", "zo", "door", "over", "ze", "zich", "bij", "ook", "tot",
             "je", "mij", "uit", "der", "daar", "haar", "naar", "heb", "hoe", "heeft", "hebben", "deze", "u", "want",
@@ -93,12 +93,12 @@ public class StandardHippoAnalyzer extends Analyzer{
             "wil", "kon", "niets", "uw", "iemand", "geweest", "andere" };
 
    
-    public final static String[] GERMAN_STOP_WORDS = { "einer", "eine", "eines", "einem", "einen", "der", "die", "das",
+    public static final String[] GERMAN_STOP_WORDS = { "einer", "eine", "eines", "einem", "einen", "der", "die", "das",
             "dass", "daß", "du", "er", "sie", "es", "was", "wer", "wie", "wir", "und", "oder", "ohne", "mit", "am",
             "im", "in", "aus", "auf", "ist", "sein", "war", "wird", "ihr", "ihre", "ihres", "als", "für", "von",
             "mit", "dich", "dir", "mich", "mir", "mein", "sein", "kein", "durch", "wegen", "wird" };
 
-    public final static String[] FRENCH_STOP_WORDS = { "a", "afin", "ai", "ainsi", "après", "attendu", "au",
+    public static final String[] FRENCH_STOP_WORDS = { "a", "afin", "ai", "ainsi", "après", "attendu", "au",
             "aujourd", "auquel", "aussi", "autre", "autres", "aux", "auxquelles", "auxquels", "avait", "avant", "avec",
             "avoir", "c", "car", "ce", "ceci", "cela", "celle", "celles", "celui", "cependant", "certain", "certaine",
             "certaines", "certains", "ces", "cet", "cette", "ceux", "chez", "ci", "combien", "comme", "comment",
@@ -118,7 +118,7 @@ public class StandardHippoAnalyzer extends Analyzer{
             "une", "va", "vers", "voici", "voilà", "vos", "votre", "vous", "vu", "vôtre", "vôtres", "y", "à",
             "ça", "ès", "été", "être", "ô" };
 
-    public final static String[] BRAZILIAN_STOP_WORDS = { "a", "ainda", "alem", "ambas", "ambos", "antes", "ao",
+    public static final String[] BRAZILIAN_STOP_WORDS = { "a", "ainda", "alem", "ambas", "ambos", "antes", "ao",
             "aonde", "aos", "apos", "aquele", "aqueles", "as", "assim", "com", "como", "contra", "contudo", "cuja",
             "cujas", "cujo", "cujos", "da", "das", "de", "dela", "dele", "deles", "demais", "depois", "desde", "desta",
             "deste", "dispoe", "dispoem", "diversa", "diversas", "diversos", "do", "dos", "durante", "e", "ela",
@@ -130,7 +130,7 @@ public class StandardHippoAnalyzer extends Analyzer{
             "sem", "sendo", "seu", "seus", "sob", "sobre", "sua", "suas", "tal", "tambem", "teu", "teus", "toda",
             "todas", "todo", "todos", "tua", "tuas", "tudo", "um", "uma", "umas", "uns" };
 
-    public final static String[] CZECH_STOP_WORDS = { "a", "s", "k", "o", "i", "u", "v", "z", "dnes", "cz",
+    public static final String[] CZECH_STOP_WORDS = { "a", "s", "k", "o", "i", "u", "v", "z", "dnes", "cz",
             "t\u00edmto", "bude\u0161", "budem", "byli", "jse\u0161", "m\u016fj", "sv\u00fdm", "ta", "tomto", "tohle",
             "tuto", "tyto", "jej", "zda", "pro\u010d", "m\u00e1te", "tato", "kam", "tohoto", "kdo", "kte\u0159\u00ed",
             "mi", "n\u00e1m", "tom", "tomuto", "m\u00edt", "nic", "proto", "kterou", "byla", "toho", "proto\u017ee",

@@ -36,7 +36,7 @@ import javax.resource.ResourceException;
  */
 public class AnonymousConnection implements ManagedConnection, XAResource {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Default transaction timeout, in seconds.

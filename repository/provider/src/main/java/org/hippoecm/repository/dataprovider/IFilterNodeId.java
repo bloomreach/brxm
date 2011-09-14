@@ -26,7 +26,7 @@ import org.apache.jackrabbit.spi.Name;
  * 
  */
 public interface IFilterNodeId {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * whether this virtual node id is singledView, in other words, below its handle, show at most 1 single node

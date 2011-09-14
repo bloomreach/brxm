@@ -34,7 +34,7 @@ import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 class NodetypesResourceInstruction extends ResourceInstruction implements NamespaceInstruction {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     private final String nodetypesresource;
     private String internalPrefix;

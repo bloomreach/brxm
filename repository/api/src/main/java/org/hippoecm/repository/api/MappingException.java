@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
  */
 public class MappingException extends RepositoryException {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Constructs a new mapping exception with the specified detail message and without initialized cause

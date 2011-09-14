@@ -30,7 +30,7 @@ public class RepositoryGroupManager extends AbstractGroupManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;

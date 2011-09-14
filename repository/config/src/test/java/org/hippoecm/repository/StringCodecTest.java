@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class StringCodecTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Node root, node;
     StringCodecFactory factory;

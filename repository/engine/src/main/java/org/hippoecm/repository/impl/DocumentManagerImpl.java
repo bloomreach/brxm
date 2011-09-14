@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentManagerImpl implements DocumentManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
 

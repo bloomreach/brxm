@@ -26,7 +26,7 @@ package org.hippoecm.repository;
  */
 
 public interface HippoStdNodeType {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     //--- Hippo standard NodeTypes ---//
     String NT_DIRECTORY = "hippostd:directory";

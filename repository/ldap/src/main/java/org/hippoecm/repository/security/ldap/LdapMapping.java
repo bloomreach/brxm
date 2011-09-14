@@ -22,12 +22,12 @@ package org.hippoecm.repository.security.ldap;
 public class LdapMapping {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // the properties don't have to be exposed through the api because they are ldap specific
-    public final static String PROPERTY_SOURCE = "hippoldap:source";
-    public final static String PROPERTY_TARGET = "hippoldap:target";
-    public final static String PROPERTY_MULTI = "hippoldap:multi";
+    public static final String PROPERTY_SOURCE = "hippoldap:source";
+    public static final String PROPERTY_TARGET = "hippoldap:target";
+    public static final String PROPERTY_MULTI = "hippoldap:multi";
 
     private final String source;
     private final String target;

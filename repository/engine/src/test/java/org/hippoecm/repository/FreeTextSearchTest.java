@@ -37,20 +37,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FreeTextSearchTest extends TestCase {
-    public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
+    public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
     public static final String NT_HTML = "hippo:testhtml";
     
 
-    public final static String DOCUMENT_TITLE_PART = "foo";
-    public final static String COMPOUNDDOCUMENT_TITLE_PART = "bar";
-    public final static String  HTML_CONTENT_PART = "lux";
-    public final static String  BINARY_CONTENT_PART = "dog";
+    public static final String DOCUMENT_TITLE_PART = "foo";
+    public static final String COMPOUNDDOCUMENT_TITLE_PART = "bar";
+    public static final String  HTML_CONTENT_PART = "lux";
+    public static final String  BINARY_CONTENT_PART = "dog";
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
    
-    private final static String TEST_PATH = "test";
+    private static final String TEST_PATH = "test";
     private Node testPath;
 
     

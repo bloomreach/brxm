@@ -28,7 +28,7 @@ import org.apache.jackrabbit.core.RepositoryImpl;
 
 public class Traverse {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final Set<UUID> all = createSetAllNodes();
     protected final Set<UUID> version = createSetAllNodes();

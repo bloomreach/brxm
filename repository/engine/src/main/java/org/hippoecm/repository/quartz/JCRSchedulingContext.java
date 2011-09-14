@@ -21,7 +21,7 @@ import org.quartz.core.SchedulingContext;
 
 public class JCRSchedulingContext extends SchedulingContext {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Session session;
 

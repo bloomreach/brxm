@@ -19,7 +19,7 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 
 public class StateProviderContext {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private String parameter;
 

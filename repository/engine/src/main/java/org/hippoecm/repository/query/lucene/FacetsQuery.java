@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class FacetsQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The logger instance for this class

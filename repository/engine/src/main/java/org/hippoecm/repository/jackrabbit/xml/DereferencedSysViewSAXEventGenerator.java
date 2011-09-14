@@ -48,12 +48,12 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEventGenerator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(DereferencedSysViewSAXEventGenerator.class);
 
     /** shortcut for quick checks */
-    private final static String JCR_PREFIX = "jcr:";
+    private static final String JCR_PREFIX = "jcr:";
 
     /** use one factory */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();

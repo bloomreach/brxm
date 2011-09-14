@@ -51,7 +51,7 @@ import org.hippoecm.repository.api.WorkflowManager;
  */
 public abstract class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;

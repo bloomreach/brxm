@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class StringCodecFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Map<String, StringCodec> codecs;
 
@@ -75,7 +75,7 @@ public class StringCodecFactory {
      * <p/>
      * Performs an identical encoding, i.e. returns an identical string for encoding and decoding.
      */
-    public final static class IdentEncoding implements StringCodec {
+    public static final class IdentEncoding implements StringCodec {
         public String encode(String plain) {
             return plain;
         }
@@ -1540,7 +1540,7 @@ public class StringCodecFactory {
             return decoded.toString();
         }
 
-        private final static String encodeOneCharSimpleName(final char c) {
+        private static final String encodeOneCharSimpleName(final char c) {
             if (!isOneCharSimpleName(c)) {
                 return ISO9075Encode(c);
             } else {
@@ -1550,7 +1550,7 @@ public class StringCodecFactory {
             }
         }
 
-        private final static String encodeTwoCharSimpleName(final char first, final char second) {
+        private static final String encodeTwoCharSimpleName(final char first, final char second) {
             if (first == '.') {
                 return "." + encodeOneCharSimpleName(second);
             } else if (second == '.') {
@@ -1560,7 +1560,7 @@ public class StringCodecFactory {
             }
         }
 
-        private final static String encodeThreeOrMoreCharName(final String name) {
+        private static final String encodeThreeOrMoreCharName(final String name) {
             int last = name.length() - 1;
             StringBuilder sb = new StringBuilder(last + 13); // reserve space
 

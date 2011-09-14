@@ -43,7 +43,7 @@ import org.xml.sax.ContentHandler;
 
 public class UpdaterWorkspace implements Workspace {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Workspace upstream;
     UpdaterSession session;

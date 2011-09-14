@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 
 public final class Modules<T extends Object> implements Iterable<T> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    final static Logger log = LoggerFactory.getLogger(Modules.class);
+    static final Logger log = LoggerFactory.getLogger(Modules.class);
 
     private static Modules allModules;
 

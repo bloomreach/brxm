@@ -26,7 +26,7 @@ import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 
 public class ServerDocumentManager extends ServerObject implements RemoteDocumentManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private DocumentManager documentManager;
 

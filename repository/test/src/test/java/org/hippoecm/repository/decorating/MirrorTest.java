@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class MirrorTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static String[] contents1 = new String[] {
         "/test", "nt:unstructured",

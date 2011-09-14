@@ -61,7 +61,7 @@ import org.hippoecm.repository.security.HippoAMContext;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImpl {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
 

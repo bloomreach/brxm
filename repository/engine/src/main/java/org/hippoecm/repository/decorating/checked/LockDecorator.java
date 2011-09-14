@@ -26,7 +26,7 @@ import javax.jcr.lock.LockException;
  */
 public class LockDecorator extends AbstractDecorator implements Lock {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected Lock lock;
 

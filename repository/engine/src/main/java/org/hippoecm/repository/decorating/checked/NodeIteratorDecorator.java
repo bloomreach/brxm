@@ -28,7 +28,7 @@ import org.hippoecm.repository.api.HippoNodeIterator;
  */
 public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator, HippoNodeIterator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a decorating node iterator.

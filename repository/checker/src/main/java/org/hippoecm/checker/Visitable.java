@@ -17,7 +17,7 @@ package org.hippoecm.checker;
 
 public interface Visitable<X> {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public void accept(Visitor<X> visitor);
 }

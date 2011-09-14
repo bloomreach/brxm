@@ -20,7 +20,7 @@ import java.rmi.RemoteException;
 import org.hippoecm.repository.api.Workflow;
 
 public interface EventLoggerWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public void logEvent(String who, String className, String methodName) throws RemoteException;
 }

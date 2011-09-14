@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 
 public class LoadInitializationModule extends Thread implements DaemonModule, EventListener {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
@@ -70,7 +70,7 @@ public class LoadInitializationModule extends Thread implements DaemonModule, Ev
      * TODO: move this query into the repository as query node
      * FIXME: this assumes all initailizeitem are also system, but they aren't necessarily
      */
-    public final static String GET_INITIALIZE_ITEMS =
+    public static final String GET_INITIALIZE_ITEMS =
         "SELECT * FROM hipposys:initializeitem " +
         "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +

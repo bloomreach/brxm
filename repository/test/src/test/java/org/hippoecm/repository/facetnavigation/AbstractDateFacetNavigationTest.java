@@ -34,42 +34,42 @@ import org.junit.Before;
 public abstract class AbstractDateFacetNavigationTest extends TestCase {
    
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    final static Calendar start = Calendar.getInstance();
+    static final Calendar start = Calendar.getInstance();
     static {
         start.set(2009, 11, 23, 10, 46);
     }
-    final static Calendar onehourearlier = Calendar.getInstance();
+    static final Calendar onehourearlier = Calendar.getInstance();
     static {
         onehourearlier.set(2009, 11, 23, 9, 46);
     }
-    final static Calendar onedayearlier = Calendar.getInstance();
+    static final Calendar onedayearlier = Calendar.getInstance();
     static {
         onedayearlier.set(2009, 11, 22, 10, 46);
     }
-    final static Calendar threedayearlier = Calendar.getInstance();
+    static final Calendar threedayearlier = Calendar.getInstance();
     static {
         threedayearlier.set(2009, 11, 20, 10, 46);
     }
-    final static Calendar monthearlier = Calendar.getInstance();
+    static final Calendar monthearlier = Calendar.getInstance();
     static {
         monthearlier.set(2009, 10, 23, 10, 46);
     }
-    final static Calendar monthandadayearlier = Calendar.getInstance();
+    static final Calendar monthandadayearlier = Calendar.getInstance();
     static {
         monthandadayearlier.set(2009, 10, 22, 10, 46);
     }
-    final static Calendar twomonthsearlier = Calendar.getInstance();
+    static final Calendar twomonthsearlier = Calendar.getInstance();
     static {
         twomonthsearlier.set(2009, 9, 23, 10, 46);
     }
-    final static Calendar yearearlier = Calendar.getInstance();
+    static final Calendar yearearlier = Calendar.getInstance();
     static {
         yearearlier.set(2008, 11, 23, 10, 46);
     }
 
-    final static Calendar twoyearearlier = Calendar.getInstance();
+    static final Calendar twoyearearlier = Calendar.getInstance();
     static {
         twoyearearlier.set(2007, 11, 23, 10, 46);
     }

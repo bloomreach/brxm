@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);

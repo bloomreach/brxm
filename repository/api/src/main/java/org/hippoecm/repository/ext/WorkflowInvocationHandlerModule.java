@@ -28,7 +28,7 @@ public interface WorkflowInvocationHandlerModule {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public Object submit(WorkflowManager workflowManager, WorkflowInvocation invocation) throws RepositoryException, WorkflowException;
 }

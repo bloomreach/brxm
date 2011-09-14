@@ -22,7 +22,7 @@ import javax.jcr.PropertyIterator;
  */
 public class PropertyIteratorDecorator extends RangeIteratorDecorator implements PropertyIterator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a decorating property iterator.

@@ -69,9 +69,9 @@ import org.slf4j.LoggerFactory;
  */
 public class WorkspaceDecorator extends org.hippoecm.repository.decorating.WorkspaceDecorator implements HippoWorkspace {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    protected final static Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
+    protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
     private static final WeakHashMap<Session, Set<EventListenerDecorator>> listeners = new WeakHashMap<Session, Set<EventListenerDecorator>>();
 

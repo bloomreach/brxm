@@ -190,7 +190,7 @@ count template that go with them.
  * @version draft
  */
 public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context> {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * The Count class is used to encapsulate a simple integer count to be able

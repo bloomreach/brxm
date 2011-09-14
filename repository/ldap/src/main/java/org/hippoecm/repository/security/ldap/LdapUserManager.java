@@ -45,7 +45,7 @@ public class LdapUserManager extends AbstractUserManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * On sync save every after every SAVE_INTERVAL changes
@@ -78,7 +78,7 @@ public class LdapUserManager extends AbstractUserManager {
     /**
      * Logger
      */
-    private final static Logger log = LoggerFactory.getLogger(LdapUserManager.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapUserManager.class);
 
     /**
      * Use case sensitive uid matching

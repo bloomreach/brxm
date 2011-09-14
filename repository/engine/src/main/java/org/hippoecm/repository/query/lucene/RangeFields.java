@@ -25,7 +25,7 @@ import org.hippoecm.repository.FacetRange;
 
 public class RangeFields {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public String begin = null;
     public String end = null;

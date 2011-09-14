@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 public class RepositoryWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private String cnd1 =
             "<testUpdateModel='http://localhost/testUpdateModel/nt/1.0'>\n"

@@ -21,7 +21,7 @@ import org.hippoecm.repository.security.ManagerContext;
  * A role a user has on a domain.
  */
 public interface Role {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * NONE JCR permission constant

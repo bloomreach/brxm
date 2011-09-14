@@ -19,22 +19,22 @@ package org.hippoecm.repository.security.ldap;
 public class LdapUserSearch {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The search base: ou=Users,dc=onehippo,dc=org
      */
-    public final static String PROPERTY_BASE_DN = "hippoldap:basedn";
+    public static final String PROPERTY_BASE_DN = "hippoldap:basedn";
 
     /**
      * The search filter: (objectClass=posixUser)
      */
-    public final static String PROPERTY_FILTER = "hippoldap:filter";
+    public static final String PROPERTY_FILTER = "hippoldap:filter";
 
     /**
      * The attribute that defines the name: uid
      */
-    public final static String PROPERTY_NAME_ATTR = "hippoldap:nameattribute";
+    public static final String PROPERTY_NAME_ATTR = "hippoldap:nameattribute";
 
 
     private static final String DEFAULT_FILTER = "(objectclass=posixAccount)";

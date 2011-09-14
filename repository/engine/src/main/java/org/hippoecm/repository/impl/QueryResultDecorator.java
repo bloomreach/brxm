@@ -26,7 +26,7 @@ import org.hippoecm.repository.query.lucene.HippoQueryResult;
 
 public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final QueryResult result;
     protected long totalSize;

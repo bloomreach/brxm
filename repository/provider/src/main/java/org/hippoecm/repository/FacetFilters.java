@@ -28,7 +28,7 @@ import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 
 public class FacetFilters {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // the only operators we currently support
     public static final Operator CONTAINS_OPERATOR = Operator.CONTAINS;

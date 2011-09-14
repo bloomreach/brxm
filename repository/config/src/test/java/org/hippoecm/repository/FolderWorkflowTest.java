@@ -66,7 +66,7 @@ public class FolderWorkflowTest extends TestCase {
     private static final String CONTENT_ON_COPY = "new-content";
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Node root, node;
     WorkflowManager manager;

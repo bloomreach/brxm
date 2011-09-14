@@ -47,13 +47,13 @@ public class LdapGroupManager extends AbstractGroupManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * On sync save every after every SAVE_INTERVAL changes
      * TODO: make configurable
      */
-    private final static int SAVE_INTERVAL = 100;
+    private static final int SAVE_INTERVAL = 100;
 
     /**
      * Ldap servers often have a limit of 1000 results. Use paged searching
@@ -80,7 +80,7 @@ public class LdapGroupManager extends AbstractGroupManager {
     /**
      * Logger
      */
-    private final static Logger log = LoggerFactory.getLogger(LdapGroupManager.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapGroupManager.class);
 
     /**
      * Use case sensitive group matching

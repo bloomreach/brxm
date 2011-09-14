@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class HierarchyResolverImpl implements HierarchyResolver {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final Logger logger = LoggerFactory.getLogger(HierarchyResolverImpl.class);
 

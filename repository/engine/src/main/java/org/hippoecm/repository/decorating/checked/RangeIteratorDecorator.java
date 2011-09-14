@@ -35,7 +35,7 @@ import javax.jcr.version.VersionHistory;
  */
 public class RangeIteratorDecorator extends AbstractDecorator implements RangeIterator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** The underlying iterator. */
     protected final RangeIterator iterator;

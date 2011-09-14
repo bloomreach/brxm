@@ -61,7 +61,7 @@ public abstract class SessionDecorator implements XASession, HippoSession {
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final DecoratorFactory factory;
 

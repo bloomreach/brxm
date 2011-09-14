@@ -36,7 +36,7 @@ import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 
 public class ClientServicingNode extends ClientNode implements HippoNode {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private RemoteServicingNode remote;
 

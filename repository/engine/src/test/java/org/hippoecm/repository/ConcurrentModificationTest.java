@@ -33,9 +33,9 @@ import org.junit.Test;
  */
 public class ConcurrentModificationTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static String testRoot = "/test";
+    private static final String testRoot = "/test";
     private Session userSession;
     
     @Override

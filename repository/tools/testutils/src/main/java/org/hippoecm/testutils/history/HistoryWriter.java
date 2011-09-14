@@ -35,7 +35,7 @@ import org.junit.runners.Suite;
 
 public class HistoryWriter extends Suite implements XmlConstants {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private File historyFile;
 

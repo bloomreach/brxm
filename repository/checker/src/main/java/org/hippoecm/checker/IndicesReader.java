@@ -32,7 +32,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class IndicesReader implements Visitable<NodeIndexed> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     File basedir;
 

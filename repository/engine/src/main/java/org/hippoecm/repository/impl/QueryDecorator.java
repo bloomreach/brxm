@@ -45,14 +45,14 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDecorator implements HippoQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final Query query;
     protected Map<String, Value> arguments = null;
     private HardcodedQuery implementation = null;
 
-    private final static String MAGIC_NAMED_START = "MAGIC";
-    private final static String MAGIC_NAMED_END = "CIGAM";
+    private static final String MAGIC_NAMED_START = "MAGIC";
+    private static final String MAGIC_NAMED_END = "CIGAM";
 
     public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
         super(factory, session, query);

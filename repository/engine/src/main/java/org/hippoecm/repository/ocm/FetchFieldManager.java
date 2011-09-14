@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FetchFieldManager extends AbstractFieldManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(FetchFieldManager.class);
 

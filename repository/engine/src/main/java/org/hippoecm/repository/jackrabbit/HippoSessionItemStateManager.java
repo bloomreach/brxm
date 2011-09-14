@@ -41,7 +41,7 @@ import org.hippoecm.repository.SessionStateThresholdEnum;
 
 public class HippoSessionItemStateManager extends SessionItemStateManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(HippoSessionItemStateManager.class);
 

@@ -23,7 +23,7 @@ import javax.jcr.NodeIterator;
 
 class SetNodeIterator implements NodeIterator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Iterator<UpdaterNode> iter;
     long position = 0;

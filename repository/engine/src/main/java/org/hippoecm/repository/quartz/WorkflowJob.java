@@ -31,7 +31,7 @@ import org.hippoecm.repository.api.WorkflowException;
 
 public class WorkflowJob implements Job {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final String IMPERSONATED_USER = "workflowuser";
     private static final char[] IMPERSONATED_PASSWORD = new char[0];

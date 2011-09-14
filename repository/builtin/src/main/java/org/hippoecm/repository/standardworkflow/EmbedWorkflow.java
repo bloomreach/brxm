@@ -29,7 +29,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface EmbedWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public Document copyFrom(Document offspring, Document targetEmbed, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;

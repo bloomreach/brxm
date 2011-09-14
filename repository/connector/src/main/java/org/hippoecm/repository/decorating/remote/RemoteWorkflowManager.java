@@ -25,7 +25,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public interface RemoteWorkflowManager extends Remote {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String uuid)
         throws RepositoryException, RemoteException;

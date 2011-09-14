@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HitsRequested {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Wether results should be returned at all.

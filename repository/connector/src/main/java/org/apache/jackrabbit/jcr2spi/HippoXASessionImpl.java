@@ -28,7 +28,7 @@ import javax.transaction.xa.XAResource;
  */
 public class HippoXASessionImpl extends HippoSessionImpl implements XASession {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The HippoXASessionInfo of this <code>SessionImpl</code>.

@@ -24,7 +24,7 @@ import org.quartz.impl.StdScheduler;
 
 public class JCRScheduler extends StdScheduler implements Scheduler {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private QuartzScheduler qs;
     SchedulingContext ctx;

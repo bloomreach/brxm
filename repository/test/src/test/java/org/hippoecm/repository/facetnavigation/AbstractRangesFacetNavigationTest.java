@@ -31,7 +31,7 @@ import org.hippoecm.repository.query.lucene.HippoDateTools;
 
 public abstract class AbstractRangesFacetNavigationTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
    
     /*
      * as we are having expectations about dates, our expectations might be wrong during the 'switch' of a day. Hence, this method returns
@@ -60,45 +60,45 @@ public abstract class AbstractRangesFacetNavigationTest extends TestCase {
         return false;
     }
     
-    protected final static Calendar start = Calendar.getInstance();
-    protected final static Calendar onehourbefore = Calendar.getInstance();
+    protected static final Calendar start = Calendar.getInstance();
+    protected static final Calendar onehourbefore = Calendar.getInstance();
     static {
         onehourbefore.setTimeInMillis(start.getTimeInMillis());
         onehourbefore.add(Calendar.HOUR, -1);
     }
-    protected final static Calendar onedaybefore = Calendar.getInstance();
+    protected static final Calendar onedaybefore = Calendar.getInstance();
     static {
         onedaybefore.setTimeInMillis(start.getTimeInMillis());
         onedaybefore.add(Calendar.DAY_OF_YEAR, -1);
     }
-    protected final static Calendar threedaybefore = Calendar.getInstance();
+    protected static final Calendar threedaybefore = Calendar.getInstance();
     static {
         threedaybefore.setTimeInMillis(start.getTimeInMillis());
         threedaybefore.add(Calendar.DAY_OF_YEAR, -3);
     }
-    protected final static Calendar monthbefore = Calendar.getInstance();
+    protected static final Calendar monthbefore = Calendar.getInstance();
     static {
         monthbefore.setTimeInMillis(start.getTimeInMillis());
         monthbefore.add(Calendar.MONTH, -1);
     }
-    protected final static Calendar monthandadaybefore = Calendar.getInstance();
+    protected static final Calendar monthandadaybefore = Calendar.getInstance();
     static {
         monthandadaybefore.setTimeInMillis(start.getTimeInMillis());
         monthandadaybefore.add(Calendar.MONTH, -1);
         monthandadaybefore.add(Calendar.DAY_OF_YEAR, -1);
     }
-    protected final static Calendar twomonthsbefore = Calendar.getInstance();
+    protected static final Calendar twomonthsbefore = Calendar.getInstance();
     static {
         twomonthsbefore.setTimeInMillis(start.getTimeInMillis());
         twomonthsbefore.add(Calendar.MONTH, -2);
     }
-    protected final static Calendar yearbefore = Calendar.getInstance();
+    protected static final Calendar yearbefore = Calendar.getInstance();
     static {
         yearbefore.setTimeInMillis(start.getTimeInMillis());
         yearbefore.add(Calendar.YEAR, -1);
     }
 
-    protected final static Calendar twoyearbefore = Calendar.getInstance();
+    protected static final Calendar twoyearbefore = Calendar.getInstance();
     static {
         twoyearbefore.setTimeInMillis(start.getTimeInMillis());
         twoyearbefore.add(Calendar.YEAR, -2);

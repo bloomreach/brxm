@@ -51,11 +51,11 @@ import org.hippoecm.repository.updater.UpdaterNode;
 
 public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(RepositoryWorkflowImpl.class);
+    static final Logger log = LoggerFactory.getLogger(RepositoryWorkflowImpl.class);
 
     private Session session;
     private Node subject;

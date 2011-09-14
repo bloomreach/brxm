@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 
 public class UpdaterTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final String[] content = {
         "/test", "nt:unstructured",

@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface DefaultWorkflow extends CopyWorkflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public void delete()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;

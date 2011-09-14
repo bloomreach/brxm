@@ -46,7 +46,7 @@ import static org.junit.Assert.assertEquals;
 
 public class HREPTWO4837Test extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     @Before
     @Override

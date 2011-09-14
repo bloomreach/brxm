@@ -28,7 +28,7 @@ import org.hippoecm.repository.decorating.client.ClientServicesAdapterFactory;
 
 class RemoteHippoRepository extends HippoRepositoryImpl {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public RemoteHippoRepository(String location) throws MalformedURLException, NotBoundException, RemoteException,
             RepositoryException {

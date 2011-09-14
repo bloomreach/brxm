@@ -29,7 +29,7 @@ import org.apache.lucene.document.DateTools;
 
 public class HippoDateTools {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     
     private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyyMM");

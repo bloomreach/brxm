@@ -39,7 +39,7 @@ import org.hippoecm.repository.api.ValueMap;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected Repository repository;
     protected final Logger log = LoggerFactory.getLogger(HippoRepositoryImpl.class);

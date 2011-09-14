@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 
 public class Progress {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private int maximum;
     private int current;

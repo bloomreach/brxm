@@ -28,7 +28,7 @@ import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
     private static HippoRepository defaultRepository = null;

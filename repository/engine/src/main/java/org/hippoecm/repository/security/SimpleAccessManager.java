@@ -40,7 +40,7 @@ public class SimpleAccessManager extends org.apache.jackrabbit.core.security.sim
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private boolean initialized;
     

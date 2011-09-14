@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 
 public class HREPTWO1104Test extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     final private static int stepsize = 10;
     final private static int numiters = 3000;

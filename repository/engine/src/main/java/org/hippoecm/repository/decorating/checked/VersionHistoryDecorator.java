@@ -31,7 +31,7 @@ import org.hippoecm.repository.api.HippoNode;
  */
 public class VersionHistoryDecorator extends NodeDecorator implements VersionHistory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final VersionHistory versionHistory;
 

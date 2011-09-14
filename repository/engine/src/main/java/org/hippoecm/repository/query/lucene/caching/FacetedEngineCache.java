@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class FacetedEngineCache {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
     
     private static final Logger log = LoggerFactory.getLogger(FacetedEngineCache.class);
    
@@ -211,8 +211,8 @@ public class FacetedEngineCache {
     class LRUMap<K, V> extends LinkedHashMap<K, V> {
         private static final long serialVersionUID = 1L;
         private int maxCacheSize;
-        private final static int DEFAULT_MAX_CAPACITY = 10000;
-        private final static int DEfAULT_INITIAL_CAPACITY = 500;
+        private static final int DEFAULT_MAX_CAPACITY = 10000;
+        private static final int DEfAULT_INITIAL_CAPACITY = 500;
         private static final float LOAD_FACTOR = 0.75f;
  
         /**

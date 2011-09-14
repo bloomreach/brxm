@@ -26,10 +26,10 @@ import static org.junit.Assert.*;
 
 public class FacetedNavigationNamespaceTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static long PROP_COUNT = 2;
-    private final static long NODE_COUNT = 3;
+    private static final long PROP_COUNT = 2;
+    private static final long NODE_COUNT = 3;
 
     private void commonStart() throws RepositoryException {
         Node test = session.getRootNode().addNode("test");

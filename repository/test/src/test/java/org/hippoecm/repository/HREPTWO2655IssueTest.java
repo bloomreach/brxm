@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public class HREPTWO2655IssueTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Session session2;
 

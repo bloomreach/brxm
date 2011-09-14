@@ -27,7 +27,7 @@ import org.hippoecm.repository.security.user.DummyUserManager;
 public interface SecurityProvider {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the security provider with the given context

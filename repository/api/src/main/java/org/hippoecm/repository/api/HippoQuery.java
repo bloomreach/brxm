@@ -38,7 +38,7 @@ public interface HippoQuery extends Query {
     /**
      * 
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * This query language is not yet available as public API, but reserved for future use.

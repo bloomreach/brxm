@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 final class Extension {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     // ---------- Member variables

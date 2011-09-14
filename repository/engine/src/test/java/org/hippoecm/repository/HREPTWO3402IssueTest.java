@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class HREPTWO3402IssueTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     
     @Override

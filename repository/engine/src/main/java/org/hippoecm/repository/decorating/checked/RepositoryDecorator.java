@@ -28,7 +28,7 @@ import javax.jcr.Value;
  */
 public class RepositoryDecorator implements Repository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private DecoratorFactory factory;
 

@@ -86,22 +86,22 @@ import org.slf4j.LoggerFactory;
 public class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** System property for overriding the repository path */
-    public final static String SYSTEM_PATH_PROPERTY = "repo.path";
+    public static final String SYSTEM_PATH_PROPERTY = "repo.path";
 
     /** System property for overriding the repository config file */
-    public final static String SYSTEM_CONFIG_PROPERTY = "repo.config";
+    public static final String SYSTEM_CONFIG_PROPERTY = "repo.config";
 
     /** System property for overriding the repository config file */
-    public final static String SYSTEM_UPGRADE_PROPERTY = "repo.upgrade";
+    public static final String SYSTEM_UPGRADE_PROPERTY = "repo.upgrade";
 
     /** System property for overriding the servlet config file */
-    public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
+    public static final String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
 
     /** Default config file */
-    public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+    public static final String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
     /** The advised threshold on the number of modified nodes to hold in transient session state */
     public static int batchThreshold = 96;

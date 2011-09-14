@@ -20,7 +20,7 @@ import java.util.UUID;
 
 interface NodeDescription {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     UUID getNode();
     UUID getParent();

@@ -29,7 +29,7 @@ import org.hippoecm.repository.FacetedNavigationEngine.Result;
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
         implements FacetedNavigationEngine<Q, C> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private FacetedNavigationEngine<Q, C> upstream;
 

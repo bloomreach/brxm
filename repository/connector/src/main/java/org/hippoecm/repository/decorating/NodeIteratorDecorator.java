@@ -28,7 +28,7 @@ import javax.jcr.Session;
  */
 public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a decorating node iterator.

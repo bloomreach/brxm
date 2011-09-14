@@ -47,9 +47,9 @@ public class LoggingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(LoggingServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(LoggingServlet.class);
 
     private static final String REPOS_PARAM = "repository-address";
     private static final String NODE_PARAM = "logging-check-node";
@@ -59,8 +59,8 @@ public class LoggingServlet extends HttpServlet {
     private static final String DEFAULT_NODE = "////content/documents";
     private static final String DEFAULT_PRIV = "hippo:admin";
 
-    private final static boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
-    private final static boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
+    private static final boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
+    private static final boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
 
     private transient HippoRepository repository;
     private transient Session session;
@@ -69,13 +69,13 @@ public class LoggingServlet extends HttpServlet {
     private String privilege;
     private String absPath;
 
-    private final static Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO,
+    private static final Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO,
             Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL };
 
-    private final static String[] log4jLevels = new String[] { "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG",
+    private static final String[] log4jLevels = new String[] { "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG",
             "TRACE", "ALL" };
 
-    private final static String[] jdk14Levels = new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
+    private static final String[] jdk14Levels = new String[] { "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
             "FINER", "FINEST", "ALL" };
 
     public void init(ServletConfig config) throws ServletException {

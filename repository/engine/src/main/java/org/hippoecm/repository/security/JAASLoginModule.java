@@ -45,7 +45,7 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 public class JAASLoginModule implements LoginModule {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     protected Subject subject;
     protected CallbackHandler callbackHandler;

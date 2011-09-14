@@ -20,7 +20,7 @@ import org.hippoecm.repository.api.Document;
 public class SuperClass extends Document
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public String superfield;
     public SuperClass() {

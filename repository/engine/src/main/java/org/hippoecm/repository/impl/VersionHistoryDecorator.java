@@ -30,7 +30,7 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
  */
 public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.VersionHistoryDecorator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
         super(factory, session, versionHistory);

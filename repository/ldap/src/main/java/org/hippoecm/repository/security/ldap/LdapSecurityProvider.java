@@ -38,28 +38,28 @@ import org.slf4j.LoggerFactory;
 public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // the nodetypes don't have to be exposed through the api because they are ldap specific
-    final public static String NT_LDAPMAPPING = "hippoldap:mapping";
-    final public static String NT_LDAPUSERSEARCH = "hippoldap:usersearch";
-    final public static String NT_LDAPGROUPSEARCH = "hippoldap:groupsearch";
-    final public static String NT_LDAPGROUPPROVIDER = "hippoldap:groupprovider";
-    final public static String NT_LDAPROLEPROVIDER = "hippoldap:roleprovider";
-    final public static String NT_LDAPUSERPROVIDER = "hippoldap:userprovider";
-    final public static String NT_LDAPSECURITYPROVIDER = "hippoldap:securityprovider";
+    public static final String NT_LDAPMAPPING = "hippoldap:mapping";
+    public static final String NT_LDAPUSERSEARCH = "hippoldap:usersearch";
+    public static final String NT_LDAPGROUPSEARCH = "hippoldap:groupsearch";
+    public static final String NT_LDAPGROUPPROVIDER = "hippoldap:groupprovider";
+    public static final String NT_LDAPROLEPROVIDER = "hippoldap:roleprovider";
+    public static final String NT_LDAPUSERPROVIDER = "hippoldap:userprovider";
+    public static final String NT_LDAPSECURITYPROVIDER = "hippoldap:securityprovider";
 
     // the properties don't have to be exposed through the api because they are ldap specific
-    public final static String PROPERTY_PROVIDER_URL = "hippoldap:providerurl";
-    public final static String PROPERTY_AUTHENTICATION = "hippoldap:authentication";
-    public final static String PROPERTY_INITIAL_FACTORY = "hippoldap:initialfactory";
-    public final static String PROPERTY_SOCKET_FACTORY = "hippoldap:socketfactory";
-    public final static String PROPERTY_CONNECT_TIMEOUT_MS = "hippoldap:connecttimeoutms";
-    public final static String PROPERTY_SEARCH_BASE = "hippoldap:searchbase";
-    public final static String PROPERTY_PRINCIPAL = "hippoldap:principal";
-    public final static String PROPERTY_CREDENTIALS = "hippoldap:credentials";
-    public final static String PROPERTY_CACHE_MAX_AGE = "hippoldap:cachemaxage";
-    public final static String PROPERTY_LDAP_DN = "hippoldap:dn";
+    public static final String PROPERTY_PROVIDER_URL = "hippoldap:providerurl";
+    public static final String PROPERTY_AUTHENTICATION = "hippoldap:authentication";
+    public static final String PROPERTY_INITIAL_FACTORY = "hippoldap:initialfactory";
+    public static final String PROPERTY_SOCKET_FACTORY = "hippoldap:socketfactory";
+    public static final String PROPERTY_CONNECT_TIMEOUT_MS = "hippoldap:connecttimeoutms";
+    public static final String PROPERTY_SEARCH_BASE = "hippoldap:searchbase";
+    public static final String PROPERTY_PRINCIPAL = "hippoldap:principal";
+    public static final String PROPERTY_CREDENTIALS = "hippoldap:credentials";
+    public static final String PROPERTY_CACHE_MAX_AGE = "hippoldap:cachemaxage";
+    public static final String PROPERTY_LDAP_DN = "hippoldap:dn";
 
     // updates and sync caches
     private long lastUpdate = 0;
@@ -75,7 +75,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     /**
      * Logger
      */
-    private final static Logger log = LoggerFactory.getLogger(LdapSecurityProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapSecurityProvider.class);
 
     /**
      * {@inheritDoc}

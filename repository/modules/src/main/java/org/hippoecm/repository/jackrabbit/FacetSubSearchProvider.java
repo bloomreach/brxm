@@ -29,7 +29,7 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     QPropertyDefinition primaryTypePropDef;
 

@@ -44,7 +44,7 @@ import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 
 public class ClientServicingSession extends ClientSession implements HippoSession {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private RemoteServicingSession remote;
 

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(ItemManager.class);
 

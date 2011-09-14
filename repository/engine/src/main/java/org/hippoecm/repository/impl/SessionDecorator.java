@@ -85,7 +85,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected DerivedDataEngine derivedEngine;
 

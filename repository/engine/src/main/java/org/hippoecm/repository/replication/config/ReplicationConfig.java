@@ -46,10 +46,10 @@ public class ReplicationConfig {
     private static final String REPLICATION_XML = "replication.xml";
 
     /** System property for overriding the replication config file */
-    public final static String SYSTEM_CONFIG_PROPERTY = "replication.config";
+    public static final String SYSTEM_CONFIG_PROPERTY = "replication.config";
 
     /** System property for overriding the servlet config file */
-    public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "replication.config";
+    public static final String SYSTEM_SERVLETCONFIG_PROPERTY = "replication.config";
 
     /**
      * map of replicator names and replicator configurations

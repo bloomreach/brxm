@@ -27,7 +27,7 @@ import org.apache.jackrabbit.core.persistence.PersistenceManager;
 
 class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visitable<NodeReference> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     String wspName;
 

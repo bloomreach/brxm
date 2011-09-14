@@ -17,7 +17,7 @@ package org.hippoecm.repository.util;
 
 public class VersionNumber implements Comparable<VersionNumber> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private int[] numbers;
     private String classifier;

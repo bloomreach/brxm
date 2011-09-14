@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Workflow;
 
 public interface RemoteWorkflowDescriptor extends Remote {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public String getDisplayName() throws RepositoryException, RemoteException;
 

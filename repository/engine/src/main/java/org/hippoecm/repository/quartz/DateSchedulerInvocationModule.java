@@ -33,7 +33,7 @@ import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 
 public class DateSchedulerInvocationModule extends AbstractSchedulerInvocationModule {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     Date timestamp;
 

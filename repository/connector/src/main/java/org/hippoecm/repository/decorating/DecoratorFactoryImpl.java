@@ -35,7 +35,7 @@ import org.apache.jackrabbit.api.XASession;
 
 public abstract class DecoratorFactoryImpl implements DecoratorFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public DecoratorFactoryImpl() {
     }

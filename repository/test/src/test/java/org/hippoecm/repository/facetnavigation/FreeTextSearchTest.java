@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 public class FreeTextSearchTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     private Calendar start = Calendar.getInstance();
     private Calendar onehourearlier = Calendar.getInstance();
     private Calendar onedayearlier = Calendar.getInstance();

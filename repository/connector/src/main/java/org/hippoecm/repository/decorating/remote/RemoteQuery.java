@@ -32,7 +32,7 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 
 public interface RemoteQuery extends org.apache.jackrabbit.rmi.remote.RemoteQuery, Remote, Serializable {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public String storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException,
             VersionException, ConstraintViolationException, LockException, UnsupportedRepositoryOperationException,

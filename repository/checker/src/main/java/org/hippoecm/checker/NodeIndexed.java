@@ -19,7 +19,7 @@ import java.util.UUID;
 
 interface NodeIndexed {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     UUID getNode();
     UUID getParent();

@@ -32,7 +32,7 @@ import org.hippoecm.repository.WebCredentials;
 
 public class ExampleLoginModule implements LoginModule {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     protected Subject subject;
 

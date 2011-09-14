@@ -44,7 +44,7 @@ public class HippoLoginModule implements LoginModule {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // initial state
     private Subject subject;

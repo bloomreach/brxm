@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface RepositoryWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Instruct the repository to apply the new node definition overriding the

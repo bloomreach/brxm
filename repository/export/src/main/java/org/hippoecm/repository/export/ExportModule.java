@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ExportModule implements DaemonModule {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     // ---------- Static variables
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");

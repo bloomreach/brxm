@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 public class WorkflowEventTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Node root;
     private WorkflowManager manager;

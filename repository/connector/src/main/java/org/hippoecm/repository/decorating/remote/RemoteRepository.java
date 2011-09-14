@@ -19,5 +19,5 @@ import java.io.Serializable;
 import java.rmi.Remote;
 
 public interface RemoteRepository extends org.apache.jackrabbit.rmi.remote.RemoteRepository, Remote, Serializable {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 }

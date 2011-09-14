@@ -26,7 +26,7 @@ import javax.resource.spi.ManagedConnectionFactory;
  */
 public final class JCAConnectionManager implements ConnectionManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The method allocateConnection gets called by the resource adapter's

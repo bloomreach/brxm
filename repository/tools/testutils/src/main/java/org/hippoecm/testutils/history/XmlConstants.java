@@ -19,38 +19,38 @@ package org.hippoecm.testutils.history;
  * XmlConstants.java
  */
 public interface XmlConstants {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     // the testsuite element
-    public final static String TESTSUITE = "testsuite";
+    public static final String TESTSUITE = "testsuite";
 
     // classname attribute for testsuite elements
-    public final static String ATTR_CLASSNAME = "classname";
+    public static final String ATTR_CLASSNAME = "classname";
 
     // the testcase element
-    public final static String TESTCASE = "testcase";
+    public static final String TESTCASE = "testcase";
 
     // name attribute for testcase and metric elements
-    public final static String ATTR_NAME = "name";
+    public static final String ATTR_NAME = "name";
 
     // the metric element
-    public final static String METRIC = "metric";
+    public static final String METRIC = "metric";
 
     // unit attribute for metric elements
-    public final static String ATTR_UNIT = "unit";
+    public static final String ATTR_UNIT = "unit";
 
     // fuzzy attribute for metric elements
-    public final static String ATTR_FUZZY = "fuzzy";
+    public static final String ATTR_FUZZY = "fuzzy";
 
     // the measurepoint element
-    public final static String MEASUREPOINT = "measurepoint";
+    public static final String MEASUREPOINT = "measurepoint";
 
     // timestamp attributes for measurepoint elements
-    public final static String ATTR_TIMESTAMP = "timestamp";
+    public static final String ATTR_TIMESTAMP = "timestamp";
 
     // value attribute for measurepoint elements
-    public final static String ATTR_VALUE = "value";
+    public static final String ATTR_VALUE = "value";
 
     // skip attribute for measurepoint elements
-    public final static String ATTR_SKIP = "skip";
+    public static final String ATTR_SKIP = "skip";
 }

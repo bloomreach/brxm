@@ -28,14 +28,14 @@ import static org.junit.Assert.assertTrue;
 
 public class StandardHippoAnalyzerTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     
-    public final static String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
+    public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
     public static final String NT_HTML = "hippo:testhtml";
     
 
-    private final static String TEST_PATH = "test";
+    private static final String TEST_PATH = "test";
     private Node testPath;
 
     

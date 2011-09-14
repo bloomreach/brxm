@@ -28,7 +28,7 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
  */
 public class QueryManagerDecorator extends org.hippoecm.repository.decorating.QueryManagerDecorator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public QueryManagerDecorator(DecoratorFactory factory, Session session, QueryManager manager) {
         super(factory, session, manager);

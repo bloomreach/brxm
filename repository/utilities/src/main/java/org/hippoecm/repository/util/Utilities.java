@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 
 public class Utilities {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(Utilities.class);
+    private static final Logger log = LoggerFactory.getLogger(Utilities.class);
 
     private static void dump(Node node, int level) throws RepositoryException {
         dump(System.out, node, level);

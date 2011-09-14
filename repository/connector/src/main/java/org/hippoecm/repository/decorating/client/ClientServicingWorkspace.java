@@ -35,7 +35,7 @@ import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public class ClientServicingWorkspace extends ClientWorkspace implements HippoWorkspace {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Session session;
     private RemoteServicingWorkspace remote;

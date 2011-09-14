@@ -18,7 +18,7 @@ package org.hippoecm.repository.api;
 import javax.jcr.NodeIterator;
 
 public interface HippoNodeIterator extends NodeIterator {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Obtains the number of elements that would be retrievable if the user your have access to all elements in the repository

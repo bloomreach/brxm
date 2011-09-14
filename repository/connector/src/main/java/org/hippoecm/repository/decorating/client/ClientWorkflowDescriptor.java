@@ -30,7 +30,7 @@ import org.hippoecm.repository.decorating.remote.RemoteWorkflowDescriptor;
 
 public class ClientWorkflowDescriptor extends UnicastRemoteObject implements WorkflowDescriptor {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     RemoteWorkflowDescriptor remote;
 

@@ -75,7 +75,7 @@ import org.xml.sax.SAXException;
 
 public class ServicingSearchIndex extends SearchIndex {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingSearchIndex.class);

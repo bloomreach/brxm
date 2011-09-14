@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 public class WebCredentialsAssertionTest {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testCredentialsCallback() throws Exception {

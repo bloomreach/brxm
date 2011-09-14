@@ -32,7 +32,7 @@ public interface UpdaterContext {
      * @exclude
      */
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * The registerName method MUST be called EXACTLY ONCE by every class

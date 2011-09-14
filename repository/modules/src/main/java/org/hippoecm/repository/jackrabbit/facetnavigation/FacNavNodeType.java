@@ -16,58 +16,58 @@
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 public interface FacNavNodeType {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * 
      */
-    final public static String NT_ABSTRACTFACETNAVIGATION = "hippofacnav:abstractfacetnavigation";
+    public static final String NT_ABSTRACTFACETNAVIGATION = "hippofacnav:abstractfacetnavigation";
     /**
      * 
      */
-    final public static String NT_FACETNAVIGATION = "hippofacnav:facetnavigation";
+    public static final String NT_FACETNAVIGATION = "hippofacnav:facetnavigation";
     /**
      * 
      */
-    final public static String NT_FACETSAVAILABLENAVIGATION = "hippofacnav:facetsavailablenavigation";
+    public static final String NT_FACETSAVAILABLENAVIGATION = "hippofacnav:facetsavailablenavigation";
     /**
      * 
      */
-    final public static String NT_FACETSUBNAVIGATION = "hippofacnav:facetsubnavigation";
+    public static final String NT_FACETSUBNAVIGATION = "hippofacnav:facetsubnavigation";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FACETS = "hippofacnav:facets";
+    public static final String HIPPOFACNAV_FACETS = "hippofacnav:facets";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FACETNODENAMES = "hippofacnav:facetnodenames";
+    public static final String HIPPOFACNAV_FACETNODENAMES = "hippofacnav:facetnodenames";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FACETLIMIT = "hippofacnav:limit";
+    public static final String HIPPOFACNAV_FACETLIMIT = "hippofacnav:limit";
     
     /**
      * 
      */
-    final public static String HIPPOFACNAV_LEAF = "hippofacnav:leaf";
+    public static final String HIPPOFACNAV_LEAF = "hippofacnav:leaf";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FACETSORTBY = "hippofacnav:sortby";
+    public static final String HIPPOFACNAV_FACETSORTBY = "hippofacnav:sortby";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FACETSORTORDER = "hippofacnav:sortorder";
+    public static final String HIPPOFACNAV_FACETSORTORDER = "hippofacnav:sortorder";
 
     /**
      * 
      */
-    final public static String HIPPOFACNAV_FILTERS = "hippofacnav:filters";
+    public static final String HIPPOFACNAV_FILTERS = "hippofacnav:filters";
 
 }

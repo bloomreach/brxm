@@ -28,7 +28,7 @@ import javax.transaction.xa.XAResource;
  */
 public class JCAResourceAdapter implements ResourceAdapter {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final XAResource[] xaResources = new XAResource[0];
 

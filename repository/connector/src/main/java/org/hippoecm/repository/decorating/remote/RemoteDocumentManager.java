@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 
 public interface RemoteDocumentManager extends Remote {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public Document getDocument(String category, String identifier) throws RepositoryException, RemoteException;
 }

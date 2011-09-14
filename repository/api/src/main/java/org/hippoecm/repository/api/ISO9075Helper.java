@@ -22,7 +22,7 @@ package org.hippoecm.repository.api;
  */
 public class ISO9075Helper {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private ISO9075Helper() {};
 

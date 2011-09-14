@@ -37,7 +37,7 @@ import javax.jcr.version.VersionHistory;
  */
 public interface DecoratorFactory {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Creates a repository decorator.

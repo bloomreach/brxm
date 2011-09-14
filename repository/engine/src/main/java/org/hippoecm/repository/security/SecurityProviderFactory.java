@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class SecurityProviderFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final String securityPath;
     private final String usersPath;

@@ -35,7 +35,7 @@ import org.hippoecm.repository.api.WorkflowException;
  *
  */
 public interface FolderWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      *

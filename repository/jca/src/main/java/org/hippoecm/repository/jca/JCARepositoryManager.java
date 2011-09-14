@@ -29,7 +29,7 @@ import org.hippoecm.repository.HippoRepositoryFactory;
  */
 public final class JCARepositoryManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Instance of manager.

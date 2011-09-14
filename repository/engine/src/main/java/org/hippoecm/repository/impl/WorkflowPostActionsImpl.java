@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 /** This class is not part of a public accessible API or extensible interface */
 public class WorkflowPostActionsImpl implements WorkflowPostActions {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
-    final static Logger log = LoggerFactory.getLogger(WorkflowPostActions.class);
+    static final Logger log = LoggerFactory.getLogger(WorkflowPostActions.class);
 
-    final static String CATAGORYNAMEPREFIX = "events";
+    static final String CATAGORYNAMEPREFIX = "events";
 
     private List<WorkflowPostActions> actions;
     private boolean isDocumentPathResult;

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class SchedulerModule implements DaemonModule
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 

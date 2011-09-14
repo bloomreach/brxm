@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 public class BasicAuth {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
     private static final String BASIC_AUTH_PREFIX = "Basic "; // intentional trailing space
     private static final int BASIC_AUTH_PREFIX_LENGTH = BASIC_AUTH_PREFIX.length();
 
-    private final static Logger log = LoggerFactory.getLogger(BasicAuth.class);
+    private static final Logger log = LoggerFactory.getLogger(BasicAuth.class);
 
     public static boolean hasAuthorizationHeader(HttpServletRequest request) {
         return (getAuthorizationHeader(request) != null);

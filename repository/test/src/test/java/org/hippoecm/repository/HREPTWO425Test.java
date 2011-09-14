@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class HREPTWO425Test extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testIssue() throws RepositoryException {

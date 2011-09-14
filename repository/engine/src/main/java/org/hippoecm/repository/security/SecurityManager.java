@@ -86,11 +86,11 @@ import org.slf4j.LoggerFactory;
 
 public class SecurityManager implements JackrabbitSecurityManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     // TODO: this string is matched as node name in the repository.
-    public final static String INTERNAL_PROVIDER = "internal";
-    public final static String SECURITY_CONFIG_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+    public static final String INTERNAL_PROVIDER = "internal";
+    public static final String SECURITY_CONFIG_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
 
     private String usersPath;
     private String groupsPath;

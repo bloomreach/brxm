@@ -43,11 +43,11 @@ import org.slf4j.LoggerFactory;
  */
 public class HREPTWO3870IssueTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(HREPTWO3870IssueTest.class);
 
-    private final static String tags = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    private static final String tags = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             + "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" sv:name=\"tags\">"
             + "  <sv:property sv:name=\"jcr:uuid\" sv:type=\"Name\">"
             + "    <sv:value>2c21a29c-aaaa-bbbb-cccc-594e5bf93b25</sv:value>" + "  </sv:property>"

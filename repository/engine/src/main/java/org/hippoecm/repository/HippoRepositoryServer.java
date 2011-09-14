@@ -32,7 +32,7 @@ import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
 public class HippoRepositoryServer extends LocalHippoRepository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private boolean registryIsEmbedded = false;
     String bindingAddress;

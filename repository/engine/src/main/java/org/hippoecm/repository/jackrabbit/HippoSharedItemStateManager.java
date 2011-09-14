@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(HippoSharedItemStateManager.class);
+    private static final Logger log = LoggerFactory.getLogger(HippoSharedItemStateManager.class);
 
     public RepositoryImpl repository;
 

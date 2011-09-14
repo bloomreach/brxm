@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class FacetedNavigationGuidedBrowsingTest extends AbstractDateFacetNavigationTest {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     
     /*
      * This test is to make sure that you can configure that some facets are available only after some other facet has been chosen, and

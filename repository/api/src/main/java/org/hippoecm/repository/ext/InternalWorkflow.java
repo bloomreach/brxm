@@ -25,5 +25,5 @@ public interface InternalWorkflow {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 }

@@ -101,9 +101,9 @@ import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 
 public class UpdaterEngine {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
+    protected static final Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
 
     Session session;
     UpdaterSession updaterSession;

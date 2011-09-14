@@ -113,7 +113,7 @@ import java.util.Vector;
  */
 public class myXML implements Serializable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
@@ -664,7 +664,7 @@ public class myXML implements Serializable {
             return PRE;
     }
 
-    private final static int // Steven Brandt's original states
+    private static final int // Steven Brandt's original states
             TEXT = 1,
             ENTITY = 2, OPEN_TAG = 3, CLOSE_TAG = 4, START_TAG = 5, ATTRIBUTE_LVALUE = 6,
             ATTRIBUTE_EQUAL = 9,

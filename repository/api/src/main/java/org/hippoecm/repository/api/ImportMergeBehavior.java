@@ -27,7 +27,7 @@ public interface ImportMergeBehavior {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * When a node already exists in the repository on the same path, skip the node in the import and its subtree.

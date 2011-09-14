@@ -42,7 +42,7 @@ import java.util.Map;
  */
 class HippoConfigurationEntityResolver implements EntityResolver {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The singleton instance of this class.

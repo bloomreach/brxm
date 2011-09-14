@@ -45,7 +45,7 @@ import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 
 public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvider {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
     protected static final String VALID_NODENAME_EXAMPLE = "date${sortby:'facetvalue', sortorder:'descending'}";
@@ -223,15 +223,15 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
     /*
      * Comparator which compares on the count of a FacetNavigationEntry
      */
-    final static FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
-    final static FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
+    static final FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
+    static final FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_COUNT_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
     
     /*
      * Comparator which compares on the FacetNavigationEntry facetValue: if both values are parseable as double, they are compare as double.
      * Otherwise, String comparison is used
      */
-    final static FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
-    final static FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
+    static final FacetNavigationEntryComparator<FacetNavigationEntry> DESCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(false);
+    static final FacetNavigationEntryComparator<FacetNavigationEntry> ASCENDING_FACETVALUE_COMPARATOR = new FacetNavigationEntryComparator<FacetNavigationEntry>(true);
     
     
     static class FacetNavigationEntryComparator<T extends FacetNavigationEntry> implements Comparator<FacetNavigationEntry> , Serializable{

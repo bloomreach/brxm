@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class HREPTWO1493Test extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private final String[] content1 = {
         "/test",              "nt:unstructured",

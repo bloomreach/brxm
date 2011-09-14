@@ -19,7 +19,7 @@ import javax.security.auth.callback.Callback;
 
 public class ParameterCallback implements Callback {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private static final String SVN_ID = "$Id: $";
 
     private String parameterValue;
     private String parameterName;

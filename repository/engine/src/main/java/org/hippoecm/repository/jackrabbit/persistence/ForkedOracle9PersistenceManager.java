@@ -39,7 +39,7 @@ import org.apache.jackrabbit.core.util.db.Oracle10R1ConnectionHelper;
  */
 public class ForkedOracle9PersistenceManager extends ForkedOraclePersistenceManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     /**
      * {@inheritDoc}

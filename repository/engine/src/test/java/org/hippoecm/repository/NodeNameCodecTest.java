@@ -31,13 +31,13 @@ import org.junit.Test;
 
 public class NodeNameCodecTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    private final static String TEST_PATH = "testnodes";
+    private static final String TEST_PATH = "testnodes";
     private Node testPath;
 
-    private final static Map<String, String> simpleNames = new HashMap<String, String>();
-    private final static Map<String, String> prefixedNames = new HashMap<String, String>();
+    private static final Map<String, String> simpleNames = new HashMap<String, String>();
+    private static final Map<String, String> prefixedNames = new HashMap<String, String>();
 
     static {
         simpleNames.put("1", "1");

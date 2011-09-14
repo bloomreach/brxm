@@ -38,7 +38,7 @@ import org.hippoecm.repository.FacetFilters.FacetFilter;
 
 public class FacetFiltersQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The lucene query: note the boolean in constructor of BooleanQuery must be false because this query is

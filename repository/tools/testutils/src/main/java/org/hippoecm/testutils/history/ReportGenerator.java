@@ -29,7 +29,7 @@ import org.apache.commons.cli.PosixParser;
 
 public class ReportGenerator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public static void main(String[] args) {
         ReportGenerator reportGenerator = new ReportGenerator();

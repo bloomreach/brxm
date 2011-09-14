@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 
 public class FacetSelectTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     String[] content = new String[] {
         "/test",              "nt:unstructured",

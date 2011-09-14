@@ -45,7 +45,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class ChartsCreator implements XmlConstants {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public void createCharts(File[] historyFiles, File reportsDir) {
         for (int j = 0; j < historyFiles.length; j++) {

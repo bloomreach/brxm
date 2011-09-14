@@ -24,7 +24,7 @@ import org.hippoecm.repository.decorating.remote.RemoteRepository;
 public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRepository implements RemoteRepository {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
     private Repository repository;
     private RemoteServicingAdapterFactory factory;
 

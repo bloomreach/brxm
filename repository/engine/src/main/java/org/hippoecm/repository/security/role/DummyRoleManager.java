@@ -26,7 +26,7 @@ import org.hippoecm.repository.security.ManagerContext;
 public class DummyRoleManager implements RoleManager {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     public boolean addRole(Role role) throws NotSupportedException, RoleException {
         throw new NotSupportedException("Dummy manager");

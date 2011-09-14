@@ -30,7 +30,7 @@ import java.io.Serializable;
  */
 public class Document extends Object implements Serializable, Cloneable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private transient Document isCloned = null;
     private String identity = null;

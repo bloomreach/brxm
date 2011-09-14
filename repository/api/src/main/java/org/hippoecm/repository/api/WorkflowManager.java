@@ -44,7 +44,7 @@ public interface WorkflowManager {
     /**
      * @exclude
      */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Workflow Managers are associated with an authenticated session, even though most of the operations executed by workflows

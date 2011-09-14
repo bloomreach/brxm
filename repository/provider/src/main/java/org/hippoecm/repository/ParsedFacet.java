@@ -28,7 +28,7 @@ import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 
 public class ParsedFacet {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
 
@@ -36,7 +36,7 @@ public class ParsedFacet {
     /*
      * A cache shared between all threads that keep parsedFacets as they are expensive to create 
      */
-    private final static Map<String, ParsedFacet> sharedCache = Collections.synchronizedMap(new LRUMap<String, ParsedFacet>()); 
+    private static final Map<String, ParsedFacet> sharedCache = Collections.synchronizedMap(new LRUMap<String, ParsedFacet>());
     
     String displayFacetName;
 
@@ -52,7 +52,7 @@ public class ParsedFacet {
     int hashCode;
     
     
-    public final static ParsedFacet getInstance(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
+    public static final ParsedFacet getInstance(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
         String cacheKey = facetNameConfig + '\uFFFF' + facetNodeName;        
         ParsedFacet pf = sharedCache.get(cacheKey);   
         if(pf == null) {
@@ -72,7 +72,7 @@ public class ParsedFacet {
         return pf;
     }
     
-    public final static ParsedFacet getInstance(String namespacedFacetConfig) throws Exception{
+    public static final ParsedFacet getInstance(String namespacedFacetConfig) throws Exception{
         ParsedFacet pf = sharedCache.get(namespacedFacetConfig);   
         if(pf == null) {
             pf = new ParsedFacet(namespacedFacetConfig);

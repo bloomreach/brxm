@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class JCAConnectionRequestInfo implements ConnectionRequestInfo {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Credentials.

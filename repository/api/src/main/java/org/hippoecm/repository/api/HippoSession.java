@@ -39,7 +39,7 @@ import javax.transaction.xa.XAResource;
  */
 public interface HippoSession extends Session {
     /** @exclude */
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Convenience function to copy a node to a destination path in the same workspace.  Unlike the copy method in the javax.jcr.Workspace class,

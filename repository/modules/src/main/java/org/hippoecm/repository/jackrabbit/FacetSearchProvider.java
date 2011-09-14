@@ -26,7 +26,7 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 public class FacetSearchProvider extends AbstractFacetSearchProvider
 {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public FacetSearchProvider()
         throws RepositoryException

@@ -30,7 +30,7 @@ import org.hippoecm.repository.ocm.JcrOID;
 
 public class ColumnResolverImpl implements ColumnResolver {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
     
     public ColumnResolverImpl() {
     }

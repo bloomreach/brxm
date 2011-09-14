@@ -36,7 +36,7 @@ import org.apache.jackrabbit.core.util.db.CheckSchemaOperation;
  */
 public class ForkedMSSqlPersistenceManager extends PatchedBundleDbPersistenceManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     /** the MS SQL table space to use */
     protected String tableSpace = "";

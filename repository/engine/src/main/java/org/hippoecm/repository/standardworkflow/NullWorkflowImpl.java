@@ -36,7 +36,7 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

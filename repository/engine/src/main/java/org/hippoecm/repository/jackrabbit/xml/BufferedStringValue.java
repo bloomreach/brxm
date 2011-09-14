@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
 class BufferedStringValue implements TextValue {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(BufferedStringValue.class);
 

@@ -39,7 +39,7 @@ import org.hippoecm.repository.api.HippoSession;
  */
 public final class JCAManagedConnection implements ManagedConnection, ManagedConnectionMetaData {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Managed connection factory.

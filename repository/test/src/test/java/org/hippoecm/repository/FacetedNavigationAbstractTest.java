@@ -36,7 +36,7 @@ import org.junit.Before;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     static class Document {
         int docid;
@@ -50,7 +50,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
     private static String alphabet = "abcde"; // abcdefghijklmnopqrstuvwxyz
     private static int hierDepth = 1;
     private static int saveInterval = 250;
-    private final static int defaultNumDocs = 20;
+    private static final int defaultNumDocs = 20;
     private int numDocs = -1;
     private static Random rnd;
     private String[] nodeNames;

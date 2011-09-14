@@ -28,7 +28,7 @@ import javax.jcr.RepositoryException;
  */
 public class VMHippoRepository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private static Map<String,HippoRepository> repositories;
 

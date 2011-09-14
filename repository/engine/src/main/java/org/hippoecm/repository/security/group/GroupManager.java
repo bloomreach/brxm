@@ -28,7 +28,7 @@ import org.hippoecm.repository.security.user.AbstractUserManager;
  * Interface for managing groups in the backend
  */
 public interface GroupManager {
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the backend with the given context and load the groups

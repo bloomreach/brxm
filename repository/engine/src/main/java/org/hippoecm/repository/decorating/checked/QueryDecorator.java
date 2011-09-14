@@ -36,7 +36,7 @@ import org.hippoecm.repository.api.HippoQuery;
  */
 public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     protected final HippoQuery query;
 

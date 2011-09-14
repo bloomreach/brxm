@@ -26,7 +26,7 @@ import org.apache.lucene.index.TermPositions;
 
 public class AuthorizedOnlyIndexReader extends FilterIndexReader {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The deleted documents as initially read from the IndexReader passed

@@ -32,7 +32,7 @@ import org.apache.lucene.analysis.Analyzer;
  */
 public class ServicingLuceneQueryBuilder {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public ServicingLuceneQueryBuilder(QueryRootNode root, SessionImpl session, ItemStateManager sharedItemMgr,
             HierarchyManager hmgr, NamespaceMappings nsMappings, Analyzer analyzer, PropertyTypeRegistry propReg,

@@ -84,9 +84,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
-    final static Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
+    static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 

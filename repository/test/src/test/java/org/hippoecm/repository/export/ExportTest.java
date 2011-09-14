@@ -68,15 +68,15 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class ExportTest extends TestCase {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     private static final long SLEEP_AFTER_SAVE = 2*1000 + 500;
     
-    private final static String BUILD_HOME;
-    private final static String EXTENSION_HOME;
-    private final static String CONFIG_HOME;
-    private final static String CONTENT_HOME;
+    private static final String BUILD_HOME;
+    private static final String EXTENSION_HOME;
+    private static final String CONFIG_HOME;
+    private static final String CONTENT_HOME;
 
     static {
         // Where are we?

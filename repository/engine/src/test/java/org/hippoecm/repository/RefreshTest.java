@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class RefreshTest {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     @Ignore
     public void testRefreshAfterRemoveIssueJackrabbit() throws Exception {

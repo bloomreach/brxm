@@ -24,7 +24,7 @@ import org.hippoecm.repository.security.user.RepositoryUserManager;
 public class RepositorySecurityProvider extends AbstractSecurityProvider {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
 
     public void init(SecurityProviderContext context) throws RepositoryException {

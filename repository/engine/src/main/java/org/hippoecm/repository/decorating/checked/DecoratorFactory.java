@@ -41,7 +41,7 @@ import org.hippoecm.repository.api.WorkflowManager;
  */
 public interface DecoratorFactory {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    static final String SVN_ID = "$Id$";
 
     /**
      * Creates a repository decorator.

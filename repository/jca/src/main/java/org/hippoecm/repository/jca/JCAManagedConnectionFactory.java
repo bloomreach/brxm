@@ -35,7 +35,7 @@ import org.hippoecm.repository.api.HippoSession;
  */
 public class JCAManagedConnectionFactory implements ManagedConnectionFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Home directory.

@@ -41,7 +41,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
  */
 public abstract class UpdaterItemVisitor implements ItemVisitor {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * 
@@ -433,7 +433,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     /**
      * 
      */
-    public final static class NamespaceVisitor extends UpdaterItemVisitor {
+    public static final class NamespaceVisitor extends UpdaterItemVisitor {
         /**
          * 
          */

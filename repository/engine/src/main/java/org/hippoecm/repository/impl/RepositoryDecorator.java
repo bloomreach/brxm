@@ -34,7 +34,7 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
  */
 public class RepositoryDecorator extends org.hippoecm.repository.decorating.RepositoryDecorator implements Repository {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     private Repository repository;
     DecoratorFactory factory;

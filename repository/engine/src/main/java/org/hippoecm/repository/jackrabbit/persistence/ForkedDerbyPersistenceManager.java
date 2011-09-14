@@ -52,7 +52,7 @@ import javax.sql.DataSource;
  */
 public class ForkedDerbyPersistenceManager extends PatchedBundleDbPersistenceManager {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
+    private static final String SVN_ID = "$Id: ";
 
     /** name of the embedded driver */
     public static final String DERBY_EMBEDDED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";

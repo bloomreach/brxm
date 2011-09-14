@@ -42,7 +42,7 @@ import org.hippoecm.repository.decorating.remote.RemoteRepository;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     public ClientServicesAdapterFactory() {
     }

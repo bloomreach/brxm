@@ -57,7 +57,7 @@ import org.hippoecm.repository.api.HippoSession;
  */
 public final class JCASessionHandle implements HippoSession {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * Managed connection.

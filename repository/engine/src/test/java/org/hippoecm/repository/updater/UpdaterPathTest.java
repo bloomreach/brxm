@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class UpdaterPathTest {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     static void assertEqualSign(int a, int b) {
         assertTrue((a < 0 && b < 0) || (a > 0 && b > 0) || (a == 0 && b ==0)); 

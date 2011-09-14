@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class LdapContextFactory {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
 
     /**
      * The Sun LDAP property used to enable connection pooling.  This is used in the default implementation
@@ -49,7 +49,7 @@ public class LdapContextFactory {
     protected static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
     protected static final String SUN_CONNECTION_TIMEOUT_PROPERTY = "com.sun.jndi.ldap.connect.timeout";
 
-    private final static Logger log = LoggerFactory.getLogger(LdapContextFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapContextFactory.class);
 
     private String authentication = "simple";
 
