@@ -216,7 +216,6 @@ export/src/main/java/org/hippoecm/repository/export/ResourceInstruction.java -te
 export/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
 export/src/main/resources/hippoecm-extension.xml -text
 export/src/test/java/org/hippoecm/repository/export/LocationMapperTest.java -text
-/jackrabbit.patch -text
 jca/pom.xml svneol=native#text/plain
 jca/src/main/rar/META-INF/ra.xml svneol=native#text/plain
 jca/src/main/rar/repository.xml svneol=native#text/plain
