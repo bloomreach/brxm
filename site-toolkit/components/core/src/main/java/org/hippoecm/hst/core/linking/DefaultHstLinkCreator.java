@@ -150,6 +150,22 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return linkResolver.resolve();
     }
     
+
+    @Override
+    public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
+        linkResolver.resolverProperties.canonicalLink = true;
+        linkResolver.resolverProperties.fallback = true;
+        throw new UnsupportedOperationException("createAllAvailableCanonicals is not yet implemented");
+    }
+
+    @Override
+    public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type) {
+        throw new UnsupportedOperationException("createAllAvailableCanonicals is not yet implemented");
+    }
+   
+
+    
     public HstLink create(Node node, Mount mount) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
         linkResolver.resolverProperties.tryOtherMounts = false;
@@ -486,6 +502,19 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return link;
             
         }
+        
+
+        /**
+         * 
+         * @return the List of all available links. When no links at all are found, an empty list is returned
+         */
+        List<HstLink> resolveAll() {
+            List<HstLink>  allLinks = new ArrayList<HstLink>();
+            
+            
+            return allLinks;
+        }
+        
 
         /**
          * @param nodePath jcr node path
@@ -668,6 +697,5 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             return counter;
         }
     }
-   
 
 }

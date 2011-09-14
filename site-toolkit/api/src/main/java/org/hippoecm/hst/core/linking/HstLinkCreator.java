@@ -110,6 +110,7 @@ public interface HstLinkCreator {
      */
     HstLink createCanonical(Node node, HstRequestContext requestContext);
     
+   
     /**
      * @see {@link #createCanonical(Node, ResolvedSiteMapItem)}.
      * When specifying a preferredItem, we try to create a canonical link wrt this preferredItem. If the link cannot be created for this preferredItem,
@@ -122,6 +123,31 @@ public interface HstLinkCreator {
      */
     HstLink createCanonical(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem);
    
+    /**
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>. All available links have a {@link Mount}
+     * that has at least one of its {@link Mount#getTypes()} equal to the {@link Mount#getTypes()} belonging to the {@link Mount} of the
+     * <code>requestContext</code>. If the {@link Mount} of the <code>requestContext</code> has no type in common at all, for example because
+     * it is {@link Mount} from a REST mount used by the template composer, you can use {@link #createAllAvailableCanonicals(Node, HstRequestContext, String)} and specify
+     * the <code>type</code> the {@link Mount}'s for the available canonical links should be of.
+     * @param node
+     * @param requestContext
+     * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to {@link Mount#getTypes()} belonging to the {@link Mount} of the  <code>requestContext</code> 
+     * @see #createCanonical(Node, HstRequestContext)
+     */
+    List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext);
+    
+    /**
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, where the backing {@link Mount} of the {@link HstLink}
+     * has at least one {@link Mount#getTypes()} equal to <code>type</code>
+     * @param node
+     * @param requestContext
+     * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
+     * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
+     * @see #createCanonical(Node, HstRequestContext)
+     */
+    List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type);
+    
+    
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code>. Note that this HstLink creation does only take into account the
      * <code>mount</code> and not the current context.
