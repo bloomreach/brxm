@@ -50,8 +50,14 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
     protected Session session;
     protected WorkflowManager workflowManager;
     private volatile boolean shutdown;
-    private long initialDelay = 5000;
-    private long iterateInterval = 5000;
+    private static final long MINIMAL_SLEEP_TIME = 1000;
+    
+    private static final long MINIMAL_INITIAL_DELAY = 100;
+    private static final long DEFAULT_INITIAL_DELAY = 5000;
+    private static final long MINIMAL_ITERATE_INTERVAL = 100;
+    private static final long DEFAULT_ITERATE_INTERVAL = 5000;
+    private long initialDelay = DEFAULT_INITIAL_DELAY;
+    private long iterateInterval = DEFAULT_ITERATE_INTERVAL;
     private boolean enabled = true;
 
     @Override
@@ -60,9 +66,17 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
             Node configNode = session.getNode("/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:moduleconfig");
             if (configNode.hasProperty("wfdropbox:delay")) {
                 initialDelay = configNode.getProperty("wfdropbox:delay").getLong();
+                if(intialDelay <= MINIMAL_INITIAL_DELAY) {
+                    // too small. Log warning that default is used because to small
+                    intialDelay = DEFAULT_INITIAL_DELAY;
+                }
             }
             if (configNode.hasProperty("wfdropbox:interval")) {
                 iterateInterval = configNode.getProperty("wfdropbox:interval").getLong();
+                if(iterateInterval <= MINIMAL_ITERATE_INTERVAL) {
+                    // too small. Log warning that default is used because to small
+                    iterateInterval = DEFAULT_ITERATE_INTERVAL;
+                }
             }
             if (configNode.hasProperty("wfdropbox:enabled")) {
                 enabled = configNode.getProperty("wfdropbox:enabled").getBoolean();
@@ -156,9 +170,13 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
             }
             processTime = System.currentTimeMillis() - processTime;
             long sleepTime = iterateInterval - processTime;
+            if(sleepTime < MINIMAL_SLEEP_TIME) {
+                sleepTime = MINIMAL_SLEEP_TIME;
+            }
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ex) {
+                // TODO log warning
                 // delibate ignore
             }
         }
