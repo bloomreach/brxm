@@ -35,6 +35,6 @@ public class NoRepositoryAvailablePage extends PluginPage {
             }
         });
 
-        error(new ResourceModel("repository.not.available").getObject());
+        error(new ClassResourceModel("repository.not.available", NoRepositoryAvailablePage.class).getObject());
     }
 }
