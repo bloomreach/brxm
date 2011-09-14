@@ -78,6 +78,7 @@
     <module>upgrade</module>
     <module>resources</module>
     <module>dependencies</module>
+    <module>repository-dependencies</module>
     <module>tools</module>
     <module>sso</module>
     <module>jquery</module>
