@@ -82,8 +82,6 @@ public class VirtualHostsService implements VirtualHosts {
     private String[] prefixExclusions;
     private String[] suffixExclusions;
     
-    private String cmsLocation;
-    
     /*
      * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
      */
@@ -100,7 +98,6 @@ public class VirtualHostsService implements VirtualHosts {
         this.locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         this.homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         this.pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
-        this.cmsLocation = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
         if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
@@ -121,9 +118,16 @@ public class VirtualHostsService implements VirtualHosts {
             } catch (IllegalArgumentException e) {
                 throw new ServiceException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
             }
+            
+            String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
+            if(cmsLocation == null) {
+                log.info("VirtualHostGroup '{}' does not have a property cms.location configured. It is preferred for surf & edit and the template composer" +
+                		"that this property is configured on the hst:virtualhosthgroup node.", hostGroupNode.getValueProvider().getName());
+            }
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
+                
                 try {
-                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName() ,hstManager);
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName(), cmsLocation ,hstManager);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ServiceException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
@@ -380,10 +384,6 @@ public class VirtualHostsService implements VirtualHosts {
         return pageNotFound;
     }
     
-    public String getCmsLocation() {
-        return cmsLocation;
-    }
-
     public boolean isVersionInPreviewHeader(){
         return versionInPreviewHeader;
     }

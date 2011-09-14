@@ -470,17 +470,8 @@ public class MountService implements ContextualizableMount {
             this.formLoginPage = parent.getFormLoginPage();
         }
         
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION)) {
-            this.cmsLocation = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
-        } else {
-           // try to get the one from the parent
-            if(parent != null) {
-                this.cmsLocation = ((MountService)parent).getCmsLocation();
-            } else {
-                this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
-            }
-        }
-        
+        this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
+       
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
         if(mountPoint == null ){

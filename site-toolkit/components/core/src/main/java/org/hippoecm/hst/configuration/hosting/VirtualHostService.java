@@ -77,12 +77,12 @@ public class VirtualHostService implements VirtualHost {
     private String scheme;
     private String cmsLocation;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, HstManagerImpl hstManager) throws ServiceException {        
+    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, HstManagerImpl hstManager) throws ServiceException {        
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.hostGroupName = StringPool.get(hostGroupName);
-        
+        this.cmsLocation = cmsLocation;
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -157,18 +157,7 @@ public class VirtualHostService implements VirtualHost {
         }
 
         pageNotFound = StringPool.get(pageNotFound);
-        
-        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION)) {
-            this.cmsLocation = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_CMS_LOCATION);
-        } else {
-           // try to get the one from the parent
-            if(parentHost != null) {
-                this.cmsLocation = parentHost.cmsLocation;
-            } else {
-                this.cmsLocation = virtualHosts.getCmsLocation();
-            }
-        }
-        
+     
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         } else {
@@ -204,7 +193,7 @@ public class VirtualHostService implements VirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName,  hstManager);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation,  hstManager);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -243,7 +232,7 @@ public class VirtualHostService implements VirtualHost {
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, hstManager);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, hstManager);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -261,10 +250,11 @@ public class VirtualHostService implements VirtualHost {
        
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, HstManagerImpl hstManager) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, String cmsLocation, HstManagerImpl hstManager) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroup;
+        this.cmsLocation = cmsLocation;
         this.scheme = parent.scheme;
         this.locale = parent.locale;
         this.homepage = parent.homepage;
@@ -275,7 +265,7 @@ public class VirtualHostService implements VirtualHost {
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, hstManager);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, cmsLocation, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = StringPool.get(buildHostName());

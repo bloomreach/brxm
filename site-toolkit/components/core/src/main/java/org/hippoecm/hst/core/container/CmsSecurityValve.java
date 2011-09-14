@@ -119,7 +119,7 @@ public class CmsSecurityValve extends AbstractValve {
                     String cmsAuthUrl = null;
                     String cmsBaseUrl;
                     if (StringUtils.isEmpty(mount.getCmsLocation())) {
-                        log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on virtualhosts, virtualhost or mount level to get rid of this warning");
+                        log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on the hst:virtualhostgroup to get rid of this warning");
                         cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
                     } else {
                         cmsBaseUrl = mount.getCmsLocation();

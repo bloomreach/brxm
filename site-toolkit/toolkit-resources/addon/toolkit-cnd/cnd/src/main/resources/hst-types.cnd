@@ -223,8 +223,6 @@
 - hst:formloginpage (string)
 // channel to which this mount belongs
 - hst:channelpath (string)
-// the fully qualified cms url, for example http://localhost:8080/cms
-- hst:cmslocation (string)
 // to hold all the 'free defined properties'
 - * (string)
 
@@ -245,10 +243,10 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// the fully qualified cms url, for example http://localhost:8080/cms
-- hst:cmslocation (string)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
+// the fully qualified cms url, for example http://localhost:8080/cms
+- hst:cmslocation (string)
 + * (hst:virtualhost)
 
 [hst:virtualhosts] > nt:base, mix:referenceable, mix:versionable
@@ -265,8 +263,6 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// the fully qualified cms url, for example http://localhost:8080/cms
-- hst:cmslocation (string)
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable
