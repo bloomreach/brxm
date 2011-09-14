@@ -1027,13 +1027,27 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.fireEvent('afterShareDataWithIFrame');
         }
 
-        if (this.iframeInitialized) {
+        if (this.iframeInitialized && this.isHstMetaDataLoaded()) {
             shareDataIFrameInitializedListener.call(this);
         } else {
             this.on('beforeShareDataWithIFrame', function() {
                 this.removeListener('iFrameInitialized', shareDataIFrameInitializedListener, this);
+                this.removeListener('afterHstMetaDataResponse', shareDataIFrameInitializedListener, this);
             }, this);
-            this.on('iFrameInitialized', shareDataIFrameInitializedListener, this, {single : true});
+            if (!this.iframeInitialized) {
+                this.on('iFrameInitialized', function() {
+                    if (this.isHstMetaDataLoaded()) {
+                        shareDataIFrameInitializedListener.call(this);
+                    }
+                }, this, {single : true});
+            }
+            if (!this.isHstMetaDataLoaded()) {
+                this.on('afterHstMetaDataResponse', function() {
+                    if (this.iframeInitialized) {
+                        shareDataIFrameInitializedListener.call(this);
+                    }
+                }, this, {single : true});
+            }
         }
     },
 
