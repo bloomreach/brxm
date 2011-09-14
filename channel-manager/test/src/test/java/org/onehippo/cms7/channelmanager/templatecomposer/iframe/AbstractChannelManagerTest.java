@@ -1,4 +1,4 @@
-/*
+package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
  *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,10 +37,7 @@ import net.sourceforge.htmlunit.corejs.javascript.Function;
 import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
-abstract public class ChannelManagerTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: XinhaTest.java 29553 2011-08-15 11:15:01Z fvlankvelt $";
-
+abstract public class AbstractChannelManagerTest {
     public static final String LISTEN_HOST = "localhost";
     public static final int LISTEN_PORT = 8888;
 

@@ -1,4 +1,4 @@
-/*
+package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
  *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ import com.google.gson.Gson;
 
 import org.junit.Test;
 import org.onehippo.cms7.channelmanager.templatecomposer.GlobalBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.w3c.dom.Text;
 
@@ -42,7 +42,7 @@ import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import static org.junit.Assert.assertTrue;
 
-public class ActualTest extends ChannelManagerTest {
+public class InitializationTest extends AbstractChannelManagerTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: EditorManagerTest.java 29553 2011-08-15 11:15:01Z fvlankvelt $";
 
@@ -50,7 +50,7 @@ public class ActualTest extends ChannelManagerTest {
     public void testMiFrameMessageHandling() throws Exception {
         setUp("test.html");
 
-        injectJavascript(ActualTest.class, "initMiFrameMessageMock.js");
+        injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
 
         page.executeJavaScript("onhostmessage(function(msg) { window.initTestOK=msg.data.initTest; }, window, false, 'test');");
         page.executeJavaScript("sendMessage({initTest: true}, 'test')");
@@ -85,7 +85,7 @@ public class ActualTest extends ChannelManagerTest {
 
 
     protected void initializeIFrameHead() throws IOException {
-        injectJavascript(ActualTest.class, "initMiFrameMessageMock.js");
+        injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
 
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CORE);
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN);
@@ -102,7 +102,7 @@ public class ActualTest extends ChannelManagerTest {
     }
 
     protected void initializeTemplateComposer(final Boolean debug, final Boolean previewMode) {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("org.onehippo.cms7.channelmanager.templatecomposer.PageEditor");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(PageEditor.class.getName());
         final Map<String, String> resourcesMap = new HashMap<String, String>();
         for (String key : resourceBundle.keySet()) {
             resourcesMap.put(key, resourceBundle.getString(key));
@@ -121,6 +121,7 @@ public class ActualTest extends ChannelManagerTest {
 
     protected void injectJavascript(Class<?> clazz, String resource) throws IOException {
         final InputStream inputStream = clazz.getResourceAsStream(resource);
+
         Reader resourceReader = new InputStreamReader(inputStream);
         StringBuilder javascript = new StringBuilder();
         int buffer = 0;
