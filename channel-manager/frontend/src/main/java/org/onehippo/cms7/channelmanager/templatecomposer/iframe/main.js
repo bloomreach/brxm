@@ -26,6 +26,12 @@
             var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(options);
 
             onhostmessage(function(msg) {
+                var facade = msg.data;
+                manager.createContainers(facade);
+                return false;
+            }, this, false, 'buildoverlay');
+
+            onhostmessage(function(msg) {
                 manager.getOverlay().show();
                 $('.empty-container-placeholder').show();
                 manager.requestSync();
@@ -51,16 +57,6 @@
             }, this, false, 'deselect');
 
             onhostmessage(function(msg) {
-                manager.add(msg.data.element, msg.data.parentId);
-                return false;
-            }, this, false, 'add');
-
-            onhostmessage(function(msg) {
-                manager.remove(msg.data.element);
-                return false;
-            }, this, false, 'remove');
-
-            onhostmessage(function(msg) {
                 manager.highlight(msg.data.groups);
                 return false;
             }, this, false, 'highlight');
@@ -69,13 +65,6 @@
                 manager.unhighlight(msg.data.groups);
                 return false;
             }, this, false, 'unhighlight');
-
-            onhostmessage(function(msg) {
-                manager.createContainers();
-                var facade = msg.data;
-                manager.updateSharedData(facade);
-                return false;
-            }, this, false, 'sharedata');
 
             onhostmessage(function(msg) {
                 manager.requestSync();

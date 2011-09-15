@@ -70,12 +70,13 @@
             }
         },
 
-        createContainers : function() {
+        createContainers : function(facade) {
             try {
                 //attach mouseover/mouseclick for components
                 var self = this;
                 $('.' + HST.CLASS.CONTAINER).each(function(index) {
-                    self._createContainer(this);
+                    var container = self._createContainer(this);
+                    container.updateSharedData(facade);
                 });
             } catch(e) {
                 sendMessage({msg: e.message}, "iframeexception");
@@ -86,6 +87,7 @@
             var container = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
             this.containers[container.id] = container;
             container.render(this);
+            return container;
         },
 
         _retrieve : function(element) {

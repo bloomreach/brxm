@@ -221,9 +221,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.on('iFrameInitialized', hideLoading, this, {single : true});
             } else {
                 this.on('beforeIFrameDOMReady', function() {
-                    this.removeListener('afterShareDataWithIFrame', hideLoading, this);
+                    this.removeListener('afterBuildOverlay', hideLoading, this);
                 }, this, {single: true});
-                this.on('afterShareDataWithIFrame', hideLoading, this, {single : true});
+                this.on('afterBuildOverlay', hideLoading, this, {single : true});
             }
             Ext.getCmp('pagePreviewButton').setDisabled(true);
             Ext.getCmp('pageComposerButton').setDisabled(true);
@@ -289,7 +289,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             console.log('beforeChangeModeTo' + JSON.stringify(data));
         }, this);
 
-        this.on('afterShareDataWithIFrame', function(data) {
+        this.on('afterBuildOverlay', function(data) {
             this.dataSharedWithIFrame = true;
         }, this);
 
@@ -607,7 +607,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         if (this.dataSharedWithIFrame) {
                             this.fireEvent('modeChanged', {previewMode : this.previewMode});
                         } else {
-                            this.on('afterShareDataWithIFrame', function() {
+                            this.on('afterBuildOverlay', function() {
                                 this.fireEvent('modeChanged', {previewMode : this.previewMode});
                             }, this, { single: true});
                         }
@@ -620,7 +620,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             success: function () {
                                 // refresh iframe to get new hst config uuids. previewMode=false will initialize
                                 // the editor for editing with the refresh
-                                self.on('afterShareDataWithIFrame', function() {
+                                self.on('afterBuildOverlay', function() {
                                     self.fireEvent.apply(self, ['modeChanged', {previewMode : self.previewMode}]);
                                 }, self, { single: true});
                                 self.refreshIframe.call(self, null);
@@ -656,7 +656,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     refreshIframe : function() {
         this.resetIFrameState();
         // we don't need to reload the stores, so just share the data again with the iframe
-        this.shareData();
+        this.buildOverlay();
         var iframe = Ext.getCmp('Iframe');
         var frame = iframe.getFrame();
         var window = frame.getWindow();
@@ -678,7 +678,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (!this.previewMode) {
             // if the pageId is not changing but navigating in e. g. pagination the data
             // needs to be shared again with the iframe
-            this.shareData();
+            this.buildOverlay();
         }
         this.requestHstMetaData( { url: frm.getDocumentURI() } );
         this.initializeIFrameHead(frm);
@@ -845,9 +845,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             for (var i = 0; i < records.length; i++) {
                                 var record = records[i];
                                 if (record.get('type') == HST.CONTAINERITEM) {
-                                    //add element to the iframe DOM
-                                    this.sendFrameMessage({parentId: record.get('parentId'), element: record.get('element')}, 'add');
-
                                     //add id to parent children map
                                     var parentId = record.get('parentId');
                                     var parentIndex = store.findExact('id', parentId);
@@ -858,10 +855,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 }
                             }
                         } else if (action == 'update') {
-                            if (!this.isReloading) {
-                                store.reload();
-                                this.isReloading = true;
-                            }
+                        if (!this.isReloading) {
+                            store.reload();
+                            this.isReloading = true;
+                        }
                         }
                     },
                     scope: this
@@ -869,7 +866,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 load :{
                     fn : function(store, records, options) {
                         this.isReloading = false;
-                        this.shareData();
+                        this.buildOverlay();
                     },
                     scope: this
                 },
@@ -897,7 +894,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         if (grid.getSelectionModel().getSelected() == record) {
                             this.deselect(null, null, record);
                         }
-                        this.sendFrameMessage({element: record.data.element}, 'remove');
                     },
                     scope : this
                 }
@@ -997,18 +993,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return window1;
     },
 
-    shareData : function() {
-        if (!this.fireEvent('beforeShareDataWithIFrame')) {
+    buildOverlay : function() {
+        if (!this.fireEvent('beforeBuildOverlay')) {
             return;
         }
-        console.log('shareData');
+        console.log('buildOverlay');
 
-        var shareDataIFrameInitializedListener = function() {
+        var buildOverlayIFrameInitializedListener = function() {
             if (this.previewMode || this.stores.pageModel == null) {
                 return;
             }
             var self = this;
-            console.log('shareData run');
+            console.log('buildOverlay run');
             if (this.pageModelFacade == null) {
                 var facade = function() {};
                 facade.prototype = {
@@ -1023,20 +1019,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 };
                 this.pageModelFacade = new facade();
             }
-            this.sendFrameMessage(this.pageModelFacade, 'sharedata');
-            this.fireEvent('afterShareDataWithIFrame');
+            this.sendFrameMessage(this.pageModelFacade, 'buildoverlay');
+            this.fireEvent('afterBuildOverlay');
         }
 
         if (this.iframeInitialized && this.isHstMetaDataLoaded()) {
-            shareDataIFrameInitializedListener.call(this);
+            buildOverlayIFrameInitializedListener.call(this);
         } else {
             if (!this.iframeInitialized) {
                 var iFrameInitializedListener = function() {
                     if (this.isHstMetaDataLoaded()) {
-                        shareDataIFrameInitializedListener.call(this);
+                        buildOverlayIFrameInitializedListener.call(this);
                     }
                 };
-                this.on('beforeShareDataWithIFrame', function() {
+                this.on('beforeBuildOverlay', function() {
                     this.removeListener('iFrameInitialized', iFrameInitializedListener, this);
                 }, this, {single : true});
                 this.on('iFrameInitialized', iFrameInitializedListener, this, {single : true});
@@ -1044,10 +1040,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             if (!this.isHstMetaDataLoaded()) {
                 var hstMetaDataResponseListener = function() {
                     if (this.iframeInitialized) {
-                        shareDataIFrameInitializedListener.call(this);
+                        buildOverlayIFrameInitializedListener.call(this);
                     }
                 };
-                this.on('beforeShareDataWithIFrame', function() {
+                this.on('beforeBuildOverlay', function() {
                     this.removeListener('afterHstMetaDataResponse', hstMetaDataResponseListener, this);
                 }, this, {single : true});
                 this.on('afterHstMetaDataResponse', hstMetaDataResponseListener, this, {single : true});
@@ -1197,7 +1193,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
             } else if (msg.tag == 'iframeexception') {
-                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'], + msg.data.message, function() {
+                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'] + msg.data.message, function() {
                     self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
                 });
             } else if (msg.tag == 'edit-document') {

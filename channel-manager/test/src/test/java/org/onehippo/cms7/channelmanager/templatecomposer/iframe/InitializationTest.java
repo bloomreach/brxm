@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import com.google.gson.Gson;
@@ -38,6 +39,7 @@ import org.w3c.dom.Text;
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Context;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.NativeObject;
 import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import static org.junit.Assert.assertTrue;
@@ -83,6 +85,70 @@ public class InitializationTest extends AbstractChannelManagerTest {
         assertTrue(messagesSend.contains("afterinit"));
     }
 
+    @Test
+    public void testBuildOverlayXTypeHSTvBox() throws Exception {
+        setUp("HST-vbox.html");
+        initializeIFrameHead();
+        initializeTemplateComposer(false, false);
+
+        // test if container is present
+        final List<HtmlElement> divs = page.getElementsByTagName("div");
+        HtmlElement containerDiv = null;
+        for (HtmlElement div : divs) {
+            if (eval("HST.CLASS.CONTAINER").equals(div.getAttribute("class"))) {
+                containerDiv = div;
+            }
+        }
+        assertTrue(containerDiv != null);
+        assertTrue(!isMetaDataConsumed(containerDiv));
+
+        page.executeJavaScript("sendMessage(" +
+            "{ getName: function(id) { " +
+                "return (id === 'cf291fdc-d962-4c14-a5ba-3111fec861fd')? 'containerItem1' : 'containerItem2'; } " +
+            "}, 'buildOverlay');");
+
+        // test if hst meta data is consumed
+        assertTrue(isMetaDataConsumed(containerDiv));
+
+        // check if attributes are set to element
+        // "xtype":"HST.vBox", "uuid":"ae12f114-9a61-47ff-b048-71852e0f2f18", "type":"CONTAINER_COMPONENT"
+        assertTrue("HST.vBox".equals(containerDiv.getAttribute(eval("HST.ATTR.XTYPE"))));
+        assertTrue(eval("HST.CONTAINER").equals(containerDiv.getAttribute(eval("HST.ATTR.TYPE"))));
+        assertTrue("ae12f114-9a61-47ff-b048-71852e0f2f18".equals(containerDiv.getAttribute(eval("HST.ATTR.ID"))));
+    }
+
+    @Test
+    public void testSurfAndEdit() throws Exception {
+        setUp("surfandedit.html");
+        initializeIFrameHead();
+        initializeTemplateComposer(false, true);
+
+        // test if container is present
+        final List<HtmlElement> divs = page.getElementsByTagName("a");
+        HtmlElement link = null;
+        for (HtmlElement div : divs) {
+            if (eval("HST.CLASS.EDITLINK").equals(div.getAttribute("class"))) {
+                link = div;
+            }
+        }
+        assertTrue(link != null);
+        assertTrue(isMetaDataConsumed(link));
+    }
+
+    private String eval(String objectIdentifier) {
+        return (String) page.executeJavaScript(objectIdentifier).getJavaScriptResult();
+    }
+
+    private boolean isMetaDataConsumed(final HtmlElement containerDiv) {
+        boolean metaDataConsumed = true;
+        DomNode tmp = containerDiv;
+        while ((tmp = tmp.getPreviousSibling()) != null) {
+            if (tmp.getNodeType() == 8) {
+                metaDataConsumed = false;
+            }
+        }
+        return metaDataConsumed;
+    }
 
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
