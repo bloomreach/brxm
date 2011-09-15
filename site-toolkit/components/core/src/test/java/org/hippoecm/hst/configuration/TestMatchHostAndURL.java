@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration;
 
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -60,7 +61,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             
         }
         
-    
         /*
          * This test should match the sitemap item /news/* which has a relative content path /News/${1}
          * The HttpServletRequest does not have a context path
@@ -70,7 +70,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testMatchNoContextPath(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -102,7 +102,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testMatchPreviewNoContextPath(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -132,7 +132,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         @Test
         public void testVersionInPreviewHeaderDefaultTrue(){
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -159,7 +159,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testMatchWithContextPath(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -191,7 +191,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testMatchPreviewWithContextPath(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -226,7 +226,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testMatchPreviewServices(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -264,7 +264,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testSiteMapItemNamedPipeline(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest requestCustom = new MockHttpServletRequest();
-            requestCustom.setLocalPort(8081);
             requestCustom.setScheme("http");
             requestCustom.setServerName("localhost");
             requestCustom.addHeader("Host", "localhost");
@@ -273,7 +272,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
             MockHttpServletRequest requestGeneral = new MockHttpServletRequest();
             
-            requestGeneral.setLocalPort(8081);
             requestGeneral.setScheme("http");
             requestGeneral.setServerName("localhost");
             requestGeneral.addHeader("Host", "localhost");
@@ -316,7 +314,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testHomePage(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -343,7 +341,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testNonMatchingSiteMapItem(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -370,9 +368,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          */
         @Test 
         public void testMountThatIsNotMounted(){
-            MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
             request.addHeader("Host", "localhost");
@@ -403,10 +400,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
-            request.setServerPort(8180);
             // the port is part of the Host header
             request.addHeader("Host", "localhost:7979");
             request.setRequestURI("/site/home");
@@ -431,6 +427,45 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 e.printStackTrace();
             }
         }
+
+        @Test 
+        public void testMatchedMountWithPort() throws Exception {
+            MockHttpServletRequest liveRequest = new MockHttpServletRequest();
+            
+            liveRequest.setScheme("http");
+            liveRequest.setServerName("localhost");
+            // the port is part of the Host header. Port 80 is not configured, thus should fallback to no port match
+            // resulting in the live mount
+            liveRequest.addHeader("Host", "localhost:80");
+            liveRequest.setRequestURI("/site/home");
+            liveRequest.setContextPath("/site");
+            
+            MockHttpServletRequest previewRequest = new MockHttpServletRequest();
+            
+            previewRequest.setScheme("http");
+            previewRequest.setServerName("localhost");
+            // the port is part of the Host header. Port 8081 is configured explicitly as port mount, and has the preview mount attached, thus should
+            // return the preview mount
+            previewRequest.addHeader("Host", "localhost:8081");
+            previewRequest.setRequestURI("/site/home");
+            previewRequest.setContextPath("/site");
+            
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            
+            // since the requestURI is empty, we expect a fallback to the configured homepage:
+            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(liveRequest), liveRequest.getContextPath(), HstRequestUtils.getRequestPath(liveRequest));
+             
+            assertFalse("Port 80 should match to a live mount" ,mount.getMount().isPreview());
+            assertEquals("Wrong content path for the live mount", "/hst:hst/hst:sites/unittestproject/hst:content", mount.getMount().getContentPath());
+            
+            // since the requestURI is empty, we expect a fallback to the configured homepage:
+            ResolvedMount prevMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
+             
+            assertTrue("Port 8081 should match to a live mount" ,prevMount.getMount().isPreview());  
+            assertEquals("Wrong content path for the preview mount", "/hst:hst/hst:sites/unittestproject-preview/hst:content", prevMount.getMount().getContentPath());
+            
+        }
+        
         
         /*
          * We now test with port 8081: this one *is explicitly* defined in the unittest config: this means, it should be used.
@@ -441,10 +476,9 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
         public void testSiteWithConfiguredPort(){
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
-            request.setServerPort(8180);
             // the port is part of the Host header
             request.addHeader("Host", "localhost:8081");
             request.setRequestURI("/site/home");
@@ -485,12 +519,10 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          */
         @Test 
         public void testMountOnlyForContextPath(){
-            MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("localhost");
-            request.setServerPort(8180);
             // the port is part of the Host header
             request.addHeader("Host", "localhost");
             
@@ -539,7 +571,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             // first test
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
-            request.setLocalPort(8081);
+            
             request.setScheme("http");
             request.setServerName("www.onehippo.test");
             request.addHeader("Host", "www.onehippo.test");
@@ -547,7 +579,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setContextPath("/site");
             
             MockHttpServletRequest previewRequest = new MockHttpServletRequest();
-            previewRequest.setLocalPort(8081);
             previewRequest.setScheme("http");
             previewRequest.setServerName("www.onehippo.test");
             previewRequest.addHeader("Host", "preview.onehippo.test");
