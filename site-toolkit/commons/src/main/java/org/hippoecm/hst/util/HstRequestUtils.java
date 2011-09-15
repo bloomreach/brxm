@@ -215,14 +215,16 @@ public class HstRequestUtils {
         if (hostName == null) {
             return null;
         }
-
-        if (!containsPort(hostName)) {
-            int serverPort = request.getServerPort();
-            if (serverPort != 80 && serverPort != 443) {
-                hostName += ":" + serverPort;
+        int offset = hostName.indexOf(":");
+        if (offset > 0) {
+            // the rendering host does not contain a portnumber. Use the portnumber of the hostname 
+            // that the request was done with
+            String farthestHostName = getFarthestRequestHost(request, false);
+            int portNumber = Integer.parseInt(farthestHostName.substring(offset+1));
+            if (portNumber != 80 && portNumber != 443) {
+                hostName += ":" + portNumber;
             }
         }
-
         return hostName;
     }
 
@@ -242,13 +244,6 @@ public class HstRequestUtils {
             return (String)session.getAttribute(ContainerConstants.RENDERING_HOST);
         }
         return null;
-    }
-
-    private static boolean containsPort(String host) {
-        if (host == null) {
-            return false;
-        }
-        return host.matches(".+:\\d+$");
     }
 
     /**
