@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CredentialCipherTest {
@@ -101,22 +100,6 @@ public class CredentialCipherTest {
             // this is ok
         }
 
-    }
-
-    @Test
-    public void testSharedKey() throws Exception {
-        System.setProperty(CredentialCipher.HIPPO_CLUSTER_KEY, "geheim");
-        try {
-            CredentialCipher cipher = new CredentialCipher();
-            byte[] bytes = cipher.encrypt("client-secret", new SimpleCredentials("aap", "noot".toCharArray()));
-
-            CredentialCipher other = new CredentialCipher();
-            SimpleCredentials credentials = (SimpleCredentials) other.decrypt("client-secret", bytes);
-            assertEquals("aap", credentials.getUserID());
-            assertArrayEquals("noot".toCharArray(), credentials.getPassword());
-        } finally {
-            System.clearProperty(CredentialCipher.HIPPO_CLUSTER_KEY);
-        }
     }
 
 }
