@@ -855,12 +855,12 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestconfigur
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent-sites.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestvirtualhosts.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/components.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/pages.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/sitemap.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/sitemapitemhandlers.xml -text svneol=unset#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/sitemenus.xml svneol=native#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittest/templates.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/components.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/pages.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemap.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemapitemhandlers.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/templates.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-blueprint.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-namespace.xml svneol=native#text/plain
