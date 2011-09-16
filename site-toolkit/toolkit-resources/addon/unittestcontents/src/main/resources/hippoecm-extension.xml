@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2008 - 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -94,6 +94,8 @@
     </sv:property>
   </sv:node>
 
+ <!-- common inherited configuration -->
+
   <sv:node sv:name="unittestcommon-components">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -138,6 +140,22 @@
       <sv:value>/hst:hst/hst:configurations/unittestcommon</sv:value>
     </sv:property>
   </sv:node>
+  
+  <sv:node sv:name="unittestcommon-sitemenus">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11060</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/unittestcommon/sitemenus.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  
   
   <!--  unittestproject  -->
   <sv:node sv:name="unittestproject-sitemap">
@@ -200,22 +218,73 @@
       <sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>
     </sv:property>
   </sv:node>
-
-  <sv:node sv:name="unittestsubproject-sitemenus">
+  
+  
+  <!--  global  -->
+  <sv:node sv:name="globalproject-sitemap">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>11060</sv:value>
+      <sv:value>11057</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hstconfiguration/unittestsubproject/sitemenus.xml</sv:value>
+      <sv:value>hstconfiguration/global/sitemap.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>
+      <sv:value>/hst:hst/hst:configurations/global</sv:value>
+    </sv:property>
+  </sv:node>
+
+
+  <!--  sub1  -->
+  <sv:node sv:name="sub1-sitemap">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11057</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/sub1/sitemap.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/sub1</sv:value>
     </sv:property>
   </sv:node>
   
+  <!--  subsub1  -->
+  <sv:node sv:name="subsub1-sitemap">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11057</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/subsub1/sitemap.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/subsub1</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <!--  sub2  -->
+  <sv:node sv:name="sub2-sitemap">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11057</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hstconfiguration/sub2/sitemap.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/sub2</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="unittestproject-test-image">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

@@ -384,10 +384,130 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             assertTrue("fully qualified with true or false should not matter for cross domain links" , crossSiteAndDomainNewsLink.toUrlForm(requestContext, false).equals(crossSiteAndDomainNewsLink.toUrlForm(requestContext, true)));
         }
         
+        /**
+         * This test assures the following linkrewriting capabilities:
+         * 
+         * If you have a configuration like this:
+         *   global (mount)
+         *      sub1 (mount)
+         *          subsub1(mount)
+         *      sub2 (mount)
+         *   
+         *   documents
+         *      content
+         *        global
+         *           sub1
+         *             subsub1
+         *           sub2
+         *   
+         *   and you have:
+         *   
+         *   mount 'global' --> /documents/content/unittestcontent
+         *   mount 'global/sub1' --> /documents/content/global/unittestcontent/common
+         *   mount 'global/sub1/subsub1' --> /documents/content/global/unittestcontent/common/aboutfolder
+         *   mount 'global/sub2' --> /documents/content/global/unittestcontent/News
+         *   
+         *   The the HST MUST do the following linkrewriting:
+         *   
+         *   1) If my current context is the global site, and I have some document bean of a node below 
+         *   /documents/content/global, then
+         *      
+         *      a) If the global sitemap can create a link for it, the HST needs to return a link for the global site
+         *      b) If the global sitemap cannot create a link for it, the HST needs to try to create a link with another mount: For 
+         *      example sub1, subsub1 or sub2. If sub1 and subsub1 are both capable of creating a link, then the following algorithm is applied
+         *                1) Firstly order the candidate mounts to have the same primary type as the current Mount of this HstLinkResolver
+         *                 2) Secondly order the candidate mounts that have the most 'types' in common with the current Mount of this HstLinkResolver
+         *                 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has, and the number of matching types is equal to the current Mount, indicates
+         *                 that it can be considered more precise
+         *                 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper the more specific.
+         *              
+         *      
+         *   2) If my current context is for example /global/sub1 and sub1 cannot create a link for the bean, then a fallback to
+         *   global, or global/sub1/subsub1 or global/sub2 should be tried
+         *   
+         * Available since https://issues.onehippo.com/browse/HSTTWO-1670
+         * @throws Exception
+         */
         @Test
         public void testPartialCoveredContentMountFallBackHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/news2");
-            // TODO add cross domain fallback link rewriting here
+            {
+                // the request context is a link to the global site. This site has a sitemap that only contains 'search'
+                HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.partial","/search");
+                Node node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
+                // the current global site's sitemap cannot create a link for News/News1 (although the content is below its root content). 
+                // therefore, it is a partial content covering sitemap. It will try sub1, subsub1 and sub2. Sub2 is capable to create a link. It should return a link for sub1
+                HstLink newsLink = linkCreator.createCanonical(node, requestContext);
+    
+                assertEquals("wrong Mount ","sub2", newsLink.getMount().getName());
+                assertEquals("wrong link.getPath for News/News1","News1.html", newsLink.getPath());
+                assertEquals("wrong absolute link for News/News1" ,"/site/sub2/News1.html", (newsLink.toUrlForm(requestContext, false)));
+                
+                node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/common/homepage");
+                // we now have a node for the homepage. 
+                // the current global site's sitemap cannot create a link for the homepage (although the content is below its root content). 
+                // sub1 can create a link for the homepage, subsub1 cannot. 
+                
+                HstLink homePageLink = linkCreator.createCanonical(node, requestContext);
+                assertEquals("wrong Mount ","sub1", homePageLink.getMount().getName());
+                assertEquals("wrong link.getPath for common/homepage","home", homePageLink.getPath());
+                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1/home", (homePageLink.toUrlForm(requestContext, false)));
+                
+                // we now have a node for the common/aboutfolder/about-us/about-us. 
+                // the current global site's sitemap cannot create a link for the about-us node (although the content is below its root content). 
+                // sub1 can create a link for the about-us but *ALSO* subsub1. Because subsub1 has a deeper content path, subsub1 should be taken
+                node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us/about-us");
+                HstLink aboutUsLink = linkCreator.createCanonical(node, requestContext);
+                assertEquals("wrong Mount ","subsub1", aboutUsLink.getMount().getName());
+                assertEquals("wrong link.getPath for common/aboutfolder/about-us/about-us","about-us", aboutUsLink.getPath());
+                assertEquals("wrong absolute link for common/aboutfolder/about-us/about-us","/site/sub1/subsub1/about-us",  (aboutUsLink.toUrlForm(requestContext, false)));
+                
+                // we now change the requestContext to be in sub1 site. Then, a link to the about-us page should 
+                // *STAY WITHIN* sub1, because sub1 can create a link for it.
+                requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.partial","/sub1/home");
+               
+                node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us/about-us");
+                HstLink aboutUsLinkAgain = linkCreator.createCanonical(node, requestContext);
+                assertEquals("wrong Mount ","sub1", aboutUsLinkAgain.getMount().getName());
+                assertEquals("wrong link.getPath for common/aboutfolder/about-us/about-us","about-us", aboutUsLinkAgain.getPath());
+                assertEquals("wrong absolute link for common/aboutfolder/about-us/about-us","/site/sub1/about-us",  (aboutUsLinkAgain.toUrlForm(requestContext, false)));
+                
+                // and a link to a news item should link to sub2 still
+                node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");  
+                HstLink newsLinkAgain = linkCreator.createCanonical(node, requestContext);
+                assertEquals("wrong Mount ","sub2", newsLinkAgain.getMount().getName());
+                assertEquals("wrong link.getPath for News/News1","News1.html", newsLinkAgain.getPath());
+                assertEquals("wrong absolute link for News/News1" ,"/site/sub2/News1.html", (newsLinkAgain.toUrlForm(requestContext, false)));
+                
+            }  
+            
+            {
+                // we now change the requestContext to be in sub1/subsub1 site. Then, a link to the about-us page should 
+                // *STAY WITHIN* sub1/subsub1, because subsub1 can create a link for it. The homepage link however can only be 
+                // made by sub1, and should thus be used for the homepage node. A news link should still go to sub2
+              
+                HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.partial","/sub1/subsub1/about-us");
+                Node homePageNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/common/homepage");  
+                Node aboutUsNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/common/aboutfolder/about-us");  
+                Node newsNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");  
+
+                HstLink aboutUsLink = linkCreator.createCanonical(aboutUsNode, requestContext);
+                assertEquals("wrong Mount ","subsub1", aboutUsLink.getMount().getName());
+                assertEquals("wrong link.getPath for common/aboutfolder/about-us/about-us","about-us", aboutUsLink.getPath());
+                assertEquals("wrong absolute link for common/aboutfolder/about-us/about-us" ,"/site/sub1/subsub1/about-us", (aboutUsLink.toUrlForm(requestContext, false)));
+             
+                
+                HstLink homePageLink = linkCreator.createCanonical(homePageNode, requestContext);
+                assertEquals("wrong Mount ","sub1", homePageLink.getMount().getName());
+                assertEquals("wrong link.getPath for common/homepage","home", homePageLink.getPath());
+                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1/home", (homePageLink.toUrlForm(requestContext, false)));
+               
+                
+                HstLink newsLink = linkCreator.createCanonical(newsNode, requestContext);
+                assertEquals("wrong Mount ","sub2", newsLink.getMount().getName());
+                assertEquals("wrong link.getPath for News/News1","News1.html", newsLink.getPath());
+                assertEquals("wrong absolute link for News/News1" ,"/site/sub2/News1.html", (newsLink.toUrlForm(requestContext, false)));
+             
+            }   
         }
         
         
@@ -429,7 +549,6 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             requestURI = "/site" + requestURI;
             request.setRequestURI(requestURI);
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-            System.out.println(request.getRequestURL());
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));
             return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
         }

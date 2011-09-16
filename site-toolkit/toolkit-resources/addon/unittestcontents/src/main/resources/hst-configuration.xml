@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2008 - 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -31,6 +31,38 @@
     </sv:property>
   </sv:node>
   <sv:node sv:name="unittestsubproject">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="global">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="sub1">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="subsub1">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="sub2">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
     </sv:property>

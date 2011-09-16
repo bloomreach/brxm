@@ -855,14 +855,18 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestchannels
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent-sites.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestcontent.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hst-unittestvirtualhosts.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/global/sitemap.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sub1/sitemap.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/sub2/sitemap.xml -text svneol=unset#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/subsub1/sitemap.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/components.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/pages.xml -text
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/sitemenus.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestcommon/templates.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemap.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemapitemhandlers.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/sitemap.xml -text svneol=unset#text/plain
-toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/sitemenus.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-blueprint.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittestproject-namespace.xml svneol=native#text/plain

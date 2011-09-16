@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008 Hippo
+    Copyright 2008 - 2011 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -303,10 +303,70 @@
                           <sv:value>JaxrsPipeline</sv:value>
                         </sv:property>
                     </sv:node>
-
                 </sv:node>
               </sv:node>
           </sv:node>
        </sv:node>
+  </sv:node>
+  <sv:node sv:name="globalAndSubSetGroupEnvironment">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:virtualhostgroup</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:cmslocation" sv:type="String">
+      <sv:value>http://localhost:8080/cms</sv:value>
+    </sv:property>
+    <sv:node sv:name="partial">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+      <sv:node sv:name="unit">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:virtualhost</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:homepage" sv:type="String">
+          <sv:value>myhometest1</sv:value>
+        </sv:property>
+        <sv:node sv:name="www">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:virtualhost</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:homepage" sv:type="String">
+            <sv:value>myhometest2</sv:value>
+          </sv:property>
+          <sv:node sv:name="hst:root">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountpoint" sv:type="String">
+              <sv:value>/hst:hst/hst:sites/global</sv:value>
+            </sv:property>
+            <sv:node sv:name="sub1">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/hst:hst/hst:sites/sub1</sv:value>
+              </sv:property>
+              <sv:node sv:name="subsub1">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:mount</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:mountpoint" sv:type="String">
+                  <sv:value>/hst:hst/hst:sites/subsub1</sv:value>
+                </sv:property>
+              </sv:node>
+            </sv:node>
+            <sv:node sv:name="sub2">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/hst:hst/hst:sites/sub2</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
   </sv:node>
 </sv:node>

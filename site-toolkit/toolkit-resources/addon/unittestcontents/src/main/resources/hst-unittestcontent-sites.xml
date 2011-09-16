@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2008 - 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -117,4 +117,114 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  
+  <!-- meant for the partial sites unit tests -->
+  <sv:node sv:name="global">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/global</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  <sv:node sv:name="sub1">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/sub1</sv:value>
+    </sv:property>
+    <!-- sub1 directly points to common folder !! -->
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>cbcbcbcb-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  <sv:node sv:name="subsub1">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/subsub1</sv:value>
+    </sv:property>
+    <!-- sub1 directly points to common/aboutfolder !! -->
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>ebebebeb-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  <sv:node sv:name="sub2">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/sub2</sv:value>
+    </sv:property>
+    <!-- sub1 directly points to News folder !! -->
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>dbdbdbdb-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  
 </sv:node>
