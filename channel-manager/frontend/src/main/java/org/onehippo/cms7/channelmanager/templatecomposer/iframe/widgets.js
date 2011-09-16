@@ -454,6 +454,7 @@
         },
 
         checkState : function() {
+            console.log('checkState of '+this.id);
             if (this.state.checkEmpty) {
                 this._checkEmpty();
             }

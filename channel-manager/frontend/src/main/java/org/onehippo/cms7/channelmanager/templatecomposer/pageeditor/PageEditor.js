@@ -879,7 +879,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 var childIndex = store.findExact('id', id);
                                 if (childIndex > -1) {
                                     store.removeAt(childIndex);
-                                }
+                }
                             });
                         } else {
                             //containerItem: unregister from parent
@@ -888,7 +888,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 var children = parentRecord.get('children');
                                 children.remove(record.get('id'));
                                 parentRecord.set('children', children);
-                            }
+            }
                         }
                         var grid = Ext.getCmp('PageModelGrid');
                         if (grid.getSelectionModel().getSelected() == record) {
@@ -1021,7 +1021,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
             this.sendFrameMessage(this.pageModelFacade, 'buildoverlay');
             this.fireEvent('afterBuildOverlay');
-        }
+        };
 
         if (this.iframeInitialized && this.isHstMetaDataLoaded()) {
             buildOverlayIFrameInitializedListener.call(this);
@@ -1090,10 +1090,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     onRearrangeContainer: function(id, children) {
-        var recordIndex = this.stores.pageModel.findExact('id', id);//should probably do this through the selectionModel
-        var record = this.stores.pageModel.getAt(recordIndex);
-        record.set('children', children);
-        record.commit();
+        var self = this;
+        window.setTimeout(function() {
+            try {
+                var recordIndex = self.stores.pageModel.findExact('id', id); //should probably do this through the selectionModel
+                var record = self.stores.pageModel.getAt(recordIndex);
+                record.set('children', children);
+                console.log('onRearrangeContainer '+id+', children: '+children);
+                record.commit();
+            } catch (exception) {
+                console.error('onRearrangeContainer '+exception);
+            }
+        }, 0);
     },
 
     handleReceivedItem : function(containerId, element) {
@@ -1207,7 +1215,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.handleEdit(msg.data.uuid);
             }
         } catch(e) {
-            Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
+            Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'].format(msg.tag)+' '+e, function() {
                 self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
             });
             console.error(e);

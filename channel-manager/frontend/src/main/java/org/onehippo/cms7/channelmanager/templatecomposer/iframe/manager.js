@@ -50,7 +50,6 @@
             var link = Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.createLink(element);
             var uuid = $(link).attr(HST.ATTR.ID);
 
-            console.log('before add event listeners for '+Hippo.Util.getElementPath(element));
             /**
              * use plain old javascript event listener to prevent other jQuery instances hijacking the event.
              */
