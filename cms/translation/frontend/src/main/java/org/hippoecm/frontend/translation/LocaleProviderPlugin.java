@@ -56,7 +56,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
 
         @Override
         public ResourceReference getIcon(final IconSize size, final LocaleState state) {
-            final String country = "_unknown";
+            final String country = "_error";
             String resourceName;
             switch (state) {
                 case AVAILABLE:
