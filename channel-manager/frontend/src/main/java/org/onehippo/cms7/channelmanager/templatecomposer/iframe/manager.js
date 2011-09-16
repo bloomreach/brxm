@@ -42,15 +42,15 @@
                     self._createSurfAndEditLink(this);
                 });
             } catch(e) {
-                sendMessage({msg: e.message}, "iframeexception");
+                sendMessage({msg: 'Error initializing manager.', exception: e}, "iframeexception");
             }
-
         },
 
         _createSurfAndEditLink : function(element) {
             var link = Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.createLink(element);
             var uuid = $(link).attr(HST.ATTR.ID);
 
+            console.log('before add event listeners for '+Hippo.Util.getElementPath(element));
             /**
              * use plain old javascript event listener to prevent other jQuery instances hijacking the event.
              */
@@ -60,7 +60,7 @@
                     event.stopPropagation();
                     event.preventDefault();
                     return false;
-                });
+                }, false);
             } else if (link.attachEvent) {
                 link.attachEvent('onclick', function(event) {
                     sendMessage({uuid: uuid}, "edit-document");
@@ -79,7 +79,7 @@
                     container.updateSharedData(facade);
                 });
             } catch(e) {
-                sendMessage({msg: e.message}, "iframeexception");
+                sendMessage({msg: 'Error creating containers.', exception: e}, "iframeexception");
             }
         },
 

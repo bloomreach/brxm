@@ -1193,7 +1193,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
             } else if (msg.tag == 'iframeexception') {
-                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'] + msg.data.message, function() {
+                var errorMsg = this.resources['iframe-event-exception-message-message'];
+                if (msg.data.msg) {
+                    errorMsg += msg.data.msg;
+                }
+                if (msg.data.exception) {
+                    errorMsg += "\n" + msg.data.exception;
+                }
+                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], errorMsg, function() {
                     self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
                 });
             } else if (msg.tag == 'edit-document') {
