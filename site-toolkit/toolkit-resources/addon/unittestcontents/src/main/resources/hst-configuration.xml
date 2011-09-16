@@ -17,9 +17,25 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:configurations</sv:value>
   </sv:property>
+  <sv:node sv:name="unittestcommon">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="unittestproject">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="unittestsubproject">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../unittestcommon</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

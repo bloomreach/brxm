@@ -94,6 +94,14 @@
                  <sv:value>/mycontextpath</sv:value>
               </sv:property>
             </sv:node>
+            <sv:node sv:name="subsite">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                  <sv:value>hst:mount</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:mountpoint" sv:type="String">
+                <sv:value>/hst:hst/hst:sites/unittestsubproject</sv:value>
+              </sv:property>
+            </sv:node>
             <sv:node sv:name="preview">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                  <sv:value>hst:mount</sv:value>
@@ -156,7 +164,7 @@
           </sv:node>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="acct">
+    <sv:node sv:name="testgroup">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
@@ -167,7 +175,7 @@
            <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hst:virtualhost</sv:value>
           </sv:property>
-          <sv:node sv:name="onehippo">
+          <sv:node sv:name="unit">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:virtualhost</sv:value>
               </sv:property>
@@ -191,7 +199,6 @@
                   <sv:property sv:name="hst:mountpoint" sv:type="String">
                      <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
                   </sv:property>
-
                    <sv:node sv:name="custompipeline">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                         <sv:value>hst:mount</sv:value>
@@ -220,6 +227,25 @@
                       </sv:property>
                   </sv:node>
 
+                </sv:node>
+              </sv:node>
+              <sv:node sv:name="sub">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                   <sv:value>hst:virtualhost</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:homepage" sv:type="String">
+                  <sv:value>home</sv:value>
+                </sv:property>
+                <sv:node sv:name="hst:root">
+                  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                      <sv:value>hst:mount</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:alias" sv:type="String">
+                      <sv:value>subtest</sv:value>
+                  </sv:property>
+                  <sv:property sv:name="hst:mountpoint" sv:type="String">
+                     <sv:value>/hst:hst/hst:sites/unittestsubproject</sv:value>
+                  </sv:property>
                 </sv:node>
               </sv:node>
               <sv:node sv:name="preview">

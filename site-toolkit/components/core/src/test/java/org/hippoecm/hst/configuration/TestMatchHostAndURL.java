@@ -554,7 +554,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
          * We also have a test host, that has configuration like this:
          * 
          * test  (host)
-         *    `onehippo (host, homepage = myhometest1)
+         *    `unit (host, homepage = myhometest1)
          *        |-www  (host, homepage = myhometest2) 
          *        |   `hst:root (mount)
          *        |        |- custompipeline (mount, homepage = myhometest3)
@@ -573,15 +573,15 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             MockHttpServletRequest request = new MockHttpServletRequest();
             
             request.setScheme("http");
-            request.setServerName("www.onehippo.test");
-            request.addHeader("Host", "www.onehippo.test");
+            request.setServerName("www.unit.test");
+            request.addHeader("Host", "www.unit.test");
             request.setRequestURI("/site/news/2009");
             request.setContextPath("/site");
             
             MockHttpServletRequest previewRequest = new MockHttpServletRequest();
             previewRequest.setScheme("http");
-            previewRequest.setServerName("www.onehippo.test");
-            previewRequest.addHeader("Host", "preview.onehippo.test");
+            previewRequest.setServerName("www.unit.test");
+            previewRequest.addHeader("Host", "preview.unit.test");
             previewRequest.setRequestURI("/site");
             previewRequest.setContextPath("/site");
             try {
@@ -595,7 +595,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
-                // second test: change request uri to "" : the expected resolvedSiteMapItem is now the homepage from the www.onehippo.test, thus myhometest2
+                // second test: change request uri to "" : the expected resolvedSiteMapItem is now the homepage from the www.unit.test, thus myhometest2
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest2 = _default_ , we should have myparam='myhometest2'
                 request.setRequestURI("/site");
                 
@@ -606,7 +606,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'myhometest2' ","myhometest2".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
-                // third test: change request hostname to "preview.onehippo.test" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test, thus myhometest1 from the host preview.onehippo.test
+                // third test: change request hostname to "preview.unit.test" : the expected resolvedSiteMapItem is now the homepage from the preview.unit.test, thus myhometest1 from the host preview.unit.test
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest1 = _default_ , we should have myparam='myhometest1'
                
                 
@@ -616,7 +616,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'myhometestpreview' but it was '"+resolvedSiteMapItem.getParameter("testparam")+"'","myhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
-                // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.onehippo.test/custompipeline, thus mycustomhometestpreview
+                // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.unit.test/custompipeline, thus mycustomhometestpreview
                 // since we have a parameter configured as testparam = ${1} and the expected match for /mycustomhometestpreview = _default_ , we should have myparam='mycustomhometestpreview'
                 
                 previewRequest.setRequestURI("/site/custompipeline");

@@ -342,14 +342,50 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         
 
         @Test
-        public void testCrossDomainHstLinkForBean() throws Exception {
-            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:80","/news2");
-            // TODO add cross domain rewriting here
+        public void testCrossSiteAndDomainHstLinkForBean() throws Exception {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/news2");
+             // the current request is for the unittestproject. Now, we fetch a node from the unittestsubproject and ask a link for it. The
+             // unittestsubproject mount is located below the current unittest live mount
+            
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            Object newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+            HstLink crossSiteNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
+           
+            assertEquals("wrong link.getPath for News/2008/SubNews1 ","news/2008/SubNews1.html", crossSiteNewsLink.getPath());
+            assertEquals("wrong absolute link for News/News1" ,"/site/subsite/news/2008/SubNews1.html", (crossSiteNewsLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for News/News1" ,"http://localhost:8080/site/subsite/news/2008/SubNews1.html", (crossSiteNewsLink.toUrlForm(requestContext, true)));
+       
+            // We now do a request that is for the preview site (PORT 8081). Because for the 'unittestsubproject' we have only 
+            // configured LIVE mounts, we should not be able to cross-site link from preview to live environemt
+           requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8081","/news2");
+            
+           obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+           newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+           HstLink notFoundCrossSiteNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
+          
+           assertEquals("wrong link.getPath for News/2008/SubNews1: We should not be able to " +
+           		"link from preview to live cross-site ","pagenotfound", notFoundCrossSiteNewsLink.getPath());
+          
+            // we now do a request is for *www.unit.test which* is part of the 'testgroup' hostgroup
+            // an internal link to a unittestsubproject is now part of a different host (sub.unit.test)
+            // this means, we should get a fully qualified link even if we do not explicitly ask for one (decause it is cross domain)
+            
+            requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.test:8080","/news2");
+            
+           
+            obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
+            HstLink crossSiteAndDomainNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
+           
+            assertEquals("wrong link.getPath for News/2008/SubNews1 ","news/2008/SubNews1.html", crossSiteAndDomainNewsLink.getPath());
+            assertEquals("wrong absolute link for News/News1" ,"http://sub.unit.test:8080/site/news/2008/SubNews1.html", (crossSiteAndDomainNewsLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for News/News1" ,"http://sub.unit.test:8080/site/news/2008/SubNews1.html", (crossSiteAndDomainNewsLink.toUrlForm(requestContext, true)));
+           // whether fullyQualified is true or false, for cross domain links we should always get a fully qualified url
+            assertTrue("fully qualified with true or false should not matter for cross domain links" , crossSiteAndDomainNewsLink.toUrlForm(requestContext, false).equals(crossSiteAndDomainNewsLink.toUrlForm(requestContext, true)));
         }
         
-
         @Test
-        public void testCrossDomainFallbackHstLinkForBean() throws Exception {
+        public void testPartialCoveredContentMountFallBackHstLinkForBean() throws Exception {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/news2");
             // TODO add cross domain fallback link rewriting here
         }
