@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
-import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.RepositoryException;
 
@@ -179,8 +178,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             boolean appendTranslationEntry = false;
             for (int i=0; i<childrenArray.length && (i==0 || !(singledView && isHandle)); i++) {
                 if (!childrenArray[i].getKey().equals(requestName) && !childrenArray[i].getKey().equals(translationName)) {
-                    if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
-                        continue;
+                    if (!childrenArray[i].getValue().getCanonicalId().equals(state.getId())) {
+                        if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
+                            continue;
+                        }
                     }
                     appendTranslationEntry = true;
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());

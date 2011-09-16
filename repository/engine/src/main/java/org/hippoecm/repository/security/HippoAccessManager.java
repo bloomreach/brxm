@@ -477,6 +477,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         if (allowRead != null) {
             return allowRead.booleanValue();
         }
+        // because the getItemState(id) call below will recursively call us (canRead(id)) again
+        // we provisionally allow that call to succeed here by adding the value 'true' to the cache
+        // so that we can then use that item state to do the work of determining if the read access is indeed allowed
+        // after which we put the real result in the cache before returning.
+        // if we wouldn't do this we'd have an infinite loop on our hands
+        addAccessToCache(id, true);
 
         if (log.isDebugEnabled()) {
             log.debug("Checking canRead for node: {}", npRes.getJCRPath(hierMgr.getPath(id)));
