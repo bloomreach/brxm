@@ -83,11 +83,6 @@ public class ImageUploadPlugin extends RenderPlugin {
             super(name);
 
             FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
-            settings.setAutoUpload(true);
-            settings.setClearAfterUpload(true);
-            settings.setClearTimeout(1000);
-            settings.setHideBrowseDuringUpload(true);
-            settings.setButtonWidth("154px");
 
             add(widget = new FileUploadWidget("multifile", settings) {
                 @Override

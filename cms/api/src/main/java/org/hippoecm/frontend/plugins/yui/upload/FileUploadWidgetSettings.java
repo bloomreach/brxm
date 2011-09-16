@@ -23,9 +23,17 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * <ul>
  *     <li>fileupload.flashEnabled = <code>true</code> for flash or <code>false</code> for javascript upload</li>
  *     <li>fileupload.maxItems = maximum allowed file uploads at the same time</li>
- *     <li>file.extensions = allowed upload file extensions (backwards compatibility)</li>
  *     <li>fileupload.allowedExtensions = allowed upload file extensions</li>
  *     <li>fileupload.autoUpload = if <code>true</code> the plugin will automatically upload the files</li>
+ *     <li>fileupload.buttonWidth = defines the width of the upload button</li>
+ *     <li>fileupload.buttonHeight = defines the height of the upload button</li>
+ *     <li>fileupload.clearAfterUpload = if <code>true</code> the dialog is cleared after all files are uploaded</li>
+ *     <li>fileupload.clearTimeout = defines the timeout before clearing the dialog after the upload</li>
+ *     <li>fileupload.hideBrowseDuringUpload = if <code>true</code> the browse button will be hidden during the upload</li>
+ * </ul>
+ * Backwards compatibility:
+ * <ul>
+ *     <li>file.extensions = allowed upload file extensions</li>
  * </ul>
  */
 public class FileUploadWidgetSettings implements IClusterable{
@@ -36,6 +44,11 @@ public class FileUploadWidgetSettings implements IClusterable{
     public static final String FILEUPLOAD_MAX_ITEMS_SETTING = "fileupload.maxItems";
     public static final String FILEUPLOAD_AUTOUPLOAD_SETTING = "fileupload.autoUpload";
     public static final String FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING = "fileupload.allowedExtensions";
+    public static final String FILEUPLOAD_BUTTON_WIDTH = "fileupload.buttonWidth";
+    public static final String FILEUPLOAD_BUTTON_HEIGHT = "fileupload.buttonHeight";
+    public static final String FILEUPLOAD_CLEAR_AFTER_UPLOAD = "fileupload.clearAfterUpload";
+    public static final String FILEUPLOAD_CLEAR_TIMEOUT = "fileupload.clearTimeout";
+    public static final String FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD = "fileupload.hideBrowseDuringUpload";
 
     //backwards compatibility
     public static final String FILE_EXTENSIONS_SETTING = "file.extensions";
@@ -146,15 +159,32 @@ public class FileUploadWidgetSettings implements IClusterable{
             this.maxNumberOfFiles = pluginConfig.getAsInteger(FILEUPLOAD_MAX_ITEMS_SETTING);
         }
         // for backwards compatibility
-        if (pluginConfig.containsKey(FILE_EXTENSIONS_SETTING)) {
+        if(pluginConfig.containsKey(FILE_EXTENSIONS_SETTING)) {
             this.fileExtensions = pluginConfig.getStringArray(FILE_EXTENSIONS_SETTING);
         }
-        if (pluginConfig.containsKey(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING)) {
+        if(pluginConfig.containsKey(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING)) {
             this.fileExtensions = pluginConfig.getStringArray(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING);
         }
-        if (pluginConfig.containsKey(FILEUPLOAD_AUTOUPLOAD_SETTING)) {
+
+        if(pluginConfig.containsKey(FILEUPLOAD_AUTOUPLOAD_SETTING)) {
             this.autoUpload = pluginConfig.getAsBoolean(FILEUPLOAD_AUTOUPLOAD_SETTING);
         }
+        if(pluginConfig.containsKey(FILEUPLOAD_BUTTON_WIDTH)) {
+            this.buttonWidth = pluginConfig.getString(FILEUPLOAD_BUTTON_WIDTH);
+        }
+        if(pluginConfig.containsKey(FILEUPLOAD_BUTTON_HEIGHT)) {
+            this.buttonHeight = pluginConfig.getString(FILEUPLOAD_BUTTON_HEIGHT);
+        }
+        if(pluginConfig.containsKey(FILEUPLOAD_CLEAR_AFTER_UPLOAD)) {
+            this.clearAfterUpload = pluginConfig.getAsBoolean(FILEUPLOAD_CLEAR_AFTER_UPLOAD);
+        }
+        if(pluginConfig.containsKey(FILEUPLOAD_CLEAR_TIMEOUT)) {
+            this.clearTimeout = pluginConfig.getAsInteger(FILEUPLOAD_CLEAR_TIMEOUT);
+        }
+        if(pluginConfig.containsKey(FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD)) {
+            this.hideBrowseDuringUpload = pluginConfig.getAsBoolean(FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD);
+        }
+
     }
 
 }

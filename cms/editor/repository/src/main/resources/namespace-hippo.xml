@@ -313,6 +313,18 @@
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${wicket.model}</sv:value>
           </sv:property>
+          <sv:property sv:name="fileupload.autoUpload" sv:type="String">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="fileupload.clearAfterUpload" sv:type="String">
+            <sv:value>true</sv:value>
+          </sv:property>
+          <sv:property sv:name="fileupload.clearTimeout" sv:type="String">
+            <sv:value>1000</sv:value>
+          </sv:property>
+          <sv:property sv:name="fileupload.hideBrowseDuringUpload" sv:type="String">
+            <sv:value>true</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
