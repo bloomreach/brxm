@@ -92,6 +92,7 @@ test/src/main/webapp/WEB-INF/web.xml -text
 test/src/main/webapp/surfandedit.html -text
 test/src/main/webapp/test.html -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/AbstractChannelManagerTest.java -text
+test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/CmsEditTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/InitializationTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/initMiFrameMessageMock.js -text
 test/src/test/resources/log4j.dtd -text

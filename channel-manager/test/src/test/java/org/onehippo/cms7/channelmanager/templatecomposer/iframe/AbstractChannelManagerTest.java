@@ -14,15 +14,26 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
  *  limitations under the License.
  */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.gargoylesoftware.htmlunit.AjaxController;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import com.google.gson.Gson;
 
 import org.junit.After;
 import org.mortbay.jetty.Connector;
@@ -31,6 +42,10 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.thread.QueuedThreadPool;
+import org.onehippo.cms7.channelmanager.templatecomposer.GlobalBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.jquery.JQueryBundle;
+import org.w3c.dom.Text;
 
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
@@ -46,16 +61,16 @@ abstract public class AbstractChannelManagerTest {
 
     public void setUp(String name) throws Exception {
         server = new Server();
-        
+
         QueuedThreadPool pool = new QueuedThreadPool();
         pool.setMinThreads(8);
         server.setThreadPool(pool);
-        
+
         SelectChannelConnector connector = new SelectChannelConnector();
         connector.setHost(LISTEN_HOST);
         connector.setPort(LISTEN_PORT);
-        server.setConnectors(new Connector[] { connector });
-        
+        server.setConnectors(new Connector[]{connector});
+
         Context root = new Context(server, "/", Context.SESSIONS);
         root.setResourceBase(".");
         root.addServlet(DefaultServlet.class, "/*");
@@ -75,6 +90,8 @@ abstract public class AbstractChannelManagerTest {
         WebWindow testWindow = client.openWindow(new URL("http://localhost:" + LISTEN_PORT + "/" + name), LISTEN_HOST);
         startConsole(client);
         page = (HtmlPage) testWindow.getEnclosedPage();
+        Window window = (Window) client.getCurrentWindow().getScriptObject();
+        window.initialize(page);
     }
 
     @After
@@ -100,8 +117,7 @@ abstract public class AbstractChannelManagerTest {
             private static final long serialVersionUID = -2445994102698852899L;
 
             @Override
-            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope,
-                    Scriptable thisObj, Object[] args) {
+            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
                     System.out.println((String) args[0]);
                 }
@@ -114,8 +130,7 @@ abstract public class AbstractChannelManagerTest {
             private static final long serialVersionUID = -2445994102698852899L;
 
             @Override
-            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope,
-                    Scriptable thisObj, Object[] args) {
+            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
                     System.err.println((String) args[0]);
                 }
@@ -128,8 +143,7 @@ abstract public class AbstractChannelManagerTest {
             private static final long serialVersionUID = -2445994102698852899L;
 
             @Override
-            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope,
-                    Scriptable thisObj, Object[] args) {
+            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
                     System.err.println((String) args[0]);
                 }
@@ -137,6 +151,77 @@ abstract public class AbstractChannelManagerTest {
             }
         };
         ScriptableObject.putProperty(console, "warn", jsxWarn);
+    }
+
+    protected String eval(String objectIdentifier) {
+        return (String) page.executeJavaScript(objectIdentifier).getJavaScriptResult();
+    }
+
+    protected boolean isMetaDataConsumed(final HtmlElement containerDiv) {
+        boolean metaDataConsumed = true;
+        DomNode tmp = containerDiv;
+        while ((tmp = tmp.getPreviousSibling()) != null) {
+            if (tmp.getNodeType() == 8) {
+                metaDataConsumed = false;
+            }
+        }
+        return metaDataConsumed;
+    }
+
+    protected void initializeIFrameHead() throws IOException {
+        injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
+
+        injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CORE);
+        injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN);
+        injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN);
+        injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_UI);
+
+        injectJavascript(GlobalBundle.class, GlobalBundle.GLOBALS);
+        injectJavascript(IFrameBundle.class, IFrameBundle.UTIL);
+        injectJavascript(IFrameBundle.class, IFrameBundle.SURFANDEDIT);
+        injectJavascript(IFrameBundle.class, IFrameBundle.MANAGER);
+        injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);
+        injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
+        injectJavascript(IFrameBundle.class, IFrameBundle.MAIN);
+    }
+
+    protected void initializeTemplateComposer(final Boolean debug, final Boolean previewMode) {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(PageEditor.class.getName());
+        final Map<String, String> resourcesMap = new HashMap<String, String>();
+        for (String key : resourceBundle.keySet()) {
+            resourcesMap.put(key, resourceBundle.getString(key));
+        }
+
+        Map<String, Object> argument = new HashMap<String, Object>();
+        argument.put("debug", debug);
+        argument.put("previewMode", previewMode);
+        argument.put("resources", resourcesMap);
+
+        Gson gson = new Gson();
+        String message = gson.toJson(argument);
+
+        page.executeJavaScript("sendMessage(" + message + ", 'init');");
+    }
+
+    protected void injectJavascript(Class<?> clazz, String resource) throws IOException {
+        final InputStream inputStream = clazz.getResourceAsStream(resource);
+
+        Reader resourceReader = new InputStreamReader(inputStream);
+        StringBuilder javascript = new StringBuilder();
+        int buffer = 0;
+        try {
+            while ((buffer = resourceReader.read()) != -1) {
+                javascript.append((char) buffer);
+            }
+            final List<HtmlElement> head = page.getElementsByTagName("head");
+            final HtmlElement script = page.createElement("script");
+            script.setAttribute("type", "text/javascript");
+            final Text textNode = page.createTextNode(javascript.toString());
+            script.appendChild(textNode);
+            head.get(0).appendChild(script);
+        } finally {
+            resourceReader.close();
+        }
     }
 
 }
