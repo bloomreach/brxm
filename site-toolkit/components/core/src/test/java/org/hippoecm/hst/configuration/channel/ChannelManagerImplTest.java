@@ -179,9 +179,11 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         Node testNode = getSession().getRootNode().addNode("test", "hst:hst");
         testNode.addNode("hst:hosts").addNode("dev-localhost", HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP);
         testNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
+        testNode.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS, HstNodeTypes.NODETYPE_HST_CONFIGURATIONS);
 
         Node bpFolder = testNode.addNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS, HstNodeTypes.NODETYPE_HST_BLUEPRINTS);
         Node bp = bpFolder.addNode("test-bp", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
+        bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
         Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
         channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
         Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);

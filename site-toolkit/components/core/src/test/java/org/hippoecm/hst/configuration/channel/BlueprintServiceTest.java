@@ -50,7 +50,9 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
                 "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
                     HstNodeTypes.BLUEPRINT_PROPERTY_NAME, "Test Blueprint",
                     HstNodeTypes.BLUEPRINT_PROPERTY_DESCRIPTION, "Description of Test Blueprint",
+                    "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION
         });
+        getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
         BlueprintService bs = new BlueprintService(blueprintNode);
@@ -68,11 +70,13 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
     public void createChannelWithFixedMountPoint() throws RepositoryException {
         build(getSession(), new String[] {
                 "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
+                    "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION,
                     "/test/hst:blueprints/test/hst:channel", HstNodeTypes.NODETYPE_HST_CHANNEL,
                         "/test/hst:blueprints/test/hst:channel/hst:channelinfo", HstNodeTypes.NODETYPE_HST_CHANNELINFO,
                     "/test/hst:blueprints/test/hst:mount", HstNodeTypes.NODETYPE_HST_MOUNT,
                         "hst:mountpoint", "/hst:hst/hst:sites/blueprint-site"
         });
+        getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
         BlueprintService bs = new BlueprintService(blueprintNode);
@@ -90,6 +94,7 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
     public void createChannelWithPrototypeSite() throws RepositoryException {
         build(getSession(), new String[] {
                 "/test/hst:blueprints/test", HstNodeTypes.NODETYPE_HST_BLUEPRINT,
+                    "/test/hst:blueprints/test/hst:configuration", HstNodeTypes.NODETYPE_HST_CONFIGURATION,
                     "/test/hst:blueprints/test/hst:channel", HstNodeTypes.NODETYPE_HST_CHANNEL,
                         "/test/hst:blueprints/test/hst:channel/hst:channelinfo", HstNodeTypes.NODETYPE_HST_CHANNELINFO,
                     "/test/hst:blueprints/test/hst:mount", HstNodeTypes.NODETYPE_HST_MOUNT,
@@ -106,6 +111,7 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
             "hippo:modes", "single",
             "hippo:values", "live",
         });
+        getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
         BlueprintService bs = new BlueprintService(blueprintNode);
