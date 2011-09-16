@@ -31,10 +31,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
@@ -281,7 +283,7 @@ public class JcrObservationManager implements ObservationManager {
 
         boolean isvirtual;
         List<String> fixed;
-        final List<Event> events = Collections.synchronizedList(new LinkedList<Event>());
+        final Queue<Event> events = new ConcurrentLinkedQueue<Event>();
         Session session;
         FacetRootsObserver fro;
         WeakReference<UserSession> sessionRef;
