@@ -260,33 +260,5 @@
       <sv:value>2007.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="image-gallery-workflow-itemsize">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows/gallery/image-gallery/frontend:renderer/fileupload.maxItems</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>25</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>2008.0</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="asset-gallery-workflow-itemsize">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:workflows/gallery/asset-gallery/frontend:renderer/fileupload.maxItems</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>25</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>2008.1</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>
 
