@@ -38,6 +38,10 @@ builtin/.classpath
 builtin/.project
 builtin/.settings
 builtin/target
+checker-app/.classpath
+checker-app/.project
+checker-app/.settings
+checker-app/target
 checker/*.tmp
 checker/.classpath
 checker/.pom.xml.swp
