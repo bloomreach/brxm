@@ -94,7 +94,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
             // enable per-cell tooltips
             onRender: function() {
-                Ext.grid.GridPanel.prototype.onRender.apply(this, arguments);
+                Hippo.ChannelManager.ChannelGridPanel.superclass.onRender.apply(this, arguments);
                 this.addEvents("beforetooltipshow");
                 this.tooltip = new Ext.ToolTip({
                     renderTo: Ext.getBody(),
