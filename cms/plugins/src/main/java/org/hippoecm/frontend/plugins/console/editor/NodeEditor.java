@@ -54,9 +54,7 @@ class NodeEditor extends Form {
     private String mixinTypes;
     private PropertyProvider propertyProvider;
     private PropertiesEditor propertiesEditor;
-    private NodeTypesEditor typesEditor1;
-    private NodeTypesEditor typesEditor2;
-    private NodeTypesEditor typesEditor3;
+    private NodeTypesEditor typesEditor;
 
     NodeEditor(String id) {
         super(id);
@@ -68,7 +66,7 @@ class NodeEditor extends Form {
         propertyProvider = new PropertyProvider(new EmptyDataProvider());
         propertiesEditor = new PropertiesEditor("properties", propertyProvider);
         add(propertiesEditor);
-
+        
         // add toggle icon
         Image toggleIcon1 = new Image("toggle-icon-1") {
             private static final long serialVersionUID = 1L;
@@ -103,12 +101,9 @@ class NodeEditor extends Form {
         toggleIcon3.setMarkupId("toggle-3");
         add(toggleIcon3);
 
-        typesEditor1 = new NodeTypesEditor("mixintypes1", new ArrayList<String>(), null, 1);
-        typesEditor2 = new NodeTypesEditor("mixintypes2", new ArrayList<String>(), null, 2);
-        typesEditor3 = new NodeTypesEditor("mixintypes3", new ArrayList<String>(), null, 3);
-        add(typesEditor1);
-        add(typesEditor2);
-        add(typesEditor3);
+        typesEditor = new NodeTypesEditor("mixintypes", new ArrayList<String>(), null);
+        add(typesEditor);
+
     }
 
     @Override
@@ -126,15 +121,9 @@ class NodeEditor extends Form {
                 for (NodeType nodeType : nodeTypes) {
                     result.add(nodeType.getName());
                 }
-                typesEditor1.setModelObject(result);
-                typesEditor1.setNodeModel(newModel);
-                typesEditor1.setVisible(true);
-                typesEditor2.setModelObject(result);
-                typesEditor2.setNodeModel(newModel);
-                typesEditor2.setVisible(true);
-                typesEditor3.setModelObject(result);
-                typesEditor3.setNodeModel(newModel);
-                typesEditor3.setVisible(true);
+                typesEditor.setModelObject(result);
+                typesEditor.setNodeModel(newModel);
+                typesEditor.setVisible(true);
                 propertiesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
@@ -144,9 +133,7 @@ class NodeEditor extends Form {
                 log.error(e.getMessage());
             }
         } else {
-            typesEditor1.setVisible(false);
-            typesEditor2.setVisible(false);
-            typesEditor3.setVisible(false);
+            typesEditor.setVisible(false);
             propertiesEditor.setVisible(false);
         }
     }

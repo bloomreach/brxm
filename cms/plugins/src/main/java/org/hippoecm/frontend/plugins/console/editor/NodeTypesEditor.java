@@ -46,25 +46,23 @@ class NodeTypesEditor extends CheckGroup<String> {
     static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
     private JcrNodeModel nodeModel;
-    private int column;
 
-    NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel, final int column) {
+    NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
         super(id, nodeTypes);
         this.nodeModel = nodeModel;
-        this.column=column;
 
-        add(new ListView<String>("type"+column, getAllNodeTypes()) {
+        add(new ListView<String>("type", getAllNodeTypes()) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(ListItem<String> item) {
                 IModel<String> model = item.getModel();
 
-                Check<String> check = new Check<String>("check"+column, model);
+                Check<String> check = new Check<String>("check", model);
                 item.add(check);
 
                 String type = model.getObject();
-                check.add(new Label("name"+column, type));
+                check.add(new Label("name", type));
             }
         });
     }
@@ -118,12 +116,7 @@ class NodeTypesEditor extends CheckGroup<String> {
             NodeTypeManager ntmgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
             NodeTypeIterator iterator = ntmgr.getMixinNodeTypes();
             while (iterator.hasNext()) {
-                if ((iterator.getPosition()%3+1)==column) {
-                    list.add(iterator.nextNodeType().getName());
-                }
-                else {
-                    iterator.nextNodeType();
-                }
+                list.add(iterator.nextNodeType().getName());
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());

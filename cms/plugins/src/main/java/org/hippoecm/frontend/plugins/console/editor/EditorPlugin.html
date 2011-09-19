@@ -15,30 +15,6 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-<!--        <style>
-            .hippo-console-editor textarea {
-                width: 100%;
-            }
-
-            .properties-table {
-                width: 100%;
-            }
-            .properties-table td {
-                vertical-align: top;
-                padding: 0px 10px 5px 0px;
-            }
-            .properties-table a {
-                text-decoration: underline;
-                color: blue;
-            }
-            .values-table {
-                width: 100%;
-            }
-            .values-table td {
-                padding-right: 10px
-            }
-
-        </style>-->
         <form wicket:id="editor">
             <h3><img wicket:id="toggle-icon-1" class="editor-toggle-icon" onclick="javascript:toggleBox('1');"/> Types</h3>
             <hr/>
@@ -73,38 +49,18 @@
                     <br/>
                 </li>
             </ul>
-            <br/>
-
             <h3><img wicket:id="toggle-icon-3" class="editor-toggle-icon" onclick="javascript:toggleBox('3');"/> Mixin Types</h3>
             <hr/>
             <div id="toggle-box-3" style="display:none">
-                <div wicket:id="mixintypes1">
-                    <ul style="list-style: none; float: left; margin-right:40px;">
-                        <li wicket:id="type1">
-                            <input type="checkbox" wicket:id="check1">
-                            <strong><span wicket:id="name1">Mixin name</span></strong>
-                            </input>
-                        </li>
-                    </ul>
-                </div>
-                <div wicket:id="mixintypes2">
-                    <ul style="list-style: none; float: left; margin-right:40px;">
-                        <li wicket:id="type2">
-                            <input type="checkbox" wicket:id="check2">
-                            <strong><span wicket:id="name2">Mixin name</span></strong>
-                            </input>
-                        </li>
-                    </ul>
-                </div>
-                <div wicket:id="mixintypes3">
-                    <ul style="list-style: none; float: left; margin-right:40px;">
-                        <li wicket:id="type3">
-                            <input type="checkbox" wicket:id="check3">
-                            <strong><span wicket:id="name3">Mixin name</span></strong>
-                            </input>
-                        </li>
-                    </ul>
-                </div>
+              <div wicket:id="mixintypes">
+                  <ul style="list-style: none;">
+                      <li wicket:id="type">
+                          <input type="checkbox" wicket:id="check">
+                              <strong><span wicket:id="name">Mixin name</span></strong>
+                          </input>
+                      </li>
+                  </ul>
+              </div>
             </div>
         </form>
     </wicket:panel>
