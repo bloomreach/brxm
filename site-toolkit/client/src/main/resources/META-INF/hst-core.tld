@@ -166,6 +166,23 @@
         </attribute>
     </tag>
 
+  <tag>
+      <name>partialRenderURL</name>
+      <tag-class>org.hippoecm.hst.tag.HstPartialRenderURLTag</tag-class>
+      <tei-class>org.hippoecm.hst.tag.HstPartialRenderURLTag$TEI</tei-class>
+      <body-content>JSP</body-content>
+      <description> A HstComponent can make a partial render URL with this tag. This tag is often used for
+          building a form action URL. This actionURL will invoke the current page with submitting
+          the parameters to the HstComponent including this tag. </description>
+      <attribute>
+          <name>var</name>
+          <required>false</required>
+          <rtexprvalue>false</rtexprvalue>
+          <type>java.lang.String</type>
+          <description>The variable name of the actionURL</description>
+      </attribute>
+  </tag>
+
     <tag>
         <name>link</name>
         <tag-class>org.hippoecm.hst.tag.HstLinkTag</tag-class>

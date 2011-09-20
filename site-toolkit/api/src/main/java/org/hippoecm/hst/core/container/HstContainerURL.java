@@ -107,7 +107,9 @@ public interface HstContainerURL {
      * @param resourceWindowReferenceNamespace
      */
     void setResourceWindowReferenceNamespace(String resourceWindowReferenceNamespace);
-    
+
+    String getPartialRenderWindowReferenceNamespace();
+
     /**
      * Returns the resource ID if the current request is for serving resource in a component window.
      * Otherwise, it returns null.
@@ -185,4 +187,6 @@ public interface HstContainerURL {
      * @return
      */
     Map<String, String []> getActionParameterMap();
+
+    void setPartialRenderWindowReferenceNamespace(String referenceNamespace);
 }

@@ -72,7 +72,12 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     public HstURL createResourceURL(String referenceNamespace) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createResourceURL().");
     }
-    
+
+    @Override
+    public HstURL createPartialRenderURL() {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
+    }
+
     public String getNamespace() {
         return this.componentWindow.getReferenceNamespace();
     }

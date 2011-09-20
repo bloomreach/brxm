@@ -51,7 +51,9 @@ public interface HstURL {
     String ACTION_TYPE = "action";
     
     String RENDER_TYPE = "render";
-    
+
+    String PARTIAL_RENDER_TYPE = "partial-render";
+
     String RESOURCE_TYPE = "resource";
     
     /**

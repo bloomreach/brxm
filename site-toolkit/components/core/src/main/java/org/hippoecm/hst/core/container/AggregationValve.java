@@ -304,7 +304,7 @@ public class AggregationValve extends AbstractValve {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
                     // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    if (window == rootWindow) {
+                    if (rootWindow.getParentWindow() == null && window == rootWindow) {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());

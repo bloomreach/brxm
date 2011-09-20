@@ -235,6 +235,9 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
+        } else if (HstURL.PARTIAL_RENDER_TYPE.equals(type)) {
+            containerURL.setPartialRenderWindowReferenceNamespace(hstUrl.getReferenceNamespace());
+            mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         } else {
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         }
@@ -326,6 +329,13 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 (resourceId != null ? resourceId : "");
             
             url.append(URLEncoder.encode(requestInfo, characterEncoding));
+        } else if (containerURL.getPartialRenderWindowReferenceNamespace() != null) {
+            url.append(this.urlNamespacePrefixedPath);
+            String requestInfo =
+                HstURL.PARTIAL_RENDER_TYPE + REQUEST_INFO_SEPARATOR +
+                containerURL.getPartialRenderWindowReferenceNamespace();
+
+            url.append(URLEncoder.encode(requestInfo, characterEncoding));
         }
         
         String[] unEncodedPaths = containerURL.getPathInfo().split("/");
@@ -391,6 +401,13 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                     
                     if (log.isDebugEnabled()) {
                         log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
+                    }
+                } else if (HstURL.PARTIAL_RENDER_TYPE.equals(requestType)) {
+                    String partialRenderReferenceNamespace = requestInfos[1];
+                    url.setPartialRenderWindowReferenceNamespace(partialRenderReferenceNamespace);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("partial render window chosen for {}: {}", url.getPathInfo(), partialRenderReferenceNamespace);
                     }
                 }
             }

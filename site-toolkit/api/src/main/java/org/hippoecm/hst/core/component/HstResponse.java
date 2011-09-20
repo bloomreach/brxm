@@ -74,6 +74,8 @@ public interface HstResponse extends HttpServletResponse {
      */
     HstURL createResourceURL(String referenceNamespace);
 
+    HstURL createPartialRenderURL();
+
     /**
      * The value returned by this method should be prefixed or appended to elements, 
      * such as JavaScript variables or function names, to ensure they are unique 

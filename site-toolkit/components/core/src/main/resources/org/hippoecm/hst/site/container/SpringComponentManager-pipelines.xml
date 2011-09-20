@@ -124,7 +124,9 @@
   
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
   </bean>
-  
+
+  <bean id="partialRenderValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PartialRenderValve">
+  </bean>
  
   <!-- Post-processing valves -->
   
@@ -156,6 +158,7 @@
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
+                <ref bean="partialRenderValve" />
                 <ref bean="aggregationValve" />
               </list>
             </property>
