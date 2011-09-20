@@ -148,5 +148,10 @@ public class TestPageErrors {
         public String getComponentClassName() {
             return className;
         }
+
+        @Override
+        public boolean isStandalone() {
+            return true;
+        }
     }
 }

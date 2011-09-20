@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private boolean inherited;
     
+    /**
+     * <code>true</code> when this {@link HstComponentConfiguration} is configured to render standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
+     * The default value is <code>true</code> when the property {@link HstNodeTypes#COMPONENT_PROPERTY_STANDALONE} is not configured.
+     * The value for standalone is *not* inherited from ancestor components.
+     * When standalone = null, it means it is not configured. Then, we return true for {@link #isStandalone()}. It is easier to work with
+     * object Boolean here to support the copying and merging etc.
+     */
+    private Boolean standalone = null;
+    
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
@@ -179,7 +189,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
             }
         }
-      
+        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
+            this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
+        }
         if(!traverseDescendants) {
             // do not load children 
             return;
@@ -345,6 +357,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public boolean isInherited() {
         return inherited;
     }
+
+    @Override
+    public boolean isStandalone() {
+        return standalone;
+    }
     
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
@@ -373,6 +390,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.dummyContent = child.dummyContent;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
+        copy.standalone = child.inherited;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);
@@ -455,6 +473,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.componentFilterTag == null) {
                     this.componentFilterTag = referencedComp.componentFilterTag;
+                }
+                if (this.standalone == null) {
+                    this.standalone = referencedComp.standalone;
                 }
                 
                 // inherited flag not needed to take from the referencedComp
@@ -550,6 +571,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.componentFilterTag == null) {
             this.componentFilterTag = childToMerge.componentFilterTag;
+        }
+        if (this.standalone == null) {
+            this.standalone = childToMerge.standalone;
         }
         
         // inherited flag not needed to merge
@@ -667,6 +691,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
     }
+
 
 
 }

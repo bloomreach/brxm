@@ -48,6 +48,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String pageErrorHandlerClassName;
     private String xType;
     private boolean inherited;
+    private boolean standalone;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -217,4 +218,16 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
     }
+  
+    @Override
+    public boolean isStandalone() {
+        return standalone;
+        
+    }
+    
+    public void setStandalone(boolean standalone) {
+        this.standalone = standalone;
+    }
+    
+    
 }

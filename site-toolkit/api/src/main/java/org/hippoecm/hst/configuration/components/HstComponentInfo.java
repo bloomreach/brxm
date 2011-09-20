@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import org.hippoecm.hst.core.component.HstURL;
+
 
 /**
  * {@link HstComponentConfiguration}.
@@ -53,4 +55,9 @@ public interface HstComponentInfo {
      */
     String getComponentClassName();
     
+
+    /**
+     * @return <code>true</code> when this {@link HstComponentConfiguration} is configured to be rendered standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
+     */
+    boolean isStandalone();
 }

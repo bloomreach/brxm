@@ -30,7 +30,15 @@ public class ComponentRenderingValve extends AbstractValve {
         if (componentRenderingWindowReferenceNamespace != null) {
 
             HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
-            context.setRootComponentWindow(window);
+            if(window.getComponentInfo().isStandalone()) {
+                // set the current window as the root window because the backing componentInfo is standalone
+                context.setRootComponentWindow(window);
+            } else {
+                // the component is not standalone: All HstComponent's should have their doBeforeRender called,
+                // but only the renderer/dispatcher of the found window should be invoked
+                
+                // TODO
+            }
         }
         context.invokeNext();
     }

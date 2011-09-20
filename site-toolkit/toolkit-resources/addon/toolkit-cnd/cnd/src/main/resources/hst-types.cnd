@@ -41,6 +41,8 @@
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
+// whether the component is rendered in standalone mode during componentRendering URLs
+- hst:standalone (boolean)
 
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent(string)

@@ -56,5 +56,10 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     public String getName() {
         return delegatee.getName();
     }
+
+    @Override
+    public boolean isStandalone() {
+        return delegatee.isStandalone();
+    }
     
 }
