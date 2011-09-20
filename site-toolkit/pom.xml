@@ -105,7 +105,9 @@
     <jackson.version>1.3.2</jackson.version>
     <mime4j.version>0.6</mime4j.version>
     <atomikos.version>3.1.4</atomikos.version>
-    <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>    
+    <forge.gallerypicker.version>1.07.03</forge.gallerypicker.version>
+    <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
+    <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
   </properties>
 
   <!--
@@ -648,14 +650,70 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${maven.plugin.site.version}</version>
+      </plugin>
+    </plugins>
   </build>
 
   <reporting>
+    <outputDirectory>${basedir}/target/site</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.plugin.javadoc.version}</version>
+        <configuration>
+          <destDir>userapidocs</destDir>
+          <source>1.6</source>
+          <sourcepath>${basedir}/api/src/main/java:${basedir}/mock/src/main/java:${basedir}/commons/src/main/java:${basedir}/content-beans/src/main/java:${basedir}/client/src/main/java</sourcepath>
+          <links>
+            <link>http://download.oracle.com/javase/6/docs/api</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.plugin.javadoc.version}</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <source>1.6</source>
+          <links>
+            <link>http://download.oracle.com/javase/6/docs/api</link>
+          </links>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>javadoc</report>
+              <report>test-javadoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>${maven.plugin.jxr.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>src-xref</id>
+            <reports>
+              <report>jxr</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>test-xref</id>
+            <reports>
+              <report>test-jxr</report>
+            </reports>
+          </reportSet>
+        </reportSets>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
@@ -668,34 +726,6 @@
           <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
           <title>HST ${project.version} JSP tag</title>
         </configuration>
-       <!--
-         <taglib.xslt>src/site/scripts/tlddoc</taglib.xslt>
-
-        You seem to have to run this using full names:
-
-        mvn -N net.sourceforge.maven-taglib:maven-taglib-plugin:2.3.1:taglibdoc
-
-        You need -N, otherwise it will run on each module and expect it to have
-        the tablib.src.dir and fail.
-
-        Only the client module has a jsp tag library and demosuite has a copy of it, needed for freemarker.
-
-        Furthermore, there is a bug that causes newlines to be removed from examples, so that they are
-        unreadable. The workaround is using a custom XSLT without the bug. I made one:
-          src/site/scripts/tlddoc/tld2_1-tld2_1.xsl
-        It does not perform normalize-space on the content of example elements.
-
-        Running directly, using the workaround XSLT (locally):
-
-        java -jar /home/rita/.m2/repository/taglibrarydoc/tlddoc/1.3/tlddoc-1.3.jar \
-            -d target/site/tlddoc \
-            -xslt src/site/scripts/tlddoc \
-            -doctitle 'JSP tag library documentation of HST' \
-            -windowtitle 'HST jsp tags' \
-          client/src/main/resources/META-INF/hst-core.tld
-
-        (First, get the jar in your .m2 by running above mvn command.)
-        -->
       </plugin>
     </plugins>
   </reporting>
