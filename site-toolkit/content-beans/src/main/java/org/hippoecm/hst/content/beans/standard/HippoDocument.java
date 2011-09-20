@@ -121,12 +121,12 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     
     public Locale getLocale() {
         String localeString = getLocaleString();
-        
-        if (localeString != null) {
+        try {
             return LocaleUtils.toLocale(localeString);
+          } catch(IllegalArgumentException e) {
+            log.warn("Invalid locale '{}' for document '{}' : {}" , new Object[] {localeString, getPath(), e.toString()});
+            return null; 
         }
-        
-        return null; 
     }
     
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
