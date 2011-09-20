@@ -69,6 +69,10 @@ public class TestSearchInputParsingUtils {
         
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The \t\n quick brown fox \njumps \t over the lazy dog", true));
         
+        // prefix ~ is allowed for synonyms Jackrabbit. In middle of word, it is not allowed
+        assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~quick brown fox jumps over the lazy dog", true));
+        assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true));
+        
     }
 
     @Test

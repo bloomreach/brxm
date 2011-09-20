@@ -131,7 +131,7 @@ public final class SearchInputParsingUtils {
                   if(sb.length() == 0) {
                       sb.append(c);
                   } else {
-                      char prevChar = sb.charAt(sb.length());
+                      char prevChar = sb.charAt(sb.length() - 1);
                       if(prevChar == ' ') {
                           sb.append(c);
                       }
