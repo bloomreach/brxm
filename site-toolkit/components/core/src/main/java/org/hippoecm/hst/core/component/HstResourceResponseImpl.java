@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008 - 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     }
 
     @Override
-    public HstURL createPartialRenderURL() {
+    public HstURL createComponentRenderingURL() {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
     }
 

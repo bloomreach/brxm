@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008 - 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import java.util.Map;
  *     trigger a resource rendering request.
  * <li>Navigational Render URLs, they are created with <CODE>{@link HstResponse#createNavigationalURL(String)}</CODE>, and
  *     trigger a render request to another navigation link url.
+ * <li>Component Rendering URLs, they are created with <code> {@link HstResponse#createComponentRenderingURL()} </code>, and trigger
+ *     a render request for a specific component
  * </ul>
  * <p>
  * The string representation of a HstURL does not need to be a valid 
@@ -52,7 +54,7 @@ public interface HstURL {
     
     String RENDER_TYPE = "render";
 
-    String PARTIAL_RENDER_TYPE = "partial-render";
+    String COMPONENT_RENDERING_TYPE = "component-rendering";
 
     String RESOURCE_TYPE = "resource";
     

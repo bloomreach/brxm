@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008 - 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -235,8 +235,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             containerURL.setResourceWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             containerURL.setResourceId(hstUrl.getResourceID());
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
-        } else if (HstURL.PARTIAL_RENDER_TYPE.equals(type)) {
-            containerURL.setPartialRenderWindowReferenceNamespace(hstUrl.getReferenceNamespace());
+        } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(type)) {
+            containerURL.setComponentRenderingWindowReferenceNamespace(hstUrl.getReferenceNamespace());
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
         } else {
             mergeParameters(containerURL, hstUrl.getReferenceNamespace(), hstUrl.getParameterMap());
@@ -329,11 +329,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 (resourceId != null ? resourceId : "");
             
             url.append(URLEncoder.encode(requestInfo, characterEncoding));
-        } else if (containerURL.getPartialRenderWindowReferenceNamespace() != null) {
+        } else if (containerURL.getComponentRenderingWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);
             String requestInfo =
-                HstURL.PARTIAL_RENDER_TYPE + REQUEST_INFO_SEPARATOR +
-                containerURL.getPartialRenderWindowReferenceNamespace();
+                HstURL.COMPONENT_RENDERING_TYPE + REQUEST_INFO_SEPARATOR +
+                containerURL.getComponentRenderingWindowReferenceNamespace();
 
             url.append(URLEncoder.encode(requestInfo, characterEncoding));
         }
@@ -402,12 +402,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                     if (log.isDebugEnabled()) {
                         log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
                     }
-                } else if (HstURL.PARTIAL_RENDER_TYPE.equals(requestType)) {
-                    String partialRenderReferenceNamespace = requestInfos[1];
-                    url.setPartialRenderWindowReferenceNamespace(partialRenderReferenceNamespace);
+                } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(requestType)) {
+                    String componentRenderingReferenceNamespace = requestInfos[1];
+                    url.setComponentRenderingWindowReferenceNamespace(componentRenderingReferenceNamespace);
 
                     if (log.isDebugEnabled()) {
-                        log.debug("partial render window chosen for {}: {}", url.getPathInfo(), partialRenderReferenceNamespace);
+                        log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
                     }
                 }
             }

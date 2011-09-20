@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2008 - 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
   </bean>
 
-  <bean id="partialRenderValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PartialRenderValve">
+  <bean id="componentRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ComponentRenderingValve">
   </bean>
  
   <!-- Post-processing valves -->
@@ -158,7 +158,7 @@
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
-                <ref bean="partialRenderValve" />
+                <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />
               </list>
             </property>

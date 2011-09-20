@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-  Copyright 2010 Hippo
+  Copyright 2008 - 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -167,19 +167,17 @@
     </tag>
 
   <tag>
-      <name>partialRenderURL</name>
-      <tag-class>org.hippoecm.hst.tag.HstPartialRenderURLTag</tag-class>
-      <tei-class>org.hippoecm.hst.tag.HstPartialRenderURLTag$TEI</tei-class>
+      <name>componentRenderingURL</name>
+      <tag-class>org.hippoecm.hst.tag.HstComponentRenderingURLTag</tag-class>
+      <tei-class>org.hippoecm.hst.tag.HstComponentRenderingURLTag$TEI</tei-class>
       <body-content>JSP</body-content>
-      <description> A HstComponent can make a partial render URL with this tag. This tag is often used for
-          building a form action URL. This actionURL will invoke the current page with submitting
-          the parameters to the HstComponent including this tag. </description>
+      <description>This tag creates a URL for rendering a single hst component</description>
       <attribute>
           <name>var</name>
           <required>false</required>
           <rtexprvalue>false</rtexprvalue>
           <type>java.lang.String</type>
-          <description>The variable name of the actionURL</description>
+          <description>The variable name of the component rendering URL</description>
       </attribute>
   </tag>
 

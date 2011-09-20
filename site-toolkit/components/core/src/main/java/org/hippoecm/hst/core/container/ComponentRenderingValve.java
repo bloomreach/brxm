@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@ package org.hippoecm.hst.core.container;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
- * ActionValve
- *
- * @version $Id$
+ * ComponentRenderingValve
  */
-public class PartialRenderValve extends AbstractValve {
+public class ComponentRenderingValve extends AbstractValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HstRequestContext requestContext = context.getRequestContext();
-        String partialRenderWindowReferenceNamespace = requestContext.getBaseURL().getPartialRenderWindowReferenceNamespace();
+        String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace();
 
-        if (partialRenderWindowReferenceNamespace != null) {
+        if (componentRenderingWindowReferenceNamespace != null) {
 
-            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), partialRenderWindowReferenceNamespace);
+            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
             context.setRootComponentWindow(window);
         }
         context.invokeNext();
