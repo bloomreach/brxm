@@ -93,7 +93,7 @@ public class FilterImpl implements Filter{
                   return;
               }
         } else {
-            text = SearchInputParsingUtils.removeLeadingWildCardsFromWords(fullTextSearch);
+            text = SearchInputParsingUtils.removeLeadingWildCardsFromWords(text);
             if(!text.equals(fullTextSearch)) {
                 HstServices.getLogger(FQCN, FQCN).warn("Replaced fullTextSearch '{}' with '{}' as " +
                 		"it contained terms that started with a wildcard. Use '{}'.parse(...) to first parse the input.", new Object[]{fullTextSearch, text, SearchInputParsingUtils.class.getName()});
