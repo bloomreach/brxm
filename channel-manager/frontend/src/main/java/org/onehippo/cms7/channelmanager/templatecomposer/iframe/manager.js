@@ -75,7 +75,9 @@
                 var self = this;
                 $('.' + HST.CLASS.CONTAINER).each(function(index) {
                     var container = self._createContainer(this);
-                    container.updateSharedData(facade);
+                    if (container !== null) {
+                        container.updateSharedData(facade);
+                    }
                 });
             } catch(e) {
                 sendMessage({msg: 'Error creating containers.', exception: e}, "iframeexception");
@@ -84,6 +86,9 @@
 
         _createContainer : function(element) {
             var container = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
+            if (container === null) {
+                return null;
+            }
             this.containers[container.id] = container;
             container.render(this);
             return container;

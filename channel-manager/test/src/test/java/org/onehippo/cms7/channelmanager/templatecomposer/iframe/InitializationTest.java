@@ -14,20 +14,13 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
  *  limitations under the License.
  */
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.Test;
 
-import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
-import net.sourceforge.htmlunit.corejs.javascript.Context;
-import net.sourceforge.htmlunit.corejs.javascript.Function;
-import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import static org.junit.Assert.assertTrue;
 
 public class InitializationTest extends AbstractChannelManagerTest {
@@ -51,24 +44,10 @@ public class InitializationTest extends AbstractChannelManagerTest {
     public void testInitialisation() throws Exception {
         setUp("test.html");
         initializeIFrameHead();
-
-        final Set<String> messagesSend = new HashSet<String>();
-
-        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        final Function oldFunction = (Function) window.get("sendMessage");
-        ScriptableObject.putProperty(window, "sendMessage", new BaseFunction() {
-            @Override
-            public Object call(final Context cx, final Scriptable scope, final Scriptable thisObj, final Object[] args) {
-                if (args.length >= 2 && args[1] instanceof String) {
-                    messagesSend.add((String) args[1]);
-                }
-                return oldFunction.call(cx, scope, thisObj, args);
-            }
-        });
-
         initializeTemplateComposer(false, true);
 
-        assertTrue(messagesSend.contains("afterinit"));
+        assertTrue(!isMessageSend("iframeexception"));
+        assertTrue(isMessageSend("afterinit"));
     }
 
     @Test
@@ -93,6 +72,8 @@ public class InitializationTest extends AbstractChannelManagerTest {
                 "return (id === 'cf291fdc-d962-4c14-a5ba-3111fec861fd')? 'containerItem1' : 'containerItem2'; } " +
             "}, 'buildOverlay');");
 
+        assertTrue(!isMessageSend("iframeexception"));
+
         // test if hst meta data is consumed
         assertTrue(isMetaDataConsumed(containerDiv));
 
@@ -101,6 +82,16 @@ public class InitializationTest extends AbstractChannelManagerTest {
         assertTrue("HST.vBox".equals(containerDiv.getAttribute(eval("HST.ATTR.XTYPE"))));
         assertTrue(eval("HST.CONTAINER").equals(containerDiv.getAttribute(eval("HST.ATTR.TYPE"))));
         assertTrue("ae12f114-9a61-47ff-b048-71852e0f2f18".equals(containerDiv.getAttribute(eval("HST.ATTR.ID"))));
+    }
+
+    @Test
+    public void testEmptyContainerItem() throws Exception {
+        setUp("emptycontaineritem.html");
+
+        initializeIFrameHead();
+        initializeTemplateComposer(false, false);
+
+        assertTrue(!isMessageSend("iframeexception"));
     }
 
 }

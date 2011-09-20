@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,19 @@ abstract public class AbstractChannelManagerTest {
     public static final String LISTEN_HOST = "localhost";
     public static final int LISTEN_PORT = 8888;
 
+    public class Message {
+        public String messageTag;
+        public Object messagePayload;
+
+        public Message(final String messageTag, final Object messagePayload) {
+            this.messageTag = messageTag;
+            this.messagePayload = messagePayload;
+        }
+    }
+
     Server server;
     protected HtmlPage page;
+    private List<Message> messagesSend = new ArrayList<Message>();
 
     public void setUp(String name) throws Exception {
         server = new Server();
@@ -183,6 +195,16 @@ abstract public class AbstractChannelManagerTest {
         injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);
         injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
         injectJavascript(IFrameBundle.class, IFrameBundle.MAIN);
+
+        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
+        final Function oldFunction = (Function) window.get("sendMessage");
+        ScriptableObject.putProperty(window, "sendMessage", new BaseFunction() {
+            @Override
+            public Object call(final net.sourceforge.htmlunit.corejs.javascript.Context cx, final Scriptable scope, final Scriptable thisObj, final Object[] args) {
+                AbstractChannelManagerTest.this.messagesSend.add(new Message((String)args[1], args[0]));
+                return oldFunction.call(cx, scope, thisObj, args);
+            }
+        });
     }
 
     protected void initializeTemplateComposer(final Boolean debug, final Boolean previewMode) {
@@ -222,6 +244,33 @@ abstract public class AbstractChannelManagerTest {
         } finally {
             resourceReader.close();
         }
+    }
+
+    public boolean isMessageSend(final String message) {
+        for (Message messageObject : this.messagesSend) {
+            if (message.equals(messageObject.messageTag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void clearMessagesSend() {
+        this.messagesSend.clear();
+    }
+
+    public List<Message> getMessagesSend() {
+        return this.messagesSend;
+    }
+
+    public List<Message> getMessages(String message) {
+        List<Message> messages = new ArrayList<Message>();
+        for (Message messageObject : this.messagesSend) {
+            if (message.equals(messageObject.messageTag)) {
+                messages.add(messageObject);
+            }
+        }
+        return messages;
     }
 
 }

@@ -328,7 +328,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('pageComposerButton').setDisabled(false);
         }, this);
 
-        this.on('iFrameException', function(data) {
+        this.on('fatalIFrameException', function(data) {
             var iFrame = Ext.getCmp('Iframe');
             var frm = iFrame.getFrame();
             if (frm !== null && data.msg) {
@@ -421,7 +421,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     requestContents(queueEmptyCallback);
                 },
                 failure : function(result, request) {
-                    self.fireEvent.apply(self, ['iFrameException', {msg : self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
+                    self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
                 }
             });
         };
@@ -472,7 +472,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 Hippo.Msg.wait(me.resources['loading-message']);
                                 composerMode(callback);
                             } else {
-                                me.fireEvent.apply(me, ['iFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
+                                me.fireEvent.apply(me, ['fatalIFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
                             }
                         });
                     }
@@ -840,7 +840,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 self.fireEvent.apply(self, ['afterHstMetaDataResponse', data]);
             },
             failure : function(responseObject) {
-                self.fireEvent.apply(self, ['iFrameException', { msg: self.resources['hst-meta-data-request-failed']}]);
+                self.fireEvent.apply(self, ['fatalIFrameException', { msg: self.resources['hst-meta-data-request-failed']}]);
             }
         });
     },
@@ -1227,7 +1227,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 if (msg.data.exception) {
                     errorMsg += "\n" + msg.data.exception;
                 }
-                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], errorMsg, function() {
+                console.error(errorMsg);
+                Hippo.Msg.alert(this.resources['iframe-event-exception-message-title'], this.resources['iframe-event-exception-message-message'], function() {
                     self.initComposer.apply(self, [self.renderHostSubMountPath, self.renderHost]);
                 });
             } else if (msg.tag == 'edit-document') {

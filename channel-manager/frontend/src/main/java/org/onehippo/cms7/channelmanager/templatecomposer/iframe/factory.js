@@ -30,6 +30,9 @@
                     return this.objects[element.id];
                 }
                 var verified = this.verify(element);
+                if (verified === null) {
+                    return null;
+                }
                 return this._create(verified, true);
             },
 
@@ -52,6 +55,16 @@
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
+                if (hstContainerMetaData === null) {
+                    if ($.trim($(element).html()) === '') {
+                        console.info('Skipping empty element "{0}" with no meta data.'.format(Hippo.Util.getElementPath(element)));
+                        return null;
+                    } else {
+                        console.warn('No hst meta data found for element "{0}".'.format(Hippo.Util.getElementPath(element)));
+                        return null;
+                    }
+                }
+
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
                     die(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
                 }

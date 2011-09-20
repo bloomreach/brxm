@@ -1,18 +1,13 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
-import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +22,8 @@ public class CmsEditTest extends AbstractChannelManagerTest {
 
     @Test
     public void testSurfAndEdit() throws Exception {
+        assertTrue(!isMessageSend("iframeexception"));
+
         // test if container is present
         HtmlElement link = getLink();
         assertTrue(isMetaDataConsumed(link));
@@ -44,24 +41,13 @@ public class CmsEditTest extends AbstractChannelManagerTest {
 
     @Test
     public void clickLinkSendsMessage() throws Exception {
-
-        final List<String> messages = new LinkedList<String>();
-        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        ScriptableObject.putProperty(window, "sendMessage", new BaseFunction() {
-            private static final long serialVersionUID = -2445994102698852899L;
-
-            @Override
-            public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-                messages.add((String) args[1]);
-                return null;
-            }
-
-        });
-
         HtmlElement link = getLink();
         link.click();
 
-        assertEquals(1, messages.size());
-        assertEquals("edit-document", messages.get(0));
+        final List<Message> messages = getMessagesSend();
+        assertEquals(3, messages.size());
+        assertEquals("edit-document", messages.get(2).messageTag);
+        assertTrue(!isMessageSend("iframeexception"));
     }
+
 }
