@@ -17,7 +17,6 @@ package org.hippoecm.hst.util;
  */
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.site.HstServices;
 
 /**
@@ -26,7 +25,7 @@ import org.hippoecm.hst.site.HstServices;
  */
 public final class SearchInputParsingUtils {
 
-    private static final String FQCN = FilterImpl.class.getName();
+    private static final String FQCN = SearchInputParsingUtils.class.getName();
     
     private static final String WHITESPACE_PATTERN = "\\s+";
 
