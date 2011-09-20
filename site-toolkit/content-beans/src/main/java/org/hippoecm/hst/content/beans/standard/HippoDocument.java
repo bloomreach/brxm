@@ -123,9 +123,9 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         String localeString = getLocaleString();
         try {
             return LocaleUtils.toLocale(localeString);
-          } catch(IllegalArgumentException e) {
-            log.warn("Invalid locale '{}' for document '{}' : {}" , new Object[] {localeString, getPath(), e.toString()});
-            return null; 
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid locale '{}' for document '{}' : {}", new Object[] { localeString, getPath(), e.toString() });
+            return null;
         }
     }
     

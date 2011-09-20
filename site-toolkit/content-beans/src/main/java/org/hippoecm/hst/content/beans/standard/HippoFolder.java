@@ -43,12 +43,13 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     
     public Locale getLocale() {
         String localeString = getLocaleString();
-        
-        if (localeString != null) {
+        try {
             return LocaleUtils.toLocale(localeString);
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid locale '{}' for document '{}' : {}",new Object[] { localeString, getPath(), e.toString() });
+            return null;
         }
-        
-        return null; 
+
     }
 
     public List<HippoFolderBean> getFolders(){
