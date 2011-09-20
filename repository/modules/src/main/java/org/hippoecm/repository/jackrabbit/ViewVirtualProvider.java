@@ -189,8 +189,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             }
             for (int i=0; i<childrenArray.length; i++) {
                 if (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName)) {
-                    if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
-                        continue;
+                    if (!childrenArray[i].getValue().getCanonicalId().equals(state.getId())) {
+                        if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
+                            continue;
+                        }
                     }
                     if(isHandle && childrenArray[i].getKey().equals(translationName)) {
                         // we only append below a handle the translation node to a handle when there is at least a hippo:document added
