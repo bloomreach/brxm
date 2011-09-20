@@ -37,11 +37,11 @@ public final class SearchInputParsingUtils {
      * Returns a parsed version of the input
      * @param input the user input
      * @param allowSingleNonLeadingWildCard if there is allowed one wildcard (however, still not allowed as leading for a word)
-     * @return the parsed version of the <code>input</code>
+     * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>, <code>null</code> is returned
      */
     public static String parse(final String input,final boolean allowSingleNonLeadingWildCard) {
         if(input == null) {
-            throw new IllegalArgumentException("Input is not allowed to be null");
+            return null;
         }        
         String parsed = compressWhitespace(input);
         parsed = removeInvalidAndEscapeChars(parsed, allowSingleNonLeadingWildCard);
@@ -57,11 +57,11 @@ public final class SearchInputParsingUtils {
      * @param input the user input
      * @param allowSingleNonLeadingWildCard if there is allowed one wildcard (however, still not allowed as leading for a word)
      * @param maxLength the maxLength of the returned parsed input
-     * @return the parsed version of the <code>input</code>
+     * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>, <code>null</code> is returned
      */
     public static String parse(final String input,final boolean allowSingleNonLeadingWildCard, int maxLength) {
         if(input == null) {
-            throw new IllegalArgumentException("Input is not allowed to be null");
+            return null;
         }
         String parsed = parse(input, allowSingleNonLeadingWildCard);
         if(parsed.length() > maxLength) {
