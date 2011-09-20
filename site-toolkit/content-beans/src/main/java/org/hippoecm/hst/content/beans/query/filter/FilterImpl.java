@@ -26,13 +26,14 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ForkedISO8601;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 
 public class FilterImpl implements Filter{
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(FilterImpl.class);
-
+    private static final String FQCN = FilterImpl.class.getName();
+    
     private StringBuilder jcrExpressionBuilder;
     
     private boolean negated = false;
@@ -71,16 +72,18 @@ public class FilterImpl implements Filter{
         return this;
     }
     
-    private void addContains(String scope, String fullTextSearch, boolean isNot) throws FilterException{
+    private void addContains(String scope,final String fullTextSearch, boolean isNot) throws FilterException{
         String jcrExpression;
         scope = toXPathProperty(scope, true, "addContains" , new String[]{"."});     
       
         if(fullTextSearch == null) {
             throw new FilterException("Not allowed to search on 'null'.");
         }
+
+        String text = fullTextSearch;
         
         // we rewrite a search for * into a more efficient search
-        if("*".equals(fullTextSearch)) {
+        if("*".equals(text)) {
               if(".".equals(scope)) {
                   // searching on * with scope '.' implies no extra filter: just return
                   return;
@@ -89,9 +92,15 @@ public class FilterImpl implements Filter{
                   this.addNotNull(scope);
                   return;
               }
-        } 
+        } else {
+            text = SearchInputParsingUtils.removeLeadingWildCardsFromWords(fullTextSearch);
+            if(!text.equals(fullTextSearch)) {
+                HstServices.getLogger(FQCN, FQCN).warn("Replaced fullTextSearch '{}' with '{}' as " +
+                		"it contained terms that started with a wildcard. Use '{}'.parse(...) to first parse the input.", new Object[]{fullTextSearch, text, SearchInputParsingUtils.class.getName()});
+            }
+        }
         
-        jcrExpression = "jcr:contains(" + scope + ", '" + fullTextSearch+ "')";     
+        jcrExpression = "jcr:contains(" + scope + ", '" + text+ "')";     
         
         if(isNot) {
             addNotExpression(jcrExpression);
@@ -196,6 +205,9 @@ public class FilterImpl implements Filter{
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
+        HstServices.getLogger(FQCN, FQCN).warn("addLike or addNotLike for FilterImpl is used. " +
+        		" It is strongly recommended to not use this because it blows up queries memory and cpu wise");
+        
         if(value == null ) {
             throw new FilterException("Not allowed to search on 'null'.");
         }
@@ -210,7 +222,7 @@ public class FilterImpl implements Filter{
     }
 
     public void addLike(String fieldAttributeName, Object value) throws FilterException{
-       
+        
         addLike(fieldAttributeName, value, false);
     }
     
@@ -239,7 +251,7 @@ public class FilterImpl implements Filter{
         if(firstAddedType == null) {
             firstAddedType = ChildFilterType.OR;
         } else if (firstAddedType == ChildFilterType.AND) {
-            log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+            HstServices.getLogger(FQCN, FQCN).warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
         }
         childFilters.add(new FilterTypeWrapper(filter, false));
         return this;
@@ -260,7 +272,7 @@ public class FilterImpl implements Filter{
        if(firstAddedType == null) {
            firstAddedType = ChildFilterType.AND;
        } else if (firstAddedType == ChildFilterType.OR) {
-           log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+           HstServices.getLogger(FQCN, FQCN).warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
        }
        childFilters.add(new FilterTypeWrapper(filter, true));       
        return this;
