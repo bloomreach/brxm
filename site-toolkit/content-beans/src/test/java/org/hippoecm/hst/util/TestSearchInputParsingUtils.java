@@ -16,6 +16,7 @@
 package org.hippoecm.hst.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -32,7 +33,15 @@ public class TestSearchInputParsingUtils {
         assertEquals("is nullsafe", null, SearchInputParsingUtils.compressWhitespace(null));
     }
     
-
+    @Test
+    public void testNullIllegalArgument() throws Exception {
+        try { 
+            SearchInputParsingUtils.parse(null, true);
+            fail("null is not allowed");
+        } catch (IllegalArgumentException e) {
+            // should be an IllegalArgumentException so correct.
+        }
+    }
     @Test
     public void testSearchInputParsingUtils_parse() throws Exception {
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The quick brown fox jumps over the lazy dog", true));
