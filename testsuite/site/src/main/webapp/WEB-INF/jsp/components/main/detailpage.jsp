@@ -52,6 +52,10 @@
   <c:if test="${isPreview}">
     <hst:cmseditlink hippobean="${document}"/>
   </c:if>
+  <p>
+  <hst:componentRenderingURL var="componentRenderingURL"/>
+  <a href="${componentRenderingURL}" target="_blank">Render only this component</a>
+  </p>
   <div id="editable_cont" class="inline-editor-editable-container">
     <h2>${document.title}</h2>
     <p>

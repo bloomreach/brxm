@@ -21,14 +21,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div id="yui-u">
-    <hst:link var="searchURL" path="/search" />
-    <form action="${searchURL}" method="get">
+   <hst:link var="searchURL" path="/search" />
+   <form action="${searchURL}" method="get">
       <div><input type="text" name="query" value="${query}" /> <input
         type="submit" value="Search" /> 
       </div>
-     </form>
-
-  <c:if test="${query != null && query != ''}">
+   </form>
+   
+   <p>
+     <br/>
+     <hst:componentRenderingURL var="componentRenderingURL"/>
+     <a href="${componentRenderingURL}" target="_blank">Render only this component</a>
+   </p>
+   
+   <c:if test="${query != null && query != ''}">
   
     <c:choose>
       <c:when test="${result.totalSize > 0}">
