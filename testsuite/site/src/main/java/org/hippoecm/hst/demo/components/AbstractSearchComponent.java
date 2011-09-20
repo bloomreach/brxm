@@ -29,6 +29,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +80,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (query != null) {
+                query = SearchInputParsingUtils.parse(query, false);
                 Filter filter = hstQuery.createFilter();
                 filter.addContains(".", query);
                 hstQuery.setFilter(filter);

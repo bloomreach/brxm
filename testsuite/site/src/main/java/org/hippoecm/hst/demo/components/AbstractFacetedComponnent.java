@@ -20,6 +20,7 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,10 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
     public static final Logger log = LoggerFactory.getLogger(AbstractFacetedComponnent.class);
   
     public HstQuery getHstQuery(HstRequest request) {
-
         String query = this.getPublicRequestParameter(request, "query");
+        if(query != null ) {
+            query = SearchInputParsingUtils.parse(query, false);
+        }
         String order = this.getPublicRequestParameter(request, "order");
         HstQuery hstQuery = null;
         if ( (query != null && !"".equals(query)) || (order != null && !"".equals(order))) {
