@@ -22,29 +22,11 @@ How to test and build Hippo Site Toolkit
     
       $ mvn clean install -DskipTests 
     
-4. Running an example site
+4. Creating the mvn site with javadocs: type from the root
+   $ mvn -o site     
+   
+   All aggregated javadocs are generated in target/site/apidocs and all aggregated test javadocs are generated in target/site/testapidocs.
 
-  (1) With Embedded Jetty
-
-    - To run repository and cms, move to demosuite/cms folder and run the following:
+   In addition, "The User API JavaDocs", which includes only api, mock, commons, content-beans and client, are generated in target/site/userapidocs/ separately.
+   Also, a menu link item for "The User API JavaDocs" has been added in site.xml. 
       
-      $ mvn jetty:run-war
-
-    - Hippo CMS is now running at: http://127.0.0.1:8080/cms
-    
-    - To run site web application, move to demosuite/site folder and run the following:
-      
-      $ mvn jetty:run
-  
-    - Visit the page: http://127.0.0.1:8085/site/preview/
-    
-  (2) Together within one Tomcat (note: default configuration uses rmi)
-
-    - Drop both build cms.war and site.war in tomcat webapps folder.
-
-    - Starting Tomcat (wait for both cms and site apps been deployed and running):
-    
-    - Visit the preview pages by http://127.0.0.1:8080/site/preview/
-      Visit the live pages by by http://127.0.0.1:8080/site/
-      Visit cms by http://127.0.0.1:8080/cms/
-      Visit cms console by http://127.0.0.1:8080/cms/console/
