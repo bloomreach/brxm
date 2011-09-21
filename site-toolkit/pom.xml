@@ -129,6 +129,13 @@
     </mailingList>
   </mailingLists>
 
+  <distributionManagement>
+    <site>
+      <id>www.onehippo.org</id>
+      <url>scp://www.onehippo.org/site-toolkit/project/</url>
+    </site>
+  </distributionManagement>
+  
   <repositories>
     <repository>
       <id>hippo-maven2-snapshots</id>
