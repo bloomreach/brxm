@@ -279,10 +279,12 @@
 
         _insertNewItem : function(element, exists, index) {
             var item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
-            this.items.put(item.id, item, index);
-            if(!exists) {
-                var itemElement = this.createItemElement(item.element);
-                this.appendItem(itemElement, index);
+            if (item !== null) {
+                this.items.put(item.id, item, index);
+                if(!exists) {
+                    var itemElement = this.createItemElement(item.element);
+                    this.appendItem(itemElement, index);
+                }
             }
             return item;
         },
@@ -516,9 +518,12 @@
 
         add : function(element, index) {
             var item = this._insertNewItem(element, false, index);
-            this._renderItem(item);
-            $(this.sel.sortable).sortable('refresh');
-
+            if (item !== null) {
+                this._renderItem(item);
+                $(this.sel.sortable).sortable('refresh');
+            } else {
+                console.warn("Internal error: item {0} inserted at index {1} is null".format(Hippo.Util.getElementPath(element), index));
+            }
             this.state.checkEmpty = true;
         },
 

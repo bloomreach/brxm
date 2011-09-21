@@ -9,9 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CmsEditTest extends AbstractChannelManagerTest {
+public class CmsEditTest extends AbstractTemplateComposerTest {
 
     @Before
     public void startPage() throws Exception {
@@ -22,7 +23,7 @@ public class CmsEditTest extends AbstractChannelManagerTest {
 
     @Test
     public void testSurfAndEdit() throws Exception {
-        assertTrue(!isMessageSend("iframeexception"));
+        assertFalse(isMessageSend("iframeexception"));
 
         // test if container is present
         HtmlElement link = getLink();
@@ -47,7 +48,7 @@ public class CmsEditTest extends AbstractChannelManagerTest {
         final List<Message> messages = getMessagesSend();
         assertEquals(3, messages.size());
         assertEquals("edit-document", messages.get(2).messageTag);
-        assertTrue(!isMessageSend("iframeexception"));
+        assertFalse(isMessageSend("iframeexception"));
     }
 
 }

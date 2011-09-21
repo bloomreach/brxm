@@ -1,4 +1,4 @@
-package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
+/*
  *  Copyright 2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;/*
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 import java.util.List;
 
@@ -21,17 +22,15 @@ import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class InitializationTest extends AbstractChannelManagerTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: EditorManagerTest.java 29553 2011-08-15 11:15:01Z fvlankvelt $";
+public class InitializationTest extends AbstractTemplateComposerTest {
 
     @Test
     public void testMiFrameMessageHandling() throws Exception {
         setUp("test.html");
-
-        injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
 
         page.executeJavaScript("onhostmessage(function(msg) { window.initTestOK=msg.data.initTest; }, window, false, 'test');");
         page.executeJavaScript("sendMessage({initTest: true}, 'test')");
@@ -43,7 +42,6 @@ public class InitializationTest extends AbstractChannelManagerTest {
     @Test
     public void testInitialisation() throws Exception {
         setUp("test.html");
-        initializeIFrameHead();
         initializeTemplateComposer(false, true);
 
         assertTrue(!isMessageSend("iframeexception"));
@@ -53,7 +51,6 @@ public class InitializationTest extends AbstractChannelManagerTest {
     @Test
     public void testBuildOverlayXTypeHSTvBox() throws Exception {
         setUp("HST-vbox.html");
-        initializeIFrameHead();
         initializeTemplateComposer(false, false);
 
         // test if container is present
@@ -64,15 +61,15 @@ public class InitializationTest extends AbstractChannelManagerTest {
                 containerDiv = div;
             }
         }
-        assertTrue(containerDiv != null);
-        assertTrue(!isMetaDataConsumed(containerDiv));
+        assertNotNull(containerDiv);
+        assertFalse(isMetaDataConsumed(containerDiv));
 
         page.executeJavaScript("sendMessage(" +
             "{ getName: function(id) { " +
                 "return (id === 'cf291fdc-d962-4c14-a5ba-3111fec861fd')? 'containerItem1' : 'containerItem2'; } " +
             "}, 'buildOverlay');");
 
-        assertTrue(!isMessageSend("iframeexception"));
+        assertFalse(isMessageSend("iframeexception"));
 
         // test if hst meta data is consumed
         assertTrue(isMetaDataConsumed(containerDiv));
@@ -91,7 +88,7 @@ public class InitializationTest extends AbstractChannelManagerTest {
         initializeIFrameHead();
         initializeTemplateComposer(false, false);
 
-        assertTrue(!isMessageSend("iframeexception"));
+        assertFalse(isMessageSend("iframeexception"));
     }
 
 }
