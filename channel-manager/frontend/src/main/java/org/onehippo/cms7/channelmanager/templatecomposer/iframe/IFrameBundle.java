@@ -13,7 +13,7 @@ public final class IFrameBundle {
 
     public static String MAIN = "main.js";
 
-    public static String MANAGER = "manager.js";
+    public static String PAGE = "page.js";
 
     public static String UTIL = "util.js";
 

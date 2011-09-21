@@ -635,6 +635,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     refreshIframe : function() {
+        console.log('refreshIframe');
         this.resetIFrameState();
         var iframe = Ext.getCmp('Iframe');
         var frame = iframe.getFrame();
@@ -769,6 +770,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }, 0);
                 })(src, responseText);
             }
+
+            // remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
+            window.setTimeout(function() {
+                frm.execScript(' jQuery.noConflict(true); ', true);
+            }, 0);
 
             var self = this;
             window.setTimeout(function() {
@@ -1050,23 +1056,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
         console.log('buildOverlay');
         var self = this;
-        console.log('buildOverlay run');
-        if (this.pageModelFacade == null) {
-            var facade = function() {};
-            facade.prototype = {
-                getName : function(id) {
-                    var idx = self.stores.pageModel.findExact('id', id);
-                    if (idx == -1) {
-                        return null;
-                    }
-                    var record = self.stores.pageModel.getAt(idx);
-                    return record.get('name');
+        this.sendFrameMessage({
+            getName : function(id) {
+                var idx = self.stores.pageModel.findExact('id', id);
+                if (idx == -1) {
+                    return null;
                 }
-            };
-            this.pageModelFacade = new facade();
-        }
-        this.sendFrameMessage(this.pageModelFacade, 'buildoverlay');
-
+                var record = self.stores.pageModel.getAt(idx);
+                return record.get('name');
+            }
+        }, 'buildoverlay');
         this.fireEvent('afterBuildOverlay');
     },
 
@@ -1242,330 +1241,3 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     }
 });
-
-Hippo.ChannelManager.TemplateComposer.RestStore = Ext.extend(Ext.data.Store, {
-
-    constructor : function(config) {
-
-        var reader = new Ext.data.JsonReader({
-            successProperty: 'success',
-            root: 'data',
-            messageProperty: 'message',
-            idProperty: 'id'
-        }, config.prototypeRecord);
-
-        var writer = new Ext.data.JsonWriter({
-            encode: false   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
-        });
-
-        var cfg = {
-            restful: true,
-            reader: reader,
-            writer: writer
-        };
-
-        Ext.apply(this, cfg, config);
-        Hippo.ChannelManager.TemplateComposer.RestStore.superclass.constructor.call(this, config);
-    }
-});
-
-Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
-
-    constructor : function(config) {
-        var proxy = new Ext.data.HttpProxy({
-            api: {
-                read     : config.composerRestMountUrl + config.mountId + './toolkit?'+config.ignoreRenderHostParameterName+'=true'
-                ,create  : '#'
-                ,update  : '#'
-                ,destroy : '#'
-            }
-        });
-
-        var cfg = {
-            id: 'ToolkitStore',
-            proxy: proxy,
-            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
-        };
-
-        Ext.apply(config, cfg);
-
-        Hippo.ChannelManager.TemplateComposer.ToolkitStore.superclass.constructor.call(this, config);
-    }
-});
-
-Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
-
-    constructor : function(config) {
-
-        var composerRestMountUrl = config.composerRestMountUrl;
-        var ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
-
-        var PageModelProxy = Ext.extend(Ext.data.HttpProxy, {
-            buildUrl : function() {
-                 return PageModelProxy.superclass.buildUrl.apply(this, arguments) + '?' + ignoreRenderHostParameterName + '=true';
-            }
-        });
-
-        var cfg = {
-            id: 'PageModelStore',
-            proxy: new PageModelProxy({
-                api: {
-                    read     : composerRestMountUrl + config.mountId + './pagemodel/' + config.pageId + "/"
-                    ,create  : '#' // see beforewrite
-                    ,update  : '#'
-                    ,destroy : '#'
-                },
-
-                listeners : {
-                    beforeload: {
-                        fn: function (store, options) {
-                            Hippo.Msg.wait(config.resources['page-model-store-before-load-message']);
-                        }
-                    },
-                    beforewrite : {
-                        fn : function(proxy, action, rs, params) {
-                            Hippo.Msg.wait(config.resources['page-model-store-before-write-message']);
-                            if (action == 'create') {
-                                var prototypeId = rs.get('id');
-                                var parentId = rs.get('parentId');
-                                proxy.setApi(action, {url: composerRestMountUrl + parentId + './create/' + prototypeId, method: 'POST'});
-                            } else if (action == 'update') {
-                                //Ext appends the item ID automatically
-                                var id = rs.get('id');
-                                proxy.setApi(action, {url: composerRestMountUrl + id + './update', method: 'POST'});
-                            } else if (action == 'destroy') {
-                                //Ext appends the item ID automatically
-                                var parentId = rs.get('parentId');
-                                proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete', method: 'GET'});
-                            }
-                        }
-                    },
-                    write :{
-                        fn: function(store, action, result, res, rs) {
-                            Hippo.Msg.hide();
-                            Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
-                        }
-                    },
-                    load : {
-                        fn: function (store, records, options) {
-                            Hippo.Msg.hide();
-                        }
-                    }
-                }
-            }),
-            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
-        };
-
-        Ext.apply(config, cfg);
-
-        Hippo.ChannelManager.TemplateComposer.PageModelStore.superclass.constructor.call(this, config);
-    }
-});
-
-
-Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
-
-    return {
-
-        init: function(c) {
-            c.onRender = c.onRender.createSequence(this.onRender);
-        },
-
-        onRender: function() {
-            var miframePanel = Ext.getCmp('Iframe');
-            var miframe = miframePanel.getFrame();
-
-            this.iFramePosition = miframePanel.getPosition();
-
-            this.boxs = [];
-            this.nodeOverRecord = null;
-            var self = this;
-
-            this.dragZone = new Ext.grid.GridDragZone(this, {
-                containerScroll: true,
-                ddGroup: 'blabla',
-
-                onInitDrag : function() {
-                    var framePanel = Ext.getCmp('Iframe');
-                    var frmDoc = framePanel.getFrameDocument();
-                    framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
-                    Hippo.ChannelManager.TemplateComposer.Instance.stores.pageModel.each(function(record) {
-                        var type = record.get('type');
-                        if (record.get('type') === HST.CONTAINER) {
-                            var id = record.get('id');
-                            var el = frmDoc.getElementById(id + '-overlay');
-                            if (el != null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
-                                var box = Ext.Element.fly(el).getBox();
-                                self.boxs.push({record: record, box: box});
-                            }
-                        }
-                    });
-                    Ext.ux.ManagedIFrame.Manager.showShims();
-                },
-
-                onEndDrag : function() {
-                    self.boxs = [];
-                    Ext.ux.ManagedIFrame.Manager.hideShims();
-                    Ext.getCmp('Iframe').getFrame().sendMessage({groups: 'dropzone'}, 'unhighlight');
-                }
-            });
-
-            var containerItemsGrid = this;
-            this.dropZone = new Ext.dd.DropZone(miframePanel.body.dom, {
-                ddGroup: 'blabla',
-
-                //If the mouse is over a grid row, return that node. This is
-                //provided as the "target" parameter in all "onNodeXXXX" node event handling functions
-                getTargetFromEvent : function(e) {
-                    return e.getTarget();
-                },
-
-                //While over a target node, return the default drop allowed class which
-                //places a "tick" icon into the drag proxy.
-                onNodeOver : function(target, dd, e, data) {
-                    var curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
-                    var curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
-                    //TODO: implement dynamic fetch of toolbar height to adjust pageY
-                    curY -= 27;
-
-                    for (var i = 0; i < self.boxs.length; i++) {
-                        var item = self.boxs[i], box = item.box;
-                        if (curX >= box.x && curX <= box.right && curY >= box.y && curY <= box.bottom) {
-                            self.nodeOverRecord = item.record;
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        }
-                    }
-                    self.nodeOverRecord = null;
-                    return Ext.dd.DropZone.prototype.dropNotAllowed;
-                },
-
-                //On node drop we can interrogate the target to find the underlying
-                //application object that is the real target of the dragged data.
-                //In this case, it is a Record in the GridPanel's Store.
-                //We can use the data set up by the DragZone's getDragData method to read
-                //any data we decided to attach in the DragZone's getDragData method.
-                onNodeDrop : function(target, dd, e, data) {
-                    //                    var rowIndex = this.getView().findRowIndex(target);
-                    //                    var r = this.getStore().getAt(rowIndex);
-                    //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
-                    //                            ' on Record id ' + r.id);
-                    if (self.nodeOverRecord != null) {
-                        var selections = containerItemsGrid.getSelectionModel().getSelections();
-
-                        var pmGrid = Ext.getCmp('PageModelGrid');
-                        var pmRecord = self.nodeOverRecord;
-                        var pmStore = pmGrid.getStore();
-                        var parentId = pmRecord.get('id');
-
-                        var models = [];
-                        var offset = pmRecord.data.children.length + 1;
-                        var at = pmStore.indexOf(pmRecord) + offset;
-                        for (var i = 0; i < selections.length; i++) {
-                            var record = selections[i];
-                            var cfg = {
-                                parentId: parentId,
-                                //we set the id of new types to the id of their prototype, this allows use
-                                //to change the rest-api url for the create method, which should contain this
-                                //id
-                                id : record.get('id'),
-                                name: null,
-                                type: HST.CONTAINERITEM,
-                                template: record.get('template'),
-                                componentClassName : record.get('componentClassName'),
-                                xtype: record.get('xtype')
-                            };
-                            var model = Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createModel(null, cfg);
-                            models.push(model);
-                            pmStore.insert(at + i, Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createRecord(model));
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-        }
-    };
-
-})();
-
-/**
- * Hippo.Msg is decorating Ext.Msg and makes alert, confirm and prompt blocking.
- * If a blocking message is waiting for user interaction, new fired messages will be queued
- * (e. g. important for asynchronous requests which could trigger hide while we are waiting for user input).
- */
-Hippo.Msg = (function() {
-    var msgQueue = [];
-
-    var blockingType = [];
-    blockingType['alert'] = true;
-    blockingType['confirm'] = true;
-    blockingType['prompt'] = true;
-    blockingType['show'] = false;
-    blockingType['wait'] = false;
-    blockingType['hide'] = false;
-    var blocked = false;
-    var waitTimeout;
-
-    var func = function(type, args) {
-        if (blocked) {
-            if (blockingType[type]) {
-                msgQueue.push(function() {
-                    func.apply(this, args);
-                });
-            }
-            return;
-        }
-        if (blockingType[type]) {
-            blocked = true;
-            if (args.length >= 3) {
-                var oldFunction = args[2];
-                var scope = this;
-                if (args.length >= 4) {
-                    scope = args[3];
-                }
-                args[2] = function() {
-                    oldFunction.apply(scope, arguments);
-                    blocked = false;
-                    if (msgQueue.length > 0) {
-                        var nextMessage = msgQueue.shift();
-                        nextMessage();
-                    }
-                }
-            }
-        }
-        Ext.Msg[type].apply(Ext.Msg, args);
-    };
-
-    return {
-        alert : function() {
-            func('alert', arguments);
-        },
-        confirm : function() {
-            func('confirm', arguments);
-        },
-        prompt : function() {
-            func('prompt', arguments);
-        },
-        show : function() {
-            func('show', arguments);
-        },
-        wait : function() {
-            if (waitTimeout) {
-                return;
-            }
-            var args = arguments;
-            waitTimeout = window.setTimeout(function() {
-                waitTimeout = null;
-                func('wait', args);
-            }, 500);
-        },
-        hide : function() {
-            if (waitTimeout) {
-                console.log('clear wait timeout');
-                window.clearTimeout(waitTimeout);
-                waitTimeout = null;
-            }
-            func('hide', arguments);
-        }
-    }
-})();

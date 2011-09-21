@@ -21,6 +21,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,6 +38,23 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         page.executeJavaScript("sendMessage({initTest: true}, 'test')");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
+        assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
+    }
+
+    @Test
+    public void testMainPubSub() throws Exception {
+        setUp("test.html");
+
+        page.executeJavaScript("var testListener = function(msg) { initTestOK=msg.initTest; };");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.subscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.publish('test', {initTest: true})");
+
+        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
+        assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
+
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.unSubscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.publish('test', {initTest: false})");
+
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
     }
 
@@ -81,11 +100,10 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         assertTrue("ae12f114-9a61-47ff-b048-71852e0f2f18".equals(containerDiv.getAttribute(eval("HST.ATTR.ID"))));
     }
 
-    @Test
+   @Test
     public void testEmptyContainerItem() throws Exception {
         setUp("emptycontaineritem.html");
 
-        initializeIFrameHead();
         initializeTemplateComposer(false, false);
 
         assertFalse(isMessageSend("iframeexception"));

@@ -18,86 +18,61 @@
     var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame');
 
-    var Main = function() {};
-
-    Main.prototype = {
-
-        init: function(options) {
-            var manager = new Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager(options);
-
-            onhostmessage(function(msg) {
-                var facade = msg.data;
-                manager.createContainers(facade);
-                return false;
-            }, this, false, 'buildoverlay');
-
-            onhostmessage(function(msg) {
-                manager.getOverlay().show();
-                $('.empty-container-placeholder').show();
-                manager.requestSync();
-                manager.sync();
-                return false;
-            }, this, false, 'showoverlay')
-
-            onhostmessage(function(msg) {
-                manager.getOverlay().hide();
-                $('.empty-container-placeholder').hide();
-                return false;
-            }, this, false, 'hideoverlay');
-
-            //register to listen to iframe-messages
-            onhostmessage(function(msg) {
-                manager.select(msg.data.element);
-                return false;
-            }, this, false, 'select');
-
-            onhostmessage(function(msg) {
-                manager.deselect(msg.data.element);
-                return false;
-            }, this, false, 'deselect');
-
-            onhostmessage(function(msg) {
-                manager.highlight(msg.data.groups);
-                return false;
-            }, this, false, 'highlight');
-
-            onhostmessage(function(msg) {
-                manager.unhighlight(msg.data.groups);
-                return false;
-            }, this, false, 'unhighlight');
-
-            onhostmessage(function(msg) {
-                manager.requestSync();
-                manager.sync();
-                return false;
-            }, this, false, 'resize');
-
-            this.manager = manager;
-            sendMessage({preview: options.preview}, "afterinit");
-        },
-
-        isDebug: function() {
-            return this.debug;
-        },
-
-       die: function(msg) {
-            if(Hippo.ChannelManager.TemplateComposer.IFrame.Main.isDebug()) {//global reference for scope simplicity
-                console.error(msg);
-            } else {
+    var Main = (function() {
+        var subscriptions = {};
+        var scopeId = 'Main';
+        return {
+            die: function(msg) {
                 sendMessage({msg: msg}, "iframeexception");
-            }
-       }
-    };
+            },
 
-    Hippo.ChannelManager.TemplateComposer.IFrame.Main = new Main();
+            publish: function(topic) {
+               if (typeof subscriptions[topic] === 'undefined') {
+                    return true;
+               }
+               console.log('publishing to topic '+topic + ', ' + subscriptions[topic].length + ' subscriptions');
+
+               for (var i = 0, len = subscriptions[topic].length; i < len; i++) {
+                   var subscription = subscriptions[topic][i];
+                   if (subscription.callback.apply(subscription.scope, Array.prototype.slice.call(arguments, 1)) === false) {
+                       return false;
+                   }
+               }
+               return true;
+            },
+
+            subscribe: function(topic, callback, scope) {
+               console.log('Main subscribe scopeId ' + scopeId);
+               var scopeParameter = scope || window;
+               if (typeof subscriptions[topic] === 'undefined') {
+                   console.log('create array for topic '+topic);
+                   subscriptions[topic] = [];
+               }
+               subscriptions[topic].push({callback: callback, scope: scopeParameter});
+            },
+
+            unSubscribe: function(topic, callback, scope) {
+               if (typeof subscriptions[topic] === 'undefined') {
+                   return false;
+               }
+               var scopeParameter = scope || window;
+               for (var i=0, len = subscriptions[topic].length; i < len; i++) {
+                   var subscription = subscriptions[topic][i];
+                   if (subscription.callback === callback && subscription.scope === scopeParameter) {
+                       subscriptions[topic].splice(i, 1);
+                       return true;
+                   }
+               }
+               return false;
+            }
+        };
+    })();
+
     onhostmessage(function(msg) {
-        console.log('IFrame Init Message '+JSON.stringify(msg.data));
-        Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.setResources(msg.data.resources);
-        Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.setResources(msg.data.resources);
-        Hippo.ChannelManager.TemplateComposer.IFrame.Main.init(msg.data);
+        Main.publish('initialize', msg.data);
+        sendMessage({preview: msg.data.preview}, "afterinit");
     }, this, false, 'init');
 
-})(jQuery);
+    Hippo.ChannelManager.TemplateComposer.IFrame.Main = Main;
 
-// remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
-jQuery.noConflict(true);
+})(jQuery);

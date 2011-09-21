@@ -19,13 +19,25 @@
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
     if (!Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory) {
+
+        var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+
+        // TODO refactor, this is a module
         var Factory = function() {
             this.objects = {};
             this.registry = {};
+            this.scopeId = 'Factory';
+
+            Main.subscribe('initialize', function(data) {
+                console.log('factory initialize ');
+                this.resources = data.resources;
+
+            }, this);
         };
 
         Factory.prototype = {
             createOrRetrieve : function(element) {
+                console.log('createOrRetrieve '+this.scopeId);
                 if (this.objects[element.id]) {
                     return this.objects[element.id];
                 }
@@ -37,10 +49,12 @@
             },
 
             _create : function(data, verify) {
+                console.log('_create');
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
                     die(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
+                console.log('_create xtype:'+data.xtype+', element: '+Hippo.Util.getElementPath(data.element));
                 var c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if(verify) {
                     if (!c instanceof data.base) {
@@ -52,6 +66,7 @@
             },
 
             verify : function(element) {
+                console.log('verify');
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
@@ -196,10 +211,6 @@
                     return commentJsonObject;
                 }
                 return null;
-            },
-
-            setResources: function(resources) {
-                this.resources = resources;
             }
 
         };

@@ -4,6 +4,16 @@ public class PageEditorBundle {
 
     public static final String PAGE_EDITOR_CSS = "PageEditor.css";
 
+    public static final String DRAGDROPONE = "DragDropOne.js";
+
+    public static final String MSG = "Hippo.Msg.js";
+
+    public static final String REST_STORE = "RestStore.js";
+
+    public static final String TOOLKIT_STORE = "ToolkitStore.js";
+
+    public static final String PAGE_MODEL_STORE = "PageModelStore.js";
+
     public static final String PAGE_EDITOR = "PageEditor.js";
 
     public static final String PAGE_MODEL = "PageModel.js";

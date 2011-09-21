@@ -19,54 +19,93 @@
     var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager = function(options) {
-        this.current = null;
-        this.containers = {};
-        this.dropIndicator = null;
-        this.syncRequested = false;
-        this.preview = options.previewMode;
-        this.resources = options.resources;
-        this.init();
-    };
+    var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    var Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
 
+    var page = {
+        overlay : null,
+        current : null,
+        containers : {},
+        dropIndicator : null,
+        syncRequested : false,
+        resources : [],
+        preview : false,
+        scopeId : 'Page',
 
-    //TODO: looks more like a UI.Page component
-    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Manager.prototype = {
-        init: function() {
+        init: function(data) {
+            console.log('page initialize');
             this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
+            this.preview = data.previewMode;
+            this.resources = data.resources;
 
-            try {
-                //replace edit link with cms styled button
-                var self = this;
-                $('.' + HST.CLASS.EDITLINK).each(function(index) {
-                    self._createSurfAndEditLink(this);
-                });
-            } catch(e) {
-                sendMessage({msg: 'Error initializing manager.', exception: e}, "iframeexception");
-            }
+            onhostmessage(function(msg) {
+                console.log('main buildoverlay');
+                var facade = msg.data;
+                this.createContainers(facade);
+                return false;
+            }, this, false, 'buildoverlay');
+
+            onhostmessage(function(msg) {
+                this.getOverlay().show();
+                $('.empty-container-placeholder').show();
+                this.requestSync();
+                this.sync();
+                return false;
+            }, this, false, 'showoverlay')
+
+            onhostmessage(function(msg) {
+                this.getOverlay().hide();
+                $('.empty-container-placeholder').hide();
+                return false;
+            }, this, false, 'hideoverlay');
+
+            onhostmessage(function(msg) {
+                this.select(msg.data.element);
+                return false;
+            }, this, false, 'select');
+
+            onhostmessage(function(msg) {
+                this.deselect(msg.data.element);
+                return false;
+            }, this, false, 'deselect');
+
+            onhostmessage(function(msg) {
+                this.highlight(msg.data.groups);
+                return false;
+            }, this, false, 'highlight');
+
+            onhostmessage(function(msg) {
+                this.unhighlight(msg.data.groups);
+                return false;
+            }, this, false, 'unhighlight');
+
+            onhostmessage(function(msg) {
+                this.requestSync();
+                this.sync();
+                return false;
+            }, this, false, 'resize');
+
         },
 
-        _createSurfAndEditLink : function(element) {
-            var link = Hippo.ChannelManager.TemplateComposer.IFrame.UI.SurfAndEdit.createLink(element);
-            var uuid = $(link).attr(HST.ATTR.ID);
-
-            /**
-             * use plain old javascript event listener to prevent other jQuery instances hijacking the event.
-             */
-            if (link.addEventListener) {
-                link.addEventListener('click', function(event) {
-                    sendMessage({uuid: uuid}, "edit-document");
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return false;
-                }, false);
-            } else if (link.attachEvent) {
-                link.attachEvent('onclick', function(event) {
-                    sendMessage({uuid: uuid}, "edit-document");
-                    event.cancelBubble = true;
-                    return false;
-                });
+        createContainer : function(element, page) {
+            console.log('page createContainer factory: '+Factory+' page scope '+page.scopeId);
+            var container = Factory.createOrRetrieve.call(Factory, element);
+            if (container === null) {
+                return null;
             }
+            this.containers[container.id] = container;
+            console.log('Page createContainer render');
+            container.render(page);
+            return container;
+        },
+
+        retrieve : function(element) {
+            var id = element.getAttribute(HST.ATTR.ID);
+            var o = Factory.getById.call(Factory, id);
+            if (o == null) {
+                Main.die(this.resources['manager-object-not-found'].format(id));
+            }
+            return o;
         },
 
         createContainers : function(facade) {
@@ -74,7 +113,7 @@
                 //attach mouseover/mouseclick for components
                 var self = this;
                 $('.' + HST.CLASS.CONTAINER).each(function(index) {
-                    var container = self._createContainer(this);
+                    var container = self.createContainer(this, self);
                     if (container !== null) {
                         container.updateSharedData(facade);
                     }
@@ -84,32 +123,12 @@
             }
         },
 
-        _createContainer : function(element) {
-            var container = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
-            if (container === null) {
-                return null;
-            }
-            this.containers[container.id] = container;
-            container.render(this);
-            return container;
-        },
-
-        _retrieve : function(element) {
-            var factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
-            var id = element.getAttribute(HST.ATTR.ID);
-            var o = factory.getById(id);
-            if (o == null) {
-                Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['manager-object-not-found'].format(id));
-            }
-            return o;
-        },
-
         select: function(element) {
             if (this.current != null && this.current.element == element) {
                 return;
             }
 
-            this.current = this._retrieve(element);
+            this.current = this.retrieve(element);
             this.current.select();
         },
 
@@ -178,7 +197,6 @@
             });
         },
 
-        //TODO: implement group handling
         highlight : function(groups) {
             $.each(this.containers, function(key, value) {
                 value.highlight();
@@ -220,7 +238,8 @@
         getOverlay : function() {
             return this.overlay;
         }
-
     };
+
+    Main.subscribe('initialize', page.init, page);
 
 })(jQuery);

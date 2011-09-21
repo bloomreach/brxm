@@ -81,12 +81,14 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_UI);
 
         injectJavascript(GlobalBundle.class, GlobalBundle.GLOBALS);
-        injectJavascript(IFrameBundle.class, IFrameBundle.UTIL);
-        injectJavascript(IFrameBundle.class, IFrameBundle.SURFANDEDIT);
-        injectJavascript(IFrameBundle.class, IFrameBundle.MANAGER);
-        injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);
-        injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
         injectJavascript(IFrameBundle.class, IFrameBundle.MAIN);
+        injectJavascript(IFrameBundle.class, IFrameBundle.UTIL);
+        injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);
+        injectJavascript(IFrameBundle.class, IFrameBundle.PAGE);
+        injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
+        injectJavascript(IFrameBundle.class, IFrameBundle.SURFANDEDIT);
+
+        page.executeJavaScript("jQuery.noConflict(true);");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
         final Function oldFunction = (Function) window.get("sendMessage");

@@ -50,6 +50,16 @@
     <appender-ref ref="console"/>
   </category>
 
+  <category additivity="false" name="com.gargoylesoftware.htmlunit.javascript">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+
+  <category additivity="false" name="org.onehippo.cms7.channelmanager">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

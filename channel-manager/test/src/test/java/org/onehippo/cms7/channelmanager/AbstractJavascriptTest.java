@@ -17,6 +17,8 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
@@ -24,6 +26,9 @@ import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
 abstract public class AbstractJavascriptTest {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractJavascriptTest.class);
+
     public static final String LISTEN_HOST = "localhost";
     public static final int LISTEN_PORT = 8888;
 
@@ -90,7 +95,7 @@ abstract public class AbstractJavascriptTest {
             @Override
             public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
-                    System.out.println((String) args[0]);
+                    log.info((String) args[0]);
                 }
                 return null;
             }
@@ -103,7 +108,7 @@ abstract public class AbstractJavascriptTest {
             @Override
             public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
-                    System.err.println((String) args[0]);
+                    log.error((String) args[0]);
                 }
                 return null;
             }
@@ -116,7 +121,7 @@ abstract public class AbstractJavascriptTest {
             @Override
             public Object call(net.sourceforge.htmlunit.corejs.javascript.Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
                 if (args.length > 0 && args[0] instanceof String) {
-                    System.err.println((String) args[0]);
+                    log.warn((String) args[0]);
                 }
                 return null;
             }

@@ -19,9 +19,12 @@
     var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
+    var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget = Class.extend({
         init : function(id, element, resources) {
             this.id = id;
+            this.scopeId = 'Widget';
             this.overlayId = id + '-overlay';
             this.element = element;
             this.el = $(element);
@@ -72,6 +75,7 @@
         },
 
         render : function(parent) {
+            console.log('render to '+parent);
             if (this.rendered) {
                 return;
             }
@@ -94,8 +98,10 @@
 
             var self = this;
             overlay.hover(function() {
+                Main.publish('mouseOverWidget', this);
                 self.onMouseOver(this);
             }, function() {
+                Main.publish('mouseOutWidget', this);
                 self.onMouseOut(this);
             });
             overlay.click(function() {
@@ -107,6 +113,7 @@
             this.onRender();
 
             this.rendered = true;
+            console.log('after render to '+parent);
         },
 
         updateSharedData: function(facade) {
@@ -257,10 +264,15 @@
 
         onRender : function() {
             this._super();
+            console.log('render items');
             this._renderItems();
+            console.log('create sortable');
             this._createSortable();
+            console.log('checkEmpty');
             this._checkEmpty();
+            console.log('sync');
             this.sync();
+            console.log('after sync');
         },
 
         onDestroy: function() {
@@ -312,14 +324,15 @@
             }
         },
 
-        _syncItems : function(quite) {
+        _syncItems : function(quiet) {
             this.eachItem(function(key, item) {
                 if (typeof item !== 'undefined') {
-                    item.sync();
-                } else if(!quite && Hippo.ChannelManager.TemplateComposer.IFrame.Main.isDebug()) {
+                    item.sync.call(item);
+                } else if(!quiet) {
                     console.warn('ContainerItem with id=' + id + ' is not found in active map.');
                 }
             });
+            console.log('after _syncItems');
         },
 
         _createSortable : function() {
@@ -512,8 +525,11 @@
         },
 
         sync : function() {
+            console.log('suncOverlay');
             this._syncOverlay();
+            console.log('syncItems');
             this._syncItems(true);
+
         },
 
         add : function(element, index) {
@@ -653,7 +669,10 @@
     //Container items
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
         init : function(id, element, resources) {
+            console.log('ContainerItem init');
             this._super(id, element, resources);
+
+            this.scopeId = 'ContainerItem';
 
             this.cls.selected = this.cls.selected + '-containerItem';
             this.cls.activated = this.cls.activated + '-containerItem';
@@ -697,14 +716,16 @@
          },
 
         sync: function() {
+            console.log('ContainerItemBase sync');
             this._super();
-            this.menu.position({
+            console.log('ContainerItemBase sync menu.position overlay '+ this.overlay +', scope id '+ this.scopeId);
+            this.menu.position.call(this.menu, {
                 my : 'right top',
                 at : 'right top',
                 of : this.overlay,
                 offset : '-2 2'
             });
-
+            console.log('ContainerItemBase sync after menu.position');
         },
 
         getOverlayData : function(data) {

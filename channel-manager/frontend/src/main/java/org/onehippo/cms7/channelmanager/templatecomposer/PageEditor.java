@@ -170,12 +170,12 @@ public class PageEditor extends ExtPanel {
                 rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
                 rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MANAGER)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(),
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString()
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()
             ));
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(

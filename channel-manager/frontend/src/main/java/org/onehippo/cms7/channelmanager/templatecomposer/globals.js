@@ -15,6 +15,16 @@
  */
 
 (function() {
+    // alternative to typeOf with more capabilities
+    Object.toType = (function toType(global) {
+        return function(obj) {
+            if (obj === global) {
+                return "global";
+            }
+            return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+        }
+    })(this);
+
     String.prototype.format = function() {
         var formatted = this;
         for (var i = 0; i < arguments.length; i++) {
