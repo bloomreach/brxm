@@ -140,7 +140,7 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
                 }
                 Name name = resolveName(languages[0]);
 
-                ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), t9nDocId, context, name, view,
+                ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), null, t9nDocId, context, name, view,
                         order, singledView);
                 viewNodesOrdered.add(ard.new Child(name, ard));
             }
