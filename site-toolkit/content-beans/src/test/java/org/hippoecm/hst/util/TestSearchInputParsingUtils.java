@@ -63,7 +63,7 @@ public class TestSearchInputParsingUtils {
         assertEquals("the quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*OR *the *?quick *?brown fox jumps over the lazy dog", true));
         assertEquals("the qu?ick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("*OR *the *?qu?ick *?brown fox jumps over the lazy dog", true));
         // only the first wildcard within a word is allowed
-        assertEquals("The qu?ick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", true));
+        assertEquals("The qu?ick br?own fo*x jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", true));
         // allow wildcard false
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", false));
         

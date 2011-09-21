@@ -36,15 +36,15 @@ public final class SearchInputParsingUtils {
     /**
      * Returns a parsed version of the input
      * @param input the user input
-     * @param allowSingleNonLeadingWildCard if there is allowed one wildcard (however, still not allowed as leading for a word)
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still not allowed as leading for a term)
      * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>, <code>null</code> is returned
      */
-    public static String parse(final String input,final boolean allowSingleNonLeadingWildCard) {
+    public static String parse(final String input,final boolean allowSingleNonLeadingWildCardPerTerm) {
         if(input == null) {
             return null;
         }        
         String parsed = compressWhitespace(input);
-        parsed = removeInvalidAndEscapeChars(parsed, allowSingleNonLeadingWildCard);
+        parsed = removeInvalidAndEscapeChars(parsed, allowSingleNonLeadingWildCardPerTerm);
         parsed = removeLeadingOrTrailingOrOperator(parsed);
         parsed = rewriteNotOperatorsToMinus(parsed);
         parsed = removeLeadingAndTrailingAndReplaceWithSpaceAndOperators(parsed);
@@ -55,15 +55,15 @@ public final class SearchInputParsingUtils {
     /**
      * Returns a parsed version of the input
      * @param input the user input
-     * @param allowSingleNonLeadingWildCard if there is allowed one wildcard (however, still not allowed as leading for a word)
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still not allowed as leading for a term)
      * @param maxLength the maxLength of the returned parsed input
      * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>, <code>null</code> is returned
      */
-    public static String parse(final String input,final boolean allowSingleNonLeadingWildCard, int maxLength) {
+    public static String parse(final String input,final boolean allowSingleNonLeadingWildCardPerTerm, int maxLength) {
         if(input == null) {
             return null;
         }
-        String parsed = parse(input, allowSingleNonLeadingWildCard);
+        String parsed = parse(input, allowSingleNonLeadingWildCardPerTerm);
         if(parsed.length() > maxLength) {
             parsed = parsed.substring(0, maxLength);
         }
@@ -108,15 +108,15 @@ public final class SearchInputParsingUtils {
      * Recommended is to remove all wildcards
      * </p> 
      * @param input
-     * @param allowSingleNonLeadingWildCard
+     * @param allowSingleNonLeadingWildCardPerTerm
      * @return formatted version of <code>input</code>
      */
-    public static String removeInvalidAndEscapeChars(final String input, final boolean allowSingleNonLeadingWildCard) {
+    public static String removeInvalidAndEscapeChars(final String input, final boolean allowSingleNonLeadingWildCardPerTerm) {
         if(input == null) {
             throw new IllegalArgumentException("Input is not allowed to be null");
         }
         StringBuffer sb = new StringBuffer();
-        boolean allowWildCard = allowSingleNonLeadingWildCard;
+        boolean allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
         for (int i = 0; i < input.length(); i++) {
           char c = input.charAt(i);
           // Some of these characters break the jcr query and others like * and ? have a very negative impact 
@@ -139,19 +139,23 @@ public final class SearchInputParsingUtils {
               } else if(sb.length() > 0) {
                   // if one wildcard is allowed, it will be added but never as leading
                   if(c == '*' || c == '?') {
-                      if(allowWildCard) {
+                      if(allowWildCardInCurrentTerm) {
                           // check if prev char is not a space or " or  '
                           // i must be > 0 here
                           char prevChar = sb.charAt(sb.length() -1);
                           if(!(prevChar == '\"' || prevChar == '\'' || prevChar == ' ')) {
                               sb.append(c);
-                              allowWildCard = false;
+                              allowWildCardInCurrentTerm = false;
                           }
-                      }
+                      } 
                   }
               }       
           } else if (c == '\"' || c == '\'') {
               sb.append('\\');
+              sb.append(c);
+          } else if (c == ' ') {
+              // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
+              allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
               sb.append(c);
           } else {
               sb.append(c);
