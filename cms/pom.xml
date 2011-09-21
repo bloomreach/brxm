@@ -210,27 +210,9 @@
         </executions>
       </plugin>
       <plugin>
-        <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-          <author>false</author>
-          <show>protected</show>
-          <source>1.6</source>
-          <javadocVersion>1.6</javadocVersion>
-          <docfilessubdirs>true</docfilessubdirs>
-          <links>
-            <link>http://java.sun.com/javase/1.6/docs/api/</link>
-            <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
-          </links>
-          <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
-          <docletArtifact>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-tools-documentation</artifactId>
-            <version>${project.version}</version>
-          </docletArtifact>
-        </configuration>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.0-beta-3</version>
       </plugin>
     </plugins>
   </build>
@@ -528,13 +510,9 @@
           <links>
             <link>http://java.sun.com/javase/1.6/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
+            <link>http://wicket.apache.org/apidocs/1.4/</link>
           </links>
-          <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
-          <docletArtifact>
-            <groupId>org.onehippo.cms7</groupId>
-            <artifactId>hippo-repository-tools-documentation</artifactId>
-            <version>${project.version}</version>
-          </docletArtifact>
+          <sourcepath>${basedir}/api/src/main/java:${basedir}/test/src/main/java</sourcepath>
         </configuration>
         <reportSets>
           <reportSet>
@@ -544,13 +522,35 @@
           </reportSet>
         </reportSets>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.2</version>
+        <reportSets>
+          <reportSet>
+            <id>src-xref</id>
+            <reports>
+              <report>jxr</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>test-xref</id>
+            <reports>
+              <report>test-jxr</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
 
       <!-- Autogenerate reports with change counts of files and on developers doing the changes. 
            target/site/changelog.html
            target/site/dev-activity.html
            target/site/file-activity.html
       -->
-      <plugin>
+      <!-- plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
@@ -558,7 +558,7 @@
           <type>range</type>
           <range>31</range>
         </configuration>
-      </plugin>
+      </plugin -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -597,28 +597,28 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.9</version>
       </plugin>
 
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.7</version>
       </plugin>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>2.0.1</version>
+        <version>3.0-beta-3</version>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
-      <plugin>
+      <!-- plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.3.2</version>
         <configuration>
           <xmlOutput>true</xmlOutput>
           <xdocsOutput>true</xdocsOutput>
@@ -629,7 +629,7 @@
           <threshold>High</threshold>
           <relaxed>true</relaxed>
         </configuration>
-      </plugin>
+      </plugin -->
     </plugins>
   </reporting>
 
