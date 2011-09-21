@@ -16,11 +16,11 @@
 
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -41,12 +41,17 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
     private final static String SVN_ID = "$Id$";
 
     private static final String SIZE = "49";
+    private static final String DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG = "open.external.in.new.window.disabled";
+    private boolean disableOpenInANewWindow;
 
     public ExternalLinkDialog(IPluginContext context, IPluginConfig config, IModel<ExternalXinhaLink> model) {
         super(model);
 
-        final DropDownChoice<String> protocolsChoice = new DropDownChoice<String>("protocols",
-                new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS);
+        if (config.containsKey(DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG)) {
+            disableOpenInANewWindow = config.getAsBoolean(DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG);
+        }
+
+        final DropDownChoice<String> protocolsChoice = new DropDownChoice<String>("protocols", new PropertyModel<String>(model, "protocol"), ExternalXinhaLink.PROTOCOLS);
         protocolsChoice.add(new OnChangeAjaxBehavior() {
             protected void onUpdate(AjaxRequestTarget target) {
                 // nothing, just update the model
@@ -73,17 +78,26 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
         titleTextField.setSize(SIZE);
         add(titleTextField);
 
-        final LabelledBooleanFieldWidget targetField = new LabelledBooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target"),
-                new StringResourceModel("labels.popup", this, null));
-        add(targetField);
+        if (disableOpenInANewWindow) {
+            add(new EmptyPanel("extra"));
+        } else {
+            Fragment fragment = new Fragment("extra", "popup", this);
+
+            final LabelledBooleanFieldWidget targetField = new LabelledBooleanFieldWidget("popup",
+                    new PropertyModel<Boolean>(model, "target"),
+                    new StringResourceModel("labels.popup", this, null));
+            fragment.add(targetField);
+            add(fragment);
+        }
+
     }
-    
+
     @Override
     protected void onOk() {
         ExternalXinhaLink link = getModelObject();
         link.setHref(link.getProtocol() + link.getAddress());
     }
-    
+
     @Override
     public IValueMap getProperties() {
         return new ValueMap("width=450,height=190");

@@ -15,41 +15,50 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-  <wicket:extend>
-    <table class="hippo-window-form">
-      <tr>
-        <td width="20">
-          <label><wicket:message key="labels.protocol" /></label>
-        </td>
-        <td>
-          <select wicket:id="protocols" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <label><wicket:message key="labels.url" /></label>
-        </td>
-        <td>
-          <div wicket:id="href">[Url box]</div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <label><wicket:message key="labels.title" /></label>
-        </td>
-        <td>
-          <div wicket:id="title">[Title text box]</div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          &#160;
-        </td>
-        <td>
-          <div wicket:id="popup">[Open in new window checkbox]</div>
-        </td>
-      </tr>
-    </table>
-  </wicket:extend>
+    <wicket:extend>
+        <table class="hippo-window-form">
+            <tr>
+                <td width="20">
+                    <label>
+                        <wicket:message key="labels.protocol"/>
+                    </label>
+                </td>
+                <td>
+                    <select wicket:id="protocols"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        <wicket:message key="labels.url"/>
+                    </label>
+                </td>
+                <td>
+                    <div wicket:id="href">[Url box]</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        <wicket:message key="labels.title"/>
+                    </label>
+                </td>
+                <td>
+                    <div wicket:id="title">[Title text box]</div>
+                </td>
+            </tr>
+            <wicket:container wicket:id="extra"/>
+        </table>
+        <wicket:fragment wicket:id="popup">
+            <tr>
+                <td>
+                    &#160;
+                </td>
+                <td>
+                    <div wicket:id="popup">[Open in new window checkbox]</div>
+                </td>
+            </tr>
+        </wicket:fragment>
+    </wicket:extend>
 </wicket:panel>
 </html>>
