@@ -147,7 +147,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             Name parentName = null;
             if (isHandle) {
                 // we only need the parentName when referring to a handle
-                parentName = getDataProviderContext().getHierarchyManager().getName(dereference.getNodeId());
+                parentName = getNodeName(dereference, context);
             }
             if (order != null && isHandle) {
                 // since the order is not null, we first have to sort all childs according the order. We only order below a handle
@@ -248,7 +248,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         Name parentName = null;
         if (isHandle) {
             // we only need the parentName when referring to a handle
-            parentName = getDataProviderContext().getHierarchyManager().getName(state.getNodeId());
+            parentName = getNodeName(state, context);
         }
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         // The translation child will be present as a child when there is a translation child in the upstream and one of the criteria's below is met:
@@ -307,5 +307,16 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
 
     ViewNodeId newViewNodeId(NodeId parent, Name parentName, NodeId upstream, StateProviderContext context, Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
         return new ViewNodeId(this, parent, parentName, upstream, context, name, view, order, singledView);
+    }
+    
+    private Name getNodeName(NodeState state, StateProviderContext context) {
+        NodeState parentState = getNodeState(state.getParentId(), context);
+        if (parentState != null) {
+            ChildNodeEntry cne = parentState.getChildNodeEntry(state.getNodeId());
+            if (cne != null) {
+                return cne.getName();
+            }
+        }
+        return null;
     }
 }
