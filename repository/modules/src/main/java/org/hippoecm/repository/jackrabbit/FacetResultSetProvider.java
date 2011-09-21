@@ -253,7 +253,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 continue;
             Name name = parentNodeState.getChildNodeEntry(upstream).getName();
         
-            state.addChildNodeEntry(name, subNodesProvider . newViewNodeId(state.getNodeId(), upstream, context, name, view, order , singledView));
+            state.addChildNodeEntry(name, subNodesProvider.newViewNodeId(state.getNodeId(), null, upstream, context, name, view, order , singledView));
         }
         
         if(log.isDebugEnabled()) {

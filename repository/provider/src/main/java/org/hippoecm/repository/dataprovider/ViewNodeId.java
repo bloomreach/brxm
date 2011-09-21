@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2010 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,13 @@
  */
 package org.hippoecm.repository.dataprovider;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
     @SuppressWarnings("unused")
@@ -40,27 +34,15 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
     public final boolean singledView;
     public final LinkedHashMap<Name, String> view;
     public final LinkedHashMap<Name, String> order;
-    private Set<Name> orderedLast = null;
+    public final Name parentName;
 
-    public ViewNodeId(HippoVirtualProvider provider, NodeId parent, NodeId upstream, StateProviderContext context,
+    public ViewNodeId(HippoVirtualProvider provider, NodeId parent, Name parentName, NodeId upstream, StateProviderContext context,
             Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
         super(provider, parent, context, name, upstream);
         this.view = view;
         this.order = order;
         this.singledView = singledView;
-        this.orderedLast = new HashSet<Name>();
-        try {
-            this.orderedLast.add(provider.resolveName(HippoNodeType.NT_REQUEST));
-            this.orderedLast.add(provider.resolveName(HippoNodeType.NT_TRANSLATION));
-        } catch (IllegalNameException e) {
-            throw new InvalidOperationException("Could not resolve basic hippo types");
-        } catch (NamespaceException e) {
-            throw new InvalidOperationException("Could not find hippo namespace");
-        }
-    }
-
-    public void setOrderedLast(Set<Name> orderedLast) {
-        this.orderedLast = orderedLast;
+        this.parentName = parentName;
     }
 
     public class Child implements Comparable<Child> {
@@ -87,12 +69,13 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
             if (o.equals(this)) {
                 return 0;
             }
-            if (orderedLast != null) {
-                if (orderedLast.contains(name)) {
-                    return 1;
-                } else if (orderedLast.contains(o.name)) {
-                    return -1;
-                }
+            // document nodes are always ordered before anything else
+            // (we make use of the fact that document nodes always have the same name as their handles)
+            if (nodeId.parentName != null && nodeId.parentName.equals(name)) {
+                return -1;
+            }
+            if (o.nodeId.parentName != null && o.nodeId.parentName.equals(o.name)) {
+                return 1;
             }
             if (order == null) {
                 return -1; // never return 0 (See Comparable api)

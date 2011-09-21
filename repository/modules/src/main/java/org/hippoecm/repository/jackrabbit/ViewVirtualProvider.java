@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -144,12 +144,17 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
 
             ViewNodeId.Child[] childrenArray;
             boolean isHandle = dereference.getNodeTypeName().equals(handleName);
-             if (order != null && isHandle) {
+            Name parentName = null;
+            if (isHandle) {
+                // we only need the parentName when referring to a handle
+                parentName = getDataProviderContext().getHierarchyManager().getName(dereference.getNodeId());
+            }
+            if (order != null && isHandle) {
                 // since the order is not null, we first have to sort all childs according the order. We only order below a handle
                 Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
                 for (Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext();) {
                     ChildNodeEntry entry = (ChildNodeEntry)iter.next();
-                    ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), entry.getId(), context, entry.getName(), view, order, singledView);
+                    ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), parentName, entry.getId(), context, entry.getName(), view, order, singledView);
                     children.add(childNodeId.new Child(entry.getName(), childNodeId));
                 }
                 childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
@@ -165,7 +170,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         } else {
                             // note that below we also add entries that have a getName() equal to translationName! The translation should never be skipped!
                             // The for loops below will make sure the translation node is added at the last child entries
-                            ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), entry.getId(), context, entry.getName(), view, order, singledView);
+                            ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), parentName, entry.getId(), context, entry.getName(), view, order, singledView);
                             children.add(childNodeId.new Child(entry.getName(), childNodeId));
                         }
                     }
@@ -240,6 +245,11 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
     protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) throws RepositoryException {
         ViewNodeId viewId = (ViewNodeId)nodeId;
         boolean isHandle = state.getNodeTypeName().equals(handleName);
+        Name parentName = null;
+        if (isHandle) {
+            // we only need the parentName when referring to a handle
+            parentName = getDataProviderContext().getHierarchyManager().getName(state.getNodeId());
+        }
         Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         // The translation child will be present as a child when there is a translation child in the upstream and one of the criteria's below is met:
         // 1) viewId.singledView = false
@@ -262,10 +272,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     if (entry.getName().equals(requestName)) {
                         continue;
                     } else if (entry.getName().equals(translationName)) {
-                        translationChildId = newViewNodeId(nodeId, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);;
+                        translationChildId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);;
                         continue;
-                    } else if (appending){
-                        ViewNodeId childNodeId = newViewNodeId(nodeId, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                    } else if (appending || (parentName != null && parentName.equals(entry.getName()))){
+                        ViewNodeId childNodeId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
                         children.add(childNodeId.new Child(entry.getName(), childNodeId));
                         // stop appending after first match because single hippo document view, and not using sorted set
                         // note that we continue the for loop because we might get a translation child entry which needs to be appended to the children
@@ -274,7 +284,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                         }
                     }
                 } else {
-                    ViewNodeId childNodeId = newViewNodeId(nodeId, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                    ViewNodeId childNodeId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
                     children.add(childNodeId.new Child(entry.getName(), childNodeId));
                 }
             }
@@ -295,7 +305,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
         }
     }
 
-    ViewNodeId newViewNodeId(NodeId parent, NodeId upstream, StateProviderContext context, Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
-        return new ViewNodeId(this, parent, upstream, context, name, view, order, singledView);
+    ViewNodeId newViewNodeId(NodeId parent, Name parentName, NodeId upstream, StateProviderContext context, Name name, LinkedHashMap<Name, String> view, LinkedHashMap<Name, String> order, boolean singledView) {
+        return new ViewNodeId(this, parent, parentName, upstream, context, name, view, order, singledView);
     }
 }
