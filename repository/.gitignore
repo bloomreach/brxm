@@ -172,13 +172,16 @@ test/.settings
 test/jpox.log
 test/local.properties
 test/nbproject
+test/repository
 test/target
 test/tm.epoch
 test/tm.out
 test/tm.out.1
 test/tm.out.lck
 test/tmlog.lck
+test/version
 test/wdbp-error-log.txt
+test/workspaces
 tools/.project
 tools/.settings
 tools/documentation/.classpath
