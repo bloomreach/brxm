@@ -35,7 +35,7 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
     protected int portNumber;
     protected String actionWindowReferenceNamespace;
     protected String resourceWindowReferenceNamespace;
-    protected String partialRenderReferenceNamespace;
+    protected String componentRenderingReferenceNamespace;
     protected String resourceId;
     protected Map<String, String[]> parameterMap;
     protected Map<String, String[]> actionParameterMap;
@@ -107,12 +107,12 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
 
     @Override
     public String getComponentRenderingWindowReferenceNamespace() {
-        return partialRenderReferenceNamespace;
+        return componentRenderingReferenceNamespace;
     }
 
     @Override
     public void setComponentRenderingWindowReferenceNamespace(final String referenceNamespace) {
-        this.partialRenderReferenceNamespace = referenceNamespace;
+        this.componentRenderingReferenceNamespace = referenceNamespace;
     }
 
     public void setResourceId(String resourceId) {
@@ -233,7 +233,7 @@ public class HstContainerURLImpl implements HstContainerURL, Cloneable {
         cloned.pathInfo = this.pathInfo;
         cloned.actionWindowReferenceNamespace = this.actionWindowReferenceNamespace;
         cloned.resourceWindowReferenceNamespace = this.resourceWindowReferenceNamespace;
-        cloned.partialRenderReferenceNamespace = this.partialRenderReferenceNamespace;
+        cloned.componentRenderingReferenceNamespace = this.componentRenderingReferenceNamespace;
         cloned.resourceId = this.resourceId;
         
         cloned.actionParameterMap = null;
