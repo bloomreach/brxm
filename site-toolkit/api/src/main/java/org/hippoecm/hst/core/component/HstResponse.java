@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
@@ -340,5 +341,13 @@ public interface HstResponse extends HttpServletResponse {
      * @param comment the comment node
      */
     void addPreamble(Comment comment);
+    
+    /**
+     * For single /subtree component rendering mode that has {@link HstComponentInfo#isStandalone()} equal to <code>false</code>, this
+     * check can be used whether some {@link HstComponent} won't get its renderer called. In other words, this is for performance optimalization 
+     * to short-circuit the doBeforeRender for components that won't get rendered any way.
+     * @return <code>true</code> when for this {@link HstResponse} the renderer won't be invoked
+     */
+    boolean rendererSkipped();
 
 }

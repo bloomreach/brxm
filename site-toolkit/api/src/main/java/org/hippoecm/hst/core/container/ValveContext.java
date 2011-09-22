@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 
@@ -65,17 +66,39 @@ public interface ValveContext
     HttpServletResponse getServletResponse();
     
     /**
-     * Sets the root {@link HstComponentWindow} instance to serve the current request.
+     * Sets the root {@link HstComponentWindow} instancethat is used to process the current request.
      * 
      * @param rootComponentWindow
      */
     void setRootComponentWindow(HstComponentWindow rootComponentWindow);
     
     /**
-     * Returns the root {@link HstComponentWindow} instance to serve the current request.
+     * Returns the root {@link HstComponentWindow} instance that is used to process the current request.
      * 
      * @return
      */
     HstComponentWindow getRootComponentWindow();
+
+    
+    /**
+     * Sets the root {@link HstComponentWindow} instance to *render* the current request
+     * 
+     * @param rootComponentRenderingWindow
+     */
+    void setRootComponentRenderingWindow(HstComponentWindow rootComponentRenderingWindow);
+    
+    /**
+     * <p>
+     * Returns the root {@link HstComponentWindow} instance to *render* the current request. By default, this 
+     * returns the same {@link HstComponentWindow} as {@link #getRootComponentWindow()}, unless it is explicitly 
+     * set to a different {@link HstComponentWindow}. For example in case when you want to render only a single (or subtree)
+     * {@link HstComponent} of an entire {@link HstComponent} hierarchy.
+     * </p>
+     * <p>
+     * The rootComponentRenderingWindow must always be a descendant of or the same as {@link #getRootComponentWindow()}
+     * </p>
+     * @return
+     */
+    HstComponentWindow getRootComponentRenderingWindow();
     
 }

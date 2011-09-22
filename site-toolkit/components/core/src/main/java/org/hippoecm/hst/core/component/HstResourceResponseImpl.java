@@ -138,5 +138,10 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     public void setWrapperElement(Element element) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setWrapperElement().");
     }
+
+    @Override
+    public boolean rendererSkipped() {
+        throw new UnsupportedOperationException("Resource response does not have anything with skipping a renderer.");
+    }
     
 }

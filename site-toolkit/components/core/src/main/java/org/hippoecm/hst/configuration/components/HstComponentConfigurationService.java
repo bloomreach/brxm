@@ -118,7 +118,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
-    }
+    } 
 
     
 
@@ -352,7 +352,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public String getCanonicalIdentifier() {
         return canonicalIdentifier;
     }
-    
+     
     @Override
     public boolean isInherited() {
         return inherited;
@@ -360,7 +360,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     @Override
     public boolean isStandalone() {
-        return standalone;
+        // when Boolean standalone is null, we return true by default
+        return standalone == null ? true : standalone;
     }
     
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
@@ -390,7 +391,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.dummyContent = child.dummyContent;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
-        copy.standalone = child.inherited;
+        copy.standalone = child.standalone;
         copy.parameters = new HashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new HashMap<String, String>(child.localParameters);

@@ -36,8 +36,7 @@ public class ComponentRenderingValve extends AbstractValve {
             } else {
                 // the component is not standalone: All HstComponent's should have their doBeforeRender called,
                 // but only the renderer/dispatcher of the found window should be invoked
-                
-                // TODO
+                context.setRootComponentRenderingWindow(window);
             }
         }
         context.invokeNext();

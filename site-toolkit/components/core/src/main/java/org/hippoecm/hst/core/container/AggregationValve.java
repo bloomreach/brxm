@@ -16,14 +16,18 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,9 +40,11 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
+import org.w3c.dom.Element;
 
 /**
  * AggregationValve
@@ -56,7 +62,10 @@ public class AggregationValve extends AbstractValve {
         
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() == null) {
             HstComponentWindow rootWindow = context.getRootComponentWindow();
-            
+            HstComponentWindow rootRenderingWindow = context.getRootComponentRenderingWindow();
+            if(rootRenderingWindow == null) {
+                rootRenderingWindow = rootWindow;
+            }
             if (rootWindow != null) {
                 
                 Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
@@ -77,18 +86,29 @@ public class AggregationValve extends AbstractValve {
                 
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
-                createHstRequestResponseForWindows(rootWindow, requestContext, parentRequest, parentResponse,
-                        requestMap, responseMap, topParentResponse);
+                createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, parentRequest, parentResponse,
+                        requestMap, responseMap, topParentResponse, false);
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
+
                 sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
-                
                 HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[sortedComponentWindowList.size()]);
+                
+                // the components that are actually rendered can be a sublist
+                HstComponentWindow [] sortedComponentRenderingWindows = sortedComponentWindows;
+                if(rootRenderingWindow != rootWindow) {
+                    // the rendering window is different than the rootWindow. Create a separate ordered list for the 
+                    // rendering windows
+                    List<HstComponentWindow> sortedComponentRenderingWindowList = new LinkedList<HstComponentWindow>();
+                    sortComponentWindowsByHierarchy(rootRenderingWindow, sortedComponentRenderingWindowList);
+                    sortedComponentRenderingWindows = sortedComponentRenderingWindowList.toArray(new HstComponentWindow[sortedComponentRenderingWindowList.size()]);
+                } 
+                
                 
                 HstContainerConfig requestContainerConfig = context.getRequestContainerConfig();
                 // process doBeforeRender() of each component as sorted order, parent first.
-                processWindowsBeforeRender(requestContainerConfig, rootWindow, sortedComponentWindows, requestMap, responseMap);
+                processWindowsBeforeRender(requestContainerConfig, rootWindow, rootRenderingWindow, sortedComponentWindows, requestMap, responseMap);
                 
                 String redirectLocation = null;
                 if (!requestContext.isPortletContext()) {
@@ -188,9 +208,9 @@ public class AggregationValve extends AbstractValve {
                     servletRequest.setAttribute(ContainerConstants.HST_FORWARD_PATH_INFO, forwardPathInfo);
                     
                 } else {
-                    
+                     
                     // process doRender() of each component as reversed sort order, child first.
-                    processWindowsRender(requestContainerConfig, sortedComponentWindows, requestMap, responseMap);
+                    processWindowsRender(requestContainerConfig, sortedComponentRenderingWindows, requestMap, responseMap);
                     
                     // page error handling...
                     pageErrors = getPageErrors(sortedComponentWindows, true);
@@ -203,12 +223,12 @@ public class AggregationValve extends AbstractValve {
                     
                     try {
                         // add the X-HST-VERSION as a response header if we are in preview:
-                        if (requestContext.isPreview() && requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
+                        if (rootWindow == rootRenderingWindow && requestContext.isPreview() && requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
                             rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
                         }
                         // flush root component window content.
                         // note that the child component's contents are already flushed into the root component's response state.
-                        rootWindow.getResponseState().flush();
+                        rootRenderingWindow.getResponseState().flush();
                     } catch (Exception e) {
                         if (log.isDebugEnabled()) {
                             log.warn("Exception during flushing the response state.", e);
@@ -227,20 +247,34 @@ public class AggregationValve extends AbstractValve {
 
     protected void createHstRequestResponseForWindows(
             final HstComponentWindow window,
+            final HstComponentWindow rootRenderingWindow, 
             final HstRequestContext requestContext, 
             final ServletRequest servletRequest,
             final ServletResponse servletResponse, 
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap,
-            HstResponse topComponentHstResponse) {
+            HstResponse topComponentHstResponse,
+            boolean windowWillRender) {
 
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
-        HstResponseState responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
-                (HttpServletResponse) servletResponse);
-        HstResponse response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
-                responseState, topComponentHstResponse);
+        if(windowWillRender || window == rootRenderingWindow) {
+            windowWillRender = true;
+        }
         
-        if (topComponentHstResponse == null) {
+        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
+        HstResponse response = null;
+        HstResponseState responseState = null;
+        if(windowWillRender) {
+            responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
+                (HttpServletResponse) servletResponse);
+            response= new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
+                responseState, topComponentHstResponse);
+        } else {
+            // use a noop responseState and noop response
+            responseState = new NoopHstServletResponseState();
+            response = new NoopHstResponseImpl();
+        }
+        
+        if (topComponentHstResponse == null && windowWillRender) {
             topComponentHstResponse = response;
         }
 
@@ -253,8 +287,14 @@ public class AggregationValve extends AbstractValve {
 
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
-                createHstRequestResponseForWindows(entry.getValue(), requestContext, servletRequest, response,
-                        requestMap, responseMap, topComponentHstResponse);
+                ServletResponse responseForChild;
+                if(windowWillRender) {
+                    responseForChild = response;
+                } else {
+                    responseForChild = servletResponse;
+                }
+                createHstRequestResponseForWindows(entry.getValue(), rootRenderingWindow, requestContext, servletRequest, responseForChild,
+                        requestMap, responseMap, topComponentHstResponse, windowWillRender);
             }
         }
     }
@@ -277,6 +317,7 @@ public class AggregationValve extends AbstractValve {
     protected void processWindowsBeforeRender(
             final HstContainerConfig requestContainerConfig, 
             final HstComponentWindow rootWindow,
+            final HstComponentWindow rootRenderingWindow,
             final HstComponentWindow [] sortedComponentWindows,
             final Map<HstComponentWindow, HstRequest> requestMap, 
             final Map<HstComponentWindow, HstResponse> responseMap)
@@ -304,7 +345,7 @@ public class AggregationValve extends AbstractValve {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
                     // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
                     HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    if (rootWindow.getParentWindow() == null && window == rootWindow) {
+                    if (rootWindow == rootRenderingWindow && window == rootWindow) {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
@@ -333,6 +374,18 @@ public class AggregationValve extends AbstractValve {
             }
         }
     }
+
+    protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
+            final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
+            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+
+        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+            HstComponentWindow window = sortedComponentWindows[i];
+            HstRequest request = requestMap.get(window);
+            HstResponse response = responseMap.get(window);
+            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+        }
+    }
     
     private Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
         StringBuilder builder = new StringBuilder();
@@ -346,16 +399,119 @@ public class AggregationValve extends AbstractValve {
         return comment;
     }
 
-    protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
-            final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
-            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-
-        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-            HstComponentWindow window = sortedComponentWindows[i];
-            HstRequest request = requestMap.get(window);
-            HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+    private class NoopHstServletResponseState implements HstResponseState {
+        @Override public void addCookie(Cookie cookie) {}
+        @Override public void addDateHeader(String name, long date) {}
+        @Override public void addHeadElement(Element element, String keyHint) {}
+        @Override public void addHeader(String name, String value) {}
+        @Override public void addIntHeader(String name, int value) {}
+        @Override public void addPreambleNode(Comment comment) {}
+        @Override public void clear() {}
+        @Override public boolean containsHeadElement(String keyHint) {return false;}
+        @Override public boolean containsHeader(String name) {return false;}
+        @Override public Comment createComment(String comment) {return null;}
+        @Override public Element createElement(String tagName) {return null;}
+        @Override public void flush() throws IOException {}
+        @Override public void flushBuffer() throws IOException {}
+        @Override public void forward(String pathInfo) throws IOException {}
+        @Override public int getBufferSize() {return 0;}
+        @Override public String getCharacterEncoding() {return null;}
+        @Override public String getContentType() {return null;}
+        @Override public int getErrorCode() {return 0;}
+        @Override public String getErrorMessage() {return null;}
+        @Override public String getForwardPathInfo() {return null;}
+        @Override public List<Element> getHeadElements() {return null;}
+        @Override public Locale getLocale() {return null;}
+        @Override public ServletOutputStream getOutputStream() throws IOException {return null;}
+        @Override public String getRedirectLocation() {return null;}
+        @Override public Element getWrapperElement() {return null;}
+        @Override public PrintWriter getWriter() throws IOException {return null;}
+        @Override public boolean isActionResponse() {return false;}
+        @Override public boolean isCommitted() {return false;}
+        @Override public boolean isMimeResponse() {return false;}
+        @Override public boolean isRenderResponse() {return false;}
+        @Override public boolean isResourceResponse() {return false;}
+        @Override public boolean isStateAwareResponse() {return false;}
+        @Override public void reset() {}
+        @Override public void resetBuffer() {}
+        @Override public void sendError(int errorCode, String errorMessage) throws IOException {}
+        @Override public void sendError(int errorCode) throws IOException {}
+        @Override public void sendRedirect(String redirectLocation) throws IOException {}
+        @Override public void setBufferSize(int size) {}
+        @Override public void setCharacterEncoding(String charset) {}
+        @Override public void setContentLength(int len) {}
+        @Override public void setContentType(String type) {}
+        @Override public void setDateHeader(String name, long date) {}
+        @Override public void setHeader(String name, String value) {}
+        @Override public void setIntHeader(String name, int value) {}
+        @Override public void setLocale(Locale locale) {}
+        @Override public void setStatus(int statusCode, String message) {}
+        @Override public void setStatus(int statusCode) {}
+        @Override public void setWrapperElement(Element element) {}
+        
+    }
+    
+    private class NoopHstResponseImpl implements HstResponse {  /**
+         * the {@link NoopHstResponseImpl} always gets its renderer skipped
+         */
+        @Override public boolean rendererSkipped() {            
+            return true;
         }
+        @Override public void addCookie(Cookie cookie) {}
+        @Override public void addHeadElement(Element element, String keyHint) {}
+        @Override public void addPreamble(Comment comment) {}
+        @Override public boolean containsHeadElement(String keyHint) {return false;}
+        @Override public HstURL createActionURL() {return null;}
+        @Override public Comment createComment(String comment) {return null;}
+        @Override public HstURL createComponentRenderingURL() {return null;}
+        @Override public Element createElement(String tagName) {return null;}
+        @Override public HstURL createNavigationalURL(String pathInfo) {return null;}
+        @Override public HstURL createRenderURL() {return null;}
+        @Override public HstURL createResourceURL() {return null;}
+        @Override public HstURL createResourceURL(String referenceNamespace) {return null;}
+        @Override public void flushChildContent(String name) throws IOException {}
+        @Override public void forward(String pathInfo) throws IOException {}
+        @Override public List<String> getChildContentNames() {return null;}
+        @Override public List<Element> getHeadElements() {return null;}
+        @Override public String getNamespace() {return null;}
+        @Override public Element getWrapperElement() {return null;}
+        @Override public void sendError(int sc, String msg) throws IOException {}
+        @Override public void sendError(int sc) throws IOException {}
+        @Override public void sendRedirect(String location) throws IOException {}
+        @Override public void setRenderParameter(String key, String value) {}
+        @Override public void setRenderParameter(String key, String[] values) {}
+        @Override public void setRenderParameters(Map<String, String[]> parameters) {}
+        @Override public void setRenderPath(String renderPath) {}
+        @Override public void setServeResourcePath(String serveResourcePath) {}
+        @Override public void setStatus(int sc) {}
+        @Override public void setWrapperElement(Element element) {}
+        @Override public void addDateHeader(String name, long date) {}
+        @Override public void addHeader(String name, String value) {}
+        @Override public void addIntHeader(String name, int value) {}
+        @Override public boolean containsHeader(String name) {return false;}
+        @Override public String encodeRedirectURL(String url) {return null;}
+        @Override public String encodeRedirectUrl(String url) {return null;}
+        @Override public String encodeURL(String url) {return null;}
+        @Override public String encodeUrl(String url) {return null;}
+        @Override public void setDateHeader(String name, long date) {}
+        @Override public void setHeader(String name, String value) {}
+        @Override public void setIntHeader(String name, int value) {}
+        @Override public void setStatus(int sc, String sm) {}
+        @Override public void flushBuffer() throws IOException {}
+        @Override public int getBufferSize() {return 0;}
+        @Override public String getCharacterEncoding() {return null;}
+        @Override public String getContentType() {return null;}
+        @Override public Locale getLocale() {return null;}
+        @Override public ServletOutputStream getOutputStream() throws IOException {return null;}
+        @Override public PrintWriter getWriter() throws IOException {return null;}
+        @Override public boolean isCommitted() {return false;}
+        @Override public void reset() {}
+        @Override public void resetBuffer() {}
+        @Override public void setBufferSize(int size) {}
+        @Override public void setCharacterEncoding(String charset) {}
+        @Override public void setContentLength(int len) {}
+        @Override public void setContentType(String type) {}
+        @Override public void setLocale(Locale loc) {}
     }
     
 }

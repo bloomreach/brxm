@@ -248,6 +248,7 @@ public class HstSitePipeline implements Pipeline
         private final HttpServletRequest servletRequest;
         private final HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
+        private HstComponentWindow rootComponentRenderingWindow;
         private final HstRequestContext requestContext;
 
         private int at = 0;
@@ -290,6 +291,18 @@ public class HstSitePipeline implements Pipeline
         
         public HstComponentWindow getRootComponentWindow() {
             return this.rootComponentWindow;
+        }
+        
+        
+        public void setRootComponentRenderingWindow(HstComponentWindow rootComponentRenderingWindow) {
+            this.rootComponentRenderingWindow = rootComponentRenderingWindow;
+        }
+        /**
+         * returns the rootComponentRenderingWindow and when it is <code>null</code> it returns the default
+         * rootComponentWindow
+         */
+        public HstComponentWindow getRootComponentRenderingWindow() {
+            return rootComponentRenderingWindow == null ? rootComponentWindow : rootComponentRenderingWindow;
         }
     }
 }

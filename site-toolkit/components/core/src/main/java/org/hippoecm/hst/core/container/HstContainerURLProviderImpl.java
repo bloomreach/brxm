@@ -45,6 +45,8 @@ import org.slf4j.LoggerFactory;
  *          the <encoded_params>     : <request_type>|<action reference namespace>
  * 3) resource url will be encoded   : http://localhsot/site/content/_hn:<encoded_params>/news/2008/08
  *          the <encoded_params>     : <request_type>|<resource reference namespace>|<resource ID>
+ * 4)component rendering url will be encoded : http://localhsot/site/content/_hn:<encoded_params>/news/2008/08
+ *          the <encoded_params>     : <request_type>|<resource reference namespace>
  * </xmp></code> 
  * </P>
  * 

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.PageErrorHandler;
 
 /**
