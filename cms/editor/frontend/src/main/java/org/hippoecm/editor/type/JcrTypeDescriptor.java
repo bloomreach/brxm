@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +150,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {
         attach();
-        return declaredFields;
+        return Collections.unmodifiableMap(declaredFields);
     }
 
     public IFieldDescriptor getField(String key) {
@@ -264,7 +265,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
      */
     protected void loadFields() {
         fields = new HashMap<String, IFieldDescriptor>();
-        declaredFields = new HashMap<String, IFieldDescriptor>();
+        declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
         primary = null;
 
         for (String superType : getSuperTypes()) {

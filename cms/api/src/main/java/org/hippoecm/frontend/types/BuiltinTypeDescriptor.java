@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.types;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -160,13 +161,13 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
     @Override
     public Map<String, IFieldDescriptor> getDeclaredFields() {
         load();
-        return declaredFields;
+        return Collections.unmodifiableMap(declaredFields);
     }
     
     @Override
     public Map<String, IFieldDescriptor> getFields() {
         load();
-        return fields;
+        return Collections.unmodifiableMap(fields);
     }
 
     @Override

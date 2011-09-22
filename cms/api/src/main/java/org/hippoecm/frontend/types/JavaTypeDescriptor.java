@@ -17,6 +17,7 @@ package org.hippoecm.frontend.types;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
         this.name = name;
         this.type = type;
         this.superTypes = new LinkedList<String>();
-        this.declaredFields = new HashMap<String, IFieldDescriptor>();
+        this.declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
         this.primary = null;
         this.node = true;
         this.mixin = false;
@@ -92,7 +93,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     }
 
     public Map<String, IFieldDescriptor> getDeclaredFields() {
-        return declaredFields;
+        return Collections.unmodifiableMap(declaredFields);
     }
 
     public Map<String, IFieldDescriptor> getFields() {
@@ -107,7 +108,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
             }
             fields.putAll(declaredFields);
         }
-        return fields;
+        return Collections.unmodifiableMap(fields);
     }
 
     public IFieldDescriptor getField(String key) {
