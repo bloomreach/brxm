@@ -69,6 +69,50 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
             if (o.equals(this)) {
                 return 0;
             }
+            if (order != null) {
+                HippoVirtualProvider provider = getProvider();
+                try {
+                    for (Map.Entry<Name, String> entry : order.entrySet()) {
+                        Name facet = entry.getKey();
+                        String value = entry.getValue();
+
+                        int thisFacetValueIndex = -1;
+                        String[] thisFacetValues = provider.getProperty(getCanonicalId(), facet, null);
+                        if (thisFacetValues != null) {
+                            for (int i = 0; i < thisFacetValues.length; i++) {
+                                if (thisFacetValues[i].equals(value)) {
+                                    thisFacetValueIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        int otherFacetValueIndex = -1;
+                        String[] otherFacetValues = provider.getProperty(o.getValue().getCanonicalId(), facet, null);
+                        if (otherFacetValues != null) {
+                            for (int i = 0; i < otherFacetValues.length; i++) {
+                                if (otherFacetValues[i].equals(value)) {
+                                    otherFacetValueIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
+                            return -1;
+                        } else if (thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
+                            return 1;
+                        } else if (value == null || value.equals("") || value.equals("*")) {
+                            if (thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
+                                return thisFacetValues[thisFacetValueIndex]
+                                        .compareTo(otherFacetValues[otherFacetValueIndex]);
+                            }
+                        }
+                    }
+                } catch (RepositoryException ex) {
+                }
+
+            }
             // document nodes are always ordered before anything else
             // (we make use of the fact that document nodes always have the same name as their handles)
             if (nodeId.parentName != null && nodeId.parentName.equals(name)) {
@@ -76,51 +120,6 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
             }
             if (o.nodeId.parentName != null && o.nodeId.parentName.equals(o.name)) {
                 return 1;
-            }
-            if (order == null) {
-                return -1; // never return 0 (See Comparable api)
-            }
-
-            HippoVirtualProvider provider = getProvider();
-            try {
-                for (Map.Entry<Name, String> entry : order.entrySet()) {
-                    Name facet = entry.getKey();
-                    String value = entry.getValue();
-
-                    int thisFacetValueIndex = -1;
-                    String[] thisFacetValues = provider.getProperty(getCanonicalId(), facet, null);
-                    if (thisFacetValues != null) {
-                        for (int i = 0; i < thisFacetValues.length; i++) {
-                            if (thisFacetValues[i].equals(value)) {
-                                thisFacetValueIndex = i;
-                                break;
-                            }
-                        }
-                    }
-
-                    int otherFacetValueIndex = -1;
-                    String[] otherFacetValues = provider.getProperty(o.getValue().getCanonicalId(), facet, null);
-                    if (otherFacetValues != null) {
-                        for (int i = 0; i < otherFacetValues.length; i++) {
-                            if (otherFacetValues[i].equals(value)) {
-                                otherFacetValueIndex = i;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
-                        return -1;
-                    } else if (thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
-                        return 1;
-                    } else if (value == null || value.equals("") || value.equals("*")) {
-                        if (thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
-                            return thisFacetValues[thisFacetValueIndex]
-                                    .compareTo(otherFacetValues[otherFacetValueIndex]);
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
             }
 
             // never return 0 (See Comparable api)
