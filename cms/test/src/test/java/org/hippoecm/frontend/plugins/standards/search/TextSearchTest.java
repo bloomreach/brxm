@@ -15,22 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
-import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
-import org.junit.Test;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
-import java.util.Set;
-import java.util.TreeSet;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
+
+import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.junit.Test;
 
 public class TextSearchTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -82,7 +83,19 @@ public class TextSearchTest extends PluginTest {
         qr = tsb.getResultModel().getObject().getQueryResult();
         assertFalse(qr.getNodes().hasNext());
     }
+    
+    @Test
+    public void specialCharactersAreIgnored() throws RepositoryException {
+        build(session, content);
+        session.save();
 
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText("|!(){}[]^title\"~*?:\\");
+        BrowserSearchResult result = tsb.getResultModel().getObject();
+        QueryResult qr = result.getQueryResult();
+        assertTrue(qr.getNodes().hasNext());
+    }
+    
     @Test
     public void keywordsSmallerThanThreeLettersAreIgnored() throws RepositoryException {
         build(session, content);
@@ -125,7 +138,7 @@ public class TextSearchTest extends PluginTest {
         BrowserSearchResult bsr = tsb.getResultModel().getObject();
         int count = 0;
         for (NodeIterator iter = bsr.getQueryResult().getNodes(); iter.hasNext();) {
-            Node node = iter.nextNode();
+            iter.nextNode();
             count++;
         }
         assertEquals(2, count);
