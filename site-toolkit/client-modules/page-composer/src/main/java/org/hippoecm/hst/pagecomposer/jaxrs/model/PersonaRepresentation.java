@@ -26,11 +26,13 @@ public class PersonaRepresentation {
     private String id;
     private String name;
     private String description;
+    private String avatarName;
 
-    public PersonaRepresentation represent(String id, String name, String description) {
+    public PersonaRepresentation represent(String id, String name, String description, String avatarName) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.avatarName = avatarName;
 
         return this;
     }
@@ -57,6 +59,14 @@ public class PersonaRepresentation {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public String getAvatarName() {
+        return avatarName;
+    }
+
+    public void setAvatarName(final String avatarName) {
+        this.avatarName = avatarName;
     }
 
 }

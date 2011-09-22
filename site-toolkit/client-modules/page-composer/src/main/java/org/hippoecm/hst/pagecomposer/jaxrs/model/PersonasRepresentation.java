@@ -28,10 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PersonasRepresentation {
 
     private static final PersonaRepresentation[] HARDCODED_PERSONAS = {
-            new PersonaRepresentation().represent("buyer", "Buyer", "A visitor that may be interested in buying one of our products."),
-            new PersonaRepresentation().represent("customer", "Customer", "A logged-in user of our site."),
-            new PersonaRepresentation().represent("default", "Default", "A visitor of our site that does not fit any of the other personas. This persona cannot be removed."),
-            new PersonaRepresentation().represent("developer", "Developer", "A visitor that has come to our site by searching for technical terms in a search engine, or through a developer-oriented website."),
+            new PersonaRepresentation().represent("buyer", "Buyer", "A visitor that may be interested in buying one of our products.", "orange"),
+            new PersonaRepresentation().represent("customer", "Customer", "A logged-in user of our site.", "green"),
+            new PersonaRepresentation().represent("default", "Default", "A visitor of our site that does not fit any of the other personas. This persona cannot be removed.", "blue"),
+            new PersonaRepresentation().represent("developer", "Developer", "A visitor that has come to our site by searching for technical terms in a search engine, or through a developer-oriented website.", "black"),
     };
 
     private List<PersonaRepresentation> personas;
