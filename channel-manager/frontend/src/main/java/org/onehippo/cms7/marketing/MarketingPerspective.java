@@ -42,7 +42,7 @@ public class MarketingPerspective extends Perspective {
 
         title = new StringResourceModel("marketing-perspective-title", this, null);
 
-        PersonaManagerPanel personaManagerPanel = new PersonaManagerPanel("persona-manager-panel");
+        PersonaManagerPanel personaManagerPanel = new PersonaManagerPanel("persona-manager-panel", config);
         personaManagerPanel.setTitle(title);
         add(personaManagerPanel);
     }

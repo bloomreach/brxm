@@ -6,6 +6,9 @@
   <sv:property sv:name="cluster.name" sv:type="String">
     <sv:value>marketing-perspective</sv:value>
   </sv:property>
+  <sv:property sv:name="persona.list.width" sv:type="Long">
+    <sv:value>216</sv:value>
+  </sv:property>
   <sv:property sv:name="plugin.class" sv:type="String">
     <sv:value>org.onehippo.cms7.marketing.MarketingPerspective</sv:value>
   </sv:property>

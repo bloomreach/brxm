@@ -24,11 +24,16 @@ Ext.namespace('Hippo.PersonaManager');
 Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
 
     constructor: function(config) {
-        this.store = new Ext.data.JsonStore({
+        var self = this;
+
+        this.smallAvatarUrls = config.avatarUrls.small;
+
+        this.personaStore = new Ext.data.JsonStore({
             fields: [
                 { name: 'id', mapping: 'id' },
                 { name: 'name', mapping: 'name' },
                 { name: 'description', mapping: 'description' },
+                { name: 'avatarName', mapping: 'avatarName' },
             ],
             idProperty: 'id',
             errorActionFailed: config.resources['error-action-failed'],
@@ -39,6 +44,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                     var errorMsg = this.createErrorMessage(type, action, response);
                     Ext.MessageBox.alert(this.errorTitle, errorMsg);
                     this.removeAll();
+                    this.fireEvent('load', this);
                 },
             },
             proxy: new Ext.data.HttpProxy({
@@ -54,16 +60,17 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                         var jsonResponse = Ext.util.JSON.decode(response.responseText);
                         return String.format(this.errorActionFailed, action, jsonResponse.message);
                     } catch (syntaxError) {
-                        console.log('Could not parse server error: ' + syntaxError);
+                        if (console) console.warn('Could not parse server error: ' + syntaxError);
                     }
                 }
                 return String.format(this.errorInvalidResponse, action, response.status, response.statusText);
             }
         });
 
-        this.personaList = new Ext.grid.GridPanel({
+        this.personaGrid = new Ext.grid.GridPanel({
             autoExpandColumn: 'name',
             autoExpandMax: Number.MAX_VALUE,
+            border: false,
             cm: new Ext.grid.ColumnModel({
                 defaults: {
                     editable: false,
@@ -72,29 +79,51 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                 },
                 columns: [
                     {
+                        align: 'middle',
+                        id: 'avatar',
+                        dataIndex: 'avatarName',
+                        width: config.smallAvatarWidth + 4,
+                        renderer: function(value, p, record) {
+                            var url = self.avatarUrls.small[value];
+                            return url ? String.format('<img width="{0}" src="{1}"/>', self.smallAvatarWidth, url) : '';
+                        },
+                        sortable: false
+                    },
+                    {
+                        css: 'vertical-align: middle;',
+                        dataIndex: 'name',
                         header: 'Name',
                         id: 'name',
-                        dataIndex: 'name',
                     }
                 ],
             }),
+            cls: 'persona-grid',
             enableColumnHide: false,
             enableColumnMove: false,
             enableColumnResize: false,
-            region: 'center',
+            region: 'west',
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: true,
             }),
-            store: this.store,
+            store: this.personaStore,
             stripeRows: true,
             viewConfig: {
-                emptyText: config.resources['no-personas-available']
-            }
+                emptyText: config.resources['no-personas-available'],
+                scrollOffset: 2,
+            },
+            width: config.personaListWidth,
+        });
+
+        this.personaDetails = new Hippo.PersonaManager.PersonaDetails({
+            avatarUrls: config.avatarUrls.large,
+            avatarWidth: config.largeAvatarWidth,
+            border: false,
+            region: 'center',
         });
 
         Ext.apply(config, {
             layout: 'border',
-            items: [ this.personaList ]
+            items: [ this.personaGrid, this.personaDetails ]
         });
 
         Hippo.PersonaManager.PersonaManagerPanel.superclass.constructor.call(this, config);
@@ -112,20 +141,122 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
             }, true);
         }, this, {single: true});
 
-        this.store.on('load', this.selectDefaultPersona, this);
-        this.store.load();
+        this.personaStore.on('load', this.init, this);
+        this.personaGrid.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
+            this.personaDetails.enable();
+            this.personaDetails.setPersona(
+                    record.get('name'),
+                    record.get('description'),
+                    record.get('avatarName')
+            )
+        }, this);
+        this.personaStore.load();
 
         Hippo.PersonaManager.PersonaManagerPanel.superclass.initComponent.apply(this, arguments);
     },
 
-    selectDefaultPersona: function() {
-        var index = this.store.find('id', 'default');
-        if (index >= 0) {
-            var selModel = this.personaList.getSelectionModel();
-            selModel.selectRow(index);
+    init: function() {
+        if (this.personaStore.getTotalCount() <= 0) {
+            // we cannot show anything useful, so hide the whole panel
+            this.personaDetails.hide();
+        } else {
+            var index = this.personaStore.find('id', 'default');
+            if (index >= 0) {
+                this.personaGrid.getSelectionModel().selectRow(index);
+            }
         }
     }
 
 });
-
 Ext.reg('Hippo.PersonaManager.PersonaManagerPanel', Hippo.PersonaManager.PersonaManagerPanel);
+
+
+/**
+ * @class Hippo.PersonaManager.PersonaDetails
+ * @extends Ext.Panel
+ */
+Hippo.PersonaManager.PersonaDetails = Ext.extend(Ext.Panel, {
+
+    constructor: function(config) {
+        this.avatarUrls = config.avatarUrls;
+
+        this.avatar = new Hippo.PersonaManager.Image({
+            flex: 0,
+            width: config.avatarWidth
+        });
+
+        this.name = new Ext.BoxComponent({
+            anchor: '100%',
+            border: false,
+            cls: 'persona-name',
+            fieldLabel: 'Name',
+            layout: 'anchor',
+        });
+
+        this.description = new Ext.BoxComponent({
+            anchor: '100% -3',
+            border: false,
+            boxMinWidth: 50,
+            boxMaxWidth: 350,
+            cls: 'persona-description',
+            fieldLabel: 'Description',
+            layout: 'anchor',
+        });
+
+        Ext.apply(config, {
+            cls: 'persona-details',
+            items: [
+                this.avatar,
+                {
+                    border: false,
+                    flex: 1,
+                    items: [ this.name, this.description ],
+                    labelWidth: 100,
+                    xtype: 'form',
+                }
+            ],
+            layout: 'hbox',
+            layoutConfig: {
+                defaultMargins: '10'
+            },
+            region: 'center'
+        });
+        Hippo.PersonaManager.PersonaDetails.superclass.constructor.call(this, config);
+    },
+
+    setPersona: function(name, description, avatarName) {
+        this.avatar.setUrl(this.avatarUrls[avatarName]);
+        this.name.update(name);
+        this.description.update(description);
+    }
+
+});
+Ext.reg('Hippo.PersonaManager.PersonaDetails', Hippo.PersonaManager.PersonaDetails);
+
+/**
+ * @class Hippo.PersonaManager.Image
+ * @extends Ext.Component
+ */
+Hippo.PersonaManager.Image = Ext.extend(Ext.BoxComponent, {
+
+    constructor: function(config) {
+        Ext.apply(config, {
+            autoEl: {
+                tag: 'img',
+                src: config.url || Ext.BLANK_IMAGE_URL
+            },
+        });
+        Hippo.PersonaManager.Image.superclass.constructor.call(this, config);
+    },
+
+    onRender: function() {
+        Hippo.PersonaManager.Image.superclass.onRender.apply(this, arguments);
+        this.el.on('load', this.syncSize, this);
+    },
+
+    setUrl: function(url) {
+        this.el.dom.src = url;
+    }
+
+});
+Ext.reg('Hippo.PersonaManager.Image', Hippo.PersonaManager.Image);
