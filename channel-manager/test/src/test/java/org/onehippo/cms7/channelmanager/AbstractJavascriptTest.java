@@ -1,12 +1,18 @@
 package org.onehippo.cms7.channelmanager;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.util.List;
 
 import com.gargoylesoftware.htmlunit.AjaxController;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
@@ -19,6 +25,7 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Text;
 
 import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
 import net.sourceforge.htmlunit.corejs.javascript.Function;
@@ -50,6 +57,7 @@ abstract public class AbstractJavascriptTest {
         Context root = new Context(server, "/", Context.SESSIONS);
         root.setResourceBase(".");
         root.addServlet(DefaultServlet.class, "/*");
+        root.addServlet(ResourceServlet.class, "/resources/*");
         root.getSessionHandler().getSessionManager().setSessionURL("none");
 
         server.start();
@@ -133,4 +141,28 @@ abstract public class AbstractJavascriptTest {
         return (String) page.executeJavaScript(objectIdentifier).getJavaScriptResult();
     }
 
+    protected void injectJavascript(Class<?> clazz, String resource) throws IOException {
+        final InputStream inputStream = clazz.getResourceAsStream(resource);
+
+        Reader resourceReader = new InputStreamReader(inputStream);
+        StringBuilder javascript = new StringBuilder();
+        int buffer = 0;
+        try {
+            while ((buffer = resourceReader.read()) != -1) {
+                javascript.append((char) buffer);
+            }
+            evalWithScriptElement(javascript.toString());
+        } finally {
+            resourceReader.close();
+        }
+    }
+
+    public void evalWithScriptElement(final String javascript) {
+        final List<HtmlElement> head = page.getElementsByTagName("head");
+        final HtmlElement script = page.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        final Text textNode = page.createTextNode(javascript);
+        script.appendChild(textNode);
+        head.get(0).appendChild(script);
+    }
 }

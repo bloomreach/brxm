@@ -119,27 +119,6 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         page.executeJavaScript("sendMessage(" + message + ", 'init');");
     }
 
-    protected void injectJavascript(Class<?> clazz, String resource) throws IOException {
-        final InputStream inputStream = clazz.getResourceAsStream(resource);
-
-        Reader resourceReader = new InputStreamReader(inputStream);
-        StringBuilder javascript = new StringBuilder();
-        int buffer = 0;
-        try {
-            while ((buffer = resourceReader.read()) != -1) {
-                javascript.append((char) buffer);
-            }
-            final List<HtmlElement> head = page.getElementsByTagName("head");
-            final HtmlElement script = page.createElement("script");
-            script.setAttribute("type", "text/javascript");
-            final Text textNode = page.createTextNode(javascript.toString());
-            script.appendChild(textNode);
-            head.get(0).appendChild(script);
-        } finally {
-            resourceReader.close();
-        }
-    }
-
     public boolean isMessageSend(final String message) {
         for (Message messageObject : this.messagesSend) {
             if (message.equals(messageObject.messageTag)) {

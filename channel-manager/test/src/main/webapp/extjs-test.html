@@ -1,0 +1,26 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <script type="text/javascript" src="resources/org/wicketstuff/js/ext/adapter/ext/ext-base-debug.js"></script>
+  <script type="text/javascript" src="resources/org/wicketstuff/js/ext/ext-all-debug-w-comments.js"></script>
+
+  <script type="text/javascript">
+      var assert = {
+        isEqual: function(a, b) {
+          if (a !== b) {
+            document.getElementById('result').innerHTML = 'fail';
+          }
+        }
+      };
+      document.write("<span id='result'>pass</span>");
+      var panel = new Ext.Panel({
+         id: 'hippo'
+      });
+      assert.isEqual('hippo', panel.getId());
+  </script>
+
+</head>
+<body>
+</body>
+</html>
