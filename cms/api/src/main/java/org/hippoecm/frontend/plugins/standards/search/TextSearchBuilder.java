@@ -38,6 +38,8 @@ public class TextSearchBuilder implements IClusterable {
     static final Logger log = LoggerFactory.getLogger(TextSearchBuilder.class);
 
     public static final String TEXT_QUERY_NAME = "text";
+    
+    private static final String DEFAULT_IGNORED_CHARS = "+-&|!(){}[]^\"~*?:\\";
 
     private String text;
     private String[] scope;
@@ -45,7 +47,7 @@ public class TextSearchBuilder implements IClusterable {
     private String[] includePrimaryTypes;
     private String[] excludedPrimaryTypes = {};
     private boolean wildcardSearch = false;
-    private String ignoredChars = "*?";
+    private String ignoredChars = DEFAULT_IGNORED_CHARS;
     private int limit = -1;
     private int minimalLength = 3;
 
@@ -78,7 +80,7 @@ public class TextSearchBuilder implements IClusterable {
     }
 
     public void setIgnoredChars(String ignoredChars) {
-        this.ignoredChars = ignoredChars;
+        this.ignoredChars = DEFAULT_IGNORED_CHARS + ignoredChars;
     }
 
     public void setText(String value) {
@@ -125,7 +127,7 @@ public class TextSearchBuilder implements IClusterable {
                 char c = token.charAt(i);
                 if (ignoredChars.indexOf(c) == -1) {
                     if (c == '\'') {
-                        tb.append('\'');
+                        tb.append('\\');
                     }
                     tb.append(c);
                 }
