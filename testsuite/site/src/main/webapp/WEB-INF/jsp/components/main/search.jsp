@@ -30,8 +30,12 @@
    
    <p>
      <br/>
-     <hst:componentRenderingURL var="componentRenderingURL"/>
-     <a href="${componentRenderingURL}" target="_blank">Render only this component</a>
+     <hst:componentRenderingURL var="componentRenderingURL">
+        <hst:param name="page" value="${crPage}" />
+        <hst:param name="query" value="${query}" />
+     </hst:componentRenderingURL>
+     <a href="${componentRenderingURL}">Render only this component</a>
+     
    </p>
    
    <c:if test="${query != null && query != ''}">
