@@ -84,19 +84,23 @@ public class PersonaManagerPanel extends ExtPanel {
 
         properties.put("largeAvatarWidth", AvatarSize.large.getSize());
         properties.put("smallAvatarWidth", AvatarSize.small.getSize());
+
+        properties.put("loadingIconUrl", resourceUrl("loading.gif"));
     }
 
     private static JSONObject getAvatarUrls(AvatarSize size) throws JSONException {
-        RequestCycle rc = RequestCycle.get();
         JSONObject result = new JSONObject();
 
         for (AvatarName name : AvatarName.values()) {
-            String resourceName = avatarResourceName(name, size);
-            ResourceReference personaAvatar = new ResourceReference(PersonaManagerPanel.class, resourceName);
-            result.put(name.toString(), rc.urlFor(personaAvatar));
+            result.put(name.toString(), resourceUrl(avatarResourceName(name, size)));
         }
 
         return result;
+    }
+
+    private static CharSequence resourceUrl(String resourceName) {
+        ResourceReference reference = new ResourceReference(PersonaManagerPanel.class, resourceName);
+        return RequestCycle.get().urlFor(reference);
     }
 
     private static String avatarResourceName(AvatarName name, AvatarSize size) {

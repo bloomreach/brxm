@@ -92,6 +92,7 @@ frontend/src/main/java/org/onehippo/cms7/marketing/personas/Hippo.PersonaManager
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/Hippo.PersonaManager.PersonaManagerPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/PersonaManagerPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/PersonaManagerPanel.properties -text
+frontend/src/main/java/org/onehippo/cms7/marketing/personas/loading.gif -text
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/persona-black-120.png -text
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/persona-black-20.png -text
 frontend/src/main/java/org/onehippo/cms7/marketing/personas/persona-blue-120.png -text

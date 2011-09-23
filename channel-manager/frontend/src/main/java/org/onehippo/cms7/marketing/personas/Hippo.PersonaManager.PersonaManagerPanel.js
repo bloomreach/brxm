@@ -27,6 +27,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
         var self = this;
 
         this.smallAvatarUrls = config.avatarUrls.small;
+        this.loadingIconUrl = config.loadingIconUrl;
 
         this.personaStore = new Ext.data.JsonStore({
             fields: [
@@ -122,6 +123,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
         });
 
         Ext.apply(config, {
+            cls: 'persona-manager',
             layout: 'border',
             items: [ this.personaGrid, this.personaDetails ]
         });
@@ -141,7 +143,6 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
             }, true);
         }, this, {single: true});
 
-        this.personaStore.on('load', this.initDisplay, this);
         this.personaGrid.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
             this.personaDetails.enable();
             this.personaDetails.setPersona(
@@ -150,12 +151,21 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                     record.get('avatarName')
             )
         }, this);
+
+        this.personaStore.on('beforeload', function() {
+            this.realTitle = this.title;
+            this.setTitle(this.title + '<img class="loading-icon" src="' + this.loadingIconUrl + '"/>');
+        }, this);
+        this.personaStore.on('load', this.initDisplay, this);
+
         this.personaStore.load();
 
         Hippo.PersonaManager.PersonaManagerPanel.superclass.initComponent.apply(this, arguments);
     },
 
     initDisplay: function() {
+        this.setTitle(this.realTitle);
+
         if (this.personaStore.getTotalCount() <= 0) {
             // we cannot show anything useful, so hide the whole panel
             this.personaDetails.hide();
