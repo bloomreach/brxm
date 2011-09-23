@@ -1,13 +1,3 @@
-package org.hippoecm.hst.tag;
-
-import javax.servlet.jsp.tagext.TagData;
-import javax.servlet.jsp.tagext.TagExtraInfo;
-import javax.servlet.jsp.tagext.VariableInfo;
-
-import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.container.ContainerConstants;
-
 /*
  *  Copyright 2011 Hippo.
  * 
@@ -23,6 +13,16 @@ import org.hippoecm.hst.core.container.ContainerConstants;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.hst.tag;
+
+import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.VariableInfo;
+
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.container.ContainerConstants;
+
  public class HstComponentRenderingURLTag extends BaseHstURLTag {
 
     private static final long serialVersionUID = 1L;

@@ -179,6 +179,14 @@
           <type>java.lang.String</type>
           <description>The variable name of the component rendering URL</description>
       </attribute>
+      <example><![CDATA[
+            <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}">
+              <hst:componentRenderingURL var="ajaxURL">
+                <hst:param name="page" value="${pageNr}" />
+              </hst:renderURL>
+              <!-- some ajax javascript to load ${ajaxURL} and replace some block -->
+            </c:forEach>
+          ]]></example>
   </tag>
 
     <tag>
