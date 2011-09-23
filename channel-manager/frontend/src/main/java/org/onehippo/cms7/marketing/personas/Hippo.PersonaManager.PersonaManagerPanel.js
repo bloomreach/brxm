@@ -141,7 +141,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
             }, true);
         }, this, {single: true});
 
-        this.personaStore.on('load', this.init, this);
+        this.personaStore.on('load', this.initDisplay, this);
         this.personaGrid.getSelectionModel().on('rowselect', function(sm, rowIndex, record) {
             this.personaDetails.enable();
             this.personaDetails.setPersona(
@@ -155,7 +155,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
         Hippo.PersonaManager.PersonaManagerPanel.superclass.initComponent.apply(this, arguments);
     },
 
-    init: function() {
+    initDisplay: function() {
         if (this.personaStore.getTotalCount() <= 0) {
             // we cannot show anything useful, so hide the whole panel
             this.personaDetails.hide();
@@ -224,6 +224,13 @@ Hippo.PersonaManager.PersonaDetails = Ext.extend(Ext.Panel, {
         Hippo.PersonaManager.PersonaDetails.superclass.constructor.call(this, config);
     },
 
+    initComponent: function() {
+        this.avatar.on('load', function() {
+            this.syncSize();
+        }, this);
+        Hippo.PersonaManager.PersonaDetails.superclass.initComponent.apply(this, arguments);
+    },
+
     setPersona: function(name, description, avatarName) {
         this.avatar.setUrl(this.avatarUrls[avatarName]);
         this.name.update(name);
@@ -249,9 +256,19 @@ Hippo.PersonaManager.Image = Ext.extend(Ext.BoxComponent, {
         Hippo.PersonaManager.Image.superclass.constructor.call(this, config);
     },
 
+    initComponent: function() {
+        this.addEvents('load');
+        Hippo.PersonaManager.Image.superclass.initComponent.apply(this, arguments);
+    },
+
     onRender: function() {
         Hippo.PersonaManager.Image.superclass.onRender.apply(this, arguments);
-        this.el.on('load', this.syncSize, this);
+        this.el.on('load', this.onLoad, this);
+    },
+
+    onLoad: function() {
+        this.syncSize();
+        this.fireEvent('load', this);
     },
 
     setUrl: function(url) {
