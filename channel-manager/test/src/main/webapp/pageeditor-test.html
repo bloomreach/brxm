@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <script type="text/javascript" src="resources/org/wicketstuff/js/ext/adapter/ext/ext-base-debug.js"></script>
+  <script type="text/javascript" src="resources/org/wicketstuff/js/ext/ext-all-debug.js"></script>
+
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/jsonp/jsonp.js"></script>
+
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/globals.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModelStore.js"></script>
+  <script type="text/javascript" src="resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js"></script>
+
+  <script type="text/javascript">
+      var assert = {
+        isEqual: function(a, b) {
+          if (a !== b) {
+            document.getElementById('result').innerHTML = 'fail';
+          }
+        }
+      };
+      document.write("<span id='result'>pass</span>");
+
+
+      Ext.onReady(function() {
+        var panel = new Hippo.ChannelManager.TemplateComposer.PageEditor({
+          id: 'hippo',
+          applyTo: 'Hippo.ChannelManager.TemplateComposer.Instance',
+          resources: {},
+          composerMountUrl: '/site',
+          composerRestMountUrl: '/site/_rp',
+          renderHostSubMountPath: '',
+          renderHost: 'localhost',
+          previewMode: true,
+          iFrameCssHeadContributions: [],
+          iFrameJsHeadContributions: [],
+          iFrameErrorPage: []
+        });
+        assert.isEqual('hippo', panel.getId());
+      });
+  </script>
+
+</head>
+<body>
+  <div id='Hippo.ChannelManager.TemplateComposer.Instance' />
+</body>
+</html>

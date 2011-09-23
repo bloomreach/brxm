@@ -14,10 +14,13 @@
         }
       };
       document.write("<span id='result'>pass</span>");
+     Ext.onReady(function() {
       var panel = new Ext.Panel({
-         id: 'hippo'
+         id: 'hippo',
+         renderTo: 'hippo-element'
       });
       assert.isEqual('hippo', panel.getId());
+     });
   </script>
 
 </head>

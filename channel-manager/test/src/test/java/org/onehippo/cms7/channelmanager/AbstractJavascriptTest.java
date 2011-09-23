@@ -14,6 +14,8 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.HtmlUnitContextFactory;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptEngine;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.After;
@@ -39,6 +41,36 @@ abstract public class AbstractJavascriptTest {
     public static final String LISTEN_HOST = "localhost";
     public static final int LISTEN_PORT = 8888;
 
+    static class ExtJavascriptEngine extends JavaScriptEngine {
+
+        private final ExtHtmlUnitContextFactory hucf;
+
+        public ExtJavascriptEngine(WebClient webClient) {
+            super(webClient);
+            hucf = new ExtHtmlUnitContextFactory(webClient);
+        }
+
+        @Override
+        public ExtHtmlUnitContextFactory getContextFactory() {
+            return hucf;
+        }
+
+    }
+
+    private static class ExtHtmlUnitContextFactory extends HtmlUnitContextFactory {
+        public ExtHtmlUnitContextFactory(final WebClient webClient) {
+            super(webClient);
+        }
+
+        @Override
+        public net.sourceforge.htmlunit.corejs.javascript.Context makeContext() {
+            net.sourceforge.htmlunit.corejs.javascript.Context context = super.makeContext();
+            context.setOptimizationLevel(-1);
+            return context;
+        }
+
+    }
+
     Server server;
     protected HtmlPage page;
 
@@ -63,6 +95,7 @@ abstract public class AbstractJavascriptTest {
         server.start();
 
         WebClient client = new WebClient(BrowserVersion.FIREFOX_3_6);
+        client.setJavaScriptEngine(new ExtJavascriptEngine(client));
         client.setAjaxController(new AjaxController() {
             private static final long serialVersionUID = 1L;
 
@@ -92,7 +125,8 @@ abstract public class AbstractJavascriptTest {
 
         Scriptable console = (Scriptable) window.get("console");
         if (console == null) {
-            net.sourceforge.htmlunit.corejs.javascript.Context context = net.sourceforge.htmlunit.corejs.javascript.Context.enter();
+            ExtJavascriptEngine eje = (ExtJavascriptEngine) client.getJavaScriptEngine();
+            net.sourceforge.htmlunit.corejs.javascript.Context context = eje.getContextFactory().makeContext();
             console = context.newObject(window, "Object");
             ScriptableObject.putProperty(window, "console", console);
         }
