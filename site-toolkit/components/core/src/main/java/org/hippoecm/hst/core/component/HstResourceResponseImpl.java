@@ -140,7 +140,7 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     }
 
     @Override
-    public boolean rendererSkipped() {
+    public boolean isRendererSkipped() {
         throw new UnsupportedOperationException("Resource response does not have anything with skipping a renderer.");
     }
     

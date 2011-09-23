@@ -428,7 +428,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
      * A normal {@link HstResponseImpl} never gets its renderer skipped
      */
     @Override
-    public boolean rendererSkipped() {
+    public boolean isRendererSkipped() {
         return false;
     }
     

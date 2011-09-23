@@ -87,7 +87,7 @@ public class AggregationValve extends AbstractValve {
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
                 createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, parentRequest, parentResponse,
-                        requestMap, responseMap, topParentResponse, false);
+                        requestMap, responseMap, topParentResponse, rootWindow != rootRenderingWindow );
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
@@ -254,27 +254,23 @@ public class AggregationValve extends AbstractValve {
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap,
             HstResponse topComponentHstResponse,
-            boolean windowWillRender) {
+            boolean isRendererSkipped) {
 
-        if(windowWillRender || window == rootRenderingWindow) {
-            windowWillRender = true;
-        }
-        
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
         HstResponse response = null;
         HstResponseState responseState = null;
-        if(windowWillRender) {
-            responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
-                (HttpServletResponse) servletResponse);
-            response= new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
-                responseState, topComponentHstResponse);
-        } else {
+        if(isRendererSkipped) {
             // use a noop responseState and noop response
             responseState = new NoopHstServletResponseState();
             response = new NoopHstResponseImpl();
+        } else {
+            responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
+                    (HttpServletResponse) servletResponse);
+                response= new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
+                    responseState, topComponentHstResponse);
         }
         
-        if (topComponentHstResponse == null && windowWillRender) {
+        if (topComponentHstResponse == null && !isRendererSkipped) {
             topComponentHstResponse = response;
         }
 
@@ -288,13 +284,14 @@ public class AggregationValve extends AbstractValve {
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
                 ServletResponse responseForChild;
-                if(windowWillRender) {
-                    responseForChild = response;
-                } else {
+                if(isRendererSkipped) {
                     responseForChild = servletResponse;
+                } else {
+                    responseForChild = response;
                 }
+                boolean isChildRendererSkipped = isRendererSkipped || entry.getValue() == rootRenderingWindow;
                 createHstRequestResponseForWindows(entry.getValue(), rootRenderingWindow, requestContext, servletRequest, responseForChild,
-                        requestMap, responseMap, topComponentHstResponse, windowWillRender);
+                        requestMap, responseMap, topComponentHstResponse, isChildRendererSkipped );
             }
         }
     }
@@ -454,7 +451,7 @@ public class AggregationValve extends AbstractValve {
     private class NoopHstResponseImpl implements HstResponse {  /**
          * the {@link NoopHstResponseImpl} always gets its renderer skipped
          */
-        @Override public boolean rendererSkipped() {            
+        @Override public boolean isRendererSkipped() {            
             return true;
         }
         @Override public void addCookie(Cookie cookie) {}
@@ -513,5 +510,6 @@ public class AggregationValve extends AbstractValve {
         @Override public void setContentType(String type) {}
         @Override public void setLocale(Locale loc) {}
     }
+    
     
 }
