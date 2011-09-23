@@ -41,7 +41,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
