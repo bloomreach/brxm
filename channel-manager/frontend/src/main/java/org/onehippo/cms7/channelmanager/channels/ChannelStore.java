@@ -289,7 +289,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 return null;
             }
             Node node = session.getNode(absPath);
-            return localeResolver.getLocale(node);
+            Locale locale = localeResolver.getLocale(node);
+            if ("".equals(locale.getLanguage())) {
+                return null;
+            }
         } catch (RepositoryException e) {
             log.warn("Could not retrieve the locale of node '" + absPath + "'", e);
         }

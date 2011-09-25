@@ -55,6 +55,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditorBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModel.js -text
@@ -62,6 +63,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageedi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/future.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/PluginsBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.css -text

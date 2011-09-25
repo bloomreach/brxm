@@ -36,13 +36,7 @@ class LocaleResolver implements IClusterable {
     Locale getLocale(Node node) throws RepositoryException {
         if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
             String localeName = node.getProperty(HippoTranslationNodeType.LOCALE).getString();
-            ILocaleProvider.HippoLocale hippoLocale = localeProvider.getLocale(localeName);
-            if (hippoLocale != null) {
-                return hippoLocale.getLocale();
-            } else {
-                log.warn("The property '{}' of node '{}' contains an unknown locale name '{}'. Known locale names are {}",
-                        new String[]{HippoTranslationNodeType.LOCALE, node.getPath(), localeName, getAllLocaleNames().toString()});
-            }
+            return localeProvider.getLocale(localeName).getLocale();
         }
         return null;
     }
