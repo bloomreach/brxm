@@ -15,25 +15,31 @@
 *#
 <html>
   <head>
-    <title>Login failure</title>
+    <title>Login</title>
     <link rel="shortcut icon" href="hst/security/skin/images/hippo-cms.ico" type="image/x-icon"/>
     <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
-  <body class="hippo-root" style="text-align:center">
-    <div>
+  <body class="hippo-root" onload="return document.signInForm.username.focus();" style="text-align:center">
+    <div class="hippo-body-back-hack">
       <div class="hippo-login-panel">
-        <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.ServletPath}/proxy">
+        <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.servletPath}/proxy">
           <h2><div class="hippo-global-hideme"><span>Hippo CMS 7</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
-                <td>
-                  <p>${messages.getString("message.auth.failed")} ${StringEscapeUtils.escapeHtml($j_username)}.</p>
-                </td>
+                <td width="30%"><label>${messages.getString("label.username")}&nbsp;</label></td>
+                <td><input class="hippo-form-text" type="text" value="${j_username?html}" name="username" id="username"/></td>
               </tr>
               <tr>
-                <td>
-                  <p><a href="..${request.ServletPath}/form">${messages.getString("message.try.again")}</a></p>
+                <td><label>${messages.getString("label.password")}&nbsp;</label></td>
+                <td><input class="hippo-form-password" type="password" value="" name="password" id="password"/></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="hippo-global-alignright">
+                  <input type="hidden" name="destination" value="${destination?html}" />
+                  <input class="hippo-form-submit" type="submit" value="${messages.getString("label.login")}"/>
+                  <input class="hippo-form-submit" type="button" value="${messages.getString("label.cancel")}" onclick="if ('${destination?html}') location.href = '${destination?html}'; return false;" />
                 </td>
               </tr>
             </table>

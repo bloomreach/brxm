@@ -16,8 +16,8 @@
 <html>
   <body onload="return document.getElementById('loginForm').submit();">
     <form id="loginForm" method="POST" action="${j_security_check}">
-      <input type="hidden" name="j_username" value="${StringEscapeUtils.escapeHtml($j_username)}" /> 
-      <input type="hidden" name="j_password" value="${StringEscapeUtils.escapeHtml($j_password)}" />
+      <input type="hidden" name="j_username" value="${j_username?html}" /> 
+      <input type="hidden" name="j_password" value="${j_password?html}" />
       <noscript>
         <input type="submit" value="Login now" />
       </noscript>

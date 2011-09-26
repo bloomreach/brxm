@@ -27,6 +27,8 @@ import javax.servlet.ServletException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockRequestDispatcher;
@@ -39,6 +41,8 @@ import org.springframework.mock.web.MockServletContext;
  */
 public class TestLoginServlet {
 
+    private static Logger log = LoggerFactory.getLogger(TestLoginServlet.class);
+    
     private LoginServlet loginServlet;
     private MockServletConfig servletConfig;
     
@@ -93,6 +97,36 @@ public class TestLoginServlet {
     }
     
     @Test
+    public void testDoLoginForm() throws IOException, ServletException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        request.setContextPath("/site");
+        request.setServletPath("/login");
+        request.setPathInfo("/form");
+        request.setRequestURI("/site/login/form");
+        
+        loginServlet.doLoginForm(request, response);
+        
+        log.info("Response:\n" + response.getContentAsString() + "\n");
+    }
+    
+    @Test
+    public void testDoLoginError() throws IOException, ServletException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        request.setContextPath("/site");
+        request.setServletPath("/login");
+        request.setPathInfo("/form");
+        request.setRequestURI("/site/login/form");
+        
+        loginServlet.doLoginError(request, response);
+        
+        log.info("Response:\n" + response.getContentAsString() + "\n");
+    }
+    
+    @Test
     public void testDoLoginProxy() throws IOException, ServletException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -117,6 +151,9 @@ public class TestLoginServlet {
         MockHttpServletResponse response = new MockHttpServletResponse();
         
         loginServlet.doLoginLogin(request, response);
+        
+        log.info("Response:\n" + response.getContentAsString() + "\n");
+        
         assertTrue(response.getContentAsString().contains("onload"));
         assertTrue(response.getContentAsString().contains(".submit"));
         assertTrue(response.getContentAsString().contains("j_security_check"));
