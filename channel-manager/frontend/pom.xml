@@ -99,12 +99,13 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
-          <include>**/*.html</include>
           <include>**/*.css</include>
-          <include>**/*.properties</include>
+          <include>**/*.gif</include>
+          <include>**/*.html</include>
           <include>**/*.jpg</include>
-          <include>**/*.png</include>
           <include>**/*.js</include>
+          <include>**/*.png</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
     </resources>
