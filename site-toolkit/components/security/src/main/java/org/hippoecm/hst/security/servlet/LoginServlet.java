@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -468,9 +467,6 @@ public class LoginServlet extends HttpServlet {
             context.put("messages", bundle);
             
             context.put("request", request);
-            
-            // add utilities
-            context.put("StringEscapeUtils", StringEscapeUtils.class);
 
             template.process(context, out);
             
