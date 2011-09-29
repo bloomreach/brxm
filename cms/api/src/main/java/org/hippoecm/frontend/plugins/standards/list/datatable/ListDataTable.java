@@ -62,6 +62,7 @@ public class ListDataTable<T> extends DataTable<T> {
     private TableDefinition definition;
     private TableSelectionListener<T> selectionListener;
     private final IDataProvider<T> provider;
+    private boolean scrollSelectedIntoView = false;
 
     public interface TableSelectionListener<T> extends IClusterable {
 
@@ -102,6 +103,10 @@ public class ListDataTable<T> extends DataTable<T> {
         });
 
         setTableBodyCss("datatable-tbody");
+    }
+
+    public void setScrollSelectedIntoView(boolean value) {
+        this.scrollSelectedIntoView = value;
     }
     
     @Override
@@ -208,7 +213,7 @@ public class ListDataTable<T> extends DataTable<T> {
     }
 
     @Override
-    protected Item newRowItem(String id, int index, final IModel model) {
+    protected Item newRowItem(final String id, int index, final IModel model) {
         final OddEvenItem item = new OddEvenItem(id, index, model);
         item.setOutputMarkupId(true);
 
@@ -219,6 +224,12 @@ public class ListDataTable<T> extends DataTable<T> {
             protected String load() {
                 IModel selected = ListDataTable.this.getDefaultModel();
                 if (selected != null && selected.equals(model)) {
+                    if (scrollSelectedIntoView) {
+                        AjaxRequestTarget target = AjaxRequestTarget.get();
+                        if (target != null) {
+                            target.appendJavascript("document.getElementById('" + item.getMarkupId() + "').scrollIntoView(false);");
+                        }
+                    }
                     return "hippo-list-selected";
                 } else {
                     return null;

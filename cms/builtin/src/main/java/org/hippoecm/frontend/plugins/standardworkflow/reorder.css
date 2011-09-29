@@ -2,22 +2,27 @@
 /* Reorder Plugin*/
 /* ================================================ */
 .hippo-reorder table {
-  width: 480px;
+  width: 445px;
 }
 
 .hippo-reorder .hippo-reorder-border {
   border: 1px solid #32629b;
   padding: 5px;
-  height: 272px;
-  overflow: auto;
+  height: 322px;
   position: relative
 }
 
 .hippo-reorder .hippo-reorder-buttons {
   position: absolute;
-  right: 0px;
+  right: 0;
   top: 1px;
-  width: 30px;
+  width: 34px;
+}
+
+.hippo-reorder .hippo-reorder-table-area {
+	overflow: auto;
+	width: 465px; 
+	height: 322px;
 }
 
 .hippo-reorder .folderlist h3 {
@@ -28,7 +33,7 @@
 }
 
 .hippo-reorder table tr td {
-  padding: 0px;
+  padding: 0;
 }
 
 .hippo-reorder table tr td {
@@ -45,7 +50,7 @@
 .hippo-reorder table tr td.icon-16 {
   height: 16px;
   width: 16px;
-  padding: 0px;
+  padding: 0;
 }
 
 .hippo-reorder table tr td.icon-16 span {

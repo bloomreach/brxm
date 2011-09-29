@@ -51,26 +51,23 @@ import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
 
     private ReorderPanel panel;
-    private WorkflowDescriptorModel model;
     private List<String> mapping;
 
     static class ListItem implements IDetachable {
@@ -132,7 +129,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
     static class ReorderDataProvider extends SortableDataProvider<ListItem> {
         private static final long serialVersionUID = 1L;
 
-        private LinkedList<ListItem> listItems;
+        private final List<ListItem> listItems;
 
         ReorderDataProvider(DocumentsProvider documents) {
             listItems = new LinkedList<ListItem>();
@@ -164,6 +161,14 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             }
         }
 
+        public void shiftTop(ListItem item) {
+            int index = listItems.indexOf(item);
+            if (index > 0) {
+                listItems.remove(index);
+                listItems.add(0, item);
+            }
+        }
+
         public void shiftUp(ListItem item) {
             int index = listItems.indexOf(item);
             if (index > 0) {
@@ -177,6 +182,14 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
             if (index < listItems.size()) {
                 listItems.remove(index);
                 listItems.add(++index, item);
+            }
+        }
+
+        public void shiftBottom(ListItem item) {
+            int index = listItems.indexOf(item);
+            if (index < listItems.size()) {
+                listItems.remove(index);
+                listItems.add(item);
             }
         }
 
@@ -198,6 +211,8 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         private ListPagingDefinition pagingDefinition;
         private AjaxLink<Void> up;
         private AjaxLink<Void> down;
+        private AjaxLink<Void> top;
+        private AjaxLink<Void> bottom;
 
         public ReorderPanel(String id, JcrNodeModel model, DocumentListFilter filter) {
             super(id);
@@ -250,8 +265,26 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
 
             pagingDefinition = new ListPagingDefinition();
             pagingDefinition.setPageSize(dataProvider.size() > 0 ? dataProvider.size() : 1);
-            add(dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false,
-                    pagingDefinition));
+            dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
+            add(dataTable);
+
+            top = new AjaxLink<Void>("top") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    IModel<ListItem> selection = dataTable.getModel();
+                    dataProvider.shiftTop(selection.getObject());
+
+                    ReorderPanel thisPanel = ReorderPanel.this;
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                            pagingDefinition);
+                    dataTable.setScrollSelectedIntoView(true);
+                    thisPanel.replace(dataTable);
+                    selectionChanged(selection);
+                }
+            };
+            add(top);
 
             up = new AjaxLink<Void>("up") {
                 private static final long serialVersionUID = 1L;
@@ -261,10 +294,11 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftUp(selection.getObject());
 
-                    ReorderPanel panel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, panel, false,
+                    ReorderPanel thisPanel = ReorderPanel.this;
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    panel.replace(dataTable);
+                    dataTable.setScrollSelectedIntoView(true);
+                    thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
             };
@@ -278,16 +312,35 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftDown(selection.getObject());
 
-                    ReorderPanel panel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, panel, false,
+                    ReorderPanel thisPanel = ReorderPanel.this;
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    panel.replace(dataTable);
+                    dataTable.setScrollSelectedIntoView(true);
+                    thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
             };
             add(down);
 
-            if (dataProvider.size() > 0) {
+            bottom = new AjaxLink<Void>("bottom") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onClick(AjaxRequestTarget target) {
+                    IModel<ListItem> selection = dataTable.getModel();
+                    dataProvider.shiftBottom(selection.getObject());
+
+                    ReorderPanel thisPanel = ReorderPanel.this;
+                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                            pagingDefinition);
+                    dataTable.setScrollSelectedIntoView(true);
+                    thisPanel.replace(dataTable);
+                    selectionChanged(selection);
+                }
+            };
+            add(bottom);
+
+           if (dataProvider.size() > 0) {
                 ListItem selection = dataProvider.iterator(0, 1).next();
                 selectionChanged(dataProvider.model(selection));
             } else {
@@ -330,7 +383,6 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
     ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig,
             WorkflowDescriptorModel model, List<String> mapping) {
         action.super();
-        this.model = model;
         this.mapping = mapping;
 
         String name;
