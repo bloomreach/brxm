@@ -49,7 +49,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                 },
             },
             proxy: new Ext.data.HttpProxy({
-                url: '/site/_rp/cafebabe-cafe-babe-cafe-babecafebabe./personas/'
+                url: '/site/_rp/cafebabe-cafe-babe-cafe-babecafebabe./personas?org.hippoecm.hst.container.ignore_render_host=true'
             }),
             restful: true,
             root: 'data',
