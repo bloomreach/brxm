@@ -519,7 +519,7 @@
         </attribute>
         <example><![CDATA[
           <div>
-             <hst:html hippohtml="${document.intro}" externalLinks="true"/>
+             <hst:html hippohtml="${document.intro}" fullyQualifiedLinks="true"/>
           </div>
           ]]></example>
     </tag>
