@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.containeritemcomponents;
+package org.hippoecm.hst.behavioral.containeritemcomponents;
 
+import org.hippoecm.hst.behavioral.BehavioralProfile;
+import org.hippoecm.hst.behavioral.util.BehavioralUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.onehippo.hst.behavioral.BehavioralProfile;
-import org.onehippo.hst.behavioral.util.BehavioralUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

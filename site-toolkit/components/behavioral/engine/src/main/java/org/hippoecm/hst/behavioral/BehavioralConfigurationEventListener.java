@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral;
+package org.hippoecm.hst.behavioral;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
@@ -21,7 +21,7 @@ import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.onehippo.hst.behavioral.BehavioralService;
+import org.hippoecm.hst.behavioral.BehavioralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

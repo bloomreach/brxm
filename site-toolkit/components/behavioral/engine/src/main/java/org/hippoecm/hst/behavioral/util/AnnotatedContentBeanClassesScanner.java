@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.util;
+package org.hippoecm.hst.behavioral.util;
 
 import java.net.URL;
 import java.util.Collections;

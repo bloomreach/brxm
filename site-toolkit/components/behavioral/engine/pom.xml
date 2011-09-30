@@ -20,17 +20,18 @@
 
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>behavioral-targeting</artifactId>
+    <artifactId>behavioral</artifactId>
     <version>2.23.03-SNAPSHOT</version>
   </parent>
-
-  <name>Behavorial Targeting Engine</name>
-  <artifactId>behavioral-targeting-engine</artifactId>
+  
+  <name>Hippo Site Toolkit Behavioral Targeting Engine</name>
+  <description>Hippo Site Toolkit Behavioral Targeting Engine</description>
+  <artifactId>hst-behavioral-engine</artifactId>
   <packaging>jar</packaging>
   
   <dependencies>
     <dependency>
-      <artifactId>behavioral-targeting-api</artifactId>
+      <artifactId>hst-behavioral-api</artifactId>
       <groupId>org.onehippo.cms7.hst</groupId>
       <version>${project.version}</version>
       <scope>provided</scope>

@@ -19,11 +19,12 @@
   
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>behavioral-targeting</artifactId>
+    <artifactId>behavioral</artifactId>
     <version>2.23.03-SNAPSHOT</version>
   </parent>
 
-  <artifactId>behavioral-targeting-repository</artifactId>
-  <name>Behavioral Targeting Repository</name>
-
+  <name>Hippo Site Toolkit Behavioral Targeting Repository</name>
+  <description>Hippo Site Toolkit Behavioral Targeting Repository</description>
+  <artifactId>hst-behavioral-repository</artifactId>
+  
 </project>

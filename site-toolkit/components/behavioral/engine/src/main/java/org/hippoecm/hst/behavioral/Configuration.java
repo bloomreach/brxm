@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral;
+package org.hippoecm.hst.behavioral;
 
 
 import java.lang.reflect.Constructor;
@@ -30,9 +30,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.hst.behavioral.BehavioralDataProvider;
-import org.onehippo.hst.behavioral.BehavioralNodeTypes;
-import org.onehippo.hst.behavioral.providers.AbstractDataProvider;
+import org.hippoecm.hst.behavioral.BehavioralDataProvider;
+import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
+import org.hippoecm.hst.behavioral.providers.AbstractDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

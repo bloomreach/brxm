@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral;
+package org.hippoecm.hst.behavioral;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +28,11 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.onehippo.hst.behavioral.BehavioralData;
-import org.onehippo.hst.behavioral.BehavioralDataProvider;
-import org.onehippo.hst.behavioral.BehavioralDataStore;
-import org.onehippo.hst.behavioral.BehavioralProfile;
-import org.onehippo.hst.behavioral.BehavioralService;
+import org.hippoecm.hst.behavioral.BehavioralData;
+import org.hippoecm.hst.behavioral.BehavioralDataProvider;
+import org.hippoecm.hst.behavioral.BehavioralDataStore;
+import org.hippoecm.hst.behavioral.BehavioralProfile;
+import org.hippoecm.hst.behavioral.BehavioralService;
 
 public class BehavioralServiceImpl implements BehavioralService {
 

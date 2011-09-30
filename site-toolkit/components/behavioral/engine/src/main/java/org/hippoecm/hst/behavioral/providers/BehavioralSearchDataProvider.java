@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.providers;
+package org.hippoecm.hst.behavioral.providers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.onehippo.hst.behavioral.BehavioralNodeTypes;
+import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
 
 
 public class BehavioralSearchDataProvider extends AbstractDataProvider {

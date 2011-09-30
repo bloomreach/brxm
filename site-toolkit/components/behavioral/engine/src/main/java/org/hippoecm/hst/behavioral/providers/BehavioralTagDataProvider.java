@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.providers;
+package org.hippoecm.hst.behavioral.providers;
 
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.hst.util.PathUtils;
-import org.onehippo.hst.behavioral.BehavioralNodeTypes;
-import org.onehippo.hst.behavioral.util.AnnotatedContentBeanClassesScanner;
+import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
+import org.hippoecm.hst.behavioral.util.AnnotatedContentBeanClassesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

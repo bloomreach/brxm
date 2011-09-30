@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.providers;
+package org.hippoecm.hst.behavioral.providers;
 
 import java.util.List;
 

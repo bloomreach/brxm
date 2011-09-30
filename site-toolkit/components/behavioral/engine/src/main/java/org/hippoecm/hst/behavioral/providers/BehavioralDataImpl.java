@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.providers;
+package org.hippoecm.hst.behavioral.providers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.onehippo.hst.behavioral.BehavioralData;
+import org.hippoecm.hst.behavioral.BehavioralData;
 
 
 class BehavioralDataImpl implements BehavioralData {

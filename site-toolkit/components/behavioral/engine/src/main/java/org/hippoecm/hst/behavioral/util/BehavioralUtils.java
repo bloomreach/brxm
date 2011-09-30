@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.util;
+package org.hippoecm.hst.behavioral.util;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.site.HstServices;
-import org.onehippo.hst.behavioral.BehavioralProfile;
-import org.onehippo.hst.behavioral.BehavioralService;
+import org.hippoecm.hst.behavioral.BehavioralProfile;
+import org.hippoecm.hst.behavioral.BehavioralService;
 
 
 public class BehavioralUtils {

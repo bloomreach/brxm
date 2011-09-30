@@ -23,8 +23,9 @@
     <version>2.23.03-SNAPSHOT</version>
   </parent>
 
-  <name>Behavioral Targeting</name>
-  <artifactId>behavioral-targeting</artifactId>
+  <name>Hippo Site Toolkit Behavioral Targeting</name>
+  <description>Hippo Site Toolkit Behavioral Targeting</description>
+  <artifactId>behavioral</artifactId>
   <packaging>pom</packaging>
   
   <modules>

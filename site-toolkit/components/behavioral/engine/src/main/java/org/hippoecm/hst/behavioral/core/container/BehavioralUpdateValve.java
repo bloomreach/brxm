@@ -13,16 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.hst.behavioral.core.container;
+package org.hippoecm.hst.behavioral.core.container;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.behavioral.BehavioralService;
+import org.hippoecm.hst.behavioral.util.BehavioralUtils;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
-import org.onehippo.hst.behavioral.BehavioralService;
-import org.onehippo.hst.behavioral.util.BehavioralUtils;
 
 
 public class BehavioralUpdateValve implements Valve {
