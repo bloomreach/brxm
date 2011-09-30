@@ -87,7 +87,7 @@ public class AggregationValve extends AbstractValve {
                 // make hstRequest and hstResponse for each component window.
                 // note that hstResponse is hierarchically created.
                 createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, parentRequest, parentResponse,
-                        requestMap, responseMap, topParentResponse, rootWindow != rootRenderingWindow );
+                        requestMap, responseMap, topParentResponse, rootWindow == rootRenderingWindow );
                 
                 // to avoid recursive invocation from now, just make a list by hierarchical order.
                 List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
@@ -254,23 +254,23 @@ public class AggregationValve extends AbstractValve {
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap,
             HstResponse topComponentHstResponse,
-            boolean isRendererSkipped) {
+            boolean isComponentWindowRendered) {
 
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
         HstResponse response = null;
         HstResponseState responseState = null;
-        if(isRendererSkipped) {
-            // use a noop responseState and noop response
-            responseState = new NoopHstServletResponseState();
-            response = new NoopHstResponseImpl();
-        } else {
+        if(isComponentWindowRendered) {
             responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
                     (HttpServletResponse) servletResponse);
                 response= new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
                     responseState, topComponentHstResponse);
+        } else {
+            // use a noop responseState and noop response
+            responseState = new NoopHstServletResponseState();
+            response = new NoopHstResponseImpl();
         }
         
-        if (topComponentHstResponse == null && !isRendererSkipped) {
+        if (topComponentHstResponse == null && isComponentWindowRendered) {
             topComponentHstResponse = response;
         }
 
@@ -284,14 +284,17 @@ public class AggregationValve extends AbstractValve {
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
                 ServletResponse responseForChild;
-                if(isRendererSkipped) {
-                    responseForChild = servletResponse;
-                } else {
+                if(isComponentWindowRendered) {
                     responseForChild = response;
+                } else {
+                    // as long as the componentWindow does not have its renderer invoked, we keep the 
+                    // servletResponse for the child component window, until we have the first component window
+                    // that is rendered
+                    responseForChild = servletResponse;
                 }
-                boolean isChildRendererSkipped = isRendererSkipped || entry.getValue() == rootRenderingWindow;
+                boolean isChildComponentWindowRendered = isComponentWindowRendered || entry.getValue() == rootRenderingWindow;
                 createHstRequestResponseForWindows(entry.getValue(), rootRenderingWindow, requestContext, servletRequest, responseForChild,
-                        requestMap, responseMap, topComponentHstResponse, isChildRendererSkipped );
+                        requestMap, responseMap, topComponentHstResponse, isChildComponentWindowRendered );
             }
         }
     }
