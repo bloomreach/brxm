@@ -597,23 +597,6 @@
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-        <artifactId>hst-demosuite-cms</artifactId>
-        <version>${hippo.hst.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-        <artifactId>hst-demosuite-content</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.demosuite</groupId>
-        <artifactId>hst-demosuite-site</artifactId>
-        <version>${hippo.hst.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-client-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
@@ -666,6 +649,21 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
         <artifactId>hst-addon-unittestcontents</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>behavioral-targeting-api</artifactId>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>behavioral-targeting-repository</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>behavioral-targeting-engine</artifactId>
+        <groupId>org.onehippo.cms7.hst</groupId>
         <version>${hippo.hst.version}</version>
       </dependency>
 
