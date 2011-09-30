@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="behavioral-configuration" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>behavioral:configuration</sv:value>
+  </sv:property>
+  <sv:node sv:name="behavioral:dimensions">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>behavioral:dimensions</sv:value>
+    </sv:property>
+    <sv:node sv:name="interests">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:dimension</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>interests</sv:value>
+      </sv:property>
+      <sv:node sv:name="cars">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>cars</sv:value>
+        </sv:property>
+        <sv:node sv:name="cartags">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>tagDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>opel</sv:value>
+            <sv:value>renault</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>1</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="carreferers">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>domainRefererDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>www.carsrus.com</sv:value>
+            <sv:value>www.chrysler.com</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="bikes">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>bikes</sv:value>
+        </sv:property>
+        <sv:node sv:name="bicyclesearchterms">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>giant</sv:value>
+            <sv:value>shimano</sv:value>
+            <sv:value>bicycle</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="bicycletags">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>tagDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>giant</sv:value>
+            <sv:value>shimano</sv:value>
+            <sv:value>bicycle</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>1</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="bicyclereferers">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>domainRefererDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>www.vakantiefietser.nl</sv:value>
+            <sv:value>www.tourforlife.nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="age">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:dimension</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>age</sv:value>
+      </sv:property>
+      <sv:node sv:name="elderly">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>elderly</sv:value>
+        </sv:property>
+        <sv:node sv:name="oldvisitorsearchterms">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>wheelchair</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="youth">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>youth</sv:value>
+        </sv:property>
+        <sv:node sv:name="youngvisitorsearchterms">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>skateboard</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="contact">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:dimension</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>contact</sv:value>
+      </sv:property>
+      <sv:node sv:name="newvisitor">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>newvisitor</sv:value>
+        </sv:property>
+        <sv:node sv:name="newvisitortags">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>tagDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>whoweare</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>1</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="interestedvisitor">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>interestedvisitor</sv:value>
+        </sv:property>
+        <sv:node sv:name="interestedvisitortags">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>tagDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>about-us</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>1</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="interestedvisitorsearchterms">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>about-us</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:weight" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="behavioral:providers">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>behavioral:providers</sv:value>
+    </sv:property>
+    <sv:node sv:name="tagDataProvider">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:className" sv:type="String">
+        <sv:value>org.onehippo.hst.behavioral.providers.BehavioralTagDataProvider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Tag data provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:termsProperty" sv:type="String">
+        <sv:value>demosite:product</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="searchDataProvider">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:className" sv:type="String">
+        <sv:value>org.onehippo.hst.behavioral.providers.BehavioralSearchDataProvider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Search data provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:queryParameter" sv:type="String">
+        <sv:value>query</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="domainRefererDataProvider">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:className" sv:type="String">
+        <sv:value>org.onehippo.hst.behavioral.providers.DomainRefererDataProvider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Referer data provider</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="searchEngineDataProvider">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:className" sv:type="String">
+        <sv:value>org.onehippo.hst.behavioral.providers.SearchEngineDataProvider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Search engine data provider</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="behavioral:personas">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>behavioral:personas</sv:value>
+    </sv:property>
+    <sv:node sv:name="driver">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:persona</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>driver</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
+        <sv:value>interests:cars</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cyclist">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:persona</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>cyclist</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
+        <sv:value>interests:bikes</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="oldinterestedvisitor">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:persona</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>oldinterestedvisitor</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
+        <sv:value>age:elderly</sv:value>
+        <sv:value>contact:interestedvisitor</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

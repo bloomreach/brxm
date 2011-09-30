@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2011 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-3.0.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+     
+  <bean id="org.onehippo.hst.behavioral.BehavioralService" class="org.onehippo.hst.behavioral.BehavioralServiceImpl">
+      <property name="repository" ref="javax.jcr.Repository" />
+      <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+      <property name="configNodePath" value="/behavioral:configuration"/>
+      <property name="behavioralDataStore" ref="org.onehippo.hst.behavioral.BehavioralDataStore" />
+  </bean>
+  
+  <bean id="org.onehippo.hst.behavioral.BehavioralDataStore" class="org.onehippo.hst.behavioral.BehavioralDataHttpSessionStore">
+  </bean>
+  
+  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
+    <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
+  </bean>
+  
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject">
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="org.hippoecm.hst.core.container.Pipelines" />
+        <property name="targetMethod" value="getPipeline"/>
+        <property name="arguments">
+            <value>DefaultSitePipeline</value>
+        </property>
+      </bean>
+    </property>
+    <property name="targetMethod" value="addInitializationValve"/>
+    <property name="arguments">
+        <bean class="org.onehippo.hst.behavioral.core.container.BehavioralUpdateValve"/>
+    </property>
+ </bean>
+ 
+  <!-- Inject the Behavioral configuration invalidation listener to the EventListenersContaine -->
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+      <property name="targetMethod" value="addEventListenerItem"/>
+      <property name="arguments">
+          <!-- Behavioral configuration invalidation listener -->
+          <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+            <property name="nodeAddedEnabled" value="true" />
+            <property name="nodeRemovedEnabled" value="true" />
+            <property name="propertyAddedEnabled" value="true" />
+            <property name="propertyChangedEnabled" value="true" />
+            <property name="propertyRemovedEnabled" value="true" />
+            <property name="absolutePath" value="/behavioral:configuration" />
+            <property name="deep" value="true" />
+            <property name="uuids">
+              <null />
+            </property>
+            <property name="noLocal" value="false" />
+            <property name="eventListener">
+              <bean class="org.onehippo.hst.behavioral.BehavioralConfigurationEventListener">
+                <property name="behavioralService" ref="org.onehippo.hst.behavioral.BehavioralService" />
+              </bean>
+            </property>
+          </bean>
+      </property>
+  </bean>
+
+  <!-- After adding an EventListenerItem we need to invoke start() again to trigger this new listener to be added -->
+   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+      <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+      <property name="targetMethod" value="start"/>
+   </bean>
+</beans>
+

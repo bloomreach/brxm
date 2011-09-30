@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2011 Hippo
+-->
+<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:templates</sv:value>
+  </sv:property>
+  <sv:node sv:name="behavioral.profile.ftl">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:template</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>79704b52-b5a3-4ea0-9183-b83e9241c6dc</sv:value>
+  </sv:property>
+ <sv:property sv:name="hst:script" sv:type="String">
+    <sv:value>&lt;div&gt; &lt;b&gt;profile&lt;b/&gt;
+&lt;ul&gt;
+  &lt;#list profile.dimensions as dim&gt; 
+    &lt;li&gt;
+        ${dim}
+         &lt;ul&gt;
+          &lt;#list profile.segmentScores[dim] as seg&gt; 
+            &lt;li&gt;
+                ${seg.segmentName} : ${seg.score}
+            &lt;/li&gt;
+&lt;/#list&gt; 
+        &lt;/ul&gt; 
+    &lt;/li&gt;
+  &lt;/#list&gt; 
+&lt;/ul&gt; 
+&lt;/div&gt;</sv:value>
+  </sv:property>
+</sv:node>
+</sv:node>
