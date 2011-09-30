@@ -33,9 +33,13 @@ import org.hippoecm.hst.behavioral.BehavioralDataProvider;
 import org.hippoecm.hst.behavioral.BehavioralDataStore;
 import org.hippoecm.hst.behavioral.BehavioralProfile;
 import org.hippoecm.hst.behavioral.BehavioralService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BehavioralServiceImpl implements BehavioralService {
 
+	private static Logger log = LoggerFactory.getLogger(BehavioralServiceImpl.class);
+	
     private static final String BEHAVIORAL_PROFILE_ATTR =  BehavioralService.class.getName()+".profile";
     private static final String BEHAVIORAL_DATA_ATTR =  BehavioralService.class.getName()+".data";
     private static final String CONFIGURATION_ATTR =  BehavioralService.class.getName()+".config";
@@ -115,37 +119,37 @@ public class BehavioralServiceImpl implements BehavioralService {
     
     private Configuration getConfiguration(HttpServletRequest request) {
         if(request.getAttribute(CONFIGURATION_ATTR) != null) {
-            // if there is a Configuration on the request, we use this configuration as for a single request, the Configuration should be the same 
-            // instance, even if during the request the Configuration is invalidated by invalidate()
+            // if there is a configuration on the request, we use this configuration 
+        	// because for a single request the configuration should be the same instance, 
+        	// even if during the request the configuration is invalidated by invalidate()
             return (Configuration)request.getAttribute(CONFIGURATION_ATTR);
         }
         Session session = null;
         Configuration config = configuration;
-        if(config != null) {
-            return config;
-        }
-        try {
-            synchronized (this) {
-                try {
-                    session = repository.login(credentials);
-                    config = buildConfiguration(session);
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
+        if (config == null) {
+            try {
+                synchronized (this) {
+                    try {
+                        session = repository.login(credentials);
+                        config = buildConfiguration(session);
+                    } catch (RepositoryException e) {
+                    	log.error("Failed to build behavioral targeting configuration", e);
+                    }
+                    configuration = config;
                 }
-                configuration = config;
             }
-        }
-        finally {
-            if (session != null) {
-                synchronized(this) {
-                    if (session != null) {
-                        session.logout();
-                        session = null;
+            finally {
+                if (session != null) {
+                    synchronized(this) {
+                        if (session != null) {
+                            session.logout();
+                            session = null;
+                        }
                     }
                 }
-            }
+            }        	
         }
-        // return config and not configuration as due to invalidate() configuration can always be set to null.
+        // return config and not configuration because invalidate() can always set configuration to null.
         request.setAttribute(CONFIGURATION_ATTR, config);
         return config;
     }
