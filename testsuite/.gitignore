@@ -10,6 +10,7 @@ content/.project
 content/.settings
 content/hst-demosuite-content.iml
 content/target
+/derby.log
 site/.classpath
 site/.project
 site/.settings
@@ -17,4 +18,6 @@ site/bin
 site/build.properties
 site/hst-demosuite-site.iml
 site/target
+/storage
 /target
+/velocity.log
