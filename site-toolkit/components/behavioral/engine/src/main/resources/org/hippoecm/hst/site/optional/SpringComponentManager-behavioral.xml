@@ -25,14 +25,14 @@
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
      
-  <bean id="org.onehippo.hst.behavioral.BehavioralService" class="org.onehippo.hst.behavioral.BehavioralServiceImpl">
+  <bean id="org.hippoecm.hst.behavioral.BehavioralService" class="org.hippoecm.hst.behavioral.BehavioralServiceImpl">
       <property name="repository" ref="javax.jcr.Repository" />
       <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
       <property name="configNodePath" value="/behavioral:configuration"/>
-      <property name="behavioralDataStore" ref="org.onehippo.hst.behavioral.BehavioralDataStore" />
+      <property name="behavioralDataStore" ref="org.hippoecm.hst.behavioral.BehavioralDataStore" />
   </bean>
   
-  <bean id="org.onehippo.hst.behavioral.BehavioralDataStore" class="org.onehippo.hst.behavioral.BehavioralDataHttpSessionStore">
+  <bean id="org.hippoecm.hst.behavioral.BehavioralDataStore" class="org.hippoecm.hst.behavioral.BehavioralDataHttpSessionStore">
   </bean>
   
   <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
