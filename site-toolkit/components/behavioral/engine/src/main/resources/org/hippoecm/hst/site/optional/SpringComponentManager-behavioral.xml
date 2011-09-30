@@ -51,7 +51,7 @@
     </property>
     <property name="targetMethod" value="addInitializationValve"/>
     <property name="arguments">
-        <bean class="org.onehippo.hst.behavioral.core.container.BehavioralUpdateValve"/>
+        <bean class="org.hippoecm.hst.behavioral.core.container.BehavioralUpdateValve"/>
     </property>
  </bean>
  
@@ -74,8 +74,8 @@
             </property>
             <property name="noLocal" value="false" />
             <property name="eventListener">
-              <bean class="org.onehippo.hst.behavioral.BehavioralConfigurationEventListener">
-                <property name="behavioralService" ref="org.onehippo.hst.behavioral.BehavioralService" />
+              <bean class="org.hippoecm.hst.behavioral.BehavioralConfigurationEventListener">
+                <property name="behavioralService" ref="org.hippoecm.hst.behavioral.BehavioralService" />
               </bean>
             </property>
           </bean>
