@@ -416,7 +416,7 @@ components/behavioral/engine/src/main/java/org/onehippo/hst/behavioral/providers
 components/behavioral/engine/src/main/java/org/onehippo/hst/behavioral/providers/SearchEngineDataProvider.java -text
 components/behavioral/engine/src/main/java/org/onehippo/hst/behavioral/util/AnnotatedContentBeanClassesScanner.java -text
 components/behavioral/engine/src/main/java/org/onehippo/hst/behavioral/util/BehavioralUtils.java -text
-components/behavioral/engine/src/main/resources/org/onehippo/hst/site/optional/SpringComponentManager-behavioral.xml -text
+components/behavioral/engine/src/main/resources/org/hippoecm/hst/site/optional/SpringComponentManager-behavioral.xml -text
 components/behavioral/engine/src/test/java/org/onehippo/hst/behavioral/BehavioralProfileCalculatorTest.java -text
 components/behavioral/engine/src/test/resources/behavioral-configuration.xml -text
 components/behavioral/engine/src/test/resources/hippoecm-extension.xml -text
