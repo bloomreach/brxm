@@ -104,16 +104,19 @@ public class BehavioralProfileCalculator {
         Map<String, BehavioralPersonaScore> personaScores = new HashMap<String, BehavioralPersonaScore>();
         Double totalScore = 0.0;
         for (Persona persona : configuration.getPersonas().values()) {
+            log.debug("Calculating absolute score for persona " + persona.getId());
             BehavioralPersonaScore personaScore = personaScores.get(persona.getId());
             if (personaScore == null) {
                 personaScore = new BehavioralPersonaScoreImpl(persona.getId());
                 personaScores.put(persona.getId(), personaScore);
             }
             for (Segment segment : persona.getSegments()) {
+                log.debug("Processing segment " + segment.getId());
                 Map<String, BehavioralSegmentScore> segmentNameScoreMap = dimensionSegmentScoreMap.get(segment.getDimension().getId());
                 if (segmentNameScoreMap != null) {
                     BehavioralSegmentScore segmentScore = segmentNameScoreMap.get(segment.getId());
                     if (segmentScore != null) {
+                        log.debug("Found score: " + segmentScore.getScore());
                         ((BehavioralPersonaScoreImpl) personaScore).addAbsoluteScore(segmentScore.getScore());
                         continue;
                     }

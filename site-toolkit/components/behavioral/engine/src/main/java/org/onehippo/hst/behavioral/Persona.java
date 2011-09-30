@@ -43,18 +43,17 @@ public class Persona {
         
         List<Segment> segments = new ArrayList<Segment>();
         for (Value segmentValue : jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_PERSONA_PROPERTY_SEGMENTS).getValues()) {
-            String segmentString = segmentValue.getString();
-            int indexOfColon = segmentString.indexOf(':');
-            String dimensionName = segmentString.substring(0, indexOfColon);
-            String segmentName = segmentString.substring(indexOfColon+1);
-            Dimension dimension = configuration.getDimensions().get(dimensionName);
+            String segmentId = segmentValue.getString();
+            int indexOfColon = segmentId.indexOf(':');
+            String dimensionId = segmentId.substring(0, indexOfColon);
+            Dimension dimension = configuration.getDimensions().get(dimensionId);
             if (dimension == null) {
-                log.warn("No such segment: " + segmentString + ". Configuration of Persona " + getName() + " is broken.");
+                log.warn("No such segment: " + segmentId + ". Configuration of Persona " + getName() + " is broken.");
                 continue;
             }
-            Segment segment = dimension.getSegments().get(segmentName);
+            Segment segment = dimension.getSegments().get(segmentId);
             if (segment == null) {
-                log.warn("No such segment: " + segmentString + ". Configuration of Persona " + getName() + " is broken.");
+                log.warn("No such segment: " + segmentId + ". Configuration of Persona " + getName() + " is broken.");
                 continue;
             }
             segments.add(segment);

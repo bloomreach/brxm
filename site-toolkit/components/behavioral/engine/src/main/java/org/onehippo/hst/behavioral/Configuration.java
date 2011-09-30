@@ -87,7 +87,7 @@ public class Configuration {
                 Node dimensionNode = dimensionIter.nextNode();
                 try {
                     Dimension dimension = new Dimension(dimensionNode);
-                    dimensions.put(dimension.getName(), dimension);
+                    dimensions.put(dimension.getId(), dimension);
                 } catch (RepositoryException e) {
                     log.error("Unable to create dimension", e);
                 } catch (IllegalArgumentException e) {

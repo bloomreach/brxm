@@ -43,19 +43,19 @@ public class Dimension {
         this.name = jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_GENERAL_PROPERTY_NAME).getString();
         
         Map<String, Segment> segments = new HashMap<String, Segment>();
-
         NodeIterator segmentIter = jcrNode.getNodes();
         while (segmentIter.hasNext()) {
             Node segmentNode = segmentIter.nextNode();
             try {
                 Segment segment = new Segment(segmentNode, this);
-                segments.put(segment.getName(), segment);
+                segments.put(segment.getId(), segment);
             } catch (RepositoryException e) {
                 log.error("Unable to create segment for dimension " + name, e);
             } catch (IllegalArgumentException e) {
                 log.error("Unable to create segment for dimension " + name, e);
             }
         }
+        
         this.segments = Collections.unmodifiableMap(segments);
     }
     

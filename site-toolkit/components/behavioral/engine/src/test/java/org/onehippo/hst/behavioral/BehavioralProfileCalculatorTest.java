@@ -33,7 +33,7 @@ public class BehavioralProfileCalculatorTest extends TestCase {
     
     @Test
     public void testPersonaScores() throws RepositoryException {
-        Node configurationNode = session.getRootNode().getNode("behavioral-configuration");
+        Node configurationNode = session.getRootNode().getNode("behavioral:configuration");
         Configuration configuration = new Configuration(configurationNode);
         BehavioralProfileCalculator calculator = new BehavioralProfileCalculator(configuration);
         
@@ -46,15 +46,13 @@ public class BehavioralProfileCalculatorTest extends TestCase {
          * rules that match document tags are configured to have a weight of 1
          * tagDataProvider is configured to have a weight of 1
          * 
-         * the user visited a page that was marked with the term renault,
-         * two pages that were marked giant, and one that was marked about-us
-         * resulting in the segment interests:cars to get an absolute score of 1 (freq) * 1 (rule weight) * 1 (provider weight),
-         * the segment interests:bikes to get an absolute score of 2 * 1 * 1,
-         * and the segment contact:interestedvisitor to get an absolute score of 1 * 1 * 1
+         * the user visited a page that was marked with the term car
+         * and two pages that were marked bicycle
+         * resulting in the segment interests:cars to get an absolute score of 1 (freq) * 1 (rule weight) * 1 (provider weight)
+         * and the segment interests:bikes to get an absolute score of 2 * 1 * 1
          */
-        termFreq.put("renault", new Integer(1));
-        termFreq.put("giant", new Integer(2));
-        termFreq.put("about-us", new Integer(1));
+        termFreq.put("car", new Integer(1));
+        termFreq.put("bicycle", new Integer(2));
         providerId = "tagDataProvider";
         
         behavioralDataList.add(new BehavioralTestData(termFreq, providerId));
@@ -63,15 +61,15 @@ public class BehavioralProfileCalculatorTest extends TestCase {
          * rules that match search terms are configured to have a weight of 2
          * searchDataProvider is configured to have a weight of 1
          * 
-         * the user searched the site for the terms bicycle, wheelchair, and skateboard
+         * the user searched the site for the terms bicycles, wheelchair, and skateboard
          * resulting in the absolute score of the segment interests:bikes to increase by 1 * 2 * 1,
          * the segment age:old to get an absolute score of 1 * 2 * 1, and the segment age:young
-         * to get an absolute score of 1 * 2 * 1
+         * to get an absolute score of 2 * 2 * 1
          */
         termFreq = new HashMap<String, Integer>();
-        termFreq.put("bicycle", new Integer(1));
+        termFreq.put("bicycles", new Integer(1));
         termFreq.put("wheelchair", new Integer(1));
-        termFreq.put("skateboard", new Integer(1));
+        termFreq.put("skateboard", new Integer(2));
         providerId = "searchDataProvider";
         
         behavioralDataList.add(new BehavioralTestData(termFreq, providerId));
@@ -92,26 +90,23 @@ public class BehavioralProfileCalculatorTest extends TestCase {
          * absolute score of 1 and 4 respectively, resulting in the relative scores of these
          * segments within that dimension to be 20% and 80%.
          * 
-         * Within the dimension age we have the two segments both scoring an absolute score
-         * of 1, resulting in both to have a relative score of 50% in that dimension
+         * Within the dimension age we have the two segments old and young scoring an
+         * absolute score of 2 and 4 respectively, resulting in the relative scores of these
+         * segments within that dimention to be 33% and 66 %
          * 
-         * Within the dimension contact (segments newvisitor and interestedvisitor) we have
-         * a score only for interested visitor (absolute score of 1 because the about-us page
-         * was viewed) but no score for the other segment which results in the segment interestedvisitor
-         * to have a relative score of 100% in that dimension
-         * 
-         * What this means for the persona scores is that the persona driver gets 0.2 points, the persona
-         * cyclist 0.8 points and the persona oldinterestedvisitor 0.5 * 1.0 points. normalizing these
-         * absolute scores given the totalscore of 0.2 + 0.8 + 0.5 = 1.5 we get that the persona driver scores
-         * 0.2 / 1.5 = 1.33333etc, the persona cyclist scores 0.8 / 1.5 = 0.533333etc, 
-         * and the persona oldinterestedvisitor scores 0.5 / 1.5 = 0.3333333etc
+         * What this means for the persona scores is that the persona youngcyclist gets 0.66 * 0.80 = 0.528, 
+         * the persona oldcyclist 0.33 * 0.8 = 0.264 points and the persona olddriver 0.33 * 0.2 = 0.066 points. 
+         * normalizing these absolute scores given the totalscore of 0.528 + 0.264 + 0.066 = 0.858
+         * we get that the persona youngcyclist scores 0.528 / 0.858 %, 
+         * the persona oldcyclist scores 0.264 / 0.858 %, 
+         * and the persona olddriver scores 0.066 / 0.858 % 
          */
         BehavioralProfile profile = calculator.calculate(behavioralDataList);
         
         assertNotNull(profile.getPrincipalPersonaId());
-        assertEquals(profile.getPrincipalPersonaId(), "cyclist");
-        assertEquals(profile.getPersonaScores().size(), 3);
-        assertEquals(profile.getPrincipalPersonaScore().getScore().doubleValue(), 0.8 / 1.5, 0.000001);
+        assertEquals("youngcyclist", profile.getPrincipalPersonaId());
+        assertEquals(3, profile.getPersonaScores().size());
+        assertEquals(0.528 / 0.858, profile.getPrincipalPersonaScore().getScore().doubleValue(), 0.001);
         
     }
 
