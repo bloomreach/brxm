@@ -62,7 +62,7 @@ Hippo.ChannelManager.TemplateComposer.BaseGridPanel = Ext.extend(Ext.grid.GridPa
                             grid.getSelectionModel().getSelected().id == record.id;
 
                     var menu = new Ext.menu.Menu({
-                        items: this.menuProvider ? this.menuProvider._getMenuActions(record, selected) : this.newEmptyContextMenu()
+                        items: this.menuProvider ? this.menuProvider.getMenuActions(record, selected) : this.newEmptyContextMenu()
                     });
                     menu.showAt(e.getXY());
                     e.preventDefault();

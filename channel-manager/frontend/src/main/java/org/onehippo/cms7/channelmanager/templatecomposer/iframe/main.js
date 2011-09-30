@@ -70,7 +70,6 @@
 
     onhostmessage(function(msg) {
         Main.publish('initialize', msg.data);
-        sendMessage({preview: msg.data.preview}, "afterinit");
     }, this, false, 'init');
 
     Hippo.ChannelManager.TemplateComposer.IFrame.Main = Main;

@@ -18,6 +18,8 @@ public class PageEditorBundle {
 
     public static final String PAGE_MODEL_STORE = "PageModelStore.js";
 
+    public static final String PAGE_CONTEXT = "PageContext.js";
+
     public static final String PAGE_CONTAINER = "PageContainer.js";
 
     public static final String PROPERTIES_PANEL = "PropertiesPanel.js";

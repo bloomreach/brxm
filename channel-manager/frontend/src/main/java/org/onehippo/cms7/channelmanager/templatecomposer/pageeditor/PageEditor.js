@@ -25,26 +25,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
 
-        this.creatingPreviewHstConfig = false;
-        this.overlayBuild = false;
-
         this.initUI(config);
 
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.constructor.call(this, config);
 
         this.relayEvents(this.pageContainer, [
-            'beforeMountIdChange',
-            'afterBuildOverlay',
+            'mountChanged',
             'beforeIFrameDOMReady',
-            'afterIFrameDOMReady',
-            'beforeRequestHstMetaData',
-            'beforeHstMetaDataResponse',
-            'afterHstMetaDataResponse',
             'iFrameInitialized',
-            'hasPreviewHstConfigChanged',
             'iFrameException',
-            'toolkitLoaded',
-            'pageModelStoreLoaded',
             'componentRemoved',
             'pageClick'
         ]);
@@ -77,7 +66,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             iconCls: 'title-button',
                             id: 'pagePreviewButton',
                             toggleGroup : 'composerMode',
-                            pressed: config.previewMode,
                             allowDepress: false,
                             width: 150,
                             disabled: true
@@ -88,7 +76,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             id: 'pageComposerButton',
                             enableToggle: true,
                             toggleGroup : 'composerMode',
-                            pressed: !config.previewMode,
                             allowDepress: false,
                             width: 150,
                             disabled: true,
@@ -158,6 +145,50 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     },
 
+    enableUI: function() {
+        Hippo.Msg.hide();
+
+        if (!this.pageContainer.previewMode) {
+            var context = this.pageContainer.pageContext;
+            if (!this.mainWindow) {
+                this.mainWindow = this.createMainWindow(context.ids.mountId);
+            }
+
+            var toolkitGrid = Ext.getCmp('ToolkitGrid');
+            toolkitGrid.reconfigure(context.stores.toolkit, toolkitGrid.getColumnModel());
+
+            var pageModelGrid = Ext.getCmp('PageModelGrid');
+            pageModelGrid.reconfigure(context.stores.pageModel, pageModelGrid.getColumnModel());
+
+            this.mainWindow.show();
+        } else {
+            if (this.mainWindow) {
+                this.mainWindow.hide();
+            }
+        }
+
+        var previewButton = Ext.getCmp('pagePreviewButton');
+        previewButton.toggle(this.pageContainer.previewMode, true);
+        previewButton.setDisabled(false);
+
+        var editButton = Ext.getCmp('pageComposerButton');
+        editButton.toggle(!this.pageContainer.previewMode, true);
+        editButton.setDisabled(false);
+
+        var publishButton = Ext.getCmp('publishHstConfig');
+        publishButton.setDisabled(!this.pageContainer.pageContext.hasPreviewHstConfig);
+    },
+
+    disableUI: function() {
+        Ext.getCmp('pagePreviewButton').setDisabled(true);
+        Ext.getCmp('pageComposerButton').setDisabled(true);
+        Ext.getCmp('publishHstConfig').setDisabled(true);
+        if (this.mainWindow) {
+            this.mainWindow.hide();
+        }
+        Hippo.Msg.wait(this.resources['loading-message']);
+    },
+
     initComponent : function() {
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
         // recalculate the ExtJs layout when the YUI layout manager fires a resize event
@@ -172,122 +203,40 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.on('beforeIFrameDOMReady', function() {
             console.log('beforeIFrameDOMReady');
-            this.overlayBuild = false;
-            var hideLoading = function() {
-                Hippo.Msg.hide();
-                Ext.getCmp('pagePreviewButton').setDisabled(false);
-                Ext.getCmp('pageComposerButton').setDisabled(false);
-            };
-            if (this.pageContainer.previewMode) {
-                this.on('beforeIFrameDOMReady', function() {
-                    this.removeListener('beforeIFrameDOMReady', hideLoading, this);
-                }, this, {single: true});
-                this.on('iFrameInitialized', hideLoading, this, {single : true});
-            } else {
-                this.on('beforeIFrameDOMReady', function() {
-                    this.removeListener('afterBuildOverlay', hideLoading, this);
-                }, this, {single: true});
-                this.on('afterBuildOverlay', hideLoading, this, {single : true});
-            }
-            Ext.getCmp('pagePreviewButton').setDisabled(true);
-            Ext.getCmp('pageComposerButton').setDisabled(true);
-            Hippo.Msg.wait(this.resources['loading-message']);
+            this.disableUI();
         }, this);
 
-        this.on('beforeChangeModeTo', function(data) {
-            console.log('beforeChangeModeTo' + JSON.stringify(data));
-            this.creatingPreviewHstConfig = !data.previewMode && !data.hasPreviewHstConfig;
-        }, this);
-
-        this.on('afterBuildOverlay', function() {
-            console.log('afterBuildOverlay');
-            this.overlayBuild = true;
+        this.on('iFrameInitialized', function() {
+            this.enableUI();
         }, this);
 
         this.on('beforeInitComposer', function() {
-            Hippo.Msg.wait(this.resources['loading-message']);
-            this.channelName = null;
-            Ext.getCmp('pagePreviewButton').toggle(true, true);
-            Ext.getCmp('pageComposerButton').toggle(false, true);
-            Ext.getCmp('pagePreviewButton').setDisabled(true);
-            Ext.getCmp('pageComposerButton').setDisabled(true);
-            Ext.getCmp('publishHstConfig').setDisabled(true);
-            if (this.mainWindow) {
-                this.mainWindow.hide();
-            }
-        }, this);
-
-        this.on('afterInitComposer', function() {
-            Ext.getCmp('pagePreviewButton').setDisabled(false);
-            Ext.getCmp('pageComposerButton').setDisabled(false);
-            Hippo.Msg.hide();
+            this.disableUI();
         }, this);
 
         this.on('toggleMode', function(data) {
             console.log('toggleMode '+JSON.stringify(data));
-            this.creatingPreviewHstConfig = false;
-            Ext.getCmp('pagePreviewButton').setDisabled(data.previewMode);
-            Ext.getCmp('pageComposerButton').setDisabled(!data.previewMode);
-            Hippo.Msg.wait(this.resources['loading-message']);
+            this.disableUI();
         }, this);
 
         this.on('modeChanged', function(data) {
             console.log('mode changed');
-            this.creatingPreviewHstConfig = false;
-            if (data.previewMode) {
-                if (this.mainWindow) {
-                    this.mainWindow.hide();
-                }
-            } else {
-                if (this.mainWindow) {
-                    this.mainWindow.show();
-                }
-            }
-            Ext.getCmp('pagePreviewButton').setDisabled(false);
-            Ext.getCmp('pageComposerButton').setDisabled(false);
-            Hippo.Msg.hide();
+            this.enableUI();
         }, this);
 
-        this.on('hasPreviewHstConfigChanged', function(data) {
-            console.log('hasPreviewHstConfigChanged ' + data.hasPreviewHstConfig);
-            Ext.getCmp('publishHstConfig').setDisabled(!data.hasPreviewHstConfig);
+        this.on('mountChanged', function(data) {
+            if (!this.pageContainer.previewMode && !data.hasPreviewHstConfig && this.pageContainer.pageContext.hasPreviewHstConfig != data.hasPreviewHstConfig) {
+                // switching mount when edit is active and no preview available on the new mount
+                Ext.getCmp('pagePreviewButton').toggle(true, true);
+            }
         }, this);
 
         this.on('beforePublishHstConfiguration', function() {
-            Ext.getCmp('publishHstConfig').setDisabled(true);
-            Ext.getCmp('pagePreviewButton').setDisabled(true);
-            Ext.getCmp('pageComposerButton').setDisabled(true);
+            this.disableUI();
         }, this);
 
         this.on('afterPublishHstConfiguration', function() {
-            Ext.getCmp('pagePreviewButton').setDisabled(false);
-            Ext.getCmp('pageComposerButton').setDisabled(false);
-        }, this);
-
-        this.on('toolkitLoaded', function(mountId, toolkit) {
-            if (this.mainWindow) {
-                var grid = Ext.getCmp('ToolkitGrid');
-                grid.reconfigure(toolkit, grid.getColumnModel());
-            } else {
-                this.mainWindow = this.createMainWindow(mountId);
-            }
-            this.mainWindow.show();
-        }, this);
-
-        this.on('pageModelStoreLoaded', function(store) {
-            if (this.mainWindow) {
-                console.log('reconfigure page model grid');
-                var grid = Ext.getCmp('PageModelGrid');
-                grid.reconfigure(store, grid.getColumnModel());
-                this.mainWindow.show();
-            }
-        }, this);
-
-        this.on('beforeMountIdChange', function(data) {
-            if (!this.preview && !data.hasPreviewHstConfig && this.pageContainer.hasPreviewHstConfig != data.hasPreviewHstConfig) {
-                // switching mount when edit is active and no preview available on the new mount
-                Ext.getCmp('pagePreviewButton').toggle(true);
-            }
+            this.enableUI();
         }, this);
 
         this.on('componentRemoved', function(record) {
@@ -322,10 +271,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var self = this;
         Ext.Ajax.request({
             method: 'POST',
-            url: this.composerRestMountUrl + this.pageContainer.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
+            url: this.composerRestMountUrl + this.pageContainer.pageContext.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
             success: function () {
                 Ext.getCmp('pagePreviewButton').toggle(true);
-                self.on.apply(self, ['afterIFrameDOMReady', function() {
+                self.on.apply(self, ['iFrameInitialized', function() {
                     this.fireEvent('afterPublishHstConfiguration');
                 }, self, {single : true}]);
                 self.pageContainer.refreshIframe.call(self.pageContainer, null);
@@ -342,77 +291,44 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     toggleMode: function () {
         this.fireEvent('toggleMode', {previewMode : this.pageContainer.previewMode});
 
-        var func = function() {
-            // FIXME: changing internal state of container!
-            this.pageContainer.previewMode = !this.pageContainer.previewMode;
-            var toggleModeClosure = function(mountId, pageId, hasPreviewHstConfig) {
-                console.log('hasPreviewHstConfig:' + hasPreviewHstConfig);
-                this.fireEvent('beforeChangeModeTo', {previewMode : this.pageContainer.previewMode, hasPreviewHstConfig : hasPreviewHstConfig});
-                if (this.pageContainer.previewMode) {
-                    var iFrame = Ext.getCmp('Iframe');
-                    if (!this.pageContainer.iframeInitialized) {
-                        this.on('iFrameInitialized', function() {
-                            iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                        }, this, {single: true});
-                    } else {
-                        iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                    }
-                    this.fireEvent('modeChanged', {previewMode : this.pageContainer.previewMode});
-                } else {
-                    if (hasPreviewHstConfig) {
-                        var iFrame = Ext.getCmp('Iframe');
-                        if (!this.pageContainer.iframeInitialized) {
-                            this.on('iFrameInitialized', function() {
-                                iFrame.getFrame().sendMessage({}, ('showoverlay'));
-                            }, this, {single: true});
-                        } else {
-                            iFrame.getFrame().sendMessage({}, ('showoverlay'));
-                        }
+        // FIXME: changing internal state of container!
+        this.pageContainer.previewMode = !this.pageContainer.previewMode;
 
-                        if (this.overlayBuild) {
-                            this.fireEvent('modeChanged', {previewMode : this.pageContainer.previewMode});
-                        } else {
-                            this.on('afterBuildOverlay', function() {
-                                this.fireEvent('modeChanged', {previewMode : this.pageContainer.previewMode});
-                            }, this, { single: true});
-                        }
-                    } else {
-                        // create new preview hst configuration
-                        var self = this;
-                        Ext.Ajax.request({
-                            method: 'POST',
-                            url: this.composerRestMountUrl + mountId + './edit?'+this.ignoreRenderHostParameterName+'=true',
-                            success: function () {
-                                // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                                // the editor for editing with the refresh
-                                self.on('afterBuildOverlay', function() {
-                                    self.fireEvent.apply(self, ['modeChanged', {previewMode : self.pageContainer.previewMode}]);
-                                }, self, { single: true});
-                                self.pageContainer.refreshIframe.call(self.pageContainer, null);
-                            },
-                            failure: function(result) {
-                                var jsonData = Ext.util.JSON.decode(result.responseText);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
-                                    self.pageContainer.initComposer.call(self.pageContainer);
-                                });
-                            }
+        var mountId = this.pageContainer.pageContext.ids.mountId;
+        var hasPreviewHstConfig = this.pageContainer.pageContext.hasPreviewHstConfig;
+
+        console.log('hasPreviewHstConfig:' + hasPreviewHstConfig);
+        if (this.pageContainer.previewMode) {
+            var iFrame = Ext.getCmp('Iframe');
+            iFrame.getFrame().sendMessage({}, 'hideoverlay');
+            this.fireEvent('modeChanged', {previewMode : this.pageContainer.previewMode});
+        } else {
+            if (hasPreviewHstConfig) {
+                var iFrame = Ext.getCmp('Iframe');
+                iFrame.getFrame().sendMessage({}, ('showoverlay'));
+                this.fireEvent('modeChanged', {previewMode : this.pageContainer.previewMode});
+            } else {
+                // create new preview hst configuration
+                var self = this;
+                Ext.Ajax.request({
+                    method: 'POST',
+                    url: this.composerRestMountUrl + mountId + './edit?' + this.ignoreRenderHostParameterName + '=true',
+                    success: function () {
+                        // refresh iframe to get new hst config uuids. previewMode=false will initialize
+                        // the editor for editing with the refresh
+                        self.on('iFrameInitialized', function() {
+                            self.fireEvent.apply(self, ['modeChanged', {previewMode : self.pageContainer.previewMode}]);
+                        }, self, { single: true });
+                        self.pageContainer.refreshIframe.call(self.pageContainer, null);
+                    },
+                    failure: function(result) {
+                        var jsonData = Ext.util.JSON.decode(result.responseText);
+                        Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
+                            self.pageContainer.initComposer.call(self.pageContainer);
                         });
                     }
-                }
-            };
-            if (this.pageContainer.isHstMetaDataLoaded()) {
-                toggleModeClosure.apply(this, [this.pageContainer.ids.mountId, this.pageContainer.ids.pageId, this.pageContainer.hasPreviewHstConfig]);
-            } else {
-                this.on('afterHstMetaDataResponse', function(data) {
-                    toggleModeClosure.apply(this, [data.mountId, data.pageId, data.hasPreviewHstConfig]);
-                }, this, {single : true});
+                });
             }
-        }
-
-        if (this.pageContainer.iframeDOMReady) {
-            func.call(this);
-        } else {
-            this.on('afterIFrameDOMReady', func, this, {single : true});
         }
 
         return true;
@@ -426,12 +342,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             height: 650,
             initRegion: 'right',
             layout: 'border',
-            closable: true,
+            closable: false,
+            minimizable: true,
             constrainHeader: true,
-            closeAction: 'hide',
             bodyStyle: 'background-color: #ffffff',
             renderTo: Ext.getCmp('Iframe').getEl(),
             constrain: true,
+            hidden: true,
             items: [
                 {
                     region: 'north',
@@ -444,12 +361,16 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             flex:2,
                             id: 'ToolkitGrid',
                             title: this.resources['toolkit-grid-title'],
-                            store: this.pageContainer.stores.toolkit,
                             cm: new Ext.grid.ColumnModel({
                                 columns: [
-                                    { header: this.resources['toolkit-grid-column-header-name'], dataIndex: 'name', id:'name', viewConfig :{width: 40}}
-//                                    { header: "Id", dataIndex: 'id', id:'id', viewConfig :{width: 40}},
-//                                    { header: "Path", dataIndex: 'path', id:'path', viewConfig :{width: 120}}
+                                    {
+                                        header: this.resources['toolkit-grid-column-header-name'],
+                                        dataIndex: 'name',
+                                        id:'name',
+                                        viewConfig : {
+                                            width: 40
+                                        }
+                                    }
                                 ],
                                 defaults: {
                                     sortable: true,
@@ -465,7 +386,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             flex: 3,
                             id: 'PageModelGrid',
                             title: this.resources['page-model-grid-title'],
-                            store: this.pageContainer.stores.pageModel,
                             sm: new Ext.grid.RowSelectionModel({
                                 singleSelect: true,
                                 listeners: {

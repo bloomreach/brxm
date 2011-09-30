@@ -26,7 +26,7 @@ Hippo.Future.prototype = {
     when: function(cb) {
         if (!this.completed) {
             this.successHandlers.push(cb);
-        } else {
+        } else if (this.success) {
             cb.call(this, this.value);
         }
         return this;
@@ -35,7 +35,7 @@ Hippo.Future.prototype = {
     otherwise: function(cb) {
         if (!this.completed) {
             this.failureHandlers.push(cb);
-        } else {
+        } else if (!this.success) {
             cb.call(this);
         }
         return this;
@@ -98,8 +98,9 @@ Hippo.Future.join = function() {
             }
         };
         var failureHandler = function() {
+            togo--;
             if (completed) {
-                throw 'future failed after completion';
+                return;
             }
             completed = true;
             onFailure.call(this);

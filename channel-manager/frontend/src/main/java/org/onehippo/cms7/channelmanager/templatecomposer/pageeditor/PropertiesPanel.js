@@ -56,7 +56,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             method: 'POST' ,
             waitMsg: this.resources['properties-panel-submit-form-message'],
             success: function () {
-                Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
+                Hippo.ChannelManager.TemplateComposer.Container.refreshIframe();
             }
         });
     },
@@ -122,7 +122,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                                 Hippo.ChannelManager.TemplateComposer.Instance.on('iFrameInitialized', function() {
                                     Hippo.Msg.hide();
                                 }, this, {single : true});
-                                Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
+                                Hippo.ChannelManager.TemplateComposer.Container.refreshIframe();
                             }
                         });
 
