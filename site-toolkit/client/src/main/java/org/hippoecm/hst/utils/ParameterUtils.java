@@ -110,7 +110,7 @@ public class ParameterUtils {
             if (isSetter(method, args)) {
                 throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
             }
-
+ 
             if (!isGetter(method, args)) {
                 return null;
             }
@@ -126,7 +126,16 @@ public class ParameterUtils {
                 throw new IllegalArgumentException("The parameter name is empty.");
             }
 
-            String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
+            String parameterValue = null; 
+            // TODO make use of a profile here instead of this hard-coded logic.
+            if(request.getSession(false) != null && request.getSession(false).getAttribute("persona") != null) {
+                String parameterPrefix = request.getSession(false).getAttribute("persona") + "|org.hippoecm.hst:";
+                parameterValue = componentConfig.getParameter(parameterPrefix+parameterName, request.getRequestContext().getResolvedSiteMapItem());
+            }
+            if(parameterValue == null) {
+                parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem()); 
+            }
+            
             if (parameterValue == null || "".equals(parameterValue)) {
                 // when the parameter value is null or an empty string we return the default value from the annotation
                 parameterValue = parameterAnnotation.defaultValue();
