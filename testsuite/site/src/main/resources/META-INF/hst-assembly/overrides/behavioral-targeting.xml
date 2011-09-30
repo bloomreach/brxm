@@ -10,6 +10,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-  <import resource="classpath:/org/onehippo/hst/site/optional/SpringComponentManager-behavioral.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/optional/SpringComponentManager-behavioral.xml" />
 
 </beans>

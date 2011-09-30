@@ -65,7 +65,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>behavioral-targeting-repository</artifactId>
+      <artifactId>hst-behavioral-repository</artifactId>
     </dependency>
 
     <dependency>

@@ -130,12 +130,12 @@
     </dependency>
     
     <dependency>
-      <artifactId>behavioral-targeting-api</artifactId>
+      <artifactId>hst-behavioral-api</artifactId>
       <groupId>org.onehippo.cms7.hst</groupId>
     </dependency>
     
     <dependency>
-      <artifactId>behavioral-targeting-engine</artifactId>
+      <artifactId>hst-behavioral-engine</artifactId>
       <groupId>org.onehippo.cms7.hst</groupId>
     </dependency>
 
