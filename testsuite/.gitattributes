@@ -66,6 +66,7 @@ site/src/main/java/org/hippoecm/hst/demo/components/Faceted.java svneol=native#t
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedAddProduct.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedDetail.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedRight.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/Header.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Home.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/HstForm.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/LeftMenu.java svneol=native#text/plain

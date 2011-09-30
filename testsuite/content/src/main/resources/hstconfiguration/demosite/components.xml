@@ -126,6 +126,18 @@
                     <sv:property sv:name="hst:xtype" sv:type="String">
                       <sv:value>HST.Item</sv:value>
                     </sv:property>
+                    <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+                      <sv:value>borderColor</sv:value>
+                      <sv:value>buyer|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>developer|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>member|org.hippoecm.hst:borderColor</sv:value>
+                    </sv:property>
+                    <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+                      <sv:value>#00FF00</sv:value>
+                      <sv:value>#FF0000</sv:value>
+                      <sv:value>#0000FF</sv:value>
+                      <sv:value>#00FFFF</sv:value>
+                    </sv:property>
                 </sv:node>
                 <sv:node sv:name="banner2-table">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">

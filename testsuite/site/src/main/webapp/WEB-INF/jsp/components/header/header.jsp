@@ -43,7 +43,19 @@
     <div id="topnav" class="yui-gc">
       <div class="yui-u first"></div>
       <div class="yui-u">
-        <ul class="menu">        
+        <ul class="menu">
+          <li>
+            <hst:actionURL var="setPersonaAction"/>
+            set persona
+            <form action="${setPersonaAction}" method="post">
+                <select id="persona" name="persona" onchange="this.form.submit()">
+                   <option></option>
+                   <option>buyer</option>
+                   <option>developer</option>
+                   <option>member</option>
+                </select>
+            </form>
+          </li>    
           <li>
             <a title="Contact" href="<hst:link path="/content/contact"/>">Contact</a>
           </li>
