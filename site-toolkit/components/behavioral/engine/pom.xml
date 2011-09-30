@@ -108,7 +108,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <artifactId>behavioral-targeting-repository</artifactId>
+      <artifactId>hst-behavioral-repository</artifactId>
       <groupId>org.onehippo.cms7.hst</groupId>
       <version>${project.version}</version>
       <scope>test</scope>

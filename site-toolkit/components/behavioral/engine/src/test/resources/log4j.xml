@@ -104,7 +104,7 @@
     <appender-ref ref="console"/>
   </category>
   
-  <category additivity="false" name="org.onehippo.hst.behavioral.BehavioralProfileCalculator">
+  <category additivity="false" name="org.hippoecm.hst.behavioral.BehavioralProfileCalculator">
     <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
