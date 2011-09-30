@@ -52,8 +52,7 @@ import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
  * not bound to JcrNodeModels.
  */
 public class ListDataTable<T> extends DataTable<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;
@@ -63,6 +62,7 @@ public class ListDataTable<T> extends DataTable<T> {
     private TableSelectionListener<T> selectionListener;
     private final IDataProvider<T> provider;
     private boolean scrollSelectedIntoView = false;
+    private boolean scrollSelectedTopAlign = false;
 
     public interface TableSelectionListener<T> extends IClusterable {
 
@@ -105,8 +105,9 @@ public class ListDataTable<T> extends DataTable<T> {
         setTableBodyCss("datatable-tbody");
     }
 
-    public void setScrollSelectedIntoView(boolean value) {
-        this.scrollSelectedIntoView = value;
+    public void setScrollSelectedIntoView(boolean enabled, boolean topAlign) {
+        this.scrollSelectedIntoView = enabled;
+        this.scrollSelectedTopAlign = topAlign;
     }
     
     @Override
@@ -227,7 +228,8 @@ public class ListDataTable<T> extends DataTable<T> {
                     if (scrollSelectedIntoView) {
                         AjaxRequestTarget target = AjaxRequestTarget.get();
                         if (target != null) {
-                            target.appendJavascript("document.getElementById('" + item.getMarkupId() + "').scrollIntoView(false);");
+                            target.appendJavascript("document.getElementById('" + item.getMarkupId()
+                                    + "').scrollIntoView(" + scrollSelectedTopAlign + ");");
                         }
                     }
                     return "hippo-list-selected";

@@ -279,7 +279,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     ReorderPanel thisPanel = ReorderPanel.this;
                     dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true);
+                    dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
@@ -297,7 +297,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     ReorderPanel thisPanel = ReorderPanel.this;
                     dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true);
+                    dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
@@ -315,7 +315,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     ReorderPanel thisPanel = ReorderPanel.this;
                     dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true);
+                    dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
@@ -333,7 +333,7 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                     ReorderPanel thisPanel = ReorderPanel.this;
                     dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true);
+                    dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
