@@ -16,7 +16,6 @@
 package org.hippoecm.hst.behavioral;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,20 +93,14 @@ public class BehavioralProfileCalculatorTest extends TestCase {
          * absolute score of 2 and 4 respectively, resulting in the relative scores of these
          * segments within that dimention to be 33% and 66 %
          * 
-         * What this means for the persona scores is that the persona youngcyclist gets 0.66 * 0.80 = 0.528, 
-         * the persona oldcyclist 0.33 * 0.8 = 0.264 points and the persona olddriver 0.33 * 0.2 = 0.066 points. 
-         * normalizing these absolute scores given the totalscore of 0.528 + 0.264 + 0.066 = 0.858
-         * we get that the persona youngcyclist scores 0.528 / 0.858 %, 
-         * the persona oldcyclist scores 0.264 / 0.858 %, 
-         * and the persona olddriver scores 0.066 / 0.858 % 
+         * What this means for the persona scores is that the persona youngcyclist gets a score of 0.666 * 0.80 = 0.533, 
+         * the persona oldcyclist 0.333 * 0.8 = 0.266 and the persona olddriver 0.33 * 0.2 = 0.066. 
          */
         BehavioralProfile profile = calculator.calculate(behavioralDataList);
         
-        assertNotNull(profile.getPrincipalPersonaId());
-        assertEquals("youngcyclist", profile.getPrincipalPersonaId());
-        assertEquals(3, profile.getPersonaScores().size());
-        assertEquals(0.528 / 0.858, profile.getPrincipalPersonaScore().getScore().doubleValue(), 0.001);
-        
+        assertEquals(0.533, profile.getPersonaScore("youngcyclist").getScore() , 0.001);
+        assertEquals(0.266, profile.getPersonaScore("oldcyclist").getScore() , 0.001);
+        assertEquals(0.066, profile.getPersonaScore("olddriver").getScore() , 0.001);
     }
 
     private static class BehavioralTestData implements BehavioralData {

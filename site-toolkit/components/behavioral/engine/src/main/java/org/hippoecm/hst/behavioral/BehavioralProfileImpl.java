@@ -16,8 +16,10 @@
 package org.hippoecm.hst.behavioral;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BehavioralProfileImpl implements BehavioralProfile {
 
@@ -33,23 +35,6 @@ public class BehavioralProfileImpl implements BehavioralProfile {
         Arrays.sort(scoresArray);
         return Arrays.asList(scoresArray);
     }
-
-    @Override
-    public String getPrincipalPersonaId() {
-        BehavioralPersonaScore principalPersonaScore = getPrincipalPersonaScore();
-        if (principalPersonaScore != null) {
-            return principalPersonaScore.getPersonaId();
-        }
-        return null;
-    }
-
-    @Override
-    public BehavioralPersonaScore getPrincipalPersonaScore() {
-        if (personaScores.values().size() > 0) {
-            return getPersonaScores().get(0);
-        }
-        return null;
-    }
     
     @Override
     public String toString() {
@@ -59,6 +44,16 @@ public class BehavioralProfileImpl implements BehavioralProfile {
             sb.append(" persona: " + personaScore.getPersonaId() + ", score: " + personaScore.getScore() + "\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public Set<String> getPersonas() {
+        return Collections.unmodifiableSet(personaScores.keySet());
+    }
+
+    @Override
+    public BehavioralPersonaScore getPersonaScore(String personaId) {
+        return personaScores.get(personaId);
     }
 
 }

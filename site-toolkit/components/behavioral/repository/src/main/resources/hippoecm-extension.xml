@@ -46,7 +46,7 @@
       <sv:value>/hippo:configuration/hippo:initialize/hippo:version</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>behaviora-1_0</sv:value>
+      <sv:value>behavioral-1_0</sv:value>
     </sv:property>
   </sv:node>
   

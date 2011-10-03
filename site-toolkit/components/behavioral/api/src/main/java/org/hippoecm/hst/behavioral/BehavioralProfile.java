@@ -16,6 +16,8 @@
 package org.hippoecm.hst.behavioral;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@link BehavioralProfile} contains the behavioral information extracted from the current user
@@ -32,16 +34,8 @@ public interface BehavioralProfile {
      */
     List<BehavioralPersonaScore> getPersonaScores();
     
-    /**
-     * @return  the <code>persona id</code> this user scores highest for or <code>null</code> if this
-     * information is not available.
-     */
-    String getPrincipalPersonaId();
+    Set<String> getPersonas();
     
-    /**
-     * @return  the highest {@link BehavioralPersonaScore} for this user or <code>null</code> if this
-     * information is not available.
-     */
-    BehavioralPersonaScore getPrincipalPersonaScore();
+    BehavioralPersonaScore getPersonaScore(String personaId);
     
 }

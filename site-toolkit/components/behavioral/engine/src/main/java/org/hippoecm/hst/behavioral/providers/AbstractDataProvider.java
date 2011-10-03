@@ -41,8 +41,8 @@ public abstract class AbstractDataProvider implements BehavioralDataProvider {
     
     private final String id;
     private final String name;
-    private int size = DEFAULT_SIZE;
-    private Long weight = DEFAULT_WEIGHT;
+    protected int size = DEFAULT_SIZE;
+    protected Long weight = DEFAULT_WEIGHT;
     private Set<String> configuredTerms;
 
     public AbstractDataProvider(String id, String name, Node node) throws RepositoryException {

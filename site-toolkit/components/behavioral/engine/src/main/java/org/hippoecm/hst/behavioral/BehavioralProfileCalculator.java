@@ -102,9 +102,8 @@ public class BehavioralProfileCalculator {
         
         // collect the absolute persona scores
         Map<String, BehavioralPersonaScore> personaScores = new HashMap<String, BehavioralPersonaScore>();
-        Double totalScore = 0.0;
         for (Persona persona : configuration.getPersonas().values()) {
-            log.debug("Calculating absolute score for persona " + persona.getId());
+            log.debug("Calculating score for persona " + persona.getId());
             BehavioralPersonaScore personaScore = personaScores.get(persona.getId());
             if (personaScore == null) {
                 personaScore = new BehavioralPersonaScoreImpl(persona.getId());
@@ -116,23 +115,14 @@ public class BehavioralProfileCalculator {
                 if (segmentNameScoreMap != null) {
                     BehavioralSegmentScore segmentScore = segmentNameScoreMap.get(segment.getId());
                     if (segmentScore != null) {
-                        log.debug("Found score: " + segmentScore.getScore());
-                        ((BehavioralPersonaScoreImpl) personaScore).addAbsoluteScore(segmentScore.getScore());
+                        log.debug("Adding score: " + segmentScore.getScore());
+                        ((BehavioralPersonaScoreImpl) personaScore).addScore(segmentScore.getScore());
                         continue;
                     }
                 }
-                ((BehavioralPersonaScoreImpl) personaScore).addAbsoluteScore(0.0);
+                log.debug("Adding score: 0.0");
+                ((BehavioralPersonaScoreImpl) personaScore).addScore(0.0);
             }
-            totalScore += ((BehavioralPersonaScoreImpl) personaScore).getAbsoluteScore();
-        }
-        
-        // calculate the relative persona scores
-        for (BehavioralPersonaScore personaScore : personaScores.values()) {
-            Double relativeScore = 0.0;
-            if (totalScore > 0.0) {
-                relativeScore = ((BehavioralPersonaScoreImpl) personaScore).getAbsoluteScore().doubleValue() / totalScore.doubleValue();
-            }
-            ((BehavioralPersonaScoreImpl) personaScore).setScore(relativeScore);
         }
         
         if (log.isDebugEnabled()) {

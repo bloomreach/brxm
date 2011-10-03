@@ -408,6 +408,7 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Segment.j
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/containeritemcomponents/BehavioralProfileComponent.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/container/BehavioralUpdateValve.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractDataProvider.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralDataImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralRefererDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralSearchDataProvider.java -text

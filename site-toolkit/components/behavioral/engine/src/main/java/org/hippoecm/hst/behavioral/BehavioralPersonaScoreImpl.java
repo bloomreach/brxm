@@ -18,8 +18,7 @@ package org.hippoecm.hst.behavioral;
 public class BehavioralPersonaScoreImpl implements BehavioralPersonaScore, Comparable<BehavioralPersonaScoreImpl> {
 
     private final String personaId;
-    private Double score;
-    private Double absoluteScore = 1.0;
+    private Double score = 1.0;
     
     public BehavioralPersonaScoreImpl(String personaId) {
         this.personaId = personaId;
@@ -35,18 +34,10 @@ public class BehavioralPersonaScoreImpl implements BehavioralPersonaScore, Compa
         return score;
     }
     
-    void setScore(Double score) {
-        this.score = score;
+    void addScore(Double score) {
+        this.score *= score;
     }
     
-    void addAbsoluteScore(Double absoluteScore) {
-        this.absoluteScore *= absoluteScore;
-    }
-    
-    Double getAbsoluteScore() {
-        return this.absoluteScore;
-    }
-
     @Override
     public int compareTo(BehavioralPersonaScoreImpl o) {
         if (getScore() > o.getScore()) {
