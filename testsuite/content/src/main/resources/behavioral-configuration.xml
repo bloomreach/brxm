@@ -173,6 +173,52 @@
         </sv:node>
       </sv:node>
     </sv:node>
+    <sv:node sv:name="authorization">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:dimension</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>authorization</sv:value>
+      </sv:property>
+      <sv:node sv:name="authorized">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>Authorized user</sv:value>
+        </sv:property>
+        <sv:node sv:name="authorized">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>authorizationDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>authorized</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="unauthorized">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:segment</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:name" sv:type="String">
+          <sv:value>Unauthorized user</sv:value>
+        </sv:property>
+        <sv:node sv:name="unauthorized">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>authorizationDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>unauthorized</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="behavioral:providers">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -228,6 +274,17 @@
         <sv:value>Search engine data provider</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="authorizationDataProvider">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:provider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:className" sv:type="String">
+        <sv:value>org.hippoecm.hst.behavioral.providers.AuthorizationDataProvider</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Authorization data provider</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="behavioral:personas">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -267,6 +324,17 @@
       <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
         <sv:value>interests:bicycles</sv:value>
         <sv:value>age:young</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="authorizeduser">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:persona</sv:value>
+      </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Authorized user</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
+        <sv:value>authorization:authorized</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
