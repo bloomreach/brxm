@@ -83,7 +83,7 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                         align: 'middle',
                         id: 'avatar',
                         dataIndex: 'avatarName',
-                        width: config.smallAvatarWidth + 4,
+                        width: config.smallAvatarWidth + 6,
                         renderer: function(value, p, record) {
                             var url = self.avatarUrls.small[value];
                             return url ? String.format('<img width="{0}" src="{1}"/>', self.smallAvatarWidth, url) : '';
