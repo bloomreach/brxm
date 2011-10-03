@@ -35,15 +35,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet for serving resources on the classpath. Adapted from deprecated Spring 2 ResourceServlet.
  */
 public class ResourceServlet extends HttpServlet {
     
-    private static final String LOGGER_CATEGORY_NAME = ResourceServlet.class.getName();
+    private static final long serialVersionUID = 1L;
+
+    private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
     
     private static final Pattern PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
     
@@ -52,8 +54,6 @@ public class ResourceServlet extends HttpServlet {
     private static final String HTTP_EXPIRES_HEADER = "Expires";
     
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
-    
-    private Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
     
     private Set<Pattern> allowedResourcePaths = new HashSet<Pattern>();
     {
@@ -101,15 +101,15 @@ public class ResourceServlet extends HttpServlet {
         
         String resourcePath = request.getPathInfo();
         
-        if (logger.isDebugEnabled()) {
-            logger.debug("Processing request for resource " + resourcePath);
+        if (log.isDebugEnabled()) {
+            log.debug("Processing request for resource " + resourcePath);
         }
         
         URL resource = getResourceURL(resourcePath);
         
         if (resource == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Resource not found: " + resourcePath);
+            if (log.isDebugEnabled()) {
+                log.debug("Resource not found: " + resourcePath);
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -121,8 +121,8 @@ public class ResourceServlet extends HttpServlet {
         long lastModified = conn.getLastModified();
         
         if (ifModifiedSince >= lastModified) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Resource: " + resourcePath + " Not Modified");
+            if (log.isDebugEnabled()) {
+                log.debug("Resource: " + resourcePath + " Not Modified");
             }
             response.setStatus(304);
             return;
@@ -155,9 +155,8 @@ public class ResourceServlet extends HttpServlet {
     
     private URL getResourceURL(String resourcePath) throws MalformedURLException {
         if (!isAllowed(resourcePath)) {
-            Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-            if (logger.isWarnEnabled()) {
-                logger.warn("An attempt to access a protected resource at " + resourcePath + " was disallowed.");
+            if (log.isWarnEnabled()) {
+                log.warn("An attempt to access a protected resource at " + resourcePath + " was disallowed.");
             }
             return null;
         }
@@ -187,8 +186,8 @@ public class ResourceServlet extends HttpServlet {
             jarResourcePath = jarResourcePath.substring(1);
         }
         
-        if (logger.isDebugEnabled()) {
-            logger.debug("Searching classpath for resource: " + jarResourcePath);
+        if (log.isDebugEnabled()) {
+            log.debug("Searching classpath for resource: " + jarResourcePath);
         }
         return getDefaultClassLoader().getResource(jarResourcePath);
     }
@@ -200,8 +199,8 @@ public class ResourceServlet extends HttpServlet {
             String extension = resource.getPath().substring(resource.getPath().lastIndexOf('.'));
             mimeType = defaultMimeTypes.get(extension);
             if (mimeType == null) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("No mime-type mapping for extension: " + extension);
+                if (log.isWarnEnabled()) {
+                    log.warn("No mime-type mapping for extension: " + extension);
                 }
             }
         }
@@ -222,8 +221,8 @@ public class ResourceServlet extends HttpServlet {
             if (matchesCompressedMimeTypes(mimeType)) {
                 String acceptEncoding = request.getHeader("Accept-Encoding");
                 if (acceptEncoding != null && acceptEncoding.indexOf("gzip") != -1) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Enabling GZIP compression for the current response.");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Enabling GZIP compression for the current response.");
                     }
                     return new GZIPResponseStream(response);
                 }
