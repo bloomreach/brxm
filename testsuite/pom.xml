@@ -20,14 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.7.0-sprint-2-alpha</version>
-    <relativePath>hippo-cms7-release-pom.xml</relativePath>
+    <version>7.7.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
-  <version>1.01.00-alpha</version>
+  <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
  <properties>
@@ -250,11 +249,5 @@
 
   </profiles>
 
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-testsuite-1.01.00-alpha</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-testsuite-1.01.00-alpha</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-testsuite-1.01.00-alpha</url>
-  </scm>
 </project>
     
