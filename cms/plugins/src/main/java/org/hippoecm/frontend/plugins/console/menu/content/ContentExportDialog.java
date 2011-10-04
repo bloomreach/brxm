@@ -53,10 +53,8 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
 
     private boolean skipBinary = false;
-    private final IModelReference modelReference;
 
-    public ContentExportDialog(final IModelReference modelReference) {
-        this.modelReference = modelReference;
+    public ContentExportDialog(final IModelReference<Node> modelReference) {
         final JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
         setModel(nodeModel);
 
@@ -76,7 +74,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             protected void onUpdate(AjaxRequestTarget target) {
             }
         };
-        skipBinaries.add(new Label("skip-binaries-text", new Model("Do not include binary properties in export")));
+        skipBinaries.add(new Label("skip-binaries-text", new Model<String>("Do not include binary properties in export")));
         add(skipBinaries);
 
         DownloadExportLink link = new DownloadExportLink("download-link", modelReference, skipBinaryModel);
@@ -84,11 +82,11 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         add(link);
         setFocus(link);
 
-        final MultiLineLabel dump = new MultiLineLabel("dump", "");
+        final Label dump = new Label("dump");
         dump.setOutputMarkupId(true);
         add(dump);
 
-        AjaxLink viewLink = new AjaxLink("view-link", nodeModel) {
+        AjaxLink<String> viewLink = new AjaxLink<String>("view-link") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -104,8 +102,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
                 } catch (Exception e) {
                     export = e.getMessage();
                 }
-                dump.add(new AttributeAppender("class", true, new Model("activated"), " "));
-                dump.setDefaultModel(new Model(export));
+                dump.setDefaultModel(new Model<String>(export));
                 target.addComponent(dump);
             }
         };
@@ -115,7 +112,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         setOkVisible(false);
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         String path;
         try {
@@ -123,7 +120,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return new Model("Export " + path);
+        return new Model<String>("Export " + path);
     }
     
     public boolean isSkipBinary() {
@@ -139,8 +136,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     private String prettyPrint(byte[] bytes) throws Exception {
         Source source = new StreamSource(new ByteArrayInputStream(bytes));
         DOMResult result = new DOMResult();
-        TransformerFactory transformerFactory = TransformerFactory
-        .newInstance();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer identityTransformer = transformerFactory.newTransformer();
         identityTransformer.transform(source, result);
         Document doc = (Document) result.getNode();

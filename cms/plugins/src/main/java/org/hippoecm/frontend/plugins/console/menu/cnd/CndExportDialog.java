@@ -33,7 +33,6 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
@@ -60,10 +59,10 @@ public class CndExportDialog extends AbstractDialog<Void> {
     static LinkedHashSet<NodeType> result;
     static LinkedHashSet<NodeType> set;
 
-    String selectedNs;
+    private String selectedNs;
 
     public CndExportDialog(CndExportPlugin menuPlugin) {
-        final PropertyModel selectedNsModel = new PropertyModel(this, "selectedNs");
+        final PropertyModel<String> selectedNsModel = new PropertyModel<String>(this, "selectedNs");
 
         List<String> nsPrefixes = null;
         try {
@@ -74,19 +73,12 @@ public class CndExportDialog extends AbstractDialog<Void> {
         }
 
         // output for view
-        final MultiLineLabel dump = new MultiLineLabel("dump", "") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return selectedNs != null && !getDefaultModelObjectAsString().equals("");
-            }
-        };
+        final Label dump = new Label("dump");
         dump.setOutputMarkupId(true);
         add(dump);
 
         // add dropdown for namespaces
-        FormComponent dropdown = new DropDownChoice("nsprefixes", selectedNsModel, nsPrefixes) {
+        FormComponent<String> dropdown = new DropDownChoice<String>("nsprefixes", selectedNsModel, nsPrefixes) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -117,7 +109,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
                     log.error("IOException while exporting NodeType Definitions of namespace : " + selectedNs, e);
                     export = e.getMessage();
                 }
-                dump.setDefaultModel(new Model(export));
+                dump.setDefaultModel(new Model<String>(export));
                 target.addComponent(CndExportDialog.this);
             }
         });
@@ -149,14 +141,22 @@ public class CndExportDialog extends AbstractDialog<Void> {
         add(link);
         setCancelVisible(false);
     }
+    
+    public String getSelectedNs() {
+        return selectedNs;
+    }
+    
+    public void setSelectedNs(String ns) {
+        selectedNs = ns;
+    } 
 
     private Session getJcrSession() {
         Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         return session;
     }
 
-    public IModel getTitle() {
-        return new Model("Export CND of namespace");
+    public IModel<String> getTitle() {
+        return new Model<String>("Export CND of namespace");
     }
 
     private List<String> getNsPrefixes(Session session) throws RepositoryException {
