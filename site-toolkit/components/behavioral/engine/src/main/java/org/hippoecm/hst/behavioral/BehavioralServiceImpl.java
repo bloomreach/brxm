@@ -114,7 +114,6 @@ public class BehavioralServiceImpl implements BehavioralService {
         // Store the updated BehavioralData
         behavioralDataStore.storeBehavioralData(request, response, behavioralDataList);
         
-        System.out.println(getBehavioralProfile(request));
     }
     
     private Configuration getConfiguration(HttpServletRequest request) {

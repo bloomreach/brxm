@@ -29,12 +29,10 @@ public class BehavioralUpdateValve implements Valve {
 
     @Override
     public void destroy() {
-        System.out.println("DESTROY");
     }
 
     @Override
     public void initialize() throws ContainerException {
-       System.out.println("INIT");
     }
 
     @Override
