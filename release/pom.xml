@@ -37,24 +37,24 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.21.02-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.21.03-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-faceteddate.version>2.21.03-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.21.03-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.08.03-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>1.01.03-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-google-analytics.version>1.01.03-SNAPSHOT</hippo.addon-google-analytics.version>
-    <hippo.addon-brokenlinks.version>1.01.01-SNAPSHOT</hippo.addon-brokenlinks.version>
-    <hippo.packages.version>2.21.03-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.23.03-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.21.03-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.21.04-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-faceteddate.version>2.21.04-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.21.04-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.addon-hst-configuration-editor.version>1.08.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>1.01.04-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-google-analytics.version>1.01.04-SNAPSHOT</hippo.addon-google-analytics.version>
+    <hippo.addon-brokenlinks.version>1.01.02-SNAPSHOT</hippo.addon-brokenlinks.version>
+    <hippo.packages.version>2.21.04-SNAPSHOT</hippo.packages.version>
+    <hippo.hst.version>2.23.04-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.09.02</forge.gallerypicker.version>
     <forge.easy-forms-cms.version>2.09.00-alpha</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.06.00</forge.easy-forms-hst.version>
     <forge.poll.version>1.05.00</forge.poll.version>
-    <forge.relateddocs.version>2.08.03-SNAPSHOT</forge.relateddocs.version>
-    <forge.selection.version>2.05.01-SNAPSHOT</forge.selection.version>
+    <forge.relateddocs.version>2.08.03-alpha</forge.relateddocs.version>
+    <forge.selection.version>2.05.01-alpha</forge.selection.version>
     <forge.sitemap.version>1.02.00</forge.sitemap.version>
     <forge.taxonomy.version>1.07.00</forge.taxonomy.version>
     <forge.tcmp.version>1.05.00-alpha</forge.tcmp.version>
