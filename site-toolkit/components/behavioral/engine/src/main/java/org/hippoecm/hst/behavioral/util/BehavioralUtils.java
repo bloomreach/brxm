@@ -17,19 +17,32 @@ package org.hippoecm.hst.behavioral.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.behavioral.BehavioralProfile;
 import org.hippoecm.hst.behavioral.BehavioralService;
+import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BehavioralUtils {
 
+    public static final Logger log = LoggerFactory.getLogger(BehavioralUtils.class);
+
+    
     public static BehavioralService getBehavioralService() {
-        BehavioralService bs = (BehavioralService)HstServices.getComponentManager().getComponent(BehavioralService.class.getName());
-        return bs;
+        return HstServices.getComponentManager().getComponent(BehavioralService.class.getName());
     }
     
+    /**
+     * @param request
+     * @return the <code>BehavioralProfile</code> for the current {@link HttpServletRequest} and <code>null<code> if there cannot be returned a profile
+     */
     public static BehavioralProfile getBehavioralProfile(HttpServletRequest request) {
+         BehavioralService bs = getBehavioralService();
+         if(bs == null) {
+             log.warn("Cannot get BehavioralProfile because there is no BehavioralService component available");
+             return null;
+         }
          return getBehavioralService().getBehavioralProfile(request);
     }
     
