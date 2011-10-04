@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import org.hippoecm.hst.behavioral.BehavioralProfile;
+import org.hippoecm.hst.behavioral.util.BehavioralUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -34,6 +36,10 @@ public class Right extends BaseHstComponent{
         HippoBean crBean = this.getContentBean(request);
         
         request.setAttribute("crBean", crBean);
+         
+        BehavioralProfile profile = BehavioralUtils.getBehavioralProfile(request);
+       
+        request.setAttribute("profile", profile);
     }
 
 
