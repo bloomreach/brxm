@@ -105,7 +105,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         return new Hippo.Future(function(onSuccess, onFail) {
             this.stores.toolkit.on('load', function() {
                 onSuccess(this.stores.toolkit);
-                this.fireEvent('toolkitLoaded', mountId, this.stores.toolkit);
             }, this, { single: true });
             this.stores.toolkit.on('exception', function() {
                 onFail();

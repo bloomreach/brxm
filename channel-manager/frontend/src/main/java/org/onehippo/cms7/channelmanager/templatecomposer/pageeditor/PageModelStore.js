@@ -25,7 +25,6 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 listeners : {
                     beforewrite : {
                         fn : function(proxy, action, rs, params) {
-//                            Hippo.Msg.wait(config.resources['page-model-store-before-write-message']);
                             if (action == 'create') {
                                 var prototypeId = rs.get('id');
                                 var parentId = rs.get('parentId');

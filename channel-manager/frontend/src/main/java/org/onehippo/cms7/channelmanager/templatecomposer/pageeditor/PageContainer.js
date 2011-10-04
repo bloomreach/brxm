@@ -38,7 +38,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.iFrameJsHeadContributions = config.iFrameJsHeadContributions;
         this.iFrameCssHeadContributions = config.iFrameCssHeadContributions;
 
-        this.composerInitialized = false;
+        this.previewMode = true;
 
         this.iframeCompletion = [];
 
@@ -56,14 +56,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         // initialized on domready
         this.pageContext = null;
-
-        this.on('beforeInitComposer', function() {
-            this.previewMode = true;
-        }, this);
-
-        this.on('afterInitComposer', function() {
-            this.composerInitialized = true;
-        }, this);
 
         this.on('fatalIFrameException', function(data) {
             var iFrame = Ext.getCmp('Iframe');
