@@ -34,7 +34,7 @@
 
         init: function(data) {
             console.log('page initialize');
-            this.overlay = $('<div/>').addClass('hst-overlay-root').appendTo(document.body);
+            this.overlay = $('<div/>').addClass('hst-overlay-root').hide().appendTo(document.body);
             this.preview = data.previewMode;
             this.resources = data.resources;
 

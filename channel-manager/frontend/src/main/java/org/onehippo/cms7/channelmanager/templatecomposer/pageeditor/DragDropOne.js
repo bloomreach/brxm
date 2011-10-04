@@ -25,7 +25,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     var framePanel = Ext.getCmp('Iframe');
                     var frmDoc = framePanel.getFrameDocument();
                     framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
-                    Hippo.ChannelManager.TemplateComposer.Instance.stores.pageModel.each(function(record) {
+                    Hippo.ChannelManager.TemplateComposer.Container.pageContext.stores.pageModel.each(function(record) {
                         var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
                             var id = record.get('id');

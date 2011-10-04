@@ -72,7 +72,6 @@ Hippo.Msg = (function() {
         },
         hide : function() {
             if (waitTimeout) {
-                console.log('clear wait timeout');
                 window.clearTimeout(waitTimeout);
                 waitTimeout = null;
             }

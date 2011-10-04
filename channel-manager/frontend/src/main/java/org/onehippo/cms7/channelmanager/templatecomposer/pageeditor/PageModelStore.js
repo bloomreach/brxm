@@ -23,14 +23,9 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 },
 
                 listeners : {
-                    beforeload: {
-                        fn: function (store, options) {
-                            Hippo.Msg.wait(config.resources['page-model-store-before-load-message']);
-                        }
-                    },
                     beforewrite : {
                         fn : function(proxy, action, rs, params) {
-                            Hippo.Msg.wait(config.resources['page-model-store-before-write-message']);
+//                            Hippo.Msg.wait(config.resources['page-model-store-before-write-message']);
                             if (action == 'create') {
                                 var prototypeId = rs.get('id');
                                 var parentId = rs.get('parentId');
@@ -48,13 +43,7 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                     },
                     write :{
                         fn: function(store, action, result, res, rs) {
-                            Hippo.Msg.hide();
-                            Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
-                        }
-                    },
-                    load : {
-                        fn: function (store, records, options) {
-                            Hippo.Msg.hide();
+                            Hippo.ChannelManager.TemplateComposer.Container.refreshIframe();
                         }
                     }
                 }

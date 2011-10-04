@@ -88,7 +88,7 @@ Ext.namespace('Hippo.ChannelManager.TemplateComposer.PageModel');
         {name: 'xtype', mapping: 'xtype'},
         {name: 'children', mapping: 'children'},
         {name: 'element', convert: function(v, record) {
-            var element = Hippo.ChannelManager.TemplateComposer.Instance.findElement(record.id);
+            var element = Hippo.ChannelManager.TemplateComposer.Container.findElement(record.id);
             if (element == null) {
                 element = document.createElement('div');
                 element.id = record.id;
