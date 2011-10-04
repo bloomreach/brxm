@@ -156,8 +156,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             toolkitGrid.reconfigure(context.stores.toolkit, toolkitGrid.getColumnModel());
 
             var pageModelGrid = Ext.getCmp('PageModelGrid');
-            pageModelGrid.reconfigure(context.stores.pageModel, pageModelGrid.getColumnModel());
+            if (pageModelGrid.pageId != context.ids.pageId) {
+                pageModelGrid.pageId = context.ids.pageId;
+                pageModelGrid.reconfigure(context.stores.pageModel, pageModelGrid.getColumnModel());
 
+                var propertiesPanel = Ext.getCmp('componentPropertiesPanel');
+                propertiesPanel.reload();
+            }
             this.mainWindow.show();
         } else {
             if (this.mainWindow) {
@@ -242,7 +247,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             initRegion: 'right',
             layout: 'border',
             closable: false,
-            minimizable: true,
+            collapsible: true,
             constrainHeader: true,
             bodyStyle: 'background-color: #ffffff',
             renderTo: Ext.getCmp('Iframe').getEl(),
@@ -351,7 +356,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     showProperties : function(record) {
-        Ext.getCmp('componentPropertiesPanel').reload(record.get('id'), record.get('name'), record.get('path'));
+        Ext.getCmp('componentPropertiesPanel').reload(record.get('id'));
     },
 
     hideProperties : function() {

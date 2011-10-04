@@ -145,8 +145,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
     },
 
     loadProperties:function(store, records, options) {
-        this.removeAll();
-
         var length = records.length;
         if (length == 0) {
             this.add({
@@ -221,7 +219,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
 
     loadException:function(proxy, type, actions, options, response) {
         console.dir(arguments);
-        this.removeAll();
 
         var errorText = this.resources['properties-panel-load-exception-text'].format(actions);
         if (type == 'response') {
@@ -237,7 +234,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         this.doLayout(false, true);
     },
 
-    reload: function(id, name, path) {
+    reload: function(id) {
+        this.removeAll();
+
+        if (typeof id === 'undefined') {
+            return;
+        }
+
         // the id is set with the onClick of the component
         this.id = id;
         var store = new Ext.data.JsonStore({
