@@ -67,6 +67,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
 
     createDocument: function (ev, target, options) {
 
+        var self = this;
         var createUrl = this.composerRestMountUrl + this.mountId + './create?' + this.ignoreRenderHostParameterName + '=true';
         var createDocumentWindow = new Ext.Window({
             title: this.resources['create-new-document-window-title'],
@@ -103,7 +104,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             buttons:[
                 {
                     text: this.resources['create-new-document-button'],
-                    handler:function () {
+                    handler: function () {
                         var createDocForm = Ext.getCmp('createDocumentForm').getForm()
                         createDocForm.submit();
                         options.docName = createDocForm.items.get(0).getValue();
@@ -113,16 +114,20 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                         }
                         createDocumentWindow.hide();
 
-                        Hippo.Msg.wait(this.resources['create-new-document-message']);
+                        Hippo.Msg.wait(self.resources['create-new-document-message']);
                         Ext.Ajax.request({
                             url: createUrl,
                             params: options,
                             success: function () {
                                 Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
-                                Hippo.ChannelManager.TemplateComposer.Instance.on('iFrameInitialized', function() {
-                                    Hippo.Msg.hide();
-                                }, this, {single : true});
-                                Hippo.ChannelManager.TemplateComposer.Container.refreshIframe();
+                                Hippo.Msg.hide();
+                            },
+                            failure: function() {
+                                Hippo.Msg.alert(self.resources['create-new-document-message'], self.resources['create-new-document-failed'],
+                                    function () {
+                                        Hippo.ChannelManager.TemplateComposer.Container.initComposer();
+                                    }
+                                );
                             }
                         });
 
@@ -230,10 +235,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         });
 
         this.doLayout(false, true);
-    }
-    ,
+    },
 
-    reload:function(id, name, path) {
+    reload: function(id, name, path) {
         // the id is set with the onClick of the component
         this.id = id;
         var store = new Ext.data.JsonStore({
@@ -247,8 +251,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         store.on('exception', this.loadException, this);
     }
 
-})
-        ;
+});
+
 Ext.reg('h_properties_panel', Hippo.ChannelManager.TemplateComposer.PropertiesPanel);
 
 //Add * to the required fields 
