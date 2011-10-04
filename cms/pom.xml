@@ -112,8 +112,8 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
-    <wicket.version>1.4.17</wicket.version>
-    <wicket-extjs.version>0.11-alpha</wicket-extjs.version>
+    <wicket.version>1.4.18</wicket.version>
+    <wicket-extjs.version>0.12-SNAPSHOT</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
 
     <joda-time.version>1.6</joda-time.version>
@@ -278,7 +278,7 @@
       <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket</artifactId>
-        <version>1.4.17-WICKET-3927_2</version>
+        <version>1.4.18-WICKET-3927_2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wicket</groupId>

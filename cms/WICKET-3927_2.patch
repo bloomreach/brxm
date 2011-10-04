@@ -1,7 +1,259 @@
+Index: src/main/java/org/apache/wicket/ajax/wicket-ajax.js
+===================================================================
+--- src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(revision 1178739)
++++ src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(working copy)
+@@ -1590,27 +1590,52 @@
+ 	},
+ 	
+ 	// Process an external stylesheet element
+-	processLink: function(steps, node) {		
++	processLink: function(steps, node) {
+ 		steps.push(function(notify) {
+ 			// if the element is already in head, skip it
+ 			if (Wicket.Head.containsElement(node, "href")) {
+ 				notify();
+ 				return;
+ 			}
+-			// create link element
+-			var css = Wicket.Head.createElement("link");
+ 
+-			// copy required attributes
+-			css.id = node.getAttribute("id");
+-			css.rel = node.getAttribute("rel");
+-			css.href = node.getAttribute("href");
+-			css.type = node.getAttribute("type");
+-			
+-			// add element to head
+-			Wicket.Head.addElement(css);
+-			
+-			// continue to next step
+-			notify();
++			var createLinkElement = function() {
++				var css = Wicket.Head.createElement("link");
++
++				// copy required attributes
++				css.id = node.getAttribute("id");
++				css.rel = node.getAttribute("rel");
++				css.href = node.getAttribute("href");
++				css.type = node.getAttribute("type");
++
++				// add element to head
++				Wicket.Head.addElement(css);
++
++				// continue to next step
++				notify();
++			};
++
++			// if the cacheBeforeRender attribute is present, we request the css to fill the browsers cache
++			// so the chance is higher the css gets rendered before other contributions are loaded
++			if (node.getAttribute("cacheBeforeRender")) {
++				var seqNumber = (Wicket.Head.csspSequenceNumber++);
++
++				// we need to schedule the request as timeout
++				// calling xml http request from another request call stack doesn't work
++				window.setTimeout(function() {
++					var req = new Wicket.Ajax.Request(node.getAttribute('href'), function() {
++						Wicket.Ajax.invokePostCallHandlers();
++						createLinkElement();
++					}, false, false);
++					req.debugContent = false;
++					if (Wicket.Browser.isKHTML())
++						// konqueror can't process the ajax response asynchronously, therefore the
++						// javascript loading must be also synchronous
++						req.async = false;
++					req.get();
++				}, 1);
++			} else {
++				createLinkElement();
++			}
+ 		});
+ 	},
+ 	
+Index: src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java
+===================================================================
+--- src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java	(revision 1178739)
++++ src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java	(working copy)
+@@ -933,6 +933,15 @@
+ 		}
+ 
+ 		@Override
++		public void renderCSSReference(final ResourceReference reference, final String media, final boolean cacheBeforeRender)
++		{
++			if (checkHeaderRendering())
++			{
++				super.renderCSSReference(reference, media, cacheBeforeRender);
++			}
++		}
++
++		@Override
+ 		public void renderCSSReference(String url)
+ 		{
+ 			if (checkHeaderRendering())
+@@ -968,6 +977,15 @@
+ 			}
+ 		}
+ 
++    @Override
++		public void renderCSSReference(ResourceReference reference, boolean cacheBeforeRender)
++		{
++			if (checkHeaderRendering())
++			{
++				super.renderCSSReference(reference, cacheBeforeRender);
++			}
++		}
++
+ 		@Override
+ 		public void renderJavascriptReference(ResourceReference reference)
+ 		{
+Index: src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java
+===================================================================
+--- src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java	(revision 1178739)
++++ src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java	(working copy)
+@@ -32,7 +32,7 @@
+  */
+ public class CSSPackageResource extends PackageResource
+ {
+-	private static final long serialVersionUID = 1L;;
++	private static final long serialVersionUID = 1L;
+ 
+ 	/**
+ 	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
+@@ -48,13 +48,34 @@
+ 	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
+ 		final String path)
+ 	{
++		return getHeaderContribution(scope, path, false);
++	}
++
++	/**
++	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
++	 * a CSS file that lives in a package.
++	 * 
++	 * @param scope
++	 *            The scope of the package resource (typically the class of the caller, or a class
++	 *            that lives in the package where the resource lives).
++	 * @param path
++	 *            The path
++	 * @param cacheBeforeRender
++	 *            if true, the resource will be pre cached by the browser before it gets rendered
++	 *            (if cache is turned on)
++	 * @return the new header contributor instance
++	 */
++	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
++		final String path, final boolean cacheBeforeRender)
++	{
+ 		return new HeaderContributor(new IHeaderContributor()
+ 		{
+ 			private static final long serialVersionUID = 1L;
+ 
+ 			public void renderHead(IHeaderResponse response)
+ 			{
+-				response.renderCSSReference(new CompressedResourceReference(scope, path));
++				response.renderCSSReference(new CompressedResourceReference(scope, path),
++					cacheBeforeRender);
+ 			}
+ 		});
+ 	}
+@@ -75,13 +96,37 @@
+ 	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
+ 		final String path, final String media)
+ 	{
++		return getHeaderContribution(scope, path, media, false);
++	}
++
++	/**
++	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
++	 * a CSS file that lives in a package.
++	 * 
++	 * @param scope
++	 *            The scope of the package resource (typically the class of the caller, or a class
++	 *            that lives in the package where the resource lives).
++	 * @param path
++	 *            The path
++	 * @param media
++	 *            The media type for this CSS ("print", "screen", etc.)
++	 * @param cacheBeforeRender
++	 *            if true, the resource will be pre cached by the browser before it gets rendered
++	 *            (if cache is turned on)
++	 * @return the new header contributor instance
++	 */
++	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
++		final String path, final String media, final boolean cacheBeforeRender)
++	{
++
+ 		return new HeaderContributor(new IHeaderContributor()
+ 		{
+ 			private static final long serialVersionUID = 1L;
+ 
+ 			public void renderHead(IHeaderResponse response)
+ 			{
+-				response.renderCSSReference(new CompressedResourceReference(scope, path), media);
++				response.renderCSSReference(new CompressedResourceReference(scope, path), media,
++					cacheBeforeRender);
+ 			}
+ 		});
+ 	}
+@@ -96,6 +141,23 @@
+ 	 */
+ 	public static final HeaderContributor getHeaderContribution(final ResourceReference reference)
+ 	{
++		return getHeaderContribution(reference, false);
++	}
++
++	/**
++	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
++	 * a CSS file that lives in a package.
++	 * 
++	 * @param reference
++	 * 
++	 * @param cacheBeforeRender
++	 *            if true, the resource will be pre cached by the browser before it gets rendered
++	 *            (if cache is turned on)
++	 * @return the new header contributor instance
++	 */
++	public static final HeaderContributor getHeaderContribution(final ResourceReference reference,
++		final boolean cacheBeforeRender)
++	{
+ 		return new HeaderContributor(new IHeaderContributor()
+ 		{
+ 			private static final long serialVersionUID = 1L;
+@@ -119,13 +181,31 @@
+ 	public static final HeaderContributor getHeaderContribution(final ResourceReference reference,
+ 		final String media)
+ 	{
++		return getHeaderContribution(reference, media, false);
++	}
++
++	/**
++	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
++	 * a CSS file that lives in a package.
++	 * 
++	 * @param reference
++	 * @param media
++	 *            The media type for this CSS ("print", "screen", etc.)
++	 * @param cacheBeforeRender
++	 *            if true, the resource will be pre cached by the browser before it gets rendered
++	 *            (if cache is turned on)
++	 * @return the new header contributor instance
++	 */
++	public static final HeaderContributor getHeaderContribution(final ResourceReference reference,
++		final String media, final boolean cacheBeforeRender)
++	{
+ 		return new HeaderContributor(new IHeaderContributor()
+ 		{
+ 			private static final long serialVersionUID = 1L;
+ 
+ 			public void renderHead(IHeaderResponse response)
+ 			{
+-				response.renderCSSReference(reference, media);
++				response.renderCSSReference(reference, media, cacheBeforeRender);
+ 			}
+ 		});
+ 	}
 Index: src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java
 ===================================================================
---- src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java	(revision 1030625)
-+++ src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java	(revision )
+--- src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java	(revision 1178739)
++++ src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java	(working copy)
 @@ -77,6 +77,21 @@
  	}
  
@@ -87,204 +339,22 @@ Index: src/main/java/org/apache/wicket/markup/html/internal/HeaderResponse.java
  			}
  		}
 -	}
-+    }
 -
++    }
  	/**
  	 * @see org.apache.wicket.markup.html.IHeaderResponse#renderJavascriptReference(org.apache.wicket.ResourceReference)
  	 */
-Index: src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java
-===================================================================
---- src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java	(revision 1049685)
-+++ src/main/java/org/apache/wicket/ajax/AjaxRequestTarget.java	(revision )
-@@ -958,6 +958,15 @@
- 		}
- 
- 		@Override
-+		public void renderCSSReference(final ResourceReference reference, final String media, final boolean cacheBeforeRender)
-+		{
-+			if (checkHeaderRendering())
-+			{
-+				super.renderCSSReference(reference, media, cacheBeforeRender);
-+			}
-+		}
-+
-+		@Override
- 		public void renderCSSReference(String url)
- 		{
- 			if (checkHeaderRendering())
-@@ -993,7 +1002,16 @@
- 			}
- 		}
- 
--		@Override
-+    @Override
-+		public void renderCSSReference(ResourceReference reference, boolean cacheBeforeRender)
-+		{
-+			if (checkHeaderRendering())
-+			{
-+				super.renderCSSReference(reference, cacheBeforeRender);
-+			}
-+		}
-+
-+		@Override
- 		public void renderJavascriptReference(ResourceReference reference)
- 		{
- 			if (checkHeaderRendering())
-Index: src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java
-===================================================================
---- src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java	(revision 731096)
-+++ src/main/java/org/apache/wicket/markup/html/CSSPackageResource.java	(revision )
-@@ -32,7 +32,7 @@
-  */
- public class CSSPackageResource extends PackageResource
- {
--	private static final long serialVersionUID = 1L;;
-+	private static final long serialVersionUID = 1L;
- 
- 	/**
- 	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
-@@ -48,13 +48,32 @@
- 	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
- 		final String path)
- 	{
-+		return getHeaderContribution(scope, path, false);
-+	}
-+
-+		/**
-+	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
-+	 * a CSS file that lives in a package.
-+	 *
-+	 * @param scope
-+	 *            The scope of the package resource (typically the class of the caller, or a class
-+	 *            that lives in the package where the resource lives).
-+	 * @param path
-+	 *            The path
-+	 * @param cacheBeforeRender
-+	 *            if true, the resource will be pre cached by the browser before it gets rendered (if cache is turned on)
-+	 * @return the new header contributor instance
-+	 */
-+	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
-+		final String path, final boolean cacheBeforeRender)
-+	{
- 		return new HeaderContributor(new IHeaderContributor()
- 		{
- 			private static final long serialVersionUID = 1L;
- 
- 			public void renderHead(IHeaderResponse response)
- 			{
--				response.renderCSSReference(new CompressedResourceReference(scope, path));
-+				response.renderCSSReference(new CompressedResourceReference(scope, path), cacheBeforeRender);
- 			}
- 		});
- 	}
-@@ -75,13 +94,34 @@
- 	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
- 		final String path, final String media)
- 	{
-+		return getHeaderContribution(scope, path, media, false);
-+	}
-+
-+	/**
-+	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
-+	 * a CSS file that lives in a package.
-+	 *
-+	 * @param scope
-+	 *            The scope of the package resource (typically the class of the caller, or a class
-+	 *            that lives in the package where the resource lives).
-+	 * @param path
-+	 *            The path
-+	 * @param media
-+	 *            The media type for this CSS ("print", "screen", etc.)
-+	 * @param cacheBeforeRender
-+	 *            if true, the resource will be pre cached by the browser before it gets rendered (if cache is turned on)
-+	 * @return the new header contributor instance
-+	 */
-+	public static final HeaderContributor getHeaderContribution(final Class<?> scope,
-+		final String path, final String media, final boolean cacheBeforeRender)
-+	{
- 		return new HeaderContributor(new IHeaderContributor()
- 		{
- 			private static final long serialVersionUID = 1L;
- 
- 			public void renderHead(IHeaderResponse response)
- 			{
--				response.renderCSSReference(new CompressedResourceReference(scope, path), media);
-+				response.renderCSSReference(new CompressedResourceReference(scope, path), media, cacheBeforeRender);
- 			}
- 		});
- 	}
-@@ -96,13 +136,28 @@
- 	 */
- 	public static final HeaderContributor getHeaderContribution(final ResourceReference reference)
- 	{
-+		return getHeaderContribution(reference, false);
-+	}
-+
-+		/**
-+	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
-+	 * a CSS file that lives in a package.
-+	 *
-+	 * @param reference
-+	 *
-+	 * @param cacheBeforeRender
-+	 *            if true, the resource will be pre cached by the browser before it gets rendered (if cache is turned on)
-+	 * @return the new header contributor instance
-+	 */
-+	public static final HeaderContributor getHeaderContribution(final ResourceReference reference, final boolean cacheBeforeRender)
-+	{
- 		return new HeaderContributor(new IHeaderContributor()
- 		{
- 			private static final long serialVersionUID = 1L;
- 
- 			public void renderHead(IHeaderResponse response)
- 			{
--				response.renderCSSReference(reference);
-+				response.renderCSSReference(reference, cacheBeforeRender);
- 			}
- 		});
- 	}
-@@ -119,13 +174,30 @@
- 	public static final HeaderContributor getHeaderContribution(final ResourceReference reference,
- 		final String media)
- 	{
-+		return getHeaderContribution(reference, media, false);
-+	}
-+
-+		/**
-+	 * Returns a new instance of {@link HeaderContributor} with a header contributor that references
-+	 * a CSS file that lives in a package.
-+	 *
-+	 * @param reference
-+	 * @param media
-+	 *            The media type for this CSS ("print", "screen", etc.)
-+	 * @param cacheBeforeRender
-+	 *            if true, the resource will be pre cached by the browser before it gets rendered (if cache is turned on)
-+	 * @return the new header contributor instance
-+	 */
-+	public static final HeaderContributor getHeaderContribution(final ResourceReference reference,
-+		final String media, final boolean cacheBeforeRender)
-+	{
- 		return new HeaderContributor(new IHeaderContributor()
- 		{
- 			private static final long serialVersionUID = 1L;
- 
- 			public void renderHead(IHeaderResponse response)
- 			{
--				response.renderCSSReference(reference, media);
-+				response.renderCSSReference(reference, media, cacheBeforeRender);
- 			}
- 		});
- 	}
 Index: src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java
 ===================================================================
---- src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java	(revision 1031154)
-+++ src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java	(revision )
-@@ -101,7 +101,17 @@
+--- src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java	(revision 1178739)
++++ src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java	(working copy)
+@@ -101,8 +101,18 @@
  		realResponse.renderCSSReference(url, media);
  	}
  
+-	public void renderString(CharSequence string)
 +	public void renderCSSReference(final ResourceReference reference, final boolean cacheBeforeRender)
-+	{
+ 	{
 +		realResponse.renderCSSReference(reference, cacheBeforeRender);
 +	}
 +
@@ -293,20 +363,19 @@ Index: src/main/java/org/apache/wicket/markup/html/DecoratingHeaderResponse.java
 +		realResponse.renderCSSReference(reference, media, cacheBeforeRender);
 +	}
 +
--	public void renderString(CharSequence string)
 +    public void renderString(CharSequence string)
- 	{
++	{
  		realResponse.renderString(string);
  	}
+ 
 Index: src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java
 ===================================================================
---- src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java	(revision 730127)
-+++ src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java	(revision )
-@@ -92,7 +92,17 @@
+--- src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java	(revision 1178739)
++++ src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java	(working copy)
+@@ -92,6 +92,16 @@
  
  	/**
  	 * Writes a CSS reference, if the specified reference hasn't been rendered yet.
--	 * 
 +	 *
 +	 * @param reference
 +	 *            resource reference pointing to the CSS resource
@@ -317,15 +386,13 @@ Index: src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java
 +
 +	/**
 +	 * Writes a CSS reference, if the specified reference hasn't been rendered yet.
-+	 * 
+ 	 * 
  	 * @param url
  	 *            url of the CSS resource
- 	 */
-@@ -110,7 +120,19 @@
+@@ -110,6 +120,18 @@
  
  	/**
  	 * Writes a CSS reference, if the specified reference hasn't been rendered yet.
--	 * 
 +	 *
 +	 * @param reference
 +	 *            resource reference pointing to the CSS resource
@@ -338,78 +405,7 @@ Index: src/main/java/org/apache/wicket/markup/html/IHeaderResponse.java
 +
 +	/**
 +	 * Writes a CSS reference, if the specified reference hasn't been rendered yet.
-+	 * 
+ 	 * 
  	 * @param url
  	 *            url of the CSS resource
- 	 * @param media
-Index: src/main/java/org/apache/wicket/ajax/wicket-ajax.js
-===================================================================
---- src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(revision 1085654)
-+++ src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(revision )
-@@ -1573,27 +1573,52 @@
- 	},
- 	
- 	// Process an external stylesheet element
--	processLink: function(steps, node) {		
-+	processLink: function(steps, node) {
- 		steps.push(function(notify) {
- 			// if the element is already in head, skip it
- 			if (Wicket.Head.containsElement(node, "href")) {
- 				notify();
- 				return;
- 			}
--			// create link element
-+
-+			var createLinkElement = function() {
--			var css = Wicket.Head.createElement("link");
-+				var css = Wicket.Head.createElement("link");
- 
--			// copy required attributes
--			css.id = node.getAttribute("id");
--			css.rel = node.getAttribute("rel");
--			css.href = node.getAttribute("href");
--			css.type = node.getAttribute("type");
--			
--			// add element to head
--			Wicket.Head.addElement(css);
--			
--			// continue to next step
--			notify();
-+				// copy required attributes
-+				css.id = node.getAttribute("id");
-+				css.rel = node.getAttribute("rel");
-+				css.href = node.getAttribute("href");
-+				css.type = node.getAttribute("type");
-+
-+				// add element to head
-+				Wicket.Head.addElement(css);
-+
-+				// continue to next step
-+				notify();
-+			};
-+
-+			// if the cacheBeforeRender attribute is present, we request the css to fill the browsers cache
-+			// so the chance is higher the css gets rendered before other contributions are loaded
-+			if (node.getAttribute("cacheBeforeRender")) {
-+				var seqNumber = (Wicket.Head.csspSequenceNumber++);
-+
-+				// we need to schedule the request as timeout
-+				// calling xml http request from another request call stack doesn't work
-+				window.setTimeout(function() {
-+					var req = new Wicket.Ajax.Request(node.getAttribute('href'), function() {
-+						Wicket.Ajax.invokePostCallHandlers();
-+						createLinkElement();
-+					}, false, false);
-+					req.debugContent = false;
-+					if (Wicket.Browser.isKHTML())
-+						// konqueror can't process the ajax response asynchronously, therefore the
-+						// javascript loading must be also synchronous
-+						req.async = false;
-+					req.get();
-+				}, 1);
-+			} else {
-+				createLinkElement();
-+			}
- 		});
- 	},
- 	
+
