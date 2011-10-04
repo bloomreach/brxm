@@ -87,16 +87,11 @@ Hippo.Future.join = function() {
     } else {
         futures = Array.prototype.slice.call(arguments);
     }
-    return new Hippo.Future(function(onSuccess, onFailure) {
+
+    var value = null;
+    var join = new Hippo.Future(function(onSuccess, onFailure) {
         var completed = false;
         var togo = futures.length;
-        var successHandler = function(result) {
-            togo--;
-            if (!completed && togo === 0) {
-                completed = true;
-                onSuccess.call(this);
-            }
-        };
         var failureHandler = function() {
             togo--;
             if (completed) {
@@ -106,7 +101,17 @@ Hippo.Future.join = function() {
             onFailure.call(this);
         };
         for (var i = 0; i < futures.length; i++) {
-            futures[i].when(successHandler).otherwise(failureHandler);
+            futures[i].when(function(result) {
+                togo--;
+                if (!completed && togo === 0) {
+                    completed = true;
+                    onSuccess.call(this, value);
+                }
+            }).otherwise(failureHandler);
         }
     });
+    join.set = function(val) {
+        value = val;
+    };
+    return join;
 };

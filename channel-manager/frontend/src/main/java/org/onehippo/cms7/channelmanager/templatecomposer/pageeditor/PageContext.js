@@ -342,21 +342,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         });
     },
 
-    _removeByRecord: function(record) {
-        var store = this.stores.pageModel;
-        Hippo.Msg.confirm(this.resources['delete-message-title'], this.resources['delete-message'].format(record.get('name')), function(btn, text) {
-            if (btn == 'yes') {
-                store.remove(record);
-            }
-        });
-    },
-
-    _removeByElement : function(element) {
-        var store = this.stores.pageModel;
-        var index = store.findExact('id', Ext.fly(element).getAttribute(HST.ATTR.ID));
-        this._removeByRecord(store.getAt(index))
-    },
-
     _buildOverlay : function(frm) {
         if (!this.fireEvent('beforeBuildOverlay')) {
             return;

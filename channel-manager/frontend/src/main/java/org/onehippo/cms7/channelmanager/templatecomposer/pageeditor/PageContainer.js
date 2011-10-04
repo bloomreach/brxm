@@ -40,17 +40,17 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         this.composerInitialized = false;
 
-        this.iframeResourceCache = new Hippo.Future(function(success, fail) {
-            this._populateIFrameResourceCache(success, fail);
-        }.createDelegate(this));
+        this.iframeCompletion = [];
+
+        this.iframeResourceCache = this._populateIFrameResourceCache();
+
+        this.addEvents(
+                'edit-document',
+                'lock',
+                'unlock'
+        );
 
         Hippo.ChannelManager.TemplateComposer.PageContainer.superclass.constructor.call(this, config);
-
-        this.addEvents('beforeIFrameDOMReady',
-                       'iFrameException',
-                       'edit-document',
-                       'beforeInitComposer',
-                       'afterInitComposer');
 
         Hippo.ChannelManager.TemplateComposer.Container = this;
 
@@ -88,7 +88,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         });
     },
 
-    _populateIFrameResourceCache : function(resourcesLoaded, loadFailed) {
+    _populateIFrameResourceCache : function() {
         var iframeResources = {
             cache: {},
             css: this.iFrameCssHeadContributions,
@@ -115,12 +115,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 });
             })
         }
-        Hippo.Future.join(futures).when(
-                function() {
-                    resourcesLoaded(iframeResources);
-                }).otherwise(function() {
-                    loadFailed();
-                });
+        var join = Hippo.Future.join(futures);
+        join.set(iframeResources);
+        return join;
     },
 
     // FIXME: static method should be extracted to separate singleton
@@ -136,15 +133,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         instance.initComposer.call(instance);
     },
 
+    // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
+
     initComposer : function() {
-        if (!(this.renderHostSubMountPath && this.renderHost)) {
+        if (typeof this.renderHostSubMountPath === 'undefined' || typeof this.renderHost === 'undefined' || this.renderHost.trim() === '') {
             return;
         }
 
-        this.fireEvent('beforeInitComposer');
-        this.on('iFrameInitialized', function() {
-            this.fireEvent('afterInitComposer');
-        }, this, {single : true});
+        this._lock();
 
         this._initIFrameListeners();
 
@@ -200,10 +196,90 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var frame = iframe.getFrame();
         var window = frame.getWindow();
         var scrollSave = {x: window.pageXOffset, y: window.pageYOffset};
-        this.on('beforeIFrameDOMReady', function() {
+
+        this._lock(function() {
             window.scrollBy(scrollSave.x, scrollSave.y);
-        }, this, {single : true});
+        });
+
         iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
+    },
+
+    toggleMode: function () {
+        this._lock();
+
+        this.previewMode = !this.previewMode;
+
+        var mountId = this.pageContext.ids.mountId;
+        var hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
+
+        console.log('hasPreviewHstConfig:' + hasPreviewHstConfig);
+        if (this.previewMode) {
+            var iFrame = Ext.getCmp('Iframe');
+            iFrame.getFrame().sendMessage({}, 'hideoverlay');
+            this._complete();
+        } else {
+            if (hasPreviewHstConfig) {
+                var iFrame = Ext.getCmp('Iframe');
+                iFrame.getFrame().sendMessage({}, ('showoverlay'));
+                this._complete();
+            } else {
+                // create new preview hst configuration
+                var self = this;
+                Ext.Ajax.request({
+                    method: 'POST',
+                    url: this.composerRestMountUrl + mountId + './edit?' + this.ignoreRenderHostParameterName + '=true',
+                    success: function () {
+                        // refresh iframe to get new hst config uuids. previewMode=false will initialize
+                        // the editor for editing with the refresh
+                        self.refreshIframe.call(self, null);
+                    },
+                    failure: function(result) {
+                        var jsonData = Ext.util.JSON.decode(result.responseText);
+                        Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
+                            self.initComposer.call(self);
+                        });
+                    }
+                });
+            }
+        }
+    },
+
+     publishHstConfiguration : function() {
+        this._lock();
+        var self = this;
+        Ext.Ajax.request({
+            method: 'POST',
+            url: this.composerRestMountUrl + this.pageContext.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
+            success: function () {
+                self.refreshIframe.call(self, null);
+            },
+            failure: function(result) {
+                var jsonData = Ext.util.JSON.decode(result.responseText);
+                Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message']+' '+jsonData.message, function() {
+                    self.initComposer.call(self);
+                });
+            }
+        });
+    },
+
+    // END PUBLIC METHODS THAT CHANGE THE iFrame
+
+    _lock : function(cb) {
+        if (this.iframeCompletion.length == 0) {
+            this.fireEvent('lock');
+        }
+        if (typeof cb === 'function') {
+            this.iframeCompletion.unshift(cb);
+        }
+    },
+
+    _complete : function() {
+        console.log('_complete');
+        while (this.iframeCompletion.length > 0) {
+            var cb = this.iframeCompletion.shift();
+            cb.call(this);
+        }
+        this.fireEvent('unlock');
     },
 
     _initIFrameListeners : function() {
@@ -231,7 +307,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _onIframeDOMReady : function(frm) {
-        this.fireEvent('beforeIFrameDOMReady');
+        this._lock();
+
         this.frm = frm;
 
         // disable old page context
@@ -252,9 +329,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.relayEvents(this.pageContext, [
            'afterBuildOverlay',
            'mountChanged',
-           'iFrameInitialized',
            'iFrameException'
         ]);
+        this.pageContext.on('iFrameInitialized', function() {
+            this.previewMode = this.pageContext.previewMode;
+            this._complete();
+        }, this);
         this.pageContext.initialize(frm);
     },
 
@@ -343,7 +423,22 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             console.warn('Handling onClick for element[id=' + id + '] with no record in component store');
             return;
         }
-        this.fireEvent('pageClick', recordIndex);
+        this.fireEvent('selectItem', recordIndex);
+    },
+
+    _removeByRecord: function(record) {
+        var store = this.pageContext.stores.pageModel;
+        Hippo.Msg.confirm(this.resources['delete-message-title'], this.resources['delete-message'].format(record.get('name')), function(btn, text) {
+            if (btn == 'yes') {
+                store.remove(record);
+            }
+        });
+    },
+
+    _removeByElement : function(element) {
+        var store = this.pageContext.stores.pageModel;
+        var index = store.findExact('id', Ext.fly(element).getAttribute(HST.ATTR.ID));
+        this._removeByRecord(store.getAt(index))
     },
 
     /**
