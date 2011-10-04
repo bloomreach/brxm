@@ -392,6 +392,7 @@ components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralNo
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralPersonaScore.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralProfile.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralService.java -text
+components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/package-info.java -text svneol=unset#text/plain
 components/behavioral/engine/pom.xml -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralConfigurationEventListener.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralDataHttpSessionStore.java -text
