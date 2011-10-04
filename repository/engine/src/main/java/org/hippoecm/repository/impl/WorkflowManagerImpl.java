@@ -93,7 +93,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     List<WorkflowInvocation> invocationChain;
     ListIterator<WorkflowInvocation> invocationIndex;
     DocumentManagerImpl documentManager;
-
+    
     public WorkflowManagerImpl(Session session, Session rootSession) {
         this.session = session;
         this.rootSession = rootSession;
@@ -595,13 +595,37 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             }
                         }
                         if(!lockable.isNodeType("mix:lockable")) {
-                            lockable = null;
+                            lockable = lockable.getParent();
+                            if (lockable.isLocked()) {
+                                try {
+                                    Lock lock = lockable.getLock();
+                                    if(lock.isLockOwningSession()) {
+                                        lockable = null;
+                                    }
+                                } catch (LockException ex) {
+                                    // no longer locked
+                                }
+                            }
+                            if(!lockable.isNodeType("mix:lockable")) {
+                                lockable = null;
+                            }
                         }
                     } catch(ItemNotFoundException ex) {
                         // if the item is not yet persisted, there is no need to try to lock it
+                        lockable = null;
                     }
                     if(lockable != null) {
-                        rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
+                        for (int retry=0; retry<12; retry++) {
+                            try {
+                                rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
+                                break;
+                            } catch (LockException ex) {
+                                try {
+                                    Thread.sleep(250);
+                                } catch(InterruptedException e) {
+                                }
+                            }
+                        }
                     }
                     returnObject = targetMethod.invoke(upstream, args);
                     if (objectPersist && !targetMethod.getName().equals("hints")) {
@@ -626,9 +650,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                 }
                 return returnObject;
-            } catch (RepositoryException ex) {
-                rootSession.refresh(false);
-                throw returnException = ex;
             } catch (RemoteException ex) {
                 rootSession.refresh(false);
                 throw returnException = ex;
@@ -693,7 +714,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if(lockable != null) {
                     rootSession.save();
                     rootSession.refresh(false);
-                    rootSession.getWorkspace().getLockManager().unlock(lockable.getPath());
+                    try {
+                        rootSession.getWorkspace().getLockManager().unlock(lockable.getPath());
+                    } catch(LockException ex) {
+                    }
                 }
             }
         }
