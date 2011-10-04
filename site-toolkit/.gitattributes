@@ -405,7 +405,6 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Dimension
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Persona.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Rule.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Segment.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/containeritemcomponents/BehavioralProfileComponent.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/container/BehavioralUpdateValve.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
@@ -427,8 +426,6 @@ components/behavioral/pom.xml -text
 components/behavioral/repository/pom.xml -text
 components/behavioral/repository/src/main/resources/behavioral.cnd -text
 components/behavioral/repository/src/main/resources/hippoecm-extension.xml -text
-components/behavioral/repository/src/main/resources/hst/configurations/hstdefault/catalog.xml -text
-components/behavioral/repository/src/main/resources/hst/configurations/hstdefault/templates.xml -text
 components/caching/pom.xml svneol=native#text/plain
 components/caching/src/main/java/org/hippoecm/hst/container/PageCachingFilter.java svneol=native#text/plain
 components/caching/src/site/site.xml -text
