@@ -56,17 +56,7 @@ Hippo.ChannelManager.TemplateComposer.BaseGridPanel = Ext.extend(Ext.grid.GridPa
             rowcontextmenu: {
                 scope:      this,
                 stopEvent:  true,
-                fn:         function(grid, rowIndex, e) {
-                    var record = grid.getStore().getAt(rowIndex);
-                    var selected = grid.getSelectionModel().hasSelection() &&
-                            grid.getSelectionModel().getSelected().id == record.id;
-
-                    var menu = new Ext.menu.Menu({
-                        items: this.menuProvider ? this.menuProvider.getMenuActions(record, selected) : this.newEmptyContextMenu()
-                    });
-                    menu.showAt(e.getXY());
-                    e.preventDefault();
-                }
+                fn:         Ext.emptyFn
             }
         };
         Ext.apply(this.initialConfig.listeners, listeners);
@@ -74,23 +64,13 @@ Hippo.ChannelManager.TemplateComposer.BaseGridPanel = Ext.extend(Ext.grid.GridPa
             store: store,
             colModel :columnModel,
             listeners: listeners,
-
             stripeRows: true
         };
 
         Ext.apply(this, Ext.apply(this.initialConfig, config));
 
         Hippo.ChannelManager.TemplateComposer.BaseGridPanel.superclass.initComponent.apply(this, arguments);
-    },
-
-    newEmptyContextMenu: function() {
-        return  [
-            new Ext.Action({
-                text: '-- Empty --',
-                handler: function() {
-                }
-            })
-        ];
     }
+
 });
 Ext.reg('h_base_grid', Hippo.ChannelManager.TemplateComposer.BaseGridPanel);

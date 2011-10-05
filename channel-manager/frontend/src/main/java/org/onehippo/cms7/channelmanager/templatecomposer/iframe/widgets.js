@@ -508,13 +508,17 @@
                 });
             }
 
+            var rearrange = null;
+
             var currentOrder = this.items.keySet();
             if (this.state.orderChanged(currentOrder)) {
                 this.state.previousOrder = currentOrder;
                 this.parent.requestSync();
-                sendMessage({id: this.id, children: currentOrder}, 'rearrange');
+                rearrange = {id: this.id, children: currentOrder};
             }
             this.state.reset();
+
+            return rearrange;
         },
 
         toggleNoHover : function() {

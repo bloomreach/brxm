@@ -85,13 +85,12 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     //                    var r = this.getStore().getAt(rowIndex);
                     //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
                     //                            ' on Record id ' + r.id);
-                    if (self.nodeOverRecord != null) {
+                    if (self.nodeOverRecord !== null) {
                         var selections = containerItemsGrid.getSelectionModel().getSelections();
 
-                        var pmGrid = Ext.getCmp('PageModelGrid');
                         var pmRecord = self.nodeOverRecord;
-                        var pmStore = pmGrid.getStore();
                         var parentId = pmRecord.get('id');
+                        var pmStore = pmRecord.store;
 
                         var models = [];
                         var offset = pmRecord.data.children.length + 1;

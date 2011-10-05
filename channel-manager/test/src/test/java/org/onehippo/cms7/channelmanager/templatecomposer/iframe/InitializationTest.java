@@ -64,7 +64,6 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         initializeTemplateComposer(false, true);
 
         assertTrue(!isMessageSend("iframeexception"));
-        assertTrue(isMessageSend("afterinit"));
     }
 
     @Test

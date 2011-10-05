@@ -32,7 +32,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.relayEvents(this.pageContainer, [
             'mountChanged',
             'iFrameException',
-            'componentRemoved',
             'selectItem',
             'lock',
             'unlock'
@@ -143,26 +142,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     },
 
-    enableUI: function() {
+    enableUI: function(pageContext) {
         Hippo.Msg.hide();
 
         if (!this.pageContainer.previewMode) {
-            var context = this.pageContainer.pageContext;
             if (!this.mainWindow) {
-                this.mainWindow = this.createMainWindow(context.ids.mountId);
+                this.mainWindow = this.createMainWindow(pageContext.ids.mountId);
             }
 
             var toolkitGrid = Ext.getCmp('ToolkitGrid');
-            toolkitGrid.reconfigure(context.stores.toolkit, toolkitGrid.getColumnModel());
+            toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
 
-            var pageModelGrid = Ext.getCmp('PageModelGrid');
-            if (pageModelGrid.pageId != context.ids.pageId) {
-                pageModelGrid.pageId = context.ids.pageId;
-                pageModelGrid.reconfigure(context.stores.pageModel, pageModelGrid.getColumnModel());
+            var propertiesPanel = Ext.getCmp('componentPropertiesPanel');
+            propertiesPanel.reload();
 
-                var propertiesPanel = Ext.getCmp('componentPropertiesPanel');
-                propertiesPanel.reload();
-            }
             this.mainWindow.show();
         } else {
             if (this.mainWindow) {
@@ -207,18 +200,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.disableUI();
         }, this);
 
-        this.on('unlock', function() {
-            this.enableUI();
-        }, this);
-
-        this.on('componentRemoved', function(record) {
-            var grid = Ext.getCmp('PageModelGrid');
-            if (grid.getSelectionModel().getSelected() == record) {
-                this.deselect(null, null, record);
-            }
+        this.on('unlock', function(pageContext) {
+            this.enableUI(pageContext);
         }, this);
 
         this.on('selectItem', this.onSelect, this);
+
     },
 
     setChannelName : function(name) {
@@ -255,67 +242,30 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             hidden: true,
             items: [
                 {
+                    xtype: 'h_base_grid',
+                    flex:2,
                     region: 'north',
-                    split:true,
-                    layout: 'accordion',
                     height: 300,
-                    items:[
-                        {
-                            xtype: 'h_base_grid',
-                            flex:2,
-                            id: 'ToolkitGrid',
-                            title: this.resources['toolkit-grid-title'],
-                            cm: new Ext.grid.ColumnModel({
-                                columns: [
-                                    {
-                                        header: this.resources['toolkit-grid-column-header-name'],
-                                        dataIndex: 'name',
-                                        id:'name',
-                                        viewConfig : {
-                                            width: 40
-                                        }
-                                    }
-                                ],
-                                defaults: {
-                                    sortable: true,
-                                    menuDisabled: true
+                    id: 'ToolkitGrid',
+                    title: this.resources['toolkit-grid-title'],
+                    cm: new Ext.grid.ColumnModel({
+                        columns: [
+                            {
+                                header: this.resources['toolkit-grid-column-header-name'],
+                                dataIndex: 'name',
+                                id:'name',
+                                viewConfig : {
+                                    width: 40
                                 }
-                            }),
-                            plugins: [
-                                Hippo.ChannelManager.TemplateComposer.DragDropOne
-                            ]
-                        },
-                        {
-                            xtype: 'h_base_grid',
-                            flex: 3,
-                            id: 'PageModelGrid',
-                            title: this.resources['page-model-grid-title'],
-                            sm: new Ext.grid.RowSelectionModel({
-                                singleSelect: true,
-                                listeners: {
-                                    rowselect: {
-                                        fn: this.select,
-                                        scope: this
-                                    },
-                                    rowdeselect: {
-                                        fn: this.deselect,
-                                        scope: this
-                                    }
-                                }
-                            }),
-                            cm : new Ext.grid.ColumnModel({
-                                columns: [
-                                    { header: this.resources['page-model-grid-column-header-name'], dataIndex: 'name', id:'name', viewConfig :{width: 120}},
-                                    { header: this.resources['page-model-grid-column-header-type'], dataIndex: 'type', id:'type'},
-                                    { header: this.resources['page-model-grid-column-header-template'], dataIndex: 'template', id:'template'}
-                                ],
-                                defaults: {
-                                    sortable: false,
-                                    menuDisabled: true
-                                }
-                            }),
-                            menuProvider: this
+                            }
+                        ],
+                        defaults: {
+                            sortable: true,
+                            menuDisabled: true
                         }
+                    }),
+                    plugins: [
+                        Hippo.ChannelManager.TemplateComposer.DragDropOne
                     ]
                 },
                 {
@@ -334,33 +284,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return window1;
     },
 
-    onSelect : function(recordIndex) {
-        var sm = Ext.getCmp('PageModelGrid').getSelectionModel();
-        if (sm.isSelected(recordIndex)) {
-            sm.deselectRow(recordIndex);
-        } else {
-            sm.selectRow(recordIndex);
+    onSelect : function(record) {
+        if (typeof this.selectedRecord !== 'undefined') {
+            this.pageContainer.sendFrameMessage({element: this.selectedRecord.data.element}, 'deselect');
         }
-    },
 
-    select : function(model, index, record) {
         this.pageContainer.sendFrameMessage({element: record.data.element}, 'select');
         if (record.get('type') === HST.CONTAINERITEM) {
             this.showProperties(record);
         }
-    },
-
-    deselect : function(model, index, record) {
-        this.pageContainer.sendFrameMessage({element: record.data.element}, 'deselect');
-        this.hideProperties();
+        this.selectedRecord = record;
     },
 
     showProperties : function(record) {
         Ext.getCmp('componentPropertiesPanel').reload(record.get('id'));
-    },
-
-    hideProperties : function() {
-        Ext.getCmp('componentPropertiesPanel').removeAll();
     }
 
 });

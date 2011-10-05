@@ -20,7 +20,6 @@
 
     var Main = (function() {
         var subscriptions = {};
-        var scopeId = 'Main';
         return {
             die: function(msg) {
                 sendMessage({msg: msg}, "iframeexception");
@@ -42,7 +41,6 @@
             },
 
             subscribe: function(topic, callback, scope) {
-               console.log('Main subscribe scopeId ' + scopeId);
                var scopeParameter = scope || window;
                if (typeof subscriptions[topic] === 'undefined') {
                    console.log('create array for topic '+topic);

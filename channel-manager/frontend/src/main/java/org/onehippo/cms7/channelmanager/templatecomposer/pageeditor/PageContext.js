@@ -57,8 +57,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
 
         Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, config);
 
-        this.addEvents('afterBuildOverlay',
-                       'mountChanged',
+        this.addEvents('mountChanged',
                        'iFrameInitialized',
                        'iFrameException');
 
@@ -246,7 +245,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
 
                 // remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
                 var self = this;
-
                 window.setTimeout(function() {
                     frm.execScript(' jQuery.noConflict(true); ', true);
                     frm.sendMessage({debug: self.debug,
@@ -301,12 +299,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     },
                     scope: this
                 },
-                beforeload: {
-                    fn : function(store, options) {
-                        this.fireEvent('beforePageModelStoreLoad');
-                    },
-                    scope: this
-                },
                 load :{
                     fn : function(store, records, options) {
                         this.isReloading = false;
@@ -333,7 +325,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                                 parentRecord.set('children', children);
                             }
                         }
-                        this.fireEvent('componentRemoved', record);
                     },
                     scope : this
                 }
@@ -342,9 +333,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     _buildOverlay : function(frm) {
-        if (!this.fireEvent('beforeBuildOverlay')) {
-            return;
-        }
         console.log('_buildOverlay');
         var self = this;
         frm.sendMessage({
@@ -360,7 +348,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         if (!this.previewMode) {
             frm.sendMessage({}, ('showoverlay'));
         }
-        this.fireEvent('afterBuildOverlay');
     }
 
 });

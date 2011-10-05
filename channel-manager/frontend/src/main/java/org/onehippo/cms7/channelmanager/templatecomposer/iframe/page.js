@@ -210,9 +210,14 @@
         },
 
         checkStateChanges : function() {
+            var rearranges = [];
             $.each(this.containers, function(key, value) {
-                value.checkState();
+                var rearrange = value.checkState();
+                if (rearrange) {
+                    rearranges.push(rearrange);
+                }
             });
+            sendMessage(rearranges, 'rearrange');
             this.sync();
         },
 

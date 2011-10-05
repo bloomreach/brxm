@@ -5,7 +5,10 @@ if (typeof Hippo == 'undefined') {
     Hippo = {};
 }
 
-Hippo.Future = function(func) {
+Hippo.Future = function(func, options) {
+    options = options || {};
+    this.continuingFuture = options.continuingFuture || false;
+
     this.success = false;
     this.completed = false;
     this.value = undefined;
@@ -24,19 +27,33 @@ Hippo.Future = function(func) {
 Hippo.Future.prototype = {
 
     when: function(cb) {
-        if (!this.completed) {
+        if (this.continuingFuture) {
             this.successHandlers.push(cb);
-        } else if (this.success) {
-            cb.call(this, this.value);
+            if (this.completed) {
+                cb.call(this, this.value);
+            }
+        } else {
+            if (!this.completed) {
+                this.successHandlers.push(cb);
+            } else if (this.success) {
+                cb.call(this, this.value);
+            }
         }
         return this;
     },
 
     otherwise: function(cb) {
-        if (!this.completed) {
+        if (this.continuingFuture) {
             this.failureHandlers.push(cb);
-        } else if (!this.success) {
-            cb.call(this);
+            if (!this.success) {
+                cb.call(this);
+            }
+        } else {
+            if (!this.completed) {
+                this.failureHandlers.push(cb);
+            } else if (!this.success) {
+                cb.call(this);
+            }
         }
         return this;
     },
@@ -49,7 +66,7 @@ Hippo.Future.prototype = {
     },
 
     onSuccess: function(value) {
-        if (this.completed) {
+        if (!this.continuingFuture && this.completed) {
             return;
         }
         this.value = value;
@@ -58,11 +75,13 @@ Hippo.Future.prototype = {
         for (var i = 0; i < this.successHandlers.length; i++) {
             this.successHandlers[i].call(this, value);
         }
-        this.cleanup();
+        if (!this.continuingFuture) {
+            this.cleanup();
+        }
     },
 
     onFailure: function() {
-        if (this.completed) {
+        if (!this.continuingFuture && this.completed) {
             return;
         }
         this.success = false;
@@ -70,7 +89,9 @@ Hippo.Future.prototype = {
         for (var i = 0; i < this.failureHandlers.length; i++) {
             this.failureHandlers[i].call(this);
         }
-        this.cleanup();
+        if (!this.continuingFuture) {
+            this.cleanup();
+        }
     },
 
     cleanup: function() {

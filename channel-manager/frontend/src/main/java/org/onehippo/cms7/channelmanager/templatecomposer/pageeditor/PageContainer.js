@@ -88,11 +88,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         };
         var self = this;
         // clone array with concat()
-        var queue = this.iFrameCssHeadContributions.concat().concat(this.iFrameJsHeadContributions);
+        var resourceUrls = this.iFrameCssHeadContributions.concat().concat(this.iFrameJsHeadContributions);
         var futures = [];
-        for (var i = 0; i < queue.length; i++) {
+        for (var i = 0; i < resourceUrls.length; i++) {
             futures[i] = new Hippo.Future(function(success, failure) {
-                var src = queue[i];
+                var src = resourceUrls[i];
                 Ext.Ajax.request({
                     url : src,
                     method : 'GET',
@@ -271,7 +271,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             var cb = this.iframeCompletion.shift();
             cb.call(this);
         }
-        this.fireEvent('unlock');
+        this.fireEvent('unlock', this.pageContext);
     },
 
     _initIFrameListeners : function() {
@@ -319,7 +319,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.pageContext = new Hippo.ChannelManager.TemplateComposer.PageContext(
                 config, this.iframeResourceCache, this.pageContext);
         this.relayEvents(this.pageContext, [
-           'afterBuildOverlay',
            'mountChanged',
            'iFrameException'
         ]);
@@ -336,60 +335,37 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         return el;
     },
 
-    _onRearrangeContainer: function(id, children) {
+    _onRearrangeContainer: function(rearranges) {
         var self = this;
-        window.setTimeout(function() {
-            try {
-                var recordIndex = self.pageContext.stores.pageModel.findExact('id', id); //should probably do this through the selectionModel
-                var record = self.pageContext.stores.pageModel.getAt(recordIndex);
-                record.set('children', children);
-                console.log('_onRearrangeContainer '+id+', children: '+children);
-                record.commit();
-            } catch (exception) {
-                console.error('_onRearrangeContainer '+exception);
-            }
-        }, 0);
-    },
+        var futures = [];
 
-    /**
-     * ContextMenu provider
-     */
-    getMenuActions : function(record, selected) {
-        var actions = [];
-        var store = this.pageContext.stores.pageModel;
-        var type = record.get('type');
-        if (type == HST.CONTAINERITEM) {
-            actions.push(new Ext.Action({
-                text: this.resources['context-menu-action-delete'],
-                handler: function() {
-                    this._removeByRecord(record)
-                },
-                scope: this
-            }));
+        for (var i=0; i<rearranges.length; i++) {
+            var rearrange = rearranges[i];
+            futures[i] = new Hippo.Future(function(onSuccess, onFailure) {
+                window.setTimeout(function() {
+                    try {
+                        var recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
+                        var record = self.pageContext.stores.pageModel.getAt(recordIndex);
+                        record.set('children', rearrange.children);
+                        console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
+                        self.pageContext.stores.pageModel.on('write', function() {
+                            onSuccess();
+                        }, {single: true});
+                        record.commit();
+                    } catch (exception) {
+                        console.error('_onRearrangeContainer ' + exception);
+                        onFailure();
+                    }
+                }, 0);
+            });
         }
-        var children = record.get('children');
-        if (type == HST.CONTAINER && children.length > 0) {
-            actions.push(new Ext.Action({
-                text: this.resources['context-menu-delete-items'],
-                handler: function() {
-                    var msg = this.resources['context-menu-delete-items-message'].format(children.length);
-                    Hippo.Msg.confirm(this.resources['context-menu-delete-items-message-title'], msg, function(btn, text) {
-                        if (btn == 'yes') {
-                            var r = [children.length];
-                            Ext.each(children, function(c) {
-                                r.push(store.getAt(store.findExact('id', c)));
-                            });
-                            //it seems that calling store.remove(r) will end up re-calling the destroy api call for
-                            //all previous items in r.. maybe a bug, for now do a loop
-                            Ext.each(r, store.remove, store);
-                            //store.remove(r);
-                        }
-                    });
-                },
-                scope: this
-            }));
-        }
-        return actions;
+
+        Hippo.Future.join(futures).when(function() {
+            console.log('refresh iframe due to rearranging of containers');
+            this.refreshIframe();
+        }.createDelegate(this)).otherwise(function() {
+            console.error('rearranging containers failed');
+        }.createDelegate(this));
     },
 
     _handleEdit : function(uuid) {
@@ -409,13 +385,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             return;
         }
         var id = element.getAttribute('id');
-        var recordIndex = this.pageContext.stores.pageModel.findExact('id', id);
+        var record = this.pageContext.stores.pageModel.getById(id);
 
-        if (recordIndex < 0) {
+        if (!record) {
             console.warn('Handling onClick for element[id=' + id + '] with no record in component store');
             return;
         }
-        this.fireEvent('selectItem', recordIndex);
+
+        this.fireEvent('selectItem', record);
     },
 
     _removeByRecord: function(record) {
@@ -442,7 +419,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var self = this;
         try {
             if (msg.tag == 'rearrange') {
-                this._onRearrangeContainer(msg.data.id, msg.data.children);
+                this._onRearrangeContainer(msg.data);
             } else if (msg.tag == 'onclick') {
                 this._onClick(msg.data.element);
             } else if (msg.tag == 'receiveditem') {
@@ -473,4 +450,5 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             console.error(e);
         }
     }
+
 });

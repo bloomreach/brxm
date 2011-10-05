@@ -39,11 +39,6 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                                 proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete', method: 'GET'});
                             }
                         }
-                    },
-                    write :{
-                        fn: function(store, action, result, res, rs) {
-                            Hippo.ChannelManager.TemplateComposer.Container.refreshIframe();
-                        }
                     }
                 }
             }),
