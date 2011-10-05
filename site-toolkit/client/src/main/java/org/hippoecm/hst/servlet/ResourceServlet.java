@@ -35,11 +35,158 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Servlet for serving resources on the classpath. Adapted from deprecated Spring 2 ResourceServlet.
+ * Serves resources from either web application or classpath.
+ *
+ * <p/>
+ * A typical configuration is to set classpath resource path and map a servlet path to this servlet.
+ * 
+ * <xmp>
+ *  <servlet>
+ *    <servlet-name>ExampleResourceServlet</servlet-name>
+ *    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+ *    <init-param>
+ *      <param-name>jarPathPrefix</param-name>
+ *      <param-value>/META-INF/example/myapp/skin</param-value>
+ *    </init-param>
+ *  </servlet>
+ *  
+ *  <servlet-mapping>
+ *    <servlet-name>ExampleResourceServlet</servlet-name>
+ *    <url-pattern>/myapp/skin/*</url-pattern>
+ *  </servlet-mapping>
+ * </xmp>
+ * 
+ * <p/>
+ * 
+ * With the configuration above, requests by paths, "/myapp/skin/*", will be served by <CODE>ExampleResourceServlet</CODE>,
+ * which reads the target resource from the configured classpath resource path, "/META-INF/example/myapp/skin".
+ * For example, if the request path info is "/myapp/skin/example.png", then the servlet will find the corresponding
+ * classpath resource, "classpath:META-INF/example/myapp/skin/example.png", to serve the request.
+ * 
+ * <p/>
+ * 
+ * <p>The following init parameters are available:</p>
+ * <table border="2">
+ *   <tr>
+ *     <th>Init parameter name</th>
+ *     <th>Description</th>
+ *     <th>Example value</th>
+ *     <th>Default value</th>
+ *   </tr>
+ *   <tr>
+ *     <td>jarPathPrefix</td>
+ *     <td>Classpath resource path prefix</td>
+ *     <td>META-INF/example/myapp/skin</td>
+ *     <td>META-INF</td>
+ *   </tr>
+ *   <tr>
+ *     <td>cacheTimeout</td>
+ *     <td>
+ *       Millisecond value to set cache control HTTP headers: 'Expires' and 'Cache-Control'.
+ *       These cache control HTTP headers will be written only if this value is greater than zero.
+ *       Otherwise, the cache control HTTP headers are not written.
+ *     </td>
+ *     <td>0</td>
+ *     <td>31556926</td>
+ *   </tr>
+ *   <tr>
+ *     <td>gzipEnabled</td>
+ *     <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by 'compressedMimeTypes' init parameter.</td>
+ *     <td>false</td>
+ *     <td>true</td>
+ *   </tr>
+ *   <tr>
+ *     <td>webResourceEnabled</td>
+ *     <td>
+ *       Flag to enable/disable to read resources from the servlet context on web application resources.
+ *       If this is enabled, then the servlet will try to read a resource from the web application first by the request path info.
+ *     </td>
+ *     <td>false</td>
+ *     <td>true</td>
+ *   </tr>
+ *   <tr>
+ *     <td>jarResourceEnabled</td>
+ *     <td>
+ *       Flag to enable/disable to read resources from the classpath resources.
+ *       If this is enabled, then the servlet will try to read a resource from the classpath.
+ *     </td>
+ *     <td>false</td>
+ *     <td>true</td>
+ *   </tr>
+ *   <tr>
+ *     <td>allowedResourcePaths</td>
+ *     <td>Sets resource path regex patterns which are allowed to serve by this servlet.</td>
+ *     <td><pre>
+ * ^/.*\\.js,
+ * ^/.*\\.css, 
+ * ^/.*\\.png, 
+ * ^/.*\\.gif, 
+ * ^/.*\\.ico, 
+ * ^/.*\\.jpg, 
+ * ^/.*\\.jpeg, 
+ * ^/.*\\.swf,
+ * ^/.*\\.txt
+ *     <pre></td>
+ *     <td><pre>
+ * ^/.*\\.js,
+ * ^/.*\\.css, 
+ * ^/.*\\.png, 
+ * ^/.*\\.gif, 
+ * ^/.*\\.ico, 
+ * ^/.*\\.jpg, 
+ * ^/.*\\.jpeg, 
+ * ^/.*\\.swf
+ *     <pre></td>
+ *   </tr>
+ *   <tr>
+ *     <td>mimeTypes</td>
+ *     <td>
+ *       Sets mimeType mappings to override (or add) from the default mimeType mappings of the web application.
+ *       If a proper mimeType is not found by this mapping, then it will look up a mimeType from the web application.
+ *     </td>
+ *     <td><pre>
+ * .css = text/css,
+ * .js = text/javascript,
+ * .gif = image/gif,
+ * .png = image/png,
+ * .ico = image/vnd.microsoft.icon,
+ * .jpg = image/jpeg,
+ * .jpeg = image/jpeg,
+ * .swf = application/x-shockwave-flash,
+ * .txt = text/plain
+ *     </pre></td>
+ *     <td><pre>
+ * .css = text/css,
+ * .js = text/javascript,
+ * .gif = image/gif,
+ * .png = image/png,
+ * .ico = image/vnd.microsoft.icon,
+ * .jpg = image/jpeg,
+ * .jpeg = image/jpeg,
+ * .swf = application/x-shockwave-flash
+ *     </pre></td>
+ *   </tr>
+ *   <tr>
+ *     <td>compressedMimeTypes</td>
+ *     <td>
+ *       Sets mimeTypes which can be compressed to serve the resource by this servlet.
+ *       If a resource is in this kind of mimeTypes, then the servlet will write a compressed response in gzip encoding.
+ *     </td>
+ *     <td><pre>
+ * text/.*,
+ * application/json
+ *     </pre></td>
+ *     <td><pre>
+ * text/.*
+ *     </pre></td>
+ *   </tr>
+ * </table>
+ * <p/>
  */
 public class ResourceServlet extends HttpServlet {
     
@@ -47,7 +194,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
     
-    private static final Pattern PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
+    private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
     
     private static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
     
@@ -55,61 +202,115 @@ public class ResourceServlet extends HttpServlet {
     
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
     
-    private Set<Pattern> allowedResourcePaths = new HashSet<Pattern>();
-    {
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.js"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.css"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.png"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.gif"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.ico"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.jpg"));
-        allowedResourcePaths.add(Pattern.compile("^/.*\\.jpeg"));
+    private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<Pattern>();
+    static {
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.js"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.css"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.png"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.gif"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.ico"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpg"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpeg"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.swf"));
     }
     
-    private Map<String, String> defaultMimeTypes = new HashMap<String, String>();
-    {
-        defaultMimeTypes.put(".css", "text/css");
-        defaultMimeTypes.put(".js", "text/javascript");
-        defaultMimeTypes.put(".gif", "image/gif");
-        defaultMimeTypes.put(".png", "image/png");
-        defaultMimeTypes.put(".ico", "image/vnd.microsoft.icon");
-        defaultMimeTypes.put(".jpg", "image/jpeg");
-        defaultMimeTypes.put(".jpeg", "image/jpeg");
+    private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<String, String>();
+    static {
+        DEFAULT_MIME_TYPES.put(".css", "text/css");
+        DEFAULT_MIME_TYPES.put(".js", "text/javascript");
+        DEFAULT_MIME_TYPES.put(".gif", "image/gif");
+        DEFAULT_MIME_TYPES.put(".png", "image/png");
+        DEFAULT_MIME_TYPES.put(".ico", "image/vnd.microsoft.icon");
+        DEFAULT_MIME_TYPES.put(".jpg", "image/jpeg");
+        DEFAULT_MIME_TYPES.put(".jpeg", "image/jpeg");
+        DEFAULT_MIME_TYPES.put(".swf", "application/x-shockwave-flash");
     }
     
-    private Set<Pattern> compressedMimeTypes = new HashSet<Pattern>();
-    {
-        compressedMimeTypes.add(Pattern.compile("text/.*"));
+    private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<Pattern>();
+    static {
+        DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
-
+    
+    private Set<Pattern> allowedResourcePaths;
+    
+    private Map<String, String> mimeTypes;
+    
+    private Set<Pattern> compressedMimeTypes;
+    
     private String jarPathPrefix;
-
+    
     private int cacheTimeout;
     
     private boolean gzipEnabled;
     
+    private boolean webResourceEnabled;
+    
+    private boolean jarResourceEnabled;
     
     @Override
     public void init() throws ServletException {
         jarPathPrefix = getInitParameter("jarPathPrefix", "META-INF");
         cacheTimeout = Integer.parseInt(getInitParameter("cacheTimeout", "31556926"));
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
+        webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
+        jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
+        
+        allowedResourcePaths = new HashSet<Pattern>(DEFAULT_ALLOWED_RESOURCE_PATHS);
+        mimeTypes = new HashMap<String, String>(DEFAULT_MIME_TYPES);
+        compressedMimeTypes = new HashSet<Pattern>(DEFAULT_COMPRESSED_MIME_TYPES);
+        
+        String param = getInitParameter("allowedResourcePaths", null);
+        if (!StringUtils.isBlank(param)) {
+            allowedResourcePaths = new HashSet<Pattern>();
+            String [] patterns = StringUtils.split(param, ", \t\r\n");
+            for (int i = 0; i < patterns.length; i++) {
+                if (!StringUtils.isBlank(patterns[i])) {
+                    allowedResourcePaths.add(Pattern.compile(patterns[i]));
+                }
+            }
+        }
+        
+        param = getInitParameter("mimeTypes", null);
+        if (!StringUtils.isBlank(param)) {
+            mimeTypes = new HashMap<String, String>();
+            String [] pairs = StringUtils.split(param, ",\t\r\n");
+            for (int i = 0; i < pairs.length; i++) {
+                if (!StringUtils.isBlank(pairs[i])) {
+                    String [] pair = StringUtils.split(pairs[i], "=");
+                    if (pair.length > 1) {
+                        mimeTypes.put(StringUtils.trim(pair[0]), StringUtils.trim(pair[1]));
+                    }
+                }
+            }
+        }
+        
+        param = getInitParameter("compressedMimeTypes", null);
+        if (!StringUtils.isBlank(param)) {
+            compressedMimeTypes = new HashSet<Pattern>();
+            String [] patterns = StringUtils.split(param, ", \t\r\n");
+            for (int i = 0; i < patterns.length; i++) {
+                if (!StringUtils.isBlank(patterns[i])) {
+                    compressedMimeTypes.add(Pattern.compile(patterns[i]));
+                }
+            }
+        }
+        
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-        String resourcePath = request.getPathInfo();
+        String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
         
         if (log.isDebugEnabled()) {
-            log.debug("Processing request for resource " + resourcePath);
+            log.debug("Processing request for resource {}.", resourcePath);
         }
         
         URL resource = getResourceURL(resourcePath);
         
         if (resource == null) {
             if (log.isDebugEnabled()) {
-                log.debug("Resource not found: " + resourcePath);
+                log.debug("Resource not found: {}", resourcePath);
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -122,7 +323,7 @@ public class ResourceServlet extends HttpServlet {
         
         if (ifModifiedSince >= lastModified) {
             if (log.isDebugEnabled()) {
-                log.debug("Resource: " + resourcePath + " Not Modified");
+                log.debug("Resource: {} Not Modified.", resourcePath);
             }
             response.setStatus(304);
             return;
@@ -156,26 +357,38 @@ public class ResourceServlet extends HttpServlet {
     private URL getResourceURL(String resourcePath) throws MalformedURLException {
         if (!isAllowed(resourcePath)) {
             if (log.isWarnEnabled()) {
-                log.warn("An attempt to access a protected resource at " + resourcePath + " was disallowed.");
+                log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
+            
             return null;
         }
-        URL resource = getServletContext().getResource(resourcePath);
-        if (resource == null) {
-            resource = getJarResource(resourcePath);
+        
+        URL resource = null;
+        
+        if (webResourceEnabled) {
+            resource = getServletContext().getResource(resourcePath);
         }
+        
+        if (resource == null) {
+            if (jarResourceEnabled) {
+                resource = getJarResource(resourcePath);
+            }
+        }
+        
         return resource;
     }
     
     private boolean isAllowed(String resourcePath) {
-        if (PROTECTED_PATH.matcher(resourcePath).matches()) {
+        if (webResourceEnabled && WEBAPP_PROTECTED_PATH.matcher(resourcePath).matches()) {
             return false;
         }
+        
         for (Pattern p : allowedResourcePaths) {
             if (p.matcher(resourcePath).matches()) {
                 return true;
             }
         }
+        
         return false;
     }
     
@@ -187,26 +400,40 @@ public class ResourceServlet extends HttpServlet {
         }
         
         if (log.isDebugEnabled()) {
-            log.debug("Searching classpath for resource: " + jarResourcePath);
+            log.debug("Searching classpath for resource: {}", jarResourcePath);
         }
+        
         return getDefaultClassLoader().getResource(jarResourcePath);
     }
     
     private void prepareResponse(HttpServletResponse response, URL resource, long lastModified, int contentLength) throws IOException {
-
-        String mimeType = getServletContext().getMimeType(resource.getPath());
+        String resourcePath = resource.getPath();
+        String mimeType = null;
+        
+        int offset = resourcePath.lastIndexOf('.');
+        if (-1 != offset) {
+            String extension = resource.getPath().substring(offset);
+            mimeType = mimeTypes.get(extension);
+        }
+        
         if (mimeType == null) {
-            String extension = resource.getPath().substring(resource.getPath().lastIndexOf('.'));
-            mimeType = defaultMimeTypes.get(extension);
-            if (mimeType == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("No mime-type mapping for extension: " + extension);
-                }
+            mimeType = getServletContext().getMimeType(resourcePath);
+            if (log.isDebugEnabled()) {
+                log.debug("Fallback to the mimeType '{}' from servlet context for {}.", mimeType, resourcePath);
             }
         }
+        
+        if (mimeType == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("No mime-type mapping for resource path: {}. Fallback to 'application/octet-stream'.", resourcePath);
+            }
+            mimeType = "application/octet-stream";
+        }
+        
         response.setDateHeader(HTTP_LAST_MODIFIED_HEADER, lastModified);
         response.setContentLength(contentLength);
         response.setContentType(mimeType);
+        
         if (cacheTimeout > 0) {
             // Http 1.0 header
             response.setDateHeader(HTTP_EXPIRES_HEADER, System.currentTimeMillis() + cacheTimeout * 1000L);
@@ -248,7 +475,7 @@ public class ResourceServlet extends HttpServlet {
         return value;
     }
     
-    private static ClassLoader getDefaultClassLoader() {
+    private ClassLoader getDefaultClassLoader() {
         ClassLoader cl = null;
         try {
             cl = Thread.currentThread().getContextClassLoader();
@@ -258,7 +485,7 @@ public class ResourceServlet extends HttpServlet {
         }
         if (cl == null) {
             // No thread context class loader -> use class loader of this class.
-            ResourceServlet.class.getClassLoader();
+            cl = getClass().getClassLoader();
         }
         return cl;
     }
