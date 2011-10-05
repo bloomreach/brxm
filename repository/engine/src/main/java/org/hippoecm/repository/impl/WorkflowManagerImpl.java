@@ -583,19 +583,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, uuid);
                     try {
-                        lockable = rootSession.getNodeByIdentifier(uuid);
-                        if (lockable.isLocked()) {
-                            try {
-                                Lock lock = lockable.getLock();
-                                if(lock.isLockOwningSession()) {
-                                    lockable = null;
-                                }
-                            } catch (LockException ex) {
-                                // no longer locked
-                            }
-                        }
-                        if(!lockable.isNodeType("mix:lockable")) {
-                            lockable = lockable.getParent();
+                        if(!method.getName().equals("hints")) {
+                            lockable = rootSession.getNodeByIdentifier(uuid);
                             if (lockable.isLocked()) {
                                 try {
                                     Lock lock = lockable.getLock();
@@ -607,6 +596,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                 }
                             }
                             if(!lockable.isNodeType("mix:lockable")) {
+                                lockable = lockable.getParent();
+                                if (lockable.isLocked()) {
+                                    try {
+                                        Lock lock = lockable.getLock();
+                                        if(lock.isLockOwningSession()) {
+                                            lockable = null;
+                                        }
+                                    } catch (LockException ex) {
+                                        // no longer locked
+                                    }
+                                }
+                            }
+                            if(lockable != null && !lockable.isNodeType("mix:lockable")) {
                                 lockable = null;
                             }
                         }
@@ -763,8 +765,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
             methodName = null;
             parameterTypes = null;
         }
-        WorkflowInvocationImpl(Node workflowNode, Document workflowSubject, Method method, Object[] args)
-        throws RepositoryException {
+
+        WorkflowInvocationImpl(Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
@@ -773,7 +775,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 String uuid = workflowSubject.getIdentity();
                 if(uuid != null && !"".equals(uuid)) {
-                    this.workflowSubjectNode = workflowNode.getSession().getNodeByUUID(uuid);
+                    this.workflowSubjectNode = rootSession.getNodeByIdentifier(uuid);
                 }
             } catch(ItemNotFoundException ex) {
             }
@@ -782,13 +784,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.parameterTypes = method.getParameterTypes();
         }
 
-        WorkflowInvocationImpl(Node workflowNode, Node workflowSubject, Method method, Object[] args)
-          throws RepositoryException {
+        WorkflowInvocationImpl(Node workflowNode, Session rootSession, Node workflowSubject, Method method, Object[] args) throws RepositoryException {
             this.workflowNode = workflowNode;
             this.workflowSubject = null;
             this.method = method;
             this.arguments = (args!=null ? args.clone() : args);
-            this.workflowSubjectNode = workflowSubject;
+            this.workflowSubjectNode = rootSession.getNodeByIdentifier(workflowSubject.getIdentifier());
             this.category = workflowNode.getParent().getName();
             this.methodName = method.getName();
             this.parameterTypes = method.getParameterTypes();
@@ -941,23 +942,25 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                 Method targetMethod = workflow.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(manager.rootSession)) {
-                    try {
-                        lockable = manager.rootSession.getNodeByIdentifier(uuid);
-                        if (lockable.isLocked()) {
-                            try {
-                                Lock lock = lockable.getLock();
-                                if(lock.isLockOwningSession()) {
-                                    lockable = null;
+                    if(!method.getName().equals("hints")) {
+                        try {
+                            lockable = manager.rootSession.getNodeByIdentifier(uuid);
+                            if (lockable.isLocked()) {
+                                try {
+                                    Lock lock = lockable.getLock();
+                                    if (lock.isLockOwningSession()) {
+                                        lockable = null;
+                                    }
+                                } catch (LockException ex) {
+                                    // no longer locked
                                 }
-                            } catch (LockException ex) {
-                                // no longer locked
                             }
+                            if (lockable != null && !lockable.isNodeType("mix:lockable")) {
+                                lockable = null;
+                            }
+                        } catch (ItemNotFoundException ex) {
+                            // if the item is not yet persisted, there is no need to try to lock it
                         }
-                        if(!lockable.isNodeType("mix:lockable")) {
-                            lockable = null;
-                        }
-                    } catch(ItemNotFoundException ex) {
-                        // if the item is not yet persisted, there is no need to try to lock it
                     }
                     if(lockable != null) {
                         manager.rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
@@ -1136,7 +1139,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, document, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, document, method, args));
                            }
                        });
             }
@@ -1188,7 +1191,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, subject, method, args));
                            }
                        });
             }
@@ -1221,7 +1224,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, subject, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, subject, method, args));
                            }
                        });
             }
