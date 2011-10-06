@@ -32,3 +32,6 @@ table.toolbarRow {
 .hippo-window-form td input { line-height: 15px; }
 
 .hippo-window-form td a.action { position: relative; bottom: 5px; }
+
+/* Fix for CMS7-5385 */
+.hippo-picker-navigation { width: auto; min-width: 618px; }

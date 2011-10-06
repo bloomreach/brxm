@@ -30,3 +30,6 @@ table.hippo-search-section .hippo-search-section-input input {
 .toggle-button {
   padding-bottom: 1px;
 }
+
+/* Fix for CMS7-5385 */
+.hippo-picker-navigation { width: auto; min-width: 618px; _width: 618px; }
