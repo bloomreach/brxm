@@ -413,6 +413,7 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Dimension
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Persona.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Rule.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Segment.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/component/BehavioralParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/container/BehavioralUpdateValve.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
