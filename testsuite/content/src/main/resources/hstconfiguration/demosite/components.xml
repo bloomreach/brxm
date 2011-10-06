@@ -128,15 +128,17 @@
                     </sv:property>
                     <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
                       <sv:value>borderColor</sv:value>
-                      <sv:value>buyer|org.hippoecm.hst:borderColor</sv:value>
-                      <sv:value>developer|org.hippoecm.hst:borderColor</sv:value>
-                      <sv:value>member|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>oldcyclist|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>youngcyclist|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>olddriver|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>oldcyclist|org.hippoecm.hst:borderColor</sv:value>
                     </sv:property>
                     <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
                       <sv:value>#00FF00</sv:value>
                       <sv:value>#FF0000</sv:value>
                       <sv:value>#0000FF</sv:value>
                       <sv:value>#00FFFF</sv:value>
+                      <sv:value>#FFFF00</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="banner2-table">
