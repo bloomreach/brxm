@@ -17,6 +17,7 @@ package org.hippoecm.hst.behavioral.core.component;
 
 import org.hippoecm.hst.behavioral.BehavioralProfile;
 import org.hippoecm.hst.behavioral.util.BehavioralUtils;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstParameterInfoInvocationHandler;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -38,7 +39,7 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
     final static double THRESHOLD = 0.1D;
     
     @Override
-    public HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(
+    protected HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(
             ComponentConfiguration componentConfig, HstRequest request,
             HstParameterValueConverter parameterValueConverter) {
         
@@ -52,8 +53,8 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
               
               if(profile != null && !profile.getPersonaScores().isEmpty() && profile.getPersonaScores().get(0).getScore() > THRESHOLD) {
                   // get highest scoring personaId
-                  String parameterPrefix = profile.getPersonaScores().get(0).getPersonaId() + "|org.hippoecm.hst:";
-                  parameterValue = config.getParameter(parameterPrefix+parameterName, req.getRequestContext().getResolvedSiteMapItem());
+                  String prefixedParameterName = profile.getPersonaScores().get(0).getPersonaId() + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER +parameterName; 
+                  parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
               }
               if(parameterValue == null) {
                   parameterValue = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem()); 

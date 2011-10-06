@@ -178,17 +178,38 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } 
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+        String[] parameterNamePrefixes = node.getValueProvider().getStrings(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
 
-        if (parameterNames != null && parameterValues != null) {
-            if (parameterNames.length != parameterValues.length) {
-                log.warn("Skipping parameters for component '{}' because they only make sense if there are equal number of names and values", id);
+        if (parameterNames.length != parameterValues.length) {
+            log.warn("Skipping parameters for component '{}' because they only make sense if there are equal number of names and values", id);
+        } else {
+            if(parameterNamePrefixes.length > 0 ) {
+                if(parameterNamePrefixes.length != parameterNames.length) {
+                    log.warn("Skipping parameters for component '{}' because there are hst:parameternameprefixes configured, but if " +
+                    		"it is configured it MUST be of equal length as the hst:parameternames", id);
+                } else {
+                    // if there is a non empty parameterNamePrefix, we prefix the parameter name with this value + the 
+                    // HstComponentConfiguration#PARAMETER_PREFIX_NAME_DELIMITER
+                    for (int i = 0; i < parameterNames.length; i++) {
+                        StringBuilder parameterNameBuilder = new StringBuilder(parameterNames[i]);
+                        if(!StringUtils.isEmpty(parameterNamePrefixes[i])) {
+                            parameterNameBuilder.insert(0, HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
+                            parameterNameBuilder.insert(0, parameterNamePrefixes[i]);
+                        }
+                        this.parameters.put(StringPool.get(parameterNameBuilder.toString()), StringPool.get(parameterValues[i]));
+                        this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                    } 
+                }
             } else {
                 for (int i = 0; i < parameterNames.length; i++) {
                     this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                     this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
-                }
-            }
+                } 
+            } 
         }
+       
+     
+        
         if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
             this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
         }

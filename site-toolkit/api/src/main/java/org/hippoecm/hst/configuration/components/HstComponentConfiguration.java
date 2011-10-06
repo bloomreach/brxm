@@ -84,6 +84,11 @@ import org.hippoecm.hst.core.container.PageErrorHandler;
 public interface HstComponentConfiguration extends HstComponentInfo {
 
     /**
+     * The delimiter that is used between the parametername and the parameterprefix when there is a prefix value
+     */
+    static final char PARAMETER_PREFIX_NAME_DELIMITER  = '\uFFFF';
+    
+    /**
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
      */

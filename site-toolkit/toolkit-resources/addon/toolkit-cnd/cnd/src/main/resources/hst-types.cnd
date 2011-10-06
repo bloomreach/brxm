@@ -96,6 +96,7 @@
 - hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
+- hst:parameternameprefixes (string) multiple
 - hst:parametervalues (string) multiple
 - hst:namedpipeline (string)
 - hst:statuscode (long)
