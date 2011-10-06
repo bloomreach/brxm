@@ -61,6 +61,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
     
+    private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
+    
 	protected ServletContext servletContext;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
@@ -205,7 +207,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
         if(parameterInfoProxyFactory == null) {
-            parameterInfoProxyFactory = new HstParameterInfoProxyFactoryImpl();
+            return HST_PARAMETER_INFO_PROXY_FACTORY;
         }
         return parameterInfoProxyFactory;
     }
