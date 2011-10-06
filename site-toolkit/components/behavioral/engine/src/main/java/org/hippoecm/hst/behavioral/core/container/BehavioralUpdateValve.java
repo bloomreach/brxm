@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.behavioral.BehavioralService;
 import org.hippoecm.hst.behavioral.core.component.BehavioralParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.behavioral.util.BehavioralUtils;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
@@ -29,6 +30,8 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 
 public class BehavioralUpdateValve implements Valve {
 
+    private final static HstParameterInfoProxyFactory parameterInfoProxyFactory =  new BehavioralParameterInfoProxyFactoryImpl();
+    
     @Override
     public void destroy() {
     }
@@ -47,7 +50,7 @@ public class BehavioralUpdateValve implements Valve {
 
         // now we set a different parameterInfoProxyFactory on the HstRequestContext because we want 
         // to depending on the current persona fetch a prefixed parameter name if it is available
-        ((HstMutableRequestContext)context.getRequestContext()).setParameterInfoProxyFactory(new BehavioralParameterInfoProxyFactoryImpl());
+        ((HstMutableRequestContext)context.getRequestContext()).setParameterInfoProxyFactory(parameterInfoProxyFactory);
         
         // continue
         context.invokeNext();
