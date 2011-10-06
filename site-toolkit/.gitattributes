@@ -416,11 +416,13 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Segment.j
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/component/BehavioralParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/container/BehavioralUpdateValve.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractDataProvider.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractHippoBeanDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralDataImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralRefererDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralSearchDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralTagDataProvider.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/DocumentTypeDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/DomainRefererDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/SearchEngineDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/util/AnnotatedContentBeanClassesScanner.java -text

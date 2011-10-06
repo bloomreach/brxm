@@ -17,7 +17,7 @@ package org.hippoecm.hst.behavioral.providers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -67,7 +67,11 @@ public class SearchEngineDataProvider extends BehavioralRefererDataProvider {
                     if (parameterName.equals(queryParameter)) {
                         String parameterValue = parameter.substring(indexOfEquals + 1);
                         String[] values = parameterValue.split("\\+");
-                        return Arrays.asList(values);
+                        List<String> terms = new ArrayList<String>(values.length);
+                        for (String value : values) {
+                            terms.add(value.toLowerCase());
+                        }
+                        return terms;
                     }
                 }
             }

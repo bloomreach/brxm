@@ -42,7 +42,7 @@ public class Rule {
 
         List<String> terms = new ArrayList<String>();
         for (Value term : jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_TERMS).getValues()) {
-            terms.add(term.getString());
+            terms.add(term.getString().toLowerCase());
         }        
         this.terms = Collections.unmodifiableList(terms);
         

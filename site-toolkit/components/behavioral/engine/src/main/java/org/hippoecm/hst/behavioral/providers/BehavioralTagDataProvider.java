@@ -26,29 +26,20 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
-import org.hippoecm.hst.behavioral.util.AnnotatedContentBeanClassesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class BehavioralTagDataProvider extends AbstractDataProvider {
+public class BehavioralTagDataProvider extends AbstractHippoBeanDataProvider {
     
     private static final Logger log = LoggerFactory.getLogger(BehavioralTagDataProvider.class);
-            
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
-    protected static final String DEFAULT_TAGS_JCR_PROPERYNAME = "hippostd:tags";
+    private static final String DEFAULT_TAGS_JCR_PROPERYNAME = "hippostd:tags";
     
-    private List<Class<? extends HippoBean>> annotatedClasses;
-    private ObjectConverter objectConverter;
     private String tagsJcrPropertyName = DEFAULT_TAGS_JCR_PROPERYNAME;
     
     public BehavioralTagDataProvider(String id, String name, Node node) throws RepositoryException {
@@ -81,10 +72,10 @@ public class BehavioralTagDataProvider extends AbstractDataProvider {
                     List<String> terms = new ArrayList<String>();
                     if(prop.isMultiple()) {
                         for(Value val :prop.getValues() ) {
-                            terms.add(val.getString());
+                            terms.add(val.getString().toLowerCase());
                         }
                     } else {
-                        terms.add(prop.getValue().getString());
+                        terms.add(prop.getValue().getString().toLowerCase());
                     }
                     return terms;
                 } else {
@@ -100,40 +91,4 @@ public class BehavioralTagDataProvider extends AbstractDataProvider {
         
     }
     
-    
-    protected HippoBean getBeanForResolvedSiteMapItem(HstRequestContext requestContext) {
-        ObjectConverter converter = getObjectConverter(requestContext);
-        
-        String base = PathUtils.normalizePath(requestContext.getResolvedMount().getMount().getContentPath());
-        String relPath = PathUtils.normalizePath(requestContext.getResolvedSiteMapItem().getRelativeContentPath());
-        if(relPath == null) {
-            return null;
-        }
-        try {
-            if("".equals(relPath)) {
-                return (HippoBean) converter.getObject(requestContext.getSession(), "/"+base);
-            } else {
-                return (HippoBean) converter.getObject(requestContext.getSession(), "/"+base + "/" + relPath);
-            }
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
-        } catch (RepositoryException e) {
-            log.error("Could not get bean for path " + relPath, e);
-        }
-        return null;
-        
-    }
-    
-    protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-        return objectConverter;
-    }
-    
-    protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-       annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM));
-       return annotatedClasses;
-    }
 }

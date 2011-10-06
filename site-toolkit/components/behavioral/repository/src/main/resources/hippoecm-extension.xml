@@ -34,8 +34,7 @@
       <sv:value>behavioral.cnd</sv:value>
     </sv:property>
   </sv:node>
-  
-  <sv:node sv:name="behavioral-contentpropadd-init">
+  <sv:node sv:name="behavioral-starttag-initialize-version">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -49,5 +48,4 @@
       <sv:value>behavioral-1_0</sv:value>
     </sv:property>
   </sv:node>
-  
 </sv:node>

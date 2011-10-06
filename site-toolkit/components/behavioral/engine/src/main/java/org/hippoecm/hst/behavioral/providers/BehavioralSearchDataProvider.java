@@ -54,7 +54,7 @@ public class BehavioralSearchDataProvider extends AbstractDataProvider {
         List<String> terms = new ArrayList<String>();
         String[] queryTerms = query.split("\\s");
         for (String term : queryTerms) {
-            terms.add(term);
+            terms.add(term.toLowerCase());
         }
         return terms;
     }

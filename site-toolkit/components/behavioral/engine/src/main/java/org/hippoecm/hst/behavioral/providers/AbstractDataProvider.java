@@ -110,6 +110,9 @@ public abstract class AbstractDataProvider implements BehavioralDataProvider {
     }
     
     protected boolean isIncludedTerm(String term) {
+        if (configuredTerms == null) {
+            return false;
+        }
         return configuredTerms.contains(term);
     }
     
