@@ -102,6 +102,9 @@ api/src/main/java/org/hippoecm/hst/core/component/HeadElement.java svneol=native
 api/src/main/java/org/hippoecm/hst/core/component/HstComponent.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentFatalException.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoInvocationHandler.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactory.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/core/component/HstParameterValueConverter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstRequest.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstResponse.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstResponseState.java svneol=native#text/plain
@@ -342,6 +345,7 @@ commons/src/main/java/org/hippoecm/hst/container/HstFilter.java svneol=native#te
 commons/src/main/java/org/hippoecm/hst/container/XSSUrlFilter.java -text
 commons/src/main/java/org/hippoecm/hst/core/component/AbstractHstResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstPortletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -text

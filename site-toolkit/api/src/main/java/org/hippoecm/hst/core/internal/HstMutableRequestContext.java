@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -62,6 +63,8 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher);
 
 	public void setLinkCreator(HstLinkCreator linkCreator);
+	
+	public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory);
 
 	public void setHstSiteMenus(HstSiteMenus siteMenus);
 

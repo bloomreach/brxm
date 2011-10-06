@@ -1,0 +1,54 @@
+/*
+ *  Copyright 2011 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.core.component;
+
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
+
+
+/**
+ * HstParameterInfoProxyFactory is a factory interface for creating a proxy for an interface that is referred to by a {@link ParametersInfo} annotation.
+ * The {@link ParametersInfo} annotation is used to annotate {@link HstComponent} classes. The interface referred to by the {@link ParametersInfo} annotation
+ * is returned as proxy by the {@link #createParameterInfoProxy(ParametersInfo, ComponentConfiguration, HstRequest)} method. The getters in the interface that are 
+ * annotated with the {@link Parameter} annotation  are delegated through the proxy to the backing {@link ComponentConfiguration} 
+ */
+
+public interface HstParameterInfoProxyFactory {
+
+    /**
+     * Returns a proxy instance of the interface T. The proxy delegates the {@link Parameter} annotated getters in the interface T to the backing {@link ComponentConfiguration} parameters, 
+     * thus to {@link ComponentConfiguration#getParameter(String, org.hippoecm.hst.core.request.ResolvedSiteMapItem)}
+     * @param <T>
+     * @param parametersInfo the ParametersInfo annotation of the {@link HstComponent}
+     * @param componentConfig the backing {@link ComponentConfiguration} of the {@link HstComponent}
+     * @param request the {@link HstRequest}
+     * @param parameterValueConverter the converter that can convert the {@link String} parametervalue to the requested return type
+     * @return proxy instance of the interface T
+     * @throw {@link IllegalArgumentException} if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
+     */
+    <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
+            HstRequest request, HstParameterValueConverter parameterValueConverter);
+    
+    /**
+     * 
+     * @param componentConfig
+     * @param request
+     * @param parameterValueConverter
+     * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
+     */
+    HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(ComponentConfiguration componentConfig, HstRequest request, HstParameterValueConverter parameterValueConverter);
+}

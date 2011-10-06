@@ -35,6 +35,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -70,6 +72,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstContainerURL baseURL;
     protected String contextNamespace = "";
     protected HstLinkCreator linkCreator;
+    protected HstParameterInfoProxyFactory parameterInfoProxyFactory;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
@@ -192,6 +195,19 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     
     public HstLinkCreator getHstLinkCreator() {
         return this.linkCreator;
+    }
+    
+    @Override
+    public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory) {
+        this.parameterInfoProxyFactory = parameterInfoProxyFactory;
+    }
+    
+    @Override
+    public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
+        if(parameterInfoProxyFactory == null) {
+            parameterInfoProxyFactory = new HstParameterInfoProxyFactoryImpl();
+        }
+        return parameterInfoProxyFactory;
     }
     
     public void setHstSiteMenus(HstSiteMenus siteMenus) {

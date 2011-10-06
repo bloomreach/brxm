@@ -33,6 +33,7 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -57,6 +58,7 @@ public class MockHstRequestContext implements HstRequestContext {
     private ResolvedMount resolvedMount;
     private ResolvedSiteMapItem resolvedSiteMapItem;
     private HstLinkCreator linkCreator;
+    private HstParameterInfoProxyFactory parameterInfoProxyFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMenus siteMenus;
     private HstQueryManagerFactory hstQueryManagerFactory;
@@ -190,6 +192,12 @@ public class MockHstRequestContext implements HstRequestContext {
     public void setURLFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }
+    
+    @Override
+    public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
+        return parameterInfoProxyFactory;
+    }
+    
     
     public HstContainerURLProvider getContainerURLProvider() {
         return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
@@ -359,5 +367,5 @@ public class MockHstRequestContext implements HstRequestContext {
     public String getRenderHost() {
         return renderHost;
     }
-    
+
 }

@@ -29,11 +29,14 @@ import javax.servlet.ServletContext;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
@@ -138,6 +141,14 @@ public interface HstRequestContext {
      * @return HstQueryManagerFactory
      */
     HstQueryManagerFactory getHstQueryManagerFactory();
+    
+    /**
+     * Expert: Returns {@link HstParameterInfoProxyFactory} to create a proxy for an interface that is referred to by a {@link ParametersInfo} annotation
+     * on a {@link HstComponent}
+     * annotated interface getters 
+     * @return the {@link HstParameterInfoProxyFactory} 
+     */
+    HstParameterInfoProxyFactory getParameterInfoProxyFactory();
     
     /**
      * Set an attribute to be shared among each HstComponent windows.
@@ -298,7 +309,7 @@ public interface HstRequestContext {
     /**
      * @return <code>true</code> when all URLs must be fully qualified, ie, including scheme, domain and portnumber (if present)
      */
-    public boolean isFullyQualifiedURLs();
+    boolean isFullyQualifiedURLs();
     
     /**
      * 
@@ -306,6 +317,6 @@ public interface HstRequestContext {
      * there is only a render host when the request originated from the CMS 
      *
      */
-    public String getRenderHost();
+    String getRenderHost();
     
 }
