@@ -33,5 +33,5 @@ table.toolbarRow {
 
 .hippo-window-form td a.action { position: relative; bottom: 5px; }
 
-/* Fix for CMS7-5385 */
+/* picker width invalid after switching to HTML mode in Xinha */
 .hippo-picker-navigation { width: auto; min-width: 618px; }

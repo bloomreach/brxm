@@ -31,5 +31,5 @@ table.hippo-search-section .hippo-search-section-input input {
   padding-bottom: 1px;
 }
 
-/* Fix for CMS7-5385 */
+/* picker width invalid after switching to HTML mode in Xinha */
 .hippo-picker-navigation { width: auto; min-width: 618px; _width: 618px; }
