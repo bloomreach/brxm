@@ -150,9 +150,11 @@ public final class SearchInputParsingUtils {
                       } 
                   }
               }       
-          } else if (c == '\"' || c == '\'') {
+          } else if (c == '\"') {
               sb.append('\\');
               sb.append(c);
+          } else if (c == '\'') {
+              // we strip ' because jackrabbit xpath builder breaks on \' (however it should be possible according spec)
           } else if (c == ' ') {
               // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
               allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
