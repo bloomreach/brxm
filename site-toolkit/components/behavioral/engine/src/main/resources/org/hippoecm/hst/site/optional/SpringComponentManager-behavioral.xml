@@ -35,10 +35,6 @@
   <bean id="org.hippoecm.hst.behavioral.BehavioralDataStore" class="org.hippoecm.hst.behavioral.BehavioralDataHttpSessionStore">
   </bean>
   
-  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
-    <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
-  </bean>
-  
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject">
       <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
