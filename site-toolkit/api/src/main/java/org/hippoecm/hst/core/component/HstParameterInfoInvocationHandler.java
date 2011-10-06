@@ -35,5 +35,5 @@ public interface HstParameterInfoInvocationHandler extends InvocationHandler {
      * @return the parameter value from the <code>componentConfiguration</code> for <code>parameterName</code>. When there is no value, <code>null</code>
      * will be returned
      */
-    String getParameterValue (String parameterName, ComponentConfiguration componentConfiguration, HstRequest request);
+    String getParameterValue(String parameterName, ComponentConfiguration componentConfiguration, HstRequest request);
 }

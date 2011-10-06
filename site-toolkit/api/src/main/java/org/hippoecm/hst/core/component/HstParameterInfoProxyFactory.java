@@ -43,12 +43,4 @@ public interface HstParameterInfoProxyFactory {
     <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
             HstRequest request, HstParameterValueConverter parameterValueConverter);
     
-    /**
-     * 
-     * @param componentConfig
-     * @param request
-     * @param parameterValueConverter
-     * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
-     */
-    HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(ComponentConfiguration componentConfig, HstRequest request, HstParameterValueConverter parameterValueConverter);
 }

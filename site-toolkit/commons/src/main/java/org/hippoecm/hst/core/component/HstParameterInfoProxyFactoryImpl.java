@@ -47,12 +47,19 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         return parametersInfoInterface;
     }
     
-    public HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter parameterValueConverter) {
+    /**
+     * Override this method if a custom parameterInfoHandler is needed
+     * @param componentConfig
+     * @param request
+     * @param parameterValueConverter
+     * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
+     */
+    protected HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter parameterValueConverter) {
         return new ParameterInfoInvocationHandler(componentConfig, request,
                 parameterValueConverter);
     }
 
-    public static class ParameterInfoInvocationHandler implements HstParameterInfoInvocationHandler {
+    protected static class ParameterInfoInvocationHandler implements HstParameterInfoInvocationHandler {
 
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
