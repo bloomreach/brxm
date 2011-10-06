@@ -29,7 +29,9 @@ import java.util.Set;
 public interface BehavioralProfile {
     
     /**
-     * @return  the list of {@link BehavioralPersonaScore}s sorted from highest to lowest score.
+     * 
+     * @return  the list of all {@link BehavioralPersonaScore}s sorted from highest to lowest score. Also {@link BehavioralPersonaScore}s that have
+     * a {@link BehavioralPersonaScore#getScore()} equal to 0 are in this list 
      */
     List<BehavioralPersonaScore> getPersonaScores();
     
