@@ -40,6 +40,7 @@
 - hst:referencename (string)
 - hst:page_errorhandlerclassname (string)
 - hst:parameternames (string) multiple
+- hst:parameternameprefixes (string) multiple
 - hst:parametervalues (string) multiple
 // whether the component is rendered in standalone mode during componentRendering URLs
 - hst:standalone (boolean)
@@ -96,7 +97,6 @@
 - hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
-- hst:parameternameprefixes (string) multiple
 - hst:parametervalues (string) multiple
 - hst:namedpipeline (string)
 - hst:statuscode (long)
