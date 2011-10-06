@@ -128,10 +128,10 @@
                     </sv:property>
                     <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
                       <sv:value>borderColor</sv:value>
-                      <sv:value>oldcyclist|org.hippoecm.hst:borderColor</sv:value>
-                      <sv:value>youngcyclist|org.hippoecm.hst:borderColor</sv:value>
-                      <sv:value>olddriver|org.hippoecm.hst:borderColor</sv:value>
-                      <sv:value>oldcyclist|org.hippoecm.hst:borderColor</sv:value>
+                      <sv:value>borderColor</sv:value>
+                      <sv:value>borderColor</sv:value>
+                      <sv:value>borderColor</sv:value>
+                      <sv:value>borderColor</sv:value>
                     </sv:property>
                     <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
                       <sv:value>#00FF00</sv:value>
@@ -139,6 +139,13 @@
                       <sv:value>#0000FF</sv:value>
                       <sv:value>#00FFFF</sv:value>
                       <sv:value>#FFFF00</sv:value>
+                    </sv:property>
+                    <sv:property sv:multiple="true" sv:name="hst:parameternameprefixes" sv:type="String">
+                      <sv:value></sv:value>
+                      <sv:value>oldcyclist</sv:value>
+                      <sv:value>youngcyclist</sv:value>
+                      <sv:value>olddriver</sv:value>
+                      <sv:value>authorizeduser</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="banner2-table">
