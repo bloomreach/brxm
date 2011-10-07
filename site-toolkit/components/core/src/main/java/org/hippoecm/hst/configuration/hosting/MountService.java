@@ -547,7 +547,11 @@ public class MountService implements ContextualizableMount, MutableMount {
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
     
-
+    @Override
+    public List<Mount> getChildMounts() {
+        return Collections.unmodifiableList(new ArrayList<Mount>(childMountServices.values()));
+    }
+    
     public Mount getChildMount(String name) {
         return childMountServices.get(name);
     }
@@ -781,4 +785,5 @@ public class MountService implements ContextualizableMount, MutableMount {
     public void setChannelInfo(final ChannelInfo channelInfo) {
         this.channelInfo = channelInfo;
     }
+
 }

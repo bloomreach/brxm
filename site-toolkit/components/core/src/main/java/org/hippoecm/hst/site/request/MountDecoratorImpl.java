@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +128,17 @@ public class MountDecoratorImpl implements MountDecorator {
             childAsPreview.put(name, child);
             return child;
         }
-
+        
+        @Override
+        public List<Mount> getChildMounts() {
+            List<Mount> childMounts = delegatee.getChildMounts();
+            List<Mount> previewChilds = new ArrayList<Mount>();
+            for(Mount child : childMounts) {
+                previewChilds.add(getChildMount(child.getName()));
+            }
+            return Collections.unmodifiableList(previewChilds);
+        }
+        
         @Override
         public String getPreviewCanonicalContentPath() {
             return getCanonicalContentPath();
@@ -321,6 +333,5 @@ public class MountDecoratorImpl implements MountDecorator {
         public String getCmsLocation() {
             return delegatee.getCmsLocation();
         }
-
     }
 }

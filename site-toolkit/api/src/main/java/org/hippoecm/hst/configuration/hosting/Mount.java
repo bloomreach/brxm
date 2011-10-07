@@ -209,6 +209,12 @@ public interface Mount {
      * @return the mountPath for this {@link Mount}
      */
     String getMountPath();
+    
+    /**
+     * @return the unmodifiable {@link List} of all child {@link Mount}s and an empty {@link List} if there are no child {@link Mount}s
+     */
+    List<Mount> getChildMounts();
+    
     /**
      * 
      * @param name of the child {@link Mount}
