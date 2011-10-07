@@ -103,12 +103,4 @@ public interface ChannelManager {
 
     List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
 
-    /**
-     * Retrieve the channel by the repository path to the channel configuration node.
-     *
-     * @param channelPath
-     * @return
-     */
-    Channel getChannelByJcrPath(String channelPath) throws ChannelException;
-
 }

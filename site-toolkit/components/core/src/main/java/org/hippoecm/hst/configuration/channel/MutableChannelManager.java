@@ -23,8 +23,17 @@ import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
  */
 public interface MutableChannelManager extends ChannelManager {
 
+    /**
+     * Populate the mounts under the virtual hosts with channel information.
+     *
+     * @param hosts
+     * @throws RepositoryNotAvailableException
+     */
     void load(VirtualHosts hosts) throws RepositoryNotAvailableException;
 
+    /**
+     * discard cached channel information; there have been external changes to the backend storage.
+     */
     void invalidate();
 
 }

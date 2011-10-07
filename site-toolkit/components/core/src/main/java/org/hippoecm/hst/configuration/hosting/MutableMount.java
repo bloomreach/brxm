@@ -19,11 +19,22 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 
 /**
  * Mount extension that decouples channel info retrieval from the mount service construction.
+ * It is only safe to use the methods that are exposed while the mount service is built;
+ * i.e. with the HstManagerImpl monitor held.
  */
 public interface MutableMount extends Mount {
 
+    /**
+     * The repository path to the channel configuration node.
+     * @return
+     */
     String getChannelPath();
 
+    /**
+     * Set the channel info for the mount.  The info must be constant,
+     * i.e. it must always return the same values.
+     * @param info
+     */
     void setChannelInfo(ChannelInfo info);
 
 }
