@@ -235,7 +235,7 @@ public class HstLinkTag extends ParamContainerTag {
         }
 
         if(this.link == null && this.siteMapItemRefId != null) {
-            this.link = reqContext.getHstLinkCreator().createByRefId(siteMapItemRefId, reqContext.getResolvedMount().getMount());
+            this.link = reqContext.getHstLinkCreator().createByRefId(siteMapItemRefId, mount);
         }
 
         if(this.link == null) {
