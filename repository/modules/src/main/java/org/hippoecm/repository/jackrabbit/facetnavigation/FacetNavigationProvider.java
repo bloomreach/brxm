@@ -263,7 +263,7 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         return state;
     }
 
-    private void  populateCount(NodeState state, int count){
+    private void populateCount(NodeState state, int count) throws RepositoryException {
         PropertyState propState = createNew(countName, state.getNodeId());
         propState.setType(PropertyType.LONG);
         propState.setValues(new InternalValue[] { InternalValue.create(count) });

@@ -143,11 +143,11 @@ public abstract class HippoVirtualProvider implements DataProviderModule
         }
     }
 
-    protected final NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) {
+    protected final NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) throws RepositoryException {
         return stateMgr.createNew(nodeId, nodeTypeName, parentId);
     }
 
-    protected final PropertyState createNew(Name propName, NodeId parentId) {
+    protected final PropertyState createNew(Name propName, NodeId parentId) throws RepositoryException {
         return stateMgr.createNew(propName, parentId);
     }
 

@@ -139,7 +139,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     @Override
-    public NodeState populate(StateProviderContext context, NodeState state) throws IllegalNameException, NamespaceException {
+    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
         long startTime = System.currentTimeMillis();
         FacetResultSetNodeId nodeId = (FacetResultSetNodeId) state.getNodeId();
         String queryname = nodeId.queryname;

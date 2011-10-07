@@ -471,10 +471,14 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     private NodeState populate(HippoNodeId nodeId) throws NoSuchItemStateException, ItemStateException {
-        NodeState dereference = getNodeState(rootNodeId);
-        NodeState state = createNew(nodeId, dereference.getNodeTypeName(), nodeId.parentId);
-        state.setNodeTypeName(dereference.getNodeTypeName());
-        return state;
+        try {
+            NodeState dereference = getNodeState(rootNodeId);
+            NodeState state = createNew(nodeId, dereference.getNodeTypeName(), nodeId.parentId);
+            state.setNodeTypeName(dereference.getNodeTypeName());
+            return state;
+        } catch(RepositoryException ex) {
+            throw new NoSuchItemStateException(ex.getMessage(), ex);
+        }
     }
 
     boolean isPureVirtual(ItemId id) {

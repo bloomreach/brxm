@@ -16,6 +16,8 @@
 package org.hippoecm.repository.dataprovider;
 
 import javax.jcr.NamespaceException;
+import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -59,9 +61,9 @@ public interface DataProviderContext {
 
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException;
 
-    public NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId);
+    public NodeState createNew(NodeId nodeId, Name nodeTypeName, NodeId parentId) throws RepositoryException;
 
-    public PropertyState createNew(Name propName, NodeId parentId);
+    public PropertyState createNew(Name propName, NodeId parentId) throws RepositoryException;
     
     public Name getQName(String name) throws IllegalNameException, NamespaceException;
     
