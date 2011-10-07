@@ -394,18 +394,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     @Override
-    public synchronized Channel getChannelByJcrPath(final String channelPath) throws ChannelException {
-        load();
-        if (channelPath.startsWith(channelsRoot)) {
-            return channels.get(channelPath.substring(channelsRoot.length()));
-        } else {
-           log.warn("Channel path " + channelPath + " is not part of the hst configuration under " + rootPath +
-                ".  Use the full repository path for identification.");
-        }
-        return null;
-    }
-
-    @Override
     public ResourceBundle getResourceBundle(Channel channel, Locale locale) {
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName != null) {
