@@ -447,15 +447,16 @@ components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUt
 components/core/src/main/java/org/hippoecm/hst/configuration/StringPool.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelConfigurationEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapper.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/JcrHstPropertyDefinition.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/channel/MutableChannelManager.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountService.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MutableMount.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationEventListener.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstManagerImpl.java -text svneol=unset#text/plain

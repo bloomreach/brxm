@@ -42,7 +42,13 @@ import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.security.HstSubject;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
@@ -50,7 +56,7 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ChannelManagerImpl implements ChannelManager {
+public class ChannelManagerImpl implements MutableChannelManager {
 
     private static final String DEFAULT_HOST_GROUP = "dev-localhost";
     private static final String DEFAULT_HST_ROOT_PATH = "/hst:hst";
@@ -121,149 +127,99 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    private void loadMounts(final Node configNode) throws RepositoryException {
-        if (!configNode.hasNode(HstNodeTypes.NODENAME_HST_HOSTS)) {
-            log.warn("Cannot load mounts because node '{}' does not exist", configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_HOSTS);
-            return;
-        }
-
-        final Node hstHosts = configNode.getNode(HstNodeTypes.NODENAME_HST_HOSTS);
-        final String locale = getStringPropertyOrDefault(hstHosts, HstNodeTypes.GENERAL_PROPERTY_LOCALE, null);
-
-        if (!hstHosts.hasNode(hostGroup)) {
-            log.warn("Cannot load mounts because node '{}' does not exist", hstHosts.getPath() + "/" + hostGroup);
-            return;
-        }
-
-        final Node virtualHostGroup = hstHosts.getNode(this.hostGroup);
-
-        NodeIterator rootVirtualHostNodes = virtualHostGroup.getNodes();
-        while (rootVirtualHostNodes.hasNext()) {
-            Node virtualHost = rootVirtualHostNodes.nextNode();
-            populateChannels(virtualHost, locale);
-        }
-    }
-
     private void loadChannel(Node currNode) throws RepositoryException {
         Channel channel = ChannelPropertyMapper.readChannel(currNode);
         channels.put(channel.getId(), channel);
     }
 
+    private void loadFromMount(MutableMount mount) {
+        String channelPath = mount.getChannelPath();
+        if (channelPath == null || !channelPath.startsWith(channelsRoot)) {
+            log.warn("Channel id " + channelPath + " is not part of the hst configuration under " + rootPath +
+                    ", ignoring channel info for mount " + mount.getName() +
+                    ".  Use the full repository path for identification.");
+            return;
+        }
+        Channel channel = channels.get(channelPath.substring(channelsRoot.length()));
+        if (channel == null) {
+            log.warn("Unknown channel " + channelPath + ", ignoring mount " + mount.getName());
+            return;
+        }
+        if (channel.getUrl() != null) {
+            // We already encountered this channel while walking over all the mounts. This mount
+            // therefore points to the same channel as another mount, which is not allowed (each channel has only
+            // one mount)
+            log.warn("Channel " + channelPath + " contains multiple mounts - analysing mount " + mount.getName() + ", found url " + channel.getUrl() + " in channel");
+            return;
+        }
+
+        String mountPoint = mount.getMountPoint();
+        if (mountPoint != null) {
+            channel.setHstMountPoint(mountPoint);
+            String configurationPath = mount.getHstSite().getConfigurationPath();
+            if (configurationPath != null) {
+                channel.setHstConfigPath(configurationPath);
+            }
+
+            channel.setContentRoot(mount.getCanonicalContentPath());
+        }
+
+        String mountPath = mount.getMountPath();
+
+        channel.setLocale(mount.getLocale());
+        channel.setMountId(mount.getIdentifier());
+        channel.setSubMountPath(mountPath);
+        channel.setHostname(mount.getVirtualHost().getHostName());
+
+        String url = mount.getScheme() + "://" + mount.getVirtualHost().getHostName() + (!"".equals(mountPath) ? "/" + mountPath : "");
+        channel.setUrl(url);
+
+        try {
+            mount.setChannelInfo(getChannelInfo(channel));
+        } catch (ChannelException e) {
+            log.error("Could not set channel info to mount", e);
+        }
+    }
+
     /**
-     * Recursively populates the channels with URLs and other mount information.
-     * Ignores the mounts which are configured to be "rest" or "composer" either in hst:type or hst:types.
+     * Make sure that hst manager is initialized.
      *
-     * @param node the inital node to start with, must be a virtual host node.
-     * @param defaultLocale the locale to use for this node if it does not specify a locale itself
-     * @throws javax.jcr.RepositoryException In case cannot read required node/property from the repository.
+     * @throws ChannelException
      */
-    private void populateChannels(Node node, String defaultLocale) throws RepositoryException {
-        final String nodeLocale = getStringPropertyOrDefault(node, HstNodeTypes.GENERAL_PROPERTY_LOCALE, defaultLocale);
-
-        NodeIterator nodes = node.getNodes();
-        while (nodes.hasNext()) {
-            Node currNode = nodes.nextNode();
-
-            //Get the channels from the child node.
-            populateChannels(currNode, nodeLocale);
-
-            if (!currNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT) || !currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
-                continue;
-            }
-
-            String channelPath = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH).getString();
-            if (!channelPath.startsWith(channelsRoot)) {
-                log.warn("Channel id " + channelPath + " is not part of the hst configuration under " + rootPath +
-                        ", ignoring channel info for mount " + currNode.getPath() +
-                        ".  Use the full repository path for identification.");
-                continue;
-            }
-            Channel channel = channels.get(channelPath.substring(channelsRoot.length()));
-            if (channel == null) {
-                log.warn("Unknown channel " + channelPath + ", ignoring mount " + currNode.getPath());
-                continue;
-            }
-            if (channel.getUrl() != null) {
-                // We already encountered this channel while recursively walking over all the mounts. This mount
-                // therefore points to the same channel as another mount, which is not allowed (each channel has only
-                // one mount)
-                log.warn("Channel " + channelPath + " contains multiple mounts - analysing node " + currNode.getPath() + ", found url " + channel.getUrl() + " in channel");
-                continue;
-            }
-
-            if (currNode.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-                String mountPoint = currNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString();
-                Node siteNode = currNode.getSession().getNode(mountPoint);
-                channel.setHstMountPoint(siteNode.getPath());
-                if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                    channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
-                }
-                Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                if (contentNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                    String siteDocbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    String contentRoot = contentNode.getSession().getNodeByIdentifier(siteDocbase).getPath();
-                    channel.setContentRoot(contentRoot);
-                }
-            }
-
-            channel.setMountId(currNode.getIdentifier());
-
-            setUrlFor(currNode, channel);
-
-            final String channelLocale = getStringPropertyOrDefault(currNode, HstNodeTypes.GENERAL_PROPERTY_LOCALE, nodeLocale);
-            channel.setLocale(channelLocale);
-        }
-    }
-
-    private void setUrlFor(final Node currNode, final Channel channel) throws RepositoryException {
-        StringBuilder mountBuilder = new StringBuilder();
-        Node ancestor = currNode;
-        while (!ancestor.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP)) {
-            if (HstNodeTypes.MOUNT_HST_ROOTNAME.equals(ancestor.getName())) {
-                ancestor = ancestor.getParent();
-                break;
-            }
-            mountBuilder.insert(0, ancestor.getName());
-            mountBuilder.insert(0, "/");
-            ancestor = ancestor.getParent();
-        }
-        channel.setSubMountPath(mountBuilder.toString());
-        boolean firstHost = true;
-        StringBuilder hostBuilder = new StringBuilder();
-        while (!ancestor.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP)) {
-            if (firstHost) {
-                firstHost = false;
-            } else {
-                hostBuilder.append(".");
-            }
-            hostBuilder.append(ancestor.getName());
-            ancestor = ancestor.getParent();
-        }
-        channel.setHostname(hostBuilder.toString());
-        channel.setUrl("http://" + hostBuilder.toString() + mountBuilder.toString());
-    }
-
-    private void load() throws ChannelException {
+    void load() throws ChannelException {
         if (channels == null) {
-            Session session = null;
+            HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
             try {
-                session = getSession(false);
-                Node configNode = session.getNode(rootPath);
+                manager.getVirtualHosts();
+            } catch (RepositoryNotAvailableException e) {
+                throw new ChannelException("could not build channels");
+            }
+        }
+    }
 
-                blueprints = new HashMap<String, BlueprintService>();
-                loadBlueprints(configNode);
+    public void load(VirtualHosts virtualHosts) throws RepositoryNotAvailableException {
+        Session session = null;
+        try {
+            session = getSession(false);
+            Node configNode = session.getNode(rootPath);
 
-                channels = new HashMap<String, Channel>();
-                loadChannels(configNode);
+            blueprints = new HashMap<String, BlueprintService>();
+            loadBlueprints(configNode);
 
-                loadMounts(configNode);
+            channels = new HashMap<String, Channel>();
+            loadChannels(configNode);
 
-            } catch (RepositoryException e) {
-                throw new ChannelException("Could not load channels and/or blueprints", e);
-            } finally {
-                if (session != null) {
-                    session.logout();
+            List<Mount> mounts = virtualHosts.getMountsByHostGroup(hostGroup);
+            for (Mount mount : mounts) {
+                if (mount instanceof MutableMount) {
+                    loadFromMount((MutableMount) mount);
                 }
+            }
+        } catch (RepositoryException e) {
+            throw new RepositoryNotAvailableException("Could not load channels and/or blueprints", e);
+        } finally {
+            if (session != null) {
+                session.logout();
             }
         }
     }
@@ -496,7 +452,7 @@ public class ChannelManagerImpl implements ChannelManager {
 
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channel.getId());
+                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channelId);
                 } else {
                     // reuse the configuration path specified in the hst:site node, if it exists
                     String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();

@@ -28,10 +28,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
-import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -43,7 +40,7 @@ import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MountService implements ContextualizableMount {
+public class MountService implements ContextualizableMount, MutableMount {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(MountService.class);
@@ -524,22 +521,8 @@ public class MountService implements ContextualizableMount {
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
             channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
-
-            if (channelPath != null) {
-                try {
-                    ChannelManager channelManager = hstManager.getChannelManager();
-                    Channel channel = channelManager.getChannelByJcrPath(channelPath);
-                    if (channel != null) {
-                        channelInfo = channelManager.getChannelInfo(channel);
-                    } else {
-                        log.warn("Could not find channel " + channelPath);
-                    }
-                } catch (ChannelException e) {
-                    log.error("Could not set channel info", e);
-                }
-            }
         }
-        
+
         // check whether there are child Mounts now for this Mount
         
         for(HstNode childMount : mount.getNodes()) {
@@ -787,9 +770,15 @@ public class MountService implements ContextualizableMount {
         return mountProperties;
     }
 
+    public String getChannelPath() {
+        return channelPath;
+    }
+
     public <T extends ChannelInfo> T getChannelInfo() {
         return (T) channelInfo;
     }
 
-
+    public void setChannelInfo(final ChannelInfo channelInfo) {
+        this.channelInfo = channelInfo;
+    }
 }

@@ -34,7 +34,7 @@ import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.MutableChannelManager;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
@@ -127,9 +127,8 @@ public class HstManagerImpl implements HstManager {
 
     private boolean clearAll = false;
     private Map<HstEvent.ConfigurationType, Set<HstEvent>> configChangeEventMap;
-    private ChannelManager channelManager;
+    private MutableChannelManager channelManager;
 
-    
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
     }
@@ -187,15 +186,9 @@ public class HstManagerImpl implements HstManager {
         this.pathSuffixDelimiter = pathSuffixDelimiter;
     }
 
-
-    public void setChannelManager(ChannelManager channelManager) {
+    public void setChannelManager(MutableChannelManager channelManager) {
         this.channelManager = channelManager;
     }
-
-    public ChannelManager getChannelManager() {
-        return channelManager;
-    }
-    
 
     public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
         this.hstLinkCreator = hstLinkCreator;
@@ -207,6 +200,7 @@ public class HstManagerImpl implements HstManager {
             synchronized(this) {
                 if (virtualHosts == null) {
                     buildSites();
+                    this.channelManager.load(virtualHosts);
                 } 
             }
         }
@@ -673,7 +667,7 @@ public class HstManagerImpl implements HstManager {
                 }
             } catch (RepositoryException e) {
                 log.error("RepositoryException happened. Invalidate hst model completely", e);
-                virtualHosts = null;
+                invalidateVirtualHosts();
                 clearAll = true;
                 return;
             }
@@ -713,8 +707,7 @@ public class HstManagerImpl implements HstManager {
                     configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE).add(event);
                 } 
             }
-            // set the model to null
-            virtualHosts = null;
+            invalidateVirtualHosts();
         }
     }
     
@@ -731,11 +724,18 @@ public class HstManagerImpl implements HstManager {
     @Override
     public void invalidateAll() {
         synchronized(this) {
-            virtualHosts = null;
+            invalidateVirtualHosts();
             clearAll = true;
         }
-    } 
-    
+    }
+
+    private final void invalidateVirtualHosts() {
+        virtualHosts = null;
+        if (channelManager != null) {
+            channelManager.invalidate();
+        }
+    }
+
     public Map<String, HstSiteRootNode> getHstSiteRootNodes(){
         return siteRootNodes;
     }
