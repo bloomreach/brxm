@@ -27,7 +27,7 @@
   <name>Hippo Test Suite CMS</name>
   <description>Hippo Test Suite CMS</description>
   <artifactId>hippo-testsuite-cms</artifactId>
-  <version>1.01.00-alpha</version>
+  <version>1.01.01-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <dependencies>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-content</artifactId>
-      <version>1.01.00-alpha</version>
+      <version>1.01.01-SNAPSHOT</version>
     </dependency>
     
     <!--  Gallery picker dependency -->
