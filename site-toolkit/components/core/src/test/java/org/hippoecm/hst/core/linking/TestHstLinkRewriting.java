@@ -19,6 +19,9 @@ package org.hippoecm.hst.core.linking;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -41,6 +44,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -382,6 +386,94 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             assertEquals("wrong fully qualified url for News/News1" ,"http://sub.unit.test:8080/site/news/2008/SubNews1.html", (crossSiteAndDomainNewsLink.toUrlForm(requestContext, true)));
            // whether fullyQualified is true or false, for cross domain links we should always get a fully qualified url
             assertTrue("fully qualified with true or false should not matter for cross domain links" , crossSiteAndDomainNewsLink.toUrlForm(requestContext, false).equals(crossSiteAndDomainNewsLink.toUrlForm(requestContext, true)));
+        }
+        
+        
+        /**
+         * returns all the available canonical links within some HOSTGROUP for a HippoBean / node
+         * 
+         * The /news2 node is available on www.unit.test but also on m.unit.test. We should get a HstLink for both these locations
+         * 
+         * @throws Exception
+         */
+        @Test
+        public void testAllCanonnicalHstLinksForBean() throws Exception {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.test:8080","/news2");
+            // the current request is for the unittestproject. Now, we fetch a node from the unittestsubproject and ask a link for it. The
+            // unittestsubproject mount is located below the current unittest live mount
+           
+            Node node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
+            List<HstLink> allCanonicalNewsLinks = linkCreator.createAllAvailableCanonicals(node, requestContext);
+            
+            assertTrue("There should be a canonical link for www.unit.test/hst:root, m.unit.test/hst:root and for www.unit.test/custompipeline ",
+                    allCanonicalNewsLinks.size() == 3);
+            
+            // list of non fully qualified URLs. Note that for the m.unit.test host it is fully qualified, because cross domain
+            List<String> expectedNonFullyQualifiedListOfURLs = Arrays.asList("/site/custompipeline/news/News1.html","/site/news/News1.html", "http://m.unit.test:8080/site/news/News1.html"); 
+            List<String> expectedFullyQualifiedListOfURLs = Arrays.asList("http://www.unit.test:8080/site/custompipeline/news/News1.html","http://www.unit.test:8080/site/news/News1.html", "http://m.unit.test:8080/site/news/News1.html"); 
+            
+            for(HstLink link : allCanonicalNewsLinks) {
+                assertEquals("The getPath for all links should be all 'news/News1.html' ", "news/News1.html" ,link.getPath());
+                String nonFQU = link.toUrlForm(requestContext, false);
+                assertTrue("Unexpected non fully qualfied URL '"+nonFQU+"'", expectedNonFullyQualifiedListOfURLs.contains(nonFQU));
+                String fqu =  link.toUrlForm(requestContext, true);
+                assertTrue("Unexpected fully qualfied URL '"+fqu+"'", expectedFullyQualifiedListOfURLs.contains(fqu));
+            }
+            
+            // we now give an explicit TYPE the mounts for the links should have. We do not have m.unit.test as preview, hence, expect this time only 
+            // two canonicalNewsLinks, and they should be preview
+            
+            List<HstLink> allPreviewCanonicalNewsLinks = linkCreator.createAllAvailableCanonicals(node, requestContext, "preview");
+            
+            assertTrue("There should be a canonical link for preview.unit.test/hst:root, and for preview.unit.test/custompipeline (and not for m.unit.test) ",
+                    allPreviewCanonicalNewsLinks.size() == 2);
+           
+            // list of non fully qualified URLs. Note that since they are links to the preview in a different domain, they should all be fully qualified
+            List<String> expectedListOfURLs = Arrays.asList("http://preview.unit.test:8080/site/custompipeline/news/News1.html", "http://preview.unit.test:8080/site/news/News1.html"); 
+            
+            for(HstLink link : allPreviewCanonicalNewsLinks) {
+                assertEquals("The getPath for all links should be all 'news/News1.html' ", "news/News1.html" ,link.getPath());
+                assertEquals("Expected non fully qualfied URL to be equal to fully qualified" , link.toUrlForm(requestContext, false), link.toUrlForm(requestContext, true));
+                String fqu =  link.toUrlForm(requestContext, true);
+                assertTrue("Unexpected fully qualfied URL '"+fqu+"'", expectedListOfURLs.contains(fqu));
+            }
+            
+            // we now give an explicit HOSTGROUPNAME. We use hostGroupName dev-localhost
+            
+            List<HstLink> allCanonicalDevLocalNewsLinks = linkCreator.createAllAvailableCanonicals(node, requestContext, null , "dev-localhost");
+           
+            assertTrue("There should be a canonical link for localhost hst:root, and for localhost examplecontextpathonly",
+                    allCanonicalDevLocalNewsLinks.size() == 2);
+           
+            List<String> expectedListOfLiveDevLocalURLs = Arrays.asList("http://localhost:8080/site/examplecontextpathonly/news/News1.html", "http://localhost:8080/site/news/News1.html");
+            
+            for(HstLink link : allCanonicalDevLocalNewsLinks) {
+                assertEquals("The getPath for all links should be all 'news/News1.html' ", "news/News1.html" ,link.getPath());
+                assertEquals("Expected non fully qualfied URL to be equal to fully qualified" , link.toUrlForm(requestContext, false), link.toUrlForm(requestContext, true));
+                String fqu =  link.toUrlForm(requestContext, true);
+                assertTrue("Unexpected fully qualfied URL '"+fqu+"'", expectedListOfLiveDevLocalURLs.contains(fqu));
+            }
+            
+            // we now have TYPE  equal to 'preview' and also give an explicit HOSTGROUPNAME. We use hostGroupName dev-localhost
+            
+            List<HstLink> allCanonicalPreviewDevLocalNewsLinks = linkCreator.createAllAvailableCanonicals(node, requestContext, "preview" , "dev-localhost");
+            
+            // there is also a preview at 'http://localhost:8081/site/news/News1.html' so, three in total
+            
+            assertTrue("There should be a canonical link for localhost port 8080 hst:root, and for localhost port 8080 custompipeline and for localhost port 8081 hst:root",
+                    allCanonicalPreviewDevLocalNewsLinks.size() == 3);
+
+            List<String> expectedListOfPreviewDevLocalURLs = Arrays.asList(
+                    "http://localhost:8080/site/preview/custompipeline/news/News1.html",
+                    "http://localhost:8080/site/preview/news/News1.html", "http://localhost:8081/site/news/News1.html");
+            
+            for(HstLink link : allCanonicalPreviewDevLocalNewsLinks) {
+                assertEquals("The getPath for all links should be all 'news/News1.html' ", "news/News1.html" ,link.getPath());
+                assertEquals("Expected non fully qualfied URL to be equal to fully qualified" , link.toUrlForm(requestContext, false), link.toUrlForm(requestContext, true));
+                String fqu =  link.toUrlForm(requestContext, true);
+                assertTrue("Unexpected fully qualfied URL '"+fqu+"'", expectedListOfPreviewDevLocalURLs.contains(fqu));
+            }
+            
         }
         
         /**

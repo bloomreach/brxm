@@ -124,8 +124,8 @@ public interface HstLinkCreator {
     HstLink createCanonical(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem);
    
     /**
-     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>. All available links have a {@link Mount}
-     * that has at least one of its {@link Mount#getTypes()} equal to the {@link Mount#getTypes()} belonging to the {@link Mount} of the
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code> within the hostgroup ( {@link VirtualHost#getHostGroupName()} ) of the {@link Mount} for 
+     * the {@link HstRequestContext}. All available links have a {@link Mount} that has at least one of its {@link Mount#getTypes()} equal to the {@link Mount#getTypes()} belonging to the {@link Mount} of the
      * <code>requestContext</code>. If the {@link Mount} of the <code>requestContext</code> has no type in common at all, for example because
      * it is {@link Mount} from a REST mount used by the template composer, you can use {@link #createAllAvailableCanonicals(Node, HstRequestContext, String)} and specify
      * the <code>type</code> the {@link Mount}'s for the available canonical links should be of.
@@ -137,8 +137,8 @@ public interface HstLinkCreator {
     List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext);
     
     /**
-     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, where the backing {@link Mount} of the {@link HstLink}
-     * has at least one {@link Mount#getTypes()} equal to <code>type</code>
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup ( {@link VirtualHost#getHostGroupName()} ) of the {@link Mount} for 
+     * the {@link HstRequestContext} and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>
      * @param node
      * @param requestContext
      * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
@@ -146,6 +146,17 @@ public interface HstLinkCreator {
      * @see #createCanonical(Node, HstRequestContext)
      */
     List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type);
+    
+    /**
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup <code>hostGroupName</code> and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>  
+     * @param node
+     * @param requestContext
+     * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
+     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belonw to
+     * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
+     * @see #createCanonical(Node, HstRequestContext)
+     */
+    List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName);
     
     
     /**

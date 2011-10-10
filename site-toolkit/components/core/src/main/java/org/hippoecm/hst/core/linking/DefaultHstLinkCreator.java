@@ -153,17 +153,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
-        linkResolver.resolverProperties.canonicalLink = true;
-        linkResolver.resolverProperties.fallback = true;
-        throw new UnsupportedOperationException("createAllAvailableCanonicals is not yet implemented");
+        return createAllAvailableCanonicals(node, requestContext, null, null);
+        
     }
 
     @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type) {
-        throw new UnsupportedOperationException("createAllAvailableCanonicals is not yet implemented");
+        return createAllAvailableCanonicals(node, requestContext, type, null);
     }
-   
+
+    @Override
+    public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
+        return linkResolver.resolveAllCanonicals(type ,hostGroupName);
+    }
 
     
     public HstLink create(Node node, Mount mount) {
@@ -505,12 +508,170 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         
 
         /**
-         * 
-         * @return the List of all available links. When no links at all are found, an empty list is returned
+         * If <code>type</code> is null, the types of the current {@link Mount} are used. If <code>hostGroupName</code> is null, the 
+         * hostGroupName of the current {@link Mount} is used. 
+         * @param type
+         * @param hostGroupName
+         * @return the List of all available links. When no links at all are found, an empty list is returned. 
          */
-        List<HstLink> resolveAll() {
-            List<HstLink>  allLinks = new ArrayList<HstLink>();
+        List<HstLink> resolveAllCanonicals(String type, String hostGroupName) {
             
+            resolverProperties.canonicalLink = true;
+            if(resolverProperties.preferredItem != null) {
+                log.warn("preferredItem is not suppored in combination with 'aa available canonical links'. It will be ignored");
+            }if(resolverProperties.navigationStateful) {
+                log.warn("navigationStateful is not suppored in combination with 'aa available canonical links'. It will be ignored");
+            }
+            
+            if(mount == null) {
+                log.warn("Cannot create link when the mount is null. Return null");
+                return null;
+            }
+            if(node == null) {
+                log.warn("Cannot create link when the jcr node null. Return a page not found link");
+                return Collections.emptyList();
+            }
+            
+            boolean postProcess = true;
+            Node canonicalNode = null;
+            canonicalNode = NodeUtils.getCanonicalNode(node);
+           
+            List<LinkInfo> linkInfoList = new ArrayList<LinkInfo>();
+            try {
+                if(node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                    // we do not support all canonical links for resources (yet)
+                    log.warn("For binary resources the HST has no support to return all available canonical links");
+                    return Collections.emptyList();
+                } 
+                if(canonicalNode == null) {
+                    log.warn("The HST has no support to return all available canonical links for virtual only nodes");
+                    return Collections.emptyList();
+                } 
+                
+                nodePath = node.getPath(); 
+                if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+                    node = NodeUtils.getDeref(node);
+                    if( node == null ) {
+                        log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
+                        return Collections.emptyList();
+                    }
+                }
+    
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    resolverProperties.representsDocument = true;
+                } else if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        node = node.getParent();
+                        resolverProperties.representsDocument = true;
+                    }
+                }
+                
+                nodePath = node.getPath();
+                
+                // try to get the list of candidateMounts to get a HstLink for
+                
+                
+                
+                List<Mount> mountsForHostGroup;
+                
+                if(hostGroupName == null) {
+                    mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(mount.getVirtualHost().getHostGroupName());
+                } else {
+                    mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);    
+                    if(mountsForHostGroup == null || mountsForHostGroup.isEmpty()) {
+                        log.warn("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
+                        return Collections.emptyList();
+                    }
+                }
+                
+                /*
+                 * There can be multiple suited Mount's (for example the Mount for preview and composermode can be the 'same' subsite). We
+                 * choose the candicate mounts as follows:
+                 * 
+                 * If the 'type' argument is not null, the candidate mount must at least have one of it types equal to type.
+                 * Else : The Mount must have at least ONE type in common as the current Mount of this HstLinkResolver
+                 * 
+                 * The candidate Mount must have a #getCanonicalContentPath() or #getContentPath() that is a prefix of the nodePath
+                 * 
+                 */
+                List<Mount> candidateMounts = new ArrayList<Mount>();
+                
+                for(Mount candidateMount : mountsForHostGroup) {
+                    
+                   if(!candidateMount.isMapped()) {
+                       // not a mount for a HstSite
+                       continue;
+                   }
+                 
+                   // (a)
+                   if(nodePath.startsWith(candidateMount.getCanonicalContentPath() + "/") || nodePath.equals(candidateMount.getCanonicalContentPath())) {
+                      // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
+                      // (b)
+                      if(type != null) {
+                          if(candidateMount.getTypes().contains(type)) {
+                              candidateMounts.add(candidateMount);
+                          } else {
+                              log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one", candidateMount.getName(), candidateMount.getAlias());
+                          }
+                      } else if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
+                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
+                          candidateMounts.add(candidateMount);
+                      } else {
+                          // The Mount did not have a type in common with the current Mount. Try another one.
+                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
+                      }
+                   } // (a)
+                   else if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
+                      // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
+                      // (b)
+                       if(type != null) {
+                           if(candidateMount.getTypes().contains(type)) {
+                               candidateMounts.add(candidateMount);
+                           } else {
+                               log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type equal to '"+type+"' hence cannot be used. Try next one", candidateMount.getName(), candidateMount.getAlias());
+                           }
+                       } else if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
+                          log.debug("Found a Mount ('name = {} and alias = {}') where the nodePath '"+nodePath+"' belongs to. Add this Mount to the list of possible suited mounts",  candidateMount.getName(), candidateMount.getAlias());
+                          candidateMounts.add(candidateMount);
+                      } else {
+                          // The Mount did not have a type in common with the current Mount. Try another one.
+                          log.debug("Mount  ('name = {} and alias = {}') has the correct canonical content path to linkrewrite '"+nodePath+"', but it does not have at least one type in common with the current request Mount hence cannot be used. Try next one",  candidateMount.getName(), candidateMount.getAlias());
+                      }
+                   }
+                }
+                
+                if(candidateMounts.size() == 0) {
+                    log.warn("There is no Mount available that is suited to linkrewrite '{}'. Return empty list for canonicalLinks..", nodePath);
+                    return Collections.emptyList();
+                    
+                } 
+                      
+                for(Mount tryMount : candidateMounts) {
+                    LinkInfo linkInfo = resolveToLinkInfo(nodePath, tryMount, resolverProperties);
+                    if(linkInfo != null) {
+                        linkInfoList.add(linkInfo);
+                    }
+                }
+            
+                
+            } catch(RepositoryException e){
+                log.error("Repository Exception during creating link", e);
+            }
+            
+            if(linkInfoList.isEmpty()) {
+                log.warn("Cannot create a link for node with path '{}'. Return empty list for canonicalLinks.", nodePath);
+                return Collections.emptyList();
+            }
+            
+            List<HstLink>  allLinks = new ArrayList<HstLink>();
+            for(LinkInfo info : linkInfoList) {
+
+                HstLink link = new HstLinkImpl(info.pathInfo, info.mount, info.containerResource);
+                if(postProcess) {
+                    link = postProcess(link);
+                }
+                allLinks.add(link);
+            }
             
             return allLinks;
         }
