@@ -43,12 +43,6 @@
       <scope>provided</scope>
     </dependency>
     
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-connector</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
     <dependency> 
       <groupId>net.sf.ehcache</groupId> 
       <artifactId>ehcache-core</artifactId> 
