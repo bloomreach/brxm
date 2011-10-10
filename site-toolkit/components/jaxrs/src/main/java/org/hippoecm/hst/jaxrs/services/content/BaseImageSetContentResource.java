@@ -43,7 +43,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.jackrabbit.value.BinaryValue;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
@@ -198,7 +197,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             try {
                 Node childResourceNode = childImageBean.getNode();
                 childResourceNode.setProperty("jcr:mimeType", mimeType);
-                childResourceNode.setProperty("jcr:data", new BinaryValue(childResourceContentStream));
+                childResourceNode.setProperty("jcr:data", childResourceNode.getSession().getValueFactory().createBinary(childResourceContentStream));
                 childResourceNode.save();
                 
                 if (binariesCache != null) {
