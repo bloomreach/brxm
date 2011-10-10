@@ -94,28 +94,39 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.0.8</version>
-      <!-- scope>runtime</scope -->
+      <!-- scope>compile</scope -->
     </dependency>
 
     <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <scope>runtime</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
-      <scope>runtime</scope>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -270,6 +281,16 @@
         </executions>
         <configuration>
           <finalName>${project.artifactId}-${project.version}-uber</finalName>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>                                       
+              </excludes>
+            </filter>
+          </filters>
         </configuration>
       </plugin>
     </plugins>
