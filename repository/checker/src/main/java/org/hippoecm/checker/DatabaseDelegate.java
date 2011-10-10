@@ -19,7 +19,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
@@ -48,6 +51,48 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
     public abstract void accept(Visitor<T> visitor);
 
     public abstract int getSize();
+
+    protected Map.Entry<NodeId, InputStream> readEntry(ResultSet rs) throws SQLException {
+        int column = 0;
+        final NodeId nodeId;
+        if (access.getStorageModelBinaryKeys()) {
+            byte[] nodeIdBytes = rs.getBytes(++column);
+            nodeId = new NodeId(nodeIdBytes);
+        } else {
+            long high = rs.getLong(++column);
+            long low = rs.getLong(++column);
+            nodeId = new NodeId(high, low);
+        }
+        InputStream istream;
+        try {
+            if (rs.getMetaData().getColumnType(++column) == Types.BLOB) {
+                istream = rs.getBlob(column).getBinaryStream();
+            } else {
+                istream = rs.getBinaryStream(column);
+            }
+        } catch (SQLException ex) {
+            istream = null;
+        } catch (Throwable ex) {
+            istream = null;
+        }
+        final InputStream in = istream;
+        return new Map.Entry<NodeId, InputStream>() {
+            @Override
+            public NodeId getKey() {
+                return nodeId;
+            }
+
+            @Override
+            public InputStream getValue() {
+                return in;
+            }
+
+            @Override
+            public InputStream setValue(InputStream value) {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
 
     protected NodeId readID(DataInputStream in) throws IOException {
         if (in.readBoolean()) {
@@ -130,4 +175,5 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
             return "name";
         }
     }
+    
 }

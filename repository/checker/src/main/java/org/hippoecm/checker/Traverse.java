@@ -200,7 +200,7 @@ public class Traverse {
         return clean;
     }
 
-    boolean checkVersionBundles(Iterable<NodeDescription> allIterable) {
+    boolean checkVersionBundles(Iterable<NodeDescription> allIterable, Repair repair) {
         Checker.log.info("Reading version bundle information");
         for (NodeDescription item : allIterable) {
             version.add(item.getNode()); // all.add(item.getNode());
@@ -208,7 +208,7 @@ public class Traverse {
         return true;
     }
 
-    boolean checkBundles(Iterable<NodeDescription> allIterable) {
+    boolean checkBundles(Iterable<NodeDescription> allIterable, Repair repair) {
         boolean clean = true;
         Checker.log.info("Reading bundle information");
         for (NodeDescription item : allIterable) {
@@ -286,6 +286,7 @@ public class Traverse {
                 }
                 if (roots.size() != 1) {
                     clean = false;
+                    repair.report(Repair.RepairStatus.FAILURE);
                     for (UUID root: roots) {
                         Checker.log.warn("  Duplicate root "+root.toString());
                     }
@@ -322,6 +323,7 @@ public class Traverse {
                     Checker.log.warn("Orphaned reference:");
                     for (UUID orphan : orphaned) {
                         Checker.log.warn("  orphaned node " + orphan);
+                        repair.removeNode(Repair.RepairStatus.RECHECK, orphan);
                     }
                     for (UUID orphanedStart : orphaned) {
                         LinkedList<UUID> orphanedPath = new LinkedList<UUID>();
@@ -333,7 +335,7 @@ public class Traverse {
                         }
                     }
                 } else {
-                    Checker.log.info("FOUND " + orphaned.size() + " ORPHANED PATHS");                    
+                    Checker.log.info("FOUND " + orphaned.size() + " ORPHANED PATHS");
                 }
                 Map<UUID, UUID> missing = new TreeMap<UUID, UUID>();
                 Map<UUID, UUID> disconnected = new TreeMap<UUID, UUID>();
@@ -356,6 +358,7 @@ public class Traverse {
                         UUID child = entry.getKey();
                         UUID parent = entry.getValue();
                         Checker.log.warn("  node " + parent + " references inexistent child " + child);
+                        repair.unlistChild(Repair.RepairStatus.PENDING, parent, child);
                     }
                 } else {
                     Checker.log.info("FOUND " + missing.size() + " MISSING CHILD NODES");                    
@@ -372,9 +375,11 @@ public class Traverse {
                             // but this needs to be sorted out
                             // clean = false;
                             Checker.log.warn("  node " + parent + " references child " + child + " which is correctly located at parent " + childParent);
+                            repair.unlistChild(Repair.RepairStatus.PENDING, parent, child);
                         } else if (all.contains(parent)) {
                             clean = false;
                             Checker.log.warn("  node " + parent + " references child " + child + " which is incorrectly located at parent " + childParent);
+                            repair.fixParent(Repair.RepairStatus.RECHECK, child, parent);
                         } else {
                             clean = false;
                             Checker.log.warn("  node " + parent + " references child " + child + " which is orphaned located at parent " + childParent);
@@ -397,11 +402,12 @@ public class Traverse {
         if (danglingReferences.size() > 0) {
             Checker.log.warn("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
             clean = false;
-            /*for(Map.Entry<UUID,UUID> reference : danglingReferences) {
-            UUID source = reference.getKey();
-            UUID target = reference.getValue();
-            Checker.log.warn("  dangling reference from "+source+" to "+target);
-            }*/
+            for(Map.Entry<UUID,UUID> reference : danglingReferences) {
+                UUID source = reference.getKey();
+                UUID target = reference.getValue();
+                Checker.log.warn("  dangling reference from "+source+" to "+target);
+                repair.removeReference(Repair.RepairStatus.PENDING, source, target);
+            }
         } else {
             Checker.log.info("FOUND " + danglingReferences.size() + " DANGLING REFERENCES");
         }

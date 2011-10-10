@@ -17,9 +17,11 @@ package org.hippoecm.checker;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
@@ -42,41 +44,35 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
             //stmt.clearParameters();
             //stmt.clearWarnings();
             while (rs.next()) {
-                int column = 0;
-                final NodeId nodeId;
-                //if(pm.getStorageModel() == SM_BINARY_KEYS) {
-                if (true == false) {
-                    byte[] nodeIdBytes = rs.getBytes(++column);
-                    nodeId = new NodeId(nodeIdBytes);
+                Map.Entry<NodeId, InputStream> bundle = readEntry(rs);
+                final NodeId nodeId = bundle.getKey();
+                InputStream istream = bundle.getValue();
+                if (istream != null) {
+                    DataInputStream in = new DataInputStream(istream);
+                    int count = in.readInt();   // count
+                    for (int i = 0; i < count; i++) {
+                        final PropertyId propertyId = PropertyId.valueOf(in.readUTF());
+                        visitor.visit(new NodeReference() {
+                            public UUID getTarget() {
+                                return create(nodeId);
+                            }
+
+                            public UUID getSource() {
+                                return create(propertyId.getParentId());
+                            }
+                            // propertyId.getParentId(), "{" + propertyId.getName().getNamespaceURI() + "}" + propertyId.getName().getLocalName()
+                        });
+                    }
                 } else {
-                    long high = rs.getLong(++column);
-                    long low = rs.getLong(++column);
-                    nodeId = new NodeId(high, low);
-                }
-                DataInputStream in;
-                if (rs.getMetaData().getColumnType(++column) == Types.BLOB) {
-                    in = new DataInputStream(rs.getBlob(column).getBinaryStream());
-                } else {
-                    in = new DataInputStream(rs.getBinaryStream(column));
-                }
-                int count = in.readInt();   // count
-                for (int i = 0; i < count; i++) {
-                    final PropertyId propertyId = PropertyId.valueOf(in.readUTF());
-                    visitor.visit(new NodeReference() {
-                        public UUID getTarget() {
-                            return create(nodeId);
-                        }
-                        public UUID getSource() {
-                            return create(propertyId.getParentId());
-                        }
-                        // propertyId.getParentId(), "{" + propertyId.getName().getNamespaceURI() + "}" + propertyId.getName().getLocalName()
-                    });
+                    // FIXME
                 }
             }
         } catch (SQLException ex) {
-            // FIXME
+            ex.printStackTrace(System.err);
         } catch (IOException ex) {
-            // FIXME
+            ex.printStackTrace(System.err);
+        } catch (Throwable ex) {
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -102,5 +98,10 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
         }
         rs.close();
         return size;
+    }
+    
+    public void repair(UUID node) throws SQLException {
+        Thread.currentThread().dumpStack();
+        // FIXME
     }
 }

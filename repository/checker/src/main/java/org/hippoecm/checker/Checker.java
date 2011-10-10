@@ -26,6 +26,7 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
+import org.apache.jackrabbit.core.persistence.pool.BundleDbPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +56,14 @@ public class Checker {
                         null,
                         null,
                         repConfig.getDataStore()));
+                Repair repair = new Repair(new Access((BundleDbPersistenceManager)persistMgr));
                 {
-                    BundleReader bundleReader = new BundleReader(persistMgr, false);
+                    BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
                     int size = bundleReader.getSize();
                     log.info("Traversing through " + size + " bundles");
                     Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
-                    clean &= traverse.checkVersionBundles(iterable);
+                    clean &= traverse.checkVersionBundles(iterable, repair);
+                    repair.perform(bundleReader);
                 }
             }
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
@@ -72,19 +75,24 @@ public class Checker {
                         null,
                         null,
                         repConfig.getDataStore()));
+                Repair repair = new Repair(new Access((BundleDbPersistenceManager)persistMgr));
                 {
-                    BundleReader bundleReader = new BundleReader(persistMgr, false);
+                    BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
                     int size = bundleReader.getSize();
                     log.info("Traversing through " + size + " bundles");
                     Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
                     //traverse.checkVersionBundles(iterable);
-                    clean &= traverse.checkBundles(iterable);
+                    clean &= traverse.checkBundles(iterable, repair);
+                    repair.perform(bundleReader);
                 }
                 {
                     ReferencesReader referenceReader = new ReferencesReader(persistMgr);
                     Iterable<NodeReference> iterable = Coroutine.<NodeReference>toIterable(referenceReader, referenceReader.getSize());
                     clean &= traverse.checkReferences(iterable);
+                    //repair.perform(referenceReader);
                 }
+                Access.close(persistMgr);
+                persistMgr = null;
             }
             /*{
             IndicesReader indicesReader = new IndicesReader(new File(repConfig.getHomeDir()));
