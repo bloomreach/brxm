@@ -25,7 +25,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  * HstLinkCreator interface for creating {@link HstLink}'s
@@ -112,7 +111,7 @@ public interface HstLinkCreator {
     
    
     /**
-     * @see {@link #createCanonical(Node, ResolvedSiteMapItem)}.
+     * @see {@link #createCanonical(Node, HstRequestContext)}.
      * When specifying a preferredItem, we try to create a canonical link wrt this preferredItem. If the link cannot be created for this preferredItem,
      * a fallback to {@link #createCanonical(Node, HstRequestContext)} without preferredItem is done.
      * 
@@ -152,7 +151,7 @@ public interface HstLinkCreator {
      * @param node
      * @param requestContext
      * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
-     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belonw to
+     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belong to
      * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
      * @see #createCanonical(Node, HstRequestContext)
      */
@@ -165,7 +164,7 @@ public interface HstLinkCreator {
      * The <code>mount</code> can be a different one then the one of the current request context.
      * If the <code>mount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
      * to a different (sub)site, a page not found link is returned. </p>
-     * <p>note: if an link is returned, this is always the canonical link, also see {@link #createCanonical(Node, ResolvedSiteMapItem)}</p>
+     * <p>note: if a link is returned, this is always the canonical link, also see {@link #createCanonical(Node, HstRequestContext)}</p>
      * @param node the jcr node for that should be translated into a HstLink
      * @param mount the (sub)site for which the hstLink should be created for
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mount</code> or <code>null</code> when no link for the node can be made in the <code>mount</code>

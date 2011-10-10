@@ -165,7 +165,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
-        return linkResolver.resolveAllCanonicals(type ,hostGroupName);
+        return linkResolver.resolveAllCanonicals(type, hostGroupName);
     }
 
     
@@ -518,17 +518,18 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             resolverProperties.canonicalLink = true;
             if(resolverProperties.preferredItem != null) {
-                log.warn("preferredItem is not suppored in combination with 'aa available canonical links'. It will be ignored");
-            }if(resolverProperties.navigationStateful) {
-                log.warn("navigationStateful is not suppored in combination with 'aa available canonical links'. It will be ignored");
+                log.warn("preferredItem is not suppored in combination with 'all available canonical links'. It will be ignored");
+            }
+            if(resolverProperties.navigationStateful) {
+                log.warn("navigationStateful is not suppored in combination with 'all available canonical links'. It will be ignored");
             }
             
-            if(mount == null) {
-                log.warn("Cannot create link when the mount is null. Return null");
-                return null;
+            if (mount == null) {
+                log.warn("Cannot create link when the mount is null. Return empty list for canonicalLinks.");
+                return Collections.emptyList();
             }
-            if(node == null) {
-                log.warn("Cannot create link when the jcr node null. Return a page not found link");
+            if (node == null) {
+                log.warn("Cannot create link when the jcr node is null. Return empty list for canonicalLinks.");
                 return Collections.emptyList();
             }
             
@@ -552,7 +553,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                     node = NodeUtils.getDeref(node);
                     if( node == null ) {
-                        log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
+                        log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", nodePath);
                         return Collections.emptyList();
                     }
                 }
@@ -569,9 +570,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 nodePath = node.getPath();
                 
                 // try to get the list of candidateMounts to get a HstLink for
-                
-                
-                
+
                 List<Mount> mountsForHostGroup;
                 
                 if(hostGroupName == null) {
