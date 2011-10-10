@@ -34,7 +34,7 @@ public class ChannelUtils {
         }
 
         ProxyFactory factory = new ProxyFactory();
-
+        
         Invoker invoker = new Invoker() {
 
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
@@ -78,8 +78,8 @@ public class ChannelUtils {
             }
         };
 
-        T parametersInfo = (T) factory.createInvokerProxy(invoker, new Class[]{parametersInfoType});
-
+        T parametersInfo = (T) factory.createInvokerProxy(ChannelUtils.class.getClassLoader(), invoker, new Class[]{parametersInfoType});
+     
         return parametersInfo;
     }
 
