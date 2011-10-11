@@ -119,7 +119,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                             };
                             var model = Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createModel(null, cfg);
                             models.push(model);
-                            // pmStore.on('write', function() { pageContainer.refreshIframe.call(pageContainer); }, this, {single: true});
+                            pmStore.on('write', function() { pageContainer.refreshIframe.call(pageContainer); }, this, {single: true});
                             pmStore.insert(at + i, Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createRecord(model));
                         }
                         return true;

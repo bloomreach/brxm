@@ -90,20 +90,21 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var futures = [];
         for (var i = 0; i < resourceUrls.length; i++) {
             futures[i] = new Hippo.Future(function(success, failure) {
-                var src = resourceUrls[i];
-                Ext.Ajax.request({
-                    url : src,
-                    method : 'GET',
-                    success : function(result, request) {
-                        iframeResources.cache[src] = result.responseText;
-                        success();
-                    },
-                    failure : function(result, request) {
-                        self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
-                        failure();
-                    }
-                });
-            })
+                (function(src) {
+                    Ext.Ajax.request({
+                        url : src,
+                        method : 'GET',
+                        success : function(result, request) {
+                            iframeResources.cache[src] = result.responseText;
+                            success();
+                        },
+                        failure : function(result, request) {
+                            self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['pre-cache-iframe-resources-exception'].format(src)}]);
+                            failure();
+                        }
+                    });
+                })(resourceUrls[i]);
+            });
         }
         var join = Hippo.Future.join(futures);
         join.set(iframeResources);
