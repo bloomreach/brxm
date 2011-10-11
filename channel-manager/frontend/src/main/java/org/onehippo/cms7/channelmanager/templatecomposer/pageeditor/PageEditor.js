@@ -120,8 +120,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     if (e) {
                         if(typeof console.error == 'function') {
                            console.error(e);
-                        } else {
-                            throw e;
                         }
                     } else if(res.status) {
                         var json = Ext.util.JSON.decode(res.responseText);
@@ -201,6 +199,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('unlock', function(pageContext) {
+            Hippo.ChannelManager.TemplateComposer.DragDropOne.setPageContext(pageContext);
             this.enableUI(pageContext);
         }, this);
 
@@ -298,6 +297,25 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     showProperties : function(record) {
         Ext.getCmp('componentPropertiesPanel').reload(record.get('id'));
+    },
+
+    refreshIframe: function() {
+        this.pageContainer.refreshIframe.call(this.pageContainer);
+    },
+
+    initComposer: function() {
+        this.pageContainer.initComposer.call(this.pageContainer);
+    },
+
+    browseTo: function(renderHost, renderHostSubMountPath) {
+        if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
+            this.pageContainer.renderHostSubMountPath = renderHostSubMountPath.substr(1);
+        } else {
+            this.pageContainer.renderHostSubMountPath = renderHostSubMountPath;
+        }
+        this.pageContainer.renderHost = renderHost;
+        this.pageContainer.previewMode = true;
+        this.pageContainer.initComposer.call(this.pageContainer);
     }
 
 });

@@ -33,13 +33,11 @@
         scopeId : 'Page',
 
         init: function(data) {
-            console.log('page initialize');
             this.overlay = $('<div/>').addClass('hst-overlay-root').hide().appendTo(document.body);
             this.preview = data.previewMode;
             this.resources = data.resources;
 
             onhostmessage(function(msg) {
-                console.log('main buildoverlay');
                 var facade = msg.data;
                 this.createContainers(facade);
                 return false;
@@ -88,13 +86,12 @@
         },
 
         createContainer : function(element, page) {
-            console.log('page createContainer factory: '+Factory+' page scope '+page.scopeId);
             var container = Factory.createOrRetrieve.call(Factory, element);
             if (container === null) {
                 return null;
             }
             this.containers[container.id] = container;
-            console.log('Page createContainer render');
+
             container.render(page);
             return container;
         },

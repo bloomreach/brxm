@@ -18,7 +18,7 @@ Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
 Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observable, {
 
-    constructor: function(config, cache, oldContext) {
+    constructor: function(config, cache, oldContext, pageContainer) {
 
         if (oldContext != null) {
             this.ids = {
@@ -46,6 +46,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
             this.hasPreviewHstConfig = false;
         }
 
+        this.pageContainer = pageContainer;
         this.resources = config.resources;
         this.previewMode = config.previewMode;
         this.composerMountUrl = config.composerMountUrl;
@@ -71,6 +72,10 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 this.fireEvent('iFrameInitialized');
             }.createDelegate(this));
         }.createDelegate(this));
+    },
+
+    getPageContainer: function() {
+        return this.pageContainer;
     },
 
     _initToolkitStore : function(mountId) {

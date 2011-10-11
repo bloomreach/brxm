@@ -1,7 +1,13 @@
 
 Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
 
+    var pageContext;
+
     return {
+
+        setPageContext: function(context) {
+            pageContext = context;
+        },
 
         init: function(c) {
             c.onRender = c.onRender.createSequence(this.onRender);
@@ -25,7 +31,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     var framePanel = Ext.getCmp('Iframe');
                     var frmDoc = framePanel.getFrameDocument();
                     framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
-                    Hippo.ChannelManager.TemplateComposer.Container.pageContext.stores.pageModel.each(function(record) {
+                    pageContext.stores.pageModel.each(function(record) {
                         var type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
                             var id = record.get('id');
@@ -86,6 +92,8 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
                     //                            ' on Record id ' + r.id);
                     if (self.nodeOverRecord !== null) {
+                        var pageContainer = pageContext.getPageContainer();
+
                         var selections = containerItemsGrid.getSelectionModel().getSelections();
 
                         var pmRecord = self.nodeOverRecord;
@@ -111,6 +119,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                             };
                             var model = Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createModel(null, cfg);
                             models.push(model);
+                            // pmStore.on('write', function() { pageContainer.refreshIframe.call(pageContainer); }, this, {single: true});
                             pmStore.insert(at + i, Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createRecord(model));
                         }
                         return true;

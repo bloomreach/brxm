@@ -22,7 +22,6 @@
     var surfandedit = {
 
         init : function (data) {
-            console.log('initialize surf and edit');
             this.resources = data.resources;
             this.createSurfAndEditLinks();
         },

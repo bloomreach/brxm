@@ -43,7 +43,6 @@
             subscribe: function(topic, callback, scope) {
                var scopeParameter = scope || window;
                if (typeof subscriptions[topic] === 'undefined') {
-                   console.log('create array for topic '+topic);
                    subscriptions[topic] = [];
                }
                subscriptions[topic].push({callback: callback, scope: scopeParameter});

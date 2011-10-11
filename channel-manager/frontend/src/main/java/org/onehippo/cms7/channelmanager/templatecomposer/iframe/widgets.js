@@ -75,7 +75,6 @@
         },
 
         render : function(parent) {
-            console.log('render to '+parent);
             if (this.rendered) {
                 return;
             }
@@ -113,7 +112,6 @@
             this.onRender();
 
             this.rendered = true;
-            console.log('after render to '+parent);
         },
 
         updateSharedData: function(facade) {
@@ -264,15 +262,10 @@
 
         onRender : function() {
             this._super();
-            console.log('render items');
             this._renderItems();
-            console.log('create sortable');
             this._createSortable();
-            console.log('checkEmpty');
             this._checkEmpty();
-            console.log('sync');
             this.sync();
-            console.log('after sync');
         },
 
         onDestroy: function() {
@@ -332,7 +325,6 @@
                     console.warn('ContainerItem with id=' + id + ' is not found in active map.');
                 }
             });
-            console.log('after _syncItems');
         },
 
         _createSortable : function() {
@@ -469,7 +461,6 @@
         },
 
         checkState : function() {
-            console.log('checkState of '+this.id);
             if (this.state.checkEmpty) {
                 this._checkEmpty();
             }
@@ -529,9 +520,7 @@
         },
 
         sync : function() {
-            console.log('suncOverlay');
             this._syncOverlay();
-            console.log('syncItems');
             this._syncItems(true);
 
         },
@@ -673,7 +662,6 @@
     //Container items
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
         init : function(id, element, resources) {
-            console.log('ContainerItem init');
             this._super(id, element, resources);
 
             this.scopeId = 'ContainerItem';
@@ -720,16 +708,13 @@
          },
 
         sync: function() {
-            console.log('ContainerItemBase sync');
             this._super();
-            console.log('ContainerItemBase sync menu.position overlay '+ this.overlay +', scope id '+ this.scopeId);
             this.menu.position.call(this.menu, {
                 my : 'right top',
                 at : 'right top',
                 of : this.overlay,
                 offset : '-2 2'
             });
-            console.log('ContainerItemBase sync after menu.position');
         },
 
         getOverlayData : function(data) {

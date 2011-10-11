@@ -52,8 +52,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         Hippo.ChannelManager.TemplateComposer.PageContainer.superclass.constructor.call(this, config);
 
-        Hippo.ChannelManager.TemplateComposer.Container = this;
-
         // initialized on domready
         this.pageContext = null;
 
@@ -110,19 +108,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var join = Hippo.Future.join(futures);
         join.set(iframeResources);
         return join;
-    },
-
-    // FIXME: static method should be extracted to separate singleton
-    browseTo : function (renderHostSubMountPath, renderHost) {
-        var instance = Hippo.ChannelManager.TemplateComposer.Container;
-        if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
-            instance.renderHostSubMountPath = renderHostSubMountPath.substr(1);
-        } else {
-            instance.renderHostSubMountPath = renderHostSubMountPath;
-        }
-        instance.renderHost = renderHost;
-        instance.previewMode = true;
-        instance.initComposer.call(instance);
     },
 
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
@@ -317,7 +302,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             resources: this.resources
         };
         this.pageContext = new Hippo.ChannelManager.TemplateComposer.PageContext(
-                config, this.iframeResourceCache, this.pageContext);
+                config, this.iframeResourceCache, this.pageContext, this);
         this.relayEvents(this.pageContext, [
            'mountChanged',
            'iFrameException'
@@ -329,35 +314,30 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.pageContext.initialize(frm);
     },
 
-    findElement: function(id) {
-        var frameDoc = Ext.getCmp('Iframe').getFrameDocument();
-        var el = frameDoc.getElementById(id);
-        return el;
-    },
-
     _onRearrangeContainer: function(rearranges) {
         var self = this;
         var futures = [];
 
         for (var i=0; i<rearranges.length; i++) {
-            var rearrange = rearranges[i];
-            futures[i] = new Hippo.Future(function(onSuccess, onFailure) {
-                window.setTimeout(function() {
-                    try {
-                        var recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
-                        var record = self.pageContext.stores.pageModel.getAt(recordIndex);
-                        record.set('children', rearrange.children);
-                        console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
-                        self.pageContext.stores.pageModel.on('write', function() {
-                            onSuccess();
-                        }, {single: true});
-                        record.commit();
-                    } catch (exception) {
-                        console.error('_onRearrangeContainer ' + exception);
-                        onFailure();
-                    }
-                }, 0);
-            });
+            (function(rearrange) {
+                futures.push(new Hippo.Future(function(onSuccess, onFailure) {
+                    window.setTimeout(function() {
+                        try {
+                            var recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
+                            var record = self.pageContext.stores.pageModel.getAt(recordIndex);
+                            record.set('children', rearrange.children);
+                            console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
+                            self.pageContext.stores.pageModel.on('write', function() {
+                                onSuccess();
+                            }, self, {single: true});
+                            record.commit();
+                        } catch (exception) {
+                            console.error('_onRearrangeContainer ' + exception);
+                            onFailure();
+                        }
+                    }, 0);
+                }));
+            })(rearranges[i]);
         }
 
         Hippo.Future.join(futures).when(function() {
@@ -397,8 +377,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     _removeByRecord: function(record) {
         var store = this.pageContext.stores.pageModel;
+        var self = this;
         Hippo.Msg.confirm(this.resources['delete-message-title'], this.resources['delete-message'].format(record.get('name')), function(btn, text) {
             if (btn == 'yes') {
+                store.on('write', self.refreshIframe, self, {single: true});
                 store.remove(record);
             }
         });
