@@ -33,7 +33,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,8 +81,6 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     private String locale;
-
-    private Channel channel;
 
     private IPluginContext context;
 
@@ -193,30 +190,9 @@ public class PageEditor extends ExtPanel {
         return super.newExtEventBehavior(event);
     }
 
-    public String getRenderHost() {
-        return renderHost;
-    }
-
-    public void setRenderHost(final String renderHost) {
+    public void setChannel(String renderHost, String mountPath) {
         this.renderHost = renderHost;
-    }
-
-    public String getRenderHostSubMountPath() {
-        return renderHostSubMountPath;
-    }
-
-    public void setRenderHostSubMountPath(final String renderHostSubMountPath) {
-        this.renderHostSubMountPath = renderHostSubMountPath;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-        this.renderHost = channel.getHostname();
-        this.renderHostSubMountPath = channel.getSubMountPath();
-    }
-
-    public Channel getChannel() {
-        return this.channel;
+        this.renderHostSubMountPath = mountPath;
     }
 
     public Boolean getPreviewMode() {
@@ -225,6 +201,10 @@ public class PageEditor extends ExtPanel {
 
     public void setPreviewMode(final Boolean previewMode) {
         this.previewMode = previewMode;
+    }
+
+    public String getComposerRestMountUrl() {
+        return composerRestMountUrl;
     }
 
 }

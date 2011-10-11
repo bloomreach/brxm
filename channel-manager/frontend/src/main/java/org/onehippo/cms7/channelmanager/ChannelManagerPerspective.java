@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Hippo
+ * Copyright 2011 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -35,13 +34,13 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.hst.configuration.channel.Channel;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditorResourceBehaviour;
+import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerResourceBehavior;
 import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
-public class ChannelManagerPerspective extends Perspective {
+public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
     private RootPanel rootPanel;
     private List<IRenderService> childservices = new LinkedList<IRenderService>();
@@ -60,6 +59,9 @@ public class ChannelManagerPerspective extends Perspective {
 
         rootPanel = new RootPanel(context, config, "channel-root");
         add(rootPanel);
+
+        final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
+        context.registerService(this, channelManagerServiceId);
     }
 
     @Override
@@ -70,19 +72,6 @@ public class ChannelManagerPerspective extends Perspective {
     @Override
     public ResourceReference getIcon(IconSize type) {
         return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
-    }
-
-    @Override
-    public IPluginContext getPluginContext() {
-        return super.getPluginContext();
-    }
-
-    public void openTemplateComposer(final AjaxRequestTarget target, final Channel channel, final boolean preview) {
-        PageEditor pageEditor = rootPanel.getPageEditor();
-        pageEditor.setChannel(channel);
-        pageEditor.setPreviewMode(preview);
-        rootPanel.setActiveCard(RootPanel.Card.TEMPLATE_COMPOSER);
-        target.addComponent(rootPanel);
     }
 
     @Override
@@ -114,4 +103,14 @@ public class ChannelManagerPerspective extends Perspective {
     public void addRenderService(final IRenderService service) {
         childservices.add(service);
     }
+
+    @Override
+    public void viewChannel(final String renderHost, final String mountPath) {
+        PageEditor pageEditor = rootPanel.getPageEditor();
+        pageEditor.setChannel(renderHost, mountPath);
+        pageEditor.setPreviewMode(true);
+        rootPanel.setActiveCard(RootPanel.Card.TEMPLATE_COMPOSER);
+        focus(null);
+    }
+
 }

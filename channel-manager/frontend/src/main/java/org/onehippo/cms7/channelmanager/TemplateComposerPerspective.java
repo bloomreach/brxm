@@ -18,7 +18,6 @@ package org.onehippo.cms7.channelmanager;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -58,13 +57,6 @@ public class TemplateComposerPerspective extends Perspective {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
-    }
-
-    public void focus(final AjaxRequestTarget target, final String renderHost, final String renderHostSubMountPath) {
-        pageEditor.setRenderHost(renderHost);
-        pageEditor.setRenderHostSubMountPath(renderHostSubMountPath);
-        target.addComponent(pageEditor);
-        focus(null);
     }
 
     @Override

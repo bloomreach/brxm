@@ -37,6 +37,14 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEdito
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.html -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_fr.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_it.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/channel-icon-16.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
@@ -120,6 +128,7 @@ repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
 repository/src/main/resources/hippoecm-extension.xml eol=lf
 repository/src/main/resources/marketing-perspective.xml -text
+repository/src/main/resources/workflow-channelactions.xml -text
 test/pom.xml -text
 test/src/main/webapp/HST-vbox.html -text
 test/src/main/webapp/WEB-INF/web.xml -text

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0.2" xmlns:hipposys="http://www.onehippo.org/jcr/hipposys/nt/1.0" xmlns:frontend="http://www.onehippo.org/jcr/frontend/nt/2.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="channelactions">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:workflowcategory</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>hippo:translated</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>nl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Bekijk</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>en</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>View</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>fr</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Afficher</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>it</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Mostra</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="button">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.NullWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:display" sv:type="String">
+      <sv:value>Show preview</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hippostdpubwf:document</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:types</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="frontend:renderer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="rest.proxy.service.id" sv:type="String">
+        <sv:value>hst.rest.proxy.service</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.onehippo.cms7.channelmanager.plugins.channelactions.ChannelActionsPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
