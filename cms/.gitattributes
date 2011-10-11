@@ -420,6 +420,7 @@ api/src/main/java/org/hippoecm/frontend/service/IEditorFilter.java svneol=native
 api/src/main/java/org/hippoecm/frontend/service/IEditorManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/IFocusListener.java -text
 api/src/main/java/org/hippoecm/frontend/service/IRenderService.java -text
+api/src/main/java/org/hippoecm/frontend/service/IRestProxyService.java -text
 api/src/main/java/org/hippoecm/frontend/service/ITitleDecorator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/ITranslateService.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/ServiceContext.java svneol=native#text/plain
@@ -1162,6 +1163,7 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_n
 engine/src/main/java/org/hippoecm/frontend/service/preferences/Preference.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/session/JcrSessionReference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/UnbindingHttpSessionStore.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/WorkflowManagerDecorator.java -text svneol=unset#text/plain

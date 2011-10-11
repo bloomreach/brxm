@@ -76,7 +76,6 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-preview/workflowPlugin/workflow.categories</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>websiteactions</sv:value>
       <sv:value>socialsharing</sv:value>
     </sv:property>
   </sv:node>
@@ -92,7 +91,6 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-compare/workflowPlugin/workflow.categories</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>websiteactions</sv:value>
       <sv:value>socialsharing</sv:value>
     </sv:property>
   </sv:node>

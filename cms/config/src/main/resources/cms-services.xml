@@ -63,4 +63,19 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="hstRestProxyService">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.restproxy.RestProxyServicePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="rest.uri" sv:type="String">
+      <sv:value>http://127.0.0.1:8080/site/_cmsrest</sv:value>
+    </sv:property>
+    <sv:property sv:name="service.id" sv:type="String">
+      <sv:value>hst.rest.proxy.service</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
