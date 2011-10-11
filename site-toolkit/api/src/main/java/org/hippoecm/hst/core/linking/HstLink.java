@@ -66,7 +66,7 @@ public interface HstLink {
     boolean getContainerResource();
     
     /**
-     * @param sets the containerResource
+     * @param containerResource sets the containerResource
      */
     void setContainerResource(boolean containerResource);
     
