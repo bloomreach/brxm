@@ -124,7 +124,7 @@ class UploadForm extends Form {
     protected GalleryProcessor getGalleryProcessor() {
         IPluginContext context = uploadDialog.pluginContext;
         GalleryProcessor processor = context.getService(uploadDialog.pluginConfig.getString("gallery.processor.id",
-                "gallery.processor.service"), GalleryProcessor.class);
+                "service.gallery.processor"), GalleryProcessor.class);
         if (processor != null) {
             return processor;
         }

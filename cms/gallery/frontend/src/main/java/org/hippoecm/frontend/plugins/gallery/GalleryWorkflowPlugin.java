@@ -204,7 +204,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     protected GalleryProcessor getGalleryProcessor() {
         IPluginContext context = getPluginContext();
         GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id",
-                "gallery.processor.service"), GalleryProcessor.class);
+                "service.gallery.processor"), GalleryProcessor.class);
         if (processor != null) {
             return processor;
         }
