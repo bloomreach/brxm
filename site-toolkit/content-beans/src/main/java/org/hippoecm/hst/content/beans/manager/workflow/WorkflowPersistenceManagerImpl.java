@@ -46,6 +46,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation for {@link WorkflowPersistenceManager} interface with Hippo Repository Workflow API.
@@ -68,6 +69,8 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
  */
 public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implements WorkflowPersistenceManager {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(WorkflowPersistenceManagerImpl.class);
+    
     /**
      * Custom content node binders map, which is used to look up a custom binder for a node type.
      */
@@ -644,8 +647,13 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             return wfm.getWorkflow(category, document);
         } catch (RepositoryException e) {
             throw e;
-        } catch (Exception ignore) {
-            // Just ignore other exceptions which are not handled properly in the repository such as NPE.
+        } catch (Exception e) {
+            // other exception which are not handled properly in the repository (we cannot do better here then just log them)
+            if(log.isDebugEnabled()) {
+                log.warn("Exception in workflow", e);
+            } else {
+                log.warn("Exception in workflow: {}", e.toString());
+            }
         } finally {
             if (workspaceClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
