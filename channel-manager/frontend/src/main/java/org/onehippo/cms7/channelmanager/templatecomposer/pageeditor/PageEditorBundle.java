@@ -14,8 +14,6 @@ public class PageEditorBundle {
 
     public static final String TOOLKIT_STORE = "ToolkitStore.js";
 
-    public static final String PAGE_MODEL = "PageModel.js";
-
     public static final String PAGE_MODEL_STORE = "PageModelStore.js";
 
     public static final String PAGE_CONTEXT = "PageContext.js";

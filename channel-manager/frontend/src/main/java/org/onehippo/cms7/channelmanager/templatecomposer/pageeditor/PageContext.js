@@ -59,7 +59,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, config);
 
         this.addEvents('mountChanged',
-                       'iFrameInitialized',
+                       'pageContextInitialized',
                        'iFrameException');
 
     },
@@ -68,8 +68,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         this._requestHstMetaData( frm.getDocumentURI() ).when(function() {
             this._initializeIFrameHead(frm, this.previewMode).when(function() {
                 this._buildOverlay(frm);
-                console.info('iFrameInitialized');
-                this.fireEvent('iFrameInitialized');
+                console.info('pageContextInitialized');
+                this.fireEvent('pageContextInitialized');
             }.createDelegate(this));
         }.createDelegate(this));
     },
@@ -277,63 +277,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
             pageId: pageId,
             composerRestMountUrl: this.composerRestMountUrl,
             ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
-            resources: this.resources,
-            listeners: {
-                write : {
-                    fn: function(store, action, result, res, records) {
-                        if (action == 'create') {
-                            records = Ext.isArray(records) ? records : [records];
-                            for (var i = 0; i < records.length; i++) {
-                                var record = records[i];
-                                if (record.get('type') == HST.CONTAINERITEM) {
-                                    //add id to parent children map
-                                    var parentId = record.get('parentId');
-                                    var parentIndex = store.findExact('id', parentId);
-                                    var parentRecord = store.getAt(parentIndex);
-                                    var children = parentRecord.get('children');
-                                    children.push(record.get('id'));
-                                    parentRecord.set('children', children);
-                                }
-                            }
-                        } else if (action == 'update') {
-                            if (!this.isReloading) {
-                                this.isReloading = true;
-                                store.reload();
-                            }
-                        }
-                    },
-                    scope: this
-                },
-                load :{
-                    fn : function(store, records, options) {
-                        this.isReloading = false;
-                    },
-                    scope: this
-                },
-                remove : {
-                    fn : function(store, record, index) {
-
-                        if (record.get('type') == HST.CONTAINER) {
-                            //remove all children as well
-                            Ext.each(record.get('children'), function(id) {
-                                var childIndex = store.findExact('id', id);
-                                if (childIndex > -1) {
-                                    store.removeAt(childIndex);
-                                }
-                            });
-                        } else {
-                            //containerItem: unregister from parent
-                            var parentRecord = store.getAt(store.findExact('id', record.get('parentId')));
-                            if (typeof parentRecord !== 'undefined') {
-                                var children = parentRecord.get('children');
-                                children.remove(record.get('id'));
-                                parentRecord.set('children', children);
-                            }
-                        }
-                    },
-                    scope : this
-                }
-            }
+            resources: this.resources
         });
     },
 

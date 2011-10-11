@@ -100,12 +100,11 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                         var parentId = pmRecord.get('id');
                         var pmStore = pmRecord.store;
 
-                        var models = [];
                         var offset = pmRecord.data.children.length + 1;
                         var at = pmStore.indexOf(pmRecord) + offset;
                         for (var i = 0; i < selections.length; i++) {
                             var record = selections[i];
-                            var cfg = {
+                            var newRecord = {
                                 parentId: parentId,
                                 //we set the id of new types to the id of their prototype, this allows use
                                 //to change the rest-api url for the create method, which should contain this
@@ -115,12 +114,12 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                                 type: HST.CONTAINERITEM,
                                 template: record.get('template'),
                                 componentClassName : record.get('componentClassName'),
-                                xtype: record.get('xtype')
+                                xtype: record.get('xtype'),
+                                isRoot: false,
+                                children: []
                             };
-                            var model = Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createModel(null, cfg);
-                            models.push(model);
                             pmStore.on('write', function() { pageContainer.refreshIframe.call(pageContainer); }, this, {single: true});
-                            pmStore.insert(at + i, Hippo.ChannelManager.TemplateComposer.PageModel.Factory.createRecord(model));
+                            pmStore.insert(at + i, new pmStore.recordType(newRecord));
                         }
                         return true;
                     }

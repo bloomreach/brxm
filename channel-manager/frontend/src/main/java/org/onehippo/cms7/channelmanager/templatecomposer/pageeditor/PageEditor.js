@@ -203,7 +203,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.enableUI(pageContext);
         }, this);
 
-        this.on('selectItem', this.onSelect, this);
+        this.on('selectItem', function(record) {
+            if (record.get('type') === HST.CONTAINERITEM) {
+                this.showProperties(record);
+            }
+        }, this);
 
     },
 
@@ -281,18 +285,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             ]
         });
         return window1;
-    },
-
-    onSelect : function(record) {
-        if (typeof this.selectedRecord !== 'undefined') {
-            this.pageContainer.sendFrameMessage({element: this.selectedRecord.data.element}, 'deselect');
-        }
-
-        this.pageContainer.sendFrameMessage({element: record.data.element}, 'select');
-        if (record.get('type') === HST.CONTAINERITEM) {
-            this.showProperties(record);
-        }
-        this.selectedRecord = record;
     },
 
     showProperties : function(record) {

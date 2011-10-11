@@ -310,7 +310,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
            'mountChanged',
            'iFrameException'
         ]);
-        this.pageContext.on('iFrameInitialized', function() {
+        this.pageContext.on('pageContextInitialized', function() {
             this.previewMode = this.pageContext.previewMode;
             this._complete();
         }, this);
@@ -375,7 +375,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             return;
         }
 
-        this.fireEvent('selectItem', record);
+        if (this.selectedRecord !== record) {
+            this.sendFrameMessage({id: record.data.id}, 'select');
+            this.selectedRecord = record;
+            this.fireEvent('selectItem', record);
+        }
     },
 
     _removeByRecord: function(record) {

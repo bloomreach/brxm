@@ -58,14 +58,10 @@
             }, this, false, 'hideoverlay');
 
             onhostmessage(function(msg) {
+                console.log('onhostmessage select');
                 this.select(msg.data.element);
                 return false;
             }, this, false, 'select');
-
-            onhostmessage(function(msg) {
-                this.deselect(msg.data.element);
-                return false;
-            }, this, false, 'deselect');
 
             onhostmessage(function(msg) {
                 this.highlight(msg.data.groups);
@@ -96,8 +92,7 @@
             return container;
         },
 
-        retrieve : function(element) {
-            var id = element.getAttribute(HST.ATTR.ID);
+        retrieve : function(id) {
             var o = Factory.getById.call(Factory, id);
             if (o == null) {
                 Main.die(this.resources['manager-object-not-found'].format(id));
@@ -120,16 +115,20 @@
             }
         },
 
-        select: function(element) {
-            if (this.current != null && this.current.element == element) {
+        select: function(id) {
+            console.log('this.current = this.retrieve(element);');
+            var selection = this.retrieve(id);
+            if (this.current == selection) {
                 return;
+            } else if (this.current != null) {
+                this.current.deselect();
             }
-
-            this.current = this.retrieve(element);
+            this.current = selection;
+            console.log('this.current.select();');
             this.current.select();
         },
 
-        deselect : function(element) {
+        deselect : function() {
             if (this.current != null) {
                 this.current.deselect();
                 this.current = null;

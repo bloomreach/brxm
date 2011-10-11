@@ -14,7 +14,13 @@ Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelMan
         var cfg = {
             id: 'ToolkitStore',
             proxy: proxy,
-            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
+            prototypeRecord :  [
+                {name: 'id', mapping: 'id'},
+                {name: 'name', mapping: 'name'},
+                {name: 'componentClassName', mapping: 'componentClassName'},
+                {name: 'template', mapping: 'template'},
+                {name: 'xtype', mapping: 'xtype'}
+            ]
         };
 
         Ext.apply(config, cfg);

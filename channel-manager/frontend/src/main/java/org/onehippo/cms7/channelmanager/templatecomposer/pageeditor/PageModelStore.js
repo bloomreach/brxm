@@ -42,7 +42,72 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                     }
                 }
             }),
-            prototypeRecord : Hippo.ChannelManager.TemplateComposer.PageModel.ReadRecord
+            listeners: {
+                write : {
+                    fn: function(store, action, result, res, records) {
+                        if (action == 'create') {
+                            records = Ext.isArray(records) ? records : [records];
+                            for (var i = 0; i < records.length; i++) {
+                                var record = records[i];
+                                if (record.get('type') == HST.CONTAINERITEM) {
+                                    //add id to parent children map
+                                    var parentId = record.get('parentId');
+                                    var parentIndex = store.findExact('id', parentId);
+                                    var parentRecord = store.getAt(parentIndex);
+                                    var children = parentRecord.get('children');
+                                    children.push(record.get('id'));
+                                    parentRecord.set('children', children);
+                                }
+                            }
+                        } else if (action == 'update') {
+                            if (!this.isReloading) {
+                                this.isReloading = true;
+                                store.reload();
+                            }
+                        }
+                    },
+                    scope: this
+                },
+                remove : {
+                    fn : function(store, record, index) {
+                        if (record.get('type') == HST.CONTAINER) {
+                            //remove all children as well
+                            Ext.each(record.get('children'), function(id) {
+                                var childIndex = store.findExact('id', id);
+                                if (childIndex > -1) {
+                                    store.removeAt(childIndex);
+                                }
+                            });
+                        } else {
+                            //containerItem: unregister from parent
+                            var parentRecord = store.getAt(store.findExact('id', record.get('parentId')));
+                            if (typeof parentRecord !== 'undefined') {
+                                var children = parentRecord.get('children');
+                                children.remove(record.get('id'));
+                                parentRecord.set('children', children);
+                            }
+                        }
+                    },
+                    scope : this
+                },
+                load :{
+                    fn : function(store, records, options) {
+                        this.isReloading = false;
+                    },
+                    scope: this
+                }
+            },
+            prototypeRecord : [
+                {name: 'id', mapping: 'id'},
+                {name: 'name', mapping: 'name'},
+                {name: 'path', mapping: 'path'},
+                {name: 'parentId', mapping: 'parentId'},
+                {name: 'componentClassName', mapping: 'componentClassName'},
+                {name: 'template', mapping: 'template'},
+                {name: 'type', mapping: 'type'},
+                {name: 'xtype', mapping: 'xtype'},
+                {name: 'children', mapping: 'children'}
+            ]
         };
 
         Ext.apply(config, cfg);
