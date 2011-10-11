@@ -205,7 +205,9 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         editor.add(imagePickerBehavior = new ImagePickerBehavior(context, config
                 .getPluginConfig("Xinha.plugins.InsertImage"), imageService));
         editor.add(linkPickerBehavior = new InternalLinkBehavior(context, config
-                .getPluginConfig("Xinha.plugins.CreateLink"), linkService));
+                .getPluginConfig("Xinha.plugins.CreateLink"),
+                config.getAsBoolean(DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG, false),
+                linkService));
 
         if (previewLinksBehavior != null) {
             remove(previewLinksBehavior);

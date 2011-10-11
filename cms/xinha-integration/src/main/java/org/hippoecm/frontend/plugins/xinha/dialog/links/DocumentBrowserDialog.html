@@ -13,15 +13,19 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
+<html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
   <wicket:extend>
     <div wicket:id="content"></div>
-    <div class="hippo-picker-properties">
-      <label><wicket:message key="new-widow-label">Open in new window:</wicket:message> </label>
-      <div wicket:id="popup" style="width: 100px; float: left; padding-top: 4px;">[Open in new window]</div>
-      <label><wicket:message key="title-label">Title:</wicket:message> </label>
-      <div wicket:id="title" class="text-input">[Title text box]</div>
-    </div>
+    <wicket:container wicket:id="extra"/>
+    <label><wicket:message key="title-label">Title:</wicket:message> </label>
+    <div wicket:id="title" class="text-input">[Title text box]</div>
+    <wicket:fragment wicket:id="popup">
+      <div class="hippo-picker-properties">
+        <label><wicket:message key="new-widow-label">Open in new window:</wicket:message> </label>
+        <div wicket:id="popup" style="width: 100px; float: left; padding-top: 4px;">[Open in new window]</div>
+      </div>
+    </wicket:fragment>
   </wicket:extend>
 </wicket:panel>
-
+</html>

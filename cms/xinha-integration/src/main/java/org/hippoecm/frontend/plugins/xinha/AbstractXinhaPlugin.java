@@ -82,6 +82,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
+    public static final String DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG = "open.in.new.window.disabled";
+
     private final IEditor.Mode mode;
     protected RichTextArea editor;
     protected final Configuration configuration;

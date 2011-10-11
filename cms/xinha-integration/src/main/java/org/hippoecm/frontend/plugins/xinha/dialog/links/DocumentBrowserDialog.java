@@ -17,6 +17,8 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -36,7 +38,7 @@ public class DocumentBrowserDialog<T extends DocumentLink> extends AbstractBrows
 
     static final Logger log = LoggerFactory.getLogger(DocumentBrowserDialog.class);
 
-    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
+    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, boolean disableOpenInANewWindow, IModel<T> model) {
         super(context, config, model);
 
         add(new ThrottledTextFieldWidget("title", new StringPropertyModel(model, DocumentLink.TITLE)) {
@@ -48,14 +50,20 @@ public class DocumentBrowserDialog<T extends DocumentLink> extends AbstractBrows
             }
         });
 
-        add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target")) {
-            private static final long serialVersionUID = 1L;
+        if (disableOpenInANewWindow) {
+            add(new EmptyPanel("extra"));
+        } else {
+            Fragment fragment = new Fragment("extra", "popup", this);
+            fragment.add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "target")) {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                checkState();
-            }
-        });
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    checkState();
+                }
+            });
+            add(fragment);
+        }
 
         checkState();
     }

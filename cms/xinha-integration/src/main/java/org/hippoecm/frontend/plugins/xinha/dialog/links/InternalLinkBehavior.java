@@ -32,17 +32,19 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
     private final static String SVN_ID = "$Id$";
 
     private XinhaLinkService linkService;
+    private boolean newWindowDisabled;
 
-    public InternalLinkBehavior(IPluginContext context, IPluginConfig config, XinhaLinkService service) {
+    public InternalLinkBehavior(IPluginContext context, IPluginConfig config, boolean newWindowDisabled, XinhaLinkService service) {
         super(context, config);
         this.linkService = service;
+        this.newWindowDisabled = newWindowDisabled;
     }
 
     @Override
     protected void respond(AjaxRequestTarget target) {
         IModel<InternalXinhaLink> model = new Model<InternalXinhaLink>(linkService.create(getParameters()));
         AbstractXinhaDialog<InternalXinhaLink> dialog = new DocumentBrowserDialog<InternalXinhaLink>(
-                getPluginContext(), getPluginConfig(), model);
+                getPluginContext(), getPluginConfig(), newWindowDisabled, model);
         getDialogService().show(dialog);
     }
 
