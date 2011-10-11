@@ -99,6 +99,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         this.hostGroup = hostGroup;
     }
 
+    public String getHostGroup() {
+        return this.hostGroup;
+    }
+
     public void setSites(final String sites) {
         this.sites = sites;
     }
@@ -134,8 +138,13 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private void loadFromMount(MutableMount mount) {
         String channelPath = mount.getChannelPath();
-        if (channelPath == null || !channelPath.startsWith(channelsRoot)) {
-            log.warn("Channel id " + channelPath + " is not part of the hst configuration under " + rootPath +
+        if (channelPath == null) {
+            // mount does not have an associated channel
+            log.debug("Ignoring mount '" + mount.getName() + "' since it does not have a channel path");
+            return;
+        }
+        if (!channelPath.startsWith(channelsRoot)) {
+            log.warn("Channel path '" + channelPath + "' is not part of the HST configuration under " + rootPath +
                     ", ignoring channel info for mount " + mount.getName() +
                     ".  Use the full repository path for identification.");
             return;
@@ -252,6 +261,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
         session.refresh(false);
 
         return session;
+    }
+
+    public synchronized Channel getChannel(String jcrPath) throws ChannelException {
+        load();
+        if (jcrPath == null || !jcrPath.startsWith(channelsRoot)) {
+            throw new ChannelException("Expected a JCR path starting with '" + channelsRoot + "', but got '" + jcrPath + "' instead");
+        }
+        final String channelId = jcrPath.substring(channelsRoot.length());
+        return channels.get(channelId);
     }
 
     // PUBLIC interface; all synchronised to guarantee consistent state

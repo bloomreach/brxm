@@ -32,6 +32,12 @@
     </dependency>
     
     <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-rest-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-security</artifactId>
       <version>${project.version}</version>

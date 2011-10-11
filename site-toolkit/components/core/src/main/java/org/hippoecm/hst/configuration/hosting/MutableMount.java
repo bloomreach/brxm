@@ -25,12 +25,6 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 public interface MutableMount extends Mount {
 
     /**
-     * The repository path to the channel configuration node.
-     * @return
-     */
-    String getChannelPath();
-
-    /**
      * Set the channel info for the mount.  The info must be constant,
      * i.e. it must always return the same values.
      * @param info

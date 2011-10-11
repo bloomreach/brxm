@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -15,33 +15,46 @@
   limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>2.23.02-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.archetype</groupId>
-      <artifactId>archetype-common</artifactId>
-      <version>2.0-alpha-3</version>
-    </dependency>
-  </dependencies>
 
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
     <version>2.23.04-SNAPSHOT</version>
   </parent>
-    
-  <artifactId>client-modules</artifactId>
-  <name>Hippo Site Toolkit Client Modules</name>
-  <description>Hippo Site Toolkit Client Modules</description>
-  <packaging>pom</packaging>
 
-  <modules>
-    <module>cms-rest</module>
-    <module>page-composer</module>
-  </modules>
-    
+  <name>Hippo Site Toolkit REST Models</name>
+  <description>Hippo Site Toolkit REST models</description>
+  <artifactId>hst-rest-api</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
+
 </project>

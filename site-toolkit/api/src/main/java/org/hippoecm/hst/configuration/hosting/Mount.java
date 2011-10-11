@@ -421,6 +421,11 @@ public interface Mount {
     <T extends ChannelInfo> T getChannelInfo();
 
     /**
+     * @return the repository path to the channel configuration node.
+     */
+    String getChannelPath();
+
+    /**
      * @return the String[] of defaultSiteMapItemHandlerIds which all {@link HstSiteMapItem}'s get or <code>null</code> if non configured
      */
     String[] getDefaultSiteMapItemHandlerIds();

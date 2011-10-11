@@ -185,6 +185,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public String getChannelPath() {
+            return delegatee.getChannelPath();
+        }
+
+        @Override
         public String getAlias() {
             return delegatee.getAlias();
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2011 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@
     <version>2.23.04-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Client Module Page Composer</name>
-  <description>Hippo Site Toolkit Client Module Page Composer</description>
+  <name>Hippo Site Toolkit Client Module CMS REST Service</name>
+  <description>Hippo Site Toolkit Client Module CMS REST service</description>
   <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-  <artifactId>hst-page-composer</artifactId>
+  <artifactId>hst-cms-rest</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -41,27 +41,34 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
-   <dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-rest-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-jaxrs</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <!-- Apache CXF Runtime for JAX-RS Services -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -89,55 +96,18 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--  TODO : remove TEMPPPPP -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>1.4</version>
-    </dependency>
-    
+
     <!-- Test dependencies -->
-    
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.5</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>   
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-unittestcontents</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>      
     </dependency>
 
   </dependencies>
-  
- <build>
+
+  <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -148,5 +118,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>

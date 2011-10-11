@@ -774,6 +774,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         return mountProperties;
     }
 
+    @Override
     public String getChannelPath() {
         return channelPath;
     }

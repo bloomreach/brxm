@@ -32,6 +32,11 @@ public interface ChannelManager {
     Map<String, Channel> getChannels() throws ChannelException;
 
     /**
+     * Returns the channel configured at the given JCR path.
+     */
+    Channel getChannel(String channelPath) throws ChannelException;
+
+    /**
      * Persists a channel. Will create the mounts, sites and configuration when the channel is new.
      * <p>
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
