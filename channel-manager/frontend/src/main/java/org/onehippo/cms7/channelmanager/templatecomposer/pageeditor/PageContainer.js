@@ -27,10 +27,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             config.composerMountUrl = config.composerMountUrl + '/';
         }
         this.composerMountUrl = config.composerMountUrl;
-
         this.composerRestMountUrl = config.composerRestMountUrl;
-        if (config.renderHostSubMountPath && config.renderHostSubMountPath.indexOf('/') === 0) {
-            config.renderHostSubMountPath = config.renderHostSubMountPath.substr(1);
+
+        this.renderHost = config.renderHost;
+        this.renderHostSubMountPath = config.renderHostSubMountPath;
+        if (this.renderHostSubMountPath.indexOf('/') === 0) {
+            this.renderHostSubMountPath = this.renderHostSubMountPath.substr(1);
         }
 
         this.iFrameErrorPage = config.iFrameErrorPage;
