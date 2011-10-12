@@ -82,3 +82,7 @@
 
 [hippo:wfeventcounter] > hippo:document, mix:lockable
 - hippo:counter (long)
+
+[hippo:testrelaxed]
+- * (double) multiple
+- * (string) multiple

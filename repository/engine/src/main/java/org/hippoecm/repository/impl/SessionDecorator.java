@@ -25,7 +25,6 @@ import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
@@ -37,15 +36,12 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.retention.RetentionManager;
-import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 import javax.xml.transform.OutputKeys;
@@ -55,21 +51,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import org.hippoecm.repository.api.ImportMergeBehavior;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.spi.Path;
-
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
@@ -79,6 +68,10 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerat
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.hippoecm.repository.updater.UpdaterNode;
 import org.hippoecm.repository.updater.UpdaterProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 public class SessionDecorator extends org.hippoecm.repository.decorating.SessionDecorator implements XASession, HippoSession {
 
@@ -348,7 +341,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                 Property property = iter.nextProperty();
                 if (property instanceof UpdaterProperty) {
                     if (((UpdaterProperty)property).isMultiple()) {
-                        destNode.setProperty(property.getName(), property.getValues());
+                        destNode.setProperty(property.getName(), property.getValues(), property.getType());
                     } else {
                         destNode.setProperty(property.getName(), property.getValue());
                     }
@@ -356,7 +349,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                     PropertyDefinition definition = property.getDefinition();
                     if (!definition.isProtected()) {
                         if (definition.isMultiple())
-                            destNode.setProperty(property.getName(), property.getValues());
+                            destNode.setProperty(property.getName(), property.getValues(), property.getType());
                         else
                             destNode.setProperty(property.getName(), property.getValue());
                     }

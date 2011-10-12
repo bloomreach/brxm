@@ -644,7 +644,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 }
                 if (!isProtected) {
                     if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
-                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()));
+                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()), prop.getType());
                     } else {
                         Value[] values = prop.getValues();
                         List<Value> newValues = new LinkedList<Value>();
@@ -658,7 +658,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                                 newValues.add(values[i]);
                             }
                         }
-                        target.setProperty(prop.getName(), newValues.toArray(new Value[newValues.size()]));
+                        target.setProperty(prop.getName(), newValues.toArray(new Value[newValues.size()]), prop.getType());
                     }
                 }
             } else {
@@ -680,12 +680,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
                         Value[] newValues = expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType());
                         if(newValues.length >= 1) {
-                            target.setProperty(prop.getName(), newValues[0]);
+                            target.setProperty(prop.getName(), newValues[0], prop.getType());
                         } else {
-                            target.setProperty(prop.getName(), (String)null);
+                            target.setProperty(prop.getName(), (String)null, prop.getType());
                         }
                     } else {
-                        target.setProperty(prop.getName(), prop.getValue());
+                        target.setProperty(prop.getName(), prop.getValue(), prop.getType());
                     }
                 }
             }

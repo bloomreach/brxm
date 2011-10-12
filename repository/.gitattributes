@@ -283,6 +283,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -t
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/SessionTest.java -text
 test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/MirrorCombiFacetSelectTest.java svneol=native#text/plain
