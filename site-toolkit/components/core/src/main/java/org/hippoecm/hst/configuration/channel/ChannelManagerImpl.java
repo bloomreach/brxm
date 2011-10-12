@@ -99,6 +99,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         this.hostGroup = hostGroup;
     }
 
+    @Override
     public String getHostGroup() {
         return this.hostGroup;
     }

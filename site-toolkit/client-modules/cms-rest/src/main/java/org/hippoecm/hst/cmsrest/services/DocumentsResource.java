@@ -31,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 import org.hippoecm.hst.cmsrest.Implements;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelManagerImpl;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -47,10 +47,10 @@ public class DocumentsResource {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
-    private ChannelManagerImpl channelManager;
+    private ChannelManager channelManager;
     private HstLinkCreator hstLinkCreator;
 
-    public void setChannelManager(final ChannelManagerImpl channelManager) {
+    public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }
 
