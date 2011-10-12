@@ -45,10 +45,10 @@ public class ChannelDocument implements Serializable {
      * @param original the channel document to copy.
      */
     public ChannelDocument(ChannelDocument original) {
-        this.channelId = original.getChannelId();
-        this.channelName = original.getChannelName();
-        this.canonicalUrl = original.getCanonicalUrl();
-        this.urlContainsContextPath = original.getUrlContainsContextPath();
+        this.channelId = original.channelId;
+        this.channelName = original.channelName;
+        this.canonicalUrl = original.canonicalUrl;
+        this.urlContainsContextPath = original.urlContainsContextPath;
     }
 
     /**
