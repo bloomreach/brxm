@@ -127,7 +127,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
         PropertyDefinition best = null;
         for (PropertyDefinition pdef : nodeType.getPropertyDefinitions()) {
             if (pdef.getName().equals(name) && pdef.isMultiple() == multiValued) {
-                if (type == PropertyType.UNDEFINED || type == JcrPropertyValueModel.NO_TYPE || pdef.getRequiredType() == type) {
+                if ((!"*".equals(name) && type == JcrPropertyValueModel.NO_TYPE) || pdef.getRequiredType() == type) {
                     return pdef;
                 } else if (pdef.getRequiredType() == PropertyType.UNDEFINED) {
                     best = pdef;

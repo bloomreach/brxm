@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +28,9 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.properties.JcrMultiPropertyValueModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JcrMultiPropertyValueModelTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -97,6 +97,22 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
         Property property = test.getProperty("test");
         assertTrue(property.isMultiple());
         assertEquals(2, property.getValues().length);
+    }
+
+    @Test
+    public void testNonExistingRelaxedPropertyIsCreated() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:relaxed");
+
+        JcrPropertyModel propModel = new JcrPropertyModel(new JcrItemModel("/test/strings"));
+        JcrMultiPropertyValueModel valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
+        List<String> list = new ArrayList<String>(1);
+        list.add("y");
+        valueModel.setObject(list);
+
+        Property prop = test.getProperty("strings");
+        Value[] values = prop.getValues();
+        assertEquals(1, values.length);
+        assertEquals("y", values[0].getString());
     }
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {

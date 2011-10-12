@@ -232,9 +232,9 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
     private PropertyDefinition getPropertyDefinition() {
         if (propertyDefinition == null) {
             // property doesn't exist, try to find pdef in the node definition
-            propertyDefinition = propertyModel.getDefinition(type, false);
+            propertyDefinition = propertyModel.getDefinition(type, true);
             if (propertyDefinition == null) {
-                propertyDefinition = propertyModel.getDefinition(type, true);
+                propertyDefinition = propertyModel.getDefinition(type, false);
 
                 if (propertyDefinition == null && propertyModel.getItemModel().exists()) {
                     try {
