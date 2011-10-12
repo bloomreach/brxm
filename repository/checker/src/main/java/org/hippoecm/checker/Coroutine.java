@@ -38,13 +38,29 @@ class Coroutine {
         return bridge;
     }
 
+    static <X> Iterable<X> toIterable(Visitable<X> visitable, Progress progress) {
+        Bridge<X> bridge = new Bridge<X>(visitable);
+        Thread thread = new Thread(bridge);
+        thread.start();
+        bridge.progress = new Progress(progress);
+        return bridge;
+    }
+
+    static <X> Iterable<X> toIterable(Visitable<X> visitable, int size, Progress progress) {
+        Bridge<X> bridge = new Bridge<X>(visitable, size);
+        Thread thread = new Thread(bridge);
+        thread.start();
+        bridge.progress = new Progress(progress);
+        return bridge;
+    }
+
     static class Bridge<X> implements Runnable, Visitor<X>, Iterable<X> {
 
         int size = -1;
         volatile boolean done = false;
         Visitable<X> visitable;
         BlockingQueue<X> queue = new LinkedBlockingQueue<X>(32);
-        Progress progress;
+        public Progress progress;
 
         Bridge(Visitable<X> visitable) {
             this.visitable = visitable;

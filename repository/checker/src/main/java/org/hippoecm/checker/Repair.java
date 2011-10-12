@@ -16,10 +16,14 @@ class Repair {
     }
     private RepairStatus currentStatus;
 
-    Repair(Access access) {
+    Repair() {
         currentStatus = RepairStatus.CLEAN;
     }
 
+    RepairStatus getStatus() {
+        return currentStatus;
+    }
+    
     boolean report(RepairStatus statusChange) {
         switch (currentStatus) {
             case CLEAN:
@@ -61,7 +65,7 @@ class Repair {
             try {
                 action.perform(storage);
             } catch (SQLException ex) {
-                ex.printStackTrace(System.err);
+                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
     }
@@ -127,7 +131,7 @@ class Repair {
                 }
                 storage.access.storeBundle(bundle);
             } catch (ItemStateException ex) {
-                ex.printStackTrace();
+                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
     }

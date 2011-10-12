@@ -26,7 +26,6 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
-import org.apache.jackrabbit.core.persistence.pool.BundleDbPersistenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,9 @@ public class Checker {
         this.repConfig = repConfig;
     }
 
-    public boolean check() {
+    public boolean check(boolean fix) {
+        Progress progress = new Progress();
+        progress.setLogger(log);
         boolean clean = true;
         PersistenceManager persistMgr = null;
         try {
@@ -56,14 +57,16 @@ public class Checker {
                         null,
                         null,
                         repConfig.getDataStore()));
-                Repair repair = new Repair(new Access((BundleDbPersistenceManager)persistMgr));
+                Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
                     int size = bundleReader.getSize();
                     log.info("Traversing through " + size + " bundles");
-                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
+                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size, progress);
                     clean &= traverse.checkVersionBundles(iterable, repair);
-                    repair.perform(bundleReader);
+                    if (fix) {
+                        repair.perform(bundleReader);
+                    }
                 }
             }
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
@@ -75,28 +78,43 @@ public class Checker {
                         null,
                         null,
                         repConfig.getDataStore()));
-                Repair repair = new Repair(new Access((BundleDbPersistenceManager)persistMgr));
+                Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
                     int size = bundleReader.getSize();
                     log.info("Traversing through " + size + " bundles");
-                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size);
+                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size, progress);
                     //traverse.checkVersionBundles(iterable);
                     clean &= traverse.checkBundles(iterable, repair);
-                    repair.perform(bundleReader);
+                    if (fix) {
+                        repair.perform(bundleReader);
+                    }
+                }
+                switch(repair.getStatus()) {
+                    case RECHECK:
+                        log.warn("Repaired repository but another check is required");
+                        break;
+                    case PENDING:
+                        log.info("Repaired repository");
+                        break;
+                    case FAILURE:
+                        log.error("FAILED TO REPAIR REPOSITORY");
+                        break;
                 }
                 {
                     ReferencesReader referenceReader = new ReferencesReader(persistMgr);
-                    Iterable<NodeReference> iterable = Coroutine.<NodeReference>toIterable(referenceReader, referenceReader.getSize());
+                    Iterable<NodeReference> iterable = Coroutine.<NodeReference>toIterable(referenceReader, referenceReader.getSize(), progress);
                     clean &= traverse.checkReferences(iterable);
-                    //repair.perform(referenceReader);
+                    if(fix) {
+                        // repair.perform(referenceReader);
+                    }
                 }
                 Access.close(persistMgr);
                 persistMgr = null;
             }
             /*{
             IndicesReader indicesReader = new IndicesReader(new File(repConfig.getHomeDir()));
-            Iterable<NodeIndexed> iterable = Coroutine.<NodeIndexed>toIterable(indicesReader);
+            Iterable<NodeIndexed> iterable = Coroutine.<NodeIndexed>toIterable(indicesReader, indicesReader.getSize(), progress);
             Iterable<UUID> corrupted = traverse.checkIndices(iterable);
             }*/
         } catch (RepositoryException ex) {

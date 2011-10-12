@@ -27,7 +27,7 @@ public class Progress {
     long updateDelay  = 5000;
     long initialDelay = 10000;
     long currentDelay;
-    Logger logger;
+    Logger logger = null;
 
     public Progress() {
         this.maximum = -1;
@@ -37,6 +37,20 @@ public class Progress {
 
     public Progress(int maximum) {
         this.maximum = maximum;
+        timestamp = System.currentTimeMillis();
+        currentDelay = initialDelay;
+    }
+    
+    public Progress(Progress parent) {
+        this.maximum = -1;
+        this.logger = parent.logger;
+        timestamp = System.currentTimeMillis();
+        currentDelay = initialDelay;
+    }
+
+    public Progress(Progress parent, int maximum) {
+        this.maximum = maximum;
+        this.logger = parent.logger;
         timestamp = System.currentTimeMillis();
         currentDelay = initialDelay;
     }
@@ -82,6 +96,5 @@ public class Progress {
     }
 
     public void close() {
-        // System.err.println();
     }
 }

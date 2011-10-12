@@ -230,6 +230,7 @@ public class Traverse {
                     unvisited.addAll(all);
 
                     Progress progress = new Progress(unvisited.size());
+                    progress.setLogger(Checker.log);
                     for (UUID current = null; !unvisited.isEmpty() || current != null;) {
                         if (current == null) {
                             if (progress.needsUpdate()) {

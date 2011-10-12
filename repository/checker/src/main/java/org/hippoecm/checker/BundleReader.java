@@ -20,13 +20,21 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.data.DataIdentifier;
+import org.apache.jackrabbit.core.data.DataRecord;
+import org.apache.jackrabbit.core.data.DataStore;
+import org.apache.jackrabbit.core.data.DataStoreException;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.persistence.util.BLOBStore;
 import org.apache.jackrabbit.core.persistence.util.BundleBinding;
 import org.apache.jackrabbit.core.persistence.util.ErrorHandling;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
@@ -34,7 +42,7 @@ import org.apache.jackrabbit.core.persistence.util.NodePropBundle.ChildNodeEntry
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle.PropertyEntry;
 import org.apache.jackrabbit.core.value.InternalValue;
 
-class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitable<NodeDescription> {;
+class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitable<NodeDescription>, BLOBStore, DataStore {;
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -76,30 +84,36 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                     try {
                         Map.Entry<NodeId, InputStream> bundle = readEntry(rs);
                         final NodeId nodeId = bundle.getKey();
-                        InputStream in = bundle.getValue();
-                        if(in != null) {
-                            try {
-                                readBundle(nodeId, in, visitor, onlyReferenceable);
-                            } catch(IOException ex) {
+                        try {
+                            InputStream in = bundle.getValue();
+                            if (in != null) {
+                                try {
+                                    readBundle(nodeId, in, visitor, onlyReferenceable);
+                                } catch (IOException ex) {
+                                    Checker.log.error("Unable to load bundle content with id "+nodeId+": "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+                                    repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
+                                }
+                            } else {
+                                Checker.log.error("Unable to load bundle with id "+nodeId+" removing it");
                                 repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
                             }
-                        } else {
+                        } catch (Throwable ex) {
+                            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                             repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
                         }
                     } catch (Throwable ex) {
-                        rs.deleteRow();
+                        Checker.log.error("FATAL ERROR RETRIEVING NODE ID: "+ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     }
                 }
                 rs.close();
             }
         } catch (SQLException ex) {
-            ex.printStackTrace(System.err);
             Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
     void readBundle(final NodeId nodeId, InputStream istream, Visitor<NodeDescription> visitor, boolean onlyReferenceable) throws IOException {
-        BundleBinding bundleBinding = new BundleBinding(new ErrorHandling(ErrorHandling.IGNORE_MISSING_BLOBS), null, nsIndex, nameIndex, null);
+        BundleBinding bundleBinding = new BundleBinding(new ErrorHandling(ErrorHandling.IGNORE_MISSING_BLOBS), this, nsIndex, nameIndex, this);
         final NodePropBundle bundle = bundleBinding.readBundle(istream, nodeId);
         if (!onlyReferenceable || bundle.isReferenceable()) {
             visitor.visit(new NodeDescription() {
@@ -135,5 +149,73 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
                 }
             });
         }
+    }
+
+    @Override
+    public String createId(PropertyId id, int index) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void put(String blobId, InputStream in, long size) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public InputStream get(String blobId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public boolean remove(String blobId) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DataRecord getRecordIfStored(DataIdentifier identifier) throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public DataRecord getRecord(DataIdentifier identifier) throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public DataRecord addRecord(InputStream stream) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateModifiedDateOnAccess(long before) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int deleteAllOlderThan(long min) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Iterator<DataIdentifier> getAllIdentifiers() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void init(String homeDir) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getMinRecordLength() {
+        return 64 * 1024;
+    }
+
+    @Override
+    public void close() throws DataStoreException {
+    }
+
+    @Override
+    public void clearInUse() {
     }
 }

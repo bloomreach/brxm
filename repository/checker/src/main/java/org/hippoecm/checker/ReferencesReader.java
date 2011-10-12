@@ -68,11 +68,11 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (IOException ex) {
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (Throwable ex) {
-            ex.printStackTrace(System.err);
+            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
     }
 
@@ -80,7 +80,7 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
         try {
             return getSize(wspName);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             return 0;
         }
     }
