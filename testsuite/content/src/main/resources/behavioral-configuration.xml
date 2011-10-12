@@ -3,223 +3,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>behavioral:configuration</sv:value>
   </sv:property>
-  <sv:node sv:name="behavioral:dimensions">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>behavioral:dimensions</sv:value>
-    </sv:property>
-    <sv:node sv:name="interests">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>behavioral:dimension</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>interests</sv:value>
-      </sv:property>
-      <sv:node sv:name="cars">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>cars</sv:value>
-        </sv:property>
-        <sv:node sv:name="cartags">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>tagDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>car</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>1</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="carreferers">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>domainRefererDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>www.carsrus.com</sv:value>
-            <sv:value>www.chrysler.com</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="carsearchterms">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>searchDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>cars</sv:value>
-            <sv:value>chrysler</sv:value>
-            <sv:value>skoda</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="bicycles">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>bicycles</sv:value>
-        </sv:property>
-        <sv:node sv:name="bicyclesearchterms">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>searchDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>giant</sv:value>
-            <sv:value>shimano</sv:value>
-            <sv:value>bicycles</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="bicycletags">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>tagDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>bicycle</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>1</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="bicyclereferers">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>domainRefererDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>www.vakantiefietser.nl</sv:value>
-            <sv:value>www.tourforlife.nl</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="age">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>behavioral:dimension</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>age</sv:value>
-      </sv:property>
-      <sv:node sv:name="old">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>old</sv:value>
-        </sv:property>
-        <sv:node sv:name="oldsearchterms">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>searchDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>wheelchair</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="young">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>young</sv:value>
-        </sv:property>
-        <sv:node sv:name="youngsearchterms">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>searchDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>skateboard</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:weight" sv:type="Long">
-            <sv:value>2</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-    <sv:node sv:name="authorization">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>behavioral:dimension</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>authorization</sv:value>
-      </sv:property>
-      <sv:node sv:name="authorized">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>Authorized user</sv:value>
-        </sv:property>
-        <sv:node sv:name="authorized">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>authorizationDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>authorized</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="unauthorized">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>behavioral:segment</sv:value>
-        </sv:property>
-        <sv:property sv:name="behavioral:name" sv:type="String">
-          <sv:value>Unauthorized user</sv:value>
-        </sv:property>
-        <sv:node sv:name="unauthorized">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>behavioral:rule</sv:value>
-          </sv:property>
-          <sv:property sv:name="behavioral:provider" sv:type="String">
-            <sv:value>authorizationDataProvider</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
-            <sv:value>unauthorized</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-  </sv:node>
   <sv:node sv:name="behavioral:providers">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>behavioral:providers</sv:value>
@@ -290,30 +73,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>behavioral:personas</sv:value>
     </sv:property>
-    <sv:node sv:name="olddriver">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>behavioral:persona</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>Old Driver</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
-        <sv:value>interests:cars</sv:value>
-        <sv:value>age:old</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="oldcyclist">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>behavioral:persona</sv:value>
-      </sv:property>
-      <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>Old Cyclist</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
-        <sv:value>age:old</sv:value>
-        <sv:value>interests:bicycles</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="youngcyclist">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>behavioral:persona</sv:value>
@@ -321,21 +80,118 @@
       <sv:property sv:name="behavioral:name" sv:type="String">
         <sv:value>Young Cyclist</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
-        <sv:value>interests:bicycles</sv:value>
-        <sv:value>age:young</sv:value>
+      <sv:node sv:name="and">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:expression</sv:value>
+        </sv:property>
+        <sv:node sv:name="rule">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>skateboard</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="or">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:expression</sv:value>
+          </sv:property>
+          <sv:node sv:name="rule">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>behavioral:rule</sv:value>
+            </sv:property>
+            <sv:property sv:name="behavioral:provider" sv:type="String">
+              <sv:value>tagDataProvider</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+              <sv:value>bicycle</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="rule">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>behavioral:rule</sv:value>
+            </sv:property>
+            <sv:property sv:name="behavioral:provider" sv:type="String">
+              <sv:value>searchDataProvider</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+              <sv:value>giant</sv:value>
+              <sv:value>shimano</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="olddriver">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>behavioral:persona</sv:value>
       </sv:property>
+      <sv:property sv:name="behavioral:name" sv:type="String">
+        <sv:value>Old Driver</sv:value>
+      </sv:property>
+      <sv:node sv:name="and">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:expression</sv:value>
+        </sv:property>
+        <sv:node sv:name="rule">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:rule</sv:value>
+          </sv:property>
+          <sv:property sv:name="behavioral:provider" sv:type="String">
+            <sv:value>searchDataProvider</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+            <sv:value>wheelchair</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="or">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>behavioral:expression</sv:value>
+          </sv:property>
+          <sv:node sv:name="rule">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>behavioral:rule</sv:value>
+            </sv:property>
+            <sv:property sv:name="behavioral:provider" sv:type="String">
+              <sv:value>searchDataProvider</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+              <sv:value>chrysler</sv:value>
+              <sv:value>skoda</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="rule">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>behavioral:rule</sv:value>
+            </sv:property>
+            <sv:property sv:name="behavioral:provider" sv:type="String">
+              <sv:value>tagDataProvider</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
+              <sv:value>car</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
     </sv:node>
     <sv:node sv:name="authorizeduser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>behavioral:persona</sv:value>
       </sv:property>
       <sv:property sv:name="behavioral:name" sv:type="String">
-        <sv:value>Authorized user</sv:value>
+        <sv:value>Authorized User</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="behavioral:segments" sv:type="String">
-        <sv:value>authorization:authorized</sv:value>
-      </sv:property>
+      <sv:node sv:name="rule">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>behavioral:rule</sv:value>
+        </sv:property>
+        <sv:property sv:name="behavioral:provider" sv:type="String">
+          <sv:value>authorizationDataProvider</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
   </sv:node>
 </sv:node>

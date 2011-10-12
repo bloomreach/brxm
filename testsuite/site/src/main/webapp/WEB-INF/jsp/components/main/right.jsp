@@ -47,8 +47,8 @@
  <c:if test="${not empty profile}">
   <b>Profile</b>
   <ul>
-    <c:forEach var="behavioralPersonaScore" items="${profile.personaScores}" > 
-        <li>${behavioralPersonaScore.personaId} : ${behavioralPersonaScore.score} </li>
+    <c:forEach var="personaId" items="${profile.personaIds}" >
+        <li>${personaId}</li>
     </c:forEach>
   </ul>
  </c:if>
