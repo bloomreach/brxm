@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.ws.rs.WebApplicationException;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ResourceReference;
@@ -105,34 +106,42 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             return;
         }
 
-        final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
-        Collections.sort(channelDocuments, getChannelDocumentComparator());
+        try {
+            final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
+            Collections.sort(channelDocuments, getChannelDocumentComparator());
 
-        final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
-        for (ChannelDocument channelDocument : channelDocuments) {
-            // don't store the proxy object, but use a POJO copy of the proxy instead
-            ChannelDocument serializableCopy = new ChannelDocument(channelDocument);
-            idToChannelMap.put(serializableCopy.getChannelId(), serializableCopy);
+            final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+            for (ChannelDocument channelDocument : channelDocuments) {
+                // don't store the proxy object, but use a POJO copy of the proxy instead
+                ChannelDocument serializableCopy = new ChannelDocument(channelDocument);
+                idToChannelMap.put(serializableCopy.getChannelId(), serializableCopy);
+            }
+
+            add(new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
+
+                @Override
+                protected List<String> load() {
+                    List<String> names = new ArrayList<String>();
+                    names.addAll(idToChannelMap.keySet());
+                    return names;
+                }
+
+            }) {
+
+                @Override
+                protected void populateItem(final ListItem<String> item) {
+                    final String channelId = item.getModelObject();
+                    ChannelDocument channel = idToChannelMap.get(channelId);
+                    item.add(new ViewChannelAction("view-channel", channel));
+                }
+            });
+        } catch (WebApplicationException e) {
+            log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
+                    e.getResponse().getStatus());
+            if (log.isDebugEnabled()) {
+                log.debug("REST proxy returned message: {}", e.getMessage());
+            }
         }
-
-        add(new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
-
-            @Override
-            protected List<String> load() {
-                List<String> names = new ArrayList<String>();
-                names.addAll(idToChannelMap.keySet());
-                return names;
-            }
-
-        }) {
-
-            @Override
-            protected void populateItem(final ListItem<String> item) {
-                final String channelId = item.getModelObject();
-                ChannelDocument channel = idToChannelMap.get(channelId);
-                item.add(new ViewChannelAction("view-channel", channel));
-            }
-        });
     }
 
     protected Comparator<ChannelDocument> getChannelDocumentComparator() {
