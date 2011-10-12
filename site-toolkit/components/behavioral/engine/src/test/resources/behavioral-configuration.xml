@@ -115,6 +115,9 @@
           <sv:property sv:multiple="true" sv:name="behavioral:terms" sv:type="String">
             <sv:value>wheelchair</sv:value>
           </sv:property>
+          <sv:property sv:name="behavioral:frequencyThreshold" sv:type="Long">
+            <sv:value>2</sv:value>
+          </sv:property>
         </sv:node>
         <sv:node sv:name="rule">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -24,7 +24,7 @@
 [behavioral:rule] > behavioral:expression
 - behavioral:provider (string) mandatory
 - behavioral:terms (string) multiple
-- behavioral:frequency (long)
+- behavioral:frequencyThreshold (long)
 
 [behavioral:persona] > nt:base
 - behavioral:name (string) mandatory

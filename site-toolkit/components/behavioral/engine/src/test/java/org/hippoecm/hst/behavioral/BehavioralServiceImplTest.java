@@ -25,6 +25,7 @@ import org.hippoecm.repository.TestCase;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 
 public class BehavioralServiceImplTest extends TestCase {
     
@@ -36,6 +37,7 @@ public class BehavioralServiceImplTest extends TestCase {
         service.setBehavioralDataStore(new BehavioralDataHttpSessionStore());
         service.setConfigNodePath("/behavioral:configuration");
         
+        // case 1: search site for term skateboard and have come from searching google for bicycles
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("query", "skateboard");
         request.setUserPrincipal(new UserPrincipal("test"));
@@ -52,17 +54,33 @@ public class BehavioralServiceImplTest extends TestCase {
         assertTrue(profile.isPersona("youngcyclist"));
         assertTrue(profile.isPersona("authorizeduser"));
         
+        
+        // case 2: search site once for wheelchair and come from searching yahoo for cars
         request = new MockHttpServletRequest();
         request.setParameter("query", "wheelchair");
         request.setUserPrincipal(null);
         request.addHeader("referer", "http://www.yahoo.com?p=cars");
         
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);        
+        ((MockHttpSession)request.getSession()).setNew(true);
+        
+        service.updateBehavioralData(request, response);
+        
+        profile = service.getBehavioralProfile(request);
+        assertFalse(profile.isPersona("olddriver"));
+        
+        // case 3: with the same session as the previous case, search once more for wheelchair, thus meeting
+        // the required threshold
+        
+        request = new MockHttpServletRequest();
+        request.setParameter("query", "wheelchair");
+        request.setSession(session);
+        
         service.updateBehavioralData(request, response);
         
         profile = service.getBehavioralProfile(request);
         assertTrue(profile.isPersona("olddriver"));
-        assertFalse(profile.isPersona("authorizeduser"));
-        
     }
     
 //    private void printProfile(BehavioralProfile profile) {
