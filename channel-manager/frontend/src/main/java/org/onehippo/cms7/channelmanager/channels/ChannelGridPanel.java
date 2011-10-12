@@ -41,7 +41,7 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.ChannelManager.ChannelGridPanel")
 public class ChannelGridPanel extends ExtPanel {
 
-    public static final String CHANNEL_GRID_PANEL_JS = "Hippo.ChannelManager.ChannelGridPanel.js";
+    public static final String CHANNEL_GRID_PANEL_JS = "ChannelGridPanel.js";
 
     public static final String CONFIG_COLUMNS = "columns";
     public static final String CONFIG_SORT_COLUMN = "sort.column";

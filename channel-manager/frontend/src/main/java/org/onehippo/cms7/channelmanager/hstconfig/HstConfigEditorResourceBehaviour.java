@@ -24,8 +24,8 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 public class HstConfigEditorResourceBehaviour extends AbstractYuiBehavior {
 
-    public static final String HST_EXTWIREFRAME_JS = "Hippo.ChannelManager.ExtWireframe.js";
-    public static final String HST_CONFIG_EDITOR_JS = "Hippo.ChannelManager.HstConfigEditor.js";
+    public static final String HST_EXTWIREFRAME_JS = "ExtWireframe.js";
+    public static final String HST_CONFIG_EDITOR_JS = "HstConfigEditor.js";
 
     @Override
     public void bind(final Component component) {

@@ -1,5 +1,7 @@
 * text=auto !eol
 frontend/pom.xml eol=lf
+frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelFormPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
@@ -8,10 +10,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerResourceBehaviour.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.ChannelFormPanel.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
@@ -19,21 +19,21 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelResourceModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelPropertiesPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.ExtWireframe.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/Hippo.ChannelManager.HstConfigEditor.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text

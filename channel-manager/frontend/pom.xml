@@ -183,11 +183,11 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.RootPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.BlueprintListPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/Hippo.ChannelManager.ChannelFormPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelPropertiesPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/Hippo.ChannelManager.ChannelGridPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/RootPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BlueprintListPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ChannelFormPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channel-manager-all.js</output>
             </aggregation>

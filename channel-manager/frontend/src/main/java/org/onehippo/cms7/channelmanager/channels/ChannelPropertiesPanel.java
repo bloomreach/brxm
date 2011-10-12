@@ -76,7 +76,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
 
     static final Logger log = LoggerFactory.getLogger(ChannelPropertiesPanel.class);
 
-    public static final String CHANNEL_PROPERTIES_PANEL_JS = "Hippo.ChannelManager.ChannelPropertiesPanel.js";
+    public static final String CHANNEL_PROPERTIES_PANEL_JS = "ChannelPropertiesPanel.js";
     public static final String EXT_CLASS = "Hippo.ChannelManager.ChannelPropertiesPanel";
 
     private static final String EVENT_SAVE_CHANNEL = "savechannel";

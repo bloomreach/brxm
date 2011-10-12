@@ -10,11 +10,11 @@ import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
-    public static final String ROOT_PANEL = "Hippo.ChannelManager.RootPanel.js";
+    public static final String ROOT_PANEL = "RootPanel.js";
 
-    public static final String BLUEPRINT_LIST_PANEL = "Hippo.ChannelManager.BlueprintListPanel.js";
+    public static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
 
-    public static final String CHANNEL_FORM_PANEL = "Hippo.ChannelManager.ChannelFormPanel.js";
+    public static final String CHANNEL_FORM_PANEL = "ChannelFormPanel.js";
 
     public static final String ALL = "channel-manager-all.js";
 
