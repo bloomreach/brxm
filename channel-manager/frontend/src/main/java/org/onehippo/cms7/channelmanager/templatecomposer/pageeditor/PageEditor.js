@@ -34,7 +34,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             'iFrameException',
             'selectItem',
             'lock',
-            'unlock'
+            'unlock',
+            'edit-document'
         ]);
     },
 

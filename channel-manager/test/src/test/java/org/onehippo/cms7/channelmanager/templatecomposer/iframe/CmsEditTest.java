@@ -46,8 +46,8 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
         link.click();
 
         final List<Message> messages = getMessagesSend();
-        assertEquals(3, messages.size());
-        assertEquals("edit-document", messages.get(2).messageTag);
+        assertEquals("init", messages.get(0).messageTag);
+        assertEquals("edit-document", messages.get(1).messageTag);
         assertFalse(isMessageSend("iframeexception"));
     }
 
