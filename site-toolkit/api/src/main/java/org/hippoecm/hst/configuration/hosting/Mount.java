@@ -146,7 +146,7 @@ public interface Mount {
     String getAlias();
     
     /**
-     * When this {@link Mount} is not using a {@link HstSite} for the request processing, this method returns <code>true</code>. When it returns <code>true</code>, then 
+     * When this {@link Mount} is not using a {@link HstSite} for the request processing, this method returns <code>false</code>. When it returns <code>false</code>, then 
      * {@link #getNamedPipeline()} should also be configured, and a pipeline should be invoked that is independent of the {@link ResolvedSiteMapItem} as their won't be one.
      */
     boolean isMapped();
