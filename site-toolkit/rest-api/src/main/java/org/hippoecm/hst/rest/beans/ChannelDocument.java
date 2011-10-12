@@ -30,13 +30,20 @@ public class ChannelDocument implements Serializable {
 
     private String channelId;
     private String channelName;
-
     private String canonicalUrl;
-
     private boolean urlContainsContextPath;
+
+    /**
+     * Creates an empty channel document bean. This constructor is needed by the JAX-RS client framework.
+     */
     public ChannelDocument() {
     }
 
+    /**
+     * Creates a copy of a channel document.
+     *
+     * @param original the channel document to copy.
+     */
     public ChannelDocument(ChannelDocument original) {
         this.channelId = original.getChannelId();
         this.channelName = original.getChannelName();
@@ -44,34 +51,68 @@ public class ChannelDocument implements Serializable {
         this.urlContainsContextPath = original.getUrlContainsContextPath();
     }
 
+    /**
+     * @return the ID of the channel of this document
+     */
     public String getChannelId() {
         return channelId;
     }
 
+    /**
+     * Sets the ID of the channel of this document.
+     *
+     * @param channelId the ID of the channel of this document
+     */
     public void setChannelId(final String channelId) {
         this.channelId = channelId;
     }
 
+    /**
+     * @return the name of the channel of this document.
+     */
     public String getChannelName() {
         return channelName;
     }
 
+    /**
+     * Sets the name of the channel of this document.
+     *
+     * @param channelName the name of the channel of this document
+     */
     public void setChannelName(final String channelName) {
         this.channelName = channelName;
     }
 
+    /**
+     * @return the canonical URL of this document in this channel.
+     */
     public String getCanonicalUrl() {
         return canonicalUrl;
     }
 
+    /**
+     * Sets the canonical URL of this document in this channel.
+     *
+     * @param canonicalUrl the canonical URL of this document in this channel.
+     */
     public void setCanonicalUrl(final String canonicalUrl) {
         this.canonicalUrl = canonicalUrl;
     }
 
+    /**
+     * Returns whether the canonical URL of this document in this channel contains a context path.
+     *
+     * @return true if the canonical URL of this document in this channel contains a context path, false otherwise.
+     */
     public boolean getUrlContainsContextPath() {
         return urlContainsContextPath;
     }
 
+    /**
+     * Sets whether the canonical URL of this document in this channel contains a context path.
+     *
+     * @param urlContainsContextPath whether the canonical URL of this document in this channel contains a context path.
+     */
     public void setUrlContainsContextPath(final boolean urlContainsContextPath) {
         this.urlContainsContextPath = urlContainsContextPath;
     }
