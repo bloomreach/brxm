@@ -20,17 +20,17 @@ import java.util.Map;
 
 /**
  * {@link BehavioralData} represents the raw data that is mined by a {@link BehavioralDataProvider}.
- * It's a simple mapping from terms to the frequency those terms were encountered.
+ * It's a simple mapping from terms to the number of times those terms were encountered.
  *
  * <p>
- * A {@link BehavioralData} object is linked to the {@link BehavioralDataProvider#getId()} that provided it so that  when
- * the time comes to calculate the {@link BehavioralProfile} the weight this data should be given is accessible.
+ * A {@link BehavioralData} object is linked to the {@link BehavioralDataProvider#getId()} that provided it.
  * </p>
  */
 public interface BehavioralData extends Serializable {
     
     /**
-     * @return the mapping between terms and the frequency those terms were encountered. If there are no mappings, an empty map is returned
+     * @return the mapping between terms and the number of times those terms were encountered. 
+     * If there are no mappings, an empty map is returned
      */
     Map<String, Integer> getTermFreq();
     

@@ -20,13 +20,9 @@ package org.hippoecm.hst.behavioral;
  */
 public interface BehavioralNodeTypes {
 
-
     public final static String BEHAVIORAL_NODETYPE_CONFIGURATION = "behavioral:configuration";
-    public final static String BEHAVIORAL_NODETYPE_DIMENSIONS = "behavioral:dimensions";
-    public final static String BEHAVIORAL_NODETYPE_DIMENSION = "behavioral:dimension";
     public final static String BEHAVIORAL_NODETYPE_PROVIDERS = "behavioral:providers";
     public final static String BEHAVIORAL_NODETYPE_PROVIDER = "behavioral:provider";
-    public final static String BEHAVIORAL_NODETYPE_SEGMENT = "behavioral:segment";
     public final static String BEHAVIORAL_NODETYPE_RULE = "behavioral:rule";
     public final static String BEHAVIORAL_NODETYPE_PERSONAS = "behavioral:personas";
     public final static String BEHAVIORAL_NODETYPE_PERSONA = "behavioral:persona";
@@ -35,7 +31,6 @@ public interface BehavioralNodeTypes {
 
     public final static String BEHAVIORAL_PROVIDER_PROPERTY_CLASSNAME = "behavioral:className";
     public final static String BEHAVIORAL_PROVIDER_PROPERTY_SIZE = "behavioral:size";
-    public final static String BEHAVIORAL_PROVIDER_PROPERTY_WEIGHT = "behavioral:weight";
     public final static String BEHAVIORAL_PROVIDER_PROPERTY_ = "behavioral:className";
 
     public final static String BEHAVIORAL_PROVIDER_TERMS_PROPERTY = "behavioral:termsProperty";
@@ -43,8 +38,7 @@ public interface BehavioralNodeTypes {
     
     public final static String BEHAVIORAL_RULE_PROPERTY_TERMS = "behavioral:terms";
     public final static String BEHAVIORAL_RULE_PROPERTY_WEIGHT = "behavioral:weight";
+    public final static String BEHAVIORAL_RULE_PROPERTY_FREQUENCY_THRESHOLD = "behavioral:frequencyThreshold";
     public final static String BEHAVIORAL_RULE_PROPERTY_PROVIDER ="behavioral:provider";
-    
-    public final static String BEHAVIORAL_PERSONA_PROPERTY_SEGMENTS = "behavioral:segments";
     
 }

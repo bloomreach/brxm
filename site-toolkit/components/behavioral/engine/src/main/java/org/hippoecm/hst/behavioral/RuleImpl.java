@@ -23,49 +23,52 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-public class Rule {
+public class RuleImpl implements Rule {
     
-    private static final Long DEFAULT_WEIGHT = 1l;
+    private static final int DEFAULT_FREQUENCY = 1;
     
-    private static final String WEIGHT_PROPERTY_NAME = BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_WEIGHT;
+    private static final String FREQUENCY_THRESHOLD_PROPERTY_NAME = BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_FREQUENCY_THRESHOLD;
     
     private final String providerId;
     private final List<String> terms;
-    private final Segment segment;
-    private Long weight = DEFAULT_WEIGHT;
     
-    public Rule(Node jcrNode, Segment segment) throws RepositoryException {
+    private int frequencyThreshold = DEFAULT_FREQUENCY;
+    
+    public RuleImpl(Node jcrNode) throws RepositoryException {
         if(!jcrNode.isNodeType(BehavioralNodeTypes.BEHAVIORAL_NODETYPE_RULE)) {
             throw new IllegalArgumentException("Rule node not of the expected type. Expected '"+BehavioralNodeTypes.BEHAVIORAL_NODETYPE_RULE+"' but was + '"+jcrNode.getPrimaryNodeType().getName()+"' ");
         }
         providerId = jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_PROVIDER).getString();
 
         List<String> terms = new ArrayList<String>();
-        for (Value term : jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_TERMS).getValues()) {
-            terms.add(term.getString().toLowerCase());
-        }        
+        if (jcrNode.hasProperty(BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_TERMS)) {
+            for (Value term : jcrNode.getProperty(BehavioralNodeTypes.BEHAVIORAL_RULE_PROPERTY_TERMS).getValues()) {
+                terms.add(term.getString().toLowerCase());
+            }
+        }
         this.terms = Collections.unmodifiableList(terms);
         
-        if (jcrNode.hasProperty(WEIGHT_PROPERTY_NAME)) {
-            this.weight = jcrNode.getProperty(WEIGHT_PROPERTY_NAME).getLong();
+        if (jcrNode.hasProperty(FREQUENCY_THRESHOLD_PROPERTY_NAME)) {
+            this.frequencyThreshold = (int)(long)jcrNode.getProperty(FREQUENCY_THRESHOLD_PROPERTY_NAME).getLong();
         }
-        
-        this.segment = segment;
+        if (frequencyThreshold < 1) {
+            throw new IllegalArgumentException("Rule frequency should be at least 1");
+        }
     }
     
+    @Override
     public String getProviderId() {
         return providerId;
     }
     
+    @Override
     public List<String> getTerms() {
         return terms;
     }
-    
-    public Segment getSegment() {
-        return segment;
+
+    @Override
+    public int getFrequencyThreshold() {
+        return frequencyThreshold;
     }
-    
-    public Long getWeight() {
-        return weight;
-    }
+
 }

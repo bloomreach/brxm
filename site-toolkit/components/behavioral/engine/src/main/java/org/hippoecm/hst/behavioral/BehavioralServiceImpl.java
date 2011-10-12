@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.behavioral;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -28,11 +27,6 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.behavioral.BehavioralData;
-import org.hippoecm.hst.behavioral.BehavioralDataProvider;
-import org.hippoecm.hst.behavioral.BehavioralDataStore;
-import org.hippoecm.hst.behavioral.BehavioralProfile;
-import org.hippoecm.hst.behavioral.BehavioralService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,18 +68,23 @@ public class BehavioralServiceImpl implements BehavioralService {
             return (BehavioralProfile) request.getAttribute(BEHAVIORAL_PROFILE_ATTR);
         }
         
-        BehavioralProfile profile = calculateBehavioralProfile(request);
+        BehavioralProfile profile = createBehavioralProfile(request);
         request.setAttribute(BEHAVIORAL_PROFILE_ATTR, profile);
         return profile;
     }
     
 
-    protected BehavioralProfile calculateBehavioralProfile(HttpServletRequest request) {
+    protected BehavioralProfile createBehavioralProfile(HttpServletRequest request) {
         @SuppressWarnings("unchecked")
-        List<BehavioralData> behavioralDataList = (List<BehavioralData>) request.getAttribute(BEHAVIORAL_DATA_ATTR);
+        Map<String, BehavioralData> behavioralDataMap = (Map<String, BehavioralData>) request.getAttribute(BEHAVIORAL_DATA_ATTR);
         Configuration config = getConfiguration(request);
-        BehavioralProfileCalculator behavioralProfileCalculator = new BehavioralProfileCalculator(config);
-        return behavioralProfileCalculator.calculate(behavioralDataList);
+        Set<String> matchingPersonas = new HashSet<String>(config.getPersonas().size());
+        for (Persona persona : config.getPersonas().values()) {
+            if (persona.getExpression().evaluate(behavioralDataMap)) {
+                matchingPersonas.add(persona.getId());
+            }
+        }
+        return new BehavioralProfileImpl(matchingPersonas);
     }
     
     @Override
@@ -93,28 +92,26 @@ public class BehavioralServiceImpl implements BehavioralService {
         
         Configuration config = getConfiguration(request);
         
-        Map<String, BehavioralData> behavioralDataMap = new HashMap<String, BehavioralData>();
-        for(BehavioralData behavioralData : behavioralDataStore.readBehavioralData(request)) {
-            behavioralDataMap.put(behavioralData.getProviderId(), behavioralData);
-        }
+        Map<String, BehavioralData> behavioralDataMap = behavioralDataStore.readBehavioralData(request);
         
         // For each provider update the BehavioralData
         for(BehavioralDataProvider provider : config.getDataProviders()) {
+            if (provider.isSessionLevel() && !request.getSession().isNew()) {
+                continue;
+            }
             BehavioralData behavioralData = provider.updateBehavioralData(behavioralDataMap.get(provider.getId()), request);
             if (behavioralData != null) {
                 behavioralDataMap.put(provider.getId(), behavioralData);
             }
         }
         
-        List<BehavioralData> behavioralDataList = new ArrayList<BehavioralData>(behavioralDataMap.values()); 
-        // We store the behavioralDataList on the request, even though it is accessible through the store as well: However, depending
+        // We store the behavioralDataMap on the request, even though it is accessible through the store as well: However, depending
         // on the store, fetching it from the store might be more expensive: Think for example of a store that is being accessed through external REST calls
-        request.setAttribute(BEHAVIORAL_DATA_ATTR, behavioralDataList);
+        request.setAttribute(BEHAVIORAL_DATA_ATTR, behavioralDataMap);
         
         // Store the updated BehavioralData
-        behavioralDataStore.storeBehavioralData(request, response, behavioralDataList);
-        
-        System.out.println(getBehavioralProfile(request).toString());
+        behavioralDataStore.storeBehavioralData(request, response, behavioralDataMap);
+
     }
     
     private Configuration getConfiguration(HttpServletRequest request) {

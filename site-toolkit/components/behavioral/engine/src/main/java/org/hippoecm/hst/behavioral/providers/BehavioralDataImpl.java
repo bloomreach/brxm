@@ -51,12 +51,12 @@ class BehavioralDataImpl implements BehavioralData {
         return termFreq;
     }
 
-    void putTerm(String tag) {
-        Integer freq = termFreq.get(tag);
+    void putTerm(String term) {
+        Integer freq = termFreq.get(term);
         if(freq == null) {
-            termFreq.put(tag, new Integer(1));
+            termFreq.put(term, new Integer(1));
         } else {
-            termFreq.put(tag, new Integer(freq + 1));
+            termFreq.put(term, new Integer(freq + 1));
         }
     }
     

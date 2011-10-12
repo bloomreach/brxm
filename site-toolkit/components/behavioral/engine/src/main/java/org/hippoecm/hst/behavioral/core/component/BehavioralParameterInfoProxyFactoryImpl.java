@@ -34,9 +34,6 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  *
  */
 public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
-
-    // TODO THRESHOLD should come from somewhere else
-    final static double THRESHOLD = 0.1D;
     
     @Override
     protected HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(
@@ -46,20 +43,26 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
         HstParameterInfoInvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request, parameterValueConverter) {
 
             @Override
-            public String getParameterValue(String parameterName, ComponentConfiguration config, HstRequest req) {
-              String parameterValue = null;
-              
-              BehavioralProfile profile = BehavioralUtils.getBehavioralProfile(req);
-              
-              if(profile != null && !profile.getPersonaScores().isEmpty() && profile.getPersonaScores().get(0).getScore() > THRESHOLD) {
-                  // get highest scoring personaId
-                  String prefixedParameterName = profile.getPersonaScores().get(0).getPersonaId() + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER +parameterName; 
-                  parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
-              }
-              if(parameterValue == null) {
-                  parameterValue = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem()); 
-              }
-              return parameterValue;
+            public String getParameterValue(final String parameterName, ComponentConfiguration config, HstRequest req) {
+                
+                String prefixedParameterName = parameterName;
+                
+                BehavioralProfile profile = BehavioralUtils.getBehavioralProfile(req);
+
+                if (profile != null && profile.hasPersona()) {
+                    for (String name : config.getParameterNames()) {
+                        int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
+                        if (offset != -1) {
+                            String id = name.substring(0, offset);
+                            if (profile.isPersona(id)) {
+                                prefixedParameterName = name;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem()); 
             }
         };
         

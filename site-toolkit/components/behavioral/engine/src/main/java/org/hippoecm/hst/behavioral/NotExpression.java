@@ -15,10 +15,19 @@
  */
 package org.hippoecm.hst.behavioral;
 
-public interface BehavioralPersonaScore {
+import java.util.Map;
+
+public class NotExpression implements Expression {
+
+    private Expression e;
     
-    public String getPersonaId();
+    NotExpression(Expression e) {
+        this.e = e;
+    }
     
-    public Double getScore();
+    @Override
+    public boolean evaluate(Map<String, BehavioralData> data) {
+        return !e.evaluate(data);
+    }
 
 }

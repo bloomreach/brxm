@@ -15,45 +15,29 @@
  */
 package org.hippoecm.hst.behavioral;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class BehavioralProfileImpl implements BehavioralProfile {
 
-    private final Map<String, BehavioralPersonaScore> personaScores;
+    private final Set<String> personas;
     
-    public BehavioralProfileImpl(Map<String, BehavioralPersonaScore> personaScores) {
-        this.personaScores = personaScores;
+    BehavioralProfileImpl(Set<String> personas) {
+        this.personas = personas;
     }
 
     @Override
-    public List<BehavioralPersonaScore> getPersonaScores() {
-        BehavioralPersonaScore[] scoresArray = personaScores.values().toArray(new BehavioralPersonaScore[personaScores.size()]);
-        Arrays.sort(scoresArray);
-        return Arrays.asList(scoresArray);
-    }
-    
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Profile: \n");
-        for (BehavioralPersonaScore personaScore : personaScores.values()) {
-            sb.append(" persona: " + personaScore.getPersonaId() + ", score: " + personaScore.getScore() + "\n");
-        }
-        return sb.toString();
+    public boolean isPersona(String personaId) {
+        return personas.contains(personaId);
     }
 
     @Override
-    public Set<String> getPersonas() {
-        return Collections.unmodifiableSet(personaScores.keySet());
+    public Set<String> getPersonaIds() {
+        return personas;
     }
 
     @Override
-    public BehavioralPersonaScore getPersonaScore(String personaId) {
-        return personaScores.get(personaId);
+    public boolean hasPersona() {
+        return personas != null && !personas.isEmpty();
     }
 
 }

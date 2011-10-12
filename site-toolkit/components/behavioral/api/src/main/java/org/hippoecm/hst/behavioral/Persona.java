@@ -15,23 +15,25 @@
  */
 package org.hippoecm.hst.behavioral;
 
-import java.util.Set;
-
-
 /**
- * A {@link BehavioralProfile} contains the behavioral information extracted from the current user
- * according to what browse behavior she exhibited. Based on this information a user can be
- * categorized as being one of several configured persona's.
- * <p>
- * A client of this class can inspect how a user scores on the different persona's.
- * </p>
+ * A Persona represents a set of users that match certain criteria. These criteria are expressed
+ * by an {@link Expression}.
  */
-public interface BehavioralProfile {
+public interface Persona {
+
+    /**
+     * @return  the identifier of this persona
+     */
+    String getId();
     
-    boolean hasPersona();
+    /**
+     * @return  the human readable name of this persona
+     */
+    String getName();
     
-    boolean isPersona(String personaId);
-    
-    Set<String> getPersonaIds();
-    
+    /**
+     * @return  the {@link Expression} that represents the criteria in order that a user be assigned this persona
+     */
+    Expression getExpression();
+
 }

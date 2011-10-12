@@ -21,7 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class BehavioralRefererDataProvider extends AbstractDataProvider {
+public abstract class BehavioralRefererDataProvider extends AbstractTermsDataProvider {
     
     public BehavioralRefererDataProvider(String id, String name, Node node) throws RepositoryException {
         super(id, name, node);
@@ -39,4 +39,10 @@ public abstract class BehavioralRefererDataProvider extends AbstractDataProvider
     }
     
     protected abstract List<String> extractRefererTerms(String referer);
+    
+    @Override
+    public final boolean isSessionLevel() {
+        return true;
+    }
+
 }

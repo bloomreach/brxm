@@ -404,27 +404,29 @@ components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralDa
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralDataProvider.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralDataStore.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralNodeTypes.java -text
-components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralPersonaScore.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralProfile.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/BehavioralService.java -text
+components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/Expression.java -text
+components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/Persona.java -text
+components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/Rule.java -text
 components/behavioral/api/src/main/java/org/hippoecm/hst/behavioral/package-info.java -text svneol=unset#text/plain
 components/behavioral/engine/pom.xml -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/AndExpression.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralConfigurationEventListener.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralDataHttpSessionStore.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralPersonaScoreImpl.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralProfileCalculator.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralProfileImpl.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralSegmentScore.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/BehavioralServiceImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Configuration.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Dimension.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Persona.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Rule.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/Segment.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/NotExpression.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/OrExpression.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/PersonaImpl.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/RuleExpression.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/RuleImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/component/BehavioralParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/core/container/BehavioralUpdateValve.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractHippoBeanDataProvider.java -text
+components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractTermsDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralDataImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralRefererDataProvider.java -text
@@ -436,7 +438,7 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/util/AnnotatedContentBeanClassesScanner.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/util/BehavioralUtils.java -text
 components/behavioral/engine/src/main/resources/org/hippoecm/hst/site/optional/SpringComponentManager-behavioral.xml -text
-components/behavioral/engine/src/test/java/org/hippoecm/hst/behavioral/BehavioralProfileCalculatorTest.java -text
+components/behavioral/engine/src/test/java/org/hippoecm/hst/behavioral/BehavioralServiceImplTest.java -text
 components/behavioral/engine/src/test/resources/behavioral-configuration.xml -text
 components/behavioral/engine/src/test/resources/hippoecm-extension.xml -text
 components/behavioral/engine/src/test/resources/log4j.dtd -text

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
 
 
-public class BehavioralSearchDataProvider extends AbstractDataProvider {
+public class BehavioralSearchDataProvider extends AbstractTermsDataProvider {
     
     private static final String QUERY_PARAMETER_PROPERTY_NAME = BehavioralNodeTypes.BEHAVIORAL_PROVIDER_QUERY_PARAMETER_PROPERTY;
     private static final String DEFAULT_QUERY_PARAMETER = "query";
@@ -58,5 +58,10 @@ public class BehavioralSearchDataProvider extends AbstractDataProvider {
         }
         return terms;
     }
-    
+
+    @Override
+    public boolean isSessionLevel() {
+        return false;
+    }
+
 }

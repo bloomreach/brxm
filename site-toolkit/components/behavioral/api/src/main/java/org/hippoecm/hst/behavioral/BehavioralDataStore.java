@@ -16,6 +16,7 @@
 package org.hippoecm.hst.behavioral;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,18 +37,19 @@ import javax.servlet.http.HttpSession;
 public interface BehavioralDataStore {
 
     /**
-     * Stores the {@link List} of {@link BehavioralData} objects 
+     * Stores the {@link Map} of {@link BehavioralData} objects
      * @param request the {@link HttpServletRequest}
      * @param response the {@link HttpServletResponse}
-     * @param behavioralDataList the {@link List} of {@link BehavioralData} objects to store. 
+     * @param behavioralDataMap the {@link Map} of {@link BehavioralDataProvider} id's to {@link BehavioralData} objects to store.
      */
-    void storeBehavioralData(HttpServletRequest request, HttpServletResponse response, List<BehavioralData> behavioralDataList);
+    void storeBehavioralData(HttpServletRequest request, HttpServletResponse response, Map<String, BehavioralData> behavioralDataList);
     
     /**
-     * Reads the {@link List} of {@link BehavioralData} objects 
+     * Reads the {@link Map} of {@link BehavioralDataProvider} id's to {@link BehavioralData} objects 
      * @param request the {@link HttpServletRequest}
-     * @return The {@link List} of {@link BehavioralData} objects and an empty {@link List} when there is no {@link BehavioralData} yet
+     * @return The {@link Map} of {@link BehavioralDataProvider} id's to {@link BehavioralData} objects, 
+     * or an empty {@link Map} when there is no {@link BehavioralData} yet
      */
-    List<BehavioralData> readBehavioralData(HttpServletRequest request);
-    
+    Map<String, BehavioralData> readBehavioralData(HttpServletRequest request);
+
 }

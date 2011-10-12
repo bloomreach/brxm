@@ -18,28 +18,20 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <behavioral='http://www.onehippo.com/jcr/behavioral/nt/1.0'>
 
-[behavioral:persona] > nt:base
-- behavioral:name (string) mandatory
-- behavioral:segments (string) multiple
+[behavioral:expression] > nt:base
++ * (behavioral:expression) multiple
 
-[behavioral:personas] > nt:base orderable
-+ * (behavioral:persona)
-
-[behavioral:rule] > nt:base orderable
+[behavioral:rule] > behavioral:expression
 - behavioral:provider (string) mandatory
 - behavioral:terms (string) multiple
-- behavioral:weight (long)
+- behavioral:frequency (long)
 
-[behavioral:segment] > nt:base orderable
+[behavioral:persona] > nt:base
 - behavioral:name (string) mandatory
-+ * (behavioral:rule)
++ * (behavioral:expression)
 
-[behavioral:dimension] > nt:base orderable
-- behavioral:name (string) mandatory
-+ * (behavioral:segment)
-
-[behavioral:dimensions] > nt:base orderable
-+ * (behavioral:dimension)
+[behavioral:personas] > nt:base
++ * (behavioral:persona)
 
 [behavioral:provider]
 - behavioral:name (string) mandatory
@@ -50,6 +42,5 @@
 + * (behavioral:provider)
 
 [behavioral:configuration] > nt:base
-+ behavioral:dimensions (behavioral:dimensions) mandatory
 + behavioral:providers (behavioral:providers) mandatory
 + behavioral:personas (behavioral:personas) mandatory

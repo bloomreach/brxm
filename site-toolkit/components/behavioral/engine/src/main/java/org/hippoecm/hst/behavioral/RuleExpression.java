@@ -15,23 +15,25 @@
  */
 package org.hippoecm.hst.behavioral;
 
-import java.util.Set;
+import java.util.Map;
 
+public class RuleExpression implements Expression {
 
-/**
- * A {@link BehavioralProfile} contains the behavioral information extracted from the current user
- * according to what browse behavior she exhibited. Based on this information a user can be
- * categorized as being one of several configured persona's.
- * <p>
- * A client of this class can inspect how a user scores on the different persona's.
- * </p>
- */
-public interface BehavioralProfile {
+    private final Rule rule;
+    private final BehavioralDataProvider provider;
     
-    boolean hasPersona();
+    RuleExpression(Rule rule, BehavioralDataProvider provider) {
+        this.rule = rule;
+        this.provider = provider;
+    }
     
-    boolean isPersona(String personaId);
-    
-    Set<String> getPersonaIds();
-    
+    @Override
+    public boolean evaluate(Map<String, BehavioralData> providersToData) {
+        BehavioralData data = providersToData.get(rule.getProviderId());
+        if (data != null) {
+            return provider.evaluate(rule, data);
+        }
+        return false;
+    }
+
 }

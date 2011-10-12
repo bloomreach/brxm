@@ -60,10 +60,17 @@ public interface BehavioralDataProvider {
     BehavioralData updateBehavioralData(BehavioralData behavioralData, HttpServletRequest request) throws IllegalArgumentException;
 
     /**
-     * Some data is more valuable than other data. This method returns the weight that the data provided by this BehavioralDataProvider
-     * should be given when calculating the {@link BehavioralProfile}.
      * 
-     * @return  the weight (or importance) of the data provided by this BehavioralDataProvider
+     * @param rule  the {@link Rule} to evaluate.
+     * @param data  the {@link BehavioralData} to evaluate the {@link Rule} against.
+     * @return  whether the {@link Rule} passes given the {@link BehavioralData}
      */
-    Long getWeight();
+    boolean evaluate(Rule rule, BehavioralData data);
+    
+    /**
+     * 
+     * @return  whether this provider should be updated on the start of the session or on every request.
+     */
+    boolean isSessionLevel();
+
 }

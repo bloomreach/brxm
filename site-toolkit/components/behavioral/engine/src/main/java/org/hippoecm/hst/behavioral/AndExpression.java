@@ -15,35 +15,27 @@
  */
 package org.hippoecm.hst.behavioral;
 
-public class BehavioralSegmentScore {
+import java.util.List;
+import java.util.Map;
 
-    private final String segmentId;
-    private Long absoluteScore;
-    private Double score;
+public class AndExpression implements Expression {
     
-    public BehavioralSegmentScore(String segmentId, Long absoluteScore) {
-        this.segmentId = segmentId;
-        this.absoluteScore = absoluteScore;
+    private final List<Expression> expressions;
+    
+    AndExpression(List<Expression> expressions) {
+        if (expressions.size() < 2) {
+            throw new IllegalArgumentException("AND expression should have 2 or more sub expressions");
+        }
+        this.expressions = expressions;
     }
     
-    public String getSegmentId() {
-        return segmentId;
-    }
-    
-    public Double getScore() {
-        return score;
+    @Override
+    public boolean evaluate(Map<String, BehavioralData> data) {
+        boolean result = true;
+        for (Expression expression : expressions) {
+            result &= expression.evaluate(data);
+        }
+        return result;
     }
 
-    void setScore(Double score) {
-        this.score = score;
-    }
-
-    Long getAbsoluteScore() {
-        return absoluteScore;
-    }
-    
-    void addAbsoluteScore(Long absoluteScore) {
-        this.absoluteScore += absoluteScore;
-    }
-     
 }

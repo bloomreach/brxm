@@ -15,31 +15,52 @@
  */
 package org.hippoecm.hst.behavioral.providers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.behavioral.BehavioralData;
+import org.hippoecm.hst.behavioral.Rule;
 
 public class AuthorizationDataProvider extends AbstractDataProvider {
 
     public AuthorizationDataProvider(String id, String name, Node node) throws RepositoryException {
         super(id, name, node);
         this.size = 1;
-        this.weight = 1l;
+    }
+    
+    @Override
+    public boolean isSessionLevel() {
+        return false;
     }
 
     @Override
-    protected List<String> extractTerms(HttpServletRequest request) {
-        List<String> terms = new ArrayList<String>(1);
+    public boolean evaluate(Rule rule, BehavioralData data) {
+        return data.getTermFreq().containsKey("authorized");
+    }
+
+    @Override
+    public BehavioralData updateBehavioralData(BehavioralData behavioralData, HttpServletRequest request)
+            throws IllegalArgumentException {
+        
+        if(behavioralData != null && !(behavioralData instanceof BehavioralDataImpl)) {
+            throw new IllegalArgumentException("BehavioralData not of the expected type.");
+        }
+        
+        if (behavioralData == null) {
+            behavioralData = new BehavioralDataImpl(size, getId());
+        }
+        
+        String term = null;
         if (request.getUserPrincipal() != null) {
-            terms.add("authorized");
+            term = "authorized";
         }
         else {
-            terms.add("unauthorized");
+            term = "unauthorized";
         }
-        return terms;
+        ((BehavioralDataImpl) behavioralData).putTerm(term);
+        
+        return behavioralData;
     }
 
 }

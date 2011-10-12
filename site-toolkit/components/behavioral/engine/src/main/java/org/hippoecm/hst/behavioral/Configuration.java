@@ -30,9 +30,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.behavioral.BehavioralDataProvider;
-import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
-import org.hippoecm.hst.behavioral.providers.AbstractDataProvider;
+import org.hippoecm.hst.behavioral.providers.AbstractTermsDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +39,6 @@ public class Configuration {
     
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
 
-    private final Map<String, Dimension> dimensions;
-    private final Map<String, List<Rule>> termsToRules;
     private final Map<String, BehavioralDataProvider> providers;
     private final Map<String, Persona> personas;
     
@@ -79,40 +75,16 @@ public class Configuration {
         }
         this.providers = Collections.unmodifiableMap(providers);
         
-        // read the dimensions, segments, and rules
-        Map<String, Dimension> dimensions = new HashMap<String, Dimension>();
-        try {
-            NodeIterator dimensionIter = jcrNode.getNode(BehavioralNodeTypes.BEHAVIORAL_NODETYPE_DIMENSIONS).getNodes();
-            while (dimensionIter.hasNext()) {
-                Node dimensionNode = dimensionIter.nextNode();
-                try {
-                    Dimension dimension = new Dimension(dimensionNode);
-                    dimensions.put(dimension.getId(), dimension);
-                } catch (RepositoryException e) {
-                    log.error("Unable to create dimension", e);
-                } catch (IllegalArgumentException e) {
-                    log.error("Unable to create dimension", e);
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error creating dimensions", e);
-        }
-        this.dimensions = Collections.unmodifiableMap(dimensions);
-        
+        // load the persona's
+        Map<String, Persona> personas = new HashMap<String, Persona>();
         Map<String, Set<String>> providersToTerms = new HashMap<String, Set<String>>();
-        Map<String, List<Rule>> termsToRules = new HashMap<String, List<Rule>>();
-        for(Dimension dimension : dimensions.values()) {
-            for(Segment segment : dimension.getSegments().values()) {
-                for(Rule rule : segment.getRules()) {
-                    for (String term : rule.getTerms()) {
-                        List<Rule> rules = termsToRules.get(term);
-                        if(rules == null) {
-                            rules = new ArrayList<Rule>();
-                            termsToRules.put(term, rules);
-                        }
-                        rules.add(rule);
-                    }
-                    // gather the terms data providers should look for
+        try {
+            NodeIterator personaIter = jcrNode.getNode(BehavioralNodeTypes.BEHAVIORAL_NODETYPE_PERSONAS).getNodes();
+            while (personaIter.hasNext()) {
+                Node personaNode = personaIter.nextNode();
+                PersonaImpl persona = new PersonaImpl(personaNode, this);
+                personas.put(persona.getId(), persona);
+                for (Rule rule : persona.getRules()) {
                     Set<String> terms = providersToTerms.get(rule.getProviderId());
                     if (terms == null) {
                         terms = new HashSet<String>();
@@ -121,27 +93,6 @@ public class Configuration {
                     terms.addAll(rule.getTerms());
                 }
             }
-        }
-
-        this.termsToRules = Collections.unmodifiableMap(termsToRules);
-        
-        // tell the data providers what terms to look out for
-        for (Entry<String, Set<String>> entry : providersToTerms.entrySet()) {
-            BehavioralDataProvider provider = providers.get(entry.getKey());
-            if (provider != null) {
-                ((AbstractDataProvider)provider).setConfiguredTerms(entry.getValue());
-            }
-        }
-        
-        // load the personas
-        Map<String, Persona> personas = new HashMap<String, Persona>();
-        try {
-            NodeIterator personaIter = jcrNode.getNode(BehavioralNodeTypes.BEHAVIORAL_NODETYPE_PERSONAS).getNodes();
-            while (personaIter.hasNext()) {
-                Node personaNode = personaIter.nextNode();
-                Persona persona = new Persona(personaNode, this);
-                personas.put(persona.getId(), persona);
-            }
         } catch (RepositoryException e) {
             log.error("Unable to create persona", e);
         } catch (IllegalArgumentException e) {
@@ -149,21 +100,21 @@ public class Configuration {
         }
         
         this.personas = Collections.unmodifiableMap(personas);
-        
-    }
-    
-    public Map<String, Dimension> getDimensions() {
-        return dimensions;
-    }
 
-    public Map<String, List<Rule>> getTermsToRules() {
-        return termsToRules;
+        // tell the terms data providers what terms to look out for
+        for (Entry<String, Set<String>> entry : providersToTerms.entrySet()) {
+            BehavioralDataProvider provider = providers.get(entry.getKey());
+            if (provider != null && provider instanceof AbstractTermsDataProvider) {
+                ((AbstractTermsDataProvider)provider).setConfiguredTerms(entry.getValue());
+            }
+        }
+
     }
     
     public List<BehavioralDataProvider> getDataProviders() {
         return new ArrayList<BehavioralDataProvider>(providers.values());
     }
-    
+
     public BehavioralDataProvider getDataProvider(String providerId) {
         return providers.get(providerId);
     }
