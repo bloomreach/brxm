@@ -15,10 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,9 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.OldParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.ParametersInfoProcessor;
