@@ -112,9 +112,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
             final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
             for (ChannelDocument channelDocument : channelDocuments) {
-                // don't store the proxy object, but use a POJO copy of the proxy instead
-                ChannelDocument serializableCopy = new ChannelDocument(channelDocument);
-                idToChannelMap.put(serializableCopy.getChannelId(), serializableCopy);
+                idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
             }
 
             add(new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
