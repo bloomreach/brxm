@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.mock.core.request;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
@@ -141,6 +143,11 @@ public class MockComponentConfiguration implements ComponentConfiguration {
 
     public void setXType(String xType) {
         this.xType = xType;
+    }
+
+    @Override
+    public List<String> getParameterNames() {
+        return new ArrayList<String>(parameters.values());
     }
     
 }

@@ -94,8 +94,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
-    private Map<String, String> parameters = new HashMap<String, String>();
-    private Map<String, String> localParameters = new HashMap<String, String>();
+    private Map<String, String> parameters = new LinkedHashMap<String, String>();
+    private Map<String, String> localParameters = new LinkedHashMap<String, String>();
     
     private String canonicalStoredLocation;
     
@@ -413,9 +413,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
-        copy.parameters = new HashMap<String, String>(child.parameters);
+        copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         // localParameters have no merging, but for copy, the localParameters are copied 
-        copy.localParameters = new HashMap<String, String>(child.localParameters);
+        copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         ArrayList<String> copyToList = (ArrayList<String>) child.usedChildReferenceNames.clone();
         copy.usedChildReferenceNames = copyToList;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
@@ -503,7 +503,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // inherited flag not needed to take from the referencedComp
                 
                 if (this.parameters == null) {
-                    this.parameters = new HashMap<String, String>(referencedComp.parameters);
+                    this.parameters = new LinkedHashMap<String, String>(referencedComp.parameters);
                 } else if (referencedComp.parameters != null) {
                     // as we already have parameters, add only the once we do not yet have
                     for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
@@ -601,7 +601,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // inherited flag not needed to merge
         
         if (this.parameters == null) {
-            this.parameters = new HashMap<String, String>(childToMerge.parameters);
+            this.parameters = new LinkedHashMap<String, String>(childToMerge.parameters);
         } else if (childToMerge.parameters != null) {
             // as we already have parameters, add only the once we do not yet have
             for (Entry<String, String> entry : childToMerge.parameters.entrySet()) {

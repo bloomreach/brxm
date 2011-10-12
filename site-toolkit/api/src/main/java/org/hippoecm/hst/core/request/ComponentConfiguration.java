@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.core.request;
 
+import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 
 /**
@@ -30,6 +32,11 @@ public interface ComponentConfiguration {
      * Returns the property and if an expession exists it is resolved with the help of the ResolvedSiteMapItem
      */
     String getParameter(String name, ResolvedSiteMapItem hstResolvedSiteMapItem);
+    
+    /**
+     * @return the ordered list of available parameter names, empty list if there are no parameters
+     */
+    List<String> getParameterNames();
     
     /**
      * Returns all resolved parameters into a map

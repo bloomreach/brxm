@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.site.request;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -42,6 +44,10 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
         this.componentConfiguration = compConfig;
     }
 
+    public List<String> getParameterNames() {
+        return new ArrayList<String>(componentConfiguration.getParameters().keySet());
+    }
+    
     public Map<String,String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
         Map<String,String> parameters = new HashMap<String, String>();
         PropertyParser pp = new PropertyParser(hstResolvedSiteMapItem.getParameters());
