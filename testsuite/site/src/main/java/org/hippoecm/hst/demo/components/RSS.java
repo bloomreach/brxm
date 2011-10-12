@@ -72,7 +72,9 @@ public class RSS extends BaseHstComponent {
         }
         
         request.setAttribute("today", new Date());
-    
+        
+        // set Expires header to 10 minutes
+        response.setDateHeader("Expires", System.currentTimeMillis() + 600000L);
     }
 
 }
