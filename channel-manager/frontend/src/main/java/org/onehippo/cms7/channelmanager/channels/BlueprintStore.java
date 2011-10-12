@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.Arrays;
@@ -29,8 +28,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
@@ -38,12 +35,13 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     private static final String FIELD_NAME = "name";
     private static final String FIELD_DESCRIPTION = "description";
+    private static final String FIELD_HAS_CONTENT_PROTOTYPE = "hasContentPrototype";
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
+
     private long total;
-    private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
     public BlueprintStore() {
-        super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_CONTENT_ROOT)));
+        super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
     }
 
     @Override
@@ -54,7 +52,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected JSONObject getProperties() throws JSONException {
         final JSONObject properties = super.getProperties();
-         Map<String, String> baseParams = new HashMap<String, String>();
+        Map<String, String> baseParams = new HashMap<String, String>();
         baseParams.put("xaction", "read");
         properties.put("baseParams", baseParams);
         return properties;
@@ -72,8 +70,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             object.put(FIELD_NAME, blueprint.getName());
             object.put(FIELD_DESCRIPTION, blueprint.getDescription());
 
-            Channel channel = blueprint.createChannel();
-            object.put(FIELD_CONTENT_ROOT, channel.getContentRoot());
+            boolean hasPrototype = blueprint.hasContentPrototype();
+            object.put(FIELD_HAS_CONTENT_PROTOTYPE, hasPrototype);
+            if (hasPrototype) {
+                Channel channel = blueprint.createChannel();
+                object.put(FIELD_CONTENT_ROOT, channel.getContentRoot());
+            }
 
             data.put(object);
         }

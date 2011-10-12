@@ -26,8 +26,9 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
     constructor: function(config) {
         this.channelStore = config.channelStore;
         this.blueprintStore = config.blueprintStore;
+        this.resources = config.resources;
 
-         Ext.apply(config, {
+        Ext.apply(config, {
             id: 'rootPanel',
             layout: 'card',
             layoutOnCardChange: true,
@@ -35,7 +36,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             viewConfig: {
                 forceFit: true
             }
-         });
+        });
 
         Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
     },
@@ -55,7 +56,8 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         // get all child components
         this.win = new Hippo.ChannelManager.NewChannelWindow({
             blueprintStore: me.blueprintStore,
-            channelStore : me.channelStore
+            channelStore : me.channelStore,
+            resources : me.resources
         });
         this.formPanel = Ext.getCmp('channel-form-panel');
         this.gridPanel = Ext.getCmp('channel-grid-panel');
@@ -115,87 +117,91 @@ Ext.reg('Hippo.ChannelManager.RootPanel', Hippo.ChannelManager.RootPanel);
 
 
 Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
-            constructor: function(config) {
-                this.blueprintStore = config.blueprintStore;
-                this.channelStore = config.channelStore;
-                Hippo.ChannelManager.NewChannelWindow.superclass.constructor.call(this, config);
-            },
 
-            initComponent: function() {
-                var me = this;
-                var config = {
-                    title: "Blueprint Chooser",
-                    width: 720,
-                    height: 450,
-                    modal: true,
-                    resizable: false,
-                    closeAction: 'hide',
-                    layout:'fit',
-                    items: [
-                        {
-                            id: 'card-container',
-                            layout: 'card',
-                            activeItem: 0,
-                            layoutConfig: {
-                                hideMode:'offsets',
-                                deferredRender: true ,
-                                layoutOnCardChange: true
-                            }
-                        }
-                    ],
-                    buttons: [
-                        {
-                            id: 'createButton',
-                            text: 'Choose ...',
-                            handler: me.processNextStep,
-                            scope: me
-                        },
-                        {
-                            id: 'cancelButton',
-                            text: 'Cancel',
-                            scope: me,
-                            handler: function() {
-                                this.hide();
-                            }
+    constructor: function(config) {
+        this.blueprintStore = config.blueprintStore;
+        this.channelStore = config.channelStore;
+        this.resources = config.resources;
 
-                        }
-                    ]
+        Hippo.ChannelManager.NewChannelWindow.superclass.constructor.call(this, config);
+    },
 
-                };
-
-                Ext.apply(this, Ext.apply(this.initialConfig, config));
-
-                Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
-
-                this.on('beforeshow', function () {
-                    Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
-                    Ext.getCmp('createButton').setText("Choose ...");
-                }, this);
-
-                Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
-                    id: 'blueprints-panel',
-                    store: me.blueprintStore
-                }));
-
-                Ext.getCmp('card-container').add(new Hippo.ChannelManager.ChannelFormPanel({
-                    id: 'channel-form-panel',
-                    store: me.channelStore
-                }));
-
-
-            },
-
-            processNextStep:function() {
-                var cc = Ext.getCmp('card-container');
-                if (cc.layout.activeItem.id === 'blueprints-panel') {
-                    this.setTitle("Channel Properties");
-                    Ext.getCmp('createButton').setText("Create Channel");
-                    cc.layout.setActiveItem('channel-form-panel');
-                } else { //current item is the form panel so call submit on it.
-                    Ext.getCmp('channel-form-panel').submitForm();
+    initComponent: function() {
+        var me = this;
+        var config = {
+            title: this.resources['new-channel-blueprint'],
+            width: 720,
+            height: 450,
+            modal: true,
+            resizable: false,
+            closeAction: 'hide',
+            layout:'fit',
+            items: [
+                {
+                    id: 'card-container',
+                    layout: 'card',
+                    activeItem: 0,
+                    layoutConfig: {
+                        hideMode:'offsets',
+                        deferredRender: true ,
+                        layoutOnCardChange: true
+                    }
                 }
-            }
+            ],
+            buttons: [
+                {
+                    id: 'createButton',
+                    text: me.resources['new-channel-choose'],
+                    handler: me.processNextStep,
+                    scope: me
+                },
+                {
+                    id: 'cancelButton',
+                    text: me.resources['new-channel-cancel'],
+                    scope: me,
+                    handler: function() {
+                        this.hide();
+                    }
+
+                }
+            ]
+
+        };
+
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
+
+        this.on('beforeshow', function () {
+            Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
+            Ext.getCmp('createButton').setText(this.resources['new-channel-choose']);
+        }, this);
+
+        Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
+            id: 'blueprints-panel',
+            store: me.blueprintStore,
+            resources: me.resources
+        }));
+
+        Ext.getCmp('card-container').add(new Hippo.ChannelManager.ChannelFormPanel({
+            id: 'channel-form-panel',
+            store: me.channelStore,
+            resources: me.resources
+        }));
+
+    },
+
+    processNextStep:function() {
+        var cc = Ext.getCmp('card-container');
+        if (cc.layout.activeItem.id === 'blueprints-panel') {
+            this.setTitle(this.resources['new-channel-properties']);
+            Ext.getCmp('createButton').setText(this.resources['new-channel-create']);
+            cc.layout.setActiveItem('channel-form-panel');
+        } else { //current item is the form panel so call submit on it.
+            Ext.getCmp('channel-form-panel').submitForm();
         }
+    }
+}
 //end extending Config
 );
 
