@@ -29,10 +29,13 @@ public class BlueprintService implements Blueprint {
 
     final static Logger log = LoggerFactory.getLogger(BlueprintService.class);
 
+    public static final String SUBSITE_TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/";
+
     private final String id;
     private final String name;
     private final String description;
     private final String path;
+    private final boolean hasContentPrototype;
 
     private final Channel prototypeChannel;
 
@@ -59,6 +62,8 @@ public class BlueprintService implements Blueprint {
             this.prototypeChannel = new Channel((String) null);
         }
 
+        hasContentPrototype = blueprint.getSession().itemExists(SUBSITE_TEMPLATES_PATH + this.id);
+
         final boolean hasSite = readSite(blueprint);
         readMount(blueprint, hasSite);
     }
@@ -70,7 +75,7 @@ public class BlueprintService implements Blueprint {
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 this.prototypeChannel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             }
-            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
+            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !hasContentPrototype) {
                 final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 final String docbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
 
@@ -124,6 +129,11 @@ public class BlueprintService implements Blueprint {
 
     public Node getNode(final Session session) throws RepositoryException {
         return session.getNode(path);
+    }
+
+    @Override
+    public boolean hasContentPrototype() {
+        return hasContentPrototype;
     }
 
 }

@@ -935,6 +935,8 @@ test/src/test/java/org/hippoecm/hst/test/basic/BasicHstTestCase.java svneol=nati
 toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-template.xml -text
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-workflows.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hst-root.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/site/site.xml -text

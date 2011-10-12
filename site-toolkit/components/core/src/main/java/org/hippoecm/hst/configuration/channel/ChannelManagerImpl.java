@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 import javax.security.auth.Subject;
 
@@ -51,8 +53,13 @@ import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +68,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private static final String DEFAULT_HOST_GROUP = "dev-localhost";
     private static final String DEFAULT_HST_ROOT_PATH = "/hst:hst";
     private static final String DEFAULT_HST_SITES = "hst:sites";
+    private static final String DEFAULT_CONTENT_ROOT = "/content/documents";
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
@@ -73,6 +81,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private Credentials credentials;
     private Repository repository;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
+    private String contentRoot = DEFAULT_CONTENT_ROOT;
 
     /**
      * The codec which is used for the channel ID
@@ -471,7 +480,19 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             }
 
-            final String contentRootPath = channel.getContentRoot();
+            final String contentRootPath;
+            if (bps.hasContentPrototype()) {
+                FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(contentRoot));
+                try {
+                    contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
+                } catch (WorkflowException e) {
+                    throw new ChannelException("Could not create content root", e);
+                } catch (RemoteException e) {
+                    throw new ChannelException("Could not create content root", e);
+                }
+            } else {
+                contentRootPath = channel.getContentRoot();
+            }
             if (contentRootPath != null) {
                 final Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 if (jcrSession.itemExists(contentRootPath)) {
@@ -573,6 +594,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
             copyNodes(node, clone, node.getName());
         }
         return clone;
+    }
+
+    public Workflow getWorkflow(String category, Node node) throws RepositoryException {
+        Workspace workspace = node.getSession().getWorkspace();
+        WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
+        return wfm.getWorkflow(category, node);
     }
 
     private static boolean isVirtual(final Node node) throws RepositoryException {

@@ -49,4 +49,10 @@ public interface Blueprint {
      */
     Channel createChannel();
 
+    /**
+     * Does the blueprint have a content prototype.  If so, it will be used to create a content structure.
+     *
+     * @return true if a prototype exists
+     */
+    boolean hasContentPrototype();
 }
