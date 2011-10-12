@@ -252,13 +252,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
         RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
         Checker checker = new Checker(repConfig);
-        return checker.check();
+        return checker.check(fix);
     }
 
     public boolean check(boolean fix) throws RepositoryException {
         RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
         Checker checker = new Checker(repConfig);
-        return checker.check();
+        return checker.check(fix);
     }
 
     private class LocalRepositoryImpl extends RepositoryImpl {
