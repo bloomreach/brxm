@@ -22,12 +22,16 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -162,7 +166,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      * @see javax.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
      */
     public void addDateHeader(String name, long date) {
-        addHeader(name, Long.toString(date));
+        addHeader(name, formatDateHeaderValue(date));
     }
 
     /*
@@ -269,7 +273,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      * @see javax.servlet.http.HttpServletResponseWrapper#setDateHeader(java.lang.String, long)
      */
     public void setDateHeader(String name, long date) {
-        setHeader(name, Long.toString(date));
+        setHeader(name, formatDateHeaderValue(date));
     }
 
     /*
@@ -792,5 +796,11 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected abstract OutputStream getResponseOutputStream() throws IOException;
     
     protected abstract PrintWriter getResponseWriter() throws IOException;
+    
+    private String formatDateHeaderValue(long date) {
+        DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US); 
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); 
+        return dateFormat.format(new Date(date)); 
+    }
 
 }
