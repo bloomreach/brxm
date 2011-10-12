@@ -330,9 +330,13 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                             var record = self.pageContext.stores.pageModel.getAt(recordIndex);
                             record.set('children', rearrange.children);
                             console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
-                            self.pageContext.stores.pageModel.on('write', function() {
-                                onSuccess();
-                            }, self, {single: true});
+                            var writeListener = function(store, action, result, res, rec) {
+                                if (rec.id === record.id) {
+                                    self.pageContext.stores.pageModel.un('write', writeListener, self);
+                                    onSuccess();
+                                }
+                            };
+                            self.pageContext.stores.pageModel.on('write', writeListener, self);
                             record.commit();
                         } catch (exception) {
                             console.error('_onRearrangeContainer ' + exception);
