@@ -59,7 +59,7 @@
 
             onhostmessage(function(msg) {
                 console.log('onhostmessage select');
-                this.select(msg.data.element);
+                this.select(msg.data.id);
                 return false;
             }, this, false, 'select');
 
