@@ -114,7 +114,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
     public Response updateContainer(@Context HttpServletRequest servletRequest,
                                     @Context HttpServletResponse servletResponse,
                                     @PathParam("itemUUID") String itemUUID, String json) {
-
+        
+        // TODO Instead of 'String json' in the argument it should be possible to have: ContainerRepresentation presentation
+        // It should be possible to automatically bind to ContainerRepresentation. Also, I don't think we need a Gson dependency here
+        // See HSTTWO-1823
+        
         Type type = new TypeToken<PostRepresentation<ContainerRepresentation>>() {}.getType();
         PostRepresentation<ContainerRepresentation> pr = new Gson().fromJson(json, type);
         ContainerRepresentation container = pr.getData();
