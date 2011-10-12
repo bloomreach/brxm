@@ -39,6 +39,8 @@ public interface DocumentService {
      *
      * @return a list of 'channel documents' that provide information about all channels the document is part of,
      * or an empty list if the identifier is unknown or the document is not part of any channel.
+     *
+     * @throws javax.ws.rs.WebApplicationException when the client-side invocation of this service fails
      */
     @GET
     @Path("/{uuid}/channels/")
