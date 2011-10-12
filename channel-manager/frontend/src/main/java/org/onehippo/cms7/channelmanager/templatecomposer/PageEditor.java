@@ -65,7 +65,7 @@ public class PageEditor extends ExtPanel {
     public String renderHostSubMountPath = "";
 
     @ExtProperty
-    public String renderHost = "localhost";
+    public String renderHost = "";
 
     @ExtProperty
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
