@@ -23,7 +23,7 @@
 
   <!-- CMS preview -->
 
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-cms-services-localhost">
+  <sv:node sv:name="demosuite-cms-services-localhost">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -83,7 +83,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="hst-sites">
+  <sv:node sv:name="demosuite-hst-sites">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -98,7 +98,7 @@
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="hst-channels">
+  <sv:node sv:name="demosuite-hst-channels">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -112,7 +112,51 @@
       <sv:value>/hst:hst</sv:value>
     </sv:property>
   </sv:node>
-  
+
+  <sv:node sv:name="demosuite-hst-blueprint">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10054.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-blueprint.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:blueprints</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="demosuite-hst-blueprint-nocontent">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10054.2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-blueprint-nocontent.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hst:hst/hst:blueprints</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="demosuite-hst-subsite-template">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10054.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hst-subsite-template.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="demosuite-hst-configurations">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -501,7 +545,7 @@
   
   <!-- /Content -->
 
-  <sv:node sv:name="hst-virtualhosts">
+  <sv:node sv:name="demosuite-hst-virtualhosts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>

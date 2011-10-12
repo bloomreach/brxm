@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="demo-subsite">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:blueprint</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:name" sv:type="String">
+    <sv:value>Demo Blueprint</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:description" sv:type="String">
+    <sv:value>Blueprint for demo suite</sv:value>
+  </sv:property>
+  <sv:node sv:name="hst:configuration">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String" sv:multiple="true">
+      <sv:value>../democommon</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:sitemap">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemap</sv:value>
+      </sv:property>
+      <sv:node sv:name="home">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/home</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>general/home</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:refId" sv:type="String">
+          <sv:value>home</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="about">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/detailpage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>general/about</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:refId" sv:type="String">
+          <sv:value>about</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="error">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/errorpage</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:refId" sv:type="String">
+          <sv:value>error</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="_any_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+          <sv:value>hst:pages/errorpage</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="hst:sitemenus">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenus</sv:value>
+      </sv:property>
+      <sv:node sv:name="main">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemenu</sv:value>
+        </sv:property>
+        <sv:node sv:name="Home">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemenuitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+            <sv:value>home</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="About">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemenuitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+            <sv:value>about</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hst:site">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:configurationpath" sv:type="String">
+      <sv:value>/hst:hst/hst:configurations/blueprint-configuration</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true">
+        <sv:value>single</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true">
+        <sv:value>live</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hst:mount">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:mount</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:alias" sv:type="String">
+      <sv:value>site</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hst:channel">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:channel</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:channelinfo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:channelinfo</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
