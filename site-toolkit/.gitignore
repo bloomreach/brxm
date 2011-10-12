@@ -15,6 +15,7 @@ api/target
 client-modules/.project
 client-modules/.settings
 client-modules/client-modules.iml
+client-modules/cms-rest/target
 client-modules/page-composer/.classpath
 client-modules/page-composer/.project
 client-modules/page-composer/.settings
@@ -125,6 +126,7 @@ mock/.settings
 mock/hst-mock.iml
 mock/target
 /repository
+rest-api/target
 sandbox/.project
 sandbox/.settings
 sandbox/ocm/.classpath
