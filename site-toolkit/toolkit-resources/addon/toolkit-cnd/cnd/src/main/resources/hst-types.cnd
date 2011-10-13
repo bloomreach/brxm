@@ -207,7 +207,8 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// when false, links get a ./ appended automatically
+// when false, links that would normally be excluded for hst request 
+// processing (for example .pdf) get a ./ appended automatically
 - hst:isSite (boolean)
 - hst:authenticated (boolean)
 - hst:roles (string) multiple
