@@ -31,7 +31,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.relayEvents(this.pageContainer, [
             'mountChanged',
-            'iFrameException',
             'selectItem',
             'lock',
             'unlock',
@@ -144,7 +143,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     enableUI: function(pageContext) {
         Hippo.Msg.hide();
 
-        if (!this.pageContainer.previewMode) {
+        if (!this.pageContainer.previewMode && pageContext !== null) {
             if (!this.mainWindow) {
                 this.mainWindow = this.createMainWindow(pageContext.ids.mountId);
             }
@@ -156,10 +155,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             propertiesPanel.reload();
 
             this.mainWindow.show();
-        } else {
-            if (this.mainWindow) {
-                this.mainWindow.hide();
-            }
+        } else if (this.mainWindow) {
+            this.mainWindow.hide();
         }
 
         var previewButton = Ext.getCmp('pagePreviewButton');
@@ -200,7 +197,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
 
         this.on('unlock', function(pageContext) {
-            Hippo.ChannelManager.TemplateComposer.DragDropOne.setPageContext(pageContext);
+            if (pageContext !== null) {
+                Hippo.ChannelManager.TemplateComposer.DragDropOne.setPageContext(pageContext);
+            }
             this.enableUI(pageContext);
         }, this);
 

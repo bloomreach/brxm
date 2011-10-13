@@ -59,8 +59,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, config);
 
         this.addEvents('mountChanged',
-                       'pageContextInitialized',
-                       'iFrameException');
+                       'pageContextInitialized');
 
     },
 
@@ -71,6 +70,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 console.info('pageContextInitialized');
                 this.fireEvent('pageContextInitialized');
             }.createDelegate(this));
+        }.createDelegate(this)).otherwise(function() {
+            this.fireEvent('pageContextInitializationFailed');
         }.createDelegate(this));
     },
 
@@ -166,7 +167,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig && !self.previewMode) {
                         self.previewMode = true;
-                        self.fireEvent('modeChanged', self.previeMode);
                     }
 
                     console.log('hstMetaDataResponse '+JSON.stringify(data));
@@ -184,7 +184,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 },
                 failure : function(responseObject) {
                     onFail();
-                    self.fireEvent.apply(self, ['fatalIFrameException', { msg: self.resources['hst-meta-data-request-failed']}]);
                 }
             });
         }.createDelegate(this));

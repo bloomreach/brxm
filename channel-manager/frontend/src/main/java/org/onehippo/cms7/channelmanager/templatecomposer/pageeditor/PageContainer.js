@@ -67,6 +67,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 frm.isReset = false;
                 frm.setSrc(this.iFrameErrorPage);
             }
+            Hippo.Msg.hide();
         }, this);
     },
 
@@ -262,6 +263,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.fireEvent('unlock', this.pageContext);
     },
 
+    _fail : function() {
+        console.log('_fail');
+        this.iframeCompletion = [];
+        this.fireEvent('unlock', null);
+    },
+
     _initIFrameListeners : function() {
         var iFrame = Ext.getCmp('Iframe');
         iFrame.purgeListeners();
@@ -308,11 +315,16 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 config, this.iframeResourceCache, this.pageContext, this);
         this.relayEvents(this.pageContext, [
            'mountChanged',
-           'iFrameException'
+           'fatalIFrameException'
         ]);
         this.pageContext.on('pageContextInitialized', function() {
             this.previewMode = this.pageContext.previewMode;
             this._complete();
+        }, this);
+        this.pageContext.on('pageContextInitializationFailed', function() {
+            this.previewMode = this.pageContext.previewMode;
+            Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
+            this._fail();
         }, this);
         this.pageContext.initialize(frm);
     },
