@@ -72,11 +72,17 @@ public class ColumnResolverImpl implements ColumnResolver {
 
     @Override
     public Property resolveProperty(Node node, String column) throws RepositoryException {
+        if (node == null) {
+            return null;
+        }
         return ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, column);
     }
 
     @Override
     public Node resolveNode(Node node, String column) throws RepositoryException {
+        if (node == null) {
+            return null;
+        }
         return ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, column);
     }
 
