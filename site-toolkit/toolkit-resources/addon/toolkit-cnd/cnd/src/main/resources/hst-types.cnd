@@ -207,7 +207,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// when true, links get a ./ appended automatically
+// when false, links get a ./ appended automatically
 - hst:isSite (boolean)
 - hst:authenticated (boolean)
 - hst:roles (string) multiple
