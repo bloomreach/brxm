@@ -160,7 +160,7 @@ var loader = new YAHOO.util.YUILoader({
     require: ["container", "menu", "button", "editor", "json", "resize"],
 
     // Configure loader to retrieve the libraries locally
-    base: '/site/javascript/yui/',
+    base: '<hst:link path="/javascript/yui/yuiloader/yuiloader-min.js'.replace(/\/yuiloader\/yuiloader-min.js$/, '\/'),
 
     // Configure loader to pull in optional dependencies.  For example, animation
     // is an optional dependency for slider.
@@ -179,7 +179,7 @@ var loader = new YAHOO.util.YUILoader({
         var addcss=document.createElement("link")
         addcss.setAttribute("rel", "stylesheet")
         addcss.setAttribute("type", "text/css")
-        addcss.setAttribute("href", "/site/css/inline-editing.css")
+        addcss.setAttribute("href", "<hst:link path='/css/inline-editing.css'/>")
         document.getElementsByTagName("head")[0].appendChild(addcss);
 
         // Initialize editor
