@@ -39,6 +39,11 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         String getName();
     }
 
+    public static interface TestInfoInteger extends ChannelInfo{
+        @Parameter(name = "test-integer")
+        int getInteger();
+    }
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -79,6 +84,18 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         assertTrue(getSession().itemExists("/test/test-name"));
         Property nameProperty = (Property) getSession().getItem("/test/test-name");
         assertEquals("aap", nameProperty.getString());
+    }
+
+    @Test
+    public void integerPropertyIsStored() throws RepositoryException {
+        List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoInteger.class);
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put(definitions.get(0).getName(), 42);
+        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+
+        assertTrue(getSession().itemExists("/test/test-integer"));
+        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        assertEquals(42, integerProperty.getLong());
     }
 
 }

@@ -214,6 +214,8 @@ public class ChannelPropertyMapper {
         } else if (value instanceof Boolean) {
             return vf.createValue((Boolean) value);
         } else if (value instanceof Integer) {
+            return vf.createValue((Integer) value);
+        } else if (value instanceof Long) {
             return vf.createValue((Long) value);
         } else if (value instanceof Double) {
             return vf.createValue((Double) value);
