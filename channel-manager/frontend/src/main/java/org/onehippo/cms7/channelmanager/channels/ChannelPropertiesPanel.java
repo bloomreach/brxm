@@ -292,11 +292,9 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                 return ZERO_FIELD_GROUPS;
             }
             return result;
-        } else {
-            log.warn("Channel info class '{}' does not have a '{}' annotation: no channel properties will be shown",
-                    channelInfoClass.getName(), FieldGroupList.class.getName());
-            return ZERO_FIELD_GROUPS;
         }
+
+        return ZERO_FIELD_GROUPS;
     }
 
     private Channel getChannel(String channelId) {
