@@ -113,6 +113,7 @@ site/src/main/resources/META-INF/hst-assembly/overrides/behavioral-targeting.xml
 site/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
 site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
+site/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
 site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 site/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
