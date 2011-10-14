@@ -107,7 +107,7 @@
         <sv:value>hippo:facetselect</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>f80dd670-f207-47b5-95e0-75f1c0123752</sv:value>
+        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true">
         <sv:value>hippo:availability</sv:value>
