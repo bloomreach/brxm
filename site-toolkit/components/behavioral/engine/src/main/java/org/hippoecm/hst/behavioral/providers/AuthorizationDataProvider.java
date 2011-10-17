@@ -36,31 +36,40 @@ public class AuthorizationDataProvider extends AbstractDataProvider {
 
     @Override
     public boolean evaluate(Rule rule, BehavioralData data) {
-        return data.getTermFreq().containsKey("authorized");
+        
+        if (!(data instanceof AuthorizationBehavioralData)) {
+            throw new IllegalArgumentException("BehavioralData is not of the expected type");
+        }
+        
+        return ((AuthorizationBehavioralData) data).isAuthorized;
     }
 
     @Override
     public BehavioralData updateBehavioralData(BehavioralData behavioralData, HttpServletRequest request)
             throws IllegalArgumentException {
         
-        if(behavioralData != null && !(behavioralData instanceof BehavioralDataImpl)) {
-            throw new IllegalArgumentException("BehavioralData not of the expected type.");
+        if(behavioralData != null && !(behavioralData instanceof AuthorizationBehavioralData)) {
+            throw new IllegalArgumentException("BehavioralData is not of the expected type.");
         }
         
         if (behavioralData == null) {
-            behavioralData = new BehavioralDataImpl(size, getId());
+            behavioralData = new AuthorizationBehavioralData(getId());
         }
         
-        String term = null;
-        if (request.getUserPrincipal() != null) {
-            term = "authorized";
-        }
-        else {
-            term = "unauthorized";
-        }
-        ((BehavioralDataImpl) behavioralData).putTerm(term);
+        ((AuthorizationBehavioralData) behavioralData).isAuthorized = request.getUserPrincipal() != null;
         
         return behavioralData;
     }
 
+    private static class AuthorizationBehavioralData extends AbstractBehavioralData {
+
+        private static final long serialVersionUID = 1L;
+
+        private boolean isAuthorized = false;
+        
+        protected AuthorizationBehavioralData(String providerId) {
+            super(providerId);
+        }
+        
+    }
 }

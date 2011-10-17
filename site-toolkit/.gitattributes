@@ -428,7 +428,6 @@ components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractHippoBeanDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AbstractTermsDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/AuthorizationDataProvider.java -text
-components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralDataImpl.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralRefererDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralSearchDataProvider.java -text
 components/behavioral/engine/src/main/java/org/hippoecm/hst/behavioral/providers/BehavioralTagDataProvider.java -text

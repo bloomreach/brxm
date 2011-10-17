@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.behavioral.providers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,16 +44,16 @@ public abstract class AbstractTermsDataProvider extends AbstractDataProvider {
             return null;
         }
         
-        if(behavioralData != null && !(behavioralData instanceof BehavioralDataImpl)) {
-            throw new IllegalArgumentException("BehavioralData not of the expected type.");
+        if(behavioralData != null && !(behavioralData instanceof TermsBehavioralData)) {
+            throw new IllegalArgumentException("BehavioralData is not of the expected type.");
         }
         
         for (String term : terms) {
             if (isIncludedTerm(term)) {
                 if (behavioralData == null) {
-                    behavioralData = new BehavioralDataImpl(size, getId());
+                    behavioralData = new TermsBehavioralData(getId(), size);
                 }
-                ((BehavioralDataImpl)behavioralData).putTerm(term);
+                ((TermsBehavioralData)behavioralData).putTerm(term);
             }
         }
         
@@ -77,14 +80,51 @@ public abstract class AbstractTermsDataProvider extends AbstractDataProvider {
     
     @Override
     public boolean evaluate(Rule rule, BehavioralData data) {
+        if (!(data instanceof TermsBehavioralData)) {
+            throw new IllegalArgumentException("Argument data is not of the expected type");
+        }
+        
         int totalFreq = 0;
         for (String term : rule.getTerms()) {
-            Integer freq = data.getTermFreq().get(term);
+            Integer freq = ((TermsBehavioralData) data).getTermFreq().get(term);
             if (freq != null) {
                 totalFreq += freq;
             }
         }
         return totalFreq >= rule.getFrequencyThreshold();
     }
- 
+    
+    protected static class TermsBehavioralData extends AbstractBehavioralData implements BehavioralData {
+        
+        private static final long serialVersionUID = 1L;
+        
+        private final Map<String, Integer> termFreq;
+        
+        protected TermsBehavioralData(String providerId, final int size) {
+            super(providerId);
+            this.termFreq = new LinkedHashMap<String, Integer>(size, 0.75f, true){
+
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected boolean removeEldestEntry(Entry<String, Integer> eldest) {
+                    return size() >  size;
+                }
+
+            };
+        }
+        
+        public Map<String, Integer> getTermFreq() {
+            return termFreq;
+        }
+
+        protected void putTerm(String term) {
+            Integer freq = termFreq.get(term);
+            if(freq == null) {
+                termFreq.put(term, new Integer(1));
+            } else {
+                termFreq.put(term, new Integer(freq + 1));
+            }
+        }
+
+    }
 }

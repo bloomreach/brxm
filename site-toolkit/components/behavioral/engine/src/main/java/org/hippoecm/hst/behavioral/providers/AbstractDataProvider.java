@@ -18,6 +18,7 @@ package org.hippoecm.hst.behavioral.providers;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.behavioral.BehavioralData;
 import org.hippoecm.hst.behavioral.BehavioralDataProvider;
 import org.hippoecm.hst.behavioral.BehavioralNodeTypes;
 
@@ -48,6 +49,23 @@ public abstract class AbstractDataProvider implements BehavioralDataProvider {
     @Override
     public final String getName() {
         return name;
+    }
+    
+    protected static abstract class AbstractBehavioralData implements BehavioralData {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String providerId;
+        
+        protected AbstractBehavioralData(String providerId) {
+            this.providerId = providerId;
+        }
+        
+        @Override
+        public String getProviderId() {
+            return providerId;
+        }
+        
     }
 
 }
