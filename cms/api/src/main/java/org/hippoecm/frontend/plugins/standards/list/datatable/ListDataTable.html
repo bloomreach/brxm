@@ -16,13 +16,15 @@
    limitations under the License.
 -->
 <wicket:panel>
-  <table>
-    <div class="list-data-table-header">
+  <div class="list-data-table-header">
+    <table>
       <thead>
         <wicket:container wicket:id="topToolbars"></wicket:container>
       </thead>
-    </div>
-    <div class="list-data-table-body">
+    </table>
+  </div>
+  <div class="list-data-table-body">
+    <table>
       <tbody wicket:id="body">
         <tr wicket:id="rows">
           <td wicket:id="cells">
@@ -30,12 +32,14 @@
           </td>
         </tr>
       </tbody>
-    </div>
-    <div class="list-data-table-footer">
+    </table>
+  </div>
+  <div class="list-data-table-footer">
+    <table>
       <tfoot>
         <wicket:container wicket:id="bottomToolbars"></wicket:container>
       </tfoot>
-    </div>
-  </table>
+    </table>
+  </div>
 </wicket:panel>
 
