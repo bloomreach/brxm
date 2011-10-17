@@ -123,34 +123,29 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         this._lock();
 
-        this._initIFrameListeners();
-
         var retry = this.initialHstConnectionTimeout;
-        var me = this;
+        var self = this;
         // do initial handshake with CmsSecurityValve of the composer mount and
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
         var composerMode = function(callback) {
             Ext.Ajax.request({
-                url: me.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+me.renderHost+'/?'+me.ignoreRenderHostParameterName+'=true',
+                url: self.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?'+self.ignoreRenderHostParameterName+'=true',
                 success: callback,
                 failure: function(exceptionObject) {
-                    if (exceptionObject.isTimeout) {
-                        retry = retry - Ext.Ajax.timeout;
-                    }
-                    if (retry > 0) {
+                    if (exceptionObject.isTimeout && retry > 0) {
                         retry = retry - Ext.Ajax.timeout;
                         window.setTimeout(function() {
                             composerMode(callback);
                         }, Ext.Ajax.timeout);
                     } else {
                         Hippo.Msg.hide();
-                        Hippo.Msg.confirm(me.resources['hst-timeout-message-title'], me.resources['hst-timeout-message'], function(id) {
+                        Hippo.Msg.confirm(self.resources['hst-timeout-message-title'], self.resources['hst-timeout-message'], function(id) {
                             if (id === 'yes') {
-                                retry = me.initialHstConnectionTimeout;
-                                Hippo.Msg.wait(me.resources['loading-message']);
+                                retry = self.initialHstConnectionTimeout;
+                                Hippo.Msg.wait(self.resources['loading-message']);
                                 composerMode(callback);
                             } else {
-                                me.fireEvent.apply(me, ['fatalIFrameException', {msg : me.resources['hst-timeout-iframe-exception']}]);
+                                self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-timeout-iframe-exception']}]);
                             }
                         });
                     }
@@ -160,15 +155,17 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         composerMode(function() {
             var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-            iFrame.setSrc(me.composerMountUrl + me.renderHostSubMountPath);
+
+            this._initIFrameListeners();
+            iFrame.setSrc(this.composerMountUrl + this.renderHostSubMountPath);
 
             // keep session active
             Ext.TaskMgr.start({
-                run: me._keepAlive,
+                run: this._keepAlive,
                 interval: 60000,
-                scope: me
+                scope: this
             });
-        });
+        }.createDelegate(this));
     },
 
     refreshIframe : function() {
@@ -201,7 +198,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         } else {
             if (hasPreviewHstConfig) {
                 var iFrame = Ext.getCmp('Iframe');
-                iFrame.getFrame().sendMessage({}, ('showoverlay'));
+                iFrame.getFrame().sendMessage({}, 'showoverlay');
                 this._complete();
             } else {
                 // create new preview hst configuration
@@ -274,14 +271,16 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         iFrame.purgeListeners();
         iFrame.on('message', this.handleFrameMessages, this);
         iFrame.on('documentloaded', function(frm) {
-            if (Ext.isSafari || Ext.isChrome) {
+            var uri = frm.getDocumentURI();
+            if ((Ext.isSafari || Ext.isChrome) && uri !== '' && uri !== 'about:blank') {
                 this._onIframeDOMReady(frm);
             }
         }, this);
         iFrame.on('domready', function(frm) {
             // Safari && Chrome report a DOM ready event, but js is not yet fully loaded, resulting
             // in 'undefined' errors.
-            if (Ext.isGecko || Ext.isIE) {
+            var uri = frm.getDocumentURI();
+            if ((Ext.isGecko || Ext.isIE) && uri !== '' && uri !== 'about:blank') {
                 this._onIframeDOMReady(frm);
             }
         }, this);

@@ -157,29 +157,22 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 method: "HEAD",
                 url : url,
                 success : function(responseObject) {
-                    var data = {
-                        url : url,
-                        pageId : responseObject.getResponseHeader('HST-Page-Id'),
-                        mountId : responseObject.getResponseHeader('HST-Mount-Id'),
-                        oldMountId : self.ids.oldMountId,
-                        oldSiteId : self.ids.oldSiteId
-                    };
+                    var pageId = responseObject.getResponseHeader('HST-Page-Id');
+                    var mountId = responseObject.getResponseHeader('HST-Mount-Id');
+
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig && !self.previewMode) {
                         self.previewMode = true;
                     }
 
-                    console.log('hstMetaDataResponse '+JSON.stringify(data));
+                    console.log('hstMetaDataResponse: url:'+url+', pageId:'+pageId+', mountId:'+mountId);
 
                     var futures = [
-                        self._initToolkitStore(data.mountId),
-                        self._initPageModelStore(data.mountId, data.pageId)
+                        self._initToolkitStore.call(self, mountId),
+                        self._initPageModelStore.apply(self, [mountId, pageId])
                     ];
                     Hippo.Future.join(futures).when(function() {
                         onSuccess();
-
-                        self.ids.pageUrl = data.url;
-
                     }).otherwise(onFail);
                 },
                 failure : function(responseObject) {
