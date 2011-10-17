@@ -61,7 +61,9 @@ public class TreeWidgetBehavior extends WidgetBehavior {
 
     public void render(AjaxRequestTarget target) {
         if (update) {
-            target.appendJavascript(getUpdateScript());
+            if (target != null) {
+                target.appendJavascript(getUpdateScript());
+            }
         }
         reset();
     }
