@@ -45,15 +45,15 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     WorkflowContext context;
     Document document;
     Session session;
-    Node subject;
     Session rootSession; // FIXME; having the need for a rootSession is PLAIN WRONG, however because the document manager cannot read its own confiugration because of authorization rules, editors and authors cannot access documents
-
+    Node subject;
+    
     public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
         this.context = context;
         document = new Document(subject.getUUID());
-        this.subject = subject;
         this.session = rootSession; // FIXME SHOULD BE THE USERSESSION!
         this.rootSession = rootSession;
+        this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
     }
 
     private WorkflowContext getWorkflowContext() {
