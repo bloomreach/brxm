@@ -122,7 +122,7 @@
 .hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
 .hippo-console-editor strong{color:#666666;}
 .hippo-console-editor sup a{color:#32629b;}
-.hippo-console-editor textarea {width: 815px;}
+.hippo-console-editor textarea {width: 100%;}
 .hippo-console-editor h3 {color:#32629B;}
 .hippo-console-editor hr {color:#32629B;background-color: #32629B;border: 0;height: 1px;margin: 0px;}
 
