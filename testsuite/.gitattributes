@@ -1,5 +1,4 @@
 * text=auto !eol
-/BUILD -text
 /README.txt -text svneol=unset#text/plain
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
@@ -50,7 +49,6 @@ content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=u
 content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-editor.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-siteuser.xml -text svneol=unset#text/plain
-/hippo-cms7-release-pom.xml -text
 /pom.xml svneol=native#text/plain
 site/pom.xml svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
