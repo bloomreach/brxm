@@ -37,16 +37,16 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.21.03-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.21.04-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-faceteddate.version>2.21.04-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.21.04-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.08.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>1.01.04-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-google-analytics.version>1.01.04-SNAPSHOT</hippo.addon-google-analytics.version>
-    <hippo.addon-brokenlinks.version>1.01.02-SNAPSHOT</hippo.addon-brokenlinks.version>
-    <hippo.packages.version>2.21.04-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.23.04-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.21.04-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.21.05-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-faceteddate.version>2.21.05-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.21.05-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.addon-hst-configuration-editor.version>1.08.05-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>1.01.05-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-google-analytics.version>1.01.05-SNAPSHOT</hippo.addon-google-analytics.version>
+    <hippo.addon-brokenlinks.version>1.01.03-SNAPSHOT</hippo.addon-brokenlinks.version>
+    <hippo.packages.version>2.21.05-SNAPSHOT</hippo.packages.version>
+    <hippo.hst.version>2.23.05-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.00</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.09.02</forge.gallerypicker.version>
