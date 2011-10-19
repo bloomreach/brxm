@@ -147,7 +147,13 @@ public class SecurityValve extends AbstractValve {
             }
         }
         
-        Subject subject = getSubject(servletRequest);
+        // NOTE: We need to check if subject is injected from somewhere into request context first.
+        //       For example, a custom security integration valve could do that before securityValve.
+        Subject subject = requestContext.getSubject();
+        
+        if (subject == null) {
+            subject = getSubject(servletRequest);
+        }
         
         if (subject == null) {
             context.invokeNext();
