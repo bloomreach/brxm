@@ -637,13 +637,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                                     matchingDefinition = def;
                                 }
                                 // now continue because there may be a more limiting definition
-                            } else if (def.getName().equals("*")) {
+                            } else if (def.getName().equals(prop.getName())) {
                                 matchingDefinition = def;
                                 break;
                             }
                         }
                     }
-                    if (matchingDefinition != null && matchingDefinition.isProtected()) {
+                    if (matchingDefinition != null && !matchingDefinition.isProtected()) {
                         isProtected = false;
                     }
                 }
