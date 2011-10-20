@@ -21,13 +21,16 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -52,7 +55,8 @@ public class ProductPlainResource extends AbstractResource {
     @GET
     @Path("/{productType}/")
     public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("productType") String productType) {
+            @PathParam("productType") String productType,
+            @MatrixParam("sitelink") @DefaultValue("true") String siteLink) {
         
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
         
@@ -79,7 +83,11 @@ public class ProductPlainResource extends AbstractResource {
                 if (productBean != null) {
                     ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
                     productRep.addLink(getNodeLink(requestContext, productBean));
-                    productRep.addLink(getSiteLink(requestContext, productBean));
+                    
+                    if (BooleanUtils.toBoolean(siteLink)) {
+                        productRep.addLink(getSiteLink(requestContext, productBean));
+                    }
+                    
                     products.add(productRep);
                 }
             }
