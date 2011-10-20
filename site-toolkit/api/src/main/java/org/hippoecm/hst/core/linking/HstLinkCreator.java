@@ -220,6 +220,7 @@ public interface HstLinkCreator {
      * @param node the jcr node
      * @param requestContext the current request context
      * @param mountAlias the alias of the {@link Mount} for which the link should be created for
+     * @param type the type tha should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the mount belonging to the returned {@link HstLink}
      * @return the {@link HstLink} for the jcr <code>node</code> and the <code>mountAlias</code> or <code>null</code> when no link for the node can be made in the <code>{@link Mount}</code> belonging to the alias or when there belongs no {@link Mount} to the alias
      * @see {@link #create(Node, Mount)} 
      */
