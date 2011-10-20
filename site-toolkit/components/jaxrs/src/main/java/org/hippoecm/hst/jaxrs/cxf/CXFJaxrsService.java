@@ -28,6 +28,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.transport.servlet.ServletController;
 import org.apache.cxf.transport.servlet.ServletTransportFactory;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.AbstractJaxrsService;
 
@@ -90,4 +91,11 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 			BusFactory.setThreadDefaultBus(null);
 		}
 	}
+	
+    @Override
+    protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
+        String requestURI = request.getRequestURI();
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        return requestURI.substring(baseURL.getContextPath().length() + baseURL.getResolvedMountPath().length());
+    }
 }

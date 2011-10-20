@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +151,6 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     	private String requestURI;
     	private String requestURL;
         private HstRequestContext requestContext;
-        private String matrixParamsSuffix;
         
         public PathsAdjustedHttpServletRequestWrapper(HstRequestContext requestContext, HttpServletRequest request, String servletPath, String requestPath) {
             super(request);
@@ -160,39 +160,24 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             String tempMatrixParamsSuffix = null;
             
             if (requestPath != null) {
-                int offset = requestPath.indexOf(';');
-                if (offset == -1) {
-                    tempPathInfo = requestPath;
-                } else {
-                    tempPathInfo = requestPath.substring(0, offset);
-                    tempMatrixParamsSuffix = requestPath.substring(offset);
-                }
+                setPathInfo(HstRequestUtils.removeAllMatrixParams(requestPath));
             }
             
-            setPathInfo(tempPathInfo);
-            this.matrixParamsSuffix = tempMatrixParamsSuffix;
+            StringBuilder sbTemp = new StringBuilder(getContextPath()).append(getServletPath());
+            if (requestPath != null) {
+                sbTemp.append(requestPath);
+            }
+            requestURI = sbTemp.toString();
+            
+            if (requestURI.length() == 0) {
+                requestURI = "/";
+            }
             
             this.requestContext = requestContext;
         }
         
 		@Override
 		public String getRequestURI() {
-			if (requestURI == null) {
-				StringBuilder sbTemp = new StringBuilder(getContextPath()).append(getServletPath());
-                String pathInfo = getPathInfo();
-				if (pathInfo != null) {
-				    sbTemp.append(pathInfo);
-				}
-				if (matrixParamsSuffix != null) {
-				    sbTemp.append(matrixParamsSuffix);
-				}
-				requestURI = sbTemp.toString();
-				
-				if (requestURI.length() == 0) {
-					requestURI = "/";
-				}
-			}
-			
 			return requestURI;
 		}
 

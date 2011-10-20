@@ -28,6 +28,7 @@ import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 /**
  * <p>
@@ -43,14 +44,13 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
  * called to recompute/reset the <code>servletPath</code> and <code>pathInfo</code> (and <code>pathTranslated</code>)
  * </p>
  * <p>
- * The {@link #getPathInfo()} won't return the part in the {@link #getRequestURI()} after the <code>pathSuffixDelimiter</code> and won't return the 
- * part after the {@link #MATRIX_PARAMETERS_DELIMITER}. The delimiters themselves won't be part of the {@link #getPathInfo()} either
-  * </p>
+ * The {@link #getPathInfo()} won't return the part in the {@link #getRequestURI()} after the <code>pathSuffixDelimiter</code>. 
+ * The delimiter itself won't be part of the {@link #getPathInfo()} either.
+ * Also the return won't include any matrix parameters. 
+ * </p>
  * @version $Id$
  */
 public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper implements HstContainerRequest {
-    
-    private static final String MATRIX_PARAMETERS_DELIMITER = ";";
     
     private String pathSuffix;
     private String pathSuffixDelimiter;
@@ -129,8 +129,7 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
         }
         
         // we do not need to strip off the pathSuffix as this is already done in the constructor. 
-        
-        pathTranslated = substringBefore(pathTranslated, MATRIX_PARAMETERS_DELIMITER);
+        pathTranslated = HstRequestUtils.removeAllMatrixParams(pathTranslated);
         // pathTranslated is the not decoded version of pathInfo
         setDecodedPathInfo(pathTranslated);
         
@@ -159,15 +158,4 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     public String getPathTranslated() {
        return pathTranslated;
     }
-    
-    private static String substringBefore(String source, String delimiter) {
-        int offset = source.indexOf(delimiter);
-        
-        if (offset == -1) {
-            return source;
-        }
-        
-        return source.substring(0, offset);
-    }
-    
 }

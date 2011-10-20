@@ -20,6 +20,8 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  * @version $Id$
  */
 public class HstRequestUtils {
+    
+    private static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
     
     private HstRequestUtils() {
         
@@ -383,4 +387,8 @@ public class HstRequestUtils {
         return queryParamMap;
     }
     
+    public static String removeAllMatrixParams(String uri) {
+        Matcher matcher = MATRIX_PARAMS_PATTERN.matcher(uri);
+        return matcher.replaceAll("");
+    }
 }
