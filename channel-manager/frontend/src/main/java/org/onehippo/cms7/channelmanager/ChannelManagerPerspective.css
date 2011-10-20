@@ -1,3 +1,7 @@
+div.channel-grid-toolbar, div.page-editor-toolbar { background-image: none; background-color: #dddddd; }
+.channel-manager .x-toolbar .breadcrumb-item .x-btn-text { font-weight: bold; padding-left: 8px}
+.channel-manager .x-toolbar .breadcrumb-item.x-item-disabled .x-btn-text { color: black !important}
+.channel-manager .x-toolbar .breadcrumb-item.x-btn-over td { border: 0; background-image: none; }
 .channel-manager .channel-properties { margin: 5px; }
 .channel-manager .channel-properties .fieldgroup { border-bottom: 16px solid #fff; }
 .channel-manager .channel-properties .fieldgrouptitle { font-weight: bold; border-bottom: 2px solid #fff; }

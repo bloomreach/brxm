@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager;
 
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
@@ -115,6 +117,9 @@ public class RootPanel extends ExtPanel {
         super.onRenderProperties(properties);
         properties.put("blueprintStore", new JSONIdentifier(this.blueprintStore.getJsObjectId()));
         properties.put("channelStore", new JSONIdentifier(this.channelStore.getJsObjectId()));
+
+        RequestCycle rc = RequestCycle.get();
+        properties.put("breadcrumbIconUrl", rc.urlFor(new ResourceReference(RootPanel.class, "breadcrumb-arrow.png")));
     }
 
     public PageEditor getPageEditor() {

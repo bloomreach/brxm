@@ -28,18 +28,6 @@ Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
         Ext.apply(config, {
             tbar: [
                 {
-                    text : '< ' + this.resources['summary'],
-                    id : 'hstConfigEditor',
-                    listeners : {
-                        'click' : {
-                            fn : function() {
-                                Ext.getCmp('rootPanel').showChannelManager();
-                            },
-                            scope: this
-                        }
-                    }
-                },
-                {
                     id: 'configEditorChannelName',
                     xtype: 'tbtext',
                     text: '',

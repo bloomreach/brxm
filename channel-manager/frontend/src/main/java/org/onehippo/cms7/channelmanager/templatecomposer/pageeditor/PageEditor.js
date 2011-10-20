@@ -47,66 +47,57 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     // loadMask: true,
                     collapsible: false,
                     disableMessaging: false,
-                    tbar: [
-                        {
-                            text : config.resources['back-to-channel-manager-button'],
-                            id : "channelManager",
-                            listeners : {
-                                'click' : {
-                                    fn : function() {
-                                        Ext.getCmp('rootPanel').showChannelManager();
-                                    },
-                                    scope: this
+                    tbar: {
+                        cls: 'page-editor-toolbar',
+                        items: [
+                            {
+                                text: config.resources['preview-button'],
+                                iconCls: 'title-button',
+                                id: 'pagePreviewButton',
+                                toggleGroup : 'composerMode',
+                                allowDepress: false,
+                                width: 150,
+                                disabled: true
+                            },
+                            {
+                                text: config.resources['edit-button'],
+                                iconCls: 'title-button',
+                                id: 'pageComposerButton',
+                                enableToggle: true,
+                                toggleGroup : 'composerMode',
+                                allowDepress: false,
+                                width: 150,
+                                disabled: true,
+                                listeners: {
+                                    'toggle': {
+                                        fn : this.pageContainer.toggleMode,
+                                        scope: this.pageContainer
+                                    }
+                                }
+                            },
+                            {
+                                text: config.resources['publish-button'],
+                                iconCls: 'title-button',
+                                id: 'publishHstConfig',
+                                width: 150,
+                                disabled: true,
+                                listeners: {
+                                    'click': {
+                                        fn : this.pageContainer.publishHstConfiguration,
+                                        scope: this.pageContainer
+                                    }
+                                }
+                            },
+                            {
+                                id: 'channelName',
+                                xtype: 'tbtext',
+                                text: '',
+                                style: {
+                                    marginLeft: '150px'
                                 }
                             }
-                        },
-                        {
-                            text: config.resources['preview-button'],
-                            iconCls: 'title-button',
-                            id: 'pagePreviewButton',
-                            toggleGroup : 'composerMode',
-                            allowDepress: false,
-                            width: 150,
-                            disabled: true
-                        },
-                        {
-                            text: config.resources['edit-button'],
-                            iconCls: 'title-button',
-                            id: 'pageComposerButton',
-                            enableToggle: true,
-                            toggleGroup : 'composerMode',
-                            allowDepress: false,
-                            width: 150,
-                            disabled: true,
-                            listeners: {
-                                'toggle': {
-                                    fn : this.pageContainer.toggleMode,
-                                    scope: this.pageContainer
-                                }
-                            }
-                        },
-                        {
-                            text: config.resources['publish-button'],
-                            iconCls: 'title-button',
-                            id: 'publishHstConfig',
-                            width: 150,
-                            disabled: true,
-                            listeners: {
-                                'click': {
-                                    fn : this.pageContainer.publishHstConfiguration,
-                                    scope: this.pageContainer
-                                }
-                            }
-                        },
-                        {
-                            id: 'channelName',
-                            xtype: 'tbtext',
-                            text: '',
-                            style: {
-                                marginLeft: '150px'
-                            }
-                        }
-                    ]
+                        ]
+                    }
                 }
             ]
         });

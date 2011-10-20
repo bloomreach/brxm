@@ -51,8 +51,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             stateful: true,
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'savestate' ],
-            title: config.resources['title'],
-
             colModel: new Ext.grid.ColumnModel({
                 columns: config.columns,
                 defaults: {
@@ -77,6 +75,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 layoutConfig: {
                     pack: 'center'
                 },
+                cls: 'channel-grid-toolbar',
                 items: [
                     {
                         text: config.resources['action.add.channel'],

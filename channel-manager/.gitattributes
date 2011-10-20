@@ -1,6 +1,7 @@
 * text=auto !eol
 frontend/pom.xml eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelFormPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
@@ -16,6 +17,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.properties -te
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/TemplateComposerPerspective.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text

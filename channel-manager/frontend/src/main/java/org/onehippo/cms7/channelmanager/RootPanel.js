@@ -28,6 +28,23 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.blueprintStore = config.blueprintStore;
         this.resources = config.resources;
 
+        this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
+            id: 'breadcrumbToolbar',
+            layout: 'hbox',
+            levels: 3,
+            breadcrumbIconUrl: config.breadcrumbIconUrl,
+            layoutConfig: {
+                pack: 'left'
+            }
+        });
+        this.toolbar.pushItem({
+            text: 'Channel Manager',
+            click: function() {
+                this.layout.setActiveItem(0);
+            },
+            scope: this
+        });
+
         Ext.apply(config, {
             id: 'rootPanel',
             layout: 'card',
@@ -35,7 +52,8 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             deferredRender: true,
             viewConfig: {
                 forceFit: true
-            }
+            },
+            tbar: this.toolbar
         });
 
         Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
@@ -104,11 +122,25 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.layout.setActiveItem(0);
     },
 
-    showTemplateComposer: function() {
+    showTemplateComposer: function(channelName) {
+        this.toolbar.pushItem({
+            text: channelName,
+            click: function() {
+                this.layout.setActiveItem(1);
+            },
+            scope: this
+        });
         this.layout.setActiveItem(1);
     },
 
     showConfigEditor: function() {
+        this.toolbar.pushItem({
+            text: 'HST Configuration',
+            click: function() {
+                this.layout.setActiveItem(2);
+            },
+            scope: this
+        });
         this.layout.setActiveItem(2);
     }
 });
