@@ -55,7 +55,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             add(new WireframeBehavior(wfSettings));
         }
 
-        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css", true));
+        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
         rootPanel = new RootPanel(context, config, "channel-root");
         add(rootPanel);

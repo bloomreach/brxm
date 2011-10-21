@@ -60,7 +60,7 @@ public class PersonaManagerPanel extends ExtPanel {
 
         this.config = config;
 
-        add(CSSPackageResource.getHeaderContribution(PersonaManagerPanel.class, CSS_FILE, true));
+        add(CSSPackageResource.getHeaderContribution(PersonaManagerPanel.class, CSS_FILE));
         add(JavascriptPackageResource.getHeaderContribution(PersonaManagerPanel.class, EXT_JS_FILE));
     }
 
