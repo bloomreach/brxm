@@ -1,18 +1,18 @@
 /**
-  * Copyright 2011 Hippo
-  *
-  * Licensed under the Apache License, Version 2.0 (the  "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  * http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-*/
+ * Copyright 2011 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.Arrays;
@@ -31,7 +31,10 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONArray;
@@ -120,18 +123,22 @@ public class PageEditor extends ExtPanel {
                 }
                 try {
                     final Object value = values.get(0);
-                    IBrowseService browseService = context.getService("service.browse", IBrowseService.class);
-                    if (browseService != null) {
-                        browseService.browse(new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(value.toString())));
-                    } else {
-                        log.warn("Could not find document " + value);
-                    }
+                    String editorManagerServiceId = config != null ? config.getString(IEditorManager.EDITOR_ID, "service.edit") : "service.edit";
+                    IEditorManager editorManager = context.getService(editorManagerServiceId, IEditorManager.class);
+                    JcrNodeModel model = new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(value.toString()));
+                    IEditor<?> editor = editorManager.openEditor(model);
+                    editor.setMode(IEditor.Mode.EDIT);
+                    editor.focus();
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
                 } catch (ItemNotFoundException e) {
                     log.warn("Could not find document to browse to", e);
                 } catch (RepositoryException e) {
                     log.error("Internal error when browsing to document", e);
+                } catch (EditorException e) {
+                    log.error("Could not open editor for document", e);
+                } catch (ServiceException e) {
+                    log.error("Opening editor failed", e);
                 }
 
             }
@@ -152,33 +159,14 @@ public class PageEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
-        properties.put("iFrameErrorPage", Arrays.asList(
-            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()
-        ));
-        properties.put("iFrameCssHeadContributions", Arrays.asList(
-            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(),
-            rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()
-        ));
+        properties.put("iFrameErrorPage", Arrays.asList(rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
+        properties.put("iFrameCssHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()));
         if (debug) {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
+            properties.put("iFrameJsHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
-                rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()
-            ));
+                    rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()));
         } else {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(
-                rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()
-            ));
+            properties.put("iFrameJsHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
         }
     }
 
