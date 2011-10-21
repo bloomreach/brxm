@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.section;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
@@ -52,11 +57,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
 
 public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSection {
     @SuppressWarnings("unused")
@@ -170,7 +170,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         });
 
-        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css", true));
+        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css"));
 
         container = new Form("container") {
             private static final long serialVersionUID = 1L;

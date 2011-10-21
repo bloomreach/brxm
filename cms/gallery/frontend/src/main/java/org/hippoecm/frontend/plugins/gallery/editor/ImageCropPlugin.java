@@ -20,16 +20,11 @@ import java.awt.Dimension;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -39,10 +34,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
-import org.onehippo.yui.YahooNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +52,7 @@ public class ImageCropPlugin extends RenderPlugin {
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css", true));
+        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css"));
 
         String mode = config.getString("mode", "edit");
         final IModel<Node> jcrImageNodeModel = getModel();

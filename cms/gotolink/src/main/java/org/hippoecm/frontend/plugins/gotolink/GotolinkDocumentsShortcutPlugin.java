@@ -60,6 +60,6 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
         };
         add(link);
 
-        add(CSSPackageResource.getHeaderContribution(GotolinkDocumentsShortcutPlugin.class, "gotolink.css", true));
+        add(CSSPackageResource.getHeaderContribution(GotolinkDocumentsShortcutPlugin.class, "gotolink.css"));
     }
 }

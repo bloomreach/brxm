@@ -15,15 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -56,14 +61,6 @@ import org.hippoecm.frontend.widgets.LabelWithTitle;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.LIST;
 import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUMBNAILS;
@@ -154,7 +151,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         super.renderHead(container);
 
         ResourceReference cssResourceReference = new ResourceReference(ImageGalleryPlugin.class, IMAGE_GALLERY_CSS);
-        container.getHeaderResponse().renderCSSReference(cssResourceReference, true);
+        container.getHeaderResponse().renderCSSReference(cssResourceReference);
     }
 
     @Override

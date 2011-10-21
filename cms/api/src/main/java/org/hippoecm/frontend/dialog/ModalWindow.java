@@ -28,7 +28,6 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
@@ -143,7 +142,7 @@ public class ModalWindow extends Panel
 		add(new WindowClosedBehavior());
 
     add(JavascriptPackageResource.getHeaderContribution(JAVASCRIPT));
-		add(CSSPackageResource.getHeaderContribution(CSS, true));
+		add(CSSPackageResource.getHeaderContribution(CSS));
 	}
 
 	/**

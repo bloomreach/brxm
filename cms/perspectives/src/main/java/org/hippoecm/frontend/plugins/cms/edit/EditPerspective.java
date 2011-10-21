@@ -131,7 +131,7 @@ public class EditPerspective extends Perspective {
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));
 
-        add(CSSPackageResource.getHeaderContribution(EditPerspective.class, "edit-perspective.css", true));
+        add(CSSPackageResource.getHeaderContribution(EditPerspective.class, "edit-perspective.css"));
     }
 
     @Override

@@ -82,7 +82,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
         refreshGroup.add(refreshLink);
         add(refreshGroup);
 
-        add(CSSPackageResource.getHeaderContribution(ReportsPerspective.class, "layout/reporting.css", true));
+        add(CSSPackageResource.getHeaderContribution(ReportsPerspective.class, "layout/reporting.css"));
     }
 
     @Override

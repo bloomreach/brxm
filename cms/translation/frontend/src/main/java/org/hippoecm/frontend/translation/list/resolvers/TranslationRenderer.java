@@ -156,7 +156,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
         public TranslationList(String id, Node document) throws RepositoryException {
             super(id);
 
-            add(CSSPackageResource.getHeaderContribution(getClass(), "style.css", true));
+            add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
 
             locale = document.getProperty(HippoTranslationNodeType.LOCALE).getString();
 

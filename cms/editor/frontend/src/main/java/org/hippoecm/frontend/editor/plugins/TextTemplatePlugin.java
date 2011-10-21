@@ -50,7 +50,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
-            add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css", true));
+            add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
 
             final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
                     IModelReference.class).getModel();

@@ -28,7 +28,7 @@ public class ExtHippoThemeReportingBehavior extends ExtCustomThemeBehavior {
 
     @Override
     protected void addCustomTheme(final Component component) {
-        component.add(CSSPackageResource.getHeaderContribution(getClass(), "hippotheme/ExtHippoThemeReporting.css", true));
+        component.add(CSSPackageResource.getHeaderContribution(getClass(), "hippotheme/ExtHippoThemeReporting.css"));
     }
 
 }

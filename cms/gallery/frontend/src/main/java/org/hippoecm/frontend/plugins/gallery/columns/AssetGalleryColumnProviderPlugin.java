@@ -1,5 +1,10 @@
 package org.hippoecm.frontend.plugins.gallery.columns;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
@@ -8,7 +13,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.MimeTypeComparator;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.SizeComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.modify.MimeTypeAttributeModifier;
 import org.hippoecm.frontend.plugins.gallery.columns.render.DatePropertyRenderer;
 import org.hippoecm.frontend.plugins.gallery.columns.render.MimeTypeIconRenderer;
 import org.hippoecm.frontend.plugins.gallery.columns.render.SizeRenderer;
@@ -17,12 +21,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
@@ -40,8 +39,7 @@ public class AssetGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(AssetGalleryColumnProviderPlugin.class,
-                "AssetGalleryStyle.css", true);
+        return CSSPackageResource.getHeaderContribution(AssetGalleryColumnProviderPlugin.class, "AssetGalleryStyle.css");
     }
 
 

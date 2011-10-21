@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns.modify;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -31,11 +36,6 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 @Deprecated
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
@@ -128,8 +128,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
             @Override
             public void bind(Component hostComponent) {
-                hostComponent.add(CSSPackageResource.getHeaderContribution(MimeTypeAttributeModifier.class,
-                        "mimetypes.css", true));
+                hostComponent.add(CSSPackageResource.getHeaderContribution(MimeTypeAttributeModifier.class, "mimetypes.css"));
             }
         };
     }

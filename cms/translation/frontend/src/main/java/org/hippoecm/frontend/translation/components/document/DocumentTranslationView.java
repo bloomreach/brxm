@@ -74,7 +74,7 @@ public class DocumentTranslationView extends ExtPanel {
         codecBehavior = new NodeNameCodecBehavior(codec);
         add(codecBehavior);
 
-        add(CSSPackageResource.getHeaderContribution(getClass(), "style.css", true));
+        add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
     }
 
     @Override

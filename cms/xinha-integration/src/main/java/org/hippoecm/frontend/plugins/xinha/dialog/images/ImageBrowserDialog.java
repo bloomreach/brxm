@@ -21,14 +21,11 @@ import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
@@ -385,7 +382,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
     public void renderHead(IHeaderResponse response) {
         final String IMAGE_BROWSER_DIALOG_CSS = "ImageBrowserDialog.css";
         ResourceReference dialogCSS = new ResourceReference(ImageBrowserDialog.class, IMAGE_BROWSER_DIALOG_CSS);
-        response.renderCSSReference(dialogCSS, true);
+        response.renderCSSReference(dialogCSS);
     }
 
     @Override

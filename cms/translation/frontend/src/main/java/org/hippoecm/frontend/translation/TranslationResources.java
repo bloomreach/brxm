@@ -31,7 +31,7 @@ public final class TranslationResources {
     }
 
     public static HeaderContributor getCountriesCss() {
-        return CSSPackageResource.getHeaderContribution(TranslationResources.class, "countries.css", true);
+        return CSSPackageResource.getHeaderContribution(TranslationResources.class, "countries.css");
     }
 
 }

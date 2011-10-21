@@ -15,12 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -28,29 +24,17 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Calendar;
 
 public class ImageRegeneratePlugin extends RenderPlugin {
 
@@ -69,7 +53,7 @@ public class ImageRegeneratePlugin extends RenderPlugin {
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css", true));
+        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css"));
 
         String mode = config.getString("mode", "edit");
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);

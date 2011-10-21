@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload.multifile;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.form.Form;
@@ -26,10 +30,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.IMultipartWebRequest;
 import org.apache.wicket.util.convert.ConversionException;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 
 public class MultiFileUploadComponent extends Panel {
     final static String SVN_ID = "$Id$";
@@ -78,7 +78,7 @@ public class MultiFileUploadComponent extends Panel {
         super.renderHead(container);
 
         container.getHeaderResponse().renderCSSReference(
-                new ResourceReference(MultiFileUploadComponent.class, MULTI_FILE_UPLOAD_CSS), true);
+                new ResourceReference(MultiFileUploadComponent.class, MULTI_FILE_UPLOAD_CSS));
     }
 
     public Collection<FileUpload> getUploads() {

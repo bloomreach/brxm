@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.repeater.Item;
@@ -34,8 +36,6 @@ import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 
-import javax.jcr.Node;
-
 public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -48,7 +48,7 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         setClassName("asset-gallery-plugin");
         getSettings().setAutoWidthClassName("assetgallery-name");
 
-        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css", true));
+        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
     }
 
     @Override

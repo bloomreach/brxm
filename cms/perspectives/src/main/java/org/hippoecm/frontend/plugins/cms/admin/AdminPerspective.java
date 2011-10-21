@@ -18,18 +18,16 @@ package org.hippoecm.frontend.plugins.cms.admin;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.service.IconSize;
 
 public class AdminPerspective extends PanelPluginPerspective {
 
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin-perspective.css", true));
+        add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin-perspective.css"));
     }
 
     @Override

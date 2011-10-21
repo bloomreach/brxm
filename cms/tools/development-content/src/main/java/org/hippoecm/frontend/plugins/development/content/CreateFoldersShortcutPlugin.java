@@ -17,6 +17,8 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
+import java.util.List;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
@@ -33,8 +35,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.development.content.ContentBuilder.FolderSettings;
 import org.hippoecm.frontend.plugins.development.content.wizard.DevelopmentContentWizard;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-
-import java.util.List;
 
 public class CreateFoldersShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -64,7 +64,7 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         public Dialog() {
-            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css", true));
+            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css"));
             
             setOkVisible(false);
             setCancelVisible(false);

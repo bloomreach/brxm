@@ -208,7 +208,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         };
         nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css", true));
+                "DefaultCssAutocompleteTextField.css"));
 
         // dynamic update of related components when name is updated
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {

@@ -1,5 +1,5 @@
 * text=auto !eol
-/WICKET-3927_2.patch -text
+/WICKET-3927.patch -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
 api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
