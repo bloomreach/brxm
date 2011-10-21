@@ -13,6 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+/*
+ *  Copyright 2011 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.configuration.channel;
 
 import java.net.URI;
@@ -466,19 +481,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
             mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
             channel.setHstMountPoint(siteNode.getPath());
 
-            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-                    siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channelId);
-                } else {
-                    // reuse the configuration path specified in the hst:site node, if it exists
-                    String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                    if (!jcrSession.nodeExists(configurationPath)) {
-                        throw new ChannelException("The hst:site node in blueprint '" + blueprintNode.getPath()
-                                + "' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
-                    }
+            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
+                siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channelId);
+            } else {
+                // reuse the configuration path specified in the hst:site node, if it exists
+                String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+                if (!jcrSession.nodeExists(configurationPath)) {
+                    throw new ChannelException("The hst:site node in blueprint '" + blueprintNode.getPath()
+                            + "' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
                 }
-                channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             }
+            channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
 
             final String contentRootPath;
             if (bps.hasContentPrototype()) {

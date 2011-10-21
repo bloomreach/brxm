@@ -74,6 +74,8 @@ public class BlueprintService implements Blueprint {
 
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 this.prototypeChannel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
+            } else if (!blueprint.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {  // validate that blueprint is correct
+                throw new ItemNotFoundException("Blueprint " + this.id + " has neither a hst:configuration node prototype or a fixed hst:configurationpath");
             }
             if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !hasContentPrototype) {
                 final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
