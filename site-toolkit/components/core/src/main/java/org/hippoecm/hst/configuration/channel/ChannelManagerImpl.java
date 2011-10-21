@@ -516,6 +516,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
             }
 
+            Node previewSiteNode = copyNodes(siteNode, configRoot.getNode(sites), channelId + "-preview");
+            if (contentRootPath != null) {
+                final Node contentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                contentMirrorNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:availability"});
+                contentMirrorNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {"preview"});
+                contentMirrorNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
+            }
+
             final String locale = channel.getLocale();
             if (locale != null) {
                 mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
