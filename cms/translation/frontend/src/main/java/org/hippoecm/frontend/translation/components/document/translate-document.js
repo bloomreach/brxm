@@ -306,14 +306,14 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
       for (var i = 0; i < this.dirty.length; i++) {
         this.dirty[i].markDirty();
       }
-    }, this);
-    this.store.on('save', function() {
       this.dirty = [];
     }, this);
     this.on('render', function() {
       var self = this;
       Hippo.Translation.WicketHook.addListener(this.getEl().id, function() {
-        self.store.save();
+        if (self.dirty.length > 0) {
+            self.store.save();
+        }
       });
     }, this);
   },
