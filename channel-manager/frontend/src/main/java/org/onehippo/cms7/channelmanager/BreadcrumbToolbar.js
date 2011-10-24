@@ -11,8 +11,7 @@ Ext.namespace('Hippo.ChannelManager');
 Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
 
     constructor: function(config) {
-        this.breadcrumbStack = [];
-        this.availableItems = 0;
+        this.breadcrumbStackSize = 0;
         this.breadcrumbIconUrl = config.breadcrumbIconUrl;
 
         if (typeof config.items === 'undefined') {
@@ -22,14 +21,9 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         Hippo.ChannelManager.BreadcrumbToolbar.superclass.constructor.call(this, config);
     },
 
-    initComponent: function() {
-        Hippo.ChannelManager.BreadcrumbToolbar.superclass.initComponent.call(this);
-    },
-
-    createBreadcrumbItem: function(visible) {
-        console.log('breadcrumbIconUrl: '+this.breadcrumbIconUrl);
-        this.add({
-            id: 'breadcrumb-item'+this.availableItems,
+    createBreadcrumbItem: function(text) {
+        var item = this.add({
+            id: 'breadcrumb-item'+this.breadcrumbStackSize,
             cls: 'breadcrumb-item',
             icon: this.breadcrumbIconUrl,
             margins: {
@@ -38,54 +32,33 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 bottom: 0,
                 left: 0
             },
+            disabled: true,
+            text: text,
             scope: this
         });
         this.doLayout();
-        this.availableItems++;
+        this.breadcrumbStackSize++;
+        return item;
     },
 
     getBreadcrumbItem: function(index) {
-        if (index > this.availableItems) {
+        if (index >= this.breadcrumbStackSize) {
             return false;
         }
-        console.log('getBreadcrumbItem'+index);
         return this.getComponent('breadcrumb-item'+index);
     },
 
-    showBreadcrumbItem: function(index) {
-        if (index > this.availableItems) {
-            return false;
-        }
-        document.getElementById('breadcrumb-item'+index).style.visibility = 'visible';
-        return true;
-    },
-
-    hideBreadcrumbItem: function(index) {
-        if (index > this.availableItems) {
-            return false;
-        }
-        document.getElementById('breadcrumb-item'+index).style.visibility = 'hidden';
-        return true;
-    },
-
-    // public used methods
+    // public methods:
 
     pushItem: function(config) {
-        var index = this.breadcrumbStack.length;
-        if (index + 1 > this.availableItems) {
-            this.createBreadcrumbItem();
-        }
+        var index = this.breadcrumbStackSize;
 
-        this.breadcrumbStack.push(config);
-        var breadcrumbItem = this.getBreadcrumbItem(index);
-        breadcrumbItem.setDisabled(true);
-        breadcrumbItem.setText(config.text);
-        breadcrumbItem.purgeListeners();
+        var breadcrumbItem = this.createBreadcrumbItem(config.text);
         breadcrumbItem.on('click', function() {
-            if (index === this.breadcrumbStack.length) {
+            if (index === this.breadcrumbStackSize) {
                 return;
             }
-            while (index+1 < this.breadcrumbStack.length) {
+            while (index+1 < this.breadcrumbStackSize) {
                 this.popItem();
             }
             if (config.scope) {
@@ -94,9 +67,6 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 config.click.apply(config, arguments);
             }
         }, this);
-        if (this.rendered) {
-            this.showBreadcrumbItem(index);
-        }
 
         for (var i=0; i<index; i++) {
             breadcrumbItem = this.getBreadcrumbItem(i);
@@ -105,26 +75,18 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
     },
 
     popItem: function() {
-        if (this.breadcrumbStack.length === 0) {
+        if (this.breadcrumbStackSize === 0) {
             return null;
         }
-        var config = this.breadcrumbStack.pop();
-        this.hideBreadcrumbItem(this.breadcrumbStack.length);
-        if (this.breadcrumbStack.length === 1) {
-            var lastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStack.length - 1);
-            lastBreadcrumbItem.setDisabled(true);
-        }
-        return config;
-    },
 
-    clearBreadcrumb: function() {
-        for (var i=0, len=this.breadcrumbStack.length; i<len; i++) {
-            this.hideBreadcrumbItem(i);
+        var lastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
+        this.remove(lastBreadcrumbItem);
+        this.breadcrumbStackSize--;
+        if (this.breadcrumbStackSize === 1) {
+            var newLastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
+            newLastBreadcrumbItem.setDisabled(true);
         }
-    },
-
-    getSize: function() {
-        return this.breadcrumbStack.length;
+        return lastBreadcrumbItem;
     }
 
 });
