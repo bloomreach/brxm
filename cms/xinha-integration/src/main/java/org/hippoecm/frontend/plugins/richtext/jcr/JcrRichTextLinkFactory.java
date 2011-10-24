@@ -97,14 +97,6 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         }
     }
 
-    public void delete(RichTextLink link) {
-        try {
-            nodeModel.getNode().getNode(link.getName()).remove();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-    }
-
     public boolean isValid(IDetachable targetId) {
         if (!(targetId instanceof JcrNodeModel)) {
             return false;

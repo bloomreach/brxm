@@ -87,16 +87,6 @@ public class XinhaLinkService implements IDetachable {
 
         public void save() {
             if (isAttacheable()) {
-                if (isReplacing()) {
-                    Map<String, String> values = getInitialValues();
-                    String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
-                    try {
-                        RichTextLink rtl = factory.loadLink(relPath);
-                        factory.delete(rtl);
-                    } catch (RichTextException e) {
-                        log.error("Error removing existing link");
-                    }
-                }
                 try {
                     RichTextLink rtl = factory.createLink(getLinkTarget());
                     setHref(RichTextUtil.encode(rtl.getName()));
@@ -107,14 +97,6 @@ public class XinhaLinkService implements IDetachable {
         }
 
         public void delete() {
-            Map<String, String> values = getInitialValues();
-            String relPath = RichTextUtil.decode(values.get(XinhaLink.HREF));
-            try {
-                RichTextLink rtl = factory.loadLink(relPath);
-                factory.delete(rtl);
-            } catch (RichTextException e) {
-                log.error("Could not delete link");
-            }
             setHref(null);
         }
 

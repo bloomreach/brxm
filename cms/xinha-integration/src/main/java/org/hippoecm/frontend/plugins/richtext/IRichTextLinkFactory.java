@@ -33,6 +33,4 @@ public interface IRichTextLinkFactory extends IDetachable {
 
     RichTextLink loadLink(String relPath) throws RichTextException;
 
-    void delete(RichTextLink link);
-
 }

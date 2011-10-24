@@ -118,20 +118,6 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         return false;
     }
 
-    public void delete(RichTextImage image) {
-        Node node = nodeModel.getNode();
-        String facet = image.getName();
-        try {
-            if (node.hasNode(facet)) {
-                Node imgNode = node.getNode(facet);
-                imgNode.remove();
-                node.getSession().save();
-            }
-        } catch (RepositoryException e) {
-            log.error("An error occured while trying to save new image facetSelect[" + image.getName() + "]", e);
-        }
-    }
-
     public boolean isValid(IDetachable targetId, String facetSelectPath) {
         if (!isValid(targetId)) {
             return false;

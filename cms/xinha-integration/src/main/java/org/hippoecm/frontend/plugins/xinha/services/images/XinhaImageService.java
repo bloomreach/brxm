@@ -80,12 +80,6 @@ public class XinhaImageService implements IDetachable {
 
             public void save() {
                  if (isAttacheable() || !isSameType(getType())) {
-                    if (isReplacing()) {
-                        RichTextImage remove = loadImageItem(getInitialValues());
-                        if (remove != null) {
-                            factory.delete(remove);
-                        }
-                    }
                     try {
                         RichTextImage item = createImageItem(getLinkTarget());
                         final String type = getType();
@@ -104,7 +98,6 @@ public class XinhaImageService implements IDetachable {
             public void delete() {
                 RichTextImage item = loadImageItem(this);
                 if (item != null) {
-                    factory.delete(item);
                     setFacetSelectPath("");
                     setUrl("");
                 }
