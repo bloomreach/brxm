@@ -35,13 +35,6 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
                 pack: 'left'
             }
         });
-        this.toolbar.pushItem({
-            text: 'Channel Manager',
-            click: function() {
-                this.layout.setActiveItem(0);
-            },
-            scope: this
-        });
 
         Ext.apply(config, {
             id: 'rootPanel',
@@ -55,6 +48,23 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         });
 
         Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
+
+        this.toolbar.pushItem({
+            card: this.items.get(0),
+            click: function() {
+                this.layout.setActiveItem(0);
+            },
+            scope: this
+        });
+        if (config.activeItem != 0) {
+            this.toolbar.pushItem({
+                card: this.items.get(config.activeItem),
+                click: function() {
+                    this.layout.setActiveItem(config.activeItem);
+                },
+                scope: this
+            });
+        }
     },
 
     initComponent: function() {
@@ -120,9 +130,9 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.layout.setActiveItem(0);
     },
 
-    showTemplateComposer: function(channelName) {
+    showTemplateComposer: function() {
         this.toolbar.pushItem({
-            text: channelName,
+            card: this.items.get(1),
             click: function() {
                 this.layout.setActiveItem(1);
             },
@@ -133,7 +143,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
 
     showConfigEditor: function() {
         this.toolbar.pushItem({
-            text: 'HST Configuration',
+            card: this.items.get(2),
             click: function() {
                 this.layout.setActiveItem(2);
             },

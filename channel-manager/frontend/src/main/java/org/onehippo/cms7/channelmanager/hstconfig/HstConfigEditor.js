@@ -25,6 +25,9 @@ Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
     constructor: function(config) {
         this.resources = config.resources;
 
+        this.title = config.title;
+        config.header = false;
+
         Ext.apply(config, {
             tbar: [
                 {
@@ -39,6 +42,11 @@ Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
         });
 
         Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
+
+
+        this.on('titlechange', function(panel, title) {
+            this.title = title;
+        });
     },
 
     initEditor: function(channelName) {

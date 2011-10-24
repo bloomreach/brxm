@@ -28,6 +28,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -123,10 +124,15 @@ public class PageEditor extends ExtPanel {
                 }
                 try {
                     final Object value = values.get(0);
-                    String editorManagerServiceId = config != null ? config.getString(IEditorManager.EDITOR_ID, "service.edit") : "service.edit";
+                    String editorManagerServiceId = config != null ? config.getString(IEditorManager.EDITOR_ID,
+                                                                                      "service.edit") : "service.edit";
                     IEditorManager editorManager = context.getService(editorManagerServiceId, IEditorManager.class);
-                    JcrNodeModel model = new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(value.toString()));
-                    IEditor<?> editor = editorManager.openEditor(model);
+                    JcrNodeModel model = new JcrNodeModel(
+                            UserSession.get().getJcrSession().getNodeByIdentifier(value.toString()));
+                    IEditor<?> editor = editorManager.getEditor(model);
+                    if (editor == null) {
+                        editor = editorManager.openEditor(model);
+                    }
                     editor.setMode(IEditor.Mode.EDIT);
                     editor.focus();
                 } catch (JSONException e) {
@@ -147,7 +153,9 @@ public class PageEditor extends ExtPanel {
 
     @Override
     public void buildInstantiationJs(StringBuilder js, String extClass, JSONObject properties) {
-        js.append(String.format(" try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert('Error', 'Error instantiating template composer. '+e); }; \n", getMarkupId(), getMarkupId(), extClass, properties.toString()));
+        js.append(String.format(
+                " try { Ext.namespace(\"%s\"); window.%s = new %s(%s); } catch (e) { Ext.Msg.alert('Error', 'Error instantiating template composer. '+e); }; \n",
+                getMarkupId(), getMarkupId(), extClass, properties.toString()));
     }
 
     @Override
@@ -159,14 +167,30 @@ public class PageEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
-        properties.put("iFrameErrorPage", Arrays.asList(rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
-        properties.put("iFrameCssHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()));
+        properties.put("iFrameErrorPage", Arrays.asList(
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
+        properties.put("iFrameCssHeadContributions", Arrays.asList(
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(),
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()));
         if (debug) {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(), rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
+            properties.put("iFrameJsHeadContributions", Arrays.asList(
+                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
+                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
+                    rc.urlFor(
+                            new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
+                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
-                    rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()));
+                    rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()));
         } else {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(), rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
+            properties.put("iFrameJsHeadContributions", Arrays.asList(
+                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
         }
     }
 
@@ -181,6 +205,10 @@ public class PageEditor extends ExtPanel {
     public void setChannel(String renderHost, String mountPath) {
         this.renderHost = renderHost;
         this.renderHostSubMountPath = mountPath;
+    }
+
+    public void setChannelName(String name) {
+        setTitle(new Model(name));
     }
 
     public Boolean getPreviewMode() {

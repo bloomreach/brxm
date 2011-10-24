@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager;
 
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
@@ -37,14 +38,14 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
 
-    public enum Card {
+    public enum CardId {
         CHANNEL_MANAGER(0),
         TEMPLATE_COMPOSER(1),
         HST_CONFIG_EDITOR(2);
 
         private Integer tabIndex;
 
-        private Card(Integer tabIndex) {
+        private CardId(Integer tabIndex) {
             this.tabIndex = tabIndex;
         }
 
@@ -73,6 +74,8 @@ public class RootPanel extends ExtPanel {
 
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
+        channelManagerCard.setTitle(new Model("Channel Manager"));
+        channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
@@ -126,7 +129,7 @@ public class RootPanel extends ExtPanel {
         return this.pageEditor;
     }
 
-    public void setActiveCard(Card rootPanelCard) {
+    public void setActiveCard(CardId rootPanelCard) {
         this.activeItem = rootPanelCard.tabIndex;
     }
 

@@ -55,6 +55,8 @@ public class HstConfigEditor extends ExtPanel {
     public HstConfigEditor(final IPluginContext context) {
         this.context = context;
 
+        setTitle(new Model("HST Configuration"));
+
         add(new HstConfigEditorResourceBehaviour());
 
         container = new WebMarkupContainer("hst-config-editor-container");

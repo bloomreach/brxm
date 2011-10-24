@@ -21,7 +21,7 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         Hippo.ChannelManager.BreadcrumbToolbar.superclass.constructor.call(this, config);
     },
 
-    createBreadcrumbItem: function(text) {
+    createBreadcrumbItem: function(card) {
         var item = this.add({
             id: 'breadcrumb-item'+this.breadcrumbStackSize,
             cls: 'breadcrumb-item',
@@ -33,9 +33,12 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 left: 0
             },
             disabled: true,
-            text: text,
+            text: card.title,
             scope: this
         });
+        item.card = card;
+        card.on('titlechange', this._onTitleChange, item);
+        
         this.doLayout();
         this.breadcrumbStackSize++;
         return item;
@@ -48,12 +51,20 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         return this.getComponent('breadcrumb-item'+index);
     },
 
+    /**
+     * listener to be invoked with breadcrumbitem scope
+     * Updates the title of the breadcrumb
+     */
+    _onTitleChange: function(panel, title) {
+          this.setText(title);
+    },
+                              
     // public methods:
 
     pushItem: function(config) {
         var index = this.breadcrumbStackSize;
 
-        var breadcrumbItem = this.createBreadcrumbItem(config.text);
+        var breadcrumbItem = this.createBreadcrumbItem(config.card);
         breadcrumbItem.on('click', function() {
             if (index === this.breadcrumbStackSize) {
                 return;
@@ -64,7 +75,7 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             if (config.scope) {
                 config.click.apply(config.scope, arguments);
             } else {
-                config.click.apply(config, arguments);
+                config.click.apply(breadcrumbItem, arguments);
             }
         }, this);
 
@@ -80,6 +91,10 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         }
 
         var lastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
+        
+        var card = lastBreadcrumbItem.card;
+        card.un('titlechange', this._onTitleChange, lastBreadcrumbItem);
+        
         this.remove(lastBreadcrumbItem);
         this.breadcrumbStackSize--;
         if (this.breadcrumbStackSize === 1) {
@@ -90,4 +105,4 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
     }
 
 });
-Ext.reg('Hippo.ChannelManager.BreadcrumbToolbar', Hippo.ChannelManager.RootPanel);
+Ext.reg('Hippo.ChannelManager.BreadcrumbToolbar', Hippo.ChannelManager.BreadcrumbToolbar);

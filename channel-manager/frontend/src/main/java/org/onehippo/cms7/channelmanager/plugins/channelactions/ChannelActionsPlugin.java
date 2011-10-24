@@ -205,7 +205,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     }
                 }
 
-                channelManagerService.viewChannel(uri.getHost(), path);
+                channelManagerService.viewChannel(uri.getHost(), path, channelDocument.getChannelName());
             } catch (URISyntaxException e) {
                 log.warn("Error while opening document in channel, invalid URI: '{}'", channelDocument.getCanonicalUrl());
             }

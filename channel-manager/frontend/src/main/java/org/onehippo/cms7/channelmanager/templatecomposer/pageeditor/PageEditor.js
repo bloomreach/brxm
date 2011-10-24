@@ -23,11 +23,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.Ajax.timeout = 90000; // this changes the 30 second default to 90 seconds
         }
 
+        this.title = config.title;
+        config.header = false;
+
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
 
         this.initUI(config);
 
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.constructor.call(this, config);
+
+        this.on('titlechange', function(panel, title) {
+            this.title = title;
+        });
 
         this.relayEvents(this.pageContainer, [
             'mountChanged',
@@ -86,14 +93,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                         fn : this.pageContainer.publishHstConfiguration,
                                         scope: this.pageContainer
                                     }
-                                }
-                            },
-                            {
-                                id: 'channelName',
-                                xtype: 'tbtext',
-                                text: '',
-                                style: {
-                                    marginLeft: '150px'
                                 }
                             }
                         ]
@@ -206,17 +205,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (typeof this.showTitleSwitchTimeout !== 'undefined') {
             window.clearTimeout(this.showTitleSwitchTimeout);
         }
-        var oldName = this.channelName;
-        this.channelName = name;
-        var channelNameText = Ext.getCmp('channelName');
-        if (typeof oldName !== 'undefined' && oldName !== null) {
-            channelNameText.setText(this.resources['channel-switch-text'].format(oldName, name));
-            this.showTitleSwitchTimeout = window.setTimeout(function() {
-                channelNameText.setText(name);
-            }, 5000);
-        } else {
-            channelNameText.setText(name);
-        }
+        this.setTitle(name);
     },
 
     createMainWindow : function(mountId) {

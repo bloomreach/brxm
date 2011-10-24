@@ -14,6 +14,6 @@ public interface IChannelManagerService extends IClusterable {
      * @param renderHost the host the channel is shown at
      * @param mountPath the mount path to a location inside the channel (without a context path)
      */
-    public void viewChannel(String renderHost, String mountPath);
+    public void viewChannel(String renderHost, String mountPath, String channelName);
 
 }
