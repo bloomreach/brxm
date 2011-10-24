@@ -70,7 +70,7 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         expect(mockModelReference.getModel()).andReturn(mockModel);
         mockModel.detach();
-        expectLastCall().times(3);
+        expectLastCall().times(2);
 
         mockBrowseService.browse(isA(JcrNodeModel.class));
         mockRenderService.focus(null);
