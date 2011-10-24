@@ -151,7 +151,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 text: this.initialConfig.resources['publish-button'],
                 iconCls: 'title-button',
                 width: 150,
-                disabled: !this.pageContainer.pageContext.hasPreviewHstConfig,
+                hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
                 listeners: {
                     click: {
                         fn : this.pageContainer.publishHstConfiguration,
