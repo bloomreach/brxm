@@ -17,6 +17,7 @@ package org.hippoecm.hst.jaxrs.services;
 
 import java.util.List;
 
+import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -169,7 +170,8 @@ public abstract class AbstractResource {
     }
     
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
-        return new WorkflowPersistenceManagerImpl(requestContext.getSession(), getObjectConverter(requestContext));
+        Session persistableSession =  getPersistableSession(requestContext);
+        return new WorkflowPersistenceManagerImpl(persistableSession, getObjectConverter(requestContext));
     }
     
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
@@ -362,5 +364,39 @@ public abstract class AbstractResource {
         }
         return nodeLink;
     }
+    
+    /**
+     * Creates a persistable JCR session with the default credentials
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param requestContext
+     * @return
+     */
+    protected Session getPersistableSession(HstRequestContext requestContext) throws RepositoryException {
+        Credentials credentials = requestContext.getContextCredentialsProvider().getWritableCredentials(requestContext);
+        return getPersistableSession(requestContext, credentials);
+    }
+    
+    /**
+     * Creates a persistable JCR session with provided credentials.
+     * <P>
+     * <EM>Note: The client should invoke <CODE>logout()</CODE> method on the session after use.</EM>
+     * </P>
+     * <P>
+     * Internally, {@link javax.jcr.Session#impersonate(Credentials)} method will be used to create a
+     * persistable JCR session. The method is invoked on the session from the session pooling repository.
+     * </P>
+     * @param requestContext
+     * @return
+     */
+    protected Session getPersistableSession(HstRequestContext requestContext, Credentials credentials) throws RepositoryException {
+        return requestContext.getSession().impersonate(credentials);
+    }
+    
     
 }
