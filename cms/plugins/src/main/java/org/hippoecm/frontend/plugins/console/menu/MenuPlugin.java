@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
+import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +129,14 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             }
         };
         add(new DialogLink("copy-dialog", new Model<String>("Copy Node"), dialogFactory, dialogService));
+        
+//        dialogFactory = new IDialogFactory() {
+//            private static final long serialVersionUID = 1L;
+//            @Override public Dialog createDialog() {
+//                return new T9idsDialog(new NodeModelReference(MenuPlugin.this, (JcrNodeModel)getDefaultModel()));
+//            }
+//        };
+//        add(new DialogLink("t9ids-dialog", new Model<String>("Generate new t9 ids"), dialogFactory, dialogService));
     }
 
     @Override

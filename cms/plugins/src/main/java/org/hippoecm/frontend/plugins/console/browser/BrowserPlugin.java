@@ -33,6 +33,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -48,6 +49,7 @@ import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
+import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
@@ -258,13 +260,13 @@ public class BrowserPlugin extends RenderPlugin {
             menuContainer.add(iconRenameNode);
 
             // xml export
-            IDialogFactory factory1 = new IDialogFactory() {
+            dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public IDialogService.Dialog createDialog() {
                     return new ContentExportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), factory1, getDialogService()));
+            menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), dialogFactory, getDialogService()));
             // xml export icon
             Image iconXmlExport = new Image("icon-xml-export") {
                 private static final long serialVersionUID = 1L;
@@ -276,13 +278,13 @@ public class BrowserPlugin extends RenderPlugin {
             iconXmlExport.setOutputMarkupId(true);
             menuContainer.add(iconXmlExport);
             // xml import
-            IDialogFactory factory2 = new IDialogFactory() {
+            dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 public IDialogService.Dialog createDialog() {
                     return new ContentImportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), factory2, getDialogService()));
+            menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), dialogFactory, getDialogService()));
             // xml import icon
             Image iconXmlImport = new Image("icon-xml-import") {
                 private static final long serialVersionUID = 1L;
@@ -293,6 +295,15 @@ public class BrowserPlugin extends RenderPlugin {
             };
             iconXmlImport.setOutputMarkupId(true);
             menuContainer.add(iconXmlImport);
+            // generate t9ids
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+                @Override public Dialog createDialog() {
+                    return new T9idsDialog(new NodeModelReference(BrowserPlugin.this, model));
+                }
+                
+            };
+            menuContainer.add(new DialogLink("t9ids", new Model<String>("Generate new t9 ids"), dialogFactory, getDialogService()));
             return menuContainer;
         }
 

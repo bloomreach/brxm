@@ -15,7 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.copy;
 
+import java.util.UUID;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +36,11 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
+import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationIdsVisitor;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +52,7 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     private String name;
+    private Boolean generate;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
@@ -69,6 +79,11 @@ public class CopyDialog extends LookupDialog {
                 TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel<String>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
+                
+                LabelledBooleanFieldWidget checkbox = new LabelledBooleanFieldWidget("generate", 
+                        new PropertyModel<Boolean>(this, "generate"), 
+                        new Model<String>("Generate new translation ids"));
+                add(checkbox);
             } else {
                 add(new Label("source", "Cannot copy the root node"));
                 add(new EmptyPanel("target"));
@@ -88,7 +103,7 @@ public class CopyDialog extends LookupDialog {
     public IModel getTitle() {
         return new Model<String>("Copy Node");
     }
-
+        
     @Override
     public void onSelect(IModel<Node> model) {
         if (model != null) {
@@ -130,6 +145,11 @@ public class CopyDialog extends LookupDialog {
 
                 Node rootNode = nodeModel.getNode().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
+                
+                if (generate) {
+                    targetNode.accept(new GenerateNewTranslationIdsVisitor());
+                }
+                
                 modelReference.setModel(new JcrNodeModel(targetNode));
             }
         } catch (RepositoryException ex) {

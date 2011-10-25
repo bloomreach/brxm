@@ -1619,6 +1619,10 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialog.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialogLink.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/save/SaveDialogLink.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/GenerateNewTranslationIdsVisitor.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog.java -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog.properties -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.html svneol=native#text/plain
