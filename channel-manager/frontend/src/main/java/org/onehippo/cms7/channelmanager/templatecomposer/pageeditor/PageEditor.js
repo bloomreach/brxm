@@ -138,7 +138,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             });
-
+            Ext.getCmp('previousLiveNotification').hide();
             this.mainWindow.show();
         } else {
             toolbar.add({
@@ -169,12 +169,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             if (this.mainWindow) {
                 this.mainWindow.hide();
             }
-        }
-
-        if (this.pageContainer.pageContext.hasPreviewHstConfig) {
-            Ext.getCmp('previousLiveNotification').show();
-        } else {
-            Ext.getCmp('previousLiveNotification').hide();
+            if (this.pageContainer.pageContext.hasPreviewHstConfig) {
+                Ext.getCmp('previousLiveNotification').show();
+            } else {
+                Ext.getCmp('previousLiveNotification').hide();
+            }
         }
 
         toolbar.doLayout();
@@ -230,7 +229,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     createMainWindow : function(mountId) {
         var window1 = new Hippo.ux.window.FloatingWindow({
             title: this.resources['main-window-title'],
-            x:10, y: 35,
+            x:10, y: 65,
             width: 310,
             height: 650,
             initRegion: 'right',
