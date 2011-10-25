@@ -52,18 +52,28 @@
     
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+      <artifactId>geronimo-stax-api_1.2_spec</artifactId>
     </dependency>
+    
+    <!-- STAX Implementation -->
     
     <dependency>
       <groupId>stax</groupId>
       <artifactId>stax</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>stax</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+    
+    <!-- STAX2 API -->
+    
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>stax2-api</artifactId>
+    </dependency>
+    
+    <!-- STAX2 Implementation -->
+    
+    <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>woodstox-core-asl</artifactId>
     </dependency>
     
     <!-- JAXB API -->
