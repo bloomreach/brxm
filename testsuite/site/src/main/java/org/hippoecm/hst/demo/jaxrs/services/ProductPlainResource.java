@@ -30,7 +30,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -56,7 +55,7 @@ public class ProductPlainResource extends AbstractResource {
     @Path("/{productType}/")
     public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             @PathParam("productType") String productType,
-            @MatrixParam("sitelink") @DefaultValue("true") String siteLink) {
+            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
         
@@ -67,7 +66,7 @@ public class ProductPlainResource extends AbstractResource {
             String mountContentPath = requestContext.getResolvedMount().getMount().getContentPath();
             Node mountContentNode = requestContext.getSession().getRootNode().getNode(PathUtils.normalizePath(mountContentPath));
             
-            HstQuery hstQuery = hstQueryManager.createQuery(mountContentNode, ProductBean.class);
+            HstQuery hstQuery = hstQueryManager.createQuery(mountContentNode, ProductBean.class, true);
             Filter filter = hstQuery.createFilter();
             filter.addEqualTo("demosite:product", productType);
             hstQuery.setFilter(filter);
@@ -84,7 +83,7 @@ public class ProductPlainResource extends AbstractResource {
                     ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
                     productRep.addLink(getNodeLink(requestContext, productBean));
                     
-                    if (BooleanUtils.toBoolean(siteLink)) {
+                    if (siteLink) {
                         productRep.addLink(getSiteLink(requestContext, productBean));
                     }
                     

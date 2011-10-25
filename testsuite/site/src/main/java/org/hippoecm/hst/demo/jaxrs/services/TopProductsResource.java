@@ -53,7 +53,7 @@ public class TopProductsResource extends AbstractResource {
     @GET
     @Path("/")
     public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @MatrixParam("max") @DefaultValue("10") String maxParam) {
+            @MatrixParam("max") @DefaultValue("10") int max) {
         
         List<ProductRepresentation> productRepList = new ArrayList<ProductRepresentation>();
         HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -63,9 +63,9 @@ public class TopProductsResource extends AbstractResource {
             Node mountContentNode = requestContext.getSession().getRootNode().getNode(PathUtils.normalizePath(mountContentPath));
             
             HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
-            HstQuery hstQuery = manager.createQuery(mountContentNode, ProductBean.class);
+            HstQuery hstQuery = manager.createQuery(mountContentNode, ProductBean.class, true);
             hstQuery.addOrderByDescending("demosite:price");
-            hstQuery.setLimit(NumberUtils.toInt(maxParam, 10));
+            hstQuery.setLimit(max);
             
             HstQueryResult result = hstQuery.execute();
             HippoBeanIterator iterator = result.getHippoBeans();
