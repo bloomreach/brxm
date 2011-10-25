@@ -8,6 +8,8 @@ public class PageEditorBundle {
 
     public static final String FUTURE = "future.js";
 
+    public static final String NOTIFICATION = "Notification.js";
+
     public static final String MSG = "Hippo.Msg.js";
 
     public static final String REST_STORE = "RestStore.js";

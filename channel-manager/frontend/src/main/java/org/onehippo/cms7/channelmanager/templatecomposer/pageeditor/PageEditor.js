@@ -61,6 +61,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         items: [
                         ]
                     }
+                },
+                {
+                    id: 'previousLiveNotification',
+                    xtype: 'Hippo.ChannelManager.TemplateComposer.Notification',
+                    alignToElementId: 'pageEditorToolbar',
+                    message: config.resources['previous-live-msg']
                 }
             ]
         });
@@ -165,16 +171,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         }
 
+        if (this.pageContainer.pageContext.hasPreviewHstConfig) {
+            Ext.getCmp('previousLiveNotification').show();
+        } else {
+            Ext.getCmp('previousLiveNotification').hide();
+        }
+
         toolbar.doLayout();
     },
 
     disableUI: function() {
         var toolbar = Ext.getCmp('pageEditorToolbar');
-        toolbar.removeAll();
-
-        toolbar.removeAll();
-        toolbar.doLayout();
-
+        toolbar.items.each(function(item) {
+            item.disable();
+        });
         Hippo.Msg.wait(this.resources['loading-message']);
     },
 

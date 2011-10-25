@@ -132,21 +132,29 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 url: self.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?'+self.ignoreRenderHostParameterName+'=true',
                 success: callback,
                 failure: function(exceptionObject) {
-                    if (exceptionObject.isTimeout && retry > 0) {
-                        retry = retry - Ext.Ajax.timeout;
-                        window.setTimeout(function() {
-                            composerMode(callback);
-                        }, Ext.Ajax.timeout);
+                    if (exceptionObject.isTimeout) {
+                        if (retry > 0) {
+                                retry = retry - Ext.Ajax.timeout;
+                                window.setTimeout(function() {
+                                    composerMode(callback);
+                                }, Ext.Ajax.timeout);
+                        } else {
+                            Hippo.Msg.hide();
+                            Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'], function(id) {
+                                if (id === 'yes') {
+                                    retry = self.initialHstConnectionTimeout;
+                                    Hippo.Msg.wait(self.resources['loading-message']);
+                                    composerMode(callback);
+                                } else {
+                                    self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
+                                }
+                            });
+                        }
                     } else {
-                        Hippo.Msg.hide();
-                        Hippo.Msg.confirm(self.resources['hst-timeout-message-title'], self.resources['hst-timeout-message'], function(id) {
-                            if (id === 'yes') {
-                                retry = self.initialHstConnectionTimeout;
-                                Hippo.Msg.wait(self.resources['loading-message']);
-                                composerMode(callback);
-                            } else {
-                                self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-timeout-iframe-exception']}]);
-                            }
+                        console.error(exceptionObject);
+                        console.error(self.resources['hst-exception']+' status: "'+exceptionObject.status+'", statusText: "'+exceptionObject.statusText+'"');
+                        Hippo.Msg.alert(self.resources['hst-exception-title'], self.resources['hst-exception'], function() {
+                            self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
                         });
                     }
                 }
@@ -213,7 +221,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                     },
                     failure: function(result) {
                         var jsonData = Ext.util.JSON.decode(result.responseText);
-                        Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message, function() {
+                        console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                        Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
                             self.initComposer.call(self);
                         });
                     }
@@ -233,7 +242,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             },
             failure: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText);
-                Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message']+' '+jsonData.message, function() {
+                console.error(self.resources['published-hst-config-failed-message']+' '+jsonData.message);
+                Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message'], function() {
                     self.initComposer.call(self);
                 });
             }
@@ -448,7 +458,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 this._handleEdit(msg.data.uuid);
             }
         } catch(e) {
-            Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'].format(msg.tag)+' '+e, function() {
+            console.error(this.resources['iframe-event-handle-error']+' Message tag: '+msg.tag+'. '+e);
+            Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
                 self.initComposer.call(self);
             });
             console.error(e);

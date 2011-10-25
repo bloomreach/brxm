@@ -66,6 +66,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageEditor.js -text
