@@ -42,7 +42,7 @@ public class HippoFacetSubNavigationContentResource extends HippoFacetNavigation
     public HippoFacetChildNavigationRepresentation getFacetNavigationResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            HippoFacetChildNavigationBean facetChildNavBean = (HippoFacetChildNavigationBean) getRequestContentBean(requestContext);
+            HippoFacetChildNavigationBean facetChildNavBean = getRequestContentBean(requestContext, HippoFacetChildNavigationBean.class);
             HippoFacetChildNavigationRepresentation facetChildNavRep = new HippoFacetChildNavigationRepresentation().represent(facetChildNavBean);
             facetChildNavRep.addLink(getNodeLink(requestContext, facetChildNavBean));
             facetChildNavRep.addLink(getSiteLink(requestContext, facetChildNavBean));

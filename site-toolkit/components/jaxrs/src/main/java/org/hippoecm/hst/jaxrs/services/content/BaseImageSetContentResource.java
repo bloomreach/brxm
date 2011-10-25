@@ -78,7 +78,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
     public HippoGalleryImageSetRepresentation getImageSetResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
+            HippoGalleryImageSetBean imageSetBean = getRequestContentBean(requestContext, HippoGalleryImageSetBean.class);
             HippoGalleryImageSetRepresentation imageRep = new HippoGalleryImageSetRepresentation().represent(imageSetBean);
             imageRep.addLink(getMountLink(requestContext, imageSetBean, MOUNT_ALIAS_GALLERY, null));
             imageRep.addLink(getSiteLink(requestContext, imageSetBean));
@@ -101,8 +101,8 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             @MatrixParam("subpath") String subPath) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
-            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
+            HippoGalleryImageSetBean imageSetBean = getRequestContentBean(requestContext, HippoGalleryImageSetBean.class);
+            HippoGalleryImageBean childImageBean = imageSetBean.getBean(imageName, HippoGalleryImageBean.class);
             
             if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -137,8 +137,8 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             @PathParam("imageName") String imageName) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
-            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
+            HippoGalleryImageSetBean imageSetBean = getRequestContentBean(requestContext, HippoGalleryImageSetBean.class);
+            HippoGalleryImageBean childImageBean = imageSetBean.getBean(imageName, HippoGalleryImageBean.class);
             
             if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -187,8 +187,8 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             InputStream childResourceContentStream) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
-            HippoGalleryImageBean childImageBean = (HippoGalleryImageBean) imageSetBean.getBean(imageName);
+            HippoGalleryImageSetBean imageSetBean = getRequestContentBean(requestContext, HippoGalleryImageSetBean.class);
+            HippoGalleryImageBean childImageBean = imageSetBean.getBean(imageName, HippoGalleryImageBean.class);
             
             if (childImageBean == null) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);

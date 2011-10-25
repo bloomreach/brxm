@@ -131,8 +131,8 @@ public class ImageSetContentResource extends BaseImageSetContentResource {
         
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            HippoGalleryImageSetBean imageSetBean = (HippoGalleryImageSetBean) getRequestContentBean(requestContext);
-            HippoGalleryImageBean originalImageBean = (HippoGalleryImageBean) imageSetBean.getBean("hippogallery:original");
+            HippoGalleryImageSetBean imageSetBean = getRequestContentBean(requestContext, HippoGalleryImageSetBean.class);
+            HippoGalleryImageBean originalImageBean = imageSetBean.getBean("hippogallery:original", HippoGalleryImageBean.class);
             String originalImageMimeType = originalImageBean.getMimeType();
             originalImageInputStream = originalImageBean.getNode().getProperty("jcr:data").getBinary().getStream();
             thumbnailImageInputStream = HippoGalleryImageThumbnailCreator.createThumbnail(originalImageInputStream, thumbnailSize, originalImageMimeType);

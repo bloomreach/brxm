@@ -30,7 +30,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface JAXRSService {
 	
 	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.jaxrs.request.contentPath";
-	String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.jaxrs.request.contentNode";
+    String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.jaxrs.request.contentNode";
+    String REQUEST_CONTENT_BEAN_KEY = "org.hippoecm.hst.jaxrs.request.contentBean";
+    String REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY = "org.hippoecm.hst.jaxrs.request.contentSiteBaseBean";
 	
 	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
 }

@@ -45,7 +45,7 @@ public class HippoFacetNavigationContentResource extends HippoFolderContentResou
     public HippoFacetNavigationRepresentation getFacetNavigationResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
-            HippoFacetNavigationBean facetNavBean = (HippoFacetNavigationBean) getRequestContentBean(requestContext);
+            HippoFacetNavigationBean facetNavBean = getRequestContentBean(requestContext, HippoFacetNavigationBean.class);
             HippoFacetNavigationRepresentation facetNavRep = new HippoFacetNavigationRepresentation().represent(facetNavBean);
             facetNavRep.addLink(getNodeLink(requestContext, facetNavBean));
             facetNavRep.addLink(getSiteLink(requestContext, facetNavBean));

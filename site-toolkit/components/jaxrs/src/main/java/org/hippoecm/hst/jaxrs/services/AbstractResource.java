@@ -17,6 +17,7 @@ package org.hippoecm.hst.jaxrs.services;
 
 import java.util.List;
 
+import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -24,18 +25,22 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
+import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
@@ -169,6 +174,90 @@ public abstract class AbstractResource {
     
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+    }
+    
+    /**
+     * Returns the content HippoBean of type T for the current request. If there cannot be found a bean of type <code>beanMappingClass<code> for the relative content path of the
+     * resolved sitemap item  a ObjectBeanManagerException is thrown
+     * If there is no resolved sitemap item, <code>null</code> is returned. 
+     * @param <T>
+     * @param requestContext
+     * @param beanMappingClass
+     * @throws ObjectBeanManagerException when there cannot be returned a bean
+     * @return a bean of type T 
+     */
+    protected <T extends HippoBean> T getRequestContentBean(HstRequestContext requestContext, Class<T> beanMappingClass) throws ObjectBeanManagerException {
+        HippoBean bean = getRequestContentBean(requestContext);
+        if(bean == null) {
+            throw new ObjectBeanManagerException("Cannot return bean of type '"+beanMappingClass+"'");
+        }
+        if(!beanMappingClass.isAssignableFrom(bean.getClass())) {
+            log.debug("Expected bean of type '{}' but found of type '{}'. Return null.", beanMappingClass.getName(), bean.getClass().getName());
+            throw new ObjectBeanManagerException("Cannot return bean of type '"+beanMappingClass+"'");
+        }
+        return (T)bean;
+    }
+
+    /**
+     * Returns the content HippoBean for the current request. If there cannot be found a bean for the relative content path of the
+     * resolved sitemap item a ObjectBeanManagerException is thrown
+     * If there is no resolved sitemap item, <code>null</code> is returned. 
+     * @param requestContext
+     * @param beanMappingClass 
+     * @throws ObjectBeanManagerException when there cannot be returned a bean
+     * @return the HippoBean where the relative contentpath of the sitemap item points to
+     */
+    protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
+        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY) != null) {
+            return (HippoBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY);
+        }
+            
+            
+        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        if (resolvedSiteMapItem == null) {
+           log.debug("No content bean for '{}' because sitemap item is null", requestContext.getBaseURL().getRequestPath());
+        }
+           
+        String contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+        String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath() + "/" + (contentPathInfo != null ? contentPathInfo : "");
+        requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
+        
+        try {
+            HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
+
+            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
+            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
+            
+            return bean;
+        } catch (ObjectBeanManagerException e) {
+            throw e;
+        } catch (RepositoryException e) {
+            throw new ObjectBeanManagerException(e);
+        }
+        
+    }
+
+    /**
+     * 
+     * @param requestContext
+     * @throws ObjectBeanManagerException when there cannot be returned a site content base bean
+     * @return the siteContentBaseBean 
+     */
+    public HippoFolderBean getSiteContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
+        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY) != null) {
+            return (HippoFolderBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY);
+        }
+        String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath();
+        
+        try {
+            HippoFolderBean bean = (HippoFolderBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
+            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY, bean);
+            return bean;
+        } catch (ObjectBeanManagerException e) {
+            throw e;
+        } catch (RepositoryException e) {
+            throw new ObjectBeanManagerException(e);
+        }
     }
     
     protected String deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {

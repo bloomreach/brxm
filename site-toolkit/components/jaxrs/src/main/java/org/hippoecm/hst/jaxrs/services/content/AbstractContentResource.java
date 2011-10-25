@@ -63,20 +63,6 @@ public abstract class AbstractContentResource extends AbstractResource {
     	return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
     }
     
-    protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        String requestContentPath = (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
-        ObjectBeanPersistenceManager obpm = null;
-        
-        try {
-            obpm = (ObjectBeanPersistenceManager) getContentPersistenceManager(requestContext);
-        } catch (RepositoryException e) {
-            throw new ObjectBeanManagerException(e);
-        }
-        
-        return (HippoBean) obpm.getObject(requestContentPath);
-        
-    }
-
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
         HippoBean child = baseBean.getBean(relPath);
         
