@@ -17,7 +17,6 @@ package org.hippoecm.hst.jaxrs.services;
 
 import java.util.List;
 
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +44,7 @@ import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,12 +213,14 @@ public abstract class AbstractResource {
         }
             
             
+        String contentPathInfo = null;    
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem == null) {
-           log.debug("No content bean for '{}' because sitemap item is null", requestContext.getBaseURL().getRequestPath());
+            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+        } else {
+            contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
         }
            
-        String contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
         String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath() + "/" + (contentPathInfo != null ? contentPathInfo : "");
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
         

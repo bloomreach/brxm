@@ -17,19 +17,14 @@ package org.hippoecm.hst.jaxrs.cxf;
 
 import java.util.Map;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

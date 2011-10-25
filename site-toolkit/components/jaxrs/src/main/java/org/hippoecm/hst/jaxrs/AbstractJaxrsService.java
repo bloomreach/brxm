@@ -35,7 +35,6 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -45,6 +44,7 @@ import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,13 +214,13 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             return (HippoBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY);
         }
             
-            
+        String contentPathInfo = null;    
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem == null) {
-           log.debug("No content bean for '{}' because sitemap item is null", requestContext.getBaseURL().getRequestPath());
+            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+        } else {
+            contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
         }
-           
-        String contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
         String requestContentPath = getMountContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
         
