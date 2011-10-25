@@ -30,10 +30,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
@@ -62,11 +64,17 @@ public class ProductPlainResource extends AbstractResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
+           
+            HippoBean scope = null;
+            try {
+                // was there a sitemap item with a relative content path pointing to a bean. If so, use this as scope
+                scope = getRequestContentBean(requestContext);
+            } catch (ObjectBeanManagerException e) {
+                // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
+                scope = getSiteContentBaseBean(requestContext);
+            }
             
-            String mountContentPath = requestContext.getResolvedMount().getMount().getContentPath();
-            Node mountContentNode = requestContext.getSession().getRootNode().getNode(PathUtils.normalizePath(mountContentPath));
-            
-            HstQuery hstQuery = hstQueryManager.createQuery(mountContentNode, ProductBean.class, true);
+            HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);
             Filter filter = hstQuery.createFilter();
             filter.addEqualTo("demosite:product", productType);
             hstQuery.setFilter(filter);

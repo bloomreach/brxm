@@ -50,7 +50,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
     public TextDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            TextBean textBean = (TextBean) getRequestContentBean(requestContext);
+            TextBean textBean = getRequestContentBean(requestContext, TextBean.class);
             TextDocumentRepresentation docRep = new TextDocumentRepresentation().represent(textBean);
             docRep.addLink(getNodeLink(requestContext, textBean));
             docRep.addLink(getSiteLink(requestContext, textBean));

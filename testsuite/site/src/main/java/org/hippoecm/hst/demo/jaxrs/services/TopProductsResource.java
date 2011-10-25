@@ -29,10 +29,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.math.NumberUtils;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
@@ -59,11 +60,17 @@ public class TopProductsResource extends AbstractResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            String mountContentPath = requestContext.getResolvedMount().getMount().getContentPath();
-            Node mountContentNode = requestContext.getSession().getRootNode().getNode(PathUtils.normalizePath(mountContentPath));
+            HippoBean scope = null;
+            try {
+                // was there a sitemap item with a relative content path pointing to a bean. If so, use this as scope
+                scope = getRequestContentBean(requestContext);
+            } catch (ObjectBeanManagerException e) {
+                // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
+                scope = getSiteContentBaseBean(requestContext);
+            }
             
             HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
-            HstQuery hstQuery = manager.createQuery(mountContentNode, ProductBean.class, true);
+            HstQuery hstQuery = manager.createQuery(scope, ProductBean.class, true);
             hstQuery.addOrderByDescending("demosite:price");
             hstQuery.setLimit(max);
             

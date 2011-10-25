@@ -50,7 +50,7 @@ public class NewsDocumentContentResource extends BaseDocumentContentResource {
     public NewsDocumentRepresentation getDocumentResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            NewsBean newsBean = (NewsBean) getRequestContentBean(requestContext);
+            NewsBean newsBean = getRequestContentBean(requestContext, NewsBean.class);
             NewsDocumentRepresentation newsRep = new NewsDocumentRepresentation().represent(newsBean);
             newsRep.addLink(getNodeLink(requestContext, newsBean));
             newsRep.addLink(getSiteLink(requestContext, newsBean));

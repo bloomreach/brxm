@@ -50,7 +50,7 @@ public class ProductContentResource extends AbstractContentResource {
     public ProductRepresentation getProductResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);       
-            ProductBean productBean = (ProductBean) getRequestContentBean(requestContext);
+            ProductBean productBean = getRequestContentBean(requestContext, ProductBean.class);
             ProductRepresentation productRep = new ProductRepresentation().represent(productBean);
             productRep.addLink(getNodeLink(requestContext, productBean));
             productRep.addLink(getSiteLink(requestContext, productBean));
