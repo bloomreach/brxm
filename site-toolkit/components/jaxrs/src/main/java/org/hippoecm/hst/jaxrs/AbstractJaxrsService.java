@@ -74,9 +74,15 @@ public abstract class AbstractJaxrsService implements JAXRSService {
         return new StringBuilder(resolvedMount.getResolvedMountPath()).append(getServletPath()).toString();
     }
     
-    protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-        return requestContext.getBaseURL().getPathInfo();
-    }
+    /**
+     * Concrete implementations must implement this method to get the jaxrs pathInfo. This one is most likely different than 
+     * {@link HstRequestContext#getBaseURL()#getPathInfo()} because the baseURL has a pathInfo which has been stripped from matrix parameters
+     * @param requestContext
+     * @param request
+     * @return
+     * @throws ContainerException
+     */
+    abstract protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException;
     
     protected HttpServletRequest getJaxrsRequest(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
     	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), getJaxrsPathInfo(requestContext, request));
