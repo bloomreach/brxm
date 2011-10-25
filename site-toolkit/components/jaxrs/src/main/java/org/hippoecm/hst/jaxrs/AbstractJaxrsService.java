@@ -162,9 +162,6 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             super(request);
             setServletPath(servletPath);
             
-            String tempPathInfo = null;
-            String tempMatrixParamsSuffix = null;
-            
             if (requestPath != null) {
                 setPathInfo(HstRequestUtils.removeAllMatrixParams(requestPath));
             }

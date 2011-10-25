@@ -26,14 +26,11 @@ import org.hippoecm.hst.jaxrs.AbstractJaxrsService.PathsAdjustedHttpServletReque
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 public class TestPathsAdjustedHttpServletRequestWrapper {
     
-    private static Logger log = LoggerFactory.getLogger(TestPathsAdjustedHttpServletRequestWrapper.class);
-    
+   
     private String scheme = "http";
     private String serverName = "www.example.org";
     private int serverPort = 8080;
