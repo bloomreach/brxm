@@ -74,6 +74,7 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -498,6 +499,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(contentRoot));
                 try {
                     contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
+                    session.refresh(false);
+
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", session.getNode(contentRootPath));
+                    defaultWorkflow.localizeName(channel.getName());
                 } catch (WorkflowException e) {
                     throw new ChannelException("Could not create content root", e);
                 } catch (RemoteException e) {
