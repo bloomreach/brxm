@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
 import org.slf4j.Logger;
@@ -88,12 +89,12 @@ public class PageEditor extends ExtPanel {
 
     private IPluginContext context;
 
-    public PageEditor(final IPluginContext context, final IPluginConfig config) {
-        this("item", config);
+    public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor) {
+        this("item", config, hstConfigEditor);
         this.context = context;
     }
 
-    public PageEditor(final String id, final IPluginConfig config) {
+    public PageEditor(final String id, final IPluginConfig config, final HstConfigEditor hstConfigEditor) {
         super(id);
         if (config != null) {
             this.composerMountUrl = config.getString("composerMountUrl", "/site/");
@@ -149,6 +150,35 @@ public class PageEditor extends ExtPanel {
 
             }
         });
+
+        addEventListener("edit-hst-config", new ExtEventListener() {
+
+            private Object getValue(final Map<String, JSONArray> parameters, final String key) throws JSONException {
+                JSONArray values = parameters.get(key);
+                if (values == null || values.length() == 0) {
+                    return null;
+                }
+                return values.get(0);
+            }
+
+            @Override
+            public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+                if (context == null) {
+                    return;
+                }
+
+                try {
+                    final String channelId = (String) getValue(parameters, "channelId");
+                    final String hstMountPoint = (String) getValue(parameters, "hstMountPoint");
+                    target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
+                    hstConfigEditor.setMountPoint(target, channelId, hstMountPoint);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -167,6 +197,7 @@ public class PageEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
+        properties.put("gearIconUrl", rc.urlFor(new ResourceReference(PageEditor.class, "gear.png")));
         properties.put("iFrameErrorPage", Arrays.asList(
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
@@ -198,11 +229,17 @@ public class PageEditor extends ExtPanel {
     protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
         if ("edit-document".equals(event)) {
             return new ExtEventAjaxBehavior("uuid");
+        } else if ("edit-hst-config".equals(event)) {
+            return new ExtEventAjaxBehavior("channelId", "hstMountPoint");
         }
         return super.newExtEventBehavior(event);
     }
 
     public void setChannel(String renderHost, String mountPath) {
+        // TODO add additional parameters for js config object, otherwise the hst configuraion editor is not working if
+        // e. g. the template composer is opened via the goto plugin
+        // channelId
+        // hstMountPoint
         this.renderHost = renderHost;
         this.renderHostSubMountPath = mountPath;
     }

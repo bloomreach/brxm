@@ -28,19 +28,6 @@ Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
         this.title = config.title;
         config.header = false;
 
-        Ext.apply(config, {
-            tbar: [
-                {
-                    id: 'configEditorChannelName',
-                    xtype: 'tbtext',
-                    text: '',
-                    style: {
-                        marginLeft: '150px'
-                    }
-                }
-            ]
-        });
-
         Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
 
 
@@ -49,10 +36,7 @@ Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
         });
     },
 
-    initEditor: function(channelName) {
-        var channelNameText = Ext.getCmp('configEditorChannelName');
-        channelNameText.setText(channelName);
-
+    initEditor: function() {
         Ext.getCmp('rootPanel').showConfigEditor();
         document.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';
     }

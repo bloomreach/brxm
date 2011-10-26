@@ -88,7 +88,7 @@ public class RootPanel extends ExtPanel {
 
         final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
 
-        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, channelStore, hstConfigEditor);
+        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, channelStore);
         channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
         channelManagerCard.add(channelPropertiesPanel);
 
@@ -99,7 +99,7 @@ public class RootPanel extends ExtPanel {
 
         // card 1: template composer
         final IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        pageEditor = new PageEditor(context, pageEditorConfig);
+        pageEditor = new PageEditor(context, pageEditorConfig, hstConfigEditor);
         add(pageEditor);
 
         // card 2: HST config editor

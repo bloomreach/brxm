@@ -137,7 +137,28 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         scope: this.pageContainer
                     }
                 }
+            },
+            '->',
+            {
+                icon: this.initialConfig.gearIconUrl,
+                menu: {
+                    items: {
+                        text: 'Edit HST Configuration',
+                        listeners: {
+                            click: {
+                                fn : function() {
+                                    this.fireEvent('edit-hst-config',
+                                        this.channelId,
+                                        this.hstMountPoint
+                                    );
+                                },
+                                scope: this
+                            }
+                        }
+                    }
+                }
             });
+
             Ext.getCmp('previousLiveNotification').hide();
             this.mainWindow.show();
         } else {
@@ -297,7 +318,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.pageContainer.initComposer.call(this.pageContainer);
     },
 
-    browseTo: function(renderHost, renderHostSubMountPath) {
+    browseTo: function(channel) {
+        var renderHost = channel.hostname, renderHostSubMountPath = channel.subMountPath;
+
+        this.title = channel.channelName;
+        this.channelId = channel.id;
+        this.hstMountPoint = channel.hstMountPoint;
+
         if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
             this.pageContainer.renderHostSubMountPath = renderHostSubMountPath.substr(1);
         } else {

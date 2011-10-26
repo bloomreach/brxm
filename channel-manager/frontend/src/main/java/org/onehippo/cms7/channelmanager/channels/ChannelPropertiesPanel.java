@@ -108,7 +108,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
     }
 
-    public ChannelPropertiesPanel(final IPluginContext context, final ChannelStore channelStore, final HstConfigEditor hstConfigEditor) {
+    public ChannelPropertiesPanel(final IPluginContext context, final ChannelStore channelStore) {
         super();
 
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
@@ -197,15 +197,6 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         ExtBoxComponent box = new ExtBoxComponent();
         box.add(container);
         add(box);
-
-        add(new ExtButton(new ResourceModel("edit.config")){
-            @Override
-            protected void onClick(final AjaxRequestTarget target) {
-                target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor('"+ channel.getName() +"');");
-                hstConfigEditor.setMountPoint(target, channel.getId(), channel.getHstMountPoint());
-                super.onClick(target);
-            }
-        });
 
         addEventListener(EVENT_SELECT_CHANNEL, new ExtEventListener() {
             @Override
