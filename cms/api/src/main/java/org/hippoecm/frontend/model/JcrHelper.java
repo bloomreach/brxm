@@ -30,6 +30,8 @@ import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for common jcr operations
@@ -38,6 +40,8 @@ public class JcrHelper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final Logger log = LoggerFactory.getLogger(JcrHelper.class);
+    
     private JcrHelper() {
     }
 
@@ -175,9 +179,10 @@ public class JcrHelper {
             }
             return !canonical.isSame(hippoNode);
         } catch (ItemNotFoundException e) {
-            // canonical node no longer exists
+            log.debug("Canonical node no longer exists");
             return true;
         } catch (RepositoryException e) {
+            log.warn("RepositoryException while determining whether node is virtual", e);
             return false;
         }
     }
