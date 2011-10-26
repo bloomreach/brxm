@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -97,7 +98,13 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
      * Use {@link JcrHelper#isVirtualNode(Node)}
      */
     public boolean isVirtual() {
-        return JcrHelper.isVirtualNode(getNode());
+        try {
+            return JcrHelper.isVirtualNode(getNode());
+        }
+        catch (RepositoryException e) {
+            log.warn("RepositoryException while determining whether node is virtual, returning false", e);
+            return false;
+        }
     }
 
     // implement IObservable
