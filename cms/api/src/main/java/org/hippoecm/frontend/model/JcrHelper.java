@@ -167,7 +167,7 @@ public class JcrHelper {
      * @param node  the node to check for virtuality
      * @return  whether the node is a virtual node or not
      */
-    public static boolean isVirtualNode(Node node) {
+    public static boolean isVirtualNode(Node node) throws RepositoryException {
         if (node == null || !(node instanceof HippoNode)) {
             return false;
         }
@@ -181,9 +181,6 @@ public class JcrHelper {
         } catch (ItemNotFoundException e) {
             log.debug("Canonical node no longer exists");
             return true;
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException while determining whether node is virtual", e);
-            return false;
         }
     }
 

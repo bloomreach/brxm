@@ -15,13 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.copy;
 
-import java.util.UUID;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +34,6 @@ import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationId
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +49,9 @@ public class CopyDialog extends LookupDialog {
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
-    private final IModelReference modelReference;
+    private final IModelReference<Node> modelReference;
 
-    public CopyDialog(IModelReference modelReference) {
+    public CopyDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null), (JcrNodeModel) modelReference.getModel());
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
@@ -100,7 +93,7 @@ public class CopyDialog extends LookupDialog {
         setFocusOnCancel();
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         return new Model<String>("Copy Node");
     }
         
