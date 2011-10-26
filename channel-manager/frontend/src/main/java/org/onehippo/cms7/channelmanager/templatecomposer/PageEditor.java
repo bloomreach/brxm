@@ -173,7 +173,7 @@ public class PageEditor extends ExtPanel {
                     target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
                     hstConfigEditor.setMountPoint(target, channelId, hstMountPoint);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    throw new WicketRuntimeException("Invalid JSON parameters", e);
                 }
 
             }
