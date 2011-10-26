@@ -59,7 +59,7 @@ import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowserPlugin extends RenderPlugin {
+public class BrowserPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -171,7 +171,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return new NodeDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("add-node", new Model("Add node"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("add-node", new Model<String>("Add node"), dialogFactory, getDialogService()));
             // add node icon
             Image iconAddNode = new Image("icon-add-node") {
                 private static final long serialVersionUID = 1L;
@@ -190,7 +190,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return new DeleteDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("delete-node", new Model("Delete node"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("delete-node", new Model<String>("Delete node"), dialogFactory, getDialogService()));
             // delete node icon
             Image iconDeleteNode = new Image("icon-delete-node") {
                 private static final long serialVersionUID = 1L;
@@ -209,7 +209,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return new CopyDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("copy-node", new Model("Copy node"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("copy-node", new Model<String>("Copy node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconCopyNode = new Image("icon-copy-node") {
                 private static final long serialVersionUID = 1L;
@@ -228,7 +228,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return new MoveDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("move-node", new Model("Move node"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("move-node", new Model<String>("Move node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconMoveNode = new Image("icon-move-node") {
                 private static final long serialVersionUID = 1L;
@@ -247,7 +247,7 @@ public class BrowserPlugin extends RenderPlugin {
                     return new RenameDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("rename-node", new Model("Rename node"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("rename-node", new Model<String>("Rename node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconRenameNode = new Image("icon-rename-node") {
                 private static final long serialVersionUID = 1L;
@@ -304,6 +304,16 @@ public class BrowserPlugin extends RenderPlugin {
                 
             };
             menuContainer.add(new DialogLink("t9ids", new Model<String>("Generate new t9 ids"), dialogFactory, getDialogService()));
+            // generate t9ids icon
+            Image iconT9ids = new Image("icon-t9ids") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "t9ids.png");
+                }
+            };
+            iconXmlImport.setOutputMarkupId(true);
+            menuContainer.add(iconT9ids);
             return menuContainer;
         }
 

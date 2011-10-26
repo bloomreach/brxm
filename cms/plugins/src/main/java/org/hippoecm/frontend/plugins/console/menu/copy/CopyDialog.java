@@ -52,7 +52,7 @@ public class CopyDialog extends LookupDialog {
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     private String name;
-    private Boolean generate;
+    private Boolean generate = true;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;

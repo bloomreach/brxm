@@ -1534,6 +1534,7 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/copy-node.pn
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/delete-node.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/move-node.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/rename-node.png -text svneol=unset#image/png
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/t9ids.png -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-export.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/browser/xml-import.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.html svneol=native#text/plain

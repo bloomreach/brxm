@@ -28,6 +28,7 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
@@ -154,6 +155,31 @@ public class JcrHelper {
             throw new ItemNotFoundException("No primary item definition found in type hierarchy");
         }
         return node.getSession().getItem(node.getPath() + "/" + primaryItemName);
+    }
+    
+    /**
+     * Determine whether node in question is a virtual node.
+     * 
+     * @param node  the node to check for virtuality
+     * @return  whether the node is a virtual node or not
+     */
+    public static boolean isVirtualNode(Node node) {
+        if (!(node instanceof HippoNode)) {
+            return false;
+        }
+        try {
+            HippoNode hippoNode = (HippoNode) node;
+            Node canonical = hippoNode.getCanonicalNode();
+            if (canonical == null) {
+                return true;
+            }
+            return !canonical.isSame(hippoNode);
+        } catch (ItemNotFoundException e) {
+            // canonical node no longer exists
+            return true;
+        } catch (RepositoryException e) {
+            return false;
+        }
     }
 
 }

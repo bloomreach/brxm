@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.model;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -25,7 +23,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,25 +92,12 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
         super.detach();
     }
 
+    /**
+     * @deprecated
+     * Use {@link JcrHelper#isVirtualNode(Node)}
+     */
     public boolean isVirtual() {
-        Node node = getNode();
-        if (node == null || !(node instanceof HippoNode)) {
-            return false;
-        }
-        try {
-            HippoNode hippoNode = (HippoNode) node;
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !canonical.isSame(hippoNode);
-        } catch (ItemNotFoundException e) {
-            // canonical node no longer exists
-            return true;
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            return false;
-        }
+        return JcrHelper.isVirtualNode(getNode());
     }
 
     // implement IObservable
