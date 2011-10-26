@@ -69,9 +69,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected VirtualHosts virtualHosts;
     protected Mount mount;
     protected ResolvedMount resolvedMount;
-    protected HstMutableRequestContext requestContext;
     protected HstURLFactory urlFactory;
     protected HstContainerURLProvider urlProvider;
+    protected HstLinkCreator linkCreator;
     
     protected String[] getConfigurations() {
         return new String[] { "org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml" };
@@ -126,7 +126,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
         EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
         
-        HstLinkCreator linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
+       linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
 
         EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(virtualHosts);
@@ -135,16 +135,21 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.replay(resolvedMount);
         EasyMock.replay(linkCreator);
         
-        requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
-        requestContext.setServletContext(servletContext);
-        requestContext.setResolvedMount(resolvedMount);
-        requestContext.setLinkCreator(linkCreator);
-        
         urlFactory = getComponent(HstURLFactory.class.getName());
         urlProvider = this.urlFactory.getContainerURLProvider();        
     }
     
+    public HstMutableRequestContext createRequestContext() {
+        HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        requestContext.setServletContext(servletContext);
+        requestContext.setResolvedMount(resolvedMount);
+        requestContext.setLinkCreator(linkCreator);
+        return requestContext;
+    }
+    
     protected void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
+        // every time a jaxrs pipeline is invoked, we also need to create a new request context
+        HstMutableRequestContext requestContext = createRequestContext();
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
     	HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
     	requestContext.setPathSuffix(cr.getPathSuffix());
