@@ -96,20 +96,8 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 	
     @Override
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-        // The HST has an adjusted HttpServletRequest#getPathInfo, that has:
-        // 1) Stripped off any matrix parameters
-        // 2) stripped off everything from the client request pathInfo after ./
-        // The request.getRequestURI() still contains the matrix parameters. The jax-rs controllor must be invoked 
-        // again with a pathInfo containing the matrix parameters and everything after the ./ include
-        String requestURI = request.getRequestURI(); 
+        String requestURI = request.getRequestURI();
         HstContainerURL baseURL = requestContext.getBaseURL();
-        StringBuilder jaxrsEndpointRequestPath =  new StringBuilder(requestURI.substring(baseURL.getContextPath().length() + baseURL.getResolvedMountPath().length()));
-        if (requestContext.getPathSuffix() != null) {
-            if(jaxrsEndpointRequestPath.charAt(jaxrsEndpointRequestPath.length() -1 ) != '/') {
-                jaxrsEndpointRequestPath.append("/");
-            }
-            jaxrsEndpointRequestPath.append(requestContext.getPathSuffix());
-        }
-        return jaxrsEndpointRequestPath.toString();
+        return requestURI.substring(baseURL.getContextPath().length() + baseURL.getResolvedMountPath().length());
     }
 }
