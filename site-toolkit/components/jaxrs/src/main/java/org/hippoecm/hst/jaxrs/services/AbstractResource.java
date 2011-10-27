@@ -245,9 +245,9 @@ public abstract class AbstractResource {
      * 
      * @param requestContext
      * @throws ObjectBeanManagerException when there cannot be returned a site content base bean
-     * @return the siteContentBaseBean 
+     * @return HippoFolderBean the mountContentBaseBean 
      */
-    public HippoFolderBean getSiteContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
+    public HippoFolderBean getMountContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
         if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY) != null) {
             return (HippoFolderBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY);
         }
