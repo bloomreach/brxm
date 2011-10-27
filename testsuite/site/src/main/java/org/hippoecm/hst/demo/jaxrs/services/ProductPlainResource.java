@@ -71,7 +71,7 @@ public class ProductPlainResource extends AbstractResource {
                 scope = getRequestContentBean(requestContext);
             } catch (ObjectBeanManagerException e) {
                 // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
-                scope = getSiteContentBaseBean(requestContext);
+                scope = getMountContentBaseBean(requestContext);
             }
             
             HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);

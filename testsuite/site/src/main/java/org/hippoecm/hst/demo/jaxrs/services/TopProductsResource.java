@@ -66,7 +66,7 @@ public class TopProductsResource extends AbstractResource {
                 scope = getRequestContentBean(requestContext);
             } catch (ObjectBeanManagerException e) {
                 // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
-                scope = getSiteContentBaseBean(requestContext);
+                scope = getMountContentBaseBean(requestContext);
             }
             
             HstQueryManager manager = getHstQueryManager(requestContext.getSession(), requestContext);
