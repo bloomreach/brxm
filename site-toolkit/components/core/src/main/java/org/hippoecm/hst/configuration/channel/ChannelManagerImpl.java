@@ -459,27 +459,21 @@ public class ChannelManagerImpl implements MutableChannelManager {
         URI channelUri = getChannelUri(channel);
         Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
-        // create mount
-        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
-        if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-                mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, channelId);
-            } else {
-                mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
-            }
-        }
-
         if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
             configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
         }
         Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channelId, HstNodeTypes.NODETYPE_HST_CHANNEL);
         ChannelPropertyMapper.saveChannel(channelNode, channel);
 
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
+            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channelId);
+        }
+
         Session jcrSession = configRoot.getSession();
+        String mountPointPath = null;
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
             Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE), configRoot.getNode(sites), channelId);
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, siteNode.getPath());
+            mountPointPath = siteNode.getPath();
             channel.setHstMountPoint(siteNode.getPath());
 
             if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
@@ -493,7 +487,16 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
             }
             channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
+            Node previewSiteNode = copyNodes(siteNode, configRoot.getNode(sites), channelId + "-preview");
 
+            Node previewContentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:availability"});
+            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {"preview"});
+            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
+
+            session.save();
+
+            // set up content
             final String contentRootPath;
             if (bps.hasContentPrototype()) {
                 FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(contentRoot));
@@ -503,6 +506,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", session.getNode(contentRootPath));
                     defaultWorkflow.localizeName(channel.getName());
+
+                    session.refresh(false);
                 } catch (WorkflowException e) {
                     throw new ChannelException("Could not create content root", e);
                 } catch (RemoteException e) {
@@ -513,21 +518,24 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
             if (contentRootPath != null) {
                 final Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                previewContentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 if (jcrSession.itemExists(contentRootPath)) {
                     contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
+                    previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
                 } else {
                     log.warn("Specified content root '" + contentRootPath + "' does not exist");
-                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getRootNode().getIdentifier());
+                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
+                    previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
                 }
-            }
 
-            Node previewSiteNode = copyNodes(siteNode, configRoot.getNode(sites), channelId + "-preview");
-            if (contentRootPath != null) {
-                final Node contentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                contentMirrorNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:availability"});
-                contentMirrorNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {"preview"});
-                contentMirrorNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
             }
+        }
+
+        // create mount
+        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
 
             final String locale = channel.getLocale();
             if (locale != null) {
@@ -535,9 +543,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
-        }
-        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channelId);
         }
     }
 
@@ -699,7 +704,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         return uri;
     }
-    
-    
+
+
 
 }
