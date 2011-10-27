@@ -23,7 +23,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
-import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
@@ -62,13 +61,7 @@ public class ParameterUtils {
         ParametersInfo annotation = component.getClass().getAnnotation(ParametersInfo.class);
         if (annotation != null) {
             HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
-            HstParameterValueConverter converter = new HstParameterValueConverter () {
-                @Override
-                public Object convert(String parameterValue, Class<?> returnType) {
-                    return ConvertUtils.convert(parameterValue, returnType);
-                }
-            };
-            parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request, converter);
+            parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request);
             request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
             return parametersInfo;            
         } else {

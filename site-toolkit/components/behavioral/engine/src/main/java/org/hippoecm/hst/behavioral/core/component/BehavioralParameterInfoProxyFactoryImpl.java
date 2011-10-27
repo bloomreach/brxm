@@ -15,13 +15,13 @@
  */
 package org.hippoecm.hst.behavioral.core.component;
 
+import java.lang.reflect.InvocationHandler;
+
 import org.hippoecm.hst.behavioral.BehavioralProfile;
 import org.hippoecm.hst.behavioral.util.BehavioralUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.component.HstParameterInfoInvocationHandler;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
-import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
@@ -36,11 +36,10 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
     
     @Override
-    protected HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(
-            ComponentConfiguration componentConfig, HstRequest request,
-            HstParameterValueConverter parameterValueConverter) {
+    protected InvocationHandler createHstParameterInfoInvocationHandler(
+            ComponentConfiguration componentConfig, HstRequest request) {
         
-        HstParameterInfoInvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request, parameterValueConverter) {
+        InvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request) {
 
             @Override
             public String getParameterValue(final String parameterName, ComponentConfiguration config, HstRequest req) {
@@ -61,7 +60,6 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                         }
                     }
                 }
-
                 return config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem()); 
             }
         };

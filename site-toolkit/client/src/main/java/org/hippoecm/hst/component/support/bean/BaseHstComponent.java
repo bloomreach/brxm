@@ -225,6 +225,10 @@ public class BaseHstComponent extends GenericHstComponent {
         return PathUtils.normalizePath(request.getRequestContext().getResolvedMount().getMount().getContentPath());
     }
     
+    /**
+     * @return <code>true</code> when this request is matched to a preview site
+     * @see Mount#isPreview()
+     */
     public boolean isPreview(HstRequest request) {
     	return request.getRequestContext().isPreview();
     }

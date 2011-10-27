@@ -32,15 +32,14 @@ public interface HstParameterInfoProxyFactory {
     /**
      * Returns a proxy instance of the interface T. The proxy delegates the {@link Parameter} annotated getters in the interface T to the backing {@link ComponentConfiguration} parameters, 
      * thus to {@link ComponentConfiguration#getParameter(String, org.hippoecm.hst.core.request.ResolvedSiteMapItem)}
-     * @param <T>
+     * @param <T> proxy instance of the interface T
      * @param parametersInfo the ParametersInfo annotation of the {@link HstComponent}
      * @param componentConfig the backing {@link ComponentConfiguration} of the {@link HstComponent}
      * @param request the {@link HstRequest}
-     * @param parameterValueConverter the converter that can convert the {@link String} parametervalue to the requested return type
      * @return proxy instance of the interface T
      * @throw {@link IllegalArgumentException} if {@link ParametersInfo#type()} does not return an interface or when <code>parameterValueConverter</code> is <code>null</code>
      */
     <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
-            HstRequest request, HstParameterValueConverter parameterValueConverter);
+            HstRequest request);
     
 }

@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.apache.commons.beanutils.ConvertUtils;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -29,20 +30,18 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
     @Override
     public <T> T createParameterInfoProxy(ParametersInfo parametersInfo, ComponentConfiguration componentConfig,
-            HstRequest request, HstParameterValueConverter parameterValueConverter) {
+            HstRequest request) {
 
         Class<?> parametersInfoType = parametersInfo.type();
 
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
         }
-        if(parameterValueConverter == null) {
-            throw new IllegalArgumentException("The HstParameterValueConverter is not allowed to be null");
-        }
+       
 
-        InvocationHandler parameterInfoHandler =  createHstParameterInfoInvocationHandler(componentConfig, request,
-                parameterValueConverter);
-        T parametersInfoInterface = (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+        InvocationHandler parameterInfoHandler =  createHstParameterInfoInvocationHandler(componentConfig, request);
+        
+        T parametersInfoInterface = (T) Proxy.newProxyInstance(parametersInfoType.getClassLoader(),
                 new Class[] { parametersInfoType }, parameterInfoHandler);
         return parametersInfoInterface;
     }
@@ -54,21 +53,18 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * @param parameterValueConverter
      * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
      */
-    protected HstParameterInfoInvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter parameterValueConverter) {
-        return new ParameterInfoInvocationHandler(componentConfig, request,
-                parameterValueConverter);
+    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request) {
+        return new ParameterInfoInvocationHandler(componentConfig, request);
     }
 
-    protected static class ParameterInfoInvocationHandler implements HstParameterInfoInvocationHandler {
+    protected static class ParameterInfoInvocationHandler implements InvocationHandler {
 
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
-        private final HstParameterValueConverter parameterValueConverter;
 
-        public ParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter parameterValueConverter) {
+        public ParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request) {
             this.componentConfig = componentConfig;
             this.request = request;
-            this.parameterValueConverter = parameterValueConverter;
         }
 
         @Override
@@ -106,7 +102,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             Class<?> returnType = method.getReturnType();
 
             if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
-                return parameterValueConverter.convert(parameterValue, returnType);
+                return ConvertUtils.convert(parameterValue, returnType);
             } else {
                 PropertyEditor customEditor = customEditorType.newInstance();
                 customEditor.setAsText(parameterValue);

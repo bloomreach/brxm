@@ -29,11 +29,17 @@
   <packaging>jar</packaging>
   
   <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-server-dependencies</artifactId>
+   <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
-      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   
