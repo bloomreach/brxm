@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,14 +50,14 @@ public class FacetRootsObserver implements IFacetRootsObserver {
     static final Logger log = LoggerFactory.getLogger(FacetRootsObserver.class);
 
     private WeakReference<Session> sessionRef;
-    private Map<String, FacetRootListener> listeners;
+    private Map<String, List<FacetRootListener>> listeners;
     private Set<UpstreamEntry> upstream;
     private boolean broadcast = false;
 
     public FacetRootsObserver(Session session) {
         this.sessionRef = new WeakReference<Session>(session);
         this.upstream = new HashSet<UpstreamEntry>();
-        this.listeners = new HashMap<String, FacetRootListener>();
+        this.listeners = new HashMap<String, List<FacetRootListener>>();
     }
 
     /**
@@ -83,12 +84,24 @@ public class FacetRootsObserver implements IFacetRootsObserver {
                 Node node = nodes.nextNode();
                 if (node != null) {
                     String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    try {
-                        String docbase = session.getNodeByIdentifier(uuid).getPath();
-                        listeners.put(node.getPath(), addFacetSearchListener(obMgr, docbase, node));
-                    } catch (ItemNotFoundException e) {
-                        log.warn("The {} property of facet node {} refers to a non-existing UUID '{}'",
-                                new Object[]{HippoNodeType.HIPPO_DOCBASE, node.getPath(), uuid});
+                    String[] uuids = {uuid};
+                    if ("hippofacnav:facetnavigation".equals(node.getPrimaryNodeType().getName())) {
+                        uuids = uuid.split(",\\s*");
+                    }
+                    for (String id : uuids) {
+                        try {
+                            String docbase = session.getNodeByIdentifier(id).getPath();
+                            List<FacetRootListener> rootListeners = listeners.get(node.getPath());
+                            if (rootListeners == null) {
+                                rootListeners = new LinkedList<FacetRootListener>();
+                                listeners.put(node.getPath(),rootListeners);
+                            }
+                            // CMS7-5568: facet navigation can have multiple docbases.
+                            rootListeners.add(addFacetSearchListener(obMgr, docbase, node));
+                        } catch (ItemNotFoundException e) {
+                            log.warn("The {} property of facet node {} refers to a non-existing UUID '{}'",
+                                    new Object[]{HippoNodeType.HIPPO_DOCBASE, node.getPath(), uuid});
+                        }
                     }
                 }
             }
@@ -102,10 +115,12 @@ public class FacetRootsObserver implements IFacetRootsObserver {
         if (session != null && session.isLive()) {
             try {
                 ObservationManager obMgr = session.getWorkspace().getObservationManager();
-                Iterator<Map.Entry<String, FacetRootListener>> iter = listeners.entrySet().iterator();
+                Iterator<Map.Entry<String, List<FacetRootListener>>> iter = listeners.entrySet().iterator();
                 while (iter.hasNext()) {
-                    Map.Entry<String, FacetRootListener> entry = iter.next();
-                    obMgr.removeEventListener(entry.getValue());
+                    Map.Entry<String, List<FacetRootListener>> entry = iter.next();
+                    for (FacetRootListener listener : entry.getValue()) {
+                        obMgr.removeEventListener(listener);
+                    }
                     iter.remove();
                 }
             } catch (RepositoryException ex) {
@@ -117,9 +132,12 @@ public class FacetRootsObserver implements IFacetRootsObserver {
     void refresh() {
         if (broadcast) {
             broadcast = false;
-            for (Map.Entry<String, FacetRootListener> entry : listeners.entrySet()) {
-                FacetRootListener listener = entry.getValue();
-                listener.broadcast();
+            Iterator<Map.Entry<String, List<FacetRootListener>>> iter = listeners.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, List<FacetRootListener>> entry = iter.next();
+                for (FacetRootListener listener : entry.getValue()) {
+                    listener.broadcast();
+                }
             }
         }
     }
