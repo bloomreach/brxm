@@ -5,18 +5,20 @@
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over td { border: 0; background-image: none; }
 
 /* notification window */
-.x-notification .x-window-tl, .x-notification .x-window-tc, .x-notification .x-window-tr,
-.x-notification .x-window-ml, .x-notification .x-window-mc, .x-notification .x-window-mr,
-.x-notification .x-window-bl, .x-notification .x-window-bc, .x-notification .x-window-br
+.channel-manager .x-notification .x-window-tl, .x-notification .x-window-tc, .x-notification .x-window-tr,
+.channel-manager .x-notification .x-window-ml, .x-notification .x-window-mc, .x-notification .x-window-mr,
+.channel-manager .x-notification .x-window-bl, .x-notification .x-window-bc, .x-notification .x-window-br
 { background-image: none; }
-.x-notification .x-window-header { padding: 0 0 1px 0 }
-.x-notification .x-window-body { padding: 7px; background-color: #fffda9; }
+.channel-manager .x-notification .x-window-header { padding: 0 0 1px 0 }
+.channel-manager .x-notification .x-window-body { padding: 7px; background-color: #fffda9; }
 
-/* properties panel */
-.channel-manager .channel-properties { margin: 5px; }
+/* channel properties window */
+.channel-manager .hide-channel-properties { display: none }
+.channel-manager .channel-properties { display: block }
 .channel-manager .channel-properties .fieldgroup { border-bottom: 16px solid #fff; }
 .channel-manager .channel-properties .fieldgrouptitle { font-weight: bold; border-bottom: 2px solid #fff; }
 .channel-manager .channel-properties tr > td.key { padding: 0px 10px 6px 4px; }
 .channel-manager .channel-properties tr > td.value { padding: 0 0px 6px 0; }
 .channel-manager .channel-properties a.channel-button, .channel-manager .channel-properties .channel-button > a { background-color: #f2f2f2; border: 1px solid #999; padding: 2px; margin-right: 4px; }
 .channel-manager .channel-properties a.channel-button:hover, .channel-manager .channel-properties .channel-button > a:hover { background-color: #fff6e0 }
+.channel-manager .channel-properties-window .x-window-body { overflow: auto }

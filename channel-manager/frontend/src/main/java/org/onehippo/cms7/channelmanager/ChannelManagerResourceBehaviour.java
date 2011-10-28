@@ -6,7 +6,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
-import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
+import org.wicketstuff.js.ext.data.ExtStore;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
@@ -18,15 +19,19 @@ public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
     public static final String BREADCRUMB_TOOLBAR = "BreadcrumbToolbar.js";
 
+    public static final String FUTURE = "future.js";
+
     public static final String ALL = "channel-manager-all.js";
 
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, FUTURE));
+            component.add(JavascriptPackageResource.getHeaderContribution(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BLUEPRINT_LIST_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, CHANNEL_FORM_PANEL));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesPanel.class, ChannelPropertiesPanel.CHANNEL_PROPERTIES_PANEL_JS));
+            component.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesWindow.class, ChannelPropertiesWindow.CHANNEL_PROPERTIES_WINDOW_JS));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
         } else {
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ALL));

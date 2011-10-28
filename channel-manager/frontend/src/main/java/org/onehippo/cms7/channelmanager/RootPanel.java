@@ -24,8 +24,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
-import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
+import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
@@ -56,6 +56,7 @@ public class RootPanel extends ExtPanel {
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
     private PageEditor pageEditor;
+    private ExtStoreFuture<Object> channelStoreFuture;
 
     @ExtProperty
     private Integer activeItem = 0;
@@ -72,6 +73,11 @@ public class RootPanel extends ExtPanel {
 
         add(new ChannelManagerResourceBehaviour());
 
+        this.channelStore = ChannelStoreFactory.createStore(context, config);
+        this.channelStoreFuture = new ExtStoreFuture<Object>(channelStore);
+        add(this.channelStore);
+        add(this.channelStoreFuture);
+
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setTitle(new Model("Channel Manager"));
@@ -79,18 +85,11 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setLayout(new BorderLayout());
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
-        final ChannelGridPanel channelPanel = new ChannelGridPanel(context, channelListConfig);
+        final ChannelGridPanel channelPanel = new ChannelGridPanel(context, channelListConfig, this.channelStoreFuture);
         channelPanel.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelPanel);
 
-        //Use the same store variable as the grid panel, no need to create another store.
-        this.channelStore = channelPanel.getStore();
-
         final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
-
-        final ChannelPropertiesPanel channelPropertiesPanel = new ChannelPropertiesPanel(context, channelStore);
-        channelPropertiesPanel.setRegion(BorderLayout.Region.EAST);
-        channelManagerCard.add(channelPropertiesPanel);
 
         this.blueprintStore = new BlueprintStore();
         channelManagerCard.add(this.blueprintStore);
@@ -99,7 +98,7 @@ public class RootPanel extends ExtPanel {
 
         // card 1: template composer
         final IPluginConfig pageEditorConfig = config.getPluginConfig("templatecomposer");
-        pageEditor = new PageEditor(context, pageEditorConfig, hstConfigEditor);
+        pageEditor = new PageEditor(context, pageEditorConfig, hstConfigEditor, this.channelStoreFuture);
         add(pageEditor);
 
         // card 2: HST config editor
@@ -112,6 +111,8 @@ public class RootPanel extends ExtPanel {
     @Override
     protected void preRenderExtHead(StringBuilder js) {
         blueprintStore.onRenderExtHead(js);
+        channelStore.onRenderExtHead(js);
+        channelStoreFuture.onRenderExtHead(js);
         super.preRenderExtHead(js);
     }
 
@@ -120,7 +121,7 @@ public class RootPanel extends ExtPanel {
         super.onRenderProperties(properties);
         properties.put("blueprintStore", new JSONIdentifier(this.blueprintStore.getJsObjectId()));
         properties.put("channelStore", new JSONIdentifier(this.channelStore.getJsObjectId()));
-
+        properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
         RequestCycle rc = RequestCycle.get();
         properties.put("breadcrumbIconUrl", rc.urlFor(new ResourceReference(RootPanel.class, "breadcrumb-arrow.png")));
     }

@@ -152,7 +152,6 @@
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/future.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js</include>
@@ -184,11 +183,13 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/future.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ExtStoreFuture.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/RootPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BlueprintListPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ChannelFormPanel.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channel-manager-all.js</output>

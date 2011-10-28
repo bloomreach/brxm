@@ -29,7 +29,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.composerMountUrl = config.composerMountUrl;
         this.composerRestMountUrl = config.composerRestMountUrl;
 
-        this.renderHost = config.renderHost;
         this.renderHostSubMountPath = config.renderHostSubMountPath;
         if (this.renderHostSubMountPath.indexOf('/') === 0) {
             this.renderHostSubMountPath = this.renderHostSubMountPath.substr(1);

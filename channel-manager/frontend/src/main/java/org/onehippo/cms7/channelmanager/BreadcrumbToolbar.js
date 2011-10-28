@@ -102,7 +102,10 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             newLastBreadcrumbItem.setDisabled(true);
         }
         return lastBreadcrumbItem;
-    }
+    },
 
+    getBreadcrumbSize: function() {
+        return this.breadcrumbStackSize;
+    }
 });
 Ext.reg('Hippo.ChannelManager.BreadcrumbToolbar', Hippo.ChannelManager.BreadcrumbToolbar);

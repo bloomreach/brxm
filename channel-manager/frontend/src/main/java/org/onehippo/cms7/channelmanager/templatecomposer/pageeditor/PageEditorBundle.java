@@ -6,8 +6,6 @@ public class PageEditorBundle {
 
     public static final String DRAGDROPONE = "DragDropOne.js";
 
-    public static final String FUTURE = "future.js";
-
     public static final String NOTIFICATION = "Notification.js";
 
     public static final String MSG = "Hippo.Msg.js";

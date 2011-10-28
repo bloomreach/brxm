@@ -105,10 +105,10 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     }
 
     @Override
-    public void viewChannel(final String renderHost, final String mountPath, String channelName) {
+    public void viewChannel(final String channelId, String mountPath) {
         PageEditor pageEditor = rootPanel.getPageEditor();
-        pageEditor.setChannel(renderHost, mountPath);
-        pageEditor.setTitle(new Model<String>(channelName));
+        pageEditor.setChannel(channelId);
+        pageEditor.setRenderHostSubMountPath(mountPath);
         pageEditor.setPreviewMode(true);
         rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
         focus(null);

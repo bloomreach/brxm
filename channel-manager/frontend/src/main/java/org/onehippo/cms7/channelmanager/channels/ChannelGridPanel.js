@@ -137,17 +137,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
     initComponent: function() {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
-        this.store.on('load', function() {
-            if (this.selectChannel(this.selectedChannelId)) {
-                this.getView().focusEl.focus();
-            } else {
-                this.selectedChannelId = null;
-            }
-        }, this);
-        this.on('afterrender', function() {
-            this.store.load();
-        }, this);
-
         this.addEvents('add-channel', 'channel-selected', 'channel-deselected', 'savestate');
 
         var sm = this.getSelectionModel();
@@ -175,7 +164,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         sm.on('rowselect', function(sm, rowIndex, record) {
             this.isSelectingRow = false;
             this.selectedChannelId = record.get('id');
-            this.fireEvent('channel-selected', this.selectedChannelId, record.get('name'), record);
+            this.fireEvent('channel-selected', this.selectedChannelId, record);
         }, this);
 
         // register keyboard navigation

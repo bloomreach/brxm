@@ -41,6 +41,9 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
+import org.onehippo.cms7.channelmanager.channels.ChannelStore;
+import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
@@ -51,6 +54,7 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtProperty;
+import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.ChannelManager.TemplateComposer.PageEditor")
 public class PageEditor extends ExtPanel {
@@ -70,9 +74,6 @@ public class PageEditor extends ExtPanel {
     public String renderHostSubMountPath = "";
 
     @ExtProperty
-    public String renderHost = "";
-
-    @ExtProperty
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
     @ExtProperty
@@ -89,18 +90,18 @@ public class PageEditor extends ExtPanel {
 
     private IPluginContext context;
 
-    public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor) {
-        this("item", config, hstConfigEditor);
-        this.context = context;
-    }
+    private ExtStoreFuture channelStoreFuture;
 
-    public PageEditor(final String id, final IPluginConfig config, final HstConfigEditor hstConfigEditor) {
-        super(id);
+    private ChannelPropertiesWindow channelPropertiesWindow;
+
+    @ExtProperty
+    private String channelId;
+
+    public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
+        this.channelStoreFuture = channelStoreFuture;
         if (config != null) {
             this.composerMountUrl = config.getString("composerMountUrl", "/site/");
             this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
-            this.renderHost = config.getString("renderHost", "localhost");
-            this.renderHostSubMountPath = config.getString("renderHostSubMountPath", "");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
@@ -111,6 +112,9 @@ public class PageEditor extends ExtPanel {
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());
+
+        this.channelPropertiesWindow = new ChannelPropertiesWindow(context, (ChannelStore) channelStoreFuture.getStore());
+        add(this.channelPropertiesWindow);
 
         addEventListener("edit-document", new ExtEventListener() {
             @Override
@@ -175,7 +179,6 @@ public class PageEditor extends ExtPanel {
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
                 }
-
             }
         });
 
@@ -197,6 +200,8 @@ public class PageEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
+        properties.put("channelPropertiesWindowId", this.channelPropertiesWindow.getMarkupId());
+        properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
         properties.put("gearIconUrl", rc.urlFor(new ResourceReference(PageEditor.class, "gear.png")));
         properties.put("iFrameErrorPage", Arrays.asList(
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
@@ -235,13 +240,8 @@ public class PageEditor extends ExtPanel {
         return super.newExtEventBehavior(event);
     }
 
-    public void setChannel(String renderHost, String mountPath) {
-        // TODO add additional parameters for js config object, otherwise the hst configuraion editor is not working if
-        // e. g. the template composer is opened via the goto plugin
-        // channelId
-        // hstMountPoint
-        this.renderHost = renderHost;
-        this.renderHostSubMountPath = mountPath;
+    public void setChannel(final String channelId) {
+        this.channelId = channelId;
     }
 
     public void setChannelName(String name) {
@@ -258,6 +258,10 @@ public class PageEditor extends ExtPanel {
 
     public String getComposerRestMountUrl() {
         return composerRestMountUrl;
+    }
+
+    public void setRenderHostSubMountPath(String mountPath) {
+        this.renderHostSubMountPath = mountPath;
     }
 
 }

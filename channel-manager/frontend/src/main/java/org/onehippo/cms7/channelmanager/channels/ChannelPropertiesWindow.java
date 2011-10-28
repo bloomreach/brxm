@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.io.Serializable;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
@@ -27,8 +28,10 @@ import java.util.ResourceBundle;
 import javax.jcr.Credentials;
 import javax.security.auth.Subject;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -36,7 +39,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
@@ -57,7 +61,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.onehippo.cms7.channelmanager.widgets.DropDownListWidget;
 import org.onehippo.cms7.channelmanager.widgets.ImageSetPathWidget;
@@ -65,19 +68,19 @@ import org.onehippo.cms7.channelmanager.widgets.JcrPathWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtBoxComponent;
-import org.wicketstuff.js.ext.ExtButton;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
+import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.form.ExtFormPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 
-@ExtClass(ChannelPropertiesPanel.EXT_CLASS)
-public class ChannelPropertiesPanel extends ExtFormPanel {
+@ExtClass(ChannelPropertiesWindow.EXT_CLASS)
+public class ChannelPropertiesWindow extends ExtFormPanel {
 
-    static final Logger log = LoggerFactory.getLogger(ChannelPropertiesPanel.class);
+    static final Logger log = LoggerFactory.getLogger(ChannelPropertiesWindow.class);
 
-    public static final String CHANNEL_PROPERTIES_PANEL_JS = "ChannelPropertiesPanel.js";
-    public static final String EXT_CLASS = "Hippo.ChannelManager.ChannelPropertiesPanel";
+    public static final String CHANNEL_PROPERTIES_WINDOW_JS = "ChannelPropertiesWindow.js";
+    public static final String EXT_CLASS = "Hippo.ChannelManager.ChannelPropertiesWindow";
 
     private static final String EVENT_SAVE_CHANNEL = "savechannel";
     private static final String EVENT_SELECT_CHANNEL = "selectchannel";
@@ -108,10 +111,13 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
         }
     }
 
-    public ChannelPropertiesPanel(final IPluginContext context, final ChannelStore channelStore) {
+    private String channelPropertiesContainerClass = "hide-channel-properties";
+
+    public ChannelPropertiesWindow(final IPluginContext context, final ChannelStore channelStore) {
         super();
 
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
+        container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
         container.add(new ListView<FieldGroup>("fieldgroups", new LoadableDetachableModel<List<FieldGroup>>() {
             @Override
             protected List<FieldGroup> load() {
@@ -206,6 +212,7 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
                     if (channelId.length() > 0) {
                         try {
                             channel = getChannel((String) channelId.get(0));
+                            channelPropertiesContainerClass = "channel-properties";
                         } catch (JSONException e) {
                             log.error("Invalid JSON", e);
                         }
@@ -219,8 +226,8 @@ public class ChannelPropertiesPanel extends ExtFormPanel {
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
                 save();
                 channelStore.reload();
+                target.prependJavascript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
             }
-
         });
     }
 

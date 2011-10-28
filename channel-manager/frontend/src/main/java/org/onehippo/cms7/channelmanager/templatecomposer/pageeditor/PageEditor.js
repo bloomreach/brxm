@@ -140,6 +140,36 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             '->',
             {
+                id: 'channel-properties-window-button',
+                text: this.initialConfig.resources['show-channel-properties-button'],
+                mode: 'show',
+                listeners: {
+                    click: {
+                        fn: function() {
+                            var propertiesWindow = Ext.getCmp('channel-properties-window');
+                            var button = Ext.getCmp('channel-properties-window-button');
+                            if (button.mode === 'show') {
+                                propertiesWindow.show({
+                                    channelId: this.channelId,
+                                    channelName: this.channelName
+                                });
+                                propertiesWindow.on('hide', function() {
+                                    button.mode = 'show';
+                                    button.setText(this.initialConfig.resources['show-channel-properties-button']);
+                                }, this, {single: true});
+                                button.mode = 'hide';
+                                button.setText(this.initialConfig.resources['close-channel-properties-button']);
+                            } else {
+                                propertiesWindow.hide();
+                                button.mode = 'show';
+                                button.setText(this.initialConfig.resources['show-channel-properties-button']);
+                            }
+                        },
+                        scope: this
+                    }
+                }
+            },
+            {
                 icon: this.initialConfig.gearIconUrl,
                 menu: {
                     items: {
@@ -205,6 +235,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         toolbar.items.each(function(item) {
             item.disable();
         });
+
+        var channelPropertiesWindow = Ext.getCmp('channel-properties-window');
+        if (channelPropertiesWindow) {
+            channelPropertiesWindow.hide();
+        }
         Hippo.Msg.wait(this.resources['loading-message']);
     },
 
@@ -216,8 +251,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
-
-            this.pageContainer.initComposer.call(this.pageContainer);
+            if (this.channelId) {
+                this.browseTo(this.channelId, this.renderHostSubMountPath);
+            }
         }, this, {single: true});
 
         this.on('lock', function() {
@@ -238,13 +274,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         }, this);
 
-    },
-
-    setChannelName : function(name) {
-        if (typeof this.showTitleSwitchTimeout !== 'undefined') {
-            window.clearTimeout(this.showTitleSwitchTimeout);
-        }
-        this.setTitle(name);
+        this.on('mountChanged', function(data) {
+            this.channelStoreFuture.when(function(config) {
+                var collection = config.store.query('mountId', data.mountId);
+                var channelRecord = collection.first()
+                if (typeof this.showTitleSwitchTimeout !== 'undefined') {
+                    window.clearTimeout(this.showTitleSwitchTimeout);
+                }
+                this.setTitle(channelRecord.get('name'));
+                this.channelId = channelRecord.get('id');
+                this.channelName = channelRecord.get('name');
+            }.createDelegate(this));
+        }, this);
     },
 
     createMainWindow : function(mountId) {
@@ -318,21 +359,24 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.pageContainer.initComposer.call(this.pageContainer);
     },
 
-    browseTo: function(channel) {
-        var renderHost = channel.hostname, renderHostSubMountPath = channel.subMountPath;
+    browseTo: function(channelId, renderHostSubMountPath) {
+        this.channelId = channelId;
+        this.channelStoreFuture.when(function(config) {
+            var record = config.store.getById(channelId);
 
-        this.title = channel.channelName;
-        this.channelId = channel.id;
-        this.hstMountPoint = channel.hstMountPoint;
+            this.title = record.get('name');
+            this.hstMountPoint = record.get('hstMountPoint');
 
-        if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
-            this.pageContainer.renderHostSubMountPath = renderHostSubMountPath.substr(1);
-        } else {
-            this.pageContainer.renderHostSubMountPath = renderHostSubMountPath;
-        }
-        this.pageContainer.renderHost = renderHost;
-        this.pageContainer.previewMode = true;
-        this.pageContainer.initComposer.call(this.pageContainer);
+            renderHostSubMountPath = renderHostSubMountPath || record.get('subMountPath');
+            if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
+                this.pageContainer.renderHostSubMountPath = renderHostSubMountPath.substr(1);
+            } else {
+                this.pageContainer.renderHostSubMountPath = renderHostSubMountPath;
+            }
+            this.pageContainer.renderHost = record.get('hostname');
+            this.pageContainer.previewMode = true;
+            this.pageContainer.initComposer.call(this.pageContainer);
+        }.createDelegate(this));
     }
 
 });

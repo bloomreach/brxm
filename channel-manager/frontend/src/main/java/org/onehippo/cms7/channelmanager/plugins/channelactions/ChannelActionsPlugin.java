@@ -196,7 +196,6 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         protected void invoke() {
             try {
                 URI uri = new URI(channelDocument.getCanonicalUrl());
-
                 String path = uri.getPath();
                 if (channelDocument.getUrlContainsContextPath()) {
                     int contextPathEndIndex = path.indexOf('/', 1);
@@ -205,12 +204,11 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     }
                 }
 
-                channelManagerService.viewChannel(uri.getHost(), path, channelDocument.getChannelName());
+                channelManagerService.viewChannel(channelDocument.getChannelId(), path);
             } catch (URISyntaxException e) {
                 log.warn("Error while opening document in channel, invalid URI: '{}'", channelDocument.getCanonicalUrl());
             }
         }
-
     }
 
     protected static class ChannelDocumentNameComparator implements Comparator<ChannelDocument> {

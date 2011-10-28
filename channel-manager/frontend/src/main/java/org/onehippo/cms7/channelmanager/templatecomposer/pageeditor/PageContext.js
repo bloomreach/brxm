@@ -103,7 +103,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 console.error('Error handling the response of the server for the toolkit store. Response is:\n'+response.responseText);
             }
             Hippo.Msg.alert(this.resources['toolkit-store-error-message-title'], this.resources['toolkit-store-error-message'], function(id) {
-                this.refreshIframe();
+                this.pageContainer.refreshIframe();
             }, this);
         }, this);
 
@@ -134,7 +134,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 console.error('Error handling the response of the server for the page store. Response is:\n'+response.responseText);
             }
             Hippo.Msg.alert(this.resources['page-store-error-message-title'], this.resources['page-store-error-message'], function(id) {
-                this.refreshIframe();
+                this.pageContainer.refreshIframe();
             }, this);
         }, this);
 

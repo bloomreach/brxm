@@ -27,6 +27,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.channelStore = config.channelStore;
         this.blueprintStore = config.blueprintStore;
         this.resources = config.resources;
+        this.selectedChannelId = null;
 
         this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
             id: 'breadcrumbToolbar',
@@ -87,7 +88,6 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         });
         this.formPanel = Ext.getCmp('channel-form-panel');
         this.gridPanel = Ext.getCmp('channel-grid-panel');
-        this.propertiesPanel = Ext.getCmp('channel-properties-panel');
 
         // register channel creation events
         this.gridPanel.on('add-channel', function() {
@@ -98,27 +98,28 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             this.channelStore.reload();
         }, this);
 
-        // register properties panel events
-        this.gridPanel.on('channel-selected', function(channelId, channelName, record) {
-            this.propertiesPanel.showPanel(channelId, channelName, record);
+        this.gridPanel.on('channel-selected', function(channelId, record) {
+            this.selectedChannelId = channelId;
+            // don't activate template composer when it is already active
+            if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
+                return;
+            }
+            Hippo.ChannelManager.TemplateComposer.Instance.browseTo(channelId);
+            Ext.getCmp('rootPanel').showTemplateComposer();
+            // TODO fix, I have no clue why the template composer card is not getting activated properly
+            document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
         }, this);
         this.gridPanel.on('channel-escaped', function() {
-            if (this.propertiesPanel.isShown()) {
-                this.propertiesPanel.hidePanel();
-            } else {
-                this.gridPanel.fireEvent('channel-deselected');
-            }
+            this.gridPanel.fireEvent('channel-deselected');
         }, this);
         this.gridPanel.on('channel-deselected', function() {
             this.gridPanel.selectRow(-1);
-            this.propertiesPanel.closePanel();
         }, this);
 
         Hippo.ChannelManager.TemplateComposer.Instance.on('mountChanged', function(data) {
             var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);
             var firstChange = data.oldMountId === null;
-            Hippo.ChannelManager.TemplateComposer.Instance.setChannelName(channelRecord.get('name'));
-            if (!firstChange) {
+            if (!firstChange && this.selectedChannelId !== channelRecord.get('id')) {
                 this.gridPanel.selectChannel(channelRecord.get('id'));
             }
         }, this);
