@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 
-/**
- * Created by IntelliJ IDEA. User: jannis Date: 10/27/11 Time: 10:51 AM To change this template use File | Settings |
- * File Templates.
- */
+
 public class ChannelStoreFactory {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);

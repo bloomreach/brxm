@@ -42,8 +42,6 @@ public class ExtTest extends AbstractJavascriptTest {
 
         final HtmlElement instance = page.getElementById("Hippo.ChannelManager.TemplateComposer.Instance");
         assertNotNull(instance);
-        List<?> buttons = instance.getByXPath("//button");
-        assertEquals(1, buttons.size());
     }
 
 }
