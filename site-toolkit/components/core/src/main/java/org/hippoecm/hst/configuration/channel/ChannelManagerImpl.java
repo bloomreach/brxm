@@ -494,20 +494,18 @@ public class ChannelManagerImpl implements MutableChannelManager {
             previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {"preview"});
             previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
 
-            session.save();
-
             // set up content
             final String contentRootPath;
             if (bps.hasContentPrototype()) {
                 FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(contentRoot));
                 try {
                     contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
-                    session.refresh(false);
+                    session.refresh(true);
 
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", session.getNode(contentRootPath));
                     defaultWorkflow.localizeName(channel.getName());
 
-                    session.refresh(false);
+                    session.refresh(true);
                 } catch (WorkflowException e) {
                     throw new ChannelException("Could not create content root", e);
                 } catch (RemoteException e) {

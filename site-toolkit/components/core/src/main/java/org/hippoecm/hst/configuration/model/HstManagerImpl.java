@@ -678,7 +678,7 @@ public class HstManagerImpl implements HstManager {
             String hstConfigPath = rootPath+"/hst:configurations";
             String hstCommonCatalogPath = hstConfigPath+"/hst:catalog";
             String hstHostsPath = rootPath+"/hst:hosts";
-            String hstBlueprintsPath = rootPath+"/hst:blueprints";
+            String hstSitesPath = rootPath+"/hst:sites";
             
             if(configChangeEventMap == null) {
                 configChangeEventMap = new HashMap<HstEvent.ConfigurationType, Set<HstEvent>>(); 
@@ -699,10 +699,7 @@ public class HstManagerImpl implements HstManager {
                     configChangeEventMap.get(HstEvent.ConfigurationType.COMMON_CATALOG_NODE).add(event);
                 } else if (event.path.startsWith(hstHostsPath+"/") ||  event.path.equals(hstHostsPath)) {
                     configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE).add(event);
-                } else if (event.path.startsWith(hstBlueprintsPath+"/") || event.path.equals(hstBlueprintsPath)) {
-                    // do nothing
-                }
-                else {
+                } else if (event.path.startsWith(hstSitesPath+"/") || event.path.equals(hstSitesPath)) {
                     // it must be a change in a hst:sites, a hst:site, or a descendant node
                     configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE).add(event);
                 } 
