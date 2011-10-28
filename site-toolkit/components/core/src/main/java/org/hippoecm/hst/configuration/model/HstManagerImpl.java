@@ -675,10 +675,20 @@ public class HstManagerImpl implements HstManager {
             // now that we have the changed and deleted maps, let's compute which hst:configuration nodes need to be reloaded,
             // which hst:sites and which hst:hosts
 
+            // NOTE we cannot directly know by only the path whether it is a change in a hst:sites or hst:site node: this
+            // is because the cnd allowed the hst:sites to have any name: Currently the cnd is:
+            // [hst:hst] > nt:base, mix:referenceable, mix:versionable
+            // + hst:configurations (hst:configurations) = hst:configurations version
+            // + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
+            // + hst:blueprints (hst:blueprints) = hst:blueprints version
+            // + hst:channels (hst:channels) = hst:channels version
+            // + * (hst:sites) = hst:sites version
+            
             String hstConfigPath = rootPath+"/hst:configurations";
             String hstCommonCatalogPath = hstConfigPath+"/hst:catalog";
             String hstHostsPath = rootPath+"/hst:hosts";
-            String hstSitesPath = rootPath+"/hst:sites";
+            String hstBlueprintsPath = rootPath+"/hst:blueprints";
+            String hstChannelsPath = rootPath+"/hst:channels";
             
             if(configChangeEventMap == null) {
                 configChangeEventMap = new HashMap<HstEvent.ConfigurationType, Set<HstEvent>>(); 
@@ -699,7 +709,12 @@ public class HstManagerImpl implements HstManager {
                     configChangeEventMap.get(HstEvent.ConfigurationType.COMMON_CATALOG_NODE).add(event);
                 } else if (event.path.startsWith(hstHostsPath+"/") ||  event.path.equals(hstHostsPath)) {
                     configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE).add(event);
-                } else if (event.path.startsWith(hstSitesPath+"/") || event.path.equals(hstSitesPath)) {
+                } else if (event.path.startsWith(hstBlueprintsPath+"/") || event.path.equals(hstBlueprintsPath)) {
+                    // do nothing for now: TODO
+                } else if (event.path.startsWith(hstChannelsPath+"/") || event.path.equals(hstChannelsPath)) {
+                    // do nothing for now: TODO
+                }
+                else {
                     // it must be a change in a hst:sites, a hst:site, or a descendant node
                     configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE).add(event);
                 } 
