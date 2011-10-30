@@ -94,13 +94,13 @@ public class HstPingServlet extends HttpServlet {
 
     /** Default values */
     private static final String DEFAULT_POOL = "default";
-    private static final String DEFAULT_NODE = "content/documents";
+    private static final String DEFAULT_NODE_PATH = "content/documents";
     private static final String DEFAULT_WRITE_ENABLE = "false";
     private static final String DEFAULT_WRITE_PATH = "pingcheck";
 
     /** Running config */
     private String checkPool;
-    private String checkNode;
+    private String checkNodePath;
     private String customMessage;
     private String writeTestPath;
     private boolean writeTestEnabled = false;
@@ -108,7 +108,7 @@ public class HstPingServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        checkNode = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE));
+        checkNodePath = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE_PATH));
         writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
         writeTestEnabled = isTrueOrYes(getParameter(config, WRITE_ENABLE_PARAM, DEFAULT_WRITE_ENABLE));
         customMessage = getParameter(config, CUSTOM_MESSAGE_PARAM, null);
@@ -214,13 +214,13 @@ public class HstPingServlet extends HttpServlet {
     private void doReadTest(Session session) throws PingException {
         String msg;
         try {
-            if (checkNode.length() == 0) {
+            if (checkNodePath.length() == 0) {
                 session.getRootNode();
             } else {
-                session.getRootNode().getNode(checkNode);
+                session.getRootNode().getNode(checkNodePath);
             }
         } catch (PathNotFoundException e) {
-            msg = "FAILURE - Path for node to lookup '" + checkNode + "' is not found by ping servlet. ";
+            msg = "FAILURE - Path for node to lookup '" + checkNodePath + "' is not found by ping servlet. ";
             throw new PingException(msg, e);
         } catch (RepositoryException e) {
             msg = "FAILURE - Could not obtain a node, which is at this point unexpected since we already have a connection."
