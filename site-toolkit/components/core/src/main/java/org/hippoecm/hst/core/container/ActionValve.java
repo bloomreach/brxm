@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
@@ -149,6 +150,11 @@ public class ActionValve extends AbstractValve {
                             responseState.flush();
                             
                             String location = responseState.getRedirectLocation();
+                            
+                            if(StringUtils.isEmpty(location)) {
+                                // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
+                                location = "/";
+                            }
                             
                             if (location.startsWith("http:") || location.startsWith("https:")) {
                                 servletResponse.sendRedirect(location);
