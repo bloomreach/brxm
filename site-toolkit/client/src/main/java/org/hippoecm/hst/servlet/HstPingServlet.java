@@ -17,9 +17,7 @@ package org.hippoecm.hst.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Calendar;
 
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -39,7 +37,6 @@ import org.hippoecm.hst.servlet.utils.SessionUtils;
  *   <ul>
  *     <li>obtain the session from the specified session pool</li>
  *     <li>try to read the check node</li>
- *     <li>try to write to the repository if enabled</li>
  *     <li>logout and close jcr session</li>
  *   </ul>
  *   <li>logout and close http session</li>
@@ -61,14 +58,6 @@ import org.hippoecm.hst.servlet.utils.SessionUtils;
         <param-name>check-node</param-name>
         <param-value>content/documents</param-value>
       </init-param>
-      <init-param>
-        <param-name>write-check-enable</param-name>
-        <param-value>false</param-value>
-      </init-param>
-      <init-param>
-        <param-name>write-check-node</param-name>
-        <param-value>pingcheck</param-value>
-      </init-param>
       <!-- enable while doing upgrades
         init-param>
         <param-name>custom-message</param-name>
@@ -88,29 +77,21 @@ public class HstPingServlet extends HttpServlet {
     /** Servlet parameters */
     private static final String POOL_PARAM = "check-pool";
     private static final String NODE_PARAM = "check-node";
-    private static final String WRITE_ENABLE_PARAM = "write-check-enable";
-    private static final String WRITE_PATH_PARAM = "write-check-path";
     private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
 
     /** Default values */
     private static final String DEFAULT_POOL = "default";
     private static final String DEFAULT_NODE_PATH = "content/documents";
-    private static final String DEFAULT_WRITE_ENABLE = "false";
-    private static final String DEFAULT_WRITE_PATH = "pingcheck";
 
     /** Running config */
     private String checkPool;
     private String checkNodePath;
     private String customMessage;
-    private String writeTestPath;
-    private boolean writeTestEnabled = false;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         checkNodePath = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE_PATH));
-        writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
-        writeTestEnabled = isTrueOrYes(getParameter(config, WRITE_ENABLE_PARAM, DEFAULT_WRITE_ENABLE));
         customMessage = getParameter(config, CUSTOM_MESSAGE_PARAM, null);
         checkPool = getParameter(config, POOL_PARAM, DEFAULT_POOL);
     }
@@ -139,10 +120,6 @@ public class HstPingServlet extends HttpServlet {
         return path;
     }
 
-    private boolean isTrueOrYes(String s) {
-        return ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s));
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int resultStatus = HttpServletResponse.SC_OK;
@@ -153,9 +130,6 @@ public class HstPingServlet extends HttpServlet {
             resultMessage = "CUSTOM - " + customMessage;
             resultStatus = HttpServletResponse.SC_SERVICE_UNAVAILABLE;
         } else {
-            if (writeTestEnabled) {
-                resultMessage = "OK - Repository online, accessible and writable.";
-            }
             try {
                 doRepositoryChecks(req);
             } catch (PingException e) {
@@ -188,7 +162,6 @@ public class HstPingServlet extends HttpServlet {
         try {
             session = obtainSession(req);
             doReadTest(session);
-            doWriteTestIfEnabled(session);
         } finally {
             closeSession(req, session);
         }
@@ -227,64 +200,6 @@ public class HstPingServlet extends HttpServlet {
                     + "Maybe we lost the connection to the repository.";
             throw new PingException(msg, e);
         }
-    }
-
-    private void doWriteTestIfEnabled(Session session) throws PingException {
-        if (writeTestEnabled) {
-            doWriteTest(session);
-        }
-    }
-
-    private void doWriteTest(Session session) throws PingException {
-        try {
-            Node writePath = getOrCreateWriteNode(session);
-            writePath.setProperty("lastcheck", Calendar.getInstance());
-            writePath.save();
-        } catch (RepositoryException e) {
-            String msg = "FAILURE - Error during write test. There could be an issue with the (connection to) the storage.";
-            throw new PingException(msg, e);
-        }
-    }
-
-    private Node getOrCreateWriteNode(Session session) throws PingException {
-        Node path = getOrCreateWritePath(session);
-        String clusterId = getClusterNodeId();
-        try {
-            if (path.hasNode(clusterId)) {
-                return path.getNode(clusterId);
-            } else {
-                Node node = path.addNode(clusterId);
-                session.save();
-                return node;
-            }
-        } catch (RepositoryException e) {
-            String msg = "FAILURE - Could not obtain the write test node '" + writeTestPath + "/" + clusterId + "'.";
-            throw new PingException(msg, e);
-        }
-    }
-
-    private Node getOrCreateWritePath(Session session) throws PingException {
-        Node path;
-        try {
-            if (session.getRootNode().hasNode(writeTestPath)) {
-                path = session.getRootNode().getNode(writeTestPath);
-            } else {
-                path = session.getRootNode().addNode(writeTestPath);
-                session.save();
-            }
-            return path;
-        } catch (RepositoryException e) {
-            String msg = "FAILURE - Could not obtain the write path node '" + writeTestPath + "'.";
-            throw new PingException(msg, e);
-        }
-    }
-
-    private String getClusterNodeId() {
-        String id = System.getProperty("org.apache.jackrabbit.core.cluster.node_id");
-        if (id == null || id.length() == 0) {
-            return "default";
-        }
-        return id;
     }
 
     /**
