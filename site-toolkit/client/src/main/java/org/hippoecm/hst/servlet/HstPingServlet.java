@@ -28,7 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.servlet.utils.SessionUtils;
 
@@ -178,21 +177,10 @@ public class HstPingServlet extends HttpServlet {
         if (exception != null) {
             exception.printStackTrace(writer);
         }
-        closeHttpSession(req);
     }
 
     private boolean hasCustomMessage() {
         return (customMessage != null);
-    }
-
-    private void closeHttpSession(HttpServletRequest req) {
-        if (req != null) {
-            // close open session
-            HttpSession httpSession = req.getSession(false);
-            if (httpSession != null) {
-                httpSession.invalidate();
-            }
-        }
     }
 
     private synchronized void doRepositoryChecks(HttpServletRequest req) throws PingException {
