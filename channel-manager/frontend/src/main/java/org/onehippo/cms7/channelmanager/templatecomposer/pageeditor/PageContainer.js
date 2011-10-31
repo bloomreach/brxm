@@ -387,15 +387,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         Ext.getCmp('Iframe').getFrame().sendMessage(data, name);
     },
 
-    _onClick : function(element) {
-        if (element.getAttribute(HST.ATTR.INHERITED)) {
-            return;
-        }
-        var id = element.getAttribute('id');
-        var record = this.pageContext.stores.pageModel.getById(id);
+    _onClick : function(data) {
+        var record = this.pageContext.stores.pageModel.getById(data.elementId);
 
         if (!record) {
-            console.warn('Handling onClick for element[id=' + id + '] with no record in component store');
+            console.warn('Handling onClick for element[id=' + data.elementId + '] with no record in component store');
             return;
         }
 
@@ -434,7 +430,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             if (msg.tag == 'rearrange') {
                 this._onRearrangeContainer(msg.data);
             } else if (msg.tag == 'onclick') {
-                this._onClick(msg.data.element);
+                this._onClick(msg.data);
             } else if (msg.tag == 'receiveditem') {
                 this._handleReceivedItem(msg.data.id, msg.data.element);
             } else if (msg.tag == 'remove') {

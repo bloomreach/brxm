@@ -25,6 +25,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             autoScroll:true,
             labelWidth: 100,
             labelSeparator: '',
+            title: this.resources['properties-panel-default-title'],
             defaults:{
                 width: 170,
                 anchor: '100%'
@@ -42,7 +43,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                     scope: this,
                     hidden: true,
                     handler: function () {
-                        this.reload(this.id);
+                        this.reload();
                     }
                 }
             ]
@@ -234,24 +235,34 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         this.doLayout(false, true);
     },
 
-    reload: function(id) {
+    clearPanel: function() {
         this.removeAll();
+        this.buttons[0].hide();
+        this.buttons[1].hide();
+    },
 
-        if (typeof id === 'undefined') {
-            return;
+    reload: function() {
+        this.removeAll();
+        this.buttons[0].show();
+        this.buttons[1].show();
+        if (this.componentPropertiesStore) {
+            this.componentPropertiesStore.purgeListeners();
         }
 
-        // the id is set with the onClick of the component
-        this.id = id;
-        var store = new Ext.data.JsonStore({
+        this.componentPropertiesStore = new Ext.data.JsonStore({
             autoLoad: true,
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
-            url: this.composerRestMountUrl + id + './parameters/' + this.locale + '?' + this.ignoreRenderHostParameterName + '=true'
+            url: this.composerRestMountUrl + this.id + './parameters/' + this.locale + '?' + this.ignoreRenderHostParameterName + '=true'
         });
-        store.on('load', this.loadProperties, this);
-        store.on('exception', this.loadException, this);
+
+        this.componentPropertiesStore.on('load', this.loadProperties, this);
+        this.componentPropertiesStore.on('exception', this.loadException, this);
+    },
+
+    setItemId: function(itemId) {
+        this.id = itemId;
     }
 
 });

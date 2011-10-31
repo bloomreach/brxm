@@ -56,11 +56,11 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/Templat
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/PageEditor.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/error.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/channel-manager-iframe.css -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/close.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/editbutton.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/surfandedit.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/page.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/surfandedit.js -text

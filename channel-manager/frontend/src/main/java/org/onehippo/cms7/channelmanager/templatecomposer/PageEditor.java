@@ -206,8 +206,7 @@ public class PageEditor extends ExtPanel {
         properties.put("iFrameErrorPage", Arrays.asList(
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE_EDITOR_CSS)).toString(),
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT_CSS)).toString()));
+                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.CHANNEL_MANAGER_IFRAME_CSS)).toString()));
         if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),

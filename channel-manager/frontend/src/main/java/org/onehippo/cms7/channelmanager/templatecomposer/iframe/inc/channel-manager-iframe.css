@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2010 Hippo B.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 .hst-container {
 }
 
@@ -21,6 +37,10 @@
 .hst-empty-container {
 }
 
+.hst-container-item {
+    min-height: 22px
+}
+
 .hst-overlay-container-item.hst-overlay-hover .hst-overlay-background {
     background-color: #fffcc9;
     opacity: 0.3;
@@ -35,29 +55,25 @@
 .hst-overlay-container-item {
     z-index: 100;
     border: 3px dotted #F9BE3D;
+    min-height:22px;
 }
 
 .hst-overlay-menu, .hst-dd-helper {
     height: 18px;
-    width: 100px;
+    width: 30px;
     position: absolute;
-    background: #fff4c3;
-    border: 1px solid #f9bc39;
-    -moz-border-radius: 2px;
-    color: red;
     z-index: 10000;
-    -moz-box-shadow: 1px 1px 1px #e3e3e3;
-    -webkit-box-shadow: 3px 3px 3px #666;
-    background-image: -moz-linear-gradient(0% 0% 270deg, #FFF2BF, #FCC12C);
 }
 
+/* close.png */
 .hst-overlay-menu-button {
     float: right;
     cursor: pointer;
-    font-weight: bold;
-    border-left: 1px solid #f9bc39;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
+    margin-top: 5px;
+    margin-right: 5px;
+    background: no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAaxJREFUeNpi/P//PwMMvHQyc2BgZMgHMgMYUMEGhv8ME8X3nToAE2CEaXzuZDqfkYEhgQEPAKqcILnvdCFc4xNHk34gu4CBOLBAZv+ZRKaH9sYOf//9L2CQEmQQ7mpjYFaTZgDyUTC7uxWDYH0FjJ8A0sP07///fCBm+PPpKwMjNz+DeNccBmYNKQaQGAhzeFgyiFZMYvj1/AlcDKSH8baNATx0mPjZGaS6JjKwSSkyPClNYuAyM2MQSa1jeDmhjOHz2t0o7mW8YaX/H1mAWYCdQbSomIHfOQzMf9qaxfBl2zEMj7L8Y/iHIvDvw3eGv18+IkISaCy6GrDr/oEkkLBoaQ6DkH8qw6PmDIY3G2YxyNRMY+D2sGJAV8cC9OgGWIRLlOUwiASkMTxsSmf4tP0Yw8dtRxlA0SVXO4Ph4X+IGCxBsPz9/38iSCO7uhQDv70/w83sQIbvZ2/DnfS0czJYs1BQHMN7oEFQMBGcAM6Za5OSACYYnbxaCE9yZ821+oFMvJoZGRkmGJ+8VoiSVkHgtKmWA5CXD0yUqImckWEDMB1PND19DZ7IAQIMAF4/0PZHrdgIAAAAAElFTkSuQmCC);
 }
 
 .hst-overlay-name-label{
@@ -73,7 +89,7 @@
 
 .hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
 .hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button{
-    opacity: 1;    
+    opacity: 1;
     color: white;
     background-color: red;
 }
@@ -179,6 +195,18 @@ button.title-button {
 
 .create-document-link a:hover {
     color: white;
-    background-color:#39f; 
+    background-color:#39f;
+}
+
+/* Surf and edit */
+a.hst-cmseditlink {
+    display: block;
+    height: 31px;
+    width: 61px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    text-indent: -9999px;
+    background: no-repeat url("editbutton.png");
 }
 

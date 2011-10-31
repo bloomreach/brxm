@@ -683,26 +683,17 @@
         },
 
         onRender : function() {
-            //var background = $('<div/>').addClass('hst-overlay-background');
-            //this.overlay.append(background);
-
-            this.menu = $('<div/>').addClass('hst-overlay-menu'); //.appendTo(document.body);
+            this.menu = $('<div/>').addClass('hst-overlay-menu');
 
             var data = {element: this.element};
             if (!this.el.attr(HST.ATTR.INHERITED)) {
-                var deleteButton = $('<div/>').addClass('hst-overlay-menu-button').html('X');
+                var deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
                 deleteButton.click(function(e) {
                     e.stopPropagation();
                     sendMessage(data, 'remove');
                 });
                 this.menu.append(deleteButton);
             }
-
-            var nameLabel = $('<div/>').addClass('hst-overlay-name-label');
-            this.menu.append(nameLabel);
-            this.nameLabel = nameLabel;
-
-            this.renderLabelContents();
           
             this.overlay.append(this.menu);
          },
@@ -730,12 +721,6 @@
 
         updateSharedData : function(facade) {
             this.data.name = facade.getName(this.id);
-
-            this.renderLabelContents();
-        },
-
-        renderLabelContents : function() {
-            this.nameLabel.html(this.data.name);
         },
 
         getOverlaySource : function() {
@@ -747,7 +732,8 @@
             if(this.isTemporary) {
                 sendMessage({}, 'refresh');
             } else {
-                sendMessage({element: this.element}, 'onclick');
+                var id = this.element.getAttribute('id');
+                sendMessage({elementId: id}, 'onclick');
             }
         },
 

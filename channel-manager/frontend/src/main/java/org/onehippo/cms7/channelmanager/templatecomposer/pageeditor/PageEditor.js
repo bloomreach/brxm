@@ -124,7 +124,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
 
             var propertiesPanel = Ext.getCmp('componentPropertiesPanel');
-            propertiesPanel.reload();
+            propertiesPanel.clearPanel();
 
             toolbar.add({
                 text: this.initialConfig.resources['close-button'],
@@ -348,7 +348,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     showProperties : function(record) {
-        Ext.getCmp('componentPropertiesPanel').reload(record.get('id'));
+        var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
+        componentPropertiesPanel.setItemId(record.get('id'));
+        componentPropertiesPanel.setTitle(record.get('name'));
+        componentPropertiesPanel.reload();
     },
 
     refreshIframe: function() {
