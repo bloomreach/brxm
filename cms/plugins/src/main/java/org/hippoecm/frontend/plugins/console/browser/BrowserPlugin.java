@@ -303,7 +303,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
                 
             };
-            menuContainer.add(new DialogLink("t9ids", new Model<String>("Generate new t9 ids"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("t9ids", new Model<String>("New translation ids"), dialogFactory, getDialogService()));
             // generate t9ids icon
             Image iconT9ids = new Image("icon-t9ids") {
                 private static final long serialVersionUID = 1L;
