@@ -23,6 +23,7 @@ import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.LocaleImageService;
 import org.hippoecm.frontend.translation.TranslationResources;
@@ -73,7 +74,7 @@ public class DocumentTranslationView extends ExtPanel {
         add(JavascriptPackageResource.getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
         codecBehavior = new NodeNameCodecBehavior(codec);
         add(codecBehavior);
-
+        add(new ExtHippoThemeBehavior());
         add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
     }
 
