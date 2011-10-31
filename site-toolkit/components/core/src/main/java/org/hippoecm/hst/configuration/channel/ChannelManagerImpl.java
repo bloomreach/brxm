@@ -124,6 +124,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         this.hostGroup = hostGroup;
     }
 
+    public void setContentRoot(final String contentRoot) {
+        this.contentRoot = contentRoot;
+    }
+
     @Override
     public String getHostGroup() {
         return this.hostGroup;
