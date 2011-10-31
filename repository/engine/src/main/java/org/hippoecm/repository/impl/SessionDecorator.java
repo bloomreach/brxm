@@ -53,6 +53,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
+import org.apache.jackrabbit.commons.xml.Exporter;
+import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
@@ -65,6 +67,7 @@ import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
+import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.hippoecm.repository.updater.UpdaterNode;
 import org.hippoecm.repository.updater.UpdaterProperty;
@@ -288,6 +291,36 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             }
         }
     }
+    
+    @Override
+    public void exportDocumentView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
+            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
+        Item item = getItem(absPath);
+        if (item.isNode()) {
+            new HippoDocumentViewExporter(this, contentHandler, !noRecurse, !binaryAsLink).export((Node) item);
+        } else {
+            throw new PathNotFoundException("XML export is not defined for properties: " + absPath);
+        }
+    }
+
+    @Override
+    public void exportDocumentView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+            throws IOException, PathNotFoundException, RepositoryException {
+        try {
+            ContentHandler handler = new ToXmlContentHandler(out);
+            exportDocumentView(absPath, handler, binaryAsLink, noRecurse);
+        } catch (SAXException e) {
+            Exception exception = e.getException();
+            if (exception instanceof RepositoryException) {
+                throw (RepositoryException) exception;
+            } else if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else {
+                throw new RepositoryException("Error serializing document view XML", e);
+            }
+        }
+    }
+
 
     /**
      * Convenience function to copy a node to a destination path in the same workspace
