@@ -25,6 +25,8 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -44,6 +46,8 @@ public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
+    private static final IValueMap SIZE = new ValueMap("width=515,height=540");
+    
     private String name;
     private Boolean generate = true;
     @SuppressWarnings("unused")
@@ -149,6 +153,11 @@ public class CopyDialog extends LookupDialog {
             log.error(ex.getMessage());
             error(ex.getMessage());
         }
+    }
+
+    @Override
+    public IValueMap getProperties() {
+        return SIZE;
     }
 
 }
