@@ -32,15 +32,6 @@ This project includes software Quartz Enterprise Job Scheduler developed by
 OpenSymphony released under the Apache 2.0 license.
 <URL:http://www.quartz-scheduler.org/>
 
-This project includes JPOX (http://www.jpox.org) distributed under the Apache
-License 2.0 (http://www.apache.org/licenses/) and includes software developed
-by Erik Bengtson, Andy Jefferson, Michael Grundmann, Joerg von Frantzius and
-contributed by Barry Haddow, Marco Schulze, Ralph Ullrich, David Ezzio,
-Brendan de Beer, David Eaves, Martin Taal, Tony Lai, Kikuchi Kousuke and
-Roland Szabo.
-It also includes software developed by the TJDO project
-(http://tjdo.sourceforge.net/)
-
 This product contains an implementation of javax.imageio.ImageWriter developed by
 Helma Software (http://dev.helma.org/) licensed under the Helma License
 Version 2.0 (the "License"). You may not use this file except in compliance with

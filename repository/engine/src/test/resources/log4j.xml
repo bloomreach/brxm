@@ -69,17 +69,6 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-
-  <category additivity="false" name="org.jpox.util">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
-  <category additivity="false" name="org.jpox">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
   <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
     <level value="error"/>
     <appender-ref ref="console"/>

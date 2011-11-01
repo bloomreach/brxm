@@ -53,16 +53,6 @@
     <appender-ref ref="console"/>
   </category>
 
-  <category additivity="false" name="org.jpox.util">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
-  <category additivity="false" name="org.jpox">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
   <root>
     <level value="info"/>
     <appender-ref ref="console"/>
