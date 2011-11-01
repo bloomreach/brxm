@@ -73,7 +73,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             tbar: new Ext.Toolbar({
                 layout: 'hbox',
                 layoutConfig: {
-                    pack: 'center'
+                    pack: 'left'
                 },
                 cls: 'channel-grid-toolbar',
                 items: [
