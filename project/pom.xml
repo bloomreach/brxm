@@ -417,19 +417,7 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-    <repository>
-      <id>jpox</id>
-      <name>JPOX maven repository.</name>
-      <url>http://www.jpox.org/downloads/maven2/</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
+   <repository>
       <id>m2snapshots</id>
       <name>Maven 2 snapshots repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
@@ -459,19 +447,7 @@
     <!-- DISABLED repositories which are often "transitively" pulled in 
         and/or were used in the past
     -->
-    <pluginRepository>
-      <id>jpox.plugin</id>
-      <name>JPOX maven 2 plugin repository.</name>
-      <url>http://www.jpox.org/downloads/maven2/</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
+   <pluginRepository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org/</url>
       <layout>default</layout>
