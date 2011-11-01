@@ -706,6 +706,7 @@
                 of : this.overlay,
                 offset : '-2 2'
             });
+            this.menu.css('top', '-1px');
         },
 
         getOverlayData : function(data) {
