@@ -4,11 +4,14 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.persistence.pool.Access;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.spi.Name;
 
 class Repair {
     enum RepairStatus {
@@ -86,6 +89,18 @@ class Repair {
             return;
         actions.add(new RemoveNode(node));
     }
+    
+    void setProperty(RepairStatus statusChange, UUID node, Name property, InternalValue[] values) {
+        if(report(statusChange))
+            return;
+        actions.add(new SetProperty(node, property, values));
+    }
+
+    void setMixins(RepairStatus statusChange, UUID node, Set<Name> mixinTypeNames) {
+        if(report(statusChange))
+            return;
+        actions.add(new SetMixins(node, mixinTypeNames));
+    }
 
     void removeReference(RepairStatus statusChange, UUID source, UUID target) {
         if (report(statusChange))
@@ -129,6 +144,59 @@ class Repair {
                         break;
                     }
                 }
+                storage.access.storeBundle(bundle);
+            } catch (ItemStateException ex) {
+                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private class SetProperty extends Action {
+        UUID node;
+        Name property;
+        InternalValue[] values;
+        SetProperty(UUID node, Name property, InternalValue[] values) {
+            this.node = node;
+            this.property = property;
+            this.values = values;
+        }
+
+        @Override
+        void perform(DatabaseDelegate storage) throws SQLException {
+            try {
+                NodePropBundle bundle = storage.access.loadBundle(new NodeId(node.toString()));
+                bundle.markOld();
+                if (values != null) {
+                    bundle.getPropertyEntry(property).setValues(values);
+                } else {
+                    bundle.removeProperty(property, null);
+                }
+                bundle.setModCount((short)(bundle.getModCount()+1));
+                storage.access.storeBundle(bundle);
+            } catch (ItemStateException ex) {
+                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private class SetMixins extends Action {
+        UUID node;
+        Set<Name> mixinTypeNames;
+        SetMixins(UUID node, Set<Name> mixinTypeNames) {
+            this.node = node;
+            this.mixinTypeNames = mixinTypeNames;
+        }
+
+        @Override
+        void perform(DatabaseDelegate storage) throws SQLException {
+            try {
+                NodePropBundle bundle = storage.access.loadBundle(new NodeId(node.toString()));
+                bundle.markOld();
+                bundle.setMixinTypeNames(mixinTypeNames);
+
+                bundle.setReferenceable(true); // FIXME
+                
+                bundle.setModCount((short)(bundle.getModCount()+1));
                 storage.access.storeBundle(bundle);
             } catch (ItemStateException ex) {
                 Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);

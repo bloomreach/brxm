@@ -249,8 +249,7 @@
           <mainClass>org.hippoecm.checker.Main</mainClass>
           <workingDirectory>target</workingDirectory>
           <arguments>
-            <argument>jdbc:mysql://localhost:3306/hreptwo?user=hippo&amp;password=hippo</argument>
-            <argument>/home/berry/projects/duitslandweb/repackage/storage/workspaces/default/index</argument>
+            <argument>false</argument>
           </arguments>
         </configuration>
       </plugin>

@@ -116,38 +116,7 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
         BundleBinding bundleBinding = new BundleBinding(new ErrorHandling(ErrorHandling.IGNORE_MISSING_BLOBS), this, nsIndex, nameIndex, this);
         final NodePropBundle bundle = bundleBinding.readBundle(istream, nodeId);
         if (!onlyReferenceable || bundle.isReferenceable()) {
-            visitor.visit(new NodeDescription() {
-                public UUID getNode() {
-                    return create(nodeId);
-                }
-
-                public UUID getParent() {
-                    return create(bundle.getParentId());
-                }
-
-                public Collection<UUID> getChildren() {
-                    List<UUID> children = new LinkedList<UUID>();
-                    for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
-                        if(children.contains(create(child.getId()))) {
-                            Thread.currentThread().dumpStack();
-                        }
-                        children.add(create(child.getId()));
-                    }
-                    return children;
-                }
-
-                public Collection<UUID> getReferences() {
-                    List<UUID> references = new LinkedList<UUID>();
-                    for (PropertyEntry entry : (Collection<PropertyEntry>)bundle.getPropertyEntries()) {
-                        if (entry.getType() == PropertyType.REFERENCE) {
-                            for (InternalValue value : entry.getValues()) {
-                                references.add(create(value.getNodeId()));
-                            }
-                        }
-                    }
-                    return references;
-                }
-            });
+            visitor.visit(new NodeDescriptionImpl(nodeId, bundle));
         }
     }
 
@@ -217,5 +186,44 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
 
     @Override
     public void clearInUse() {
+    }
+
+    public class NodeDescriptionImpl implements NodeDescription {
+        NodeId nodeId;
+        public NodePropBundle bundle;
+        NodeDescriptionImpl(NodeId nodeId, NodePropBundle bundle) {
+            this.nodeId = nodeId;
+            this.bundle = bundle;
+        }
+        public UUID getNode() {
+            return create(nodeId);
+        }
+
+        public UUID getParent() {
+            return create(bundle.getParentId());
+        }
+
+        public Collection<UUID> getChildren() {
+            List<UUID> children = new LinkedList<UUID>();
+            for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
+                if (children.contains(create(child.getId()))) {
+                    Thread.currentThread().dumpStack();
+                }
+                children.add(create(child.getId()));
+            }
+            return children;
+        }
+
+        public Collection<UUID> getReferences() {
+            List<UUID> references = new LinkedList<UUID>();
+            for (PropertyEntry entry : (Collection<PropertyEntry>)bundle.getPropertyEntries()) {
+                if (entry.getType() == PropertyType.REFERENCE) {
+                    for (InternalValue value : entry.getValues()) {
+                        references.add(create(value.getNodeId()));
+                    }
+                }
+            }
+            return references;
+        }
     }
 }

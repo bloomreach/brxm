@@ -16,6 +16,13 @@
 package org.hippoecm.checker;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
@@ -26,10 +33,16 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
+import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Checker {
+
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(Checker.class);
@@ -127,5 +140,237 @@ public class Checker {
             }
         }
         return clean;
+    }
+
+    static enum SanityCheckerMode {
+        TRUE("true"),
+        FALSE("false"),
+        CORRUPTMIXINPROPCLEAR("corruptMixinPropClear"),
+        CORRUPTMIXINPROPDROP("corruptMixinPropDrop"),
+        CORRUPTMIXINSET("corruptMixinSetClear"),
+        FIXMIXINSET("fixMixinSetTo"),
+        FIXMIXINSETFROMPROP("fixMixinSetFromProp"),
+        FIXCHILDRENOFMIXINSET("fixChildrenOfMixinSetTo"),
+        FIXCHILDRENOFMIXINSETFROMPROP("fixChildrenOfMixinSetFromProp"),
+        UNLISTCHILDREN("unlistChildren"),
+        DUMP("dump");
+        private String name;
+
+        SanityCheckerMode(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public boolean checkBundles(String[] arguments) {
+        if (arguments.length == 0) {
+            return true;
+        }
+        SanityCheckerMode mode = null;
+        for (SanityCheckerMode candidateMode : SanityCheckerMode.values()) {
+            if (candidateMode.getName().equals(arguments[0])) {
+                mode = candidateMode;
+            }
+        }
+        if (mode == null) {
+            return false;
+        }
+        Set<String> checkerUUIDs = null;
+        Set<Name> checkerNames = null;
+        switch (mode) {
+            case TRUE:
+                return check(true);
+            case FALSE:
+                return check(false);
+            case CORRUPTMIXINPROPCLEAR:
+            case CORRUPTMIXINPROPDROP:
+            case CORRUPTMIXINSET:
+            case FIXMIXINSETFROMPROP:
+            case FIXCHILDRENOFMIXINSET:
+            case FIXCHILDRENOFMIXINSETFROMPROP:
+            case UNLISTCHILDREN:
+                if (arguments.length > 1) {
+                    checkerUUIDs = new HashSet<String>();
+                    checkerUUIDs.addAll(Arrays.asList(Arrays.copyOfRange(arguments, 1, arguments.length)));
+                    if ("all".equals(arguments[1])) {
+                        checkerUUIDs.clear();
+                    }
+                }
+                break;
+            case FIXMIXINSET:
+                if (arguments.length > 1) {
+                    checkerUUIDs = new LinkedHashSet<String>();
+                    checkerUUIDs.add(arguments[1]);
+                    NameFactory nameFactory = NameFactoryImpl.getInstance();
+                    checkerNames = new HashSet<Name>();
+                    for(int i=2; i<arguments.length; i++) {
+                        checkerNames.add(nameFactory.create(arguments[i]));
+                    }
+                }
+                break;
+        }
+
+        Progress progress = new Progress();
+        progress.setLogger(log);
+        PersistenceManager persistMgr = null;
+        try {
+            FileSystem fs = repConfig.getFileSystem();
+            for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
+                PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
+                persistMgr = pmConfig.newInstance(PersistenceManager.class);
+                persistMgr.init(new PMContext(
+                        new File(repConfig.getHomeDir()), fs,
+                        RepositoryImpl.ROOT_NODE_ID,
+                        null,
+                        null,
+                        repConfig.getDataStore()));
+                Repair repair = new Repair();
+                {
+                    BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
+                    int size = bundleReader.getSize();
+                    log.info("Traversing through " + size + " bundles");
+                    bundleReader.accept(new SanityChecker(repair, mode, checkerUUIDs, checkerNames));
+                    repair.perform(bundleReader);
+                }
+                Access.close(persistMgr);
+                persistMgr = null;
+            }
+            return true;
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName(), ex);
+            return false;
+        } catch (Exception ex) {
+            log.error(ex.getClass().getName(), ex);
+            return false;
+        } finally {
+            if (persistMgr != null) {
+                Access.close(persistMgr);
+            }
+        }
+    }
+
+    static class SanityChecker implements Visitor<NodeDescription> {
+
+        SanityCheckerMode mode;
+        Repair repair;
+        Set<String> repairSet;
+        Set<Name> names;
+
+        public SanityChecker(Repair repair, SanityCheckerMode mode, Set<String> repairSet, Set<Name> names) {
+            this.repair = repair;
+            this.mode = mode;
+            this.repairSet = repairSet;
+            this.names = names;
+        }
+
+        public void visit(NodeDescription nodeDescription) {
+            BundleReader.NodeDescriptionImpl node = (BundleReader.NodeDescriptionImpl) nodeDescription;
+            boolean skip = true;
+            switch (mode) {
+                case CORRUPTMIXINPROPCLEAR:
+                case CORRUPTMIXINPROPDROP:
+                case CORRUPTMIXINSET:
+                case FIXMIXINSETFROMPROP:
+                case FIXMIXINSET:
+                case DUMP:
+                    if (repairSet == null || repairSet.contains(node.getNode().toString())) {
+                        skip = false;
+                    }
+                    break;
+                case FIXCHILDRENOFMIXINSET:
+                case FIXCHILDRENOFMIXINSETFROMPROP:
+                case UNLISTCHILDREN:
+                    if (repairSet == null || repairSet.contains(node.getParent().toString())) {
+                        skip = false;
+                    }
+                    break;
+            }
+            if (skip) {
+                return;
+            }
+            switch (mode) {
+                case CORRUPTMIXINPROPCLEAR:
+                case CORRUPTMIXINPROPDROP:
+                case FIXMIXINSETFROMPROP:
+                case FIXCHILDRENOFMIXINSETFROMPROP:
+                    for (Name name : node.bundle.getPropertyNames()) {
+                        if ("mixinTypes".equals(name.getLocalName()) && "http://www.jcp.org/jcr/1.0".equals(name.getNamespaceURI())) {
+                            if(repairSet == null) {
+                            StringBuffer sb = new StringBuffer();
+                            sb.append("{").append(name.getNamespaceURI()).append("}").append(name.getLocalName());
+                            for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
+                                try {
+                                    Name nameValue = value.getName();
+                                    sb.append("{").append(nameValue.getNamespaceURI()).append("}").append(nameValue.getLocalName());
+                                } catch (RepositoryException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            System.err.println(node.getNode() + " " + sb.toString());
+                            }
+                            if (repairSet != null) {
+                                switch (mode) {
+                                    case CORRUPTMIXINPROPCLEAR:
+                                        repair.setProperty(Repair.RepairStatus.PENDING, nodeDescription.getNode(), name, new InternalValue[0]);
+                                        break;
+                                    case CORRUPTMIXINPROPDROP:
+                                        repair.setProperty(Repair.RepairStatus.PENDING, nodeDescription.getNode(), name, null);
+                                        break;
+                                    case FIXMIXINSETFROMPROP:
+                                    case FIXCHILDRENOFMIXINSETFROMPROP:
+                                        try {
+                                            Set<Name> newMixinNames = new HashSet<Name>();
+                                            for(InternalValue nameValue : node.bundle.getPropertyEntry(name).getValues()) {
+                                                newMixinNames.add(nameValue.getName());
+                                            }
+                                            repair.setMixins(Repair.RepairStatus.PENDING, nodeDescription.getNode(), newMixinNames);
+                                        } catch(RepositoryException ex) {
+                                            ex.printStackTrace(System.err);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case UNLISTCHILDREN:
+                    if (repairSet != null) {
+                        for (Iterator<NodePropBundle.ChildNodeEntry> iter = node.bundle.getChildNodeEntries().iterator(); iter.hasNext();) {
+                            NodePropBundle.ChildNodeEntry childEntry = iter.next();
+                            repair.unlistChild(Repair.RepairStatus.PENDING, node.getNode(), DatabaseDelegate.create(childEntry.getId()));
+                        }
+                    }
+                    break;
+                case DUMP:
+                    if (repairSet != null) {
+                        StringBuffer sb = new StringBuffer();
+                        sb.append("node=").append(node.getNode());
+                        sb.append(" parent=").append(node.getParent());
+                        sb.append(" children=");
+                        boolean first = true;
+                        for(UUID child : node.getChildren()) {
+                            if(first) {
+                                first = false;
+                            } else {
+                                sb.append(",");
+                            }
+                            sb.append(child);
+                        }                   
+                    }
+                    break;
+                case CORRUPTMIXINSET:
+                    System.err.println(node.getNode());
+                    repair.setMixins(Repair.RepairStatus.PENDING, nodeDescription.getNode(), Collections.EMPTY_SET);
+                    break;
+                case FIXCHILDRENOFMIXINSET:
+                case FIXMIXINSET:
+                    System.err.println(node.getNode());
+                    repair.setMixins(Repair.RepairStatus.PENDING, nodeDescription.getNode(), names);
+                    break;
+            }
+        }
     }
 }

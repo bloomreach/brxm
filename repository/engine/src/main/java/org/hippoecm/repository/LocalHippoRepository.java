@@ -261,6 +261,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         return checker.check(fix);
     }
 
+    public static void check(String location, String[] arguments) throws RepositoryException {
+        LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
+        RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
+        Checker checker = new Checker(repConfig);
+        checker.checkBundles(arguments);
+    }
+
     private class LocalRepositoryImpl extends RepositoryImpl {
         LocalRepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
             super(repConfig);
