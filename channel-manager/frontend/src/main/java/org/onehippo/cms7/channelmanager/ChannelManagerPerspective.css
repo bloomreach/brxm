@@ -22,3 +22,7 @@
 .channel-manager .channel-properties a.channel-button, .channel-manager .channel-properties .channel-button > a { background-color: #f2f2f2; border: 1px solid #999; padding: 2px; margin-right: 4px; }
 .channel-manager .channel-properties a.channel-button:hover, .channel-manager .channel-properties .channel-button > a:hover { background-color: #fff6e0 }
 .channel-manager .channel-properties-window .x-window-body { overflow: auto }
+
+.channel-manager .x-btn-small .add-channel {
+  background-image: url("add-channel.png") !important;
+}

@@ -82,7 +82,8 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                         handler: function() {
                             this.fireEvent('add-channel');
                         },
-                        scope: this
+                        scope: this,
+                        iconCls: 'add-channel'
                     }
                 ]
             }),
