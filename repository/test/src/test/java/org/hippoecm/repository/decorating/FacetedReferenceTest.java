@@ -57,7 +57,6 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         "language","english",
         "/test/documents/articles/war-of-the-worlds",                        "hippo:handle",
         "jcr:mixinTypes", "mix:referenceable",
-        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
         "jcr:mixinTypes", "mix:referenceable",
         "language","english",
