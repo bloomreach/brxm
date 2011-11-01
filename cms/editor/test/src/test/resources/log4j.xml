@@ -44,17 +44,6 @@
     <appender-ref ref="root"/>
   </category>
 
-
-  <category additivity="false" name="org.jpox.util">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
-  <category additivity="false" name="org.jpox">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-
   <!-- category additivity="true" name="org.hippoecm.repository.LocalHippoRepository">
     <level value="debug"/>
     <appender-ref ref="console"/>
