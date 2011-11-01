@@ -215,9 +215,9 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
-        if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).copy(document, destination, newName);
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), destination);
+        if(workflow instanceof EmbedWorkflow)
+            ((EmbedWorkflow)workflow).copyTo(folder, document, newName, null);
         else
             throw new WorkflowException("cannot copy document which is not contained in a folder");
     }
