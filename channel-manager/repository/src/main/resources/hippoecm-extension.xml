@@ -35,7 +35,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static</sv:value>
     </sv:property>
   </sv:node>
-
+  <!-- 
   <sv:node sv:name="marketing-perspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -50,7 +50,7 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms/cms-static</sv:value>
     </sv:property>
   </sv:node>
-
+  -->
   <sv:node sv:name="workflow-channelactions">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
