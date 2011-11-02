@@ -27,6 +27,48 @@
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-jackson.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-content-pipeline.xml" />
+
+  <!--
+    Enabling to use '_format' parameter name instead of the CXF default _type parameter name for the plain JAX-RS pipeline.
+    Also, if you set 'additionalQueryString' property, then all the JAX-RS requests will have the additional parameters forcefully.
+    For example, if you set it to '_type=json', then you can force the output format to JSON format globally
+    without considering 'Accept' HTTP request header.
+  -->
+  <bean id="jaxrsRestPlainServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing. -->
+        <entry key="_format" value="_type" />
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>addparam1=value1&amp;addparam2=value2</value>
+      -->
+    </property>
+  </bean>
+
+  <!--
+    Enabling to use '_format' parameter name instead of the CXF default _type parameter name for the Content/Context-Aware JAX-RS pipeline.
+    Also, if you set 'additionalQueryString' property, then all the JAX-RS requests will have the additional parameters forcefully.
+    For example, if you set it to '_type=json', then you can force the output format to JSON format globally
+    without considering 'Accept' HTTP request header.
+  -->
+  <bean id="jaxrsRestContentServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing. -->
+        <entry key="_format" value="_type" />
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>addparam1=value1&amp;addparam2=value2</value>
+      -->
+    </property>
+  </bean>
   
   <!-- Custom JAX-RS REST Plain Resource Providers to be overriden. -->
   <bean id="customRestPlainResourceProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
