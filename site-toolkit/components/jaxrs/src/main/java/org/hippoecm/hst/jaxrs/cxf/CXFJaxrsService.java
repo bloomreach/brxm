@@ -16,6 +16,7 @@
 package org.hippoecm.hst.jaxrs.cxf;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -24,7 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.servlet.ServletController;
 import org.apache.cxf.transport.servlet.ServletTransportFactory;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -43,6 +46,11 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 	private String servletControllerAttributeName;
 	private String cxfBusAttributeName;
     private JAXRSServerFactoryBean jaxrsServerFactoryBean;
+    
+    private List<Interceptor<? extends Message>> inInterceptors;
+    private List<Interceptor<? extends Message>> inFaultInterceptors;
+    private List<Interceptor<? extends Message>> outInterceptors;
+    private List<Interceptor<? extends Message>> outFaultInterceptors;
 	
     public CXFJaxrsService(String serviceName) {
     	this(serviceName, new HashMap<String,String>());
@@ -54,17 +62,53 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     	this.cxfBusAttributeName = CXF_BUS_ATTRIBUTE_NAME_PREFIX + serviceName;
     }
     
-    
 	public synchronized void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
 		this.jaxrsServerFactoryBean = jaxrsServerFactoryBean;
 	}
 	
-	
-	protected synchronized ServletController getController(ServletContext servletContext) {
+    public void setInInterceptors(List<Interceptor<? extends Message>> inInterceptors) {
+        this.inInterceptors = inInterceptors;
+    }
+
+    public void setInFaultInterceptors(List<Interceptor<? extends Message>> inFaultInterceptors) {
+        this.inFaultInterceptors = inFaultInterceptors;
+    }
+
+    public void setOutInterceptors(List<Interceptor<? extends Message>> outInterceptors) {
+        this.outInterceptors = outInterceptors;
+    }
+
+    public void setOutFaultInterceptors(List<Interceptor<? extends Message>> outFaultInterceptors) {
+        this.outFaultInterceptors = outFaultInterceptors;
+    }
+
+    protected Bus createBus() {
+        BusFactory.setThreadDefaultBus(null);
+        Bus bus = BusFactory.getThreadDefaultBus(true);
+        
+        if (inInterceptors != null && !inInterceptors.isEmpty()) {
+            bus.getInInterceptors().addAll(inInterceptors);
+        }
+        
+        if (inFaultInterceptors != null && !inFaultInterceptors.isEmpty()) {
+            bus.getInInterceptors().addAll(inFaultInterceptors);
+        }
+        
+        if (outInterceptors != null && !outInterceptors.isEmpty()) {
+            bus.getInInterceptors().addAll(outInterceptors);
+        }
+        
+        if (outFaultInterceptors != null && !outFaultInterceptors.isEmpty()) {
+            bus.getInInterceptors().addAll(outFaultInterceptors);
+        }
+        
+        return bus;
+    }
+
+    protected synchronized ServletController getController(ServletContext servletContext) {
 		ServletController controller = (ServletController)servletContext.getAttribute(servletControllerAttributeName);
 		if (controller == null) {
-			BusFactory.setThreadDefaultBus(null);
-			Bus bus = BusFactory.getThreadDefaultBus(true);
+			Bus bus = createBus();
 			ServletTransportFactory df = new ServletTransportFactory(bus);
 			jaxrsServerFactoryBean.setDestinationFactory(df);
 			jaxrsServerFactoryBean.create();

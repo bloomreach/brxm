@@ -24,6 +24,22 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+  <bean id="jaxrsRestContentServiceQueryStringReplacingInterceptor" class="org.hippoecm.hst.jaxrs.cxf.QueryStringReplacingInterceptor">
+    <property name="paramNameReplaces">
+      <map>
+        <!-- The following will replace '_format' parameter name with '_type' parameter name before JAX-RS processing.
+        <entry key="_format" value="_type" />
+        -->
+      </map>
+    </property>
+    <property name="additionalQueryString">
+      <value></value>
+      <!-- The following will append additional query string before JAX-RS processing
+      <value>addparam1=value1&amp;addparam2=value2</value>
+      -->
+    </property>
+  </bean>
+
   <bean id="jaxrsRestContentServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"> 
     <constructor-arg>
       <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
@@ -47,6 +63,11 @@
               </bean>
             </property>
           </bean>
+        </property>
+        <property name="inInterceptors">
+          <list>
+            <ref bean="jaxrsRestContentServiceQueryStringReplacingInterceptor" />
+          </list>
         </property>
       </bean>
     </constructor-arg>

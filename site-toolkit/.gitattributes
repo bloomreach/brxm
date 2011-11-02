@@ -657,6 +657,7 @@ components/jaxrs/pom.xml svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/AbstractJaxrsService.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/CXFJaxrsContentService.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/CXFJaxrsService.java svneol=native#text/plain
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/QueryStringReplacingInterceptor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/SecuredJAXRSInvoker.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractDataset.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractNodeRepresentationDataset.java -text
@@ -694,6 +695,7 @@ components/jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger -text
 components/jaxrs/src/main/resources/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml -text
 components/jaxrs/src/site/site.xml -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/TestPathsAdjustedHttpServletRequestWrapper.java -text
+components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/cxf/TestQueryStringReplacingInterceptor.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/GeneralPage.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/TextPage.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/content/TextPageRepresentation.java -text
