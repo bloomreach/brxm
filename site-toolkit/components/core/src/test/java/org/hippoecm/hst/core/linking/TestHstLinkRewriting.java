@@ -44,14 +44,13 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 public class TestHstLinkRewriting extends AbstractBeanTestCase {
 
-        private HstManager hstSitesManager;
+        private HstManager hstManager;
         private HstURLFactory hstURLFactory;
         private  ObjectConverter objectConverter;
         private HstLinkCreator linkCreator;
@@ -63,7 +62,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
 
             // Repository repo = getComponent(Repository.class.getName());
             // Credentials cred= getComponent(Credentials.class.getName()+".default");
-            this.hstSitesManager = getComponent(HstManager.class.getName());
+            this.hstManager = getComponent(HstManager.class.getName());
             this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.objectConverter = getObjectConverter();
@@ -640,13 +639,13 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             request.setQueryString(queryString);
             requestURI = "/site" + requestURI;
             request.setRequestURI(requestURI);
-            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));
             return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
         }
         
         public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws RepositoryNotAvailableException {
-            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vhosts = hstManager.getVirtualHosts();
             return vhosts.matchSiteMapItem(url);
         }
      

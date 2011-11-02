@@ -596,6 +596,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/site/site.xml -text
 components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintServiceTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
@@ -641,6 +642,7 @@ components/core/src/test/resources/META-INF/assembly/simple-config.properties sv
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestMatchHostAndURL.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.xml -text svneol=unset#text/plain
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestSiteMapItemHandler.xml -text svneol=unset#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/GeneralBasicPoolingRepository.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml svneol=native#text/plain
@@ -964,6 +966,7 @@ toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/uni
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemap.xml svneol=native#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemapitemhandlers.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestproject/sitemenus.xml svneol=native#text/plain
+toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/pages.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/hstconfiguration/unittestsubproject/sitemap.xml -text svneol=unset#text/plain
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-blueprint.xml -text
 toolkit-resources/addon/unittestcontents/src/main/resources/unittest-image.xml svneol=native#text/plain
