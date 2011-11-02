@@ -44,7 +44,7 @@
     <property name="additionalQueryString">
       <value></value>
       <!-- The following will append additional query string before JAX-RS processing
-      <value>addparam1=value1&amp;addparam2=value2</value>
+      <value>_type=json</value>
       -->
     </property>
   </bean>
@@ -65,7 +65,7 @@
     <property name="additionalQueryString">
       <value></value>
       <!-- The following will append additional query string before JAX-RS processing
-      <value>addparam1=value1&amp;addparam2=value2</value>
+      <value>_type=json</value>
       -->
     </property>
   </bean>
