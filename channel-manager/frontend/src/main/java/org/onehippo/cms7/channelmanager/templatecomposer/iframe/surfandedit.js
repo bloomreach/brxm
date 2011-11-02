@@ -26,6 +26,14 @@
             this.createSurfAndEditLinks();
         },
 
+        showLinks: function() {
+            $('.hst-cmseditlink').show();
+        },
+
+        hideLinks: function() {
+            $('.hst-cmseditlink').hide();
+        },
+
         createSurfAndEditLinks : function() {
             try {
                 //replace edit link with cms styled button
@@ -125,5 +133,9 @@
     };
 
     Main.subscribe('initialize', surfandedit.init, surfandedit);
+
+    onhostmessage(surfandedit.hideLinks, surfandedit, false, 'showoverlay');
+
+    onhostmessage(surfandedit.showLinks, surfandedit, false, 'hideoverlay');
 
 })(jQuery);

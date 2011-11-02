@@ -49,7 +49,7 @@
                 this.requestSync();
                 this.sync();
                 return false;
-            }, this, false, 'showoverlay')
+            }, this, false, 'showoverlay');
 
             onhostmessage(function(msg) {
                 this.getOverlay().hide();
