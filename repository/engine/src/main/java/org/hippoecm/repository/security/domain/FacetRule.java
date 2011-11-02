@@ -165,7 +165,7 @@ public class FacetRule implements Serializable {
                 throw new RepositoryException(msg.toString(), e);
             } catch (UnsupportedRepositoryOperationException e) {
                 StringBuilder msg = new StringBuilder();
-                msg.append("Path not found for facetRule ");
+                msg.append("Node is not referenceable for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
                 msg.append("FacetRule");
                 msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
