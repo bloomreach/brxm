@@ -34,6 +34,7 @@ import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
+import org.apache.jackrabbit.core.persistence.util.NodePropBundle.ChildNodeEntry;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
@@ -192,6 +193,7 @@ public class Checker {
             case FIXCHILDRENOFMIXINSET:
             case FIXCHILDRENOFMIXINSETFROMPROP:
             case UNLISTCHILDREN:
+            case DUMP:
                 if (arguments.length > 1) {
                     checkerUUIDs = new HashSet<String>();
                     checkerUUIDs.addAll(Arrays.asList(Arrays.copyOfRange(arguments, 1, arguments.length)));
@@ -351,14 +353,15 @@ public class Checker {
                         sb.append(" parent=").append(node.getParent());
                         sb.append(" children=");
                         boolean first = true;
-                        for(UUID child : node.getChildren()) {
+                        for(ChildNodeEntry entry : node.bundle.getChildNodeEntries()) {
                             if(first) {
                                 first = false;
                             } else {
                                 sb.append(",");
                             }
-                            sb.append(child);
-                        }                   
+                            sb.append(entry.getName()+":"+entry.getId());
+                        }
+                        System.err.println(sb.toString());
                     }
                     break;
                 case CORRUPTMIXINSET:
