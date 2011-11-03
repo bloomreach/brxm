@@ -128,7 +128,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
             toolbar.add({
                 text: this.initialConfig.resources['close-button'],
-                iconCls: 'title-button',
+                iconCls: 'save-close-channel',
                 allowDepress: false,
                 width: 120,
                 listeners: {
@@ -172,8 +172,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             },
             {
-                icon: this.initialConfig.gearIconUrl,
                 cls: 'toolbarMenuIcon',
+                iconCls: 'channel-gear',
                 allowDepress: false,
                 menu: {
                     items: {
@@ -198,7 +198,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         } else {
             toolbar.add({
                 text: this.initialConfig.resources['edit-button'],
-                iconCls: 'title-button',
+                iconCls: 'edit-channel',
                 allowDepress: false,
                 width: 120,
                 listeners: {
@@ -210,7 +210,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             {
                 text: this.initialConfig.resources['publish-button'],
-                iconCls: 'title-button',
                 allowDepress: false,
                 width: 120,
                 hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,

@@ -19,6 +19,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.properties -te
 frontend/src/main/java/org/onehippo/cms7/channelmanager/add-channel.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/bg.gif -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/button-edit-content.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
@@ -55,6 +56,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalB
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
