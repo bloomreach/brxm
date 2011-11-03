@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+"use strict";
+
 /**
  * @description
  * <p>
@@ -39,19 +41,20 @@ if (!YAHOO.hippo.EditorManager) {
     (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoAjax = YAHOO.hippo.HippoAjax;
 
+        var info = function(message) {
+            YAHOO.log(message, "info", "EditorManager");
+        };
+
+        var error = function(message) {
+            YAHOO.log(message, "error", "EditorManager");
+        };
+
         /**
          * The editor-manager controls the life-cycle of Xinha editors.
          */
         YAHOO.hippo.EditorManagerImpl = function() {
-            this.editors = new YAHOO.hippo.HashMap();
-            this.activeEditors = new YAHOO.hippo.HashMap();
-            this.newEditors = new YAHOO.hippo.HashMap();
-
             this.initialized = false;
-            this.registered = false;
-            this.sizeState = null;
-            this.form = null;
-            this.deltaProvider = null;
+            this.contexts = new YAHOO.hippo.HashMap();
         };
 
         YAHOO.hippo.EditorManagerImpl.prototype = {
@@ -90,37 +93,50 @@ if (!YAHOO.hippo.EditorManager) {
              * TODO: implement configurable editor instantiation
              */
             register : function(cfg) {
-                var editor = null;
-                if (this.editors.containsKey(cfg.name)) {
-                    editor = this.editors.remove(cfg.name);
-                    editor.reset(cfg);
-                } else {
-                    editor = new YAHOO.hippo.XinhaEditor(cfg);
-                }
-                this.newEditors.put(cfg.name, editor);
-
-                if (!this.registered) {
-                    var self = this;
-
-                    //Start at the editor container element and traverse up to the nearest form.
-                    //During the traversal monitor for a parent element with classname 'column-wrapper', 
-                    //if found save the current element as an alternative deltaProvider
-                    this.form = Dom.getAncestorBy(Dom.get(cfg.name), function(element) {
-                        if (element.tagName.toLowerCase() === 'form') {
-                            return true;
-                        }
-                        if (Dom.hasClass(element.parentNode, 'column-wrapper')) {
-                            self.deltaProvider = element;
-                        }
-                        return false;
-                    });
-
-                    if (this.form == null) {
-                        return;
+                //Start at the editor container element and traverse up to the nearest form.
+                //During the traversal monitor for a parent element with classname 'column-wrapper',
+                //if found save the current element as an alternative deltaProvider
+                var deltaProvider = null;
+                var form = Dom.getAncestorBy(Dom.get(cfg.name), function(element) {
+                    if (element.tagName.toLowerCase() === 'form') {
+                        return true;
                     }
+                    if (Dom.hasClass(element.parentNode, 'column-wrapper')) {
+                        deltaProvider = element;
+                    }
+                    return false;
+                });
 
-                    this.registered = true;
+                if (form == null) {
+                    return;
                 }
+
+                if (!this.contexts.containsKey(form)) {
+                    this.contexts.put(form, []);
+                    YAHOO.hippo.HippoAjax.registerDestroyFunction(form, function() {
+                        this.contexts.remove(form);
+                    }, this);
+                }
+                var context = null;
+                for (var candidate in this.contexts.get(form)) {
+                    if (candidate.deltaProvider === deltaProvider) {
+                        context = candidate;
+                        break;
+                    }
+                }
+                if (context == null) {
+                    context = new YAHOO.hippo.EditorContext(form, deltaProvider);
+                    this.contexts.get(form).push(context);
+                }
+                context.register(cfg);
+            },
+
+            forEachContext: function(cb, obj) {
+                this.contexts.forEach(this, function(k, v) {
+                    for (var i = 0; i < v.length; i++) {
+                        cb.call(obj || this, v[i]);
+                    }
+                });
             },
 
             /**
@@ -133,37 +149,102 @@ if (!YAHOO.hippo.EditorManager) {
                     Lang.later(100, this, this.render);
                     return;
                 }
+                this.forEachContext(function(context) {
+                    context.render();
+                });
+            },
 
+            saveEditors : function() {
+                this.forEachContext(function(context) {
+                    context.saveEditors();
+                });
+            },
+
+            //TODO: should be something like widget.id
+            saveByTextareaId : function(id) {
+                var editor = this.getEditorByWidgetId(id);
+                if (editor != null) {
+                    editor.save(true);
+                    info("Saved!");
+                }
+            },
+
+            getEditorByWidgetId : function(id) {
+                var editor = null;
+                this.forEachContext(function(context) {
+                    if (editor == null) {
+                        editor = context.getEditorByWidgetId(id);
+                    }
+                });
+                return editor;
+            }
+
+        };
+
+        YAHOO.hippo.EditorContext = function(form, deltaProvider) {
+            this.editors = new YAHOO.hippo.HashMap();
+            this.activeEditors = new YAHOO.hippo.HashMap();
+            this.newEditors = new YAHOO.hippo.HashMap();
+
+            this.sizeState = null;
+            this.form = form;
+            this.deltaProvider = deltaProvider;
+
+            var self = this;
+            //register the form as a resize listener
+            YAHOO.hippo.LayoutManager.registerResizeListener(this.form, this, function(unitSize) {
+                var sizes;
+                if (self.deltaProvider != null) {
+                    sizes = Dom.getRegion(self.deltaProvider);
+                    // if deltaProvider exists, but has no region, it is not shown (display:none)
+                    if (sizes == false) {
+                        return;
+                    }
+                } else {
+                    sizes = {width: unitSize.wrap.w, height: unitSize.wrap.h};
+                }
+                if (self.sizeState == null) {
+                    self.sizeState = {w: sizes.width, h: sizes.height};
+                } else {
+                    var deltaW = sizes.width - self.sizeState.w;
+                    var deltaH = sizes.height - self.sizeState.h;
+                    self.resize(deltaW, deltaH);
+                    self.sizeState = {w: sizes.width, h: sizes.height};
+                }
+            }, true);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.form, function() {
+                YAHOO.hippo.LayoutManager.unregisterResizeListener(self.form, self);
+                //a new form is loaded so clear editors map
+                self.editors.forEach(self, function(k, v) {
+                    v.destroy();
+                });
+                self.editors.clear();
+            }, this);
+        };
+
+        YAHOO.hippo.EditorContext.prototype = {
+
+            /**
+             * Register a XinhaTextEditor. This method is called on dom load.
+             * TODO: implement configurable editor instantiation
+             */
+            register: function(cfg) {
+                var editor = null;
+                if (this.editors.containsKey(cfg.name)) {
+                    editor = this.editors.remove(cfg.name);
+                    editor.reset(cfg);
+                } else {
+                    editor = new YAHOO.hippo.XinhaEditor(cfg, this);
+                }
+                this.newEditors.put(cfg.name, editor);
+            },
+
+            render: function() {
                 this.newEditors.forEach(this, function(name, editor) {
                     this.editors.put(editor.name, editor);
                     editor.render();
                 });
                 this.newEditors.clear();
-
-                var self = this;
-
-                //register the form as a resize listener
-                YAHOO.hippo.LayoutManager.registerResizeListener(this.form, this, function(unitSize) {
-                    var sizes = self.deltaProvider == null ? {width: unitSize.wrap.w, height: unitSize.wrap.h} :
-                            Dom.getRegion(self.deltaProvider);
-                    if (self.sizeState == null) {
-                        self.sizeState = {w: sizes.width, h: sizes.height};
-                    } else {
-                        var deltaW = sizes.width - self.sizeState.w;
-                        var deltaH = sizes.height - self.sizeState.h;
-                        self.resize(deltaW, deltaH);
-                        self.sizeState = {w: sizes.width, h: sizes.height};
-                    }
-                }, true);
-                YAHOO.hippo.HippoAjax.registerDestroyFunction(this.form, function() {
-                    YAHOO.hippo.LayoutManager.unregisterResizeListener(self.form, self);
-                    self.registered = false;
-                    //a new form is loaded so clear editors map
-                    self.editors.forEach(self, function(k, v) {
-                        v.destroy();
-                    });
-                    self.editors.clear();
-                }, this);
             },
 
             resize : function(deltaW, deltaH) {
@@ -172,23 +253,21 @@ if (!YAHOO.hippo.EditorManager) {
                 });
             },
 
-            editorLoaded : function(name) {
-                var editor = this.editors.get(name);
-                editor.onEditorLoaded();
-
-                this.registerCleanup(editor.getContainer(), name);
-                this.activeEditors.put(name, editor);
-
-                this.info('Editor successfully loaded');
-            },
-
             cleanup : function(name) {
                 this.sizeState = null;
                 this.deltaProvider = null;
                 var editor = this.activeEditors.remove(name);
                 // TODO: works now??
-                //Xinha.collectGarbageForIE(); 
-                this.info('Cleanup executed');
+                //Xinha.collectGarbageForIE();
+                info('Cleanup executed');
+            },
+
+            editorLoaded : function(name) {
+                var editor = this.editors.get(name);
+                this.registerCleanup(editor.getContainer(), name);
+                this.activeEditors.put(name, editor);
+
+                info('Editor successfully loaded');
             },
 
             registerCleanup : function(element, name) {
@@ -203,15 +282,6 @@ if (!YAHOO.hippo.EditorManager) {
                 });
             },
 
-            //TODO: should be something like widget.id
-            saveByTextareaId : function(id) {
-                var editor = this.getEditorByWidgetId(id);
-                if (editor != null) {
-                    editor.save(true);
-                    this.info("Saved!");
-                }
-            },
-
             getEditorByWidgetId : function(id) {
                 var values = this.activeEditors.valueSet();
                 for (var i = 0; i < values.length; ++i) {
@@ -220,20 +290,11 @@ if (!YAHOO.hippo.EditorManager) {
                         return editor;
                     }
                 }
-                return null;
-            },
-
-            info : function(message) {
-                YAHOO.log(message, "info", "EditorManager");
-            },
-
-            error : function(message) {
-                YAHOO.log(message, "error", "EditorManager");
             }
 
         };
 
-        YAHOO.hippo.BaseEditor = function(config) {
+        YAHOO.hippo.BaseEditor = function(config, context) {
             if (!Lang.isString(config.name) || Lang.trim(config.name).length === 0) {
                 throw new Error("Editor configuration parameter 'name' is undefined or empty");
             }
@@ -242,15 +303,16 @@ if (!YAHOO.hippo.EditorManager) {
             this.lastData = null;
             this.container = null;
             this.sizeState = {w: 0, h: 0};
+            this.context = context;
         };
 
         YAHOO.hippo.BaseEditor.prototype = {
             render : function() {
-                this.info('Base class render');
+                info('Base class render');
             },
 
             save : function(throttled) {
-                this.info('Base class save');
+                info('Base class save');
             },
 
             reset : function(config) {
@@ -259,16 +321,16 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             destroy : function() {
-                this.info('Base class destroy');
+                info('Base class destroy');
             },
 
             resize : function(deltaW, deltaH) {
-                this.info("Base class resize");
+                info("Base class resize");
             },
 
             setSize : function(w, h) {
                 var oW = this.sizeState.w, oH = this.sizeState.h, dW = w - oW, dH = h - oH;
-                this.info('setSize: old[' + oW + ', ' + oH + '] new[' + w + ', ' + h + '] delta[' + dW + ', ' + dH + ']');
+                info('setSize: old[' + oW + ', ' + oH + '] new[' + w + ', ' + h + '] delta[' + dW + ', ' + dH + ']');
 
                 this.sizeState.w = w;
                 this.sizeState.h = h;
@@ -279,7 +341,7 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             getWidgetId : function() {
-                this.info("Base class getWidgetId");
+                info("Base class getWidgetId");
                 return null;
             },
 
@@ -333,9 +395,9 @@ if (!YAHOO.hippo.EditorManager) {
                     if (this.tooltip != null) {
                         this.hideTooltip();
                         this.createEditor();
-                        this.info('Editor created directly');
+                        info('Editor created directly');
                     } else {
-                        this.info('Editor created with a slight delay');
+                        info('Editor created with a slight delay');
                         Lang.later(300, this, this.createEditor);
                     }
                 } else {
@@ -539,8 +601,9 @@ if (!YAHOO.hippo.EditorManager) {
 
                 var _name = this.name;
                 this.xinha._onGenerate = function() {
-                    YAHOO.hippo.EditorManager.editorLoaded(_name);
-                }
+                    this.onEditorLoaded();
+                    this.context.editorLoaded(_name);
+                }.bind(this);
 
                 Dom.setStyle(this.name, 'visibility', 'hidden');
                 Xinha.startEditors([this.xinha]);
@@ -619,7 +682,7 @@ if (!YAHOO.hippo.EditorManager) {
                     yy = (minHeight / 20) * p;
                 }
 
-                y = minHeight;
+                var y = minHeight;
                 if (vHeight - vHeight > 0) {  //what should this do?
                     if (y - yy > minHeight) {
                         y -= yy;
@@ -737,10 +800,10 @@ if (!YAHOO.hippo.EditorManager) {
                             this.xinha.plugins['AutoSave'].instance.save(throttled);
                             this.lastData = data;
 
-                            this.info('Content saved.');
+                            info('Content saved.');
                         }
                     } catch(e) {
-                        this.error('Error retrieving innerHTML from xinha, skipping save');
+                        error('Error retrieving innerHTML from xinha, skipping save');
                     }
                 }
             },

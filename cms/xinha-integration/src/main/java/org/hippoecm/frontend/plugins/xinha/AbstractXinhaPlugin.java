@@ -297,7 +297,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             });
-            context.addOnWinLoad("YAHOO.hippo.EditorManager.render();");
+            context.addOnDomLoad("YAHOO.hippo.EditorManager.render();");
         }
     }
 

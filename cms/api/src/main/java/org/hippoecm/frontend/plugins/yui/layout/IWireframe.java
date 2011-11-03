@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.io.Serializable;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+
 /**
  * Base wireframe interface, allows wireframes that are linked to their parent to register
  * with their parent through the Wicket component tree model.
@@ -31,4 +33,9 @@ public interface IWireframe extends Serializable {
      */
     YuiId getYuiId();
 
+    /**
+     * Resize the wireframe, e.g. when it has become visible.
+     * @param target
+     */
+    void resize(AjaxRequestTarget target);
 }

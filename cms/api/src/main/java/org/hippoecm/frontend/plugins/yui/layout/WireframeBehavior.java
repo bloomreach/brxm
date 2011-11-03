@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import net.sf.json.JsonConfig;
+import java.io.Serializable;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.MarkupContainer;
@@ -32,7 +33,7 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.service.render.RenderService;
 
-import java.io.Serializable;
+import net.sf.json.JsonConfig;
 
 /**
  * The WireframeBehavior allows you to create cross-browser application layouts based on the YUI Layout Manager:
@@ -146,6 +147,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
 
     private WireframeSettings settings;
     private HippoTextTemplate template;
+    private boolean rendered = false;
 
     public WireframeBehavior(final WireframeSettings settings) {
         super(settings);
@@ -190,6 +192,14 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
+    }
+
+    @Override
+    public void resize(AjaxRequestTarget target) {
+        if (rendered) {
+            target.appendJavascript(
+                "YAHOO.hippo.LayoutManager.getWireframe('" + settings.getRootId().getElementId() + "').resize()");
+        }
     }
 
     @Override
@@ -245,6 +255,8 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         });
 
         super.onRenderHead(response);
+
+        rendered  = true;
     }
 
     @Override

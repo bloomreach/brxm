@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -190,6 +193,20 @@ public class EditPerspective extends Perspective {
             }
 
         };
+    }
+
+    @Override
+    public String getMarkupId(boolean createIfDoesNotExist) {
+        String wicketServiceId = getPluginContext().getReference(this).getServiceId() + "-edit-perspective";
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(wicketServiceId.getBytes(), 0, wicketServiceId.length());
+            // use 'id' prefix to be compliant with w3c identifier specification
+            return "id" + new BigInteger(1, m.digest()).toString(16);
+
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

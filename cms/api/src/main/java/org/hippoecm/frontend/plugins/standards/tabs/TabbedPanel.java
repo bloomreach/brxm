@@ -15,7 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
@@ -33,6 +40,8 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.Loop.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -42,11 +51,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TabbedPanel extends WebMarkupContainer {
     @SuppressWarnings("unused")
@@ -64,6 +71,7 @@ public class TabbedPanel extends WebMarkupContainer {
     private MarkupContainer tabsContainer;
     private IconSize iconType = IconSize.TINY;
     private transient boolean redraw = false;
+    private CardView cardView;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
         super(id, new Model<Integer>(-1));
@@ -109,13 +117,14 @@ public class TabbedPanel extends WebMarkupContainer {
                         protected void respond(AjaxRequestTarget target) {
                             getContextmenu().setVisible(true);
                             target.addComponent(getComponentToUpdate());
-                            IContextMenuManager menuManager = (IContextMenuManager) findParent(IContextMenuManager.class);
+                            IContextMenuManager menuManager = (IContextMenuManager) findParent(
+                                    IContextMenuManager.class);
                             if (menuManager != null) {
                                 menuManager.showContextMenu(this);
                                 String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
                                 String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                                target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
-                                        + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                                target.appendJavascript(
+                                        "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
                             }
                         }
                     });
@@ -131,8 +140,9 @@ public class TabbedPanel extends WebMarkupContainer {
         });
 
         panelContainer = new WebMarkupContainer("panel-container");
+        cardView = new CardView(tabs);
+        panelContainer.add(cardView);
         panelContainer.setOutputMarkupId(true);
-        panelContainer.add(plugin.getEmptyPanel());
         add(panelContainer);
     }
 
@@ -319,11 +329,32 @@ public class TabbedPanel extends WebMarkupContainer {
         redraw = true;
     }
 
+    void removed(final TabsPlugin.Tab tabbie) {
+        if (hasBeenRendered()) {
+            cardView.removed(tabbie);
+            redraw();
+        }
+    }
+
+    void addLast() {
+        if (hasBeenRendered()) {
+            cardView.addLast();
+            redraw();
+        }
+    }
+
+    void addFirst() {
+        if (hasBeenRendered()) {
+            cardView.addFirst();
+            redraw();
+        }
+    }
+
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
                 target.addComponent(tabsContainer);
-                target.addComponent(get("panel-container"));
+                cardView.updateCards(target);
             }
             redraw = false;
         }
@@ -345,7 +376,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
     public void setSelectedTab(int index) {
         if (index < 0 || index >= tabs.size()) {
-            panelContainer.replace(plugin.getEmptyPanel());
+//            panelContainer.replace(plugin.getEmptyPanel());
             return;
         }
 
@@ -356,20 +387,18 @@ public class TabbedPanel extends WebMarkupContainer {
         Panel panel = tab.getPanel(TAB_PANEL_ID);
 
         if (panel == null) {
-            throw new WicketRuntimeException("ITab.getPanel() returned null. TabbedPanel [" + getPath()
-                    + "] ITab index [" + index + "]");
+            throw new WicketRuntimeException(
+                    "ITab.getPanel() returned null. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
 
         }
 
         if (!panel.getId().equals(TAB_PANEL_ID)) {
             throw new WicketRuntimeException(
-                    "ITab.getPanel() returned a panel with invalid id ["
-                            + panel.getId()
-                            + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel ["
-                            + getPath() + "] ITab index [" + index + "]");
+                    "ITab.getPanel() returned a panel with invalid id [" + panel.getId() + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
         }
 
-        panelContainer.replace(panel);
+        cardView.select((TabsPlugin.Tab) tab);
+//        panelContainer.replace(panel);
     }
 
     public final int getSelectedTab() {
@@ -384,4 +413,144 @@ public class TabbedPanel extends WebMarkupContainer {
         return iconType;
     }
 
+    private static class CardView extends ListView<TabsPlugin.Tab> {
+
+        private Set<TabsPlugin.Tab> added = new HashSet<TabsPlugin.Tab>();
+        private Set<TabsPlugin.Tab> removed = new HashSet<TabsPlugin.Tab>();
+        private TabsPlugin.Tab selected;
+        private int counter = 0;
+
+        public CardView(final List<TabsPlugin.Tab> tabs) {
+            super("cards", tabs);
+            setRenderBodyOnly(true);
+        }
+
+        void select(TabsPlugin.Tab tabbie) {
+            this.selected = tabbie;
+        }
+
+        @Override
+        protected void populateItem(final ListItem<TabsPlugin.Tab> item) {
+            item.add(item.getModelObject().getPanel(TAB_PANEL_ID));
+            item.setOutputMarkupId(true);
+        }
+
+        void removed(final TabsPlugin.Tab tabbie) {
+            if (added.contains(tabbie)) {
+                added.remove(tabbie);
+            }
+            removed.add(tabbie);
+        }
+
+        void addLast() {
+            List<TabsPlugin.Tab> tabs = getModelObject();
+            TabsPlugin.Tab tabbie = tabs.get(tabs.size() - 1);
+            if (removed.contains(tabbie)) {
+                removed.remove(tabbie);
+            }
+            added.add(tabbie);
+        }
+
+        void addFirst() {
+            List<TabsPlugin.Tab> tabs = getModelObject();
+            TabsPlugin.Tab tabbie = tabs.get(0);
+            if (removed.contains(tabbie)) {
+                removed.remove(tabbie);
+            }
+            added.add(tabbie);
+        }
+
+        @Override
+        protected ListItem<TabsPlugin.Tab> newItem(int index) {
+            return newItem(getModelObject().get(index));
+        }
+
+        protected ListItem<TabsPlugin.Tab> newItem(TabsPlugin.Tab tabbie) {
+            return new ListItem<TabsPlugin.Tab>(counter++, new Model<TabsPlugin.Tab>(tabbie)) {
+                {
+                    add(new AttributeAppender("style", new LoadableDetachableModel<Object>() {
+                        @Override
+                        protected Object load() {
+                            if (getModelObject() == selected) {
+                                return "display: block;";
+                            } else {
+                                return "display: none;";
+                            }
+                        }
+                    }, " "));
+                }
+            };
+        }
+
+        @Override
+        protected void onBeforeRender() {
+            super.onBeforeRender();
+
+            added.clear();
+            removed.clear();
+        }
+
+        public void updateCards(AjaxRequestTarget target) {
+            for (TabsPlugin.Tab tabbie : added) {
+                ListItem<TabsPlugin.Tab> item = newItem(tabbie);
+                add(item);
+
+                populateItem(item);
+
+                target.prependJavascript(
+                        "var element = document.createElement('div');" +
+                        "element.setAttribute('id', '" + item.getMarkupId() + "');" +
+                        "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
+                target.addComponent(item);
+            }
+            Iterator<ListItem<TabsPlugin.Tab>> children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
+            while (children.hasNext()) {
+                ListItem<TabsPlugin.Tab> item = children.next();
+                if (removed.contains(item.getModelObject())) {
+                    target.appendJavascript(
+                        "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                        "element.parentNode.removeChild(element);");
+                    children.remove();
+                }
+            }
+
+            children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
+            while (children.hasNext()) {
+                ListItem<TabsPlugin.Tab> item = children.next();
+                String cssClass = "none";
+                if (item.getModelObject() == selected) {
+                    cssClass = "block";
+                }
+
+                target.appendJavascript(
+                    "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                    "element.setAttribute('style', 'display: " + cssClass + ";');");
+
+                if (item.getModelObject() == selected) {
+                    renderWireframes(item, target);
+                }
+            }
+
+            added.clear();
+            removed.clear();
+        }
+
+        void renderWireframes(MarkupContainer cont, final AjaxRequestTarget target) {
+            //Visit child components in order to find components that contain a {@link WireframeBehavior}.
+            cont.visitChildren(new IVisitor<Component>() {
+                public Object component(Component component) {
+                    for (Object behavior : component.getBehaviors()) {
+                        if (behavior instanceof IWireframe) {
+                            IWireframe wireframe = (IWireframe) behavior;
+                            wireframe.resize(target);
+                            return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                        }
+                    }
+                    return IVisitor.CONTINUE_TRAVERSAL;
+                }
+            });
+
+        }
+
+    }
 }

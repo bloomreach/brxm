@@ -29,6 +29,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
+import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -137,7 +138,11 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
 
         this.children = new LinkedHashMap<String, ExtensionPoint>();
 
-        this.wicketServiceId = properties.getName() + ".service.wicket.id";
+        if (properties.getName() == null) {
+            this.wicketServiceId = "service.wicket.id" + Session.get().nextSequenceValue();
+        } else {
+            this.wicketServiceId = properties.getName() + ".service.wicket.id";
+        }
 
         if (properties.getString(MODEL_ID) != null) {
             modelReference = context.getService(properties.getString(MODEL_ID), IModelReference.class);

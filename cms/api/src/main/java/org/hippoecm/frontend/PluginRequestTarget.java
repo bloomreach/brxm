@@ -69,6 +69,10 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         if (component.getOutputMarkupId() == false) {
             throw new IllegalArgumentException("cannot update component that does not have setOutputMarkupId property set to true. Component: " + component.toString());
         }
+        if (component.findParent(Page.class) != getPage()) {
+            log.debug("ignoring component {} belonging to outdated page version", component.getId());
+            return;
+        }
         this.updates.add(component);
     }
 

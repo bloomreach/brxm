@@ -57,6 +57,9 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
     public JcrTreeNode(IModel<Node> nodeModel, IJcrTreeNode parent) {
         super(nodeModel);
 
+        if (nodeModel == null) {
+            throw new RuntimeException("JcrTreeNode instantiated with null model");
+        }
         this.parent = parent;
     }
 

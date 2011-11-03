@@ -15,14 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import net.sf.json.JsonConfig;
-
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
+
+import net.sf.json.JsonConfig;
 
 /**
  * Special purpose {@link WireframeBehavior} that automatically binds itself to the document body and creates a 
@@ -31,7 +32,7 @@ import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
  * In accordance with YUI-grids CSS, the default id value for the wireframe root element is set to "doc3".
  * </p>
  * <p>
- * Note: It doesn't support dynamic registration with parent wireframes or looking up {@link Unitbehavior}'s from child 
+ * Note: It doesn't support dynamic registration with parent wireframes or looking up {@link UnitBehavior}'s from child
  * components because of it's static nature. This can be achieved by the {@link WireframeBehavior}
  * <p>
  * 
@@ -77,6 +78,11 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
+    }
+
+    @Override
+    public void resize(final AjaxRequestTarget target) {
+        target.appendJavascript("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override

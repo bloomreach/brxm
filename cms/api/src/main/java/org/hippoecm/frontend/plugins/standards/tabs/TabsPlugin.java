@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
@@ -52,11 +58,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Plugin that manages a number of {@link IRenderService}s using a tabbing interface.
@@ -97,7 +98,7 @@ public class TabsPlugin extends RenderPlugin {
 
         setOutputMarkupId(true);
 
-        IPluginConfig panelConfig = new JavaPluginConfig();
+        IPluginConfig panelConfig = new JavaPluginConfig(properties.getName() + "-empty-panel");
         panelConfig.put("wicket.id", properties.getString(TAB_ID));
         panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
 
@@ -117,7 +118,7 @@ public class TabsPlugin extends RenderPlugin {
         tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, "tiny")));
 
         if (properties.containsKey("tabs.container.id")) {
-            JavaPluginConfig containerConfig = new JavaPluginConfig();
+            JavaPluginConfig containerConfig = new JavaPluginConfig(properties.getName() + "-tabs-container");
             containerConfig.put("wicket.id", properties.getString("tabs.container.id"));
             RenderService containerService = new TabsContainerService(context, containerConfig);
             containerService.add(tabsContainer);
@@ -138,14 +139,15 @@ public class TabsPlugin extends RenderPlugin {
                     if (openleft) {
                         tabs.add(0, tabbie);
                         tabbedPanel.setSelectedTab(0);
+                        tabbedPanel.addFirst();
                     } else {
                         tabs.add(tabbie);
                         if (tabs.size() == 1) {
                             tabbedPanel.setSelectedTab(0);
                         }
+                        tabbedPanel.addLast();
                     }
                 }
-                tabbedPanel.redraw();
             }
 
             @Override
@@ -158,7 +160,7 @@ public class TabsPlugin extends RenderPlugin {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
-                    tabbedPanel.redraw();
+                    tabbedPanel.removed(tabbie);
                 }
             }
         };
