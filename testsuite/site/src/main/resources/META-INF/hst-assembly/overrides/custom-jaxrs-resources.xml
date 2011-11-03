@@ -42,7 +42,7 @@
       </map>
     </property>
     <property name="additionalQueryString">
-      <value></value>
+      <value>_type=xml</value>
       <!-- The following will append additional query string before JAX-RS processing
       <value>_type=json</value>
       -->
@@ -63,7 +63,7 @@
       </map>
     </property>
     <property name="additionalQueryString">
-      <value></value>
+      <value>_type=xml</value>
       <!-- The following will append additional query string before JAX-RS processing
       <value>_type=json</value>
       -->
