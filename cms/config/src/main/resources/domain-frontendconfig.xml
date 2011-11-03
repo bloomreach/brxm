@@ -43,7 +43,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="frontent-plugincluster">
+  <sv:node sv:name="frontend-plugincluster">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
@@ -68,7 +68,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="frontent-plugins">
+  <sv:node sv:name="frontend-plugins">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
