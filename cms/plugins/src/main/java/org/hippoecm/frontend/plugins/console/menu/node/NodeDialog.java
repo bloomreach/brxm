@@ -15,11 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.node;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -35,7 +34,6 @@ import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAuto
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.IModelReference;
@@ -48,121 +46,189 @@ public class NodeDialog extends AbstractDialog<Node> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
-    
+
     private String name;
-    private String type = "nt:unstructured";
+    private String type;
 
-    private final Map<String,String> choices = new HashMap<String, String>();
-    private final IModelReference modelReference;
+    private final Map<String, Collection<String>> namesToTypes = new HashMap<String, Collection<String>>();
+    private final Map<String, Collection<String>> typesToNames = new HashMap<String, Collection<String>>();
+    
+    private final IModelReference<Node> modelReference;
 
-    public NodeDialog(IModelReference modelReference) {
+    public NodeDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
         JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
         setModel(nodeModel);
-        
+
         // list defined child node names and types for automatic completion
         Node node = nodeModel.getNode();
         try {
             NodeType pnt = node.getPrimaryNodeType();
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
-            	if (!nd.getName().equals("*")) {
-                    String defaultPriTypeName = nd.getDefaultPrimaryTypeName();
-                    if (defaultPriTypeName != null) {
-                        choices.put(nd.getName(), defaultPriTypeName);
+                for (NodeType nt : nd.getRequiredPrimaryTypes()) {
+                    if (!nt.isAbstract()) {
+                        Collection<String> types = namesToTypes.get(nd.getName());
+                        if (types == null) {
+                            types = new HashSet<String>(5);
+                            namesToTypes.put(nd.getName(), types);
+                        }
+                        types.add(nt.getName());
+                        Collection<String> names = typesToNames.get(nt.getName());
+                        if (names == null) {
+                            names = new HashSet<String>(5);
+                            typesToNames.put(nt.getName(), names);
+                        }
+                        names.add(nd.getName());
                     }
-            	}
+                }
             }
             for (NodeType nt : node.getMixinNodeTypes()) {
-            	for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-            		if (!nd.getName().equals("*")) {
-                        String defaultPriTypeName = nd.getDefaultPrimaryTypeName();
-                        if (defaultPriTypeName != null) {
-                    		choices.put(nd.getName(), nd.getDefaultPrimaryTypeName());
+                for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
+                    for (NodeType cnt : nd.getRequiredPrimaryTypes()) {
+                        if (!cnt.isAbstract()) {
+                            Collection<String> types = namesToTypes.get(nd.getName());
+                            if (types == null) {
+                                types = new HashSet<String>(5);
+                                namesToTypes.put(nd.getName(), types);
+                            }
+                            types.add(cnt.getName());
+                            Collection<String> names = typesToNames.get(cnt.getName());
+                            if (names == null) {
+                                names = new HashSet<String>(5);
+                                typesToNames.put(cnt.getName(), names);
+                            }
+                            names.add(nd.getName());
                         }
-            		}
-            	}
+                    }
+                }
             }
+        } catch (RepositoryException e) {
+            log.warn("Unable to populate autocomplete list for child node names", e);
         }
-        catch (RepositoryException e) {
-        	log.warn("Unable to populate autocomplete list for child node names", e);
-        }
-        
+
         AutoCompleteSettings settings = new AutoCompleteSettings();
         settings.setAdjustInputWidth(false);
         settings.setUseSmartPositioning(true);
         settings.setShowCompleteListOnFocusGain(true);
-        
+
         final Model<String> typeModel = new Model<String>() {
             private static final long serialVersionUID = 1L;
-            @Override public String getObject() {
-                if (name != null && choices.containsKey(name)) {
-                    type = choices.get(name);
+
+            @Override
+            public String getObject() {
+                if (name != null && namesToTypes.containsKey(name)) {
+                    Collection<String> types = namesToTypes.get(name);
+                    if (types.size() == 1) {
+                        type = types.iterator().next();
+                    }
+                }
+                else if (namesToTypes.size() == 1) {
+                    Collection<String> types = namesToTypes.values().iterator().next();
+                    if (types.size() == 1) {
+                        type = types.iterator().next();
+                    }
                 }
                 return type;
             }
-            @Override public void setObject(String s) {
+
+            @Override
+            public void setObject(String s) {
                 type = s;
             }
         };
         final AutoCompleteTextField<String> typeField = new AutoCompleteTextField<String>("type", typeModel, settings) {
             private static final long serialVersionUID = 1L;
-            @Override protected Iterator<String> getChoices(String input) {
-                if (Strings.isEmpty(input)) {
-                    return Collections.EMPTY_LIST.iterator();
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+                Collection<String> result = new HashSet<String>();
+                if (name != null && !name.isEmpty()) {
+                    if (namesToTypes.get(name) != null) {
+                        result.addAll(namesToTypes.get(name));
+                    }
+                    if (namesToTypes.get("*") != null) {
+                        result.addAll(namesToTypes.get("*"));
+                    }
                 }
-                List<String> result = new ArrayList<String>();
-                for (String nodeType : choices.values()) {
-                    if (nodeType.startsWith(input)) {
-                        result.add(nodeType);
+                else {
+                    for (Collection<String> types : namesToTypes.values()) {
+                        result.addAll(types);
+                    }
+                }
+                Iterator<String> resultIter = result.iterator();
+                while (resultIter.hasNext()) {
+                    if (!resultIter.next().startsWith(input)) {
+                        resultIter.remove();
                     }
                 }
                 return result.iterator();
             }
         };
-        typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css"));
-        typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {}
-        });
+        typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
+                "DefaultCssAutocompleteTextField.css"));
         add(typeField);
-        
+
         final Model<String> nameModel = new Model<String>() {
             private static final long serialVersionUID = 1L;
-            @Override public String getObject() {
+
+            @Override
+            public String getObject() {
+                if (type != null && typesToNames.containsKey(type)) {
+                    Collection<String> names = typesToNames.get(type);
+                    if (names.size() == 1) {
+                        name = names.iterator().next();
+                    }
+                }
+                else if (typesToNames.size() == 1) {
+                    Collection<String> names = typesToNames.values().iterator().next();
+                    if (names.size() == 1) {
+                        name = names.iterator().next();
+                    }
+                }
                 return name;
             }
-            @Override public void setObject(String s) {
+
+            @Override
+            public void setObject(String s) {
                 name = s;
             }
         };
         final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name", nameModel, settings) {
-			private static final long serialVersionUID = 1L;
-			@Override protected Iterator<String> getChoices(String input) {
-				if (Strings.isEmpty(input)) {
-					return Collections.EMPTY_LIST.iterator();
-				}
-				List<String> result = new ArrayList<String>();
-				for (String nodeName : choices.keySet()) {
-					if (nodeName.startsWith(input)) {
-						result.add(nodeName);
-					}
-				}
-				return result.iterator();
-			}
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected Iterator<String> getChoices(String input) {
+                Collection<String> result = new HashSet<String>();
+                for (String nodeName : namesToTypes.keySet()) {
+                    if (!nodeName.equals("*") && nodeName.startsWith(input)) {
+                        result.add(nodeName);
+                    }
+                }
+                return result.iterator();
+            }
         };
-        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class, "DefaultCssAutocompleteTextField.css"));
+        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
+                "DefaultCssAutocompleteTextField.css"));
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 target.addComponent(typeField);
             }
         });
+        typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                target.addComponent(nameField);
+            }
+        });
         add(setFocus(nameField));
-        
+
     }
 
     @Override
@@ -196,7 +262,7 @@ public class NodeDialog extends AbstractDialog<Node> {
     public String getType() {
         return type;
     }
-    
+
     @Override
     public IValueMap getProperties() {
         return SMALL;
