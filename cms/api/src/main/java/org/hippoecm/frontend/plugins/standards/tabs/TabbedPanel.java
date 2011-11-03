@@ -49,6 +49,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.collections.ReadOnlyIterator;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
@@ -488,6 +489,21 @@ public class TabbedPanel extends WebMarkupContainer {
 
             added.clear();
             removed.clear();
+        }
+
+        @Override
+        protected Iterator<Component> renderIterator() {
+            final Iterator<? extends ListItem<TabsPlugin.Tab>> upstream = iterator();
+            return new ReadOnlyIterator<Component>() {
+
+                public boolean hasNext() {
+                    return upstream.hasNext();
+                }
+
+                public Component next() {
+                    return upstream.next();
+                }
+            };
         }
 
         public void updateCards(AjaxRequestTarget target) {
