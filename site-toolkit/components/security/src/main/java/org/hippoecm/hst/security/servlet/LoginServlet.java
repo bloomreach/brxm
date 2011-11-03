@@ -37,11 +37,13 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.security.PolicyContextWrapper;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
@@ -176,10 +178,15 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        /*
+         * because the LoginServlet can be called by the container bypassing the HstFilter, the hst matching might not be done yet. 
+         * If there is no ResolvedVirtualHost on the request yet, then in assertHostMatchingDone this will be done.
+         */
+        assertHostMatchingDone(request);
         if (requestCharacterEncoding != null) {
             request.setCharacterEncoding(requestCharacterEncoding);
         }
-        
+         
         String mode = getMode(request);
         
         if (MODE_LOGIN_FORM.equals(mode)) {
@@ -328,6 +335,9 @@ public class LoginServlet extends HttpServlet {
     }
     
     protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        //     init 
+        assertHostMatchingDone(request);
+        
         String pagePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginErrorPagePath", defaultLoginErrorPagePath);
         
         if (pagePath != null) {
@@ -488,6 +498,26 @@ public class LoginServlet extends HttpServlet {
         }
         
         return (value != null ? value : defaultValue);
+    }
+    
+    /**
+     * when there is not {@link ResolvedVirtualHost} on the {@link HttpServletRequest}, we try to resolve it and set it on the {@link HttpServletRequest} in 
+     * this method. 
+     * @param request
+     */
+    private void assertHostMatchingDone(HttpServletRequest request) {
+        ResolvedVirtualHost host = (ResolvedVirtualHost)request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
+        if (host != null) {
+            return;
+        }
+        String hostName = HstRequestUtils.getFarthestRequestHost(request);
+        HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        try {
+            ResolvedVirtualHost resolvedVirtualHost = hstSitesManager.getVirtualHosts().matchVirtualHost(hostName);
+            request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
+        } catch (Exception e) {
+            log.warn("Unable to match '"+hostName+"' to a hst host. Try to complete request without but contextpath might be included in URLs while not desired", e);
+        }  
     }
     
     /**
