@@ -694,6 +694,7 @@ components/jaxrs/src/main/resources/META-INF/cxf/org.apache.cxf.Logger -text
 components/jaxrs/src/main/resources/org/hippoecm/hst/site/optional/jaxrs/SpringComponentManager-rest-plain-pipeline.xml -text
 components/jaxrs/src/site/site.xml -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/TestPathsAdjustedHttpServletRequestWrapper.java -text
+components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/cxf/TestCXFJaxrsService.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/cxf/TestQueryStringReplacingInterceptor.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/GeneralPage.java -text
 components/jaxrs/src/test/java/org/hippoecm/hst/jaxrs/model/beans/TextPage.java -text

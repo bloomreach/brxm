@@ -23,6 +23,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.interceptor.Interceptor;
@@ -142,6 +143,16 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
         String requestURI = request.getRequestURI();
         HstContainerURL baseURL = requestContext.getBaseURL();
-        return requestURI.substring(baseURL.getContextPath().length() + baseURL.getResolvedMountPath().length());
+        String pathInfo = StringUtils.substringAfter(requestURI, baseURL.getContextPath() + baseURL.getResolvedMountPath());
+        
+        if (StringUtils.startsWith(pathInfo, ";")) {
+            pathInfo = "/" + StringUtils.substringAfter(pathInfo, "/");
+        }
+        
+        if (StringUtils.isEmpty(pathInfo)) {
+            pathInfo = "/";
+        }
+        
+        return pathInfo;
     }
 }
