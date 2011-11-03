@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.property;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -155,12 +156,10 @@ public class PropertyDialog extends AbstractDialog<Node> {
         add(checkBox);
 
         // dropdown for property type
-        final DropDownChoice<String> ddChoice = new DropDownChoice<String>("types", new PropertyModel<String>(this, "propertyType"), 
-                new AbstractReadOnlyModel<List<? extends String>>() {
+        final DropDownChoice<String> ddChoice = new DropDownChoice<String>("types") {
             private static final long serialVersionUID = 1L;
-
             @Override
-            public List<String> getObject() {
+            public List<? extends String> getChoices() {
                 if (PropertyDialog.this.name != null) {
                     List<PropertyDefinition> propdefs = choiceModel.getObject().get(PropertyDialog.this.name);
                     if (propdefs != null) {
@@ -172,8 +171,26 @@ public class PropertyDialog extends AbstractDialog<Node> {
                     }
                 }
                 return ALL_TYPES;
+
+            }
+        };
+        ddChoice.setModel(new Model<String>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void setObject(String object) {
+                type = object;
+            }
+            
+            @Override
+            public String getObject() {
+                List<? extends String> choices = ddChoice.getChoices();
+                if (choices.size() == 1) {
+                    type = choices.iterator().next();
+                }
+                return type;
             }
         });
+        
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
         ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -196,7 +213,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
             @Override
             protected Iterator<String> getChoices(String input) {
                 if (Strings.isEmpty(input)) {
-                    return Collections.EMPTY_LIST.iterator();
+                    List<String> s = Collections.emptyList();
+                    return s.iterator();
                 }
                 List<String> result = new ArrayList<String>();
                 for (String propName : choiceModel.getObject().keySet()) {

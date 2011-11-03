@@ -235,7 +235,7 @@ public class NodeDialog extends AbstractDialog<Node> {
     public void onOk() {
         try {
             JcrNodeModel nodeModel = (JcrNodeModel) getModel();
-            Node node = nodeModel.getNode().addNode(getName(), getType());
+            Node node = nodeModel.getNode().addNode(name, type);
 
             modelReference.setModel(new JcrNodeModel(node));
         } catch (RepositoryException ex) {
@@ -245,22 +245,6 @@ public class NodeDialog extends AbstractDialog<Node> {
 
     public IModel<String> getTitle() {
         return new Model<String>("Add a new Node");
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
     }
 
     @Override
