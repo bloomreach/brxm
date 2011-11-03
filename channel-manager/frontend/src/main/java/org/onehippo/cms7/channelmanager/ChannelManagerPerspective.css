@@ -1,5 +1,39 @@
+/* toolbar */
+.channel-manager-toolbar.x-toolbar {
+    background-image: none;
+    background-color: #dddddd;
+    border-top: 0;
+}
+
+.channel-manager .channel-manager-toolbar .x-btn-text {
+    margin: 1px 5px;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-ml,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mr,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-mc,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bl,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-br,
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-bc {
+    background-position: 500px 500px;
+}
+
+.channel-manager .channel-manager-toolbar .x-btn-mc {
+    background: url("bg.gif") repeat-x 0 0 transparent;
+    border: 1px solid #bebebe;
+    background-position: 0 0;
+    text-align: left;
+}
+
+.channel-manager .channel-manager-toolbar .toolbarMenuIcon .x-btn-mc {
+    background: none;
+    border: 0;
+}
+
 /* breadcrumb */
-.channel-grid-toolbar, .page-editor-toolbar { background-image: none; background-color: #dddddd; }
 .channel-manager .x-toolbar .breadcrumb-item { opacity: 1 }
 .channel-manager .x-toolbar .breadcrumb-item .x-btn-text { font-weight: bold; padding-left: 8px; color: #666666 !important}
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over td { border: 0; background-image: none; }

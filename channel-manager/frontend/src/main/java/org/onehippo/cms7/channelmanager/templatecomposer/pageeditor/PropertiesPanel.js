@@ -39,7 +39,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                     scope: this
                 },
                 {
-                    text: this.resources['properties-panel-button-reset'],
+                    text: this.resources['properties-panel-button-cancel'],
                     scope: this,
                     hidden: true,
                     handler: function () {

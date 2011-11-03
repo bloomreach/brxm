@@ -75,13 +75,16 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 layoutConfig: {
                     pack: 'left'
                 },
-                cls: 'channel-grid-toolbar',
+                height: 28,
+                cls: 'channel-manager-toolbar',
                 items: [
                     {
                         text: config.resources['action.add.channel'],
                         handler: function() {
                             this.fireEvent('add-channel');
                         },
+                        allowDepress: false,
+                        width: 120,
                         scope: this,
                         iconCls: 'add-channel'
                     }

@@ -56,8 +56,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     disableMessaging: false,
                     tbar: {
                         id: 'pageEditorToolbar',
-                        cls: 'page-editor-toolbar',
-                        height: 25,
+                        cls: 'channel-manager-toolbar',
+                        height: 28,
                         items: [
                         ]
                     }
@@ -130,7 +130,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 text: this.initialConfig.resources['close-button'],
                 iconCls: 'title-button',
                 allowDepress: false,
-                width: 150,
+                width: 120,
                 listeners: {
                     click: {
                         fn : this.pageContainer.toggleMode,
@@ -143,6 +143,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 id: 'channel-properties-window-button',
                 text: this.initialConfig.resources['show-channel-properties-button'],
                 mode: 'show',
+                allowDepress: false,
+                width: 120,
                 listeners: {
                     click: {
                         fn: function() {
@@ -171,6 +173,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             },
             {
                 icon: this.initialConfig.gearIconUrl,
+                cls: 'toolbarMenuIcon',
+                allowDepress: false,
                 menu: {
                     items: {
                         text: 'Edit HST Configuration',
@@ -196,7 +200,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 text: this.initialConfig.resources['edit-button'],
                 iconCls: 'title-button',
                 allowDepress: false,
-                width: 150,
+                width: 120,
                 listeners: {
                     click: {
                         fn : this.pageContainer.toggleMode,
@@ -207,7 +211,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             {
                 text: this.initialConfig.resources['publish-button'],
                 iconCls: 'title-button',
-                width: 150,
+                allowDepress: false,
+                width: 120,
                 hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
                 listeners: {
                     click: {
