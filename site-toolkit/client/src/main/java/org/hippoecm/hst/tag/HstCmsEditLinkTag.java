@@ -47,12 +47,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * This tag creates a cms edit link for some HippoBean. It can do so in two different modes:
+ * This tag creates a cms edit url for some HippoBean. It can do so in two different modes:
  * </p>
  * <ol>
  *    <li> <b>With</b> a <code>var</code> attribute specified: Then, a url String is set on the var attribute
  *    </li> 
- *    <li> <b>Without</b> a <code>var</code> attribute specified: Then, directly to the output a cms edit link and html comment is written.
+ *    <li> <b>Without</b> a <code>var</code> attribute specified: Then, directly to the output a cms edit url and html comment is written.
  *    </li>
  * </ol>
  */
@@ -93,7 +93,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
             return EVAL_PAGE;
         }
         if(this.hippoBean == null || this.hippoBean.getNode() == null || !(this.hippoBean.getNode() instanceof HippoNode)) {
-            log.warn("Cannot create a surf & edit link for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
+            log.warn("Cannot create a cms edit url for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
             return EVAL_PAGE;
         }
         
@@ -101,16 +101,20 @@ public class HstCmsEditLinkTag extends TagSupport  {
         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
        
         if(hstRequest == null) {
-            log.warn("Cannot create a surf & edit link outside the hst request processing for '{}'", this.hippoBean.getPath());
+            log.warn("Cannot create a cms edit url outside the hst request processing for '{}'", this.hippoBean.getPath());
             return EVAL_PAGE;
-        }
-
+        } 
+ 
         HstRequestContext hstRequestContext = HstRequestUtils.getHstRequestContext(servletRequest);
-          
+           
         if(!hstRequestContext.isPreview()) {
-            log.debug("Skipping surf & edit link because not in preview.");
+            log.debug("Skipping cms edit url because not in preview.");
             return EVAL_PAGE;
         }
+        if (var == null && servletRequest.getSession(false) != null && !Boolean.TRUE.equals(servletRequest.getSession(false).getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED)) ) {
+            log.debug("Skipping cms edit html comment snippet because request in not in a SSO CMS CONTEXT.");
+            return EVAL_PAGE;
+        } 
         
         // cmsBaseUrl is something like : http://localhost:8080
         String cmsBaseUrl = null;
@@ -124,7 +128,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
         }
         
         if(cmsBaseUrl == null || "".equals(cmsBaseUrl)) {
-            log.warn("Skipping surf & edit link because cms location property is not configured: Configure '{}' property in your hst-config.properties.", ContainerConstants.CMS_LOCATION);
+            log.warn("Skipping cms edit url because cms location property is not configured: Configure '{}' property in your hst-config.properties.", ContainerConstants.CMS_LOCATION);
             return EVAL_PAGE;
         }
         if(cmsBaseUrl.endsWith("/")) {
@@ -153,7 +157,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 
                 Node handleNode = getHandleNodeIfIsAncestor(editNode, rootNode);
                 if(handleNode != null) {
-                    // take the handle node as this is the one expected by the cms edit link:
+                    // take the handle node as this is the one expected by the cms edit url:
                     editNode = handleNode;  
                     log.debug("The nodepath for the edit link in cms is '{}'", editNode.getPath());
                 } else {
@@ -208,12 +212,19 @@ public class HstCmsEditLinkTag extends TagSupport  {
         return EVAL_PAGE;
     }
     
-    protected void write(String link, String nodeId) throws IOException {
+    protected void write(String url, String nodeId) throws IOException {
         JspWriter writer = pageContext.getOut();
-        Map<String, String> editParameters = new HashMap<String, String>(2);
-        editParameters.put("uuid", nodeId);
-        writer.print(createCommentWithAttr(editParameters));
-        writer.print("<a href='" + link + "' class=\"hst-cmseditlink\" target=\"CMS\">" + LocaleSupport.getLocalizedMessage(pageContext, "hst.cmseditlink.label", "preview-messages") + "</a>");
+        StringBuilder htmlComment = new StringBuilder(); 
+        htmlComment.append("<!-- ");
+        htmlComment.append(" {\"type\":\"cmslink\"");
+        htmlComment.append(" , \"url\":\"");
+        htmlComment.append(url);
+        htmlComment.append("\"");
+        // add uuid
+        htmlComment.append(", \"uuid\":\"");
+        htmlComment.append(nodeId);
+        htmlComment.append("\" } -->");
+        writer.print(htmlComment.toString());
     }
 
 
@@ -271,22 +282,6 @@ public class HstCmsEditLinkTag extends TagSupport  {
     
     public void setScope(String scope) {
         this.scope = scope;
-    }
-    
-    
-    private String createCommentWithAttr(Map<String, String> attributes) {
-      StringBuilder builder = new StringBuilder("<!-- { ");
-      boolean first = true;
-      for (Map.Entry<String, String> attr : attributes.entrySet()) {
-          if (first) {
-              first = false;
-          } else {
-              builder.append(", ");
-          }
-          builder.append("\"").append(attr.getKey()).append("\":").append("\"").append(attr.getValue()).append("\"");
-      }
-      builder.append("} -->\n");
-      return builder.toString();
     }
     
     /* -------------------------------------------------------------------*/
