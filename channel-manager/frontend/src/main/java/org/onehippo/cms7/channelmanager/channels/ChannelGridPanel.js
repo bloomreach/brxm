@@ -50,7 +50,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 forceFit: true
             },
             stateful: true,
-            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange', 'savestate' ],
+            stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
             colModel: new Ext.grid.ColumnModel({
                 columns: config.columns,
                 defaults: {
@@ -141,50 +141,15 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
     initComponent: function() {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
-        this.addEvents('add-channel', 'channel-selected', 'channel-deselected', 'savestate');
+        this.addEvents('add-channel', 'channel-selected');
 
         var sm = this.getSelectionModel();
-        sm.on('rowselect', function() {
-            this.fireEvent('savestate');
-        }, this);
-        sm.on('rowdeselect', function() {
-            this.fireEvent('savestate');
-        }, this);
-
-        // ensure that we do not create a channel-deselected event quickly followed by a channel-selected event when
-        // up or down is used to navigate to the next row, since this may ruin animations of components that listen
-        // to these events
-        this.isSelectingRow = true;
-        sm.on('beforerowselect', function() {
-            this.isSelectingRow = true;
-            return true;
-        }, this);
-        sm.on('rowdeselect', function(sm) {
-            if (!this.isSelectingRow) {
-                this.selectedChannelId = null;
-                this.fireEvent('channel-deselected');
-            }
-        }, this);
-        sm.on('rowselect', function(sm, rowIndex, record) {
-            this.isSelectingRow = false;
+        this.on('rowclick', function(grid, rowIndex, eventObject) {
+            var record = this.store.getAt(rowIndex);
             this.selectedChannelId = record.get('id');
             this.fireEvent('channel-selected', this.selectedChannelId, record);
         }, this);
 
-        // register keyboard navigation
-        this.on('keydown', function(event) {
-            switch (event.keyCode) {
-                case 13: // ENTER
-                    var selectedRecord = this.getSelectionModel().getSelected();
-                    if (selectedRecord) {
-                        this.selectChannel(selectedRecord.get('id'));
-                    }
-                    break;
-                case 27: // ESC
-                    this.fireEvent('channel-escaped');
-                    break;
-            }
-        }, this);
     },
 
     // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.

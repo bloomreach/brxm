@@ -109,12 +109,6 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             // TODO fix, I have no clue why the template composer card is not getting activated properly
             document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
         }, this);
-        this.gridPanel.on('channel-escaped', function() {
-            this.gridPanel.fireEvent('channel-deselected');
-        }, this);
-        this.gridPanel.on('channel-deselected', function() {
-            this.gridPanel.selectRow(-1);
-        }, this);
 
         Hippo.ChannelManager.TemplateComposer.Instance.on('mountChanged', function(data) {
             var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);

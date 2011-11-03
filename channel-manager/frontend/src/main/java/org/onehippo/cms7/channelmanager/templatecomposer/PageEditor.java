@@ -202,7 +202,6 @@ public class PageEditor extends ExtPanel {
         RequestCycle rc = RequestCycle.get();
         properties.put("channelPropertiesWindowId", this.channelPropertiesWindow.getMarkupId());
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
-        properties.put("gearIconUrl", rc.urlFor(new ResourceReference(PageEditor.class, "gear.png")));
         properties.put("iFrameErrorPage", Arrays.asList(
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
