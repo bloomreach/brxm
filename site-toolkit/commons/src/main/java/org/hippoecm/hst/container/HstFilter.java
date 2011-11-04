@@ -296,7 +296,7 @@ public class HstFilter implements Filter {
              * We check below whether the previous location was /login/resource, and if so, whether the contextpath is twice in the url
              * If so, we do a client redirect again to remove the duplicate contextpath
              */ 
-            if ( !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
+            if (doClientRedirectAfterJaasLoginBehindProxy && !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
                 // TODO below the '/login/resource' should be replaced by the LoginServlet#defaultLoginResourcePath : not sure yet how to pass this value
                 if(req.getHeader("referer") != null && req.getHeader("referer").endsWith("/login/resource")) {
                    String location = req.getRequestURI();
