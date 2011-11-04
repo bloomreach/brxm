@@ -408,6 +408,11 @@ public class VirtualHostsService implements VirtualHosts {
         return Collections.unmodifiableList(l);
     }
     
+    @Override
+    public List<String> getHostGroupNames() {
+        return new ArrayList<String>(mountByHostGroup.keySet());
+    }
+    
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
@@ -426,5 +431,4 @@ public class VirtualHostsService implements VirtualHosts {
         return mountsByIdentifier.get(uuid);
     }
 
-    
 }

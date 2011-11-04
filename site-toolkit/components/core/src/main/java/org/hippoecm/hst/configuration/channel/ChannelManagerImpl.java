@@ -213,11 +213,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         String url = mount.getScheme() + "://" + mount.getVirtualHost().getHostName() + (!"".equals(mountPath) ? "/" + mountPath : "");
         channel.setUrl(url);
 
-        try {
-            mount.setChannelInfo(getChannelInfo(channel));
-        } catch (ChannelException e) {
-            log.error("Could not set channel info to mount", e);
-        }
     }
 
     /**
@@ -246,12 +241,40 @@ public class ChannelManagerImpl implements MutableChannelManager {
             loadBlueprints(configNode);
 
             channels = new HashMap<String, Channel>();
+            
+            // load all the channels, even if they are not used by the current hostGroup
             loadChannels(configNode);
-
+            
+            // in channel manager only the mounts for at most ONE single hostGroup are shown
             List<Mount> mounts = virtualHosts.getMountsByHostGroup(hostGroup);
             for (Mount mount : mounts) {
                 if (mount instanceof MutableMount) {
                     loadFromMount((MutableMount) mount);
+                }
+            }
+            
+            // for ALL the mounts in ALL the host groups, set the channel Info if available
+            for(String hostGroupName : virtualHosts.getHostGroupNames()) {
+                for (Mount mount : virtualHosts.getMountsByHostGroup(hostGroupName)) {
+                    if (mount instanceof MutableMount) {
+                        try {
+                            String channelPath = mount.getChannelPath();
+                            if (StringUtils.isEmpty(channelPath)) {
+                                log.debug("Mount '{}' does not have a channelpath configured. Skipping setting channelInfo. ", mount);
+                                continue;
+                            }
+                            String channelNodeName = channelPath.substring(channelPath.lastIndexOf("/")+1);
+                            Channel channel = this.channels.get(channelNodeName);
+                            if (channel == null) {
+                                log.debug("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo. ", mount);
+                                continue;
+                            }
+                            log.debug("Setting channel info for mount '{}'.", mount);
+                            ((MutableMount)mount).setChannelInfo(getChannelInfo(channel));
+                        } catch (ChannelException e) {
+                            log.error("Could not set channel info to mount", e);
+                        }
+                    }
                 }
             }
         } catch (RepositoryException e) {

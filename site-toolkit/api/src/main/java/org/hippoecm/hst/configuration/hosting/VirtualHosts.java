@@ -128,6 +128,11 @@ public interface VirtualHosts {
     List<Mount> getMountsByHostGroup(String hostGroupName);
     
     /**
+     * @return return the list of all hostGroupNames
+     */
+    List<String> getHostGroupNames();
+    
+    /**
      * 
      * @param uuid
      * @return
