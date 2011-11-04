@@ -112,6 +112,7 @@ public class NodeDialog extends AbstractDialog<Node> {
         settings.setAdjustInputWidth(false);
         settings.setUseSmartPositioning(true);
         settings.setShowCompleteListOnFocusGain(true);
+        settings.setShowListOnEmptyInput(true);
 
         final Model<String> typeModel = new Model<String>() {
             private static final long serialVersionUID = 1L;
@@ -204,9 +205,16 @@ public class NodeDialog extends AbstractDialog<Node> {
             @Override
             protected Iterator<String> getChoices(String input) {
                 Collection<String> result = new HashSet<String>();
-                for (String nodeName : namesToTypes.keySet()) {
-                    if (!nodeName.equals("*") && nodeName.startsWith(input)) {
-                        result.add(nodeName);
+                if (type != null && !type.isEmpty()) {
+                    if (typesToNames.get(type) != null) {
+                        result.addAll(typesToNames.get(type));
+                    }
+                }
+                else {
+                    for (String nodeName : namesToTypes.keySet()) {
+                        if (!nodeName.equals("*") && nodeName.startsWith(input)) {
+                            result.add(nodeName);
+                        }
                     }
                 }
                 return result.iterator();
