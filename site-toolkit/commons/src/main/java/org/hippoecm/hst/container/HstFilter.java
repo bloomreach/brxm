@@ -70,6 +70,7 @@ import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstFilter implements Filter {
 
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = 1L;
 
     private static final String LOGGER_CATEGORY_NAME = HstFilter.class.getName();
@@ -87,12 +88,14 @@ public class HstFilter implements Filter {
 
     /* moved here from HstContainerServlet initialization */
     public static final String CONTEXT_NAMESPACE_INIT_PARAM = "hstContextNamespace";
+    public static final String CLIENT_REDIRECT_AFTER_JAAS_LOGIN_BEHIND_PROXY = "clientRedirectAfterJaasLoginBehindProxy";
     public static final String CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM = "clientComponentManagerClass";
     public static final String CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM = "clientComponentManagerConfigurations";
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
 
     protected String contextNamespace;
+    protected boolean doClientRedirectAfterJaasLoginBehindProxy;
     protected String clientComponentManagerClassName;
     protected String [] clientComponentManagerConfigurations;
     protected volatile boolean initialized;
@@ -109,6 +112,8 @@ public class HstFilter implements Filter {
         /* HST and ClientComponentManager initialization */
 
         contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, contextNamespace);
+ 
+        doClientRedirectAfterJaasLoginBehindProxy = Boolean.parseBoolean(getConfigOrContextInitParameter(CLIENT_REDIRECT_AFTER_JAAS_LOGIN_BEHIND_PROXY, "true"));
 
         clientComponentManagerClassName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, clientComponentManagerClassName);
 
@@ -196,7 +201,7 @@ public class HstFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
     ServletException {
-
+        
     	if (request.getAttribute(ContainerConstants.HST_RESET_FILTER) != null) {
     		request.removeAttribute(FILTER_DONE_KEY);
     		request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
@@ -208,8 +213,8 @@ public class HstFilter implements Filter {
 		}
 
     	HttpServletRequest req = (HttpServletRequest)request;
-    	HttpServletResponse res = (HttpServletResponse)response;
-
+        HttpServletResponse res = (HttpServletResponse)response;
+     	
     	// Cross-context includes are not (yet) supported to be handled directly by HstFilter
     	// Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
     	// which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
@@ -280,8 +285,30 @@ public class HstFilter implements Filter {
                 logger.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
                 chain.doFilter(request, response);
                 return;
-            }
-
+            } 
+ 
+            /*
+             * HSTTWO-1519
+             * Below is a workaround for JAAS authentication: The j_security_check URL is always handled by the 
+             * container, after which a REDIRECT takes place which always includes the contextpath. In case of a 
+             * proxy like httpd in front that again adds the contextpath, the URL ends up with twice the contextpath.
+             * This can only happen when the contextpath is not empty and when the !resolvedVirtualHost.getVirtualHost().isContextPathInUrl()
+             * We check below whether the previous location was /login/resource, and if so, whether the contextpath is twice in the url
+             * If so, we do a client redirect again to remove the duplicate contextpath
+             */ 
+            if ( !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
+                // TODO below the '/login/resource' should be replaced by the LoginServlet#defaultLoginResourcePath : not sure yet how to pass this value
+                if(req.getHeader("referer") != null && req.getHeader("referer").endsWith("/login/resource")) {
+                   String location = req.getRequestURI();
+                   if(location.startsWith(req.getContextPath() + req.getContextPath() + "/")) {
+                       String redirectTo = location.substring((req.getContextPath() + req.getContextPath()).length());
+                       res.sendRedirect(redirectTo); 
+                       return;
+                   }
+                }
+    	    }
+           
+            
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
     		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
