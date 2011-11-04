@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -326,7 +327,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         mounts = new LinkedList<Mount>();
         expect(vhosts.getMountsByHostGroup("dev-localhost")).andReturn(mounts).anyTimes();
-
+        expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
+        
         testHost = createNiceMock(VirtualHost.class);
         testMount = createNiceMock(MutableMount.class);
         mounts.add(testMount);
