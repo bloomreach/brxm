@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.property;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,7 +41,6 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -58,7 +56,9 @@ import org.slf4j.LoggerFactory;
 
 public class PropertyDialog extends AbstractDialog<Node> {
 
+    @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
+    
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
     private static final List<String> ALL_TYPES = new ArrayList<String>(8);
@@ -205,6 +205,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         settings.setAdjustInputWidth(false);
         settings.setUseSmartPositioning(true);
         settings.setShowCompleteListOnFocusGain(true);
+        settings.setShowListOnEmptyInput(true);
 
         final AutoCompleteTextField<String> nameField = new AutoCompleteTextField<String>("name",
                 new PropertyModel<String>(this, "name"), settings) {
@@ -212,10 +213,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                if (Strings.isEmpty(input)) {
-                    List<String> s = Collections.emptyList();
-                    return s.iterator();
-                }
                 List<String> result = new ArrayList<String>();
                 for (String propName : choiceModel.getObject().keySet()) {
                     if (propName.startsWith(input)) {
