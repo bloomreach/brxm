@@ -37,8 +37,9 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
         public BreadCrumbComponent(String id, int index, IBreadCrumbModel breadCrumbModel,
                 final IBreadCrumbParticipant participant, boolean enableLink) {
             super(id);
+
             add(new Label("sep", "").setRenderBodyOnly(true));
-            BreadCrumbLink link = new BreadCrumbLink("link", breadCrumbModel) {
+            BreadCrumbLink link = new AjaxBreadCrumbLink("link", breadCrumbModel) {
                 private static final long serialVersionUID = 1L;
 
                 protected IBreadCrumbParticipant getParticipant(String componentId) {
