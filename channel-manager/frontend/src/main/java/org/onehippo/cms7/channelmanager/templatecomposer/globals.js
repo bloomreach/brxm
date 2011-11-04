@@ -68,12 +68,14 @@
         COMPONENT       : 'COMPONENT',
         CONTAINER       : 'CONTAINER_COMPONENT',
         CONTAINERITEM   : 'CONTAINER_ITEM_COMPONENT',
+        CMSLINK : 'cmslink',
 
         ATTR : {
             ID : 'uuid',
             TYPE : 'type',
             XTYPE : 'xtype',
-            INHERITED : 'inherited'
+            INHERITED : 'inherited',
+            URL : 'url'
         },
 
         CLASS : {
