@@ -178,7 +178,10 @@ public class NodeDialog extends AbstractDialog<Node> {
                 if (type != null && typesToNames.containsKey(type)) {
                     Collection<String> names = typesToNames.get(type);
                     if (names.size() == 1) {
-                        name = names.iterator().next();
+                        String _name = names.iterator().next();
+                        if (name == null || !_name.equals("*")) {
+                            name = _name;
+                        }
                     }
                 }
                 else if (typesToNames.size() == 1) {
