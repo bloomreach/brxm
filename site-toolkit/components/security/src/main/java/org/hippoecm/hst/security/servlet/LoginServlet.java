@@ -335,9 +335,6 @@ public class LoginServlet extends HttpServlet {
     }
     
     protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        //     init 
-        assertHostMatchingDone(request);
-        
         String pagePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginErrorPagePath", defaultLoginErrorPagePath);
         
         if (pagePath != null) {
