@@ -85,6 +85,7 @@ public class CopyDialog extends LookupDialog {
                 add(new Label("source", "Cannot copy the root node"));
                 add(new EmptyPanel("target"));
                 add(new EmptyPanel("name"));
+                add(new EmptyPanel("generate"));
                 setOkVisible(false);
             }
         } catch (RepositoryException e) {
