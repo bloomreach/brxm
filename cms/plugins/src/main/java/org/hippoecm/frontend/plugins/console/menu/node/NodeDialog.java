@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console.menu.node;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -69,18 +71,10 @@ public class NodeDialog extends AbstractDialog<Node> {
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
                 for (NodeType nt : nd.getRequiredPrimaryTypes()) {
                     if (!nt.isAbstract()) {
-                        Collection<String> types = namesToTypes.get(nd.getName());
-                        if (types == null) {
-                            types = new HashSet<String>(5);
-                            namesToTypes.put(nd.getName(), types);
-                        }
-                        types.add(nt.getName());
-                        Collection<String> names = typesToNames.get(nt.getName());
-                        if (names == null) {
-                            names = new HashSet<String>(5);
-                            typesToNames.put(nt.getName(), names);
-                        }
-                        names.add(nd.getName());
+                        addNodeType(nd, nt);
+                    }
+                    for (NodeType subnt : getDescendentNodeTypes(nt)) {
+                        addNodeType(nd, subnt);
                     }
                 }
             }
@@ -88,18 +82,10 @@ public class NodeDialog extends AbstractDialog<Node> {
                 for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
                     for (NodeType cnt : nd.getRequiredPrimaryTypes()) {
                         if (!cnt.isAbstract()) {
-                            Collection<String> types = namesToTypes.get(nd.getName());
-                            if (types == null) {
-                                types = new HashSet<String>(5);
-                                namesToTypes.put(nd.getName(), types);
-                            }
-                            types.add(cnt.getName());
-                            Collection<String> names = typesToNames.get(cnt.getName());
-                            if (names == null) {
-                                names = new HashSet<String>(5);
-                                typesToNames.put(cnt.getName(), names);
-                            }
-                            names.add(nd.getName());
+                            addNodeType(nd, cnt);
+                        }
+                        for (NodeType subnt : getDescendentNodeTypes(cnt)) {
+                            addNodeType(nd, subnt);
                         }
                     }
                 }
@@ -261,5 +247,33 @@ public class NodeDialog extends AbstractDialog<Node> {
     @Override
     public IValueMap getProperties() {
         return SMALL;
+    }
+    
+    private Collection<NodeType> getDescendentNodeTypes(NodeType nt) {
+        Collection<NodeType> result = new HashSet<NodeType>();
+        NodeTypeIterator subNodeTypes = nt.getDeclaredSubtypes();
+        while (subNodeTypes.hasNext()) {
+            NodeType subNodeType = subNodeTypes.nextNodeType();
+            if (!subNodeType.isAbstract()) {
+                result.add(subNodeType);
+            }
+            result.addAll(getDescendentNodeTypes(subNodeType));
+        }
+        return result;
+    }
+    
+    private void addNodeType(NodeDefinition nd, NodeType nt) {
+        Collection<String> types = namesToTypes.get(nd.getName());
+        if (types == null) {
+            types = new HashSet<String>(5);
+            namesToTypes.put(nd.getName(), types);
+        }
+        types.add(nt.getName());
+        Collection<String> names = typesToNames.get(nt.getName());
+        if (names == null) {
+            names = new HashSet<String>(5);
+            typesToNames.put(nt.getName(), names);
+        }
+        names.add(nd.getName());
     }
 }
