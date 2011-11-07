@@ -48,20 +48,24 @@
                     }
                 } else {
                     // fallback
-                    // TODO the fallback is not working, we need to fix it
-                    var elements = document.body.getElementsByTagName('*');
-                    console.log('fallback '+elements.length);
-                    for (var i=0, length = elements.length; i < length; i++) {
-                        var element = elements[i];
-                        if (element.nodeType !== 8) {
-                            continue;
+                    var self = this;
+                    var domWalker = function(node) {
+                        if (!node || typeof node.nodeType === 'undefined') {
+                            return;
                         }
-                        console.log('convertToHstMetaData ');
-                        var hstMetaData = this.convertToHstMetaData(element);
-                        if (hstMetaData !== null) {
-                            this._createLink(element, hstMetaData);
+                        if (node.nodeType === 8) {
+                            var hstMetaData = self.convertToHstMetaData(node);
+                            if (hstMetaData !== null) {
+                                self._createLink(node, hstMetaData);
+                            }
+                            return;
                         }
-                    }
+                        for (var i=0, len=node.childNodes.length; i< len; i++) {
+                            var childNode = node.childNodes[i];
+                            domWalker(childNode);
+                        }
+                    };
+                    domWalker(document.body);
                 }
             } catch(e) {
                 sendMessage({msg: 'Error initializing manager.', exception: e}, "iframeexception");
