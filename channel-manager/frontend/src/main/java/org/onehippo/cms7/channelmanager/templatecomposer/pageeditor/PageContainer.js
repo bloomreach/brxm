@@ -29,9 +29,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.composerMountUrl = config.composerMountUrl;
         this.composerRestMountUrl = config.composerRestMountUrl;
 
-        this.renderHostSubMountPath = config.renderHostSubMountPath;
-        if (this.renderHostSubMountPath.indexOf('/') === 0) {
-            this.renderHostSubMountPath = this.renderHostSubMountPath.substr(1);
+        this.renderPathInfo = config.renderPathInfo;
+        if (this.renderPathInfo.indexOf('/') === 0) {
+            this.renderPathInfo = this.renderPathInfo.substr(1);
         }
 
         this.iFrameErrorPage = config.iFrameErrorPage;
@@ -116,7 +116,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
     initComposer : function() {
-        if (typeof this.renderHostSubMountPath === 'undefined' || typeof this.renderHost === 'undefined' || this.renderHost.trim() === '') {
+        if (typeof this.renderPathInfo === 'undefined' || typeof this.renderHost === 'undefined' || this.renderHost.trim() === '') {
             return;
         }
 
@@ -164,7 +164,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
             this._initIFrameListeners();
-            iFrame.setSrc(this.composerMountUrl + this.renderHostSubMountPath);
+            iFrame.setSrc(this.composerMountUrl + this.renderPathInfo);
 
             // keep session active
             Ext.TaskMgr.start({
@@ -314,7 +314,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var config = {
             composerMountUrl: this.composerMountUrl,
             composerRestMountUrl: this.composerRestMountUrl,
-            renderHostSubMountPath: this.renderHostSubMountPath,
+            renderPathInfo: this.renderPathInfo,
             ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
             previewMode: this.previewMode,
             resources: this.resources
