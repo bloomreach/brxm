@@ -100,7 +100,7 @@ public class DocumentsResource {
                 ChannelDocument document = new ChannelDocument();
                 document.setChannelId(channel.getId());
                 document.setChannelName(channel.getName());
-                document.setCanonicalUrl(link.toUrlForm(requestContext, false));
+                document.setCanonicalUrl(link.toUrlForm(requestContext, true));
                 document.setUrlContainsContextPath(link.getMount().getVirtualHost().isContextPathInUrl());
 
                 channelDocuments.add(document);
