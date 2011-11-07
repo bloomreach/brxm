@@ -113,6 +113,13 @@ public class DocumentsResource {
                     // from the current HttpServletRequest
                     document.setContextPath(servletRequest.getContextPath());
                 }
+                
+                // and set the contextpath through which the temlate composer is available
+                if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
+                    document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
+                } else {
+                    document.setTemplateComposerContextPath(servletRequest.getContextPath());
+                }
 
                 channelDocuments.add(document);
             } catch (ChannelException e) {

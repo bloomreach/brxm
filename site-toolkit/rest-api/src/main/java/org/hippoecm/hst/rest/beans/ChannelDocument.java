@@ -33,6 +33,7 @@ public class ChannelDocument implements Serializable {
     private String channelId;
     private String channelName;
     private String contextPath;
+    private String templateComposerContextPath;
     private String pathInfo;
     private String mountPath;
     private String hostName;
@@ -52,6 +53,7 @@ public class ChannelDocument implements Serializable {
         this.channelId = original.channelId;
         this.channelName = original.channelName;
         this.contextPath = original.contextPath;
+        this.templateComposerContextPath = original.templateComposerContextPath;
         this.pathInfo = original.pathInfo;
         this.mountPath = original.mountPath;
         this.hostName = original.hostName;  
@@ -103,6 +105,14 @@ public class ChannelDocument implements Serializable {
      */
     public void setContextPath(final String contextPath) {
         this.contextPath = contextPath;
+    }
+    
+    public String getTemplateComposerContextPath() {
+        return templateComposerContextPath;
+    }
+
+    public void setTemplateComposerContextPath(String templateComposerContextPath) {
+        this.templateComposerContextPath = templateComposerContextPath;
     }
 
     public String getPathInfo() {
