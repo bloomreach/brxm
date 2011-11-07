@@ -50,12 +50,13 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
     protected Session session;
     protected WorkflowManager workflowManager;
     private volatile boolean shutdown;
+
     private static final long MINIMAL_SLEEP_TIME = 1000;
-    
     private static final long MINIMAL_INITIAL_DELAY = 100;
     private static final long DEFAULT_INITIAL_DELAY = 5000;
     private static final long MINIMAL_ITERATE_INTERVAL = 100;
     private static final long DEFAULT_ITERATE_INTERVAL = 5000;
+
     private long initialDelay = DEFAULT_INITIAL_DELAY;
     private long iterateInterval = DEFAULT_ITERATE_INTERVAL;
     private boolean enabled = true;
@@ -176,8 +177,7 @@ public class DropboxDaemonModule extends Thread implements DaemonModule {
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ex) {
-                // TODO log warning
-                // delibate ignore
+                // delibate ignore, interrupt probably due to shutdown
             }
         }
     }
