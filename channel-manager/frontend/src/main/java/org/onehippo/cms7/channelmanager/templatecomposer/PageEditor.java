@@ -73,7 +73,13 @@ public class PageEditor extends ExtPanel {
     public String composerRestMountUrl = "/site/_rp/";
 
     @ExtProperty
-    public String renderHostSubMountPath = "";
+    public String renderPathInfo = "";
+
+    @ExtProperty
+    public String contextPath = "";
+    
+    @ExtProperty
+    public String templateComposerContextPath = "";
 
     @ExtProperty
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
@@ -101,8 +107,8 @@ public class PageEditor extends ExtPanel {
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.channelStoreFuture = channelStoreFuture;
         if (config != null) {
-            this.composerMountUrl = config.getString("composerMountUrl", "/site/");
-            this.composerRestMountUrl = config.getString("composerRestMountUrl", "/site/_rp/");
+            this.composerMountUrl = config.getString("composerMountUrl", contextPath + "/");
+            this.composerRestMountUrl = config.getString("composerRestMountUrl", templateComposerContextPath + "/_rp/");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
@@ -275,9 +281,19 @@ public class PageEditor extends ExtPanel {
         return composerRestMountUrl;
     }
 
-    public void setRenderHostSubMountPath(String mountPath) {
-        this.renderHostSubMountPath = mountPath;
+    public void setRenderPathInfo(String pathInfo) {
+        this.renderPathInfo = pathInfo;
         redraw();
     }
-
+    
+    public void setRenderContextPath(String contextPath) {
+        this.contextPath = contextPath;
+        redraw();
+    }
+    
+    public void setTemplateComposerContextPath(String templateComposerContextPath) {
+        this.templateComposerContextPath = templateComposerContextPath;
+        redraw();
+    }
+    
 }

@@ -194,20 +194,9 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         @Override
         protected void invoke() {
-            try {
-                URI uri = new URI(channelDocument.getCanonicalUrl());
-                String path = uri.getPath();
-                if (channelDocument.getUrlContainsContextPath()) {
-                    int contextPathEndIndex = path.indexOf('/', 1);
-                    if (contextPathEndIndex >= 0 && contextPathEndIndex < path.length()) {
-                        path = path.substring(contextPathEndIndex);
-                    }
-                }
-
-                channelManagerService.viewChannel(channelDocument.getChannelId(), path);
-            } catch (URISyntaxException e) {
-                log.warn("Error while opening document in channel, invalid URI: '{}'", channelDocument.getCanonicalUrl());
-            }
+            // create the pathInfo of the channel manager url. The pathInfo includes the mountPath & path after the mount
+            StringBuilder pathInfo  = new StringBuilder(channelDocument.getMountPath()).append(channelDocument.getPathInfo());
+            channelManagerService.viewChannel(channelDocument.getChannelId(), pathInfo.toString(), channelDocument.getContextPath(), channelDocument.getTemplateComposerContextPath());
         }
     }
 
