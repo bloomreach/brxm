@@ -78,6 +78,10 @@ public class VirtualHostsService implements VirtualHosts {
     private boolean virtualHostsConfigured;
     private String scheme;
     private boolean contextPathInUrl = true;
+    /**
+     * if configured, this field will contain the default contextpath through which is hst webapp can be accessed
+     */
+    private String defaultContextPath = null;
     private boolean showPort = true;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
@@ -91,6 +95,7 @@ public class VirtualHostsService implements VirtualHosts {
         this.hstManager = hstManager;
         this.virtualHostsConfigured = true;
         this.contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        this.defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
         this.showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
         this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
         this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
@@ -360,6 +365,10 @@ public class VirtualHostsService implements VirtualHosts {
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
+    
+    public String getDefaultContextPath() {
+        return defaultContextPath;
+    }
 
     public boolean isPortInUrl() {
         return showPort;
@@ -430,5 +439,7 @@ public class VirtualHostsService implements VirtualHosts {
     public Mount getMountByIdentifier(String uuid) {
         return mountsByIdentifier.get(uuid);
     }
+
+
 
 }

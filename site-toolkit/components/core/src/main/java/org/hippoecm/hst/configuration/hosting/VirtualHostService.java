@@ -73,6 +73,12 @@ public class VirtualHostService implements VirtualHost {
     private Map<Integer, PortMount> portMounts = new HashMap<Integer, PortMount>();
     
     private boolean contextPathInUrl;
+
+    /**
+     *  when {@link Mount}s for this {@link VirtualHost} are only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
+     */
+    private String onlyForContextPath;
+    
     private boolean showPort;
     private String scheme;
     private String cmsLocation;
@@ -91,6 +97,17 @@ public class VirtualHostService implements VirtualHost {
                 this.contextPathInUrl = parentHost.contextPathInUrl;
             } else {
                 this.contextPathInUrl = virtualHosts.isContextPathInUrl();
+            }
+        }
+        
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH)) {
+            this.onlyForContextPath = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH);
+        } else {
+            // try to get the one from the parent
+            if(parentHost != null) {
+                this.onlyForContextPath = parentHost.onlyForContextPath;
+            } else {
+                this.onlyForContextPath = virtualHosts.getDefaultContextPath();
             }
         }
         
@@ -286,6 +303,11 @@ public class VirtualHostService implements VirtualHost {
 
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
+    }
+    
+    @Override
+    public String onlyForContextPath() {
+        return onlyForContextPath;
     }
     
     public boolean isPortInUrl() {

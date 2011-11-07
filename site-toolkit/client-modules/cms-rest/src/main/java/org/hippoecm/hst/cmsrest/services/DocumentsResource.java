@@ -100,8 +100,19 @@ public class DocumentsResource {
                 ChannelDocument document = new ChannelDocument();
                 document.setChannelId(channel.getId());
                 document.setChannelName(channel.getName());
-                document.setCanonicalUrl(link.toUrlForm(requestContext, true));
-                document.setUrlContainsContextPath(link.getMount().getVirtualHost().isContextPathInUrl());
+                document.setPathInfo(link.getPath());
+                document.setMountPath(link.getMount().getMountPath());
+                document.setHostName(link.getMount().getVirtualHost().getHostName());
+                // The preview in the cms always accesses the hst site through the hostname of the cms, but 
+                // adds the contextpath of the website. By default it it site, but, if a different contextpath is 
+                // available for the mount that belons to  the Hstlink, we take that one.
+                if (link.getMount().onlyForContextPath() != null) {
+                    document.setContextPath(link.getMount().onlyForContextPath());
+                } else {
+                    // if there is no contextpath configured on the Mount belonging to the HstLink, then we use the contextpath 
+                    // from the current HttpServletRequest
+                    document.setContextPath(servletRequest.getContextPath());
+                }
 
                 channelDocuments.add(document);
             } catch (ChannelException e) {

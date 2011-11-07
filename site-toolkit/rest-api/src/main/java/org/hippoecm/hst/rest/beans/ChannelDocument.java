@@ -24,14 +24,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "channeldocument")
 public class ChannelDocument implements Serializable {
-
+    
+    private static final long serialVersionUID = 1L;
+    
     private static final int HASH_SEED = 17;
     private static final int ODD_PRIME = 37;
 
     private String channelId;
     private String channelName;
-    private String canonicalUrl;
-    private boolean urlContainsContextPath;
+    private String contextPath;
+    private String pathInfo;
+    private String mountPath;
+    private String hostName;
 
     /**
      * Creates an empty channel document bean. This constructor is needed by the JAX-RS client framework.
@@ -47,8 +51,10 @@ public class ChannelDocument implements Serializable {
     public ChannelDocument(ChannelDocument original) {
         this.channelId = original.channelId;
         this.channelName = original.channelName;
-        this.canonicalUrl = original.canonicalUrl;
-        this.urlContainsContextPath = original.urlContainsContextPath;
+        this.contextPath = original.contextPath;
+        this.pathInfo = original.pathInfo;
+        this.mountPath = original.mountPath;
+        this.hostName = original.hostName;  
     }
 
     /**
@@ -84,46 +90,71 @@ public class ChannelDocument implements Serializable {
     }
 
     /**
-     * @return the canonical URL of this document in this channel.
+     * @return Returns the contextpath of the URL 
      */
-    public String getCanonicalUrl() {
-        return canonicalUrl;
+    public String getContextPath() {
+        return contextPath;
     }
 
     /**
-     * Sets the canonical URL of this document in this channel.
+     * Sets the contextpath of the URL 
      *
-     * @param canonicalUrl the canonical URL of this document in this channel.
+     * @param contextPath 
      */
-    public void setCanonicalUrl(final String canonicalUrl) {
-        this.canonicalUrl = canonicalUrl;
+    public void setContextPath(final String contextPath) {
+        this.contextPath = contextPath;
     }
 
-    /**
-     * Returns whether the canonical URL of this document in this channel contains a context path.
-     *
-     * @return true if the canonical URL of this document in this channel contains a context path, false otherwise.
-     */
-    public boolean getUrlContainsContextPath() {
-        return urlContainsContextPath;
+    public String getPathInfo() {
+        return pathInfo;
     }
 
-    /**
-     * Sets whether the canonical URL of this document in this channel contains a context path.
-     *
-     * @param urlContainsContextPath whether the canonical URL of this document in this channel contains a context path.
-     */
-    public void setUrlContainsContextPath(final boolean urlContainsContextPath) {
-        this.urlContainsContextPath = urlContainsContextPath;
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
     }
 
+    public String getMountPath() {
+        return mountPath;
+    }
+
+    public void setMountPath(String mountPath) {
+        this.mountPath = mountPath;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
         } else if (o instanceof ChannelDocument) {
             ChannelDocument d = (ChannelDocument)o;
-            return channelId.equals(d.channelId) && canonicalUrl.equals(d.canonicalUrl);
+            if(!equals(channelId, d.channelId)) {
+                return false;
+            }
+            if(!equals(channelName, d.channelName)) {
+                return false;
+            }
+            if(!equals(contextPath, d.contextPath)) {
+                return false;
+            }
+            if(!equals(pathInfo, d.pathInfo)) {
+                return false;
+            }
+            if(!equals(mountPath, d.mountPath)) {
+                return false;
+            }
+            if(!equals(hostName, d.hostName)) {
+                return false;
+            }
+            // all properties are equal, return true
+            return true;
         }
         return false;
     }
@@ -131,9 +162,32 @@ public class ChannelDocument implements Serializable {
     @Override
     public int hashCode() {
         int result = HASH_SEED;
-        result = ODD_PRIME * result + channelId.hashCode();
-        result = ODD_PRIME * result + canonicalUrl.hashCode();
+        if (channelId != null) {
+            result = ODD_PRIME * result + channelId.hashCode();
+        }
+        if (channelName != null) { 
+            result = ODD_PRIME * result + channelName.hashCode();
+        }
+        if (contextPath != null) { 
+            result = ODD_PRIME * result + contextPath.hashCode();
+        }
+        if (pathInfo != null) { 
+            result = ODD_PRIME * result + pathInfo.hashCode();
+        }
+        if (mountPath != null) { 
+            result = ODD_PRIME * result + mountPath.hashCode();
+        }
+        if (channelName != null) { 
+            result = ODD_PRIME * result + channelName.hashCode();
+        }
+        if (hostName != null) { 
+            result = ODD_PRIME * result + hostName.hashCode();
+        }
         return result;
     }
-
+    
+    public static boolean equals(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equals(str2);
+    }
+    
 }

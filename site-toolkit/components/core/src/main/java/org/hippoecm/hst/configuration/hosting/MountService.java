@@ -278,7 +278,9 @@ public class MountService implements ContextualizableMount, MutableMount {
         } else {
             if(parent != null) {
                 this.onlyForContextPath = parent.onlyForContextPath();
-            } 
+            } else {
+                this.onlyForContextPath = virtualHost.onlyForContextPath();
+            }
         }
         
         if(onlyForContextPath != null && !"".equals(onlyForContextPath)) {

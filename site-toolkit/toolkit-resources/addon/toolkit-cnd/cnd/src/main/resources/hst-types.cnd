@@ -192,7 +192,8 @@
 // if you do not want to mount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
-// when this mount is only applicable for certain contextpath, add this property for the contextpath that is allowed (must start with '/' and no further '/' is allowed)
+// when this mount is only applicable for certain contextpath, add this property containing the contextpath that 
+// is allowed (must start with '/' and no further '/' is allowed)
 - hst:onlyforcontextpath (string)
 // for embedded delegation of sites a mountpath needs to point to the delegated mount. This is only relevant for portal environment
 - hst:embeddedmountpath
@@ -247,6 +248,9 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
+// when the mounts for this host is only applicable for certain contextpath, add this property containing the contextpath that 
+// is allowed (must start with '/' and no further '/' is allowed)
+- hst:onlyforcontextpath (string)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms
@@ -267,6 +271,9 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
+// The default contextpath for this webapp. If configured, this will be the value 
+// for the 'hst:onlyforcontextpath' for the hst:mounts. It must start with '/' and no further '/' is allowed
+- hst:defaultcontextpath (string)
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable

@@ -84,6 +84,14 @@ public interface VirtualHost {
     boolean isContextPathInUrl();
     
     /**
+     * In case the {@link HttpServletRequest#getContextPath()} does not matter, this method returns <code>null</code> or empty. <b>If</b> {@link Mount}s 
+     * for this host can be used only for a certain contextPath, this method should return that contextPath. A contextPath has to start with a "/" and is not allowed to have any other "/". 
+     * 
+     * @return <code>null</code> or empty if the contextPath does not matter, otherwise it returns the value the contextPath must have a possible to match to this {@link Mount}
+     */
+    String onlyForContextPath();
+    
+    /**
      * @return <code>true</code> when the created url should have the port in it
      */
     boolean isPortInUrl();
