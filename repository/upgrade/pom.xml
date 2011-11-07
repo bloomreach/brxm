@@ -67,7 +67,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.upgrade.Upgrader13a org.hippoecm.repository.upgrade.Upgrader16a org.hippoecm.repository.upgrade.UpgraderAvailability1 org.hippoecm.repository.upgrade.Upgrader18a org.hippoecm.repository.upgrade.Upgrader19a</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.upgrade.Upgrader12a org.hippoecm.repository.upgrade.Upgrader12b org.hippoecm.repository.upgrade.Upgrader12c org.hippoecm.repository.upgrade.Upgrader13a org.hippoecm.repository.upgrade.Upgrader16a org.hippoecm.repository.upgrade.UpgraderAvailability1 org.hippoecm.repository.upgrade.Upgrader18a org.hippoecm.repository.upgrade.Upgrader19a</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

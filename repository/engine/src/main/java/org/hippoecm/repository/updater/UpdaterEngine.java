@@ -419,6 +419,7 @@ public class UpdaterEngine {
 
     static boolean prepare(Vector<ModuleRegistration> modules, Set<String> currentVersions) throws RepositoryException {
         // Select applicable modules for the current version.
+        boolean singleRunner = false;
         for (Iterator<ModuleRegistration> iter = modules.iterator(); iter.hasNext();) {
             ModuleRegistration registration = iter.next();
             boolean isValid = false;
@@ -432,6 +433,7 @@ public class UpdaterEngine {
                 }
                 if(!currentVersions.contains(registration.endTag)) {
                     isValid = true;
+                    singleRunner = true;
                 }
             }
             for (String requestedVersion : registration.startTag) {
@@ -446,6 +448,14 @@ public class UpdaterEngine {
             }
             if (!isValid) {
                 iter.remove();
+            }
+        }
+        if (singleRunner) {
+            for (Iterator<ModuleRegistration> iter = modules.iterator(); iter.hasNext();) {
+                ModuleRegistration registration = iter.next();
+                if(registration.startTag.size() != 0) {
+                    iter.remove();
+                }
             }
         }
         if (modules.size() == 0) {
@@ -736,7 +746,11 @@ public class UpdaterEngine {
         }
         int count = 0;
         for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
-            log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
+            if (currentBatch.isEmpty()) {
+                log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" empty");
+            } else {
+                log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
+            }
             for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
@@ -786,7 +800,11 @@ public class UpdaterEngine {
         }
         count = 0;
         for (Map<UpdaterPath, List<UpdaterItemVisitor>> currentBatch : partitionedBatch) {
-            log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
+            if (currentBatch.isEmpty()) {
+                log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" empty");
+            } else {
+                log.info("upgrade cycle iterated process batch "+(++count)+"/"+partitionedBatch.size()+" starting entry "+currentBatch.keySet().iterator().next());
+            }
             for (Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry : currentBatch.entrySet()) {
                 String path = entry.getKey().toString();
                 Node node = updaterSession.getRootNode();
@@ -862,33 +880,57 @@ public class UpdaterEngine {
             partitionedBatch.add(currentBatch);
         }
 
-        /*
-        Iterator<SortedMap<UpdaterPath, List<UpdaterItemVisitor>>> iter = (reverse ? partitionedBatch.descendingIterator() : partitionedBatch.iterator());
-        if(iter.hasNext()) {
-            SortedMap<UpdaterPath, List<UpdaterItemVisitor>> carry = new TreeMap<UpdaterPath,List<UpdaterItemVisitor>>(comparator);
-            SortedMap<UpdaterPath, List<UpdaterItemVisitor>> current = iter.next();
-            while(iter.hasNext()) {
-                SortedMap<UpdaterPath, List<UpdaterItemVisitor>> next = iter.next();
-                for(Iterator<Map.Entry<UpdaterPath,List<UpdaterItemVisitor>>> entries = current.entrySet().iterator(); entries.hasNext(); ) {
-                    Map.Entry<UpdaterPath,List<UpdaterItemVisitor>> entry = entries.next();
-                    UpdaterPath path = null;
-                    String[] pathElements = entry.getKey().toString().split("/");
-                    for(int i=0; i<pathElements.length - 1; i++) {
-                        if(pathElements[i].equals(pathElements[i+1])) {
-                            path = new UpdaterPath(pathElements, i);
-                        }
-                    }
-                    if(path != null && next.containsKey(path)) {
-                        entries.remove();
-                        carry.put(entry.getKey(), entry.getValue());
-                    }
+        /* now make sure that all document variant content is in the same batch */
+        /* first pass; create a map containing all document variant base paths contained within each batch */
+        Vector<Set<UpdaterPath>> documentBatches = new Vector<Set<UpdaterPath>>(partitionedBatch.size());
+        for(SortedMap<UpdaterPath, List<UpdaterItemVisitor>> batch : partitionedBatch) {
+            Set<UpdaterPath> documentBatch = new HashSet<UpdaterPath>();
+            for(UpdaterPath path : batch.keySet()) {
+                UpdaterPath base, root = (path.ancestors().hasNext() ? path.ancestors().next() : null);
+                if(root != null && (root.toString().equals("/hippo:configuration") || path.toString().equals("/hst:hst"))) {
+                    base = root;
+                } else {
+                    base = path.documentVariantPath();
                 }
-                next.putAll(carry);
-                carry.clear();
-                current = next;
+                if(base != null) {
+                    documentBatch.add(base);
+                }
+            }
+            documentBatches.add(documentBatch);
+        }
+        /* second pass: remove all document variant base paths that are not spread out over multiple batches */
+        for(int i=0; i<documentBatches.size(); i++) {
+            for(Iterator<UpdaterPath> iter = documentBatches.get(i).iterator(); iter.hasNext(); ) {
+                UpdaterPath base = iter.next();
+                if(!(i>0 && documentBatches.get(i-1).contains(base)) &&
+                   !(i+1<documentBatches.size() && documentBatches.get(i+1).contains(base))) {
+                    iter.remove();
+                }
             }
         }
-        */
+        /* third pass: retain only the document variant base paths that have a successor in the next batch */
+        for(int i=0; i<documentBatches.size(); i++) {
+            for(Iterator<UpdaterPath> iter = documentBatches.get(i).iterator(); iter.hasNext(); ) {
+                UpdaterPath base = iter.next();
+                if(!(i+1<documentBatches.size() && documentBatches.get(i+1).contains(base))) {
+                    iter.remove();
+                }
+            }
+        }
+        /* now actually move all entries in the batches based on the document variant base paths that need moving */
+        for(int i=0; i<documentBatches.size()-1; i++) {
+            for(UpdaterPath base : documentBatches.get(i)) {
+                SortedMap<UpdaterPath, List<UpdaterItemVisitor>> batch = partitionedBatch.get(i);
+                SortedMap<UpdaterPath, List<UpdaterItemVisitor>> nextBatch = partitionedBatch.get(i+1);
+                for(Iterator<Map.Entry<UpdaterPath, List<UpdaterItemVisitor>>> iter=batch.entrySet().iterator(); iter.hasNext(); ) {
+                    Map.Entry<UpdaterPath, List<UpdaterItemVisitor>> entry = iter.next();
+                    if(entry.getKey().isDescendentOrSelf(base)) {
+                        nextBatch.put(entry.getKey(), entry.getValue());
+                        iter.remove();
+                    }
+                }
+            }
+        }
 
         return partitionedBatch;
     }

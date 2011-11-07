@@ -41,7 +41,6 @@ public class Upgrader12b implements UpdaterModule {
     
     public void register(final UpdaterContext context) {
         context.registerName("upgrade-v12b");
-        context.registerStartTag("v20902");
         context.registerStartTag("v12a");
         context.registerEndTag("v12b");
 

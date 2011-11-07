@@ -415,7 +415,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd" }) {
                 try {
                     log.info("Initializing nodetypes from: " + cndName);
-                    initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
+                    LoadInitializationModule.initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
                     syncSession.save();
                 } catch (ConstraintViolationException ex) {
                     throw new RepositoryException("Could not initialize repository with hippo node types", ex);
@@ -445,7 +445,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 log.info("Initializing configuration content");
                 InputStream configuration = getClass().getResourceAsStream("configuration.xml");
                 if (configuration != null) {
-                    initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
+                    LoadInitializationModule.initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
                 } else {
                     log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                 }
@@ -453,102 +453,15 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             } else {
                 log.info("Initial configuration content already present");
             }
+
+            // load all extension resources
             try {
-                List<URL> extensions = new LinkedList<URL>();
-                for(Enumeration iter = Thread.currentThread().getContextClassLoader().getResources("org/hippoecm/repository/extension.xml");
-                    iter.hasMoreElements(); ) {
-                    URL configurationURL = (URL) iter.nextElement();
-                    extensions.add(configurationURL);
-                }
-                for(Enumeration iter = Thread.currentThread().getContextClassLoader().getResources("hippoecm-extension.xml");
-                    iter.hasMoreElements(); ) {
-                    URL configurationURL = (URL) iter.nextElement();
-                    extensions.add(configurationURL);
-                }
-                /* FIXME: does not seem to be necessary, as long as in the
-                 * EAR the extensions are all placed in the default place,
-                 * not in for instance APP-INF/lib
-                 *     for(Enumeration iter = getClass().getClassLoader().getParent().
-                 *         getResources("org/hippoecm/repository/extension.xml"); iter.hasMoreElements(); ) {
-                 *         URL configurationURL = (URL) iter.nextElement();
-                 *         extensions.addend(configurationURL);
-                 *     }
-                 * TODO: Use merge behavior from dereferenced import? [BvdS] [BvH] No not a operation which can be supported by project export
-                 */
-                rootSession.save();
-                for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
-                    URL configurationURL = (URL) iter.next();
-                    log.info("Initializing additional configuration content from "+configurationURL);
-                    try {
-                        InputStream configurationStream = configurationURL.openStream();
-                        initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream, configurationURL.getPath());
-                        Node mergeInitializationNode = rootSession.getRootNode().
-                            getNode("hippo:configuration/hippo:temporary/hippo:initialize");
-                        for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
-                            Node n = mergeIter.nextNode();
-                            if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" + n.getName())) {
-                                Node moved = rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize").addNode(n.getName(), HippoNodeType.NT_INITIALIZEITEM);
-                                if("hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
-                                               ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
-                                               : configurationURL.getFile())) {
-                                    moved.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-                                }
-                                for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD }) {
-                                    if(n.hasProperty(propertyName)) {
-                                        if(n.getProperty(propertyName).getDefinition().isMultiple()) {
-                                            moved.setProperty(propertyName, n.getProperty(propertyName).getValues());
-                                        } else {
-                                            moved.setProperty(propertyName, n.getProperty(propertyName).getValue());
-                                        }
-                                    }
-                                }
-                            } else {
-                                log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
-                            }
-                        }
-                        if(mergeInitializationNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
-                            Node initializeNode = rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize");
-                            Set<String> tags = new TreeSet<String>();
-                            if (initializeNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
-                                for (Value value : initializeNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues()) {
-                                    tags.add(value.getString());
-                                }
-                            }
-                            Value[] added = mergeInitializationNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
-                            for (Value value : added) {
-                                tags.add(value.getString());
-                            }
-                            initializeNode.setProperty(HippoNodeType.HIPPO_VERSION, tags.toArray(new String[tags.size()]));
-                        }
-                        mergeInitializationNode.remove();
-                        rootSession.save();
-                    } catch (PathNotFoundException ex) {
-                        log.error("Rejected old style configuration content", ex);
-                        for(NodeIterator removeTempIter = rootSession.getRootNode().getNode("hippo:configuration/hippo:temporary").getNodes(); removeTempIter.hasNext(); ) {
-                            removeTempIter.nextNode().remove();
-                        }
-                        rootSession.getRootNode().getNode("hippo:configuration/hippo:temporary").save();
-                    } catch (AccessDeniedException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (ConstraintViolationException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (InvalidItemStateException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (ItemExistsException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (LockException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (NoSuchNodeTypeException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    } catch (VersionException ex) {
-                        throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                    }
-                }
+                LoadInitializationModule.locateExtensionResources(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
-
             LoadInitializationModule.refresh(rootSession);
+            LoadInitializationModule.query(rootSession);
 
             if (!hasHippoNamespace) {
                 Session initializeSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
@@ -571,177 +484,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
-        }
-    }
-
-    static void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri)
-            throws UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
-        try {
-
-            /* Try to remap namespace if a namespace already exists and the uri is similar.
-             * This assumes a convention to use in the namespace URI.  It should end with a version
-             * number of the nodetypes, such as in http://www.sample.org/nt/1.0.0
-             */
-            try {
-                String currentURI = nsreg.getURI(prefix);
-                if (currentURI.equals(uri)) {
-                    log.debug("Namespace already exists: " + prefix + ":" + uri);
-                    return;
-                }
-                String uriPrefix = currentURI.substring(0, currentURI.lastIndexOf("/") + 1);
-                if(!uriPrefix.equals(uri.substring(0,uri.lastIndexOf("/")+1))) {
-                    log.error("Prefix already used for different namespace: " + prefix + ":" + uri);
-                    return;
-                }
-                // do not remap namespace, the upgrading infrastructure must take care of this
-                return;
-            } catch (NamespaceException ex) {
-                if (!ex.getMessage().endsWith("is not a registered namespace prefix.")) {
-                    log.error(ex.getMessage() +" For: " + prefix + ":" + uri);
-                }
-            }
-
-            nsreg.registerNamespace(prefix, uri);
-
-        } catch (NamespaceException ex) {
-            if (ex.getMessage().endsWith("mapping already exists")) {
-                log.error("Namespace already exists: " + prefix + ":" + uri);
-            } else {
-                log.error(ex.getMessage()+" For: " + prefix + ":" + uri);
-            }
-        }
-    }
-
-    static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
-            RepositoryException {
-        CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
-        List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
-        NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
-        NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
-
-        for (Iterator<QNodeTypeDefinition> iter = ntdList.iterator(); iter.hasNext();) {
-            QNodeTypeDefinition ntd = iter.next();
-
-            try {
-                ntreg.unregisterNodeType(ntd.getName());
-            } catch (NoSuchNodeTypeException ex) {
-                // new type, ignore
-            } catch (RepositoryException ex) {
-                // kind of safe to ignore
-            }
-
-            EffectiveNodeType effnt = null;
-            try {
-                effnt = ntreg.registerNodeType(ntd);
-            } catch (NamespaceException ex) {
-                log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
-            } catch (InvalidNodeTypeDefException ex) {
-                if (ex.getMessage().endsWith("already exists")) {
-                    try {
-                        effnt = ntreg.reregisterNodeType(ntd);
-                        log.info("Replaced NodeType: " + ntd.getName().getLocalName());
-                    } catch (NamespaceException e) {
-                        log.error(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
-                    } catch (InvalidNodeTypeDefException e) {
-                        log.info(e.getMessage() +". In " + cndName +" for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), e);
-                    } catch (RepositoryException e) {
-                        if (!e.getMessage().equals("not yet implemented")) {
-                            log.warn(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
-                }
-            } catch (RepositoryException ex) {
-                if (!ex.getMessage().equals("not yet implemented")) {
-                    log.warn(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
-
-    static void removeNodecontent(Session session, String absPath, boolean save) {
-        if ("".equals(absPath) || "/".equals(absPath)) {
-            log.warn("Not allowed to delete rootNode from initialization.");
-            return;
-        }
-
-        String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
-        try {
-            if (relpath.length() > 0 && session.getRootNode().hasNode(relpath)) {
-                session.getRootNode().getNode(relpath).remove();
-                if (save) {
-                    session.save();
-                }
-            }
-        } catch (RepositoryException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage(), ex);
-            } else {
-                log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage());
-            }
-        }
-
-    }
-
-    static void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
-        try {
-            String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
-            if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
-                session.getRootNode().addNode(relpath);
-            }
-            ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
-        } catch (IOException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (PathNotFoundException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (ItemExistsException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (ConstraintViolationException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (VersionException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (InvalidSerializedDataException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (LockException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (RepositoryException ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
         }
     }
 
