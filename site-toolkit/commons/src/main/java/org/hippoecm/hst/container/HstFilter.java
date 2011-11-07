@@ -94,6 +94,8 @@ public class HstFilter implements Filter {
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
 
+    private static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
+    
     protected String contextNamespace;
     protected boolean doClientRedirectAfterJaasLoginBehindProxy;
     protected String clientComponentManagerClassName;
@@ -105,7 +107,9 @@ public class HstFilter implements Filter {
 
     protected HstManager hstSitesManager;
     protected HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
-
+    
+    private String defaultLoginResourcePath;
+    
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
 
@@ -130,6 +134,8 @@ public class HstFilter implements Filter {
         }
 
         clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
+        
+        defaultLoginResourcePath = getInitParameter(filterConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
 
         initialized = false;
 
@@ -297,18 +303,17 @@ public class HstFilter implements Filter {
              * If so, we do a client redirect again to remove the duplicate contextpath
              */ 
             if (doClientRedirectAfterJaasLoginBehindProxy && !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
-                // TODO below the '/login/resource' should be replaced by the LoginServlet#defaultLoginResourcePath : not sure yet how to pass this value
-                if(req.getHeader("referer") != null && req.getHeader("referer").endsWith("/login/resource")) {
-                   String location = req.getRequestURI();
-                   if(location.startsWith(req.getContextPath() + req.getContextPath() + "/")) {
-                       String redirectTo = location.substring((req.getContextPath() + req.getContextPath()).length());
-                       res.sendRedirect(redirectTo); 
-                       return;
-                   }
+                String referer = req.getHeader("Referer");
+                if (referer != null && referer.endsWith(defaultLoginResourcePath)) {
+                    String requestURI = req.getRequestURI();
+                    if (requestURI.startsWith(req.getContextPath() + req.getContextPath() + "/")) {
+                        String redirectTo = requestURI.substring((req.getContextPath() + req.getContextPath()).length());
+                        res.sendRedirect(redirectTo);
+                        return;
+                    }
                 }
     	    }
-           
-            
+
             request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
 
     		// when getPathSuffix() is not null, we have a REST url and never skip hst request processing
