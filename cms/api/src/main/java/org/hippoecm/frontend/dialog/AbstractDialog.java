@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
@@ -34,6 +35,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -61,6 +63,10 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import wicket.contrib.input.events.EventType;
+import wicket.contrib.input.events.InputBehavior;
+import wicket.contrib.input.events.key.KeyType;
 
 /**
  * Utility class for implementing the {@link IDialogService.Dialog} interface.
@@ -300,6 +306,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         protected Button decorate(Button button) {
             button.setEnabled(enabled);
             button.setVisible(visible);
+            if (getKeyType() != null) {
+                button.add(new InputBehavior(new KeyType[] { getKeyType() }, EventType.click));
+            }
             return button;
         }
 
@@ -362,6 +371,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
             return false;
         }
+        
+        protected KeyType getKeyType() {
+            return null;
+        }
 
     }
 
@@ -394,16 +407,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
-
-        add(new AjaxButton("default-submit") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                AbstractDialog.this.onDefaultSubmit();
-            }
-            
-        });
         
         feedback = new ExceptionFeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
@@ -429,6 +432,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             protected void onSubmit() {
                 handleSubmit();
             }
+            
+            @Override
+            protected KeyType getKeyType() {
+                return KeyType.Enter;
+            }
 
         };
         buttons.add(ok);
@@ -448,6 +456,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 b.setDefaultFormProcessing(false);
                 return super.decorate(b);
             }
+            
+            @Override
+            protected KeyType getKeyType() {
+                return KeyType.Escape;
+            }
 
         };
         buttons.add(cancel);
@@ -460,8 +473,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
             }
         });
+        
     }
-
+    
     @Override
     protected void onDetach() {
         if (fmm != null) {
@@ -470,6 +484,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         super.onDetach();
     }
 
+    @Deprecated
     protected void onDefaultSubmit() {
         handleSubmit();
     }
@@ -639,11 +654,16 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
     public void onClose() {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            for (ButtonWrapper bw : buttons) {
+                if (bw.getKeyType() != null) {
+                    target.appendJavascript("shortcut.remove('" + bw.getKeyType() + "');\n");
+                }
+            }
+        }
     }
 
     /**

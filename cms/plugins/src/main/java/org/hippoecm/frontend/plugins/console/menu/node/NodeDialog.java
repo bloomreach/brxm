@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.console.menu.node;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
