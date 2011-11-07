@@ -29,6 +29,7 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -54,6 +55,7 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtProperty;
+import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.ChannelManager.TemplateComposer.PageEditor")
@@ -89,10 +91,9 @@ public class PageEditor extends ExtPanel {
     private String locale;
 
     private IPluginContext context;
-
     private ExtStoreFuture channelStoreFuture;
-
     private ChannelPropertiesWindow channelPropertiesWindow;
+    private boolean redraw = false;
 
     @ExtProperty
     private String channelId;
@@ -238,12 +239,27 @@ public class PageEditor extends ExtPanel {
         return super.newExtEventBehavior(event);
     }
 
+    public void redraw() {
+        redraw = true;
+    }
+
+    public void render(PluginRequestTarget target) {
+        if (redraw) {
+            JSONObject update = new JSONObject();
+            ExtPropertyConverter.addProperties(this, getClass(), update);
+            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').update(" + update.toString() + ");");
+            redraw = false;
+        }
+    }
+
     public void setChannel(final String channelId) {
         this.channelId = channelId;
+        redraw();
     }
 
     public void setChannelName(String name) {
         setTitle(new Model(name));
+        redraw();
     }
 
     public Boolean getPreviewMode() {
@@ -252,6 +268,7 @@ public class PageEditor extends ExtPanel {
 
     public void setPreviewMode(final Boolean previewMode) {
         this.previewMode = previewMode;
+        redraw();
     }
 
     public String getComposerRestMountUrl() {
@@ -260,6 +277,7 @@ public class PageEditor extends ExtPanel {
 
     public void setRenderHostSubMountPath(String mountPath) {
         this.renderHostSubMountPath = mountPath;
+        redraw();
     }
 
 }

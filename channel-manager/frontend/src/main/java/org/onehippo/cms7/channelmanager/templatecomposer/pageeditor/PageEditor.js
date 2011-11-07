@@ -247,6 +247,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Hippo.Msg.wait(this.resources['loading-message']);
     },
 
+    update: function(config) {
+        this.browseTo(config.channelId, config.renderHostSubMountPath);
+    },
+
     initComponent : function() {
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
         // recalculate the ExtJs layout when the YUI layout manager fires a resize event

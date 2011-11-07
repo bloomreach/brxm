@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
@@ -57,6 +58,8 @@ public class RootPanel extends ExtPanel {
     private ChannelStore channelStore;
     private PageEditor pageEditor;
     private ExtStoreFuture<Object> channelStoreFuture;
+
+    private boolean redraw = false;
 
     @ExtProperty
     private Integer activeItem = 0;
@@ -108,6 +111,24 @@ public class RootPanel extends ExtPanel {
         add(new ExtLinkPicker(context));
     }
 
+    public void redraw() {
+        redraw = true;
+    }
+
+    public void render(PluginRequestTarget target) {
+        pageEditor.render(target);
+        if (redraw) {
+            JSONObject update = new JSONObject();
+            try {
+                update.put("activeItem", activeItem);
+            } catch (JSONException e) {
+                throw new RuntimeException("could not populate property updates");
+            }
+            target.appendJavascript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
+            redraw = false;
+        }
+    }
+
     @Override
     protected void preRenderExtHead(StringBuilder js) {
         blueprintStore.onRenderExtHead(js);
@@ -132,6 +153,7 @@ public class RootPanel extends ExtPanel {
 
     public void setActiveCard(CardId rootPanelCard) {
         this.activeItem = rootPanelCard.tabIndex;
+        redraw();
     }
 
 }

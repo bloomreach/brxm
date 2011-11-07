@@ -50,22 +50,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
 
         Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
 
-        this.toolbar.pushItem({
-            card: this.items.get(0),
-            click: function() {
-                this.layout.setActiveItem(0);
-            },
-            scope: this
-        });
-        if (config.activeItem != 0) {
-            this.toolbar.pushItem({
-                card: this.items.get(config.activeItem),
-                click: function() {
-                    this.layout.setActiveItem(config.activeItem);
-                },
-                scope: this
-            });
-        }
+        this.selectCard(config.activeItem);
     },
 
     initComponent: function() {
@@ -119,6 +104,39 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         }, this);
 
         Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
+    },
+
+    selectCard: function(itemId) {
+        while (this.toolbar.popItem() != null);
+
+        this.toolbar.pushItem({
+            card: this.items.get(0),
+            click: function() {
+                this.layout.setActiveItem(0);
+            },
+            scope: this
+        });
+        if ((typeof itemId !== 'undefined') && itemId != 0) {
+            this.toolbar.pushItem({
+                card: this.items.get(itemId),
+                click: function() {
+                    this.layout.setActiveItem(itemId);
+                },
+                scope: this
+            });
+
+            this.layout.setActiveItem(itemId);
+            if (itemId == 1) {
+                // TODO fix, I have no clue why the template composer card is not getting activated properly
+                document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel'
+            }
+        } else {
+            this.layout.setActiveItem(0);
+        }
+    },
+
+    update: function(config) {
+        this.selectCard(config.activeItem);
     },
 
     showChannelManager: function() {

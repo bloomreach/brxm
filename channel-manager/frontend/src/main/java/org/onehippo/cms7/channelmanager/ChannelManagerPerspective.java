@@ -91,6 +91,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 page.add(new HstConfigEditorResourceBehaviour());
             }
         }
+        rootPanel.render(target);
         for (IRenderService child : childservices) {
             child.render(target);
         }
