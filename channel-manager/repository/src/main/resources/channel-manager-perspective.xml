@@ -44,9 +44,6 @@
     <sv:property sv:name="center" sv:type="String">
       <sv:value>id=template-composer-perspective-center,body=template-composer-perspective-center-body,scroll=false</sv:value>
     </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=template-composer-perspective-top,body=template-composer-perspective-top-body,height=24</sv:value>
-    </sv:property>
     <sv:property sv:name="linked.with.parent" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
