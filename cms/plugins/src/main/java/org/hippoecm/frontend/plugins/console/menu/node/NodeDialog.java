@@ -165,7 +165,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                     Collection<String> names = typesToNames.get(type);
                     if (names.size() == 1) {
                         String _name = names.iterator().next();
-                        if (name == null || !_name.equals("*")) {
+                        if (name == null && !_name.equals("*")) {
                             name = _name;
                         }
                     }
@@ -173,7 +173,10 @@ public class NodeDialog extends AbstractDialog<Node> {
                 else if (typesToNames.size() == 1) {
                     Collection<String> names = typesToNames.values().iterator().next();
                     if (names.size() == 1) {
-                        name = names.iterator().next();
+                        String _name = names.iterator().next();
+                        if (!_name.equals("*")) {
+                            name = _name;
+                        }
                     }
                 }
                 return name;
