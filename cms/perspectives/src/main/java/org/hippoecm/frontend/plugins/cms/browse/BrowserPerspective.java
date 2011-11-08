@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import java.util.Iterator;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -31,9 +35,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
-
-import javax.jcr.Node;
-import java.util.Iterator;
 
 public class BrowserPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -56,7 +57,6 @@ public class BrowserPerspective extends Perspective {
     public BrowserPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        addExtensionPoint("top");
         addExtensionPoint("center");
         addExtensionPoint("left");
 

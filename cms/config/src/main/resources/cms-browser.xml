@@ -31,9 +31,6 @@
     <sv:property sv:name="left" sv:type="String">
       <sv:value>service.browse.navigator</sv:value>
     </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>service.browse.tabscontainer</sv:value>
-    </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>
     </sv:property>
@@ -55,9 +52,6 @@
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=browse-perspective-top,height=25</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px 0px 0px 0px</sv:value>

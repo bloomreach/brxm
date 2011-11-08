@@ -312,17 +312,17 @@ body.hippo-root #doc3 {
 /* Header */
 /* ================================================ */
 .hippo-header {
-  height: 45px;
+  height: 25px;
   background: url("images/headerBack.png") repeat-x top left;
 }
 
 .hippo-header-home {
   background: url("images/hippologo.png") no-repeat;
   text-indent: -9999px;
-  display: block;
   width: 29px;
-  height: 24px;
+  height: 25px;
   margin-left: 5px;
+  display: block;
 }
 
 .hippo-logout-username {
@@ -340,24 +340,21 @@ body.hippo-root #doc3 {
   background: url("images/tabs-vertical-back.png") repeat-y
 }
 
-.tabbed-panel-layout-left .hippo-tabs-perspective-tabs {
-  background: url("images/headerBack.png") no-repeat 0px -50px;
-}
-
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
   position: absolute;
   top: 0px;
-  width: 50px;
+  width: 62px;
   left: 0px;
-  padding-top: 50px;
+  padding-top: 30px;
 }
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li {
-  height: 52px;
+  height: 53px;
 }
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.selected {
-  background: url("images/tab-active.png") no-repeat center center
+  background: url("images/tab-active.png");
+  background-position: 0px 4px;
 }
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a img {
@@ -371,13 +368,15 @@ body.hippo-root #doc3 {
 /* TabsPlugin Document switcher */
 /* ================================================ */
 .hippo-tabs-documents-top .tab-row {
-  margin-left: 400px;
 }
 
 .hippo-tabs-documents-top {
   width: auto;
-  position: relative;
+  position: absolute;
   text-align: left;
+  top: 0px;
+  left: 446px;
+  margin-right: 75px;
 }
 
 .hippo-tabs-documents-top ul {
@@ -1463,7 +1462,7 @@ ents-small-folders h3 {
 }
 
 .hippo-browser-documents-small .hippo-browser-documents-small-files {
-  background: url("images/document-list-back.png") repeat-x top left;
+  background: url("images/document-list-back.png") repeat-x top left #fcfcfc;
 }
 
 /* toolbar requires some tweaks here */

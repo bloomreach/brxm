@@ -413,6 +413,9 @@
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>service.browse.tabscontainer</sv:value>
+    </sv:property>
     <sv:node sv:name="browser.ie">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -446,7 +449,7 @@
         <sv:value>id=tabbed-panel-layout-center,height=1000</sv:value>
       </sv:property>
       <sv:property sv:name="left" sv:type="String">
-        <sv:value>id=tabbed-panel-layout-left,width=50</sv:value>
+        <sv:value>id=tabbed-panel-layout-left,width=50,gutter=0px 3px 0px 0px</sv:value>
       </sv:property>
       <sv:property sv:name="linked.with.parent" sv:type="Boolean">
         <sv:value>true</sv:value>

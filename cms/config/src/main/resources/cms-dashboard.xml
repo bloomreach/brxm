@@ -71,9 +71,6 @@
       <sv:property sv:name="client.class.name" sv:type="String">
         <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
       </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=top,height=24</sv:value>
-      </sv:property>
       <sv:property sv:name="left" sv:type="String">
         <sv:value>id=left,width=33%,body=left-body,gutter=0px 1px 1px 1px</sv:value>
       </sv:property>

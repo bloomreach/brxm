@@ -61,7 +61,7 @@ public class RootPlugin extends TabsPlugin {
         add(new LogoutLink("logout"));
 
         PageLayoutSettings plSettings = new PageLayoutSettings();
-        plSettings.setHeaderHeight(50);
+        plSettings.setHeaderHeight(24);
         // TODO: update settings from config
         add(new PageLayoutBehavior(plSettings));
 
@@ -83,6 +83,8 @@ public class RootPlugin extends TabsPlugin {
         }
         add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
         add(new ExtHippoThemeBehavior());
+
+        addExtensionPoint("top");
 
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.SMALL);
