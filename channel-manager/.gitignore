@@ -9,3 +9,7 @@ repository/.project
 repository/.settings
 repository/target
 /target
+test/.classpath
+test/.project
+test/.settings
+test/target
