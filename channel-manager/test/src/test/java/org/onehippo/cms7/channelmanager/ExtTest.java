@@ -1,14 +1,11 @@
 package org.onehippo.cms7.channelmanager;
 
-import java.util.List;
-
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 public class ExtTest extends AbstractJavascriptTest {
 

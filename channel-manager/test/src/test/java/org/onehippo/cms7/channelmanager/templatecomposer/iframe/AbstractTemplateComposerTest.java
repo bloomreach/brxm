@@ -16,30 +16,27 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
-import com.google.gson.Gson;
+import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
+import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
 import org.onehippo.cms7.channelmanager.templatecomposer.GlobalBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.jquery.JQueryBundle;
-import org.w3c.dom.Text;
 
-import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
-import net.sourceforge.htmlunit.corejs.javascript.Function;
-import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.javascript.host.Node;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import com.google.gson.Gson;
 
 abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTest {
 
@@ -65,7 +62,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         boolean metaDataConsumed = true;
         DomNode tmp = containerDiv;
         while ((tmp = tmp.getPreviousSibling()) != null) {
-            if (tmp.getNodeType() == 8) {
+            if (tmp.getNodeType() == Node.COMMENT_NODE) {
                 metaDataConsumed = false;
             }
         }

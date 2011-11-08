@@ -16,7 +16,7 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
 
     @Before
     public void startPage() throws Exception {
-        setUp("surfandedit.html");
+        setUp("cmseditlink.html");
         initializeIFrameHead();
         initializeTemplateComposer(false, true);
     }
