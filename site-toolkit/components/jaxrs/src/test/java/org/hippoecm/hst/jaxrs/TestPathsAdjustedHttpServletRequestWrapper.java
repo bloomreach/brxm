@@ -86,4 +86,122 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         
     }
     
+    @Test
+    public void testRequestURLRegardingPortNumbers() throws Exception {
+        
+        // testing http and the default port 0 first
+        
+        int portNumber = 0;
+        
+        ResolvedVirtualHost resolvedVirtualHost = EasyMock.createNiceMock(ResolvedVirtualHost.class);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        
+        resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
+        EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
+        
+        EasyMock.replay(resolvedVirtualHost);
+        EasyMock.replay(resolvedMount);
+        
+        String contextPath = "/app1";
+        String mountPath = "/mount1";
+        String pathInfo = "/a/b/c./x/y/z";
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setScheme("http");
+        request.setServerName(serverName);
+        request.setServerPort(serverPort);
+        request.setRequestURI(contextPath + mountPath + pathInfo);
+        request.setContextPath(contextPath);
+        request.setServletPath(mountPath);
+        request.setPathInfo(pathInfo);
+        
+        HstContainerRequest containerRequest = new HstContainerRequestImpl(request, pathSuffixParameter);
+        
+        MockHstRequestContext requestContext = new MockHstRequestContext();
+        requestContext.setResolvedMount(resolvedMount);
+        
+        String jaxrsPathInfo = "/demosite:news/" + containerRequest.getPathSuffix();
+        
+        PathsAdjustedHttpServletRequestWrapper jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("http://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+        
+        // testing 80
+        
+        portNumber = 80;
+        EasyMock.reset(resolvedVirtualHost);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        EasyMock.replay(resolvedVirtualHost);
+        
+        jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("http://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+        
+        // testing 8080
+        
+        portNumber = 8080;
+        EasyMock.reset(resolvedVirtualHost);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        EasyMock.replay(resolvedVirtualHost);
+        
+        jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("http://www.example.org:8080" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+
+        // testing https with default port 0
+        
+        request = new MockHttpServletRequest();
+        request.setScheme("https");
+        request.setServerName(serverName);
+        request.setServerPort(0);
+        request.setRequestURI(contextPath + mountPath + pathInfo);
+        request.setContextPath(contextPath);
+        request.setServletPath(mountPath);
+        request.setPathInfo(pathInfo);
+        
+        containerRequest = new HstContainerRequestImpl(request, pathSuffixParameter);
+        
+        portNumber = 0;
+        EasyMock.reset(resolvedVirtualHost);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        EasyMock.replay(resolvedVirtualHost);
+        
+        jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("https://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+
+        // testing 443
+        
+        portNumber = 443;
+        EasyMock.reset(resolvedVirtualHost);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        EasyMock.replay(resolvedVirtualHost);
+        
+        jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("https://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+
+        // testing 8443
+        
+        portNumber = 8443;
+        EasyMock.reset(resolvedVirtualHost);
+        EasyMock.expect(resolvedVirtualHost.getResolvedHostName()).andReturn(serverName).anyTimes();
+        EasyMock.expect(resolvedVirtualHost.getPortNumber()).andReturn(portNumber).anyTimes();
+        EasyMock.replay(resolvedVirtualHost);
+        
+        jaxrsRequest = 
+            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+        
+        assertEquals("https://www.example.org:8443" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
+    }
 }

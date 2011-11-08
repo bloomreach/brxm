@@ -335,7 +335,14 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 		public StringBuffer getRequestURL() {
 			if (requestURL == null) {
 				ResolvedVirtualHost host = requestContext.getResolvedMount().getResolvedVirtualHost();
-				StringBuilder sbTemp = new StringBuilder(super.getScheme()).append("://").append(host.getResolvedHostName()).append(":").append(host.getPortNumber()).append(getRequestURI());
+				String scheme = super.getScheme();
+				int portNumber = host.getPortNumber();
+				StringBuilder sbTemp = new StringBuilder(100);
+				sbTemp.append(scheme).append("://").append(host.getResolvedHostName());
+				if (portNumber > 0 && (("http".equals(scheme) && portNumber != 80) || ("https".equals(scheme) && portNumber != 443))) {
+				    sbTemp.append(":").append(host.getPortNumber());
+				}
+				sbTemp.append(getRequestURI());
 				requestURL = sbTemp.toString();
 			}
 			
