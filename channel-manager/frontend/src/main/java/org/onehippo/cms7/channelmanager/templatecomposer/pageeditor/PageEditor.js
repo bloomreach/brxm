@@ -26,6 +26,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.title = config.title;
         config.header = false;
 
+        this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
 
         this.initUI(config);
@@ -248,7 +249,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     update: function(config) {
-        this.browseTo(config.channelId, config.renderHostSubMountPath);
+        this.browseTo(config.channelId, config.contextPath, config.renderPath);
     },
 
     initComponent : function() {
@@ -260,7 +261,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
             if (this.channelId) {
-                this.browseTo(this.channelId, this.renderHostSubMountPath);
+                this.browseTo(this.channelId, this.contextPath, this.renderPath);
             }
         }, this, {single: true});
 
@@ -370,7 +371,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.pageContainer.initComposer.call(this.pageContainer);
     },
 
-    browseTo: function(channelId, renderHostSubMountPath) {
+    browseTo: function(channelId, contextPath, renderPath) {
         this.channelId = channelId;
         this.channelStoreFuture.when(function(config) {
             var record = config.store.getById(channelId);
@@ -378,12 +379,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.title = record.get('name');
             this.hstMountPoint = record.get('hstMountPoint');
 
-            renderHostSubMountPath = renderHostSubMountPath || record.get('subMountPath');
-            if (renderHostSubMountPath && renderHostSubMountPath.indexOf('/') === 0) {
-                this.pageContainer.renderHostSubMountPath = renderHostSubMountPath.substr(1);
-            } else {
-                this.pageContainer.renderHostSubMountPath = renderHostSubMountPath;
+            if (contextPath) {
+                this.contextPath = contextPath;
             }
+            if (renderPath) {
+                this.pageContainer.renderPathInfo = renderPath;
+            } else {
+                this.pageContainer.renderPathInfo = record.get('subMountPath');
+            }
+
             this.pageContainer.renderHost = record.get('hostname');
             this.pageContainer.previewMode = true;
             this.pageContainer.initComposer.call(this.pageContainer);

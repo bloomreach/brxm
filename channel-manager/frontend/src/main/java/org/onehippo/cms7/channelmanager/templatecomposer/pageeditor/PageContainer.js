@@ -23,16 +23,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
         this.resources = config.resources;
 
-        if (config.composerMountUrl.lastIndexOf('/') !== config.composerMountUrl.length - 1) {
-            config.composerMountUrl = config.composerMountUrl + '/';
-        }
-        this.composerMountUrl = config.composerMountUrl;
-        this.composerRestMountUrl = config.composerRestMountUrl;
-
+        this.templateComposerContextPath = config.templateComposerContextPath;
+        this.composerRestMountPath = config.composerRestMountPath;
+        this.contextPath = config.contextPath;
         this.renderPathInfo = config.renderPathInfo;
-        if (this.renderPathInfo.indexOf('/') === 0) {
-            this.renderPathInfo = this.renderPathInfo.substr(1);
-        }
+        this.composerRestMountUrl = this.templateComposerContextPath + this.composerRestMountPath;
 
         this.iFrameErrorPage = config.iFrameErrorPage;
         this.initialHstConnectionTimeout = config.initialHstConnectionTimeout;
@@ -73,7 +68,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     //Keeps the session alive every minute
     _keepAlive : function() {
         Ext.Ajax.request({
-            url: this.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./keepalive?' + this.ignoreRenderHostParameterName + '=true',
+            url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./keepalive?' + this.ignoreRenderHostParameterName + '=true',
             success: function () {
                 // Do nothing
             }
@@ -116,7 +111,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
     initComposer : function() {
-        if (typeof this.renderPathInfo === 'undefined' || typeof this.renderHost === 'undefined' || this.renderHost.trim() === '') {
+        if (typeof this.renderPathInfo === 'undefined'
+                || typeof this.contextPath === 'undefined'
+                || this.contextPath.trim() === ''
+                || typeof this.renderHost === 'undefined'
+                || this.renderHost.trim() === '') {
             return;
         }
 
@@ -128,7 +127,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
         var composerMode = function(callback) {
             Ext.Ajax.request({
-                url: self.composerRestMountUrl + 'cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?'+self.ignoreRenderHostParameterName+'=true',
+                url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?'+self.ignoreRenderHostParameterName+'=true',
                 success: callback,
                 failure: function(exceptionObject) {
                     if (exceptionObject.isTimeout) {
@@ -164,7 +163,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
             this._initIFrameListeners();
-            iFrame.setSrc(this.composerMountUrl + this.renderPathInfo);
+            iFrame.setSrc(this.contextPath + this.renderPathInfo);
 
             // keep session active
             Ext.TaskMgr.start({
@@ -212,7 +211,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 var self = this;
                 Ext.Ajax.request({
                     method: 'POST',
-                    url: this.composerRestMountUrl + mountId + './edit?' + this.ignoreRenderHostParameterName + '=true',
+                    url: this.composerRestMountUrl + '/' + mountId + './edit?' + this.ignoreRenderHostParameterName + '=true',
                     success: function () {
                         // refresh iframe to get new hst config uuids. previewMode=false will initialize
                         // the editor for editing with the refresh
@@ -235,7 +234,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var self = this;
         Ext.Ajax.request({
             method: 'POST',
-            url: this.composerRestMountUrl + this.pageContext.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
+            url: this.composerRestMountUrl +'/'+ this.pageContext.ids.mountId + './publish?'+this.ignoreRenderHostParameterName+'=true',
             success: function () {
                 self.refreshIframe.call(self, null);
             },
@@ -312,9 +311,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }
 
         var config = {
-            composerMountUrl: this.composerMountUrl,
-            composerRestMountUrl: this.composerRestMountUrl,
-            renderPathInfo: this.renderPathInfo,
+            templateComposerContextPath: this.templateComposerContextPath,
+            composerRestMountPath: this.composerRestMountPath,
+            renderPath: this.renderPath,
             ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
             previewMode: this.previewMode,
             resources: this.resources

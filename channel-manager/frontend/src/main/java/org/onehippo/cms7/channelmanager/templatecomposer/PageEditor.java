@@ -67,19 +67,16 @@ public class PageEditor extends ExtPanel {
     public Boolean debug = false;
 
     @ExtProperty
-    public String composerMountUrl = "/site/";
-
-    @ExtProperty
-    public String composerRestMountUrl = "/site/_rp/";
+    public String composerRestMountPath = "/_rp";
 
     @ExtProperty
     public String renderPathInfo = "";
 
     @ExtProperty
-    public String contextPath = "";
+    public String contextPath = "/site";
     
     @ExtProperty
-    public String templateComposerContextPath = "";
+    public String templateComposerContextPath = "/site";
 
     @ExtProperty
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
@@ -107,8 +104,9 @@ public class PageEditor extends ExtPanel {
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.channelStoreFuture = channelStoreFuture;
         if (config != null) {
-            this.composerMountUrl = config.getString("composerMountUrl", contextPath + "/");
-            this.composerRestMountUrl = config.getString("composerRestMountUrl", templateComposerContextPath + "/_rp/");
+            this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
+            this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
+            this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
@@ -275,10 +273,6 @@ public class PageEditor extends ExtPanel {
     public void setPreviewMode(final Boolean previewMode) {
         this.previewMode = previewMode;
         redraw();
-    }
-
-    public String getComposerRestMountUrl() {
-        return composerRestMountUrl;
     }
 
     public void setRenderPathInfo(String pathInfo) {

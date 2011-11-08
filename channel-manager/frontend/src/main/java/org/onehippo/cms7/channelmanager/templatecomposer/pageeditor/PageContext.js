@@ -49,9 +49,10 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         this.pageContainer = pageContainer;
         this.resources = config.resources;
         this.previewMode = config.previewMode;
-        this.composerMountUrl = config.composerMountUrl;
-        this.composerRestMountUrl = config.composerRestMountUrl;
-        this.renderHostSubMountPath = config.renderHostSubMountPath;
+        this.contextPath = config.contextPath;
+        this.templateComposerContextPath = config.templateComposerContextPath;
+        this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
+        this.renderPath = config.renderPath;
         this.ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
 
         this.iframeResourceCache = cache;

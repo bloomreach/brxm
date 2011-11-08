@@ -32,7 +32,7 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
             id: 'PageModelStore',
             proxy: new PageModelProxy({
                 api: {
-                    read     : composerRestMountUrl + config.mountId + './pagemodel/' + config.pageId + "/"
+                    read     : composerRestMountUrl +'/'+ config.mountId + './pagemodel/' + config.pageId + "/"
                     ,create  : '#' // see beforewrite
                     ,update  : '#'
                     ,destroy : '#'
@@ -44,15 +44,15 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                             if (action == 'create') {
                                 var prototypeId = rs.get('id');
                                 var parentId = rs.get('parentId');
-                                proxy.setApi(action, {url: composerRestMountUrl + parentId + './create/' + prototypeId, method: 'POST'});
+                                proxy.setApi(action, {url: composerRestMountUrl +'/' + parentId + './create/' + prototypeId, method: 'POST'});
                             } else if (action == 'update') {
                                 //Ext appends the item ID automatically
                                 var id = rs.get('id');
-                                proxy.setApi(action, {url: composerRestMountUrl + id + './update', method: 'POST'});
+                                proxy.setApi(action, {url: composerRestMountUrl +'/' + id + './update', method: 'POST'});
                             } else if (action == 'destroy') {
                                 //Ext appends the item ID automatically
                                 var parentId = rs.get('parentId');
-                                proxy.setApi(action, {url: composerRestMountUrl + parentId + './delete', method: 'GET'});
+                                proxy.setApi(action, {url: composerRestMountUrl +'/' + parentId + './delete', method: 'GET'});
                             }
                         }
                     }
