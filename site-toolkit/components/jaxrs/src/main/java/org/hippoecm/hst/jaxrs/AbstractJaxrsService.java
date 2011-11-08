@@ -39,7 +39,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -334,13 +333,13 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 		@Override
 		public StringBuffer getRequestURL() {
 			if (requestURL == null) {
-				ResolvedVirtualHost host = requestContext.getResolvedMount().getResolvedVirtualHost();
 				String scheme = super.getScheme();
-				int portNumber = host.getPortNumber();
+				String serverName = super.getServerName();
+				int serverPort = super.getServerPort();
 				StringBuilder sbTemp = new StringBuilder(100);
-				sbTemp.append(scheme).append("://").append(host.getResolvedHostName());
-				if (portNumber > 0 && (("http".equals(scheme) && portNumber != 80) || ("https".equals(scheme) && portNumber != 443))) {
-				    sbTemp.append(":").append(host.getPortNumber());
+				sbTemp.append(scheme).append("://").append(serverName);
+				if (serverPort > 0 && (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443))) {
+				    sbTemp.append(":").append(serverPort);
 				}
 				sbTemp.append(getRequestURI());
 				requestURL = sbTemp.toString();
