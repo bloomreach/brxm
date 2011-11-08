@@ -146,6 +146,7 @@ public interface HstNodeTypes {
 
     public final static String BLUEPRINT_PROPERTY_NAME = "hst:name";
     public final static String BLUEPRINT_PROPERTY_DESCRIPTION = "hst:description";
+    public final static String BLUEPRINT_PROPERTY_CONTENT_ROOT = "hst:contentRoot";
 
     public final static String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
     

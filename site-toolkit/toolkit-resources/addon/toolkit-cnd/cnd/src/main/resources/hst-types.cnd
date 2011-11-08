@@ -280,6 +280,9 @@
 //"User-friendly" Name of the Blueprint that is used in Channel Manager
 - hst:name (string)
 - hst:description (string)
+// the absolute location where, if this blueprint contains content, the content is created. If missing
+// the default contentRoot is used. It must start with a / 
+- hst:contentRoot (string)
 // prototype for the channel properties.
 // Used for default values
 + hst:channel (hst:channel)

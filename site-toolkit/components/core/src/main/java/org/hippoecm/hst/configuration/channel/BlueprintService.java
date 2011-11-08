@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class BlueprintService implements Blueprint {
     private final String id;
     private final String name;
     private final String description;
+    private final String contentRoot;
     private final String path;
     private final boolean hasContentPrototype;
 
@@ -55,6 +57,21 @@ public class BlueprintService implements Blueprint {
         } else {
             this.description = null;
         }
+        
+        if (blueprint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT)) {
+            String location = blueprint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT).getString();
+            if(StringUtils.isEmpty(location) || !location.startsWith("/")) {
+                log.warn("Skipping invalid '{}' of blueprint '{}' : The value should start with a / ", 
+                        HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT, path );
+                this.contentRoot = null;
+            } else {
+                log.debug("Setting contentRoot for blueprint '{}' to '{}'", path, location);
+                this.contentRoot = location;
+            }
+        } else {
+            this.contentRoot = null;
+        }
+        
 
         if (blueprint.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
             this.prototypeChannel = ChannelPropertyMapper.readChannel(blueprint.getNode(HstNodeTypes.NODENAME_HST_CHANNEL), null);
@@ -125,6 +142,11 @@ public class BlueprintService implements Blueprint {
         return this.description;
     }
 
+    @Override
+    public String getContentRoot() {
+        return this.contentRoot;
+    }
+
     public Channel createChannel() {
         return new Channel(prototypeChannel);
     }
@@ -137,5 +159,6 @@ public class BlueprintService implements Blueprint {
     public boolean hasContentPrototype() {
         return hasContentPrototype;
     }
+
 
 }

@@ -38,9 +38,15 @@ public interface Blueprint {
     String getName();
 
     /**
-     * @return value of hst:description of the blueprint node, returns null if the property doesn't exist.
+     * @return value of hst:description of the blueprint node, returns <code>null</code> if the property doesn't exist.
      */
     String getDescription();
+    
+    /**
+     * The contentRoot must start with a / and be a valid jcr path
+     * @return absolute path of the hst:contentRoot of the blueprint node, returns <code>null</code> if the property doesn't exist.
+     */
+    String getContentRoot();
 
     /**
      * Creates a new channel with ID 'null'. The channel can be persisted using {@link ChannelManager#persist}.

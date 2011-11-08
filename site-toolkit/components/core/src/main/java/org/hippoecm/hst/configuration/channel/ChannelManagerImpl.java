@@ -524,7 +524,11 @@ public class ChannelManagerImpl implements MutableChannelManager {
             // set up content
             final String contentRootPath;
             if (bps.hasContentPrototype()) {
-                FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(contentRoot));
+                String blueprintContentPath = bps.getContentRoot();
+                if(blueprintContentPath == null) {
+                    blueprintContentPath = contentRoot;
+                }
+                FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(blueprintContentPath));
                 try {
                     contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
                     session.refresh(true);
