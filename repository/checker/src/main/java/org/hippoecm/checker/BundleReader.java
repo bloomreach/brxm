@@ -188,13 +188,15 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
     public void clearInUse() {
     }
 
-    public class NodeDescriptionImpl implements NodeDescription {
+    class NodeDescriptionImpl implements NodeDescription {
         NodeId nodeId;
-        public NodePropBundle bundle;
+        NodePropBundle bundle;
+
         NodeDescriptionImpl(NodeId nodeId, NodePropBundle bundle) {
             this.nodeId = nodeId;
             this.bundle = bundle;
         }
+
         public UUID getNode() {
             return create(nodeId);
         }
@@ -206,9 +208,6 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
         public Collection<UUID> getChildren() {
             List<UUID> children = new LinkedList<UUID>();
             for (ChildNodeEntry child : (List<ChildNodeEntry>)bundle.getChildNodeEntries()) {
-                if (children.contains(create(child.getId()))) {
-                    Thread.currentThread().dumpStack();
-                }
                 children.add(create(child.getId()));
             }
             return children;
