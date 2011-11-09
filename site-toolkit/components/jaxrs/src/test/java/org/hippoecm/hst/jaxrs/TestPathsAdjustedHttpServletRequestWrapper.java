@@ -23,7 +23,6 @@ import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.AbstractJaxrsService.PathsAdjustedHttpServletRequestWrapper;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -72,13 +71,10 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         assertEquals(containerRequest.getPathInfo(), "/mount1/a/b/c");
         assertEquals(containerRequest.getPathSuffix(), "x;p1=1;p11=11/y;p2=2;p22=22/z;p3=3;p33=33");
         
-        MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setResolvedMount(resolvedMount);
-        
         String jaxrsPathInfo = "/demosite:news/" + containerRequest.getPathSuffix();
         
         PathsAdjustedHttpServletRequestWrapper jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals(jaxrsRequest.getPathInfo(), "/demosite:news/x/y/z");
         assertEquals(jaxrsRequest.getRequestURI(), "/app1/demosite:news/x;p1=1;p11=11/y;p2=2;p22=22/z;p3=3;p33=33");
@@ -106,13 +102,10 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         
         HstContainerRequest containerRequest = new HstContainerRequestImpl(request, pathSuffixParameter);
         
-        MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.setResolvedMount(resolvedMount);
-        
         String jaxrsPathInfo = "/demosite:news/" + containerRequest.getPathSuffix();
         
         PathsAdjustedHttpServletRequestWrapper jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("http://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
         
@@ -121,7 +114,7 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         request.setServerPort(80);
         
         jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("http://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
         
@@ -130,7 +123,7 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         request.setServerPort(8080);
         
         jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("http://www.example.org:8080" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
 
@@ -150,7 +143,7 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         request.setServerPort(0);
         
         jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("https://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
 
@@ -159,7 +152,7 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         request.setServerPort(443);
         
         jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("https://www.example.org" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
 
@@ -168,7 +161,7 @@ public class TestPathsAdjustedHttpServletRequestWrapper {
         request.setServerPort(8443);
         
         jaxrsRequest = 
-            new PathsAdjustedHttpServletRequestWrapper(requestContext, containerRequest, "", jaxrsPathInfo);
+            new PathsAdjustedHttpServletRequestWrapper(containerRequest, "", jaxrsPathInfo);
         
         assertEquals("https://www.example.org:8443" + jaxrsRequest.getRequestURI(), jaxrsRequest.getRequestURL().toString());
     }

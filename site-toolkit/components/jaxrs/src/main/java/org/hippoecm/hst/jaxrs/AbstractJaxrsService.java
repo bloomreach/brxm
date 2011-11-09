@@ -141,7 +141,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     abstract protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException;
     
     protected HttpServletRequest getJaxrsRequest(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), getJaxrsPathInfo(requestContext, request));
+    	return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), getJaxrsPathInfo(requestContext, request));
     }
     
     protected String getMountContentPath(HstRequestContext requestContext) {
@@ -302,9 +302,17 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 
     	private String requestURI;
     	private String requestURL;
-        private HstRequestContext requestContext;
         
-        public PathsAdjustedHttpServletRequestWrapper(HstRequestContext requestContext, HttpServletRequest request, String servletPath, String requestPath) {
+    	/**
+    	 * @deprecated use {@link PathsAdjustedHttpServletRequestWrapper(HttpServletRequest, String, String) instead} 
+    	 */
+    	@Deprecated
+    	public PathsAdjustedHttpServletRequestWrapper(HstRequestContext requestContext, HttpServletRequest request, String servletPath, String requestPath) {
+    	    this(request, servletPath, requestPath);
+    	    log.warn("PathsAdjustedHttpServletRequestWrapper constructor with HstRequestContext is deprecated. Use PathsAdjustedHttpServletRequestWrapper(HttpServletRequest, String, String) instead");
+    	}
+    	
+        public PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String requestPath) {
             super(request);
             setServletPath(servletPath);
             
@@ -321,8 +329,6 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             if (requestURI.length() == 0) {
                 requestURI = "/";
             }
-            
-            this.requestContext = requestContext;
         }
         
 		@Override

@@ -127,13 +127,13 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     	if (log.isDebugEnabled()) {
     		log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
     	}
-    	return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
+    	return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
 	
 	private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
 	    request.setAttribute(REQUEST_ERROR_MESSAGE_ATTRIBUTE, message);
 	    String jaxrsEndpointRequestPath = "/hst:exception/";
-	    return new PathsAdjustedHttpServletRequestWrapper(requestContext, request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath);
+	    return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath);
     }
 
     @Override
