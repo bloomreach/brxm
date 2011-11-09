@@ -15,7 +15,10 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
@@ -31,6 +34,8 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
@@ -42,9 +47,9 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
-import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.templatecomposer.iframe.IFrameBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
@@ -97,11 +102,13 @@ public class PageEditor extends ExtPanel {
     private ExtStoreFuture channelStoreFuture;
     private ChannelPropertiesWindow channelPropertiesWindow;
     private boolean redraw = false;
+    private List<Observer> observers = new ArrayList<Observer>();
 
     @ExtProperty
     private String channelId;
 
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
+        this.context = context;
         this.channelStoreFuture = channelStoreFuture;
         if (config != null) {
             this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
@@ -124,10 +131,6 @@ public class PageEditor extends ExtPanel {
         addEventListener("edit-document", new ExtEventListener() {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                if (context == null) {
-                    return;
-                }
-
                 JSONArray values = parameters.get("uuid");
                 if (values == null || values.length() == 0) {
                     return;
@@ -172,10 +175,6 @@ public class PageEditor extends ExtPanel {
 
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                if (context == null) {
-                    return;
-                }
-
                 try {
                     final String channelId = (String) getValue(parameters, "channelId");
                     final String hstMountPoint = (String) getValue(parameters, "hstMountPoint");
@@ -187,6 +186,49 @@ public class PageEditor extends ExtPanel {
             }
         });
 
+        addEventListener("documents", new ExtEventListener() {
+            @Override
+            public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+                clearObservers();
+
+                JSONArray values = parameters.get("documents");
+                if (values == null || values.length() == 0) {
+                    return;
+                }
+                try {
+                    for (int i = 0; i < values.length(); i++) {
+                        String uuid = values.getString(i);
+                        try {
+                            javax.jcr.Node node = UserSession.get().getJcrSession().getNodeByIdentifier(uuid);
+                            JcrNodeModel nodeModel = new JcrNodeModel(node);
+                            Observer observer = new Observer(nodeModel) {
+
+                                @Override
+                                public void onEvent(final Iterator events) {
+                                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                                    if (target != null) {
+                                        target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
+                                    }
+                                }
+                            };
+                            context.registerService(observer, IObserver.class.getName());
+                            observers.add(observer);
+                        } catch (RepositoryException re) {
+                            log.warn("Unable to construct node model for document {}", uuid);
+                        }
+                    }
+                } catch (JSONException e) {
+                    throw new WicketRuntimeException("Invalid JSON parameters", e);
+                }
+            }
+        });
+    }
+
+    private void clearObservers() {
+        for (Observer observer : observers) {
+            context.unregisterService(observer, IObserver.class.getName());
+        }
+        observers.clear();
     }
 
     @Override
@@ -239,12 +281,15 @@ public class PageEditor extends ExtPanel {
             return new ExtEventAjaxBehavior("uuid");
         } else if ("edit-hst-config".equals(event)) {
             return new ExtEventAjaxBehavior("channelId", "hstMountPoint");
+        } else if ("documents".equals(event)) {
+            return new ExtEventAjaxBehavior("documents");
         }
         return super.newExtEventBehavior(event);
     }
 
     public void redraw() {
         redraw = true;
+        clearObservers();
     }
 
     public void render(PluginRequestTarget target) {

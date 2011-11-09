@@ -35,6 +35,7 @@
         },
 
         createSurfAndEditLinks : function() {
+            var links = [];
             try {
                 if (!!document.evaluate) {
                     // fast XPATH
@@ -43,7 +44,8 @@
                         var element = query.snapshotItem(i);
                         var hstMetaData = this.convertToHstMetaData(element);
                         if (hstMetaData !== null) {
-                            this._createLink(element, hstMetaData);
+                            links.push(hstMetaData[HST.ATTR.ID]);
+                            this._createLink(element, hstMetaData)
                         }
                     }
                 } else {
@@ -56,6 +58,7 @@
                         if (node.nodeType === 8) {
                             var hstMetaData = self.convertToHstMetaData(node);
                             if (hstMetaData !== null) {
+                                links.push(hstMetaData[HST.ATTR.ID]);
                                 self._createLink(node, hstMetaData);
                             }
                             return;
@@ -67,6 +70,7 @@
                     };
                     domWalker(document.body);
                 }
+                sendMessage(links, 'documents');
             } catch(e) {
                 sendMessage({msg: 'Error initializing manager.', exception: e}, "iframeexception");
             }

@@ -42,6 +42,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         this.addEvents(
                 'edit-document',
+                'documents',
                 'lock',
                 'unlock'
         );
@@ -382,6 +383,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.fireEvent('edit-document', uuid);
     },
 
+    _handleDocuments : function(documents) {
+        this.fireEvent('documents', documents);
+    },
+
     _handleReceivedItem : function(containerId, element) {
         //we reload for now so no action here, children value update of containers will take care of it
     },
@@ -454,6 +459,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 });
             } else if (msg.tag == 'edit-document') {
                 this._handleEdit(msg.data.uuid);
+            } else if (msg.tag == 'documents') {
+                this._handleDocuments(msg.data);
             }
         } catch(e) {
             console.error(this.resources['iframe-event-handle-error']+' Message tag: '+msg.tag+'. '+e);
