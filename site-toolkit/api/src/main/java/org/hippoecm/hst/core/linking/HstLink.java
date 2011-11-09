@@ -35,7 +35,7 @@ public interface HstLink {
     
     /**
      * Note: This is *not* a url!
-     * @return the path of this HstLink. Note: This is *not* a url!
+     * @return the path of this HstLink. Note: This is *not* a url! The value never starts or ends with a slash /
      */
     String getPath();
     
