@@ -87,9 +87,8 @@
             } else {
                 commentElement.parentNode.appendChild(newLink);
             }
-            console.log('createLink: '+Hippo.Util.getElementPath(newLink));
 
-            $(newLink).text(this.resources['edit-document']);
+            $(newLink).append('<span>'+this.resources['edit-document']+'</span>');
             newLink.setAttribute(HST.ATTR.ID, id);
             newLink.setAttribute('href', '');
             newLink.setAttribute('class', HST.CLASS.EDITLINK);
