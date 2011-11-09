@@ -95,11 +95,7 @@ public class HstRequestUtils {
         String requestURI = request.getRequestURI();
         
         if (excludeMatrixParameters) {
-            int endIndex = requestURI.indexOf(';');
-            
-            if (endIndex != -1) {
-                requestURI = requestURI.substring(0, endIndex);
-            }
+            return removeAllMatrixParams(requestURI);
         }
         
         return requestURI;
