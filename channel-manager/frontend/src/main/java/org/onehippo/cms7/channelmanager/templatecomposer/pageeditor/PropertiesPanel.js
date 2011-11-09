@@ -246,7 +246,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         this.buttons[0].show();
         this.buttons[1].show();
         if (this.componentPropertiesStore) {
-            this.componentPropertiesStore.purgeListeners();
+            this.componentPropertiesStore.destroy();
         }
 
         this.componentPropertiesStore = new Ext.data.JsonStore({
