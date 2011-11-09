@@ -107,7 +107,7 @@
       <sv:value>exclude-channel-manager.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:domains/frontendconfig/frontent-plugins</sv:value>
+      <sv:value>/hippo:configuration/hippo:domains/frontendconfig/frontend-plugins</sv:value>
     </sv:property>
   </sv:node>
 
