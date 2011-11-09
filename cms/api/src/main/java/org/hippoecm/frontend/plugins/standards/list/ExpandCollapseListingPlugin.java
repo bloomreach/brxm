@@ -36,6 +36,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.yui.datatable.DataTableBehavior;
@@ -142,6 +143,13 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         return datatable;
     }
 
+
+    protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
+            ISortableDataProvider<Node> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener, boolean triState,
+            ListPagingDefinition pagingDefinition) {
+        return new Grid(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
+    }
+
     protected DataTableBehavior getBehavior() {
         return new DataTableBehavior(settings);
     }
@@ -237,4 +245,10 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
         };
     }
 
+    class Grid extends ListDataTable<Node> {
+
+        public Grid(String id, TableDefinition tableDefinition, ISortableDataProvider iSortableDataProvider, TableSelectionListener tableSelectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
+            super(id, tableDefinition, iSortableDataProvider, tableSelectionListener, triState, pagingDefinition);
+        }
+    }
 }

@@ -565,7 +565,6 @@ body.hippo-root #doc3 {
   padding: 4px 2px 5px 4px;
   border-right: none;
   overflow: hidden;
-  white-space: nowrap;
 }
 
 .hippo-list-details tr td:hover {

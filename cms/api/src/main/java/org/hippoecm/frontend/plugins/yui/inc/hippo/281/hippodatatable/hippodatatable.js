@@ -174,7 +174,6 @@ if (!YAHOO.hippo.DataTable) {
                             newWidth = 100;
                         }
                         Dom.setStyle(cell, 'width', newWidth + 'px');
-                        Dom.setStyle(cell, 'float', 'left');
                     }
                 }
             }
