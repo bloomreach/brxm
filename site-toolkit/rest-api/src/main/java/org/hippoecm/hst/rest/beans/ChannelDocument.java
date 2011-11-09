@@ -128,7 +128,9 @@ public class ChannelDocument implements Serializable {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
 
-
+    /**
+     * @return returns the pathInfo always starting with a slash or empty string
+     */
     public String getPathInfo() {
         return pathInfo;
     }

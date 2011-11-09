@@ -28,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cmsrest.Implements;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -100,7 +101,11 @@ public class DocumentsResource {
                 ChannelDocument document = new ChannelDocument();
                 document.setChannelId(channel.getId());
                 document.setChannelName(channel.getName());
-                document.setPathInfo("/"+link.getPath());
+                if (StringUtils.isNotEmpty(link.getPath())) {
+                    document.setPathInfo("/"+link.getPath());
+                } else {
+                    document.setPathInfo(StringUtils.EMPTY);
+                }
                 document.setMountPath(link.getMount().getMountPath());
                 document.setHostName(link.getMount().getVirtualHost().getHostName());
                 // The preview in the cms always accesses the hst site through the hostname of the cms, but 
