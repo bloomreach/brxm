@@ -24,7 +24,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 
 public abstract class AbstractMenuItem implements CommonMenuItem{
 
