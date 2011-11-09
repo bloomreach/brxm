@@ -86,6 +86,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     
     public void clear() {
         loadedSubLocationMapTree.clear();
+        // TODO CMS7-5601 also clear the locationResolvers the LocationMap
     }
     
     /**
@@ -289,7 +290,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         /**
          * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link Mount} is taken from this context. If
          * we have a {@link ResolvedSiteMapItem} on the <code>requestContext</code>, we also set this also for the {@link HstLinkResolver} for context aware link rewriting
-         * @param node
+         * @param nodemount.getHstSite().getLocationMapTree()
          * @param resolvedSiteMapItem
          */
         HstLinkResolver(Node node, HstRequestContext requestContext){

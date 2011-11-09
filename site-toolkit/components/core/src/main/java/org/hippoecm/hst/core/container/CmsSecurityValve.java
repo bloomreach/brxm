@@ -79,6 +79,16 @@ public class CmsSecurityValve extends AbstractValve {
          * 2) ContainerConstants.CMS_HOST_CONTEXT attribute is not TRUE
          */
         if(requestContext.getRenderHost() == null && !Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
+            String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
+            if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
+                // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT
+                try {
+                    servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+                } catch (IOException e) {
+                    log.error("Exception while sending error response", e);
+                }
+                return;
+            }
             context.invokeNext();
             return;
         } 
@@ -140,7 +150,6 @@ public class CmsSecurityValve extends AbstractValve {
                     log.error("Unable to encode the destination url with utf8 encoding" + e.getMessage(), e);
                 } catch (IOException e) {
                     log.error("Something gone wrong so stopping valve invocation fall through:" + e.getMessage(), e);
-
                 }
 
                 return;
@@ -158,8 +167,9 @@ public class CmsSecurityValve extends AbstractValve {
         } 
 
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
-        // if another thread flushes this session
+        // if another thread flushes this session. 
         if(Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
+            // we are in a request for the REST template composer 
             synchronized (session) {
                 LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
                 if(!lazySession.isLive()) {

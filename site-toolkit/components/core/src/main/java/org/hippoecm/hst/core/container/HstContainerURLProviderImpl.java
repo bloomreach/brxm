@@ -522,7 +522,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         } else if (requestContext.getRenderHost() != null ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
-        
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
         String path = null;
         
@@ -542,6 +541,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
             }
         } else {
+            // if there is a matchingIgnoredPrefix on the ResolvedMount, we include it here again after the contextpath
+            if(!StringUtils.isEmpty(requestContext.getResolvedMount().getMatchingIgnoredPrefix())) {
+                urlBuilder.append("/").append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
+            }
+            
             urlBuilder.append(containerURL.getResolvedMountPath());
             path = buildHstURLPath(containerURL);
         }

@@ -121,6 +121,10 @@ public class DocumentsResource {
                     document.setTemplateComposerContextPath(servletRequest.getContextPath());
                 }
 
+                // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
+                
+                document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+                
                 channelDocuments.add(document);
             } catch (ChannelException e) {
                 log.warn("Error getting channel with path '" + channelPath + "'", e);

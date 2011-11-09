@@ -37,6 +37,7 @@ public class ChannelDocument implements Serializable {
     private String pathInfo;
     private String mountPath;
     private String hostName;
+    private String cmsPreviewPrefix;
 
     /**
      * Creates an empty channel document bean. This constructor is needed by the JAX-RS client framework.
@@ -53,6 +54,7 @@ public class ChannelDocument implements Serializable {
         this.channelId = original.channelId;
         this.channelName = original.channelName;
         this.contextPath = original.contextPath;
+        this.cmsPreviewPrefix = original.cmsPreviewPrefix;
         this.templateComposerContextPath = original.templateComposerContextPath;
         this.pathInfo = original.pathInfo;
         this.mountPath = original.mountPath;
@@ -114,6 +116,18 @@ public class ChannelDocument implements Serializable {
     public void setTemplateComposerContextPath(String templateComposerContextPath) {
         this.templateComposerContextPath = templateComposerContextPath;
     }
+    
+    /**
+     * @return the cmsPreviewPrefix to access the channels in the cms. The value can be EMPTY ("") but never <code>null</code>
+     */
+    public String getCmsPreviewPrefix() {
+        return cmsPreviewPrefix;
+    }
+
+    public void setCmsPreviewPrefix(String cmsPreviewPrefix) {
+        this.cmsPreviewPrefix = cmsPreviewPrefix;
+    }
+
 
     public String getPathInfo() {
         return pathInfo;

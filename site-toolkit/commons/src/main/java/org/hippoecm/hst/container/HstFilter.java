@@ -366,18 +366,25 @@ public class HstFilter implements Filter {
                                 // we are in a CMS SSO context.
                                 session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                                 if(resolvedMount instanceof MutableResolvedMount) {
-                                    Mount mount = resolvedMount.getMount();
-                                    if(!(mount instanceof ContextualizableMount)) {
-                                        throw new MatchException("The matched mount for request '" + hostName + " and " +containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
+                                    // we are in a CMS SSO context. We will now only decorate to a preview mount if and only if
+                                    // the resolvedMount#getMatchingIgnoredPrefix() is equal to the VirtualHosts#getCmsPreviewPrefix()
+                                    // if they are not equal, we'll just use the live mount. This way, the CMS can view the preview and live mounts 
+                                    // if the VirtualHosts#getCmsPreviewPrefix() is empty, not the live & preview can be shown: Then, we'll 
+                                    // return the preview decorated mount
+                                    if(shouldDecorateMountToPreview(vHosts, resolvedMount)) {
+                                        Mount mount = resolvedMount.getMount();
+                                        if(!(mount instanceof ContextualizableMount)) {
+                                            throw new MatchException("The matched mount for request '" + hostName + " and " +containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
+                                        }
+                                        MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+                                        Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
+                                        if(decoratedMount == mount) {
+                                            logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
+                                        } else {
+                                            logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
+                                        }
+                                        ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
                                     }
-                                    MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
-                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
-                                    if(decoratedMount == mount) {
-                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
-                                    } else {
-                                        logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
-                                    }
-                                    ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
                                 } else {
                                     throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " +containerRequest.getRequestURI());
                                 }
@@ -450,6 +457,18 @@ public class HstFilter implements Filter {
     			}
     		}
     	}
+    }
+
+    // returns true if the mount should be decorated to a preview mount
+    private boolean shouldDecorateMountToPreview(VirtualHosts vHosts, ResolvedMount resolvedMount) {
+        if(vHosts.getCmsPreviewPrefix() == null || "".equals(vHosts.getCmsPreviewPrefix())) {
+            return true;
+        }
+        if(vHosts.getCmsPreviewPrefix().equals(resolvedMount.getMatchingIgnoredPrefix())) {
+            return true;
+        }
+        return false;
+        
     }
 
     private String getJcrUuidParameter(ServletRequest request, Logger logger) throws IOException {

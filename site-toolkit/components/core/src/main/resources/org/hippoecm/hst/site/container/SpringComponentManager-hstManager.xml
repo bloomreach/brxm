@@ -40,6 +40,7 @@
   
   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
+    <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/> 
     <property name="repository" ref="javax.jcr.Repository" />
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        

@@ -15,9 +15,10 @@
  */
 package org.hippoecm.hst.site.request;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
-import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -57,8 +58,23 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         
         // strip leading and trailing slashes
         String path = PathUtils.normalizePath(requestPath);
+        
+        String matchingIgnoredPrefix = null;
+        // check whether the requestPath starts with the cmsPreviewPrefix path: If so, first strip this prefix off and append it later to the resolvedMountPath
+        if(!StringUtils.isEmpty(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
+           if (path.equals(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
+               matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
+               path = "";
+           } else if (path.startsWith(virtualHost.getVirtualHosts().getCmsPreviewPrefix() + "/")){
+               matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
+               path = path.substring(virtualHost.getVirtualHosts().getCmsPreviewPrefix().length() +1);
+           }
+        }
+        
         String[] requestPathSegments = path.split("/");
+
         int position = 0;
+        
         Mount mount = portMount.getRootMount();
         
         while(position < requestPathSegments.length) {
@@ -93,11 +109,13 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         StringBuilder builder = new StringBuilder();
         while(position > 0) {
             builder.insert(0,requestPathSegments[--position]).insert(0,"/");
-           
+        }
+        if(matchingIgnoredPrefix != null) {
+            builder.insert(0,matchingIgnoredPrefix).insert(0,"/");
         }
         String resolvedMountPath = builder.toString();
         
-        ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath);
+        ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath, matchingIgnoredPrefix);
         log.debug("Found ResolvedMount is '{}' and the mount prefix for it is :", resolvedMount.getResolvedMountPath());
         
         return resolvedMount;

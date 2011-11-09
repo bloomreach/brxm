@@ -147,4 +147,11 @@ public interface VirtualHosts {
      */
     Mount getMountByIdentifier(String uuid);
     
+    /**
+     * The cmsPreviewPrefix will never start or end with a slash and will never be <code>null</code>
+     * @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
+     * to be empty, it will be ""
+     */
+     String getCmsPreviewPrefix();
+    
 }

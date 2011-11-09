@@ -36,11 +36,14 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     private Mount mount;
     private ResolvedVirtualHost resolvedVirtualHost;
     private String resolvedMountPath;
+    // If there was a prefix in the requestPath which is ignored for Mount matching, it is stored in matchingIgnoredPrefix
+    private String matchingIgnoredPrefix;
     
-    public ResolvedMountImpl(Mount mount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath){
+    public ResolvedMountImpl(Mount mount, ResolvedVirtualHost resolvedVirtualHost, String resolvedMountPath, String matchingIgnoredPrefix){
         this.mount = mount;
         this.resolvedVirtualHost = resolvedVirtualHost;
         this.resolvedMountPath = resolvedMountPath;
+        this.matchingIgnoredPrefix = matchingIgnoredPrefix; 
     }
     
     @Override
@@ -61,6 +64,11 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     @Override
     public String getResolvedMountPath() {
         return resolvedMountPath;
+    }
+    
+    @Override
+    public String getMatchingIgnoredPrefix() {
+        return matchingIgnoredPrefix;
     }
 
     @Override
@@ -139,5 +147,4 @@ public class ResolvedMountImpl implements MutableResolvedMount {
         return mount.getFormLoginPage();
     }
 
-    
 }

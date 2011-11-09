@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,6 +88,11 @@ public class VirtualHostsService implements VirtualHosts {
     private String[] prefixExclusions;
     private String[] suffixExclusions;
     
+    /**
+     * the cms preview prefix : The prefix all URLs when accessed through the CMS 
+     */
+    private String cmsPreviewPrefix;
+    
     /*
      * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
      */
@@ -93,22 +100,37 @@ public class VirtualHostsService implements VirtualHosts {
     
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
-        this.virtualHostsConfigured = true;
-        this.contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
-        this.defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
-        this.showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        this.prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        this.suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-        this.scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
-        this.locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
-        this.homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
-        this.pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
-        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
-            this.versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        virtualHostsConfigured = true;
+        contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
+        cmsPreviewPrefix = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
+        if(cmsPreviewPrefix == null) {
+            // there is no explicit cms preview prefix configured. Take the default one from the hstManager
+            cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
+            if(cmsPreviewPrefix == null) {
+                cmsPreviewPrefix = StringUtils.EMPTY;
+            }
         }
-        this.defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        if(StringUtils.isEmpty(cmsPreviewPrefix)) {
+            log.info("cmsPreviewPrefix property '{}' on hst:hosts is configured to be empty. This means that when the " +
+            		"cms and site run on the same host that a client who visited the preview in cms also" +
+            		"sees the preview without the cms where he expected to see the live. ", HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
+        } else {
+            cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
+        }
+        showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+        prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
+        suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+        scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        }
+        defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if(scheme == null || "".equals(scheme)) {
-            this.scheme = DEFAULT_SCHEME;
+            scheme = DEFAULT_SCHEME;
         }
         
         // now we loop through the hst:hostgroup nodes first:
@@ -265,17 +287,17 @@ public class VirtualHostsService implements VirtualHosts {
         ResolvedVirtualHost host = findMatchingVirtualHost(portStrippedHostName, portNumber);
         
         // no host found. Let's try the default host, if there is one configured:
-        if(host == null && this.getDefaultHostName() != null && !this.getDefaultHostName().equals(portStrippedHostName)) {
-            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, this.getDefaultHostName());
+        if(host == null && getDefaultHostName() != null && !getDefaultHostName().equals(portStrippedHostName)) {
+            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, getDefaultHostName());
             if (portNumber != 0) {
-                host = matchVirtualHost(this.getDefaultHostName()+":"+Integer.toString(portNumber));
+                host = matchVirtualHost(getDefaultHostName()+":"+Integer.toString(portNumber));
             }
             else {
-                host = matchVirtualHost(this.getDefaultHostName());
+                host = matchVirtualHost(getDefaultHostName());
             }
         }
         if(host == null) {
-           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , this.getDefaultHostName());
+           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , getDefaultHostName());
           
         }
         // store in the resolvedMap
@@ -369,13 +391,13 @@ public class VirtualHostsService implements VirtualHosts {
     public String getDefaultContextPath() {
         return defaultContextPath;
     }
-
+    
     public boolean isPortInUrl() {
         return showPort;
     }
 
     public String getScheme(){
-        return this.scheme;
+        return scheme;
     }
 
     public String getLocale() {
@@ -383,7 +405,7 @@ public class VirtualHostsService implements VirtualHosts {
     }
 
     public String getDefaultHostName() {
-        return this.defaultHostName;
+        return defaultHostName;
     }
 
     public String getHomePage() {
@@ -440,6 +462,10 @@ public class VirtualHostsService implements VirtualHosts {
         return mountsByIdentifier.get(uuid);
     }
 
+    @Override
+    public String getCmsPreviewPrefix() {
+        return cmsPreviewPrefix;
+    }
 
 
 }

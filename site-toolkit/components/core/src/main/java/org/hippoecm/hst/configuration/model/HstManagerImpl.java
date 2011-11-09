@@ -87,6 +87,11 @@ public class HstManagerImpl implements HstManager {
     private String rootPath;
     
     /**
+     * the default cms preview prefix : The prefix all URLs when accessed through the CMS 
+     */
+    private String cmsPreviewPrefix;
+   
+    /**
      * The depth, or length of the rootPath splitted on slash. Thus for example /hst:hst returns 2 
      */
     private int rootPathDepth;
@@ -141,6 +146,10 @@ public class HstManagerImpl implements HstManager {
         this.rootPath = rootPath;
         this.rootPathDepth = rootPath.split("/").length;
     }
+
+    public synchronized String getRootPath() {
+        return rootPath;
+    }
     
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
@@ -150,8 +159,12 @@ public class HstManagerImpl implements HstManager {
         this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
     }
     
-    public synchronized String getRootPath() {
-        return rootPath;
+    public synchronized String getCmsPreviewPrefix() {
+        return cmsPreviewPrefix;
+    }
+
+    public synchronized void setCmsPreviewPrefix(String cmsPreviewPrefix) {
+        this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
     
     public void setUrlFactory(HstURLFactory urlFactory) {

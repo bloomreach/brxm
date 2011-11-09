@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.request;
 
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -49,6 +51,14 @@ public interface ResolvedMount {
      * @return the resolved mountPath for this {@link ResolvedMount}
      */
     String getResolvedMountPath();
+    
+    /**
+     * Expert: In most circumstance, this {@link #getMatchingIgnoredPrefix()} will return <code>null</code>. Only when there
+     * was a pathInfo prefix after the {@link HttpServletRequest#getContextPath()} that should be ignored during matching the request to 
+     * a {@link ResolvedMount}, this method returns the ignored prefix. The returned String must have leading and trailing slashes all removed.
+     * @return the prefix that was ignore during matching and <code>null</code> if there wasn't a ignored prefix
+     */
+    String getMatchingIgnoredPrefix();
     
     /**
      * matches a pathInfo to a {@link ResolvedSiteMapItem} item or throws a 
