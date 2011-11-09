@@ -23,6 +23,8 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 
 public abstract class AbstractMenuItem implements CommonMenuItem{
 
@@ -58,7 +60,8 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
     }
 
     public String getName() {
-        return name;
+        // if the name contains JCR encoded parts, we will decode it and return the decoded version
+        return NodeNameCodec.decode(name);
     }
 
     public boolean isExpanded() {
