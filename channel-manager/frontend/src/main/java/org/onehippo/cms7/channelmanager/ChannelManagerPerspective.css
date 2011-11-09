@@ -58,21 +58,21 @@
 .channel-manager .channel-properties-window .x-window-body { overflow: auto }
 
 .channel-manager .x-btn-small .add-channel {
-  background-image: url("add-channel.png") !important;
+  background-image: url("add-channel.png");
 }
 
 .channel-manager .x-btn-small .edit-channel {
-  background-image: url("templatecomposer/button-edit.png") !important;
+  background-image: url("templatecomposer/button-edit.png");
 }
 
 .channel-manager .x-btn-small .save-close-channel {
-  background-image: url("templatecomposer/button-save-close.png") !important;
+  background-image: url("templatecomposer/button-save-close.png");
 }
 
 .channel-manager .x-btn-small .save-channel {
-  background-image: url("templatecomposer/button-save.png") !important;
+  background-image: url("templatecomposer/button-save.png");
 }
 
 .channel-manager .x-btn-small .channel-gear {
-  background-image: url("templatecomposer/gear.png") !important;
+  background-image: url("templatecomposer/gear.png");
 }

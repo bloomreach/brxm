@@ -700,13 +700,6 @@
 
         sync: function() {
             this._super();
-            this.menu.position.call(this.menu, {
-                my : 'right top',
-                at : 'right top',
-                of : this.overlay,
-                offset : '-2 2'
-            });
-            this.menu.css('top', '-1px');
         },
 
         getOverlayData : function(data) {

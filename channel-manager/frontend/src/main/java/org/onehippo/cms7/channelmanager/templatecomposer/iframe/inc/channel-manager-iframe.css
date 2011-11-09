@@ -60,6 +60,8 @@
 }
 
 .hst-overlay-menu, .hst-dd-helper {
+    top: -1px;
+    right: -1px;
     height: 18px;
     width: 30px;
     position: absolute;
