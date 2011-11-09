@@ -163,7 +163,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
             this._initIFrameListeners();
-            iFrame.setSrc(this.contextPath + this.renderPathInfo);
+            if (this.renderPathInfo === null || this.renderPathInfo.trim() === '') {
+                iFrame.setSrc(this.contextPath+'/');
+            } else {
+                iFrame.setSrc(this.contextPath + this.renderPathInfo);
+            }
 
             // keep session active
             Ext.TaskMgr.start({
