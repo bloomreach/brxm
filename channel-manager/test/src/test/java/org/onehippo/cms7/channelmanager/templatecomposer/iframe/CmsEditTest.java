@@ -27,6 +27,7 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
 
         // test if container is present
         HtmlElement link = getLink();
+        assertTrue(isMessageSend("documents"));
         assertTrue(isMetaDataConsumed(link));
     }
 
@@ -47,7 +48,8 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
 
         final List<Message> messages = getMessagesSend();
         assertEquals("init", messages.get(0).messageTag);
-        assertEquals("edit-document", messages.get(1).messageTag);
+        assertEquals("documents", messages.get(1).messageTag);
+        assertEquals("edit-document", messages.get(2).messageTag);
         assertFalse(isMessageSend("iframeexception"));
     }
 
