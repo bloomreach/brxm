@@ -61,7 +61,7 @@ public class RootPlugin extends TabsPlugin {
         add(new LogoutLink("logout"));
 
         PageLayoutSettings plSettings = new PageLayoutSettings();
-        plSettings.setHeaderHeight(24);
+        plSettings.setHeaderHeight(25);
         // TODO: update settings from config
         add(new PageLayoutBehavior(plSettings));
 
