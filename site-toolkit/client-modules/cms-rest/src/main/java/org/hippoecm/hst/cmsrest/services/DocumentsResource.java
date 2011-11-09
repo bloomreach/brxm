@@ -100,7 +100,7 @@ public class DocumentsResource {
                 ChannelDocument document = new ChannelDocument();
                 document.setChannelId(channel.getId());
                 document.setChannelName(channel.getName());
-                document.setPathInfo(link.getPath());
+                document.setPathInfo("/"+link.getPath());
                 document.setMountPath(link.getMount().getMountPath());
                 document.setHostName(link.getMount().getVirtualHost().getHostName());
                 // The preview in the cms always accesses the hst site through the hostname of the cms, but 
