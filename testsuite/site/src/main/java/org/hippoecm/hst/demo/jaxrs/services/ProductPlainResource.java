@@ -30,6 +30,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
@@ -62,7 +63,11 @@ public class ProductPlainResource extends AbstractResource {
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
         
         try {
-            HstRequestContext requestContext = getRequestContext(servletRequest);
+            // You can use either getRequestContext(servletRequest) or RequestContextProvider.get().
+            //
+            //HstRequestContext requestContext = getRequestContext(servletRequest);
+            HstRequestContext requestContext = RequestContextProvider.get();
+            
             HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
            
             HippoBean scope = null;
