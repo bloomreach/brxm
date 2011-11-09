@@ -38,6 +38,9 @@ public class InitializationValve extends AbstractValve
     {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
         
+        requestContext.setServletRequest(context.getServletRequest());
+        requestContext.setServletResponse(context.getServletResponse());
+        
         if (requestContext.getURLFactory() == null) {
             requestContext.setURLFactory(getUrlFactory());
         }

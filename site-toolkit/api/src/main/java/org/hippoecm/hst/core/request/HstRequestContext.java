@@ -25,6 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -49,11 +51,24 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
  */
 public interface HstRequestContext {
     
-	/** Returns the ServletContext for this request 
+	/** 
+	 * Returns the ServletContext for this request 
      * @return the ServletContext for this request
-	**/
+	 **/
 	ServletContext getServletContext();
 	
+    /** 
+     * Returns the current HttpServletRequest
+     * @return the current HttpServletRequest
+     **/
+    HttpServletRequest getServletRequest();
+
+    /** 
+     * Returns the current HttpServletResponse
+     * @return the current HttpServletResponse
+     **/
+    HttpServletResponse getServletResponse();
+    
     /**
      * Returns a session which is normally retrieved from a session pooling repository.
      * 

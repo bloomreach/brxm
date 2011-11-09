@@ -234,6 +234,8 @@ public class HstFilter implements Filter {
 
     	Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
 
+    	boolean requestContextSetToProvider = false;
+
     	try {
     		if (!HstServices.isAvailable()) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
@@ -324,7 +326,6 @@ public class HstFilter implements Filter {
 
             HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             
-                
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create(false);
@@ -339,6 +340,10 @@ public class HstFilter implements Filter {
             if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
                 requestContext.setFullyQualifiedURLs(true);
             }
+
+            // sets up the current thread's active request context object.
+            RequestContextProvider.set(requestContext);
+            requestContextSetToProvider = true;
 
             if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
                 /*
@@ -450,6 +455,11 @@ public class HstFilter implements Filter {
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
     	finally {
+    	    // clears up the current thread's active request context object.
+    	    if (requestContextSetToProvider) {
+    	        RequestContextProvider.clear();
+    	    }
+    	    
     		if (logger != null && logger.isDebugEnabled()) {
     			long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);
     			if(starttick != 0) {

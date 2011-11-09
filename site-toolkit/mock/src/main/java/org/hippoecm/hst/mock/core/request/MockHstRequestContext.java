@@ -30,6 +30,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -51,6 +53,8 @@ public class MockHstRequestContext implements HstRequestContext {
     
     private Hashtable<String, Object> attributes = new Hashtable<String, Object>();
     private ServletContext servletContext;
+    private HttpServletRequest servletRequest;
+    private HttpServletResponse servletResponse;
     private Session session;
     private HstContainerURL baseURL;
     private String contextNamespace;
@@ -93,6 +97,22 @@ public class MockHstRequestContext implements HstRequestContext {
     	this.servletContext = servletContext;
     }
     
+    public HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
+    }
+
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    }
+
+    public void setServletResponse(HttpServletResponse servletResponse) {
+        this.servletResponse = servletResponse;
+    }
+
     public Object getAttribute(String name) {
         return this.attributes.get(name);
     }

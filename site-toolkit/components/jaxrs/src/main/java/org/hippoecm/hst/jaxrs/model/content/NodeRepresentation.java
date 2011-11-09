@@ -23,7 +23,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * NodeRepresentation
@@ -105,5 +107,9 @@ public abstract class NodeRepresentation {
             }        
             links.add(link);
     	}
+    }
+    
+    protected HstRequestContext getRequestContext() {
+        return RequestContextProvider.get();
     }
 }

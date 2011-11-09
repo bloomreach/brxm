@@ -22,6 +22,8 @@ import java.util.Set;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -46,6 +48,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
     
 	public void setServletContext(ServletContext servletContext);
 	
+    public void setServletRequest(HttpServletRequest servletRequest);
+
+    public void setServletResponse(HttpServletResponse servletResponse);
+    
 	public void setContextNamespace(String contextNamespace);
 
 	public void setSession(Session session);
