@@ -137,7 +137,6 @@ frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.jav
 /pom.xml eol=lf
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
-repository/src/main/resources/exclude-channel-manager.xml -text
 repository/src/main/resources/hippoecm-extension.xml eol=lf
 repository/src/main/resources/marketing-perspective.xml -text
 repository/src/main/resources/workflow-channelactions.xml -text

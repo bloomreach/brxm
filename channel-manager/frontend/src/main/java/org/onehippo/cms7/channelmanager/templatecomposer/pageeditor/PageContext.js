@@ -64,10 +64,12 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
 
     },
 
-    initialize: function(frm) {
-        this._requestHstMetaData( frm.getDocumentURI() ).when(function() {
+    initialize: function(frm, canEdit) {
+        this._requestHstMetaData(frm.getDocumentURI(), canEdit).when(function() {
             this._initializeIFrameHead(frm, this.previewMode).when(function() {
-                this._buildOverlay(frm);
+                if (canEdit) {
+                    this._buildOverlay(frm);
+                }
                 console.info('pageContextInitialized');
                 this.fireEvent('pageContextInitialized');
             }.createDelegate(this));
@@ -150,7 +152,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         }.createDelegate(this));
     },
 
-    _requestHstMetaData: function(url) {
+    _requestHstMetaData: function(url, canEdit) {
         console.log('_requestHstMetaData ' + url);
         return new Hippo.Future(function(onSuccess, onFail) {
             var self = this;
@@ -162,19 +164,23 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     var mountId = responseObject.getResponseHeader('HST-Mount-Id');
 
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
-                    if (!self.hasPreviewHstConfig && !self.previewMode) {
+                    if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
 
                     console.log('hstMetaDataResponse: url:'+url+', pageId:'+pageId+', mountId:'+mountId);
 
-                    var futures = [
-                        self._initToolkitStore.call(self, mountId),
-                        self._initPageModelStore.apply(self, [mountId, pageId])
-                    ];
-                    Hippo.Future.join(futures).when(function() {
+                    if (canEdit) {
+                        var futures = [
+                            self._initToolkitStore.call(self, mountId),
+                            self._initPageModelStore.apply(self, [mountId, pageId])
+                        ];
+                        Hippo.Future.join(futures).when(function() {
+                            onSuccess();
+                        }).otherwise(onFail);
+                    } else {
                         onSuccess();
-                    }).otherwise(onFail);
+                    }
                 },
                 failure : function(responseObject) {
                     onFail();

@@ -23,6 +23,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
         this.resources = config.resources;
 
+        this.cmsUser = config.cmsUser;
         this.templateComposerContextPath = config.templateComposerContextPath;
         this.composerRestMountPath = config.composerRestMountPath;
         this.contextPath = config.contextPath;
@@ -36,6 +37,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.iFrameCssHeadContributions = config.iFrameCssHeadContributions;
 
         this.previewMode = true;
+        this.canEdit = false;
 
         this.iframeCompletion = [];
 
@@ -128,6 +130,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
         var composerMode = function(callback) {
             Ext.Ajax.request({
+                headers: {
+                    'CMS-User': self.cmsUser
+                },
                 url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?'+self.ignoreRenderHostParameterName+'=true',
                 success: callback,
                 failure: function(exceptionObject) {
@@ -159,7 +164,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 }
             });
         };
-        composerMode(function() {
+        composerMode(function(response) {
+            var responseObj = Ext.util.JSON.decode(response.responseText);
+            this.canEdit = responseObj.data;
+
             var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
@@ -341,7 +349,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
             this._fail();
         }, this);
-        this.pageContext.initialize(frm);
+        this.pageContext.initialize(frm, this.canEdit);
     },
 
     _onRearrangeContainer: function(rearranges) {

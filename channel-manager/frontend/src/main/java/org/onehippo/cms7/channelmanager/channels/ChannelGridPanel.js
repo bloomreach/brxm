@@ -39,9 +39,31 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         this.columns = config.columns;
         this.resources = config.resources;
         this.selectedChannelId = null;
+        this.canModifyChannels = config.canModifyChannels;
 
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
+        var toolbar = new Ext.Toolbar({
+            layout: 'hbox',
+            layoutConfig: {
+                pack: 'left'
+            },
+            height: 28,
+            cls: 'channel-manager-toolbar',
+            items: []
+        });
+        if (this.canModifyChannels) {
+            toolbar.add({
+                text: config.resources['action.add.channel'],
+                handler: function() {
+                    this.fireEvent('add-channel');
+                },
+                allowDepress: false,
+                width: 120,
+                scope: this,
+                iconCls: 'add-channel'
+            });
+        }
         Ext.apply(config, {
             id: 'channel-grid-panel',
             stripeRows: true,
@@ -70,26 +92,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 sortDescText: config.resources['menu.sort.descending']
             }),
 
-            tbar: new Ext.Toolbar({
-                layout: 'hbox',
-                layoutConfig: {
-                    pack: 'left'
-                },
-                height: 28,
-                cls: 'channel-manager-toolbar',
-                items: [
-                    {
-                        text: config.resources['action.add.channel'],
-                        handler: function() {
-                            this.fireEvent('add-channel');
-                        },
-                        allowDepress: false,
-                        width: 120,
-                        scope: this,
-                        iconCls: 'add-channel'
-                    }
-                ]
-            }),
+            tbar: toolbar,
 
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: true

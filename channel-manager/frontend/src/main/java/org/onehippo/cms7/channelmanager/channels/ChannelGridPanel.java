@@ -18,13 +18,10 @@ package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,8 +29,8 @@ import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
-import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 /**
@@ -49,9 +46,13 @@ public class ChannelGridPanel extends ExtPanel {
     private List<String> visibleFields;
     private ExtStoreFuture storeFuture;
 
+    @ExtProperty
+    private boolean canModifyChannels;
+
     public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture) {
         super();
         this.store = (ChannelStore) storeFuture.getStore();
+        canModifyChannels = store.canModifyChannels();
         this.storeFuture = storeFuture;
         visibleFields = parseChannelFields(config);
     }

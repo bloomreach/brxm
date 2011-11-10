@@ -192,6 +192,24 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
+    public boolean canModifyChannels() {
+        final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+
+        Subject subject = createSubject();
+        try {
+            return HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Boolean>() {
+                public Boolean run() throws ChannelException {
+                    return channelManager.canUserModifyChannels();
+                }
+            }, null);
+        } catch (PrivilegedActionException e) {
+            log.error("Could not determine privileges", e.getException());
+            return false;
+        } finally {
+            HstSubject.clearSubject();
+        }
+    }
+
     @Override
     protected JSONObject createRecord(JSONObject record) throws JSONException {
         final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
@@ -223,12 +241,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // save channel (FIXME: move boilerplate to CMS engine)
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
-        Credentials credentials = session.getCredentials();
-        Subject subject = new Subject();
-        subject.getPrivateCredentials().add(credentials);
-        subject.setReadOnly();
-
+        Subject subject = createSubject();
         try {
             String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
                         public String run() throws ChannelException {
@@ -248,6 +261,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.channels = null;
 
         return createdRecordResult(true, "");
+    }
+
+    private Subject createSubject() {
+        UserSession session = (UserSession) Session.get();
+        Credentials credentials = session.getCredentials();
+        Subject subject = new Subject();
+        subject.getPrivateCredentials().add(credentials);
+        subject.setReadOnly();
+        return subject;
     }
 
     private JSONObject createdRecordResult(boolean success, String message) throws JSONException {

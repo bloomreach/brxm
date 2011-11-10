@@ -198,30 +198,32 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('previousLiveNotification').hide();
             this.mainWindow.show();
         } else {
-            toolbar.add({
-                text: this.initialConfig.resources['edit-button'],
-                iconCls: 'edit-channel',
-                allowDepress: false,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn : this.pageContainer.toggleMode,
-                        scope: this.pageContainer
+            if (this.pageContainer.canEdit) {
+                toolbar.add({
+                    text: this.initialConfig.resources['edit-button'],
+                    iconCls: 'edit-channel',
+                    allowDepress: false,
+                    width: 120,
+                    listeners: {
+                        click: {
+                            fn : this.pageContainer.toggleMode,
+                            scope: this.pageContainer
+                        }
                     }
-                }
-            },
-            {
-                text: this.initialConfig.resources['publish-button'],
-                allowDepress: false,
-                width: 120,
-                hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
-                listeners: {
-                    click: {
-                        fn : this.pageContainer.publishHstConfiguration,
-                        scope: this.pageContainer
+                },
+                {
+                    text: this.initialConfig.resources['publish-button'],
+                    allowDepress: false,
+                    width: 120,
+                    hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
+                    listeners: {
+                        click: {
+                            fn : this.pageContainer.publishHstConfiguration,
+                            scope: this.pageContainer
+                        }
                     }
-                }
-            });
+                });
+            }
 
             if (this.mainWindow) {
                 this.mainWindow.hide();

@@ -93,6 +93,9 @@ public class PageEditor extends ExtPanel {
     public String ignoreRenderHostParameterName = ContainerConstants.IGNORE_RENDERING_HOST;
 
     @ExtProperty
+    public String cmsUser;
+
+    @ExtProperty
     public Boolean previewMode = true;
 
     @ExtProperty
@@ -124,6 +127,7 @@ public class PageEditor extends ExtPanel {
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
+        this.cmsUser = UserSession.get().getJcrSession().getUserID();
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());
