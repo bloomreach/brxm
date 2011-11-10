@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConfigurationFactory;
+import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -454,7 +454,7 @@ public class HstSiteConfigServlet extends HttpServlet {
      */
     protected Configuration getConfiguration(ServletConfig servletConfig) throws ServletException {
         Configuration configuration = null;
-        ConfigurationFactory factory = new ConfigurationFactory();
+        DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
 
         // check if we have an commons configuration xml config file
         String hstConfigurationFilePath = getConfigOrContextInitParameter(HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
@@ -463,8 +463,8 @@ public class HstSiteConfigServlet extends HttpServlet {
             File hstConfigurationFile = getResourceFile(hstConfigurationFilePath);
             
             if (hstConfigurationFile != null && hstConfigurationFile.isFile()) {
-                factory.setConfigurationFileName(hstConfigurationFile.getCanonicalPath());
-                configuration = factory.getConfiguration();
+                builder.setFile(hstConfigurationFile);
+                configuration = builder.getConfiguration();
                 
                 if (log.isInfoEnabled()) {
                     log.info("Using HST Configuration File: {}", hstConfigurationFile.getCanonicalPath());
