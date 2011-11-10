@@ -27,7 +27,10 @@ public class Channel implements Serializable {
 
     private String name;
     private String hostname;
-    private String subMountPath; // TODO find proper name
+    private String contextPath;
+    private String cmsPreviewPrefix;
+    private String mountPath;
+
     private String url; //Probably not needed for all channels ?
     private String type; //Channel type - preview/live.
 
@@ -60,7 +63,9 @@ public class Channel implements Serializable {
 
         this.name = orig.name;
         this.hostname = orig.hostname;
-        this.subMountPath = orig.subMountPath;
+        this.mountPath = orig.mountPath;
+        this.contextPath = orig.contextPath;
+        this.cmsPreviewPrefix = orig.cmsPreviewPrefix;
         this.url = orig.url;
         this.type = orig.type;
 
@@ -163,12 +168,12 @@ public class Channel implements Serializable {
         return this.hostname;
     }
 
-    public void setSubMountPath(final String subMountPath) {
-        this.subMountPath = subMountPath;
+    public void setMountPath(final String mountPath) {
+        this.mountPath = mountPath;
     }
 
-    public String getSubMountPath() {
-        return this.subMountPath;
+    public String getMountPath() {
+        return this.mountPath;
     }
 
     public Map<String, Object> getProperties() {
@@ -199,6 +204,22 @@ public class Channel implements Serializable {
         this.locale = locale;
     }
 
+    public String getCmsPreviewPrefix() {
+        return cmsPreviewPrefix;
+    }
+
+    public void setCmsPreviewPrefix(final String cmsPreviewPrefix) {
+        this.cmsPreviewPrefix = cmsPreviewPrefix;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(final String contextPath) {
+        this.contextPath = contextPath;
+    }
+
     public int hashCode() {
         return id.hashCode() ^ 317;
     }
@@ -226,6 +247,9 @@ public class Channel implements Serializable {
         b.append(",hstConfigPath=").append(hstConfigPath);
         b.append(",contentRoot=").append(contentRoot);
         b.append(",locale=").append(locale);
+        b.append(",contextPath=").append(contextPath);
+        b.append(",cmsPreviewPrefix=").append(cmsPreviewPrefix);
+        b.append(",mountPath=").append(mountPath);
         b.append('}');
 
         return b.toString();
