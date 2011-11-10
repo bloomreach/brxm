@@ -59,7 +59,7 @@ public class BlueprintService implements Blueprint {
         }
         
         if (blueprint.hasProperty(HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT)) {
-            String location = blueprint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT).getString();
+            String location = blueprint.getProperty(HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT).getString().trim();
             if(StringUtils.isEmpty(location) || !location.startsWith("/")) {
                 log.warn("Skipping invalid '{}' of blueprint '{}' : The value should start with a / ", 
                         HstNodeTypes.BLUEPRINT_PROPERTY_CONTENT_ROOT, path );

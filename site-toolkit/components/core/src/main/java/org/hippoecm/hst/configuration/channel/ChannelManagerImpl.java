@@ -116,7 +116,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
+        this.rootPath = rootPath.trim();
         channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
@@ -125,7 +125,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public void setContentRoot(final String contentRoot) {
-        this.contentRoot = contentRoot;
+        this.contentRoot = contentRoot.trim();
     }
 
     @Override
@@ -473,6 +473,22 @@ public class ChannelManagerImpl implements MutableChannelManager {
             return ResourceBundle.getBundle(channelInfoClassName, locale);
         }
         return null;
+    }
+
+    @Override
+    public synchronized boolean canUserModifyChannels() {
+        Session session = null;
+        try {
+            session = getSession(true);
+            return session.itemExists(rootPath);
+        } catch (RepositoryException e) {
+            log.error("Repository error when determining channel manager access", e);
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+        }
+        return false;
     }
 
     public synchronized void invalidate() {

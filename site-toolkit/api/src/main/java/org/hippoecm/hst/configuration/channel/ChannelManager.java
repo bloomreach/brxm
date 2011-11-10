@@ -116,4 +116,11 @@ public interface ChannelManager {
      */
     String getHostGroup();
 
+    /**
+     * Can the current user (set in HstSubject) create or modify channels.
+     *
+     * @return true when the user can create a channel, false otherwise
+     */
+    boolean canUserModifyChannels();
+
 }

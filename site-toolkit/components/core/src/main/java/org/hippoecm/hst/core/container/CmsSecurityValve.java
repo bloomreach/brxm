@@ -22,6 +22,7 @@ import java.security.SignatureException;
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -60,11 +61,11 @@ public class CmsSecurityValve extends AbstractValve {
     public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
         this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
     }
-    
+
     public void setRepository(Repository repository) {
         this.repository = repository;
-    } 
-    
+    }
+
     public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
         this.pathSuffixDelimiter = pathSuffixDelimiter;
     }
@@ -72,10 +73,10 @@ public class CmsSecurityValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = context.getRequestContext(); 
+        HstRequestContext requestContext = context.getRequestContext();
         /*
          * we invoke the next valve if the call is not from the cms. A call is *not* from the cms template composer if:
-         * 1) The renderHost == null AND 
+         * 1) The renderHost == null AND
          * 2) ContainerConstants.CMS_HOST_CONTEXT attribute is not TRUE
          */
         if(requestContext.getRenderHost() == null && !Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
@@ -91,9 +92,24 @@ public class CmsSecurityValve extends AbstractValve {
             }
             context.invokeNext();
             return;
-        } 
+        }
+
         log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
         HttpSession session = servletRequest.getSession(true);
+
+        // Verify that cms user in request header is same as the one associated
+        // with the jcr session, already bound to the http session.
+        String cmsUser = servletRequest.getHeader("CMS-User");
+        if (cmsUser != null) {
+            Session jcrSession = (Session) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
+            if (jcrSession != null && !jcrSession.getUserID().equals(cmsUser)) {
+                jcrSession.logout();
+
+                session.setAttribute(SSO_BASED_SESSION_ATTR_NAME, null);
+                session.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, null);
+                session.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, false);
+            }
+        }
 
         if (session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
             String key = session.getId();

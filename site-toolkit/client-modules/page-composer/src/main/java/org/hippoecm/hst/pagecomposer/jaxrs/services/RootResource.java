@@ -15,6 +15,7 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,10 +28,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PersonasRepresentation;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
+
+    private String rootPath;
+
+    public void setRootPath(final String rootPath) {
+        this.rootPath = rootPath;
+    }
 
     @GET
     @Path("/keepalive/")
@@ -53,7 +61,15 @@ public class RootResource extends AbstractConfigResource {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
-        return ok("Composer-Mode successful", null);
+
+        boolean canWrite;
+        try {
+            HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+            canWrite = requestContext.getSession().itemExists(rootPath);
+        } catch (RepositoryException e) {
+            return error("Could not determine authorization", e);
+        }
+        return ok("Composer-Mode successful", canWrite);
     }
 
     @GET
