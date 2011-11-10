@@ -50,12 +50,15 @@
     -->
     <servlet-api.version>2.5</servlet-api.version>
     <javax.jcr.version>2.0</javax.jcr.version>
+    <xml-apis.version>1.0.b2</xml-apis.version>
     <jdo2.api.version>2.3-eb</jdo2.api.version>
     <jta.version>1.1</jta.version>
     <mail.version>1.4.3</mail.version>
     <slf4j.version>1.6.1</slf4j.version>
     <log4j.version>1.2.16</log4j.version>
-    
+    <commons-logging.version>1.1.1</commons-logging.version>
+    <commons-logging-api.version>1.1</commons-logging-api.version> 
+
     <maven.plugin.antrun.version>1.6</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.0</maven.plugin.buildnumber.version>
@@ -80,6 +83,8 @@
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
     
+    <maven.extension.wagon-http.version>1.0-beta-7</maven.extension.wagon-http.version>
+
     <!-- if you want a remote debugging on a different a address
          override on command line with -Dcargo.debug.addres=xxxx -->
     <cargo.debug.address>8000</cargo.debug.address>
@@ -385,7 +390,7 @@
         and/or were used in the past
     -->
     <repository>
-      <id>codehaus</id>
+<id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
         <enabled>false</enabled>
@@ -478,7 +483,7 @@
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>1.0.b2</version>
+        <version>${xml-apis.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -533,13 +538,13 @@
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.1.1</version>
+        <version>${commons-logging.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging-api</artifactId>
-        <version>1.1</version>
+        <version>${commons-logging-api.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -604,7 +609,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-http</artifactId>
-        <version>1.0-beta-7</version>
+        <version>${maven.extension.wagon-http.version}</version>
       </extension>
     </extensions>
     <pluginManagement>
