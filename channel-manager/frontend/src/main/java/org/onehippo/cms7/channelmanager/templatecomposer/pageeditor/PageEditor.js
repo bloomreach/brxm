@@ -257,9 +257,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
             }, true);
-            if (this.channelId) {
-                this.browseTo(this.channelId, this.contextPath, this.renderPath);
-            }
         }, this, {single: true});
 
         this.on('lock', function() {
@@ -370,9 +367,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     browseTo: function(data) {
         this.channelStoreFuture.when(function(config) {
-            this.channelId = data.channelId;
+            this.channelId = data.channelId || this.channelId;
             var record = config.store.getById(this.channelId);
-
             this.title = record.get('name');
             this.hstMountPoint = record.get('hstMountPoint');
             this.pageContainer.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
