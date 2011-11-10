@@ -89,7 +89,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
                 return;
             }
-            Hippo.ChannelManager.TemplateComposer.Instance.browseTo(channelId);
+            Hippo.ChannelManager.TemplateComposer.Instance.browseTo({ channelId: channelId });
             Ext.getCmp('rootPanel').showTemplateComposer();
             // TODO fix, I have no clue why the template composer card is not getting activated properly
             document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';

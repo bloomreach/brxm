@@ -79,7 +79,10 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     public String contextPath = "/site";
-    
+
+    @ExtProperty
+    public String cmsPreviewPrefix;
+
     @ExtProperty
     public String templateComposerContextPath = "/site";
 
@@ -296,7 +299,7 @@ public class PageEditor extends ExtPanel {
         if (redraw) {
             JSONObject update = new JSONObject();
             ExtPropertyConverter.addProperties(this, getClass(), update);
-            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').update(" + update.toString() + ");");
+            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').browseTo(" + update.toString() + ");");
             redraw = false;
         }
     }
@@ -334,5 +337,13 @@ public class PageEditor extends ExtPanel {
         this.templateComposerContextPath = templateComposerContextPath;
         redraw();
     }
-    
+
+    public String getCmsPreviewPrefix() {
+        return cmsPreviewPrefix;
+    }
+
+    public void setCmsPreviewPrefix(final String cmsPreviewPrefix) {
+        this.cmsPreviewPrefix = cmsPreviewPrefix;
+    }
+
 }

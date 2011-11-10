@@ -67,7 +67,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         locale,
         mountId,
         name,
-        subMountPath,
+        mountPath,
+        cmsPreviewPrefix,
+        contextPath,
         type,
         url
     }

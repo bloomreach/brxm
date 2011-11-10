@@ -27,7 +27,7 @@
       <sv:value>contentRoot</sv:value>
       <sv:value>hstConfigPath</sv:value>
       <sv:value>hostname</sv:value>
-      <sv:value>subMountPath</sv:value>
+      <sv:value>mountPath</sv:value>
     </sv:property>
     <sv:property sv:name="sort.column" sv:type="String">
       <sv:value>name</sv:value>

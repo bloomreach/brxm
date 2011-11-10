@@ -26,6 +26,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.templateComposerContextPath = config.templateComposerContextPath;
         this.composerRestMountPath = config.composerRestMountPath;
         this.contextPath = config.contextPath;
+        this.cmsPreviewPrefix = config.cmsPreviewPrefix;
         this.renderPathInfo = config.renderPathInfo;
         this.composerRestMountUrl = this.templateComposerContextPath + this.composerRestMountPath;
 
@@ -112,8 +113,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
     initComposer : function() {
-        if (typeof this.renderPathInfo === 'undefined'
-                || typeof this.contextPath === 'undefined'
+        if (typeof this.contextPath === 'undefined'
                 || this.contextPath.trim() === ''
                 || typeof this.renderHost === 'undefined'
                 || this.renderHost.trim() === '') {
@@ -164,11 +164,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
             this._initIFrameListeners();
-            if (this.renderPathInfo === null || this.renderPathInfo.trim() === '') {
-                iFrame.setSrc(this.contextPath+'/');
-            } else {
-                iFrame.setSrc(this.contextPath + this.renderPathInfo);
+            var iFrameUrl = this.contextPath;
+            if (this.cmsPreviewPrefix) {
+                iFrameUrl += '/'+this.cmsPreviewPrefix;
             }
+            if (this.renderPathInfo) {
+                iFrameUrl += this.renderPathInfo;
+            }
+            iFrame.setSrc(iFrameUrl);
 
             // keep session active
             Ext.TaskMgr.start({

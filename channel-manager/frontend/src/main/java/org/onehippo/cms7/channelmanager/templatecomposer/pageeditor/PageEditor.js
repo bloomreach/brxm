@@ -249,10 +249,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         Hippo.Msg.wait(this.resources['loading-message']);
     },
 
-    update: function(config) {
-        this.browseTo(config.channelId, config.contextPath, config.renderPath);
-    },
-
     initComponent : function() {
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
         // recalculate the ExtJs layout when the YUI layout manager fires a resize event
@@ -372,26 +368,19 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.pageContainer.initComposer.call(this.pageContainer);
     },
 
-    browseTo: function(channelId, contextPath, renderPath) {
-        this.channelId = channelId;
+    browseTo: function(data) {
         this.channelStoreFuture.when(function(config) {
-            var record = config.store.getById(channelId);
+            this.channelId = data.channelId;
+            var record = config.store.getById(this.channelId);
 
             this.title = record.get('name');
             this.hstMountPoint = record.get('hstMountPoint');
-
-            if (contextPath) {
-                this.contextPath = contextPath;
-            }
-            if (renderPath) {
-                this.pageContainer.renderPathInfo = renderPath;
-            } else {
-                this.pageContainer.renderPathInfo = record.get('subMountPath');
-            }
-
+            this.pageContainer.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
+            this.pageContainer.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
+            this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
             this.pageContainer.renderHost = record.get('hostname');
             this.pageContainer.previewMode = true;
-            this.pageContainer.initComposer.call(this.pageContainer);
+            this.initComposer();
         }.createDelegate(this));
     }
 

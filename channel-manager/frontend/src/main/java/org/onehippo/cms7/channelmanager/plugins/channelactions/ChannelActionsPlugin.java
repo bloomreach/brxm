@@ -196,7 +196,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         protected void invoke() {
             // create the pathInfo of the channel manager url. The pathInfo includes the mountPath & path after the mount
             StringBuilder pathInfo  = new StringBuilder(channelDocument.getMountPath()).append(channelDocument.getPathInfo());
-            channelManagerService.viewChannel(channelDocument.getChannelId(), pathInfo.toString(), channelDocument.getContextPath(), channelDocument.getTemplateComposerContextPath());
+            channelManagerService.viewChannel(channelDocument.getChannelId(), pathInfo.toString(), channelDocument.getContextPath(), channelDocument.getCmsPreviewPrefix() ,channelDocument.getTemplateComposerContextPath());
         }
     }
 
