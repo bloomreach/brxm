@@ -62,7 +62,7 @@ public class ChannelStoreFactory {
 
         // create an intermediate set of all unique field names to put in the ExtJS store: a union of all default
         // channel fields and the visible fields (since the latter may also include custom channel properties)
-        for (ChannelStore.Column channelField : ChannelStore.Column.values()) {
+        for (ChannelStore.ChannelField channelField : ChannelStore.ChannelField.values()) {
             storeFieldNames.add(channelField.name());
         }
 
@@ -70,8 +70,8 @@ public class ChannelStoreFactory {
         if (columnNames != null && columnNames.length > 0) {
             storeFieldNames.addAll(Arrays.asList(columnNames));
         }
-        if (!storeFieldNames.contains(ChannelStore.Column.name.name())) {
-            storeFieldNames.add(ChannelStore.Column.name.name());
+        if (!storeFieldNames.contains(ChannelStore.ChannelField.name.name())) {
+            storeFieldNames.add(ChannelStore.ChannelField.name.name());
         }
         return storeFieldNames;
     }
@@ -79,7 +79,7 @@ public class ChannelStoreFactory {
 
     static String parseSortColumn(IPluginConfig config, Set<String> columnNames) {
         if (config == null || columnNames.size() == 0) {
-            return ChannelStore.Column.name.name();
+            return ChannelStore.ChannelField.name.name();
         }
 
         String configSortColumn = config.getString(CONFIG_SORT_COLUMN);
@@ -87,7 +87,7 @@ public class ChannelStoreFactory {
             return configSortColumn;
         }
 
-        return ChannelStore.Column.name.name();
+        return ChannelStore.ChannelField.name.name();
     }
 
     static ChannelStore.SortOrder parseSortOrder(IPluginConfig config) {

@@ -64,6 +64,21 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 iconCls: 'add-channel'
             });
         }
+
+        var columns = [];
+        for (var i = 0; i < config.columns.length; i++) {
+            var column = config.columns[i];
+            if (!column.internal) {
+                columns.push(column);
+            }
+        }
+        var columnModel = new Ext.grid.ColumnModel({
+            columns: columns,
+            defaults: {
+                sortable: true
+            }
+        });
+
         Ext.apply(config, {
             id: 'channel-grid-panel',
             stripeRows: true,
@@ -73,12 +88,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             },
             stateful: true,
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
-            colModel: new Ext.grid.ColumnModel({
-                columns: config.columns,
-                defaults: {
-                    sortable: true
-                }
-            }),
+            colModel: columnModel,
 
             view: new Ext.grid.GroupingView({
                 forceFit: true,

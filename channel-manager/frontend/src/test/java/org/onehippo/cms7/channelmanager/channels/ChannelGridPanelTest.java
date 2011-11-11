@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -38,9 +36,9 @@ public class ChannelGridPanelTest {
 
         List<String> parsedFields = ChannelGridPanel.parseChannelFields(config);
         assertEquals(3, parsedFields.size());
-        assertEquals(ChannelStore.Column.id.name(), parsedFields.get(0));
+        assertEquals(ChannelStore.ChannelField.id.name(), parsedFields.get(0));
         assertEquals("customChannelProperty", parsedFields.get(1));
-        assertEquals(ChannelStore.Column.name.name(), parsedFields.get(2));
+        assertEquals(ChannelStore.ChannelField.name.name(), parsedFields.get(2));
     }
 
     @Test
@@ -61,7 +59,7 @@ public class ChannelGridPanelTest {
     }
 
     private void testIsDefaultColumns(List<String> fields) {
-        for (ChannelStore.Column column : ChannelStore.Column.values()) {
+        for (ChannelStore.ChannelField column : ChannelStore.ChannelField.values()) {
             assertTrue(fields.contains(column.name()));
         }
     }
@@ -71,7 +69,7 @@ public class ChannelGridPanelTest {
         JavaPluginConfig config = new JavaPluginConfig();
         config.put("sort.column", "url");
         assertEquals("url", ChannelStoreFactory.parseSortColumn(config, new HashSet<String>() {
-            { add(ChannelStore.Column.url.name()); }
+            { add(ChannelStore.ChannelField.url.name()); }
         }));
     }
 

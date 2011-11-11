@@ -61,16 +61,16 @@ public class ChannelGridPanel extends ExtPanel {
         List<String> columns = new ArrayList<String>();
 
         if (config == null) {
-            return ChannelStore.ALL_COLUMN_NAMES;
+            return ChannelStore.ALL_FIELD_NAMES;
         }
 
         String[] columnNames = config.getStringArray(ChannelStoreFactory.CONFIG_COLUMNS);
         if (columnNames == null || columnNames.length == 0) {
-            return ChannelStore.ALL_COLUMN_NAMES;
+            return ChannelStore.ALL_FIELD_NAMES;
         }
         columns.addAll(Arrays.asList(columnNames));
-        if (!columns.contains(ChannelStore.Column.name.name())) {
-            columns.add(0, ChannelStore.Column.name.name());
+        if (!columns.contains(ChannelStore.ChannelField.name.name())) {
+            columns.add(0, ChannelStore.ChannelField.name.name());
         }
         return columns;
     }
@@ -85,15 +85,16 @@ public class ChannelGridPanel extends ExtPanel {
     private JSONArray getColumnsConfig() throws JSONException {
         JSONArray columnsConfig = new JSONArray();
 
-        List<String> hiddenColumns = new ArrayList<String>(ChannelStore.ALL_COLUMN_NAMES);
+        List<String> hiddenFields = new ArrayList<String>(ChannelStore.ALL_FIELD_NAMES);
+        hiddenFields.removeAll(ChannelStore.INTERNAL_FIELDS);
 
-        for (String columnName : visibleFields) {
-            columnsConfig.put(createColumnFieldConfig(columnName, false));
-            hiddenColumns.remove(columnName);
+        for (String columnfield : visibleFields) {
+            columnsConfig.put(createColumnFieldConfig(columnfield, false));
+            hiddenFields.remove(columnfield);
         }
 
-        for (String columnName : hiddenColumns) {
-            columnsConfig.put(createColumnFieldConfig(columnName, true));
+        for (String fieldName : hiddenFields) {
+            columnsConfig.put(createColumnFieldConfig(fieldName, true));
         }
 
         return columnsConfig;
@@ -103,7 +104,7 @@ public class ChannelGridPanel extends ExtPanel {
         final JSONObject fieldConfig = new JSONObject();
         fieldConfig.put("dataIndex", columnName);
         fieldConfig.put("id", columnName);
-        fieldConfig.put("header", store.getColumnHeader(columnName));
+        fieldConfig.put("header", store.getLocalizedFieldName(columnName));
         fieldConfig.put("hidden", isHidden);
         return fieldConfig;
     }

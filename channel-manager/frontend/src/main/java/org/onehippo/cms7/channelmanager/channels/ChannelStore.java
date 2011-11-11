@@ -18,6 +18,7 @@ package org.onehippo.cms7.channelmanager.channels;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     // the names are used to access
     // the getters of Channel via reflection
-    public enum Column {
+    public enum ChannelField {
         composerModeEnabled,
         contentRoot,
         hostname,
@@ -73,11 +74,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         type,
         url
     }
-    public static final List<String> ALL_COLUMN_NAMES = new ArrayList<String>();
+    public static final List<String> ALL_FIELD_NAMES;
+    public static final List<String> INTERNAL_FIELDS;
     static {
-        for (Column column : Column.values()) {
-            ALL_COLUMN_NAMES.add(column.name());
+        List<String> names = new ArrayList<String>();
+        for (ChannelField field : ChannelField.values()) {
+            names.add(field.name());
         }
+        ALL_FIELD_NAMES = Collections.unmodifiableList(names);
+        INTERNAL_FIELDS = Collections.unmodifiableList(Arrays.asList("cmsPreviewPrefix"));
     }
 
     public static enum SortOrder { ascending, descending }
@@ -149,30 +154,30 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return data;
     }
 
-    String getColumnHeader(String columnName) {
-        if (isChannelColumn(columnName)) {
+    String getLocalizedFieldName(String fieldName) {
+        if (isChannelField(fieldName)) {
             // known field of a Channel; translations are provided by the resource bundle of this class
-            return getResourceValue("column." + columnName);
+            return getResourceValue("field." + fieldName);
         }
 
         // custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
-        getChannels();
-        for (Channel channel : channels.values()) {
-            String header = ChannelResourceModel.getChannelResourceValue(channel, columnName);
+        Map<String, Channel> channelMap = getChannels();
+        for (Channel channel : channelMap.values()) {
+            String header = ChannelResourceModel.getChannelResourceValue(channel, fieldName);
             if (header != null) {
                 return header;
             }
         }
 
-        log.warn("Column '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the column name itself as the column header.",
-                columnName, org.apache.wicket.Session.get().getLocale());
+        log.warn("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the field name itself as the column header.",
+                fieldName, org.apache.wicket.Session.get().getLocale());
 
-        return columnName;
+        return fieldName;
     }
 
-    private boolean isChannelColumn(String columnName) {
+    private boolean isChannelField(String fieldName) {
         try {
-            Column.valueOf(columnName);
+            ChannelField.valueOf(fieldName);
             return true;
         } catch (IllegalArgumentException e) {
             return false;
