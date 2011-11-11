@@ -36,6 +36,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ServletConfigUtils;
@@ -198,6 +199,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     private static final String INIT_DONE_MSG = "HstSiteConfigServlet Initialization complete, Ready to service requests.";
     
     protected Map<String [], Boolean> repositoryCheckingStatus = new HashMap<String [], Boolean>();
+    
+    private RepositoryAvailabilityCheckerThread repositoryAvailabilityCheckerThread;
 
     /**
      * Intialize Servlet.
@@ -249,27 +252,9 @@ public class HstSiteConfigServlet extends HttpServlet {
             }
             
             if (!this.allRepositoriesAvailable) {
-                final Thread repositoryCheckerThread = new Thread("RepositoryChecker") {
-                    public void run() {
-                        while (!allRepositoriesAvailable) {
-                           // check the repository is accessible
-                           allRepositoriesAvailable = checkAllRepositoriesRunning();
-    
-                           if (!allRepositoriesAvailable) {
-                               try {
-                                    Thread.sleep(3000);
-                               } catch (InterruptedException e) {
-                               }
-                           }
-                        }
-                        
-                        if (allRepositoriesAvailable) {
-                            initializeComponentManager(config);
-                        }
-                    }
-                };
-                
-                repositoryCheckerThread.start();
+                destroyRepositoryAvailabilityCheckerThread();
+                repositoryAvailabilityCheckerThread = new RepositoryAvailabilityCheckerThread(config);
+                repositoryAvailabilityCheckerThread.start();
             }
         }
     }
@@ -291,6 +276,7 @@ public class HstSiteConfigServlet extends HttpServlet {
                     oldComponentManager.stop();
                     oldComponentManager.close();
                 } catch (Exception ce) {
+                    log.warn("Old Component Manager stopping/closing error", ce);
                 }
             }
             
@@ -333,11 +319,6 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-
-        if (!isInitialized()) {
-            initializeComponentManager(getServletConfig());
-        }
-        
     }
 
     /**
@@ -363,11 +344,14 @@ public class HstSiteConfigServlet extends HttpServlet {
     @Override
     public synchronized void destroy() {
         log.info("Done shutting down!");
-
+        
+        destroyRepositoryAvailabilityCheckerThread();
+        
         try {
             this.componentManager.stop();
             this.componentManager.close();
         } catch (Exception e) {
+            log.warn("Component Manager stopping/closing error", e);
         } finally {
             HstServices.setComponentManager(null);
         }
@@ -379,6 +363,7 @@ public class HstSiteConfigServlet extends HttpServlet {
         for (Map.Entry<String [], Boolean> entry : this.repositoryCheckingStatus.entrySet()) {
             String [] repositoryInfo = entry.getKey();
             String repositoryAddress = repositoryInfo[0];
+            boolean isLocalRepository = StringUtils.startsWith(repositoryAddress, "vm://");
             String repositoryUsername = (repositoryInfo[1] != null ? repositoryInfo[1] : "");
             String repositoryPassword = (repositoryInfo[2] != null ? repositoryInfo[2] : "");
             
@@ -389,19 +374,21 @@ public class HstSiteConfigServlet extends HttpServlet {
                 try {
                     hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
                     
-                    if (!"".equals(repositoryUsername)) {
-                        try {
-                            session = hippoRepository.login(new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray()));
-                            
-                            if (session != null) {
+                    if (hippoRepository != null) {
+                        if (!StringUtils.isBlank(repositoryUsername) && !isLocalRepository) {
+                            try {
+                                session = hippoRepository.login(new SimpleCredentials(repositoryUsername, repositoryPassword.toCharArray()));
+                                
+                                if (session != null) {
+                                    entry.setValue(Boolean.TRUE);
+                                }
+                            } catch (LoginException le) {
+                                log("Failed to try to log on to " + repositoryAddress + " with userID=" + repositoryUsername + ". Skip this repository.");
                                 entry.setValue(Boolean.TRUE);
                             }
-                        } catch (LoginException le) {
-                            log("Failed to try to log on to " + repositoryAddress + " with userID=" + repositoryUsername + ". Skip this repository.");
+                        } else {
                             entry.setValue(Boolean.TRUE);
                         }
-                    } else {
-                        entry.setValue(Boolean.TRUE);
                     }
                 } catch (Exception e) {
                     allRunning = false;
@@ -409,7 +396,7 @@ public class HstSiteConfigServlet extends HttpServlet {
                     if (session != null) {
                         try { session.logout(); } catch (Exception ce) { }
                     }
-                    if (hippoRepository != null) {
+                    if (hippoRepository != null && !isLocalRepository) {
                         try { hippoRepository.close(); } catch (Exception ce) { }
                     }
                 }
@@ -545,4 +532,53 @@ public class HstSiteConfigServlet extends HttpServlet {
         return resourceFile;
     }
     
+    private void destroyRepositoryAvailabilityCheckerThread() {
+        try {
+            if (repositoryAvailabilityCheckerThread != null && repositoryAvailabilityCheckerThread.isAlive()) {
+                repositoryAvailabilityCheckerThread.setStopped(true);
+                repositoryAvailabilityCheckerThread.interrupt();
+            }
+        } catch (Exception e) {
+            log.warn("RepositoryAvailabilityCheckerThread interruption error", e);
+        } finally {
+            repositoryAvailabilityCheckerThread = null;
+        }
+    }
+    
+    private class RepositoryAvailabilityCheckerThread extends Thread {
+        
+        private ServletConfig servletConfig;
+        private boolean stopped;
+        
+        private RepositoryAvailabilityCheckerThread(final ServletConfig servletConfig) {
+            super("RepositoryAvailabilityCheckerThread");
+            setDaemon(true);
+            this.servletConfig = servletConfig;
+        }
+        
+        public void setStopped(boolean stopped) {
+            this.stopped = stopped;
+        }
+        
+        public void run() {
+            while (!stopped && !allRepositoriesAvailable) {
+                // check the repository is accessible
+                allRepositoriesAvailable = checkAllRepositoriesRunning();
+
+                if (!allRepositoriesAvailable) {
+                    try {
+                         Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        if (stopped) {
+                            break;
+                        }
+                    }
+                }
+             }
+             
+             if (!stopped && allRepositoriesAvailable) {
+                 initializeComponentManager(servletConfig);
+             }
+        }
+    }
 }
