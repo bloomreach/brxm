@@ -20,7 +20,6 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
     constructor : function(config) {
 
         var composerRestMountUrl = config.composerRestMountUrl;
-        alert("TEST");
         var PageModelProxy = Ext.extend(Ext.data.HttpProxy, {
             buildUrl : function() {
                  return PageModelProxy.superclass.buildUrl.apply(this, arguments) + '?FORCE_CLIENT_HOST=true';

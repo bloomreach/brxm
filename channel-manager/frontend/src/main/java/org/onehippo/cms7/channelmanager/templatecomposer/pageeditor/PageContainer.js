@@ -131,7 +131,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var self = this;
         // do initial handshake with CmsSecurityValve of the composer mount and
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-        alert("TEST");
         var composerMode = function(callback) {
             Ext.Ajax.request({
                 headers: {
