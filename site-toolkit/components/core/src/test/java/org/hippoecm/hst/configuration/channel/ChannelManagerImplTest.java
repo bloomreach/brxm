@@ -180,7 +180,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelsAreReloaded() throws ChannelException, RepositoryException, PrivilegedActionException {
+    public void channelsAreReloaded() throws ChannelException, RepositoryException, PrivilegedActionException, RepositoryNotAvailableException {
         final ChannelManagerImpl manager = createManager();
         int numberOfChannels = manager.getChannels().size();
 
@@ -194,24 +194,29 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         // manager should reload
 
         reset(testHost, testMount);
-        expectMountLoad(testHost, testMount);
+        
 
-        VirtualHost newHost = createNiceMock(VirtualHost.class);
+        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
+        expectMountLoad(testHost, testMount, vhosts);
+
         MutableMount newMount = createNiceMock(MutableMount.class);
         mounts.add(newMount);
-
-        expect(newMount.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-test-channel");
-        expect(newMount.getMountPoint()).andReturn("mountpoint");
-        expect(newMount.getHstSite()).andReturn(createNiceMock(HstSite.class));
+        
+        VirtualHost newHost = createNiceMock(VirtualHost.class);
+        
+        expect(newMount.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-test-channel").anyTimes();
+        expect(newMount.getMountPoint()).andReturn("mountpoint").anyTimes();
+        expect(newMount.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
         expect(newMount.getCanonicalContentPath()).andReturn("/unittestcontent/documents");
-        expect(newMount.getVirtualHost()).andReturn(newHost).times(2);
-        expect(newHost.getHostName()).andReturn("myhost").times(2);
-        expect(newMount.getLocale()).andReturn("nl_NL");
-        expect(newMount.getScheme()).andReturn("http");
-        expect(newMount.getMountPath()).andReturn("");
+        expect(newMount.getVirtualHost()).andReturn(newHost).anyTimes();
+        expect(newHost.getHostName()).andReturn("myhost").anyTimes();
+        expect(newHost.getVirtualHosts()).andReturn(vhosts).anyTimes();
+        expect(newMount.getLocale()).andReturn("nl_NL").anyTimes();
+        expect(newMount.getScheme()).andReturn("http").anyTimes();
+        expect(newMount.getMountPath()).andReturn("").anyTimes();
 
         replay(testHost, testMount, newHost, newMount);
-
+      
         Map<String, Channel> channels = manager.getChannels();
 
         // verify reload
@@ -311,7 +316,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         setComponentManager(cm);
 
         final VirtualHosts vhosts = createNiceMock(VirtualHosts.class);
-        expect(vhosts.getCmsPreviewPrefix()).andReturn("_cmsinternal");
+        expect(vhosts.getCmsPreviewPrefix()).andReturn("_cmsinternal").anyTimes();
         HstManager hstMgr = createNiceMock(HstManager.class);
         try {
             expect(hstMgr.getVirtualHosts()).andAnswer(new IAnswer<VirtualHosts>() {
@@ -325,6 +330,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             // mock impl doesn't throw
         }
         expect(cm.getComponent(HstManager.class.getName())).andReturn(hstMgr).anyTimes();
+        expect(cm.getComponent(VirtualHosts.class.getName())).andReturn(vhosts).anyTimes();
 
         mounts = new LinkedList<Mount>();
         expect(vhosts.getMountsByHostGroup("dev-localhost")).andReturn(mounts).anyTimes();
@@ -332,12 +338,10 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         
         testHost = createNiceMock(VirtualHost.class);
         
-        expect(testHost.getVirtualHosts()).andReturn(vhosts);
-        
         testMount = createNiceMock(MutableMount.class);
         mounts.add(testMount);
 
-        expectMountLoad(testHost, testMount);
+        expectMountLoad(testHost, testMount, vhosts);
 
         replay(vhosts, cm, hstMgr, testHost, testMount);
 
@@ -348,8 +352,10 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         return manager;
     }
 
-    private static void expectMountLoad(final VirtualHost host, final MutableMount mount) {
+    private static void expectMountLoad(final VirtualHost host, final MutableMount mount, VirtualHosts vhosts) {
         expect(host.getHostName()).andReturn("localhost").anyTimes();
+        expect(host.getVirtualHosts()).andReturn(vhosts).anyTimes();
+        
         expect(mount.getMountPoint()).andReturn("mountpoint");
         expect(mount.getHstSite()).andReturn(createNiceMock(HstSite.class));
         expect(mount.getCanonicalContentPath()).andReturn("/content/documents");
