@@ -303,7 +303,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="type-hst-sitemenu">
+    <sv:node sv:name="type-hst-sitemap">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
@@ -328,7 +328,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
-    <sv:node sv:name="type-hst-sitemenu">
+    <sv:node sv:name="type-hst-sitemapitem">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
