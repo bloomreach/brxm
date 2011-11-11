@@ -344,7 +344,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     resources: this.resources,
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
-                    ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
                     mountId: mountId
                 }
             ]

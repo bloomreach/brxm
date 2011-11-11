@@ -53,7 +53,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
 
     submitForm:function () {
         this.getForm().submit({
-            url: this.composerRestMountUrl +'/'+ this.id + './parameters?' + this.ignoreRenderHostParameterName + '=true',
+            headers: {
+                    'FORCE_CLIENT_HOST': 'true'
+            },
+            url: this.composerRestMountUrl +'/'+ this.id + './parameters?FORCE_CLIENT_HOST=true',
             method: 'POST' ,
             waitMsg: this.resources['properties-panel-submit-form-message'],
             success: function () {
@@ -69,7 +72,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
     createDocument: function (ev, target, options) {
 
         var self = this;
-        var createUrl = this.composerRestMountUrl +'/'+ this.mountId + './create?' + this.ignoreRenderHostParameterName + '=true';
+        var createUrl = this.composerRestMountUrl +'/'+ this.mountId + './create?FORCE_CLIENT_HOST=true';
         var createDocumentWindow = new Ext.Window({
             title: this.resources['create-new-document-window-title'],
             height: 150,
@@ -162,7 +165,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
-                        url: this.composerRestMountUrl +'/' + this.mountId + './documents/' + property.get('docType') + '?' + this.ignoreRenderHostParameterName + '=true',
+                        url: this.composerRestMountUrl +'/' + this.mountId + './documents/' + property.get('docType') + '?FORCE_CLIENT_HOST=true',
                         fields:['path']
                     });
 
@@ -254,7 +257,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
-            url: this.composerRestMountUrl +'/'+ this.id + './parameters/' + this.locale + '?' + this.ignoreRenderHostParameterName + '=true'
+            url: this.composerRestMountUrl +'/'+ this.id + './parameters/' + this.locale + '?FORCE_CLIENT_HOST=true'
         });
 
         this.componentPropertiesStore.on('load', this.loadProperties, this);

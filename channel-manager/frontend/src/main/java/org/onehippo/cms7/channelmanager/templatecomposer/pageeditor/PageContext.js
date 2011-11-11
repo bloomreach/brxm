@@ -53,7 +53,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         this.templateComposerContextPath = config.templateComposerContextPath;
         this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
         this.renderPath = config.renderPath;
-        this.ignoreRenderHostParameterName = config.ignoreRenderHostParameterName;
 
         this.iframeResourceCache = cache;
 
@@ -264,8 +263,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     _createToolkitStore : function(mountId) {
         return new Hippo.ChannelManager.TemplateComposer.ToolkitStore({
             mountId : mountId,
-            composerRestMountUrl : this.composerRestMountUrl,
-            ignoreRenderHostParameterName: this.ignoreRenderHostParameterName
+            composerRestMountUrl : this.composerRestMountUrl
         });
     },
 
@@ -275,7 +273,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
             mountId: mountId,
             pageId: pageId,
             composerRestMountUrl: this.composerRestMountUrl,
-            ignoreRenderHostParameterName: this.ignoreRenderHostParameterName,
             resources: this.resources
         });
     },

@@ -90,9 +90,6 @@ public class PageEditor extends ExtPanel {
     public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
     @ExtProperty
-    public String ignoreRenderHostParameterName = ContainerConstants.IGNORE_RENDERING_HOST;
-
-    @ExtProperty
     public String cmsUser;
 
     @ExtProperty
