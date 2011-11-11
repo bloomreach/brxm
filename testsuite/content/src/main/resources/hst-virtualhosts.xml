@@ -22,6 +22,15 @@
   <sv:property sv:name="hst:showport" sv:type="Boolean">
     <sv:value>true</sv:value>
   </sv:property>
+  <sv:property sv:name="hst:channelmanagerhostgroup" sv:type="Boolean">
+    <sv:value>dev-localhost</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:defaultcontextpath" sv:type="String">
+    <sv:value>/site</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:cmspreviewprefix" sv:type="Boolean">
+    <sv:value>_testsuiteExamplePrefix</sv:value>
+  </sv:property>
   <sv:property sv:name="hst:prefixexclusions" sv:type="String">
     <sv:value>/ping/</sv:value>
     <sv:value>/binaries/</sv:value>
