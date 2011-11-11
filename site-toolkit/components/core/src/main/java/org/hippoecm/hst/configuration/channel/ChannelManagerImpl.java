@@ -81,7 +81,6 @@ import org.slf4j.LoggerFactory;
 
 public class ChannelManagerImpl implements MutableChannelManager {
 
-    private static final String DEFAULT_HOST_GROUP = "dev-localhost";
     private static final String DEFAULT_HST_ROOT_PATH = "/hst:hst";
     private static final String DEFAULT_HST_SITES = "hst:sites";
     private static final String DEFAULT_CONTENT_ROOT = "/content/documents";
@@ -89,7 +88,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
     private String rootPath = DEFAULT_HST_ROOT_PATH;
-    private String hostGroup = DEFAULT_HOST_GROUP;
+    private String hostGroup = null;
     private String sites = DEFAULT_HST_SITES;
 
     private Map<String, BlueprintService> blueprints;
@@ -120,21 +119,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
-    public void setHostGroup(String hostGroup) {
-        this.hostGroup = hostGroup;
-    }
-
     public void setContentRoot(final String contentRoot) {
         this.contentRoot = contentRoot.trim();
-    }
-
-    @Override
-    public String getHostGroup() {
-        return this.hostGroup;
-    }
-
-    public void setSites(final String sites) {
-        this.sites = sites;
     }
 
     private void loadBlueprints(final Node configNode) throws RepositoryException {
@@ -238,12 +224,18 @@ public class ChannelManagerImpl implements MutableChannelManager {
         try {
             session = getSession(false);
             Node configNode = session.getNode(rootPath);
-
+ 
             blueprints = new HashMap<String, BlueprintService>();
             loadBlueprints(configNode);
 
             channels = new HashMap<String, Channel>();
             
+            hostGroup = virtualHosts.getChannelMngrVirtualHostGroupNodeName();
+            sites = virtualHosts.getChannelMngrSitesNodeName();
+            
+            if(hostGroup == null) {
+                log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");
+            }
             // load all the channels, even if they are not used by the current hostGroup
             loadChannels(configNode);
             
@@ -374,6 +366,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
         }
 
+        // TODO replace load() here and just check on jcr nodes whether the node
+        // already exists or not
+        
         load();
 
         String channelId = channelIdCodec.encode(channelName);

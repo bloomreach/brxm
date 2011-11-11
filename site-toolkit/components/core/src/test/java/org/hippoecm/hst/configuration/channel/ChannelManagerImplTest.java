@@ -309,9 +309,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         manager.setRepository(getRepository());
         // FIXME: use readonly credentials
         manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
-        manager.setHostGroup("dev-localhost");
-        manager.setSites("hst:sites");
-
+        
         ComponentManager cm = createMock(ComponentManager.class);
         setComponentManager(cm);
 
@@ -335,6 +333,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         mounts = new LinkedList<Mount>();
         expect(vhosts.getMountsByHostGroup("dev-localhost")).andReturn(mounts).anyTimes();
         expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
+        expect(vhosts.getChannelMngrVirtualHostGroupNodeName()).andReturn("dev-localhost").anyTimes();
+        expect(vhosts.getChannelMngrSitesNodeName()).andReturn("hst:sites").anyTimes();
         
         testHost = createNiceMock(VirtualHost.class);
         

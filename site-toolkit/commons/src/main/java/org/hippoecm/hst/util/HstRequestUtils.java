@@ -229,8 +229,8 @@ public class HstRequestUtils {
     }
 
     private static String getRenderingHostName(final HttpServletRequest request) {
-        String ignoreRenderingHost = request.getParameter(ContainerConstants.IGNORE_RENDERING_HOST);
-        if (Boolean.parseBoolean(ignoreRenderingHost) == Boolean.TRUE) {
+        String forceClientHost = request.getParameter("FORCE_CLIENT_HOST");
+        if (Boolean.parseBoolean(forceClientHost) == Boolean.TRUE) {
             return null;
         }
 

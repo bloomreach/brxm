@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.List;
 
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -153,5 +154,18 @@ public interface VirtualHosts {
      * to be empty, it will be ""
      */
      String getCmsPreviewPrefix();
+     
+     /**
+      * Returns the virtual host group node name in use for the current environment. The {@link ChannelManager} will only be able to create links 
+      * for channels that are reflected in the hostGroup 
+      *
+      * @return the virtual host group node name used for this {@link VirtualHosts}. If not configured it returns <code>null</code>
+      */
+     String getChannelMngrVirtualHostGroupNodeName();
+     
+     /**
+      * @return the node name of the hst:sites that will be managed by the {@link ChannelManager}. If not configured it returns <code>hst:sites</code>
+      */
+     String getChannelMngrSitesNodeName();
     
 }

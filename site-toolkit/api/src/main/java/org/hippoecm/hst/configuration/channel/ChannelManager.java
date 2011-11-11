@@ -109,14 +109,6 @@ public interface ChannelManager {
     List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
 
     /**
-     * Returns the host group used by this channel manager. Only channels referenced within this host group will
-     * be available via this channel manager.
-     *
-     * @return the host group used by this channel manager.
-     */
-    String getHostGroup();
-
-    /**
      * Can the current user (set in HstSubject) create or modify channels.
      *
      * @return true when the user can create a channel, false otherwise

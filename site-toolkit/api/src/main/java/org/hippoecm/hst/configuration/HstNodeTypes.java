@@ -106,9 +106,11 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOSTS_PROPERTY_SCHEME = "hst:scheme";
     public final static String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     public final static String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
+    public final static String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
     public final static String VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH = "hst:defaultcontextpath";
     public final static String VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX = "hst:cmspreviewprefix";
-    public final static String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
+    public final static String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP = "hst:channelmanagerhostgroup";
+    public final static String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
     
     public final static String VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION =  "hst:cmslocation" ;
     

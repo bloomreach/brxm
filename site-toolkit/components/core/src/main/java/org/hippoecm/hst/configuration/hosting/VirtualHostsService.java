@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -93,6 +94,19 @@ public class VirtualHostsService implements VirtualHosts {
      */
     private String cmsPreviewPrefix;
     
+    /**
+     * The 'active' virtual host group for the current environment. This should not be <code>null</code> and 
+     * not contains slashes but just the name of the hst:virtualhostgroup node below the hst:hosts node
+     */
+    private String channelMngrVirtualHostGroupNodeName;
+   
+    private final static String DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME = "hst:sites";
+    
+    /**
+     * The name of the hst:sites that is managed by the {@link ChannelManager}
+     */
+    private String channelMngrSitesNodeName = DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME;
+    
     /*
      * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
      */
@@ -117,6 +131,20 @@ public class VirtualHostsService implements VirtualHosts {
             		"sees the preview without the cms where he expected to see the live. ", HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         } else {
             cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
+        }
+        
+        channelMngrVirtualHostGroupNodeName = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
+        if(StringUtils.isEmpty(channelMngrVirtualHostGroupNodeName)) {
+            log.warn("On the hst:hosts node there is no '{}' property configured. This means the channel manager won't be able to " +
+            		"load channels in the preview / composer", HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
+        } else {
+            log.info("Channel manager will load channels for hostgroup = '{}'", channelMngrVirtualHostGroupNodeName);
+        }
+        String sites = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES);
+        if(!StringUtils.isEmpty(sites)) {
+            log.info("Channel manager will load work with hst:sites node '{}' instead of the default '{}'.",
+                    sites, DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME);
+            channelMngrSitesNodeName = sites;
         }
         showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
         prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
@@ -467,5 +495,13 @@ public class VirtualHostsService implements VirtualHosts {
         return cmsPreviewPrefix;
     }
 
+    @Override
+    public String getChannelMngrVirtualHostGroupNodeName() {
+        return channelMngrVirtualHostGroupNodeName;
+    }
 
+    @Override
+    public String getChannelMngrSitesNodeName() {
+        return channelMngrSitesNodeName;
+    }
 }

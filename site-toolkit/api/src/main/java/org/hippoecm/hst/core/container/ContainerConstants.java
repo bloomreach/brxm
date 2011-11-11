@@ -140,12 +140,6 @@ public interface ContainerConstants {
     String RENDERING_HOST = "org.hippoecm.hst.container.render_host"; 
 
     /**
-     * The parameter name used in the request to store whether the rendering host available in the request or the
-     * HTTP session needs to be ignored.
-     */
-    String IGNORE_RENDERING_HOST = "org.hippoecm.hst.container.ignore_render_host";
-
-    /**
      * The parameter/attribute name used to store the real_host 
      */
     String REAL_HOST = "org.hippoecm.hst.container.real_host"; 
