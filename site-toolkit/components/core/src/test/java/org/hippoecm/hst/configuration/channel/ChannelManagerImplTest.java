@@ -311,6 +311,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         setComponentManager(cm);
 
         final VirtualHosts vhosts = createNiceMock(VirtualHosts.class);
+        expect(vhosts.getCmsPreviewPrefix()).andReturn("_cmsinternal");
         HstManager hstMgr = createNiceMock(HstManager.class);
         try {
             expect(hstMgr.getVirtualHosts()).andAnswer(new IAnswer<VirtualHosts>() {
@@ -330,6 +331,9 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
         
         testHost = createNiceMock(VirtualHost.class);
+        
+        expect(testHost.getVirtualHosts()).andReturn(vhosts);
+        
         testMount = createNiceMock(MutableMount.class);
         mounts.add(testMount);
 
@@ -345,13 +349,13 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     private static void expectMountLoad(final VirtualHost host, final MutableMount mount) {
-        expect(host.getHostName()).andReturn("localhost").times(2);
+        expect(host.getHostName()).andReturn("localhost").anyTimes();
         expect(mount.getMountPoint()).andReturn("mountpoint");
         expect(mount.getHstSite()).andReturn(createNiceMock(HstSite.class));
         expect(mount.getCanonicalContentPath()).andReturn("/content/documents");
 
         expect(mount.getChannelPath()).andReturn("/hst:hst/hst:channels/testchannel");
-        expect(mount.getVirtualHost()).andReturn(host).times(2);
+        expect(mount.getVirtualHost()).andReturn(host).anyTimes();
         expect(mount.getLocale()).andReturn("en_EN");
         expect(mount.getScheme()).andReturn("http");
         expect(mount.getMountPath()).andReturn("");
