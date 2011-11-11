@@ -480,7 +480,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         Session session = null;
         try {
             session = getSession(true);
-            return session.itemExists(rootPath);
+            return session.hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
         } finally {

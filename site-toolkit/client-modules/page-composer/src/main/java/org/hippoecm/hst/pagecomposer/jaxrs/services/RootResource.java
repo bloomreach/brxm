@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -65,7 +66,7 @@ public class RootResource extends AbstractConfigResource {
         boolean canWrite;
         try {
             HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            canWrite = requestContext.getSession().itemExists(rootPath);
+            canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             return error("Could not determine authorization", e);
         }
