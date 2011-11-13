@@ -198,20 +198,6 @@
           </additionalProjectnatures>
         </configuration>
       </plugin>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <workingDirectory>target</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>org.onehippo.repository.test.installfixture</name>
-              <value>true</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
    </plugins>
   </build>
   <reporting>

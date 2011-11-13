@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import org.junit.After;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -65,7 +66,12 @@ public class FreeTextSearchTest extends TestCase {
         session.save();
     }
 
-    
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+ 
     /*
      * This creates the following structure:
      * 

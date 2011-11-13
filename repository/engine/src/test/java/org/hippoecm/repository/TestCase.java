@@ -15,13 +15,14 @@
  */
 package org.hippoecm.repository;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
-
-import java.io.File;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -63,6 +64,7 @@ public abstract class TestCase
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     protected static HippoRepository external = null;
+    protected static HippoRepository background = null;
     protected HippoRepository server = null;
     protected Session session = null;
 
@@ -80,7 +82,16 @@ public abstract class TestCase
         }
     }
 
-    static private void clear() {
+    public static void clear() {
+        if (background != null) {
+            background.close();
+            background = null;
+        }
+        try {
+            DriverManager.getConnection("jdbc:derby:;shutdown=true;deregister=true");
+        } catch (SQLException e) {
+            // a shutdown command always raises a SQLException
+        }
         String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
         for(int i=0; i<files.length; i++) {
             File file = new File(files[i]);
@@ -182,7 +193,15 @@ public abstract class TestCase
                     fixture();
                 }
             }
-            server = HippoRepositoryFactory.getHippoRepository();
+            if(Boolean.getBoolean("org.onehippo.repository.test.keepserver")) {
+                if(background != null) {
+                    server = background;
+                } else {
+                    server = background = HippoRepositoryFactory.getHippoRepository();
+                }
+            } else {
+                server = HippoRepositoryFactory.getHippoRepository();
+            }
         }
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         while (session.getRootNode().hasNode("test")) {
@@ -208,17 +227,19 @@ public abstract class TestCase
             session = null;
         }
         if (external == null && server != null) {
-            server.close();
-            if (server instanceof LocalHippoRepository) {
-                if (!((LocalHippoRepository)server).check(false)) {
-                    server = null;
-                    clear();
-                    throw new Exception("Repository inconsistent");
+            if (!Boolean.getBoolean("org.onehippo.repository.test.keepserver")) {
+                server.close();
+                if (server instanceof LocalHippoRepository) {
+                    if (!((LocalHippoRepository)server).check(false)) {
+                        server = null;
+                        clear();
+                        throw new Exception("Repository inconsistent");
+                    }
                 }
             }
             server = null;
         }
-        if(clearRepository) {
+        if (clearRepository) {
             clear();
         }
     }

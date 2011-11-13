@@ -75,7 +75,7 @@ public class HREPTWO2655IssueTest extends TestCase {
     }
 
     volatile boolean stop = false;
-    
+
     @Ignore("timeout issue test not supported")
     // @Test(timeout = 60000)
     public void testIssue() throws Exception {

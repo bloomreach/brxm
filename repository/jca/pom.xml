@@ -75,6 +75,10 @@
               <name>derby.stream.error.file</name>
               <value>target/derby.log</value>
             </property>
+            <property>
+              <name>org.onehippo.repository.test.keepserver</name>
+              <value>true</value>
+            </property>
           </systemProperties>
         </configuration>
       </plugin>

@@ -116,8 +116,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
           <systemProperties>
             <property>
               <name>history.points</name>
@@ -127,9 +125,14 @@
               <name>rep.home</name>
               <value>${project.build.directory}</value>
             </property>
+            <property>
+              <name>org.onehippo.repository.test.keepserver</name>
+              <value>true</value>
+            </property>
           </systemProperties>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>
+            <exclude>**/RemoteSPITest.java</exclude>
           </excludes>
         </configuration>
       </plugin>

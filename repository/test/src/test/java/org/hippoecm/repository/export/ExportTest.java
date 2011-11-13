@@ -52,6 +52,7 @@ import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.ElementQualifier;
 import org.hippoecm.repository.TestCase;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -112,7 +113,7 @@ public class ExportTest extends TestCase {
         }
         System.setProperty("hippoecm.export.dir", CONFIG_HOME);
         // startup the repository
-        super.setUp();
+        super.setUp(true);
         // remove imported nodes
         Node root = super.session.getNode("/");
         for (NodeIterator iter = root.getNodes("et:*"); iter.hasNext();) {
@@ -140,6 +141,18 @@ public class ExportTest extends TestCase {
         super.session.save();
         Thread.sleep(SLEEP_AFTER_SAVE);
         m_testRoot = session.getRootNode();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        TestCase.tearDownClass(true);
+        System.clearProperty("hippoecm.export.dir");
     }
 
     @Test
@@ -289,12 +302,6 @@ public class ExportTest extends TestCase {
         XMLReader reader = XMLReaderFactory.createXMLReader();
         reader.setContentHandler(filter);
         reader.parse(contentFileSource);
-    }
-    
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private void compare(String testCase) throws Exception {

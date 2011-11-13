@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository;
 
+import org.hippoecm.repository.api.HippoSession;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -121,5 +122,10 @@ public class TrivialServerTest extends TestCase {
         Node encodedNode2 = root.getNode(encoded);
         assertTrue(encodedNode.isSame(encodedNode2));
         assertEquals(encoded, encodedNode.getName());
+    }
+    
+    @Test
+    public void testHREPTWO398() throws RepositoryException {
+        assertTrue(session instanceof HippoSession);
     }
 }

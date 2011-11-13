@@ -50,6 +50,7 @@ public class AppserverTest extends Suite
         Deployer deployer = null;
         HippoRepository server = null;
         String product = System.getProperties().getProperty("product");
+        TestCase.clear();
         try {
             try {
                 deployer = new Deployer();

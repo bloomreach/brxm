@@ -59,12 +59,16 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
+          <forkMode>never</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <systemProperties>
             <property>
               <name>history.points</name>
               <value>${history.points}</value>
+            </property>
+            <property>
+              <name>org.onehippo.repository.test.keepserver</name>
+              <value>true</value>
             </property>
           </systemProperties>
           <excludes>

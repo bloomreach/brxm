@@ -19,6 +19,8 @@ import java.io.File;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.jcr.RepositoryException;
 
@@ -73,36 +75,18 @@ public class RemoteTest extends Suite
         super(klass, annotatedClasses);
     }
 
-
-    static private void delete(File path) {
-        if(path.exists()) {
-            if(path.isDirectory()) {
-                File[] files = path.listFiles();
-                for(int i=0; i<files.length; i++)
-                    delete(files[i]);
-            }
-            path.delete();
-        }
-    }
-
-    static private void clear() {
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for(int i=0; i<files.length; i++) {
-            File file = new File(files[i]);
-            delete(file);
-        }
-    }
-
     @Override
     public void run(final RunNotifier notifier) {
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
+            TestCase.clear();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
             TestCase.setRepository(server);
+            HippoRepositoryFactory.setDefaultRepository((String)null);
 
             super.run(notifier);
 
@@ -128,7 +112,9 @@ public class RemoteTest extends Suite
             if (backgroundServer != null) {
                 backgroundServer.close();
             }
-            clear();
+            TestCase.clear();
+            TestCase.setRepository(null);
+            HippoRepositoryFactory.setDefaultRepository((String)null);
         }
     }
 }

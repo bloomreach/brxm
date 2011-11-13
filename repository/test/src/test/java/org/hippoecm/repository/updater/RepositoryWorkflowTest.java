@@ -76,7 +76,7 @@ public class RepositoryWorkflowTest extends TestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
+        super.tearDown(true);
     }
 
     @AfterClass
@@ -220,6 +220,9 @@ public class RepositoryWorkflowTest extends TestCase {
        flush();
        server.close();
        server = HippoRepositoryFactory.getHippoRepository();
+       if (background != null) {
+           background = server;
+       }
        flush();
        getWorkflow().updateModel("testUpdateModel", cndMoveAggregate2);
        flush();

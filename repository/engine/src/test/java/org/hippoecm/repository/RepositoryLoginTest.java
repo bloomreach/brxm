@@ -30,17 +30,13 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class RepositoryLoginTest {
+public class RepositoryLoginTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    private HippoRepository server;
-    private Session serverSession;
     private Node users;
 
     private static final String ANONYMOUS_ID = "anonymous";
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
     private static final String USERS_PATH = "hippo:configuration/hippo:users";
 
@@ -54,12 +50,11 @@ public class RepositoryLoginTest {
     private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
 
     @Before
-    public void setUp() throws RepositoryException, IOException {
-        server = HippoRepositoryFactory.getHippoRepository();
-        serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+    public void setUp() throws Exception {
+        super.setUp();
 
         // create user config path
-        Node node = serverSession.getRootNode();
+        Node node = session.getRootNode();
         StringTokenizer tokenizer = new StringTokenizer(USERS_PATH, "/");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
@@ -68,7 +63,7 @@ public class RepositoryLoginTest {
 
         // create test users
         Node testuser;
-        users = serverSession.getRootNode().getNode(USERS_PATH);
+        users = session.getRootNode().getNode(USERS_PATH);
         testuser = users.addNode(TESTUSER_ID_PLAIN, HippoNodeType.NT_USER);
         testuser.setProperty("hipposys:password", TESTUSER_PASS);
         testuser = users.addNode(TESTUSER_ID_MD5, HippoNodeType.NT_USER);
@@ -77,11 +72,11 @@ public class RepositoryLoginTest {
         testuser.setProperty("hipposys:password", TESTUSER_HASH_SHA1);
         testuser = users.addNode(TESTUSER_ID_SHA256, HippoNodeType.NT_USER);
         testuser.setProperty("hipposys:password", TESTUSER_HASH_SHA256);
-        serverSession.save();
+        session.save();
     }
 
     @After
-    public void tearDown() throws RepositoryException {
+    public void tearDown() throws Exception {
         if (users != null) {
             if (users.hasNode(TESTUSER_ID_PLAIN)) {
                 users.getNode(TESTUSER_ID_PLAIN).remove();
@@ -96,13 +91,8 @@ public class RepositoryLoginTest {
                 users.getNode(TESTUSER_ID_SHA256).remove();
             }
         }
-        if (serverSession != null) {
-            serverSession.save();
-            serverSession.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
+        session.save();
+        super.tearDown();
     }
 
     @Test
@@ -250,7 +240,7 @@ public class RepositoryLoginTest {
         SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
         Session anonymousSession = server.login();
         assertEquals("anonymous", anonymousSession.getUserID());
-        Session workflowSession = serverSession.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
+        Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
         anonymousSession.logout();
         assertEquals("workflowuser", workflowSession.getUserID());
         workflowSession.logout();
@@ -259,13 +249,13 @@ public class RepositoryLoginTest {
     @Test
     public void testLogins() throws RepositoryException {
         for (int count = 1; count <= 1024; count = count << 1) {
-            long t1 = System.currentTimeMillis();
+            //long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
-                sessions[i] = serverSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
                 sessions[i].logout();
             }
-            long t2 = System.currentTimeMillis();
+            //long t2 = System.currentTimeMillis();
             //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
         }
     }
@@ -273,15 +263,15 @@ public class RepositoryLoginTest {
     @Test
     public void testConcurrentLogins() throws RepositoryException {
         for (int count = 1; count <= 1024; count = count << 1) {
-            long t1 = System.currentTimeMillis();
+            //long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
-                sessions[i] = serverSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+                sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
             }
             for (int i = 0; i < count; i++) {
                 sessions[i].logout();
             }
-            long t2 = System.currentTimeMillis();
+            //long t2 = System.currentTimeMillis();
             //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
         }
     }

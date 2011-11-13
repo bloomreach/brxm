@@ -72,6 +72,7 @@ public class RemoteSPITest extends Suite
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
+            TestCase.clear();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);

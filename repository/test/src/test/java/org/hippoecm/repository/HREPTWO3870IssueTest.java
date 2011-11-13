@@ -63,13 +63,11 @@ public class HREPTWO3870IssueTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
-        // add test specific setup code here
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        // add test specific teardown code here
         super.tearDown();
     }
 
@@ -115,9 +113,9 @@ public class HREPTWO3870IssueTest extends TestCase {
             while (iter.hasNext()) {
                 iter.nextNode().getPath();
             }
-            fail("Please resolve HREPTWO-33870");
+            fail("Please resolve HREPTWO-3870");
         } catch (RepositoryException e) {
-            log.warn("Issue HREPTWO-33870 is not yet solved, error: {}: {}", e.getClass().getName(), e.getMessage());
+            log.warn("Issue HREPTWO-3870 is not yet solved, error: {}: {}", e.getClass().getName(), e.getMessage());
         }
     }
 }

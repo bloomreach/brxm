@@ -34,8 +34,11 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import com.atomikos.icatch.jta.UserTransactionManager;
+import org.hippoecm.repository.TestCase;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,9 +49,21 @@ public class SampleRemoteWorkflowTest {
     private HippoRepositoryServer backgroundServer;
     private HippoRepository server;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        TestCase.clear();
+        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
+    }
+    
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        TestCase.clear();
+        HippoRepositoryFactory.setDefaultRepository((String)null);
+        System.clearProperty("com.atomikos.icatch.file");
+    }
+
     @Before
     public void setUp() throws Exception {
-        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);

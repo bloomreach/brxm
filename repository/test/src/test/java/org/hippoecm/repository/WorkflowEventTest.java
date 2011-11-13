@@ -95,7 +95,7 @@ public class WorkflowEventTest extends TestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp(false);
         root = session.getRootNode();
         while (root.hasNode("test")) {
             root.getNode("test").remove();

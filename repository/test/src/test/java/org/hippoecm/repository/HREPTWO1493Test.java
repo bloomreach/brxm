@@ -121,26 +121,6 @@ public class HREPTWO1493Test extends TestCase {
 
         node = traverse(session, "/test/docs/doc/doc");
         assertEquals("changed", node.getProperty("hippo:x").getString());
-
-        restart();
-
-        /*
-        node = traverse(session, "/test/virtual/doc/doc");
-        assertNotNull(node);
-        assertEquals("changed", node.getProperty("hippo:x").getString());
-        node.setProperty("hippo:x", "invalid");
-        node.save();
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        node = traverse(session, "/test/docs/doc/doc");
-        assertEquals("changed", node.getProperty("hippo:x").getString());
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        */
-
         node = traverse(session, "/test/virtual/doc/doc");
         assertNotNull(node);
         assertEquals("changed", node.getProperty("hippo:x").getString());
@@ -154,17 +134,5 @@ public class HREPTWO1493Test extends TestCase {
 
         node = traverse(session, "/test/docs/doc/doc");
         assertEquals("reset", node.getProperty("hippo:x").getString());
-    }
-
-    private void restart() throws RepositoryException {
-        session.refresh(false);
-        session.logout();
-        server.close();
-        try {
-            Thread.sleep(1000);
-        } catch(InterruptedException ex) {
-        }
-        server = HippoRepositoryFactory.getHippoRepository();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
 }
