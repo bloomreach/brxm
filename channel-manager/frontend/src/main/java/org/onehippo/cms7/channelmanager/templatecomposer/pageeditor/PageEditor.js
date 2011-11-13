@@ -69,6 +69,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     xtype: 'Hippo.ChannelManager.TemplateComposer.Notification',
                     alignToElementId: 'pageEditorToolbar',
                     message: config.resources['previous-live-msg']
+                },
+                {
+                    id: 'icon-toolbar-window',
+                    xtype: 'Hippo.ChannelManager.TemplateComposer.IconToolbarWindow',
+                    alignToElementId: 'pageEditorToolbar',
+                    resources: config.resources
                 }
             ]
         });
@@ -111,23 +117,23 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         // exception occurred during loading: hide everything
         if (pageContext === null) {
             toolbar.doLayout();
-            if (this.mainWindow) {
-                this.mainWindow.hide();
+            if (this.propertiesWindow) {
+                this.propertiesWindow.hide();
             }
             return;
         }
 
         if (!this.pageContainer.previewMode) {
-            if (!this.mainWindow) {
-                this.mainWindow = this.createMainWindow(pageContext.ids.mountId);
+            if (!this.propertiesWindow) {
+                this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
             }
 
             var toolkitGrid = Ext.getCmp('ToolkitGrid');
             toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
 
-            var propertiesPanel = Ext.getCmp('componentPropertiesPanel');
-            propertiesPanel.clearPanel();
+            this.propertiesWindow.hide();
 
+            var toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
             toolbar.add({
                 text: this.initialConfig.resources['close-button'],
                 iconCls: 'save-close-channel',
@@ -174,6 +180,31 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             },
             {
+                id: 'toolkit-window-button',
+                text: (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
+                mode: (toolboxVisible ? 'hide' : 'show'),
+                allowDepress: false,
+                width: 120,
+                listeners: {
+                    click: {
+                        fn: function() {
+                            var toolkitWindow = Ext.getCmp('icon-toolbar-window');
+                            var button = Ext.getCmp('toolkit-window-button');
+                            if (button.mode === 'show') {
+                                toolkitWindow.show();
+                                button.mode = 'hide';
+                                button.setText(this.initialConfig.resources['close-components-button']);
+                            } else {
+                                toolkitWindow.hide();
+                                button.mode = 'show';
+                                button.setText(this.initialConfig.resources['add-components-button']);
+                            }
+                        },
+                        scope: this
+                    }
+                }
+            },
+            {
                 cls: 'toolbarMenuIcon',
                 iconCls: 'channel-gear',
                 allowDepress: false,
@@ -196,7 +227,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             });
 
             Ext.getCmp('previousLiveNotification').hide();
-            this.mainWindow.show();
         } else {
             if (this.pageContainer.canEdit) {
                 toolbar.add({
@@ -225,14 +255,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 });
             }
 
-            if (this.mainWindow) {
-                this.mainWindow.hide();
+            if (this.propertiesWindow) {
+                this.propertiesWindow.hide();
             }
             if (this.pageContainer.pageContext.hasPreviewHstConfig) {
                 Ext.getCmp('previousLiveNotification').show();
             } else {
                 Ext.getCmp('previousLiveNotification').hide();
             }
+            Ext.getCmp('icon-toolbar-window').hide();
         }
 
         toolbar.doLayout();
@@ -293,12 +324,13 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }, this);
     },
 
-    createMainWindow : function(mountId) {
+    createPropertiesWindow : function(mountId) {
         var window1 = new Hippo.ux.window.FloatingWindow({
-            title: this.resources['main-window-title'],
-            x:10, y: 65,
+            id: 'componentPropertiesWindow',
+            title: this.resources['properties-window-default-title'],
+            x:10, y: 120,
             width: 310,
-            height: 650,
+            height: 350,
             initRegion: 'right',
             layout: 'border',
             closable: false,
@@ -309,33 +341,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             constrain: true,
             hidden: true,
             items: [
-                {
-                    xtype: 'h_base_grid',
-                    flex:2,
-                    region: 'north',
-                    height: 300,
-                    id: 'ToolkitGrid',
-                    title: this.resources['toolkit-grid-title'],
-                    cm: new Ext.grid.ColumnModel({
-                        columns: [
-                            {
-                                header: this.resources['toolkit-grid-column-header-name'],
-                                dataIndex: 'name',
-                                id:'name',
-                                viewConfig : {
-                                    width: 40
-                                }
-                            }
-                        ],
-                        defaults: {
-                            sortable: true,
-                            menuDisabled: true
-                        }
-                    }),
-                    plugins: [
-                        Hippo.ChannelManager.TemplateComposer.DragDropOne
-                    ]
-                },
                 {
                     id: 'componentPropertiesPanel',
                     xtype:'h_properties_panel',
@@ -354,8 +359,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     showProperties : function(record) {
         var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
         componentPropertiesPanel.setItemId(record.get('id'));
-        componentPropertiesPanel.setTitle(record.get('name'));
         componentPropertiesPanel.reload();
+        if (this.propertiesWindow) {
+            this.propertiesWindow.setTitle(record.get('name'));
+            this.propertiesWindow.show();
+        }
     },
 
     refreshIframe: function() {

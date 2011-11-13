@@ -2,8 +2,6 @@ package org.onehippo.cms7.channelmanager.templatecomposer.plugins;
 
 public class PluginsBundle {
 
-    public static final String BASE_GRID = "basegrid/BaseGrid.js";
-
     public static final String COLOR_FIELD = "colorfield/colorfield.js";
 
     public static final String FLOATING_WINDOW = "floatingwindow/FloatingWindow.js";

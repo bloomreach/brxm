@@ -2,9 +2,13 @@ package org.onehippo.cms7.channelmanager.templatecomposer.pageeditor;
 
 public class PageEditorBundle {
 
-    public static final String PAGE_EDITOR_CSS = "PageEditor.css";
+    public static final String ICON_GRID_VIEW = "IconGridView.js";
 
-    public static final String DRAGDROPONE = "DragDropOne.js";
+    public static final String TOOLKIT_GRID_PANEL = "ToolkitGridPanel.js";
+
+    public static final String ICON_TOOLBAR_WINDOW = "IconToolbarWindow.js";
+
+    public static final String DRAG_DROP_ONE = "DragDropOne.js";
 
     public static final String NOTIFICATION = "Notification.js";
 

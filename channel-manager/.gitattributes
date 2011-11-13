@@ -59,6 +59,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/Templat
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/components.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
@@ -76,6 +78,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js -text
@@ -84,9 +88,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageedi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModelStore.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PropertiesPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/PluginsBundle.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/basegrid/BaseGrid.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/gradient.png -text

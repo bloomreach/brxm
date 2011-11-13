@@ -25,7 +25,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
             autoScroll:true,
             labelWidth: 100,
             labelSeparator: '',
-            title: this.resources['properties-panel-default-title'],
             defaults:{
                 width: 170,
                 anchor: '100%'

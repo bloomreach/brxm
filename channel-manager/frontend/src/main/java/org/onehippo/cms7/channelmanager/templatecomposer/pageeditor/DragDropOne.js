@@ -83,7 +83,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     var curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
                     var curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
                     //TODO: implement dynamic fetch of toolbar height to adjust pageY
-                    curY -= 27;
+                    curY -= 77;
 
                     for (var i = 0; i < self.boxs.length; i++) {
                         var item = self.boxs[i], box = item.box;
