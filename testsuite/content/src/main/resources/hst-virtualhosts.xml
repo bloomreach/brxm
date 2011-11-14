@@ -98,6 +98,12 @@
           <sv:property sv:name="hst:isSite" sv:type="Boolean">
             <sv:value>false</sv:value>
           </sv:property>
+          <sv:property sv:name="hst:showcontextpath" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:showport" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
           <sv:property sv:name="hst:namedpipeline" sv:type="String">
             <sv:value>CmsRestPipeline</sv:value>
           </sv:property>
