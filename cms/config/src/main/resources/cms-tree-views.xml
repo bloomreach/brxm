@@ -100,9 +100,6 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="contextmenu.rightclick.enabled" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
 
       <!-- Wicket tree helper properties -->
       <sv:property sv:name="bind.to.layout.unit" sv:type="String">
