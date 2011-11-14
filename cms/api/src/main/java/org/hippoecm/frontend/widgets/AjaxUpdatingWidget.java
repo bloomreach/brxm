@@ -64,11 +64,6 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
                 protected void onUpdate(AjaxRequestTarget target) {
                     AjaxUpdatingWidget.this.onUpdate(target);
                 }
-
-                @Override
-                protected String getChannelName() {
-                    return "auc|s";
-                }
             });
         } else {
             component.add(new OnChangeAjaxBehavior() {
@@ -76,11 +71,6 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     AjaxUpdatingWidget.this.onUpdate(target);
-                }
-
-                @Override
-                protected String getChannelName() {
-                    return "auc|s";
                 }
 
             }.setThrottleDelay(throttleDelay));
