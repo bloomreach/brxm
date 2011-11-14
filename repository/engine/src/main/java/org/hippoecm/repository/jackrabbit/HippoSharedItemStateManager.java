@@ -20,8 +20,10 @@ import java.util.List;
 
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.ItemId;
+import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
@@ -32,6 +34,7 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.replication.ReplicationUpdateEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,5 +120,20 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         synchronized (updateListeners) {
             updateListeners.remove(listener);
         }
+    }
+
+    @Override
+    public boolean hasItemState(final ItemId id) {
+        if (id.denotesNode()) {
+            if (id instanceof HippoNodeId) {
+                return false;
+            }
+        } else {
+            PropertyId propertyId = (PropertyId) id;
+            if (propertyId.getParentId() instanceof HippoNodeId) {
+                return false;
+            }
+        }
+        return super.hasItemState(id);
     }
 }
