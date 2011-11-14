@@ -537,8 +537,8 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("As the contextPath '/mycontextpath' matches the configured one of Mount 'examplecontextpathonly', we expect the Mount to have the name 'examplecontextpathonly'",mount.getMount().getName().equals("examplecontextpathonly"));
                 
                 // now change the contextPath to be unequal to the 'hst:onlyforcontextpath = /mycontextpath'. The Mount should be the hst:root Mount now
-                request.setRequestURI("/mywrongpath/examplecontextpathonly/home");
-                request.setContextPath("/mywrongpath");
+                request.setRequestURI("/site/examplecontextpathonly/home");
+                request.setContextPath("/site");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                

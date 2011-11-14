@@ -87,15 +87,14 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
             position++;
         }
         
-        // ensure "valid" matching ROOT contextPath which could be derived as "" -> turn it into "/"
-        if (contextPath != null && contextPath.length() == 0) {
-        	contextPath = "/";
-        }
-        
-        // let's find a Mount that has a valid 'onlyForContextPath' : if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent Mount until we have a valid one or have a Mount that is null
-        while(mount != null && contextPath != null && (mount.onlyForContextPath() != null && !mount.onlyForContextPath().equals(contextPath) )) {
-            log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Let's try parent Mount's if present.'"+mount.onlyForContextPath()+"' ", mount.getName(), contextPath);
-            mount = mount.getParent();
+        if(contextPath != null && contextPath.length() != 0) {
+            // Check if the Mount that has a valid 'onlyForContextPath' : 
+            // if onlyForContextPath is not null && not equal to the contextPath, we need to try the parent Mount 
+            // until we have a valid one or have a Mount that is null
+            while(mount != null && contextPath != null && (mount.onlyForContextPath() != null && !mount.onlyForContextPath().equals(contextPath) )) {
+                log.debug("Mount '{}' cannot be used because the contextPath '{}' is not valid for this Mount, because it is only for context path. Let's try parent Mount's if present.'"+mount.onlyForContextPath()+"' ", mount.getName(), contextPath);
+                mount = mount.getParent();
+            }
         }
         
         if(mount == null) {
