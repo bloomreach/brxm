@@ -16,7 +16,7 @@
 package org.hippoecm.repository.decorating;
 
 import javax.jcr.Node;
-import org.junit.Ignore;
+import javax.jcr.Session;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +45,62 @@ public class MirrorTest extends TestCase {
         "/test/documents/test5", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
         "/test/documents/test5/test5", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument"
+        "jcr:mixinTypes", "hippo:harddocument",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured",
+        "/test/documents/testmore", "nt:unstructured"
     };
 
     private static String[] contents2 = new String[] {
@@ -89,7 +144,26 @@ public class MirrorTest extends TestCase {
         assertNotNull(n.getNode(n.getName()).getProperty("hippo:uuid"));
     }
 
-    @Ignore
+    /**
+     * This tests whether when creating new sessions, each accessing a
+     * virtual tree and then logging out, all memory is released.  Due
+     * to an issue when upgrading to jackrabbit 2.2.9 this was not the
+     * case.  This test by default does not go out of memory, you
+     * either need to limit the maximum amount of memory to 32Mb, or
+     * increase the iteration count a lot.  This means that this unit
+     * test is better suited for an integration or long running test suite.
+     */
+    @Test
+    public void testREPO246() throws Exception {
+        for(int i=0; i<2500; i++) {
+            Session newSession;
+            newSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            newSession.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test1");
+            newSession.logout();
+        }
+    }
+
+    @Test
     public void testMirror() throws Exception {
         assertNotNull(session.getRootNode());
         assertTrue(session.getRootNode().hasNode("test/navigation"));
@@ -114,7 +188,7 @@ public class MirrorTest extends TestCase {
         assertFalse(session.getRootNode().getNode("test/navigation").getNode("mirror").hasNode("test1[2]"));
     }
     
-    @Ignore
+    @Test
     public void testSubTypeMirror() throws Exception {        
         assertTrue(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").hasProperty("hippo:docbase"));
         assertNotNull(session.getRootNode().getNode("test/navigation").getNode("subtypemirror").getProperty("hippo:docbase"));
