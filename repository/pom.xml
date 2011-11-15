@@ -18,13 +18,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>7</version>
+    <version>9-alpha</version>
   </parent>
 
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>2.21.05-SNAPSHOT</version>
+  <version>2.21.06-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <repositories>
