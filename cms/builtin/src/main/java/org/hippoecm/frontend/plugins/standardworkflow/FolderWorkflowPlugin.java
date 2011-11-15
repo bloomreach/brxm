@@ -305,6 +305,9 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                 if (targetName == null || "".equals(targetName)) {
                                     throw new IllegalArgumentException("You need to enter a name");
                                 }
+                                if (uriName == null || "".equals(uriName)) {
+                                    throw new IllegalArgumentException("You need to enter a URL name");
+                                }
                                 if (workflow != null) {
                                     if (!prototypes.get(category).contains(prototype)) {
                                         log.error("unknown folder type " + prototype);
@@ -481,7 +484,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 
             });
             nameComponent.setRequired(true);
-            nameComponent.setLabel(new StringResourceModel("name-label", FolderWorkflowPlugin.this, null));
+            nameComponent.setLabel(new StringResourceModel("name-label", this, null));
             AjaxEventBehavior behavior;
             nameComponent.add(behavior = new OnChangeAjaxBehavior() {
                 @Override
@@ -555,6 +558,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     return uriModified ? "grayedin" : "grayedout";
                 }
             }));
+            uriComponent.setRequired(true);
+            uriComponent.setLabel(new StringResourceModel("url-label", this, null));
             uriComponent.setOutputMarkupId(true);
             
             AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
@@ -563,7 +568,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     uriModified = !uriModified;
                     if (!uriModified) {
                         uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(nameModel.getObject()));
-                    }else {
+                        uriComponent.modelChanged();
+                    } else {
                         target.focusComponent(uriComponent);
                     }
                     target.addComponent(AddDocumentDialog.this);
