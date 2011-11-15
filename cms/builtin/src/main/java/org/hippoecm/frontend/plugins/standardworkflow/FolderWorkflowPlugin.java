@@ -652,12 +652,15 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             setFocus(nameComponent);
             add(nameComponent);
 
-            add(uriComponent = new TextField<String>("uriinput", uriModel) {
+            uriComponent = new TextField<String>("uriinput", uriModel) {
                 @Override
                 public boolean isEnabled() {
                     return uriModified;
                 }
-            });
+            };
+
+            uriComponent.setLabel(new StringResourceModel("url-label", FolderWorkflowPlugin.this, null));
+            add(uriComponent);
 
             uriComponent.add(new CssClassAppender(new AbstractReadOnlyModel<String>() {
                 @Override
@@ -666,6 +669,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 }
             }));
             uriComponent.setOutputMarkupId(true);
+            uriComponent.setRequired(true);
 
             AjaxLink<Boolean> uriAction = new AjaxLink<Boolean>("uriAction") {
                 @Override
@@ -674,6 +678,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                     if (!uriModified) {
                         uriModel.setObject(Strings.isEmpty(nameModel.getObject()) ? "" : getNodeNameCodec().encode(
                                 nameModel.getObject()));
+                        uriComponent.modelChanged();
                     } else {
                         target.focusComponent(uriComponent);
                     }
