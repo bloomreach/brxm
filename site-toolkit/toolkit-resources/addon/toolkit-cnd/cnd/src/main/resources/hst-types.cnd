@@ -193,7 +193,7 @@
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
 // when this mount is only applicable for certain contextpath, add this property containing the contextpath that 
-// is allowed (must start with '/' and no further '/' is allowed)
+// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
 - hst:onlyforcontextpath (string)
 // for embedded delegation of sites a mountpath needs to point to the delegated mount. This is only relevant for portal environment
 - hst:embeddedmountpath
@@ -249,7 +249,7 @@
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 // when the mounts for this host is only applicable for certain contextpath, add this property containing the contextpath that 
-// is allowed (must start with '/' and no further '/' is allowed)
+// is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
 - hst:onlyforcontextpath (string)
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
@@ -272,7 +272,8 @@
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
 // The default contextpath for this webapp. If configured, this will be the value 
-// for the 'hst:onlyforcontextpath' for the hst:mounts. It must start with '/' and no further '/' is allowed
+// for the 'hst:onlyforcontextpath' for the hst:mounts. 
+// (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)

@@ -104,7 +104,7 @@ public interface VirtualHosts {
     /**
      * For external calls like the CMS REST api, an exteran app needs to know what context path to use. Through this getter, 
      * the default context path can be retrieved. If not configured, <code>null</code> is returned and the external app must know
-     * the context path
+     * the context path. . If configured, the contextPath is either an empty String, or it has to start with a "/" and is not allowed to have any other "/".
      * @return the default context path for the webapps or <code>null</code> when not configured
      */
     String getDefaultContextPath();
