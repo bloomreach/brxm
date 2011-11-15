@@ -4,21 +4,21 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>7</version>
+    <version>9-alpha</version>
   </parent>
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>1.01.06-SNAPSHOT</version>
+  <version>1.01.07-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
   <name>Hippo Addon Channel Manager</name>
 
   <properties>
-    <hippo.cms.version>2.21.06-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.23.06-SNAPSHOT</hippo.hst.version>
-    <hippo.repository.version>2.21.05-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.21.07-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>2.23.07-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.21.06-SNAPSHOT</hippo.repository.version>
     <hippo.addon-hst-configuration-editor.version>1.08.06-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
     <junit.version>4.5</junit.version>
