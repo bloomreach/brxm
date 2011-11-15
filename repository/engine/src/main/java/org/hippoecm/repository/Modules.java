@@ -113,6 +113,8 @@ public final class Modules<T extends Object> implements Iterable<T> {
                             }
                         }
                     }
+                } catch (NullPointerException ex) {
+                    log.error("Cannot access manifest " + url.toString(), ex);
                 } catch (IOException ex) {
                     log.error("Cannot access manifest " + url.toString(), ex);
                 } catch (Throwable ex) {
