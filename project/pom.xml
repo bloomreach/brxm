@@ -91,10 +91,18 @@
     <!-- if you want to start remote debugging session suspended
          override on command line with -Dcargo.debug.suspend=y -->
     <cargo.debug.suspend>n</cargo.debug.suspend>
-    <!-- Cargo Tomcat container version and used for Tomcat tarball distribution url -->
+    <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
     <cargo.tomcat.major.version>6</cargo.tomcat.major.version>
-    <!-- Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>6.0.32</cargo.tomcat.full.version>
+    <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
+    <cargo.tomcat.full.version>6.0-latest</cargo.tomcat.full.version>
+    <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.prefix>http://apache.hippo.nl/tomcat/</cargo.tomcat.distribution.url.prefix>
+    <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.archive>tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}</cargo.tomcat.distribution.url.archive>
+    <!-- Cargo Tomcat distribution url postfix used for Tomcat tarball distribution url -->
+    <cargo.tomcat.distribution.url.postfix>.tar.gz</cargo.tomcat.distribution.url.postfix>
+    <!-- Cargo Tomcat full distribution url -->
+    <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
     <!-- Extra JVM arguments to pass to Cargo -->
     <cargo.jvm.args />
     
@@ -942,7 +950,7 @@
                 </systemProperties>
                 <zipUrlInstaller>
                   <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
-                  <url>http://apache.hippo.nl/tomcat/tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}.tar.gz</url>
+                  <url>${cargo.tomcat.distribution.url}</url>
                 </zipUrlInstaller>
                 <timeout>600000</timeout>
                 <dependencies combine.children="append">
