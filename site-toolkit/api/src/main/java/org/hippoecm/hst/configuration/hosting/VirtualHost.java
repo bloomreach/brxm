@@ -131,4 +131,14 @@ public interface VirtualHost {
     
     String getBaseURL(HttpServletRequest request);
 
+    /**
+     * @return the pagenotfound for this {@link Mount} or <code>null</code> when not present
+     */
+    String getPageNotFound();
+    
+    /**
+     * @return whether the version of the HST is in the header of the preview
+     */
+    boolean isVersionInPreviewHeader();
+    
 }

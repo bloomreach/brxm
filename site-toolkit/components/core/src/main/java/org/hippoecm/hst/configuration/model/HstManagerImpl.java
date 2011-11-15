@@ -129,6 +129,12 @@ public class HstManagerImpl implements HstManager {
      */
     private String pathSuffixDelimiter = "./";
     
+    /**
+     * The list of implicit configuration augmenters which can provide extra hst configuration after the {@link VirtualHosts} object 
+     * has been created
+     */
+    List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
+    
 
     private boolean clearAll = false;
     private Map<HstEvent.ConfigurationType, Set<HstEvent>> configChangeEventMap;
@@ -181,6 +187,19 @@ public class HstManagerImpl implements HstManager {
     
     public HstSiteMapMatcher getSiteMapMatcher() {
         return siteMapMatcher;
+    }
+    
+    @Override
+    public List<HstConfigurationAugmenter> getHstConfigurationAugmenters() {
+        return hstConfigurationAugmenters;
+    }
+    
+    /**
+     * Adds <code>hstConfigurationProvider</code> to {@link #hstConfigurationAugmenters}
+     * @param augmenter
+     */
+    public void addHstConfigurationAugmenter(HstConfigurationAugmenter augmenter) {
+        hstConfigurationAugmenters.add(augmenter);
     }
     
     public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
@@ -535,6 +554,10 @@ public class HstManagerImpl implements HstManager {
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
             enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
             this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+            
+            for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
+                configurationAugmenter.augment(this);
+            }
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {

@@ -15,20 +15,11 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import org.hippoecm.hst.configuration.channel.ChannelInfo;
-
-/**
- * Mount extension that decouples channel info retrieval from the mount service construction.
- * It is only safe to use the methods that are exposed while the mount service is built;
- * i.e. with the HstManagerImpl monitor held.
- */
-public interface MutableMount extends Mount {
-
+public interface MutablePortMount extends PortMount {
+ 
     /**
-     * Set the channel info for the mount.  The info must be constant,
-     * i.e. it must always return the same values.
-     * @param info
+     * sets the <code>mount</code> as rootMount for this {@link MutablePortMount}
+     * @param mount the <code>mount</code> to set as rootMount
      */
-    void setChannelInfo(ChannelInfo info);
-
+    void setRootMount(MutableMount mount); 
 }

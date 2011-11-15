@@ -164,7 +164,7 @@ public interface Mount {
      * </p>
      * 
      * @see ResolvedMount#getResolvedMountPath()
-     * @return the mountPoint for this {@link Mount}
+     * @return the mountPoint for this {@link Mount} and <code>null</code> if there is no mountPoint configured (nor inherited)
      */
     String getMountPoint();
     
@@ -382,7 +382,7 @@ public interface Mount {
     
     /**
      * Returns FORM Login Page
-     * @return <code>true</code> if the Mount is authenticated. 
+     * @return the FORM Login Page and <code>null</code> if not configured
      */
     String getFormLoginPage();
     
@@ -421,7 +421,7 @@ public interface Mount {
     <T extends ChannelInfo> T getChannelInfo();
 
     /**
-     * @return the repository path to the channel configuration node.
+     * @return the repository path to the channel configuration node and <code>null</code> if not configured
      */
     String getChannelPath();
 

@@ -42,9 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(MountService.class);
-    
     
     private static final String DEFAULT_TYPE = Mount.LIVE_NAME;
     /**
@@ -86,7 +84,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     /**
      * The child {@link Mount} below this {@link Mount}
      */
-    private Map<String, MountService> childMountServices = new HashMap<String, MountService>();
+    private Map<String, MutableMount> childMountServices = new HashMap<String, MutableMount>();
 
     /**
      * the alias of this {@link Mount}. <code>null</code> if there is no alias property
@@ -344,7 +342,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             if(parent != null) {
                 this.pageNotFound = parent.getPageNotFound();
             } else {
-                this.pageNotFound = ((VirtualHostService)virtualHost).getPageNotFound();
+                this.pageNotFound = virtualHost.getPageNotFound();
             }
         }
         
@@ -356,7 +354,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             if(parent != null) {
                 this.versionInPreviewHeader = parent.isVersionInPreviewHeader();
             } else {
-                this.versionInPreviewHeader = ((VirtualHostService)virtualHost).isVersionInPreviewHeader();
+                this.versionInPreviewHeader = virtualHost.isVersionInPreviewHeader();
             }
         }
         
@@ -531,7 +529,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
                 try {
                     MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
-                    MountService prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
+                    MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
                     if(prevValue != null) {
                         log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
                     }
@@ -547,6 +545,16 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
+    }
+    
+
+    @Override
+    public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+        if(childMountServices.containsKey(mount.getName())) {
+            throw new IllegalArgumentException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
+        }
+        childMountServices.put(mount.getName(), mount);
+        ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(mount);
     }
     
     @Override

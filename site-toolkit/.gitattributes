@@ -15,12 +15,17 @@ api/src/main/java/org/hippoecm/hst/configuration/components/ParametersInfo.java 
 api/src/main/java/org/hippoecm/hst/configuration/components/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/MatchException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/Mount.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/hosting/MutableMount.java -text
+api/src/main/java/org/hippoecm/hst/configuration/hosting/MutablePortMount.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/hosting/MutableVirtualHost.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/hosting/MutableVirtualHosts.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/NotFoundException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/PortMount.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/VirtualHost.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/VirtualHosts.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/internal/ContextualizableMount.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationAugmenter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstManager.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstNode.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstSiteRootNode.java -text svneol=unset#text/plain
@@ -237,6 +242,7 @@ api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/pla
 api/src/site/site.xml -text
 client-modules/cms-rest/pom.xml -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/Implements.java -text
+client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/configuration/model/CmsRestMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text
@@ -463,7 +469,6 @@ components/core/src/main/java/org/hippoecm/hst/configuration/components/Delegati
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountService.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MutableMount.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationEventListener.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstManagerImpl.java -text svneol=unset#text/plain

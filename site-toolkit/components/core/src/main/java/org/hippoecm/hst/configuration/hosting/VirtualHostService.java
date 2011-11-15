@@ -31,12 +31,11 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VirtualHostService implements VirtualHost {
+public class VirtualHostService implements MutableVirtualHost {
     
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
     
-    private Map<String, VirtualHostService> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
+    private Map<String, MutableVirtualHost> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
    
     private String name;
     private String hostName;
@@ -70,7 +69,7 @@ public class VirtualHostService implements VirtualHost {
     private String hostGroupName;
     private VirtualHostService parentHost;
     
-    private Map<Integer, PortMount> portMounts = new HashMap<Integer, PortMount>();
+    private Map<Integer, MutablePortMount> portMounts = new HashMap<Integer, MutablePortMount>();
     
     private boolean contextPathInUrl;
 
@@ -236,7 +235,7 @@ public class VirtualHostService implements VirtualHost {
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
                     Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, 0);
-                    PortMount portMount = new PortMountService(mount, this);
+                    MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'" ,e);
@@ -257,7 +256,7 @@ public class VirtualHostService implements VirtualHost {
                 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
                 try {
-                PortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
+                MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -288,6 +287,23 @@ public class VirtualHostService implements VirtualHost {
         hostName = StringPool.get(buildHostName());
     }
     
+    @Override
+    public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
+        // when the virtualhost already exists, the childVirtualHosts.put will throw an IllegalArgumentException, so we do not
+        // need a separate check
+        childVirtualHosts.put(virtualHost.getName(), virtualHost);
+    }
+    
+
+    @Override
+    public void addPortMount(MutablePortMount portMount) throws IllegalArgumentException {
+        if(portMounts.containsKey(portMount.getPortNumber())) {
+            throw new IllegalArgumentException("Cannot add a portMount for port '"+portMount.getPortNumber()+"' because portMount already exists.");
+        }
+        portMounts.put(portMount.getPortNumber(), portMount);
+    }
+
+
     
     public String getName(){
         return name;

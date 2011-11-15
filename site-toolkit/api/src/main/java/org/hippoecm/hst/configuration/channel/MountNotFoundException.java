@@ -21,6 +21,8 @@ package org.hippoecm.hst.configuration.channel;
  */
 public class MountNotFoundException extends ChannelException {
 
+    private static final long serialVersionUID = 1L;
+
     public MountNotFoundException(String message) {
         super(message);
     }

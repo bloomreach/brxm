@@ -16,15 +16,14 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PortMountService implements PortMount {
+public class PortMountService implements MutablePortMount {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PortMountService.class);
     
     /**
@@ -71,6 +70,11 @@ public class PortMountService implements PortMount {
 
     public Mount getRootMount() {
         return rootMount;
+    }
+
+    @Override
+    public void setRootMount(MutableMount mount) {
+        this.rootMount = mount;
     }
 
 }

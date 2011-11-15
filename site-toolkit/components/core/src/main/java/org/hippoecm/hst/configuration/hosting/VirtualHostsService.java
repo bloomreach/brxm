@@ -38,10 +38,8 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VirtualHostsService implements VirtualHosts {
+public class VirtualHostsService implements MutableVirtualHosts {
     
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsService.class);
 
     private final static String WILDCARD = "_default_";
@@ -49,7 +47,7 @@ public class VirtualHostsService implements VirtualHosts {
     public final static String DEFAULT_SCHEME = "http";
 
     private HstManagerImpl hstManager;
-    private Map<String, Map<String, VirtualHostService>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, VirtualHostService>>();
+    private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, MutableVirtualHost>>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<String, List<Mount>>();
     private Map<String, Mount> mountsByIdentifier = new HashMap<String, Mount>();
@@ -167,7 +165,7 @@ public class VirtualHostsService implements VirtualHosts {
             if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
                 throw new ServiceException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
             }
-            Map<String, VirtualHostService> rootVirtualHosts =  virtualHostHashMap();
+            Map<String, MutableVirtualHost> rootVirtualHosts =  virtualHostHashMap();
             try {
                 rootVirtualHostsByGroup.put(hostGroupNode.getValueProvider().getName(), rootVirtualHosts);
             } catch (IllegalArgumentException e) {
@@ -224,6 +222,21 @@ public class VirtualHostsService implements VirtualHosts {
         }
         
         return false;
+    }
+    
+    @Override
+    public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
+       Map<String, MutableVirtualHost> rootVirtualHosts =  rootVirtualHostsByGroup.get(virtualHost.getHostGroupName());
+       if(rootVirtualHosts == null) {
+           rootVirtualHosts =  virtualHostHashMap();
+           rootVirtualHostsByGroup.put(virtualHost.getHostGroupName(), rootVirtualHosts);
+       }
+       rootVirtualHosts.put(virtualHost.getName(), virtualHost);
+    }
+
+    @Override
+    public Map<String, Map<String, MutableVirtualHost>> getRootVirtualHostsByGroup() {
+        return rootVirtualHostsByGroup;
     }
     
     /**
@@ -325,7 +338,7 @@ public class VirtualHostsService implements VirtualHosts {
             }
         }
         if(host == null) {
-           log.warn("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , getDefaultHostName());
+           log.info("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , getDefaultHostName());
           
         }
         // store in the resolvedMap
@@ -346,7 +359,7 @@ public class VirtualHostsService implements VirtualHosts {
         int depth = requestServerNameSegments.length - 1;
         VirtualHost host = null; 
         PortMount portMount = null; 
-        for(Map<String, VirtualHostService> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
+        for(Map<String, MutableVirtualHost> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
             VirtualHost tryHost = rootVirtualHosts.get(requestServerNameSegments[depth]);
             if(tryHost == null) {
               continue;
@@ -475,8 +488,8 @@ public class VirtualHostsService implements VirtualHosts {
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
-    public final static HashMap<String, VirtualHostService> virtualHostHashMap(){
-        return new DuplicateKeyNotAllowedHashMap<String, VirtualHostService>();
+    public final static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
+        return new DuplicateKeyNotAllowedHashMap<String, MutableVirtualHost>();
     }
     
 
@@ -504,4 +517,6 @@ public class VirtualHostsService implements VirtualHosts {
     public String getChannelMngrSitesNodeName() {
         return channelMngrSitesNodeName;
     }
+
+
 }

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import java.util.List;
+
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -66,5 +68,10 @@ public interface HstManager {
      * @return
      */
     String getPathSuffixDelimiter();
+    
+    /**
+     * @return the {@link List} of {@link HstConfigurationAugmenter}s and empty list if no providers available.
+     */
+    List<HstConfigurationAugmenter> getHstConfigurationAugmenters();
     
 }
