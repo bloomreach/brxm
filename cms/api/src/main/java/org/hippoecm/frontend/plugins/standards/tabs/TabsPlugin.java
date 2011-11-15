@@ -267,7 +267,7 @@ public class TabsPlugin extends RenderPlugin {
         List<Tab> changedTabs = getChangedTabs(ignoredTab);
         if (changedTabs.size() > 0) {
             IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(new CloseAllDialog(changedTabs));
+            dialogService.show(new CloseAllDialog(changedTabs, ignoredTab));
 
         } else {
 
@@ -533,7 +533,7 @@ public class TabsPlugin extends RenderPlugin {
 
     private class CloseAllDialog extends AbstractDialog {
 
-        public CloseAllDialog(final List<Tab> changedTabs) {
+        public CloseAllDialog(final List<Tab> changedTabs, final Tab ignoredTab) {
             super();
             setOkVisible(false);
 
@@ -558,10 +558,9 @@ public class TabsPlugin extends RenderPlugin {
                         } catch (EditorException e) {
                             log.error("Unable to save the document {}", e.getMessage());
                         }
-
-
                     }
                     closeDialog();
+                    TabsPlugin.this.closeAll(ignoredTab, target);
                 }
             };
 
@@ -593,6 +592,7 @@ public class TabsPlugin extends RenderPlugin {
                         }
                     }
                     closeDialog();
+                    TabsPlugin.this.closeAll(ignoredTab, target);
                 }
             };
 
