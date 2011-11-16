@@ -80,6 +80,47 @@
     <sv:property sv:name="service.id" sv:type="String">
       <sv:value>popup.social.media.service</sv:value>
     </sv:property>
+    <sv:node sv:name="facebook">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="display.name" sv:type="String">
+        <sv:value>Facebook</sv:value>
+      </sv:property>
+      <sv:property sv:name="enabled" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="share.url" sv:type="String">
+        <sv:value>http://www.facebook.com/sharer.php?u=</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="linkedin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="display.name" sv:type="String">
+        <sv:value>LinkedIn</sv:value>
+      </sv:property>
+      <sv:property sv:name="enabled" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="share.url" sv:type="String">
+        <sv:value>http://www.linkedin.com/shareArticle?mini=true&amp;url=</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="twitter">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="display.name" sv:type="String">
+        <sv:value>Twitter</sv:value>
+      </sv:property>
+      <sv:property sv:name="enabled" sv:type="String">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="share.url" sv:type="String">
+        <sv:value>http://twitter.com/share?url=</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-
 </sv:node>
