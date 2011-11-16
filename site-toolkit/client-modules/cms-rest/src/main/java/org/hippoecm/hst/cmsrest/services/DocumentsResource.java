@@ -108,18 +108,19 @@ public class DocumentsResource {
                 }
                 document.setMountPath(link.getMount().getMountPath());
                 document.setHostName(link.getMount().getVirtualHost().getHostName());
-                // The preview in the cms always accesses the hst site through the hostname of the cms, but 
-                // adds the contextpath of the website. By default it it site, but, if a different contextpath is 
-                // available for the mount that belons to  the Hstlink, we take that one.
+
+                // The preview in the cms always accesses the hst site through the hostname of the cms, but
+                // adds the contextpath of the website. By default it is site, but if a different contextpath is
+                // available for the mount that belongs to the HstLink, we take that one.
                 if (link.getMount().onlyForContextPath() != null) {
                     document.setContextPath(link.getMount().onlyForContextPath());
                 } else {
-                    // if there is no contextpath configured on the Mount belonging to the HstLink, then we use the contextpath 
+                    // if there is no contextpath configured on the Mount belonging to the HstLink, we use the contextpath
                     // from the current HttpServletRequest
                     document.setContextPath(servletRequest.getContextPath());
                 }
                 
-                // and set the contextpath through which the temlate composer is available
+                // and set the contextpath through which the template composer is available
                 if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
                     document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
                 } else {
@@ -127,7 +128,6 @@ public class DocumentsResource {
                 }
 
                 // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
-                
                 document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
                 
                 channelDocuments.add(document);

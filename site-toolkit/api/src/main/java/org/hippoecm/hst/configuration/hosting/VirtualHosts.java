@@ -20,8 +20,8 @@ import java.util.List;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 
 
@@ -102,9 +102,9 @@ public interface VirtualHosts {
     boolean isContextPathInUrl();
     
     /**
-     * For external calls like the CMS REST api, an exteran app needs to know what context path to use. Through this getter, 
+     * For external calls like the CMS REST api, an external app needs to know what context path to use. Through this getter,
      * the default context path can be retrieved. If not configured, <code>null</code> is returned and the external app must know
-     * the context path. . If configured, the contextPath is either an empty String, or it has to start with a "/" and is not allowed to have any other "/".
+     * the context path. If configured, the contextPath is either an empty string, or it has to start with a "/" and is not allowed to have any other "/".
      * @return the default context path for the webapps or <code>null</code> when not configured
      */
     String getDefaultContextPath();
