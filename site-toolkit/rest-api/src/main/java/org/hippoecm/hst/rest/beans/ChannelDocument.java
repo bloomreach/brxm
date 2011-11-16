@@ -215,5 +215,13 @@ public class ChannelDocument implements Serializable {
     public static boolean equals(String str1, String str2) {
         return str1 == null ? str2 == null : str1.equals(str2);
     }
+
+    @Override
+    public String toString() {
+        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", contextPath="
+                + contextPath + ", pathInfo=" + pathInfo + ", mountPath=" + mountPath + ", hostName=" + hostName
+                + ", cmsPreviewPrefix=" + cmsPreviewPrefix + "]";
+    }
+    
     
 }
