@@ -218,9 +218,9 @@ public class ChannelDocument implements Serializable {
 
     @Override
     public String toString() {
-        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", contextPath="
-                + contextPath + ", pathInfo=" + pathInfo + ", mountPath=" + mountPath + ", hostName=" + hostName
-                + ", cmsPreviewPrefix=" + cmsPreviewPrefix + "]";
+        return "ChannelDocument [channelId=" + channelId + ", channelName=" + channelName + ", hostName=" + hostName
+                + ", contextPath=" + contextPath + ", cmsPreviewPrefix=" + cmsPreviewPrefix + ", mountPath="
+                + mountPath + ", pathInfo=" + pathInfo + "]";
     }
     
     
