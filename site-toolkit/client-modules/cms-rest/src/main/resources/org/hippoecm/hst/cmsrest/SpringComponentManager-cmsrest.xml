@@ -96,7 +96,11 @@
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
-        <bean class="org.hippoecm.hst.cmsrest.configuration.model.CmsRestMountAndVirtualHostAugmenter"/>
+        <bean class="org.hippoecm.hst.cmsrest.configuration.model.CmsRestMountAndVirtualHostAugmenter">
+           <property name="cmsRestMountName" value="_cmsrest"/>
+           <property name="cmsRestHostName" value="127.0.0.1"/>
+           <property name="cmsRestMountNamedPipeline" value="CmsRestPipeline"/>
+        </bean>
     </property>
- </bean>
+  </bean>
 </beans>

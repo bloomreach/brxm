@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -34,12 +36,14 @@ import org.slf4j.LoggerFactory;
 public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugmenter {
 
     private static final Logger log = LoggerFactory.getLogger(CmsRestMountAndVirtualHostAugmenter.class);
-  
+
     private final static String DEFAULT_CMS_REST_MOUNT_NAME = "_cmsrest";
+    private final static String DEFAULT_CMS_REST_HOST_NAME = "127.0.0.1";
     private final static String DEFAULT_CMS_REST_MOUNT_NAMED_PIPELINE = "CmsRestPipeline";
     
     private String cmsRestMountName = DEFAULT_CMS_REST_MOUNT_NAME;
     private String cmsRestMountNamedPipeline = DEFAULT_CMS_REST_MOUNT_NAMED_PIPELINE;
+    private String cmsRestHostName = DEFAULT_CMS_REST_HOST_NAME;
     
 
     public void setCmsRestMountName(String cmsRestMountName) {
@@ -49,6 +53,10 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
     public void setCmsRestMountNamedPipeline(String cmsRestMountNamedPipeline) {
         this.cmsRestMountNamedPipeline = cmsRestMountNamedPipeline;
     }
+    
+    public void setCmsRestHostName(String cmsRestHostName) {
+        this.cmsRestHostName = cmsRestHostName;
+    }
 
     @Override
     public void augment(HstManager manager) throws RepositoryNotAvailableException {
@@ -57,38 +65,44 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
                log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts. The VIEW / GOTO button in cms will not work", this.getClass().getName());
                return;
            } 
+           if(StringUtils.isEmpty(cmsRestHostName)) {
+               log.error("{} can only work when the cmsRestHostName is not null or empty. The VIEW / GOTO button in cms will not work", this.getClass().getName());
+               return;
+           }
            MutableVirtualHosts hosts = (MutableVirtualHosts) manager.getVirtualHosts();
-           
+            
+           // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
+           String[] hostSegments = cmsRestHostName.split("\\.");
+           ArrayUtils.reverse(hostSegments);
+           System.out.println("!!");
+           System.out.println("!!");
            VirtualHost cmsHost = null;
            // try to find the 127.0.0.1 host. If not present, it needs to be added entirely
            for(Map<String, MutableVirtualHost> rootVirtualHostMap :  hosts.getRootVirtualHostsByGroup().values()) {
-               cmsHost = rootVirtualHostMap.get("1");
-               if (cmsHost == null) {
-                   // cmsHost 127.0.0.1 does not yet exist
-                   continue;
+               System.out.println("!!");
+               int i = 0;
+               cmsHost = null;
+               while(i < hostSegments.length) {
+                   if (i == 0) {
+                       cmsHost = rootVirtualHostMap.get(hostSegments[i]);
+                   } else {
+                       cmsHost = cmsHost.getChildHost(hostSegments[i]); 
+                   }
+                   if (cmsHost == null) {
+                       // cmsRestHostName does not yet exist in this hostGroup
+                       break;
+                   }
+                   i++;
                }
-               cmsHost = cmsHost.getChildHost("0");
-               if (cmsHost == null) {
-                   // cmsHost 127.0.0.1 does not yet exist
-                   continue;
+               
+               if(cmsHost != null) {
+                   // We have found the correct cmsHost Stop
+                   break;
                }
-               cmsHost = cmsHost.getChildHost("0");
-               if (cmsHost == null) {
-                   // cmsHost 127.0.0.1 does not yet exist
-                   continue;
-               }
-               cmsHost = cmsHost.getChildHost("127");
-               if (cmsHost == null) {
-                   // cmsHost 127.0.0.1 does not yet exist
-                   continue;
-               }
-               // We have found the cmsHost 127.0.0.1. Stop
-               break;
            }
           
            if (cmsHost == null) {
-               // add the 127.0.0.1 host + mount
-               String[] hostSegments = {"1", "0", "0", "127"};
+               // add the cmsRestHostName + mount
                MutableVirtualHost cmsVirtualHost = new CmsRestVirtualHost(manager.getVirtualHosts(), hostSegments, 0);
                hosts.addVirtualHost(cmsVirtualHost);
            } else if (cmsHost instanceof MutableVirtualHost){
