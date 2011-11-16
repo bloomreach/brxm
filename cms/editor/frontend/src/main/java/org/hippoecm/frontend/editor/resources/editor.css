@@ -66,8 +66,7 @@
   border: 1px dashed #D9D9D9;
 }
 
-.hippo-editor .hippo-editor-field-subfield a,
-.hippo-editor .hippo-editor-field-subfield {
+.hippo-editor .hippo-editor .hippo-editor-field-subfield {
   background-color: #FDFDFD;
   color: #555;
 }
