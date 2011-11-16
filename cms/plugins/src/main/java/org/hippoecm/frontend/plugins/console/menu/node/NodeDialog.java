@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -68,23 +69,27 @@ public class NodeDialog extends AbstractDialog<Node> {
         try {
             NodeType pnt = node.getPrimaryNodeType();
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
-                for (NodeType nt : nd.getRequiredPrimaryTypes()) {
-                    if (!nt.isAbstract()) {
-                        addNodeType(nd, nt);
-                    }
-                    for (NodeType subnt : getDescendentNodeTypes(nt)) {
-                        addNodeType(nd, subnt);
+                if (!nd.isProtected()) {
+                    for (NodeType nt : nd.getRequiredPrimaryTypes()) {
+                        if (!nt.isAbstract()) {
+                            addNodeType(nd, nt);
+                        }
+                        for (NodeType subnt : getDescendentNodeTypes(nt)) {
+                            addNodeType(nd, subnt);
+                        }
                     }
                 }
             }
             for (NodeType nt : node.getMixinNodeTypes()) {
                 for (NodeDefinition nd : nt.getChildNodeDefinitions()) {
-                    for (NodeType cnt : nd.getRequiredPrimaryTypes()) {
-                        if (!cnt.isAbstract()) {
-                            addNodeType(nd, cnt);
-                        }
-                        for (NodeType subnt : getDescendentNodeTypes(cnt)) {
-                            addNodeType(nd, subnt);
+                    if (!nd.isProtected()) {
+                        for (NodeType cnt : nd.getRequiredPrimaryTypes()) {
+                            if (!cnt.isAbstract()) {
+                                addNodeType(nd, cnt);
+                            }
+                            for (NodeType subnt : getDescendentNodeTypes(cnt)) {
+                                addNodeType(nd, subnt);
+                            }
                         }
                     }
                 }
@@ -129,7 +134,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                Collection<String> result = new HashSet<String>();
+                Collection<String> result = new TreeSet<String>();
                 if (name != null && !name.isEmpty()) {
                     if (namesToTypes.get(name) != null) {
                         result.addAll(namesToTypes.get(name));
@@ -162,11 +167,13 @@ public class NodeDialog extends AbstractDialog<Node> {
             @Override
             public String getObject() {
                 if (type != null && typesToNames.containsKey(type)) {
-                    Collection<String> names = typesToNames.get(type);
-                    if (names.size() == 1) {
-                        String _name = names.iterator().next();
-                        if (name == null && !_name.equals("*")) {
-                            name = _name;
+                    if (name == null) {
+                        Collection<String> names = typesToNames.get(type);
+                        if (names.size() == 1) {
+                            String _name = names.iterator().next();
+                            if (!_name.equals("*")) {
+                                name = _name;
+                            }
                         }
                     }
                 }
@@ -192,7 +199,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<String> getChoices(String input) {
-                Collection<String> result = new HashSet<String>();
+                Collection<String> result = new TreeSet<String>();
                 if (type != null && !type.isEmpty()) {
                     if (typesToNames.get(type) != null) {
                         result.addAll(typesToNames.get(type));
