@@ -74,8 +74,6 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
            // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
            String[] hostSegments = cmsRestHostName.split("\\.");
            ArrayUtils.reverse(hostSegments);
-           System.out.println("!!");
-           System.out.println("!!");
            VirtualHost cmsHost = null;
            // try to find the 127.0.0.1 host. If not present, it needs to be added entirely
            for(Map<String, MutableVirtualHost> rootVirtualHostMap :  hosts.getRootVirtualHostsByGroup().values()) {
