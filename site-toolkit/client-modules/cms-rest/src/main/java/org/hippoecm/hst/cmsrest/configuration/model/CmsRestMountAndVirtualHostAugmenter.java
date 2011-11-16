@@ -77,7 +77,6 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
            VirtualHost cmsHost = null;
            // try to find the 127.0.0.1 host. If not present, it needs to be added entirely
            for(Map<String, MutableVirtualHost> rootVirtualHostMap :  hosts.getRootVirtualHostsByGroup().values()) {
-               System.out.println("!!");
                int i = 0;
                cmsHost = null;
                while(i < hostSegments.length) {
