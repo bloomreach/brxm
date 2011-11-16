@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -109,6 +110,12 @@ public abstract class NodeRepresentation {
     	}
     }
     
+    /**
+     * {@link #getRequestContext()} is a utility method that should not be serialized/deserialized hence the 
+     * {@link XmlTransient} annotation
+     * @return
+     */
+    @XmlTransient
     protected HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
     }
