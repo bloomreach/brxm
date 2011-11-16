@@ -47,7 +47,7 @@
 + * (hippo:document) = hippo:document multiple version
 + hippo:request (hippo:request) multiple ignore
 
-[hippo:hardhandle] > mix:versionable, mix:lockable mixin
+[hippo:hardhandle] > mix:versionable mixin
 
 [hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
 - hippo:paths (string) multiple mandatory
