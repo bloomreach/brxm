@@ -90,6 +90,7 @@ abstract public class AbstractJavascriptTest {
         root.setResourceBase(".");
         root.addServlet(DefaultServlet.class, "/*");
         root.addServlet(ResourceServlet.class, "/resources/*");
+        root.setClassLoader(getClass().getClassLoader());
         root.getSessionHandler().getSessionManager().setSessionURL("none");
 
         server.start();
