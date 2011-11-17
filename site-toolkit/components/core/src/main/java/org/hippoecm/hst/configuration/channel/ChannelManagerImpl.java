@@ -215,8 +215,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             channels = new HashMap<String, Channel>();
             
-            hostGroup = virtualHosts.getChannelMngrVirtualHostGroupNodeName();
-            sites = virtualHosts.getChannelMngrSitesNodeName();
+            hostGroup = virtualHosts.getChannelManagerHostGroupName();
+            sites = virtualHosts.getChannelManagerSitesName();
             
             if(hostGroup == null) {
                 log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");

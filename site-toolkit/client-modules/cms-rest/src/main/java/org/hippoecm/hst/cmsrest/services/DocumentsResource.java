@@ -78,7 +78,7 @@ public class DocumentsResource {
         if (handle == null) {
             return Collections.emptyList();
         }
-        String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelMngrVirtualHostGroupNodeName();
+        String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, hostGroupNameForChannelMngr);
         List<ChannelDocument> channelDocuments = new ArrayList<ChannelDocument>(canonicalLinks.size());
 

@@ -161,11 +161,11 @@ public interface VirtualHosts {
       *
       * @return the virtual host group node name used for this {@link VirtualHosts}. If not configured it returns <code>null</code>
       */
-     String getChannelMngrVirtualHostGroupNodeName();
+     String getChannelManagerHostGroupName();
      
      /**
       * @return the node name of the hst:sites that will be managed by the {@link ChannelManager}. If not configured it returns <code>hst:sites</code>
       */
-     String getChannelMngrSitesNodeName();
+     String getChannelManagerSitesName();
     
 }

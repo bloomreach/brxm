@@ -509,12 +509,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public String getChannelMngrVirtualHostGroupNodeName() {
+    public String getChannelManagerHostGroupName() {
         return channelMngrVirtualHostGroupNodeName;
     }
 
     @Override
-    public String getChannelMngrSitesNodeName() {
+    public String getChannelManagerSitesName() {
         return channelMngrSitesNodeName;
     }
 

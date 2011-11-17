@@ -333,8 +333,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         mounts = new LinkedList<Mount>();
         expect(vhosts.getMountsByHostGroup("dev-localhost")).andReturn(mounts).anyTimes();
         expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
-        expect(vhosts.getChannelMngrVirtualHostGroupNodeName()).andReturn("dev-localhost").anyTimes();
-        expect(vhosts.getChannelMngrSitesNodeName()).andReturn("hst:sites").anyTimes();
+        expect(vhosts.getChannelManagerHostGroupName()).andReturn("dev-localhost").anyTimes();
+        expect(vhosts.getChannelManagerSitesName()).andReturn("hst:sites").anyTimes();
         
         testHost = createNiceMock(VirtualHost.class);
         
