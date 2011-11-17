@@ -24,7 +24,7 @@ class ChannelResourceModel extends LoadableDetachableModel<String> {
     static String getChannelResourceValue(Channel channel, String key) {
         if (StringUtils.isNotEmpty(key)) {
             ResourceBundle bundle = ChannelUtil.getResourceBundle(channel);
-            if (bundle != null) {
+            if (bundle != null && bundle.containsKey(key)) {
                 return bundle.getString(key);
             }
         }

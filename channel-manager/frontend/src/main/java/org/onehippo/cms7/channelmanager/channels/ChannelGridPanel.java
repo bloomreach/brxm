@@ -55,6 +55,7 @@ public class ChannelGridPanel extends ExtPanel {
         canModifyChannels = store.canModifyChannels();
         this.storeFuture = storeFuture;
         visibleFields = parseChannelFields(config);
+        visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
     }
 
     static List<String> parseChannelFields(IPluginConfig config) {
