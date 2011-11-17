@@ -658,6 +658,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         if (target != null) {
             for (ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
+                    // the input behavior does not support removal, so we need to do this manually
                     target.appendJavascript("shortcut.remove('" + bw.getKeyType() + "');\n");
                 }
             }
