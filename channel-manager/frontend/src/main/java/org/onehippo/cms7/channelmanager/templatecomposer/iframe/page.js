@@ -64,6 +64,12 @@
             }, this, false, 'select');
 
             onhostmessage(function(msg) {
+                console.log('onhostmessage deselect');
+                this.deselect();
+                return false;
+            }, this, false, 'deselect');
+
+            onhostmessage(function(msg) {
                 this.highlight(msg.data.groups);
                 return false;
             }, this, false, 'highlight');
@@ -132,6 +138,7 @@
             if (this.current != null) {
                 this.current.deselect();
                 this.current = null;
+                sendMessage({}, 'deselect');
             }
         },
 

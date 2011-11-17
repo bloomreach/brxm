@@ -333,13 +333,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             height: 350,
             initRegion: 'right',
             layout: 'border',
-            closable: false,
-            collapsible: true,
+            closable: true,
+            closeAction: 'hide',
+            collapsible: false,
             constrainHeader: true,
             bodyStyle: 'background-color: #ffffff',
             renderTo: Ext.getCmp('Iframe').getEl(),
             constrain: true,
             hidden: true,
+            listeners: {
+                hide: function() {
+                    this.pageContainer.deselectComponents();
+                },
+                scope: this
+            },
             items: [
                 {
                     id: 'componentPropertiesPanel',
@@ -349,7 +356,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     resources: this.resources,
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
-                    mountId: mountId
+                    mountId: mountId,
+                    listeners: {
+                        cancel: function() {
+                            window1.hide();
+                        }
+                    }
                 }
             ]
         });

@@ -274,6 +274,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         });
     },
 
+    deselectComponents : function() {
+        this.sendFrameMessage({}, 'deselect');
+    },
+
     // END PUBLIC METHODS THAT CHANGE THE iFrame
 
     _lock : function(cb) {
@@ -430,6 +434,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }
     },
 
+    _onDeselect : function() {
+        this.selectedRecord = null;
+    },
+
     _removeByRecord: function(record) {
         var store = this.pageContext.stores.pageModel;
         var self = this;
@@ -459,6 +467,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 this._onRearrangeContainer(msg.data);
             } else if (msg.tag == 'onclick') {
                 this._onClick(msg.data);
+            } else if (msg.tag == 'deselect') {
+                this._onDeselect();
             } else if (msg.tag == 'receiveditem') {
                 this._handleReceivedItem(msg.data.id, msg.data.element);
             } else if (msg.tag == 'remove') {
