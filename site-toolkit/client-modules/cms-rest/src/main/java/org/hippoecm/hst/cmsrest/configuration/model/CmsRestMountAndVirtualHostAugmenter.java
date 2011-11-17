@@ -304,14 +304,15 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
         
     }
 
+    private final static String fakeNonExistingPath = "/fakePath/"+UUID.randomUUID().toString();
+    
     private class CmsRestMount implements MutableMount {
 
         private VirtualHost virtualHost;
         private Mount parent;
         // just a unique alias
-        private String alias = UUID.randomUUID().toString();
-        private String identifier = UUID.randomUUID().toString();
-        private String fakeNonExistingPath = "/"+UUID.randomUUID().toString();
+        private String alias = "randomAlias"+UUID.randomUUID().toString();
+        private String identifier = "randomIdentifer"+UUID.randomUUID().toString();
         private String name;
         private String namedPipeline;
         private Map<String, Mount> childs = new HashMap<String, Mount>();
