@@ -27,6 +27,7 @@ import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.LocaleImageService;
 import org.hippoecm.frontend.translation.PathRenderer;
@@ -74,6 +75,7 @@ public final class FolderTranslationView extends ExtPanel {
 
         add(TranslationResources.getTranslationsHeaderContributor());
         add(TranslationResources.getCountriesCss());
+        add(new ExtHippoThemeBehavior());
 
         addHeaderContribution("treegrid/TreeGridSorter.js");
         addHeaderContribution("treegrid/TreeGridColumnResizer.js");
