@@ -760,6 +760,14 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                         printWriter = null;
                         charOutputBuffer = null;
                     }
+                } else {
+                    if (!closed) {
+                        if (preambleNodes != null) {
+                            for (Node node : preambleNodes) {
+                                getResponseWriter().write("<!-- " + node.getTextContent() + " -->");
+                            }
+                        }
+                    }
                 }
             }
         }
