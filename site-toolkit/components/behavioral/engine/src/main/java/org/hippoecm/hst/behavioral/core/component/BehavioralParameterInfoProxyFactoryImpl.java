@@ -52,10 +52,12 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                     for (String name : config.getParameterNames()) {
                         int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
                         if (offset != -1) {
-                            String id = name.substring(0, offset);
-                            if (profile.isPersona(id)) {
-                                prefixedParameterName = name;
-                                break;
+                            if(name.length() >= offset + 1 && name.substring(offset + 1).equals(parameterName)) {
+                                String id = name.substring(0, offset);
+                                if (profile.isPersona(id)) { 
+                                    prefixedParameterName = name;
+                                    break;
+                                } 
                             }
                         }
                     }
