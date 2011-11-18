@@ -376,15 +376,7 @@
 
   <repositories>
     <repository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2-snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>hippo</id>
+      <id>hippo-maven2</id>
       <name>Hippo Maven 2</name>
       <url>http://maven.onehippo.com/maven2/</url>
       <snapshots>
@@ -398,7 +390,7 @@
         and/or were used in the past
     -->
     <repository>
-<id>codehaus</id>
+      <id>codehaus</id>
       <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
       <snapshots>
         <enabled>false</enabled>
@@ -430,7 +422,7 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-   <repository>
+    <repository>
       <id>m2snapshots</id>
       <name>Maven 2 snapshots repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
