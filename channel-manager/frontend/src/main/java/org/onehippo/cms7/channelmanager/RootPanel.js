@@ -107,7 +107,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
     },
 
     selectCard: function(itemId) {
-        while (this.toolbar.popItem() != null);
+        while (this.toolbar.popItem() != null) ;
 
         this.toolbar.pushItem({
             card: this.items.get(0),
@@ -201,10 +201,19 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
                     }
                 }
             ],
+            buttonAlign: 'left',
             buttons: [
                 {
-                    id: 'createButton',
-                    text: me.resources['new-channel-choose'],
+                    id: 'previousButton',
+                    text: me.resources['new-channel-previous'],
+                    handler: me.processPreviousStep,
+                    scope: me,
+                    hidden: true
+                },
+                '->',
+                {
+                    id: 'nextButton',
+                    text: me.resources['new-channel-next'],
                     handler: me.processNextStep,
                     scope: me
                 },
@@ -225,10 +234,7 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
         Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
 
-        this.on('beforeshow', function () {
-            Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
-            Ext.getCmp('createButton').setText(this.resources['new-channel-choose']);
-        }, this);
+        this.on('beforeshow', this.resetWizard, this);
 
         Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
             id: 'blueprints-panel',
@@ -244,19 +250,38 @@ Hippo.ChannelManager.NewChannelWindow = Ext.extend(Ext.Window, {
 
     },
 
-    processNextStep:function() {
-        var cc = Ext.getCmp('card-container');
-        if (cc.layout.activeItem.id === 'blueprints-panel') {
-            this.setTitle(this.resources['new-channel-properties']);
-            Ext.getCmp('createButton').setText(this.resources['new-channel-create']);
-            cc.layout.setActiveItem('channel-form-panel');
+    showBlueprintChoice: function () {
+        this.setTitle(this.resources['new-channel-blueprint']);
+        Ext.getCmp('card-container').layout.setActiveItem('blueprints-panel');
+        Ext.getCmp('nextButton').setText(this.resources['new-channel-next']);
+        Ext.getCmp('previousButton').hide();
+    },
+
+    showChannelForm: function () {
+        this.setTitle(this.resources['new-channel-properties']);
+        Ext.getCmp('card-container').layout.setActiveItem('channel-form-panel');
+        Ext.getCmp('nextButton').setText(this.resources['new-channel-create']);
+        Ext.getCmp('previousButton').show();
+    },
+
+    resetWizard: function() {
+        this.showBlueprintChoice();
+    },
+
+    processPreviousStep: function() {
+        if (Ext.getCmp('card-container').layout.activeItem.id === 'channel-form-panel') {
+            this.showBlueprintChoice();
+        }
+    },
+
+    processNextStep: function() {
+        if (Ext.getCmp('card-container').layout.activeItem.id === 'blueprints-panel') {
+            this.showChannelForm();
         } else { //current item is the form panel so call submit on it.
             Ext.getCmp('channel-form-panel').submitForm();
         }
     }
-}
-//end extending Config
-);
+});
 
 
 

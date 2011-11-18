@@ -22,55 +22,55 @@ Ext.namespace('Hippo.ChannelManager');
  * @extends Ext.grid.GridPanel
  */
 Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
-            constructor: function(config) {
-                this.store = config.store;
-                this.columns = config.columns;
-                Hippo.ChannelManager.BlueprintListPanel.superclass.constructor.call(this, config);
+    constructor: function(config) {
+        this.store = config.store;
+        this.columns = config.columns;
+        Hippo.ChannelManager.BlueprintListPanel.superclass.constructor.call(this, config);
+    },
+
+    initComponent: function() {
+        var me = this;
+        var config = {
+            id: me.id,
+            store: me.store,
+            loadMask: true,
+            stripeRows: true,
+            height: 400,
+            viewConfig: {
+                forceFit: true
             },
 
-            initComponent: function() {
-                var me = this;
-                var config = {
-                    id: me.id,
-                    store: me.store,
-                    loadMask: true,
-                    stripeRows: true,
-                    height: 400,
-                    viewConfig: {
-                        forceFit: true
+            colModel: new Ext.grid.ColumnModel({
+                columns: [
+                    {
+                        header: 'Blueprint Name',
+                        align: 'left'
                     },
+                    {
+                        header: 'Description',
+                        align: 'left'
+                    }
+                ]
+            }),
+            sm: new Ext.grid.RowSelectionModel({
+                singleSelect: true
+            })
+        };
 
-                    colModel: new Ext.grid.ColumnModel({
-                                columns: [
-                                    {
-                                        header: 'Blueprint Name',
-                                        align: 'left'
-                                    },
-                                    {
-                                        header: 'Description',
-                                        align: 'left'
-                                    }
-                                ]
-                            }),
-                    sm: new Ext.grid.RowSelectionModel({
-                              singleSelect: true
-                            })
-                };
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-                Ext.apply(this, Ext.apply(this.initialConfig, config));
+        Hippo.ChannelManager.BlueprintListPanel.superclass.initComponent.apply(this, arguments);
 
-                Hippo.ChannelManager.BlueprintListPanel.superclass.initComponent.apply(this, arguments);
+        this.on('render', function() {
+            this.store.load();
+        }, this);
 
-                this.on('render', function() {
-                    this.store.load();
-                }, this);
+        this.store.on('load', function () {
+            //TODO: select the first row only when there are rows.
+            this.getSelectionModel().selectFirstRow();
+        }, this)
 
-                this.store.on('load', function () {
-                    //TODO: select the first row only when there are rows.
-                    this.getSelectionModel().selectFirstRow();
-                }, this)
-
-            }
-        });
+    }
+});
 
 Ext.reg('Hippo.ChannelManager.BlueprintListPanel', Hippo.ChannelManager.BlueprintListPanel);
