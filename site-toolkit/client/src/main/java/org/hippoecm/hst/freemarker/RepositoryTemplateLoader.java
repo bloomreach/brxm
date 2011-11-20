@@ -73,8 +73,9 @@ public class RepositoryTemplateLoader implements TemplateLoader {
                 }
             } else {
                 // HST Container Component Manager can be reloaded; so repository bean should be reset when reloaded.
-                if (repository != HstServices.getComponentManager().getComponent(Repository.class.getName())) {
-                    repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+                Repository repoInCompMgr = HstServices.getComponentManager().getComponent(Repository.class.getName());
+                if (repoInCompMgr != null && repository != repoInCompMgr) {
+                    repository = repoInCompMgr;
                     defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
                     repoTemplateEventListenersContainer.setRepository(repository);
                     repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
