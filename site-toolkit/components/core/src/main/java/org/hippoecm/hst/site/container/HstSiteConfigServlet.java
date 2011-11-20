@@ -31,12 +31,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.configuration.AbstractFileConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ServletConfigUtils;
@@ -167,20 +170,22 @@ public class HstSiteConfigServlet extends HttpServlet {
     private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
     
     private static final String HST_CONFIG_PROPERTIES = "hst-config.properties";
-
-    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running"; 
+    
+    private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
+    
+    private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running";
     
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
     
     private static final String ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM = "assembly.overrides";
 
     private static final String REPOSITORY_ADDRESS_PARAM_SUFFIX = ".repository.address";
+    
+    private static final long DEFAULT_CONFIGURATION_REFRESH_DELAY = 0L;
 
     private final static Logger log = LoggerFactory.getLogger(HstSiteConfigServlet.class);
     
     private static final long serialVersionUID = 1L;
-
-    protected ComponentManager componentManager;
 
     protected String [] assemblyOverridesConfigurations = { "META-INF/hst-assembly/overrides/*.xml" };
     
@@ -191,6 +196,10 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected boolean allRepositoriesAvailable;
     
     protected Configuration configuration;
+    
+    private FileChangedReloadingStrategy configurationReloadingStrategy;
+    
+    private long configurationRefreshDelay;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -201,6 +210,8 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected Map<String [], Boolean> repositoryCheckingStatus = new HashMap<String [], Boolean>();
     
     private RepositoryAvailabilityCheckerThread repositoryAvailabilityCheckerThread;
+    
+    private HstSiteConfigurationChangesChecker hstSiteConfigurationChangesCheckerThread;
 
     /**
      * Intialize Servlet.
@@ -223,6 +234,32 @@ public class HstSiteConfigServlet extends HttpServlet {
         // then the initialization will go on from here.
         
         this.configuration = getConfiguration(config);
+        
+        configurationRefreshDelay = NumberUtils.toLong(getConfigOrContextInitParameter(HST_CONFIGURATION_REFRESH_DELAY_PARAM, null), DEFAULT_CONFIGURATION_REFRESH_DELAY);
+        
+        if ((configurationRefreshDelay > 0L) && (this.configuration instanceof AbstractFileConfiguration)) {
+            configurationReloadingStrategy = new FileChangedReloadingStrategy() {
+                @Override
+                public void reloadingPerformed() {
+                    super.reloadingPerformed();
+                    log.warn("HstSiteConfigServlet is trying to reinitialize component manager on configuration change.");
+                    try {
+                        initializeComponentManager(config);
+                        log.warn("HstSiteConfigServlet has completed reinitializing component manager on configuration change.");
+                    } catch (Exception e) {
+                        log.error("HstSiteConfigServlet failed to reinitialize component manager on configuration change.", e);
+                    }
+                }
+            };
+            
+            configurationReloadingStrategy.setRefreshDelay(configurationRefreshDelay);
+            ((AbstractFileConfiguration) this.configuration).setReloadingStrategy(configurationReloadingStrategy);
+            log.warn("HstSiteConfigServlet enables component manager reloading on configuration change with refreshing delay = {} ms", configurationRefreshDelay);
+            
+            destroyHstSiteConfigurationChangesCheckerThread();
+            hstSiteConfigurationChangesCheckerThread = new HstSiteConfigurationChangesChecker();
+            hstSiteConfigurationChangesCheckerThread.start();
+        }
         
         if (this.configuration.containsKey(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM)) {
             assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
@@ -264,15 +301,31 @@ public class HstSiteConfigServlet extends HttpServlet {
     }
     
     protected synchronized void initializeComponentManager(ServletConfig config) {
-
+        ComponentManager componentManager = null;
+        
         try {
             log.info(INIT_START_MSG);
             
+            log.info("HstSiteConfigServlet attempting to create the Component manager...");
+            componentManager = new SpringComponentManager(this.configuration);
+            log.info("HSTSiteServlet attempting to start the Component Manager...");
+            
+            if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {
+                String [] configurations = componentManager.getConfigurationResources();
+                configurations = (String []) ArrayUtils.addAll(configurations, assemblyOverridesConfigurations);
+                componentManager.setConfigurationResources(configurations);
+            }
+            
+            componentManager.initialize();
+            componentManager.start();
+            log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
+            
             ComponentManager oldComponentManager = HstServices.getComponentManager();
+            HstServices.setComponentManager(componentManager);
+            
             if (oldComponentManager != null) {
                 log.info("HstSiteConfigServlet attempting to stop the old component manager...");
                 try {
-                    HstServices.setComponentManager(null);
                     oldComponentManager.stop();
                     oldComponentManager.close();
                 } catch (Exception ce) {
@@ -280,28 +333,15 @@ public class HstSiteConfigServlet extends HttpServlet {
                 }
             }
             
-            log.info("HstSiteConfigServlet attempting to create the Component manager...");
-            this.componentManager = new SpringComponentManager(this.configuration);
-            log.info("HSTSiteServlet attempting to start the Component Manager...");
-            
-            if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {
-                String [] configurations = this.componentManager.getConfigurationResources();
-                configurations = (String []) ArrayUtils.addAll(configurations, assemblyOverridesConfigurations);
-                this.componentManager.setConfigurationResources(configurations);
-            }
-            
-            this.componentManager.initialize();
-            this.componentManager.start();
-            HstServices.setComponentManager(this.componentManager);
-            
-            log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
             this.initialized = true;
             log.info(INIT_DONE_MSG);
         } catch (Exception e) {
-            if (this.componentManager != null) {
+            log.error("HstSiteConfigServlet: ComponentManager initialization failed.", e);
+            
+            if (componentManager != null) {
                 try { 
-                    this.componentManager.stop();
-                    this.componentManager.close();
+                    componentManager.stop();
+                    componentManager.close();
                 } catch (Exception ce) {
                     if (log.isDebugEnabled()) {
                         log.warn("Exception occurred during stopping componentManager.", e);
@@ -310,10 +350,6 @@ public class HstSiteConfigServlet extends HttpServlet {
                     }
                 }
             }
-            
-            // save the exception to complain loudly later :-)
-            final String msg = "HSTSite: init() failed.";
-            log.error(msg, e);
         }
     }
     
@@ -346,10 +382,13 @@ public class HstSiteConfigServlet extends HttpServlet {
         log.info("Done shutting down!");
         
         destroyRepositoryAvailabilityCheckerThread();
+        destroyHstSiteConfigurationChangesCheckerThread();
+        
+        ComponentManager componentManager = HstServices.getComponentManager();
         
         try {
-            this.componentManager.stop();
-            this.componentManager.close();
+            componentManager.stop();
+            componentManager.close();
         } catch (Exception e) {
             log.warn("Component Manager stopping/closing error", e);
         } finally {
@@ -534,14 +573,33 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     private void destroyRepositoryAvailabilityCheckerThread() {
         try {
-            if (repositoryAvailabilityCheckerThread != null && repositoryAvailabilityCheckerThread.isAlive()) {
-                repositoryAvailabilityCheckerThread.setStopped(true);
-                repositoryAvailabilityCheckerThread.interrupt();
+            if (repositoryAvailabilityCheckerThread != null) {
+                if (hstSiteConfigurationChangesCheckerThread.isAlive()) {
+                    repositoryAvailabilityCheckerThread.setStopped(true);
+                    repositoryAvailabilityCheckerThread.interrupt();
+                    repositoryAvailabilityCheckerThread.join(10000L);
+                }
             }
         } catch (Exception e) {
             log.warn("RepositoryAvailabilityCheckerThread interruption error", e);
         } finally {
             repositoryAvailabilityCheckerThread = null;
+        }
+    }
+    
+    private void destroyHstSiteConfigurationChangesCheckerThread() {
+        try {
+            if (hstSiteConfigurationChangesCheckerThread != null) {
+                if (hstSiteConfigurationChangesCheckerThread.isAlive()) {
+                    hstSiteConfigurationChangesCheckerThread.setStopped(true);
+                    hstSiteConfigurationChangesCheckerThread.interrupt();
+                    hstSiteConfigurationChangesCheckerThread.join(10000L);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("HstSiteConfigurationChangesCheckerThread interruption error", e);
+        } finally {
+            hstSiteConfigurationChangesCheckerThread = null;
         }
     }
     
@@ -579,6 +637,40 @@ public class HstSiteConfigServlet extends HttpServlet {
              if (!stopped && allRepositoriesAvailable) {
                  initializeComponentManager(servletConfig);
              }
+        }
+    }
+    
+    private class HstSiteConfigurationChangesChecker extends Thread {
+        
+        private boolean stopped;
+        
+        private HstSiteConfigurationChangesChecker() {
+            super("HstSiteConfigurationChangesChecker");
+            setDaemon(true);
+        }
+
+        public void setStopped(boolean stopped) {
+            this.stopped = stopped;
+        }
+        
+        public void run() {
+            while (!this.stopped) {
+                
+                // NOTE: when trying to read configuration, commons-configuration will
+                //       check if the configuration has been modified
+                //       per each refresh delay
+                configuration.getString("development.mode");
+                
+                synchronized (this) {
+                    try {
+                        wait(3000L);
+                    } catch (InterruptedException e) {
+                        if (this.stopped) {
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

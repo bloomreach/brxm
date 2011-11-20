@@ -46,6 +46,14 @@ public class BinariesCache {
         this.cache = cache;
     }
     
+    public HstCache getHstCache() {
+        return cache;
+    }
+    
+    public void setHstCache(HstCache cache) {
+        this.cache = cache;
+    }
+    
     public long getValidityCheckIntervalMillis() {
         return validityCheckIntervalMillis;
     }

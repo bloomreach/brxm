@@ -44,7 +44,10 @@ import org.hippoecm.hst.util.NodeUtils;
 public class EventListenersContainerImpl implements EventListenersContainer {
 
     private static final String LOGGER_CATEGORY_NAME = EventListenersContainerImpl.class.getName();
-
+    
+    private static int eventListenersContainerSessionCheckerIndex;
+    
+    protected String name;
     protected Repository repository;
     protected Credentials credentials;
     protected Session session;
@@ -59,6 +62,14 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
     protected volatile boolean stopped;
     protected LoggerFactory loggerFactory;
+    
+    public EventListenersContainerImpl() {
+        this(null);
+    }
+    
+    public EventListenersContainerImpl(String name) {
+        this.name = name;
+    }
     
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -126,7 +137,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         }
     }
     
-    public void start() {
+    public synchronized void start() {
         if (!this.sessionLiveCheck) {
             this.stopped = false;
             doDeinit();
@@ -137,11 +148,13 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                 if (eventListenersContainerSessionChecker.isAlive()) {
                     try {
                         this.eventListenersContainerSessionChecker.interrupt();
+                        this.eventListenersContainerSessionChecker.join(10000L);
+                        getLogger().debug("EventListenersContainerSessionChecker is interrupted on start: {}", this.eventListenersContainerSessionChecker);
                     } catch (Exception e) {
                         Logger log = getLogger();
                         
                         if (log.isDebugEnabled()) {
-                            log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread", e);
+                            log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread.", e);
                         } else if (log.isWarnEnabled()) {
                             log.warn("Exception occurred during interrupting eventListenersContainerSessionChecker thread. {}", e.toString());
                         }
@@ -152,6 +165,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             doDeinit();
             this.stopped = false;
             eventListenersContainerSessionChecker = new EventListenersContainerSessionChecker();
+            getLogger().debug("EventListenersContainerSessionChecker is started: {}", this);
             eventListenersContainerSessionChecker.start();
         }
     }
@@ -293,7 +307,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         this.stopped = true;
         
         doDeinit();
@@ -302,6 +316,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
             if (eventListenersContainerSessionChecker.isAlive()) {
                 try {
                     this.eventListenersContainerSessionChecker.interrupt();
+                    this.eventListenersContainerSessionChecker.join(10000L);
+                    getLogger().debug("EventListenersContainerSessionChecker is interrupted on stop: {}", this.eventListenersContainerSessionChecker);
                 } catch (Exception e) {
                     Logger log = getLogger();
                     
@@ -370,14 +386,17 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         this.session = null;
     }
     
-    private class EventListenersContainerSessionChecker extends Thread {
+    protected class EventListenersContainerSessionChecker extends Thread {
 
-        private EventListenersContainerSessionChecker() {
-            super("EventListenersContainerSessionChecker");
+        protected EventListenersContainerSessionChecker() {
+            super((name != null ? name + "::" : "") + "EventListenersContainerSessionChecker-" + (++eventListenersContainerSessionCheckerIndex));
             setDaemon(true);
         }
 
         public void run() {
+            
+            getLogger().debug("EventListenersContainerSessionChecker starts running: {}", this);
+            
             while (!EventListenersContainerImpl.this.stopped) {
                 boolean isSessionLive = false;
                 
@@ -389,9 +408,21 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                     getLogger().debug("Exception while checking jcr session: {}", e.toString());
                 }
                 
+                if (EventListenersContainerImpl.this.stopped) {
+                    break;
+                }
+                
                 if (EventListenersContainerImpl.this.session == null || !isSessionLive) {
-                    doDeinit();
-                    doInit();
+                    if (!EventListenersContainerImpl.this.stopped) {
+                        doDeinit();
+                        if (EventListenersContainerImpl.this.stopped) {
+                            break;
+                        }
+                        doInit();
+                        if (EventListenersContainerImpl.this.stopped) {
+                            break;
+                        }
+                    }
                 }
 
                 synchronized (this) {
@@ -405,6 +436,8 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                     }
                 }
             }
+            
+            getLogger().debug("EventListenersContainerSessionChecker stops running: {}", this);
         }
     }
 

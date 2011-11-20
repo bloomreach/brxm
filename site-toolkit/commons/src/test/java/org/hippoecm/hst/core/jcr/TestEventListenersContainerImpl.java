@@ -20,6 +20,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.makeThreadSafe;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -162,6 +165,32 @@ public class TestEventListenersContainerImpl {
         
         listenersContainer.stop();
         assertEquals(0, observationManager.size());
+    }
+    
+    @Test
+    public void testEventListenersContainerSessionChecker() throws Exception {
+        List<EventListenerItem> eventListenerItems = new ArrayList<EventListenerItem>();
+        
+        EventListenersContainerImpl listenersContainer = new EventListenersContainerImpl();
+        listenersContainer.setRepository(repository);
+        listenersContainer.setCredentials(credentials);
+        listenersContainer.setSessionLiveCheck(true);
+        listenersContainer.setSessionLiveCheckInterval(100L);
+        listenersContainer.setSessionLiveCheckIntervalOnStartup(200L);
+        listenersContainer.setEventListenerItems(eventListenerItems);
+        
+        listenersContainer.start();
+        
+        ThreadGroup tGroup = listenersContainer.eventListenersContainerSessionChecker.getThreadGroup();
+        int activeCount = tGroup.activeCount();
+        
+        assertNotNull(listenersContainer.eventListenersContainerSessionChecker);
+        assertTrue(listenersContainer.eventListenersContainerSessionChecker.isAlive());
+        
+        listenersContainer.stop();
+
+        assertNull(listenersContainer.eventListenersContainerSessionChecker);
+        assertEquals(activeCount - 1, tGroup.activeCount());
     }
     
     private EventListenerItem createEventListenerItem(String absPath) {

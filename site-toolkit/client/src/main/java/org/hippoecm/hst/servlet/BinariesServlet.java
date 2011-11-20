@@ -174,6 +174,8 @@ public class BinariesServlet extends HttpServlet {
 
     /** FIXME: BinariesCache is not serializable. */
     private BinariesCache binariesCache;
+    
+    private String binariesCacheComponentName;
 
     /**
      * {@inheritDoc}
@@ -192,6 +194,14 @@ public class BinariesServlet extends HttpServlet {
         if (!initialized) {
             synchronized (this) {
                 doInit();
+            }
+        }
+        
+        // HST Container Component Manager can be reloaded; so cache bean should be reset when reloaded.
+        if (HstServices.isAvailable()) {
+            HstCache cache = HstServices.getComponentManager().getComponent(binariesCacheComponentName);
+            if (cache != null && binariesCache.getHstCache() != cache) {
+                binariesCache.setHstCache(cache);
             }
         }
         
@@ -526,7 +536,7 @@ public class BinariesServlet extends HttpServlet {
     private void initBinariesCache() {
         HstCache cache = null;
         
-        String binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
+        binariesCacheComponentName = getInitParameter(CACHE_NAME_INIT_PARAM, "defaultBinariesCache");
         ComponentManager clientComponentManager = (ComponentManager) getServletContext().getAttribute(HstFilter.CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM);
         
         if (clientComponentManager != null) {

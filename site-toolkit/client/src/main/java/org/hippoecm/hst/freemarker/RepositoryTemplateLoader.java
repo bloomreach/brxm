@@ -53,7 +53,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
     
     volatile boolean stopped = false;
     
-    private EventListenersContainerImpl repoTemplateEventListenersContainer = new EventListenersContainerImpl(); 
+    private EventListenersContainerImpl repoTemplateEventListenersContainer; 
     
     private Map<String, RepositorySource> cache =  Collections.synchronizedMap(new HashMap<String, RepositorySource>());
     
@@ -62,32 +62,41 @@ public class RepositoryTemplateLoader implements TemplateLoader {
     }
 
     public Object findTemplateSource(String templateSource) throws IOException {
-        
-        if(templateSource != null && templateSource.startsWith("jcr:")) {
-           if (repository == null) {
-              synchronized (this) {
-                  doInit();
-              }
-           }
-           if(repository == null) {
-               return null;
-           }
-           String absPath = ((String)templateSource).substring("jcr:".length());
-           RepositorySource source = cache.get(absPath);
-           if(source != null) {
-               return source;
-           } 
-           synchronized(this) {
-               source = cache.get(absPath);
-               if(source == null) {
-                   source = getRepositoryTemplate(absPath);
-                   cache.put(absPath, source);
-               }
-           }
-           return source;
-       }
-       // the templateSource is not a repository source: return null
-       return null;
+
+        if (templateSource != null && templateSource.startsWith("jcr:")) {
+            if (repository == null) {
+                synchronized (this) {
+                    doInit();
+                }
+                if (repository == null) {
+                    return null;
+                }
+            } else {
+                // HST Container Component Manager can be reloaded; so repository bean should be reset when reloaded.
+                if (repository != HstServices.getComponentManager().getComponent(Repository.class.getName())) {
+                    repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+                    defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+                    repoTemplateEventListenersContainer.setRepository(repository);
+                    repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
+                }
+            }
+            
+            String absPath = ((String) templateSource).substring("jcr:".length());
+            RepositorySource source = cache.get(absPath);
+            if (source != null) {
+                return source;
+            }
+            synchronized (this) {
+                source = cache.get(absPath);
+                if (source == null) {
+                    source = getRepositoryTemplate(absPath);
+                    cache.put(absPath, source);
+                }
+            }
+            return source;
+        }
+        // the templateSource is not a repository source: return null
+        return null;
     }
 
     public long getLastModified(Object templateSource) {
@@ -146,7 +155,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
             this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
         }
         
-        repoTemplateEventListenersContainer = new EventListenersContainerImpl();
+        repoTemplateEventListenersContainer = new EventListenersContainerImpl("RepoFTLLoader");
         repoTemplateEventListenersContainer.setRepository(repository);
         repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
         repoTemplateEventListenersContainer.setSessionLiveCheck(true); 

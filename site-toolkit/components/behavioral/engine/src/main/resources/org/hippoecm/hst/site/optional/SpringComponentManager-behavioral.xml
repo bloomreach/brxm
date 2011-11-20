@@ -78,10 +78,26 @@
       </property>
   </bean>
 
-  <!-- After adding an EventListenerItem we need to invoke start() again to trigger this new listener to be added -->
-   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-      <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
-      <property name="targetMethod" value="start"/>
-   </bean>
+  <!-- After adding an EventListenerItem we need to invoke stop/start again to trigger this new listener to be added on applicationContext starting -->
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key><value>org.springframework.context.event.ContextStartedEvent</value></key>
+          <list>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="stop"/>
+            </bean>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="start"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+  
 </beans>
 
