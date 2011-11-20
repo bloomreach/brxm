@@ -152,6 +152,15 @@
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
+    <!--
+      If 'hst-config-refresh-delay' parameter is greater than 0,
+      then the HST configuration file changes will be monitored to re-initialize the HST Container.
+      This re-initialization option on configuration file changes is not turned on by default.
+    -->
+    <init-param>
+      <param-name>hst-config-refresh-delay</param-name>
+      <param-value>30000</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
