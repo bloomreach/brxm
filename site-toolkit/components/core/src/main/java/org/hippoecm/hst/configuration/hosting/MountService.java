@@ -797,4 +797,23 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.channelInfo = channelInfo;
     }
 
+
+    @Override
+    public String toString() {
+        return "MountService [name=" + name + ", uuid=" + uuid + ", hostName=" + virtualHost.getHostName() + ", channelPath="
+                + channelPath + ", parent=" + parent + ", hstSite=" + hstSite + ", previewHstSite=" + previewHstSite
+                + ", childMountServices=" + childMountServices + ", alias=" + alias + ", type=" + type + ", types=" + types + ", versionInPreviewHeader="
+                + versionInPreviewHeader + ", namedPipeline=" + namedPipeline + ", mountPath=" + mountPath
+                + ", contentPath=" + contentPath + ", previewContentPath=" + previewContentPath
+                + ", canonicalContentPath=" + canonicalContentPath + ", previewCanonicalContentPath="
+                + previewCanonicalContentPath + ", mountPoint=" + mountPoint + ", previewMountPoint="
+                + previewMountPoint + ", isMapped=" + isMapped + ", homepage=" + homepage + ", pageNotFound="
+                + pageNotFound + ", contextPathInUrl=" + contextPathInUrl + ", isSite=" + isSite + ", showPort="
+                + showPort + ", port=" + port + ", onlyForContextPath=" + onlyForContextPath + ", scheme=" + scheme
+                + ", locale=" + locale + ", authenticated=" + authenticated + ", roles=" + roles + ", users=" + users
+                + ", embeddedMountPath=" + embeddedMountPath + ", subjectBasedSession=" + subjectBasedSession
+                + ", sessionStateful=" + sessionStateful + ", formLoginPage=" + formLoginPage + ", channelInfo="
+                + channelInfo + ", cmsLocation=" + cmsLocation + "]";
+    }
+
 }
