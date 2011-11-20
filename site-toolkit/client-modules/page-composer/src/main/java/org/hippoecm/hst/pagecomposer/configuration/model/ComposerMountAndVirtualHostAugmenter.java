@@ -173,8 +173,13 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
                     
                     if (composerHost == null) {
                         // add the cmsRestHostName + mount
-                        composerHost = new ComposerVirtualHost(hosts,hostSegments,cmsLocation, 0);
-                        hosts.addVirtualHost((MutableVirtualHost)composerHost);
+                        VirtualHost newHost = new ComposerVirtualHost(hosts,hostSegments,cmsLocation, 0);
+                        // get the last one added 
+                        hosts.addVirtualHost((MutableVirtualHost)newHost);
+                        composerHost = newHost;
+                        while(!composerHost.getChildHosts().isEmpty()) {
+                            composerHost = composerHost.getChildHosts().get(0);
+                        }
                     } 
                     
                     // now check whether to add a portMount
@@ -260,7 +265,7 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
             name = hostSegments[position];
             this.cmsLocation = cmsLocation;
             int i = position;
-            while(i > 0) {
+            while(i > -1) {
                 if(hostName != null) {
                     hostName = hostSegments[position] + "." + hostName;
                 } else {
