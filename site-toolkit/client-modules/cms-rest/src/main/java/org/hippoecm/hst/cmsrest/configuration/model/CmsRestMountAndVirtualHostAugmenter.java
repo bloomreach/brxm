@@ -172,7 +172,7 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
             this.virtualHosts = virtualHosts;
             name = hostSegments[position];
             int i = position;
-            while(i > 0) {
+            while(i > -1) {
                 if(hostName != null) {
                     hostName = hostSegments[position] + "." + hostName;
                 } else {
