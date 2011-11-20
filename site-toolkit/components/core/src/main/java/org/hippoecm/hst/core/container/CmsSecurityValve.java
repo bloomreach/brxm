@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -118,11 +118,11 @@ public class CmsSecurityValve extends AbstractValve {
             //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
             if (credentialParam == null) {
                 
-                if(!(requestContext.getResolvedMount().getMount() instanceof ContextualizableMount)) {
-                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type ContextualizableMount.");
+                if(!(requestContext.getResolvedMount().getMount() instanceof MutableMount)) {
+                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
                 }
                 
-                ContextualizableMount mount = (ContextualizableMount)requestContext.getResolvedMount().getMount();
+                MutableMount mount = (MutableMount)requestContext.getResolvedMount().getMount();
                 StringBuilder destinationURL = new StringBuilder();
                 destinationURL.append(servletRequest.getScheme()).append("://");
                 destinationURL.append(HstRequestUtils.getRequestHosts(servletRequest, false)[0]);

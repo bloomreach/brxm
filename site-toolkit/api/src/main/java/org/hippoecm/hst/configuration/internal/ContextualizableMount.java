@@ -16,13 +16,14 @@
 package org.hippoecm.hst.configuration.internal;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 
 /**
  * internal only api for being able to decorate a {@link Mount} to a preview {@link Mount}
  */
-public interface ContextualizableMount extends Mount {
+public interface ContextualizableMount extends MutableMount {
 
     /**
      * internal only : not api 
@@ -49,9 +50,4 @@ public interface ContextualizableMount extends Mount {
      */
     HstSite getPreviewHstSite();
     
-    /**
-     * internal only : not api
-     * @return the fully qualified cms url 
-     */
-    String getCmsLocation();
 }

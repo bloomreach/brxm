@@ -169,6 +169,10 @@
             </property>
           </bean>
         </entry>
+        <!-- A noop pipeline -->
+        <entry key="NoopPipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline"/>
+        </entry>
       </map>
     </property>
   </bean>

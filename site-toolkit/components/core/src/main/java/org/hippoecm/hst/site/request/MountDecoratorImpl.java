@@ -24,11 +24,13 @@ import java.util.Set;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -337,6 +339,16 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getCmsLocation() {
             return delegatee.getCmsLocation();
+        }
+
+        @Override
+        public void setChannelInfo(ChannelInfo info) {
+            throw new UnsupportedOperationException("setChannelInfo not allowed on decorated mounts");
+        }
+
+        @Override
+        public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+            throw  new UnsupportedOperationException("addMount not allowed on decorated mounts");
         }
     }
 }

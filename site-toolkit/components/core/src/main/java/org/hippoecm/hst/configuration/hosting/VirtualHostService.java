@@ -367,7 +367,6 @@ public class VirtualHostService implements MutableVirtualHost {
         return childVirtualHosts.get(name);
     }
 
-
     public String getBaseURL(HttpServletRequest request) {
         StringBuilder builder = new StringBuilder();
         
@@ -400,5 +399,6 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         return builder.toString();
     }
+
 
 }

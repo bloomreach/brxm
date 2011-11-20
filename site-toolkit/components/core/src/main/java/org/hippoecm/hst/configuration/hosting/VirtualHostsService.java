@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -176,7 +178,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if(cmsLocation == null) {
                 log.info("VirtualHostGroup '{}' does not have a property cms.location configured. It is preferred for surf & edit and the template composer" +
                 		"that this property is configured on the hst:virtualhosthgroup node.", hostGroupNode.getValueProvider().getName());
+            } else {
+                try {
+                    URI testLocation = new URI(cmsLocation);
+                    log.info("Cms host location for hostGroup '{}' is '{}'", hostGroupNode.getValueProvider().getName(), testLocation.getHost());
+                } catch (URISyntaxException e) {
+                    log.warn("'{}' is an invalid cmsLocation. cms location can't be used and set to null for hostGroup '{}'", cmsLocation, hostGroupNode.getValueProvider().getName());
+                }
             }
+            
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
                 
                 try {
@@ -265,11 +275,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if(mount.getAlias() == null) {
                 continue;
             }
+            String aliasTypeKey = getAliasTypeKey(mount.getAlias(), type);
             try {
-                aliasTypeMap.put(getAliasTypeKey(mount.getAlias(), type), mount);
+                aliasTypeMap.put(aliasTypeKey, mount);
             } catch (IllegalArgumentException e) {
-                log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination within a single hst:hostgroup. " +
-                		". Failed for mount '{}' in hostgroup '"+mount.getVirtualHost().getHostGroupName()+"' for host '"+mount.getVirtualHost().getHostName()+"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot be used for lookup. Change alias for it.", mount.getName(), mount.getName());
+                log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination " +
+                		"within a single hst:hostgroup. Failed for mount '{}' in hostgroup '"
+                        +mount.getVirtualHost().getHostGroupName()+"' for host '"
+                		+mount.getVirtualHost().getHostName()+
+                		"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount " +
+                		"within a single hostgroup. The mount '{}' cannot be used for lookup. " +
+                		"Change alias for it. Conflicting mounts are "+mount+" that conflicts with "+aliasTypeMap.get(aliasTypeKey) , mount.getName(), mount.getName());
             }
         }
         

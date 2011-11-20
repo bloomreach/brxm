@@ -40,4 +40,9 @@ public interface MutableMount extends Mount {
      */
     void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException;
     
+    /**
+     * @return the cms location (fully qualified URL) and <code>null</code> if not configured
+     */
+    String getCmsLocation();
+    
 }
