@@ -78,6 +78,7 @@ public class RepositoryTemplateLoader implements TemplateLoader {
                     defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
                     repoTemplateEventListenersContainer.setRepository(repository);
                     repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
+                    cache.clear();
                 }
             }
             
