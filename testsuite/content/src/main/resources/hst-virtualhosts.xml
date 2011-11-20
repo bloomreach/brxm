@@ -368,23 +368,6 @@
             </sv:node>
           </sv:node>
         </sv:node>
-        <sv:node sv:name="_rp">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:mount</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>6db1c591-92ed-47f1-9e3c-ffd2131fa4af</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:ismapped" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:namedpipeline" sv:type="String">
-            <sv:value>ComposerPipeline</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:type" sv:type="String">
-            <sv:value>composer</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
     </sv:node>
   </sv:node>
