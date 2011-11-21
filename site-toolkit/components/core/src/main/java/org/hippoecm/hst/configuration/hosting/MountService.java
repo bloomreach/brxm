@@ -800,20 +800,22 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public String toString() {
-        return "MountService [name=" + name + ", uuid=" + uuid + ", hostName=" + virtualHost.getHostName() + ", channelPath="
-                + channelPath + ", parent=" + parent + ", hstSite=" + hstSite + ", previewHstSite=" + previewHstSite
-                + ", childMountServices=" + childMountServices + ", alias=" + alias + ", type=" + type + ", types=" + types + ", versionInPreviewHeader="
-                + versionInPreviewHeader + ", namedPipeline=" + namedPipeline + ", mountPath=" + mountPath
-                + ", contentPath=" + contentPath + ", previewContentPath=" + previewContentPath
-                + ", canonicalContentPath=" + canonicalContentPath + ", previewCanonicalContentPath="
-                + previewCanonicalContentPath + ", mountPoint=" + mountPoint + ", previewMountPoint="
-                + previewMountPoint + ", isMapped=" + isMapped + ", homepage=" + homepage + ", pageNotFound="
-                + pageNotFound + ", contextPathInUrl=" + contextPathInUrl + ", isSite=" + isSite + ", showPort="
-                + showPort + ", port=" + port + ", onlyForContextPath=" + onlyForContextPath + ", scheme=" + scheme
-                + ", locale=" + locale + ", authenticated=" + authenticated + ", roles=" + roles + ", users=" + users
-                + ", embeddedMountPath=" + embeddedMountPath + ", subjectBasedSession=" + subjectBasedSession
-                + ", sessionStateful=" + sessionStateful + ", formLoginPage=" + formLoginPage + ", channelInfo="
-                + channelInfo + ", cmsLocation=" + cmsLocation + "]";
+        
+        StringBuilder builder = new StringBuilder("MountService [name=");
+        builder.append(name).append(", uuid=").append(uuid).append(", hostName=").append(virtualHost.getHostName())
+        .append(", channelPath=").append(channelPath).append(", alias=").append(alias).append(", type=").append(type)
+        .append(", types=").append(types).append(", versionInPreviewHeader=").append(versionInPreviewHeader)
+        .append(", namedPipeline=").append(namedPipeline).append(", mountPath=").append(mountPath)
+        .append(", contentPath=").append(contentPath).append(", mountPoint=").append(mountPoint)
+        .append( ", isMapped=").append(isMapped).append(", homepage=").append(homepage).append(", pageNotFound=").append(pageNotFound)
+        .append(", contextPathInUrl=").append(contextPathInUrl).append(isSite).append(isSite).append(", showPort=")
+        .append(showPort).append(", port=").append(port).append(", onlyForContextPath=").append(onlyForContextPath)
+        .append(", scheme=").append(scheme).append(", locale=").append(locale).append(", authenticated=").append(authenticated)
+        .append(", roles=").append(roles).append(", users=").append(users).append(", subjectBasedSession=")
+        .append(subjectBasedSession).append(", sessionStateful=").append(sessionStateful).append(", formLoginPage=" ).append(formLoginPage)
+        .append(", channelInfo=").append(channelInfo).append(", cmsLocation=" ).append(cmsLocation)
+        .append("]");
+        return  builder.toString();
     }
 
 }
