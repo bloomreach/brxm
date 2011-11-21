@@ -44,9 +44,9 @@ public class HippoNodeId extends NodeId
     public Name name;
     private final HippoVirtualProvider provider;
     private StateProviderContext context;
-
+    
     public HippoNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name) {
-        super(UUID.randomUUID());
+        super(provider.getDataProviderContext().generateUuid(context, null));
         this.provider = provider;
         if(context != null) {
             this.context = context;

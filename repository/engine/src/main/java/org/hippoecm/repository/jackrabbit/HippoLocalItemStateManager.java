@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.NamespaceException;
@@ -179,6 +181,16 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     public HippoVirtualProvider lookupProvider(Name nodeTypeName) {
         return virtualNodeNames.get(nodeTypeName);
+    }
+
+    private final AtomicLong virtualNodeIdLsb = new AtomicLong(1);
+    //private long virtualNodeIdLsb = 1L;
+    private final long virtualNodeIdMsb = NodeId.valueOf("cafeface-0000-0000-0000-000000000000").getMostSignificantBits();
+
+    public UUID generateUuid(StateProviderContext context, NodeId canonical) {
+        return new UUID(virtualNodeIdMsb,virtualNodeIdLsb.getAndIncrement());
+        //return UUID.randomUUID();
+        //return new UUID(virtualNodeIdMsb, virtualNodeIdLsb++);
     }
 
     public Name getQName(String name) throws IllegalNameException, NamespaceException {

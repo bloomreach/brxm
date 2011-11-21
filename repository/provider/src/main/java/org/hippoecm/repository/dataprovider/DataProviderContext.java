@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.dataprovider;
 
+import java.util.UUID;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 
@@ -42,6 +43,8 @@ public interface DataProviderContext {
     public HippoVirtualProvider lookupProvider(String moduleName);
 
     public HippoVirtualProvider lookupProvider(Name nodeTypeName);
+
+    public UUID generateUuid(StateProviderContext context, NodeId canonical);
 
     public void registerProvider(Name nodeTypeName, HippoVirtualProvider provider);
 
