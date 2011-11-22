@@ -166,3 +166,7 @@
 .channel-manager .toolbar-window .scroll-left:hover {
     background-color: #d3d3d3;
 }
+
+#Iframe .ext-el-mask {
+  background-color: transparent;
+}
