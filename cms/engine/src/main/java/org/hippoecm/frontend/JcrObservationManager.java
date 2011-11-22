@@ -274,6 +274,7 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     private class JcrListener extends WeakReference<EventListener> implements EventListener, Comparable<JcrListener> {
+        
         String path;
         int eventTypes;
         boolean isDeep;
@@ -296,6 +297,17 @@ public class JcrObservationManager implements ObservationManager {
         public void onEvent(EventIterator events) {
             while (events.hasNext()) {
                 this.events.add(events.nextEvent());
+            }
+            // When the update requests do not arrive anymore,
+            // for instance due to the user not properly having closed
+            // its session, then the event queue just keeps growing,
+            // risking out of memory errors. We therefore set a limit
+            // on the amount of events that may reasonably accumulate
+            // during a valid session. If this number is exceeded we can
+            // assume the session is no longer valid.
+            if (this.events.size() > 10000) {
+                log.error("The event queue is full. Logging out the user.");
+                getSession().logout();
             }
         }
 
