@@ -19,6 +19,7 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<hst:defineObjects />
 
 <hst:link path="/css/yui-2.8.1-reset-fonts-grids.css" var="yuiResetFontsGridCssHref"/>
 <hst:element var="yuiResetFontsGridCss" name="link">
@@ -37,7 +38,7 @@
 <hst:headContribution keyHint="yuiResetFontsGridCss" element="${yuiResetFontsGridCss}" />
 <hst:headContribution keyHint="demoSiteCss" element="${demoSiteCss}" />
 
-<hst:link var="destination" path="/" />
+<hst:link var="destination" path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" />
 
   <div id="hd">        
     <div id="topnav" class="yui-gc">
