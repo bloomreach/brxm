@@ -251,7 +251,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }
     },
 
-     publishHstConfiguration : function() {
+    publishHstConfiguration : function() {
         this._lock();
         var self = this;
         Ext.Ajax.request({
@@ -303,15 +303,22 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         console.log('_fail');
         this.iframeCompletion = [];
         this.fireEvent('unlock', null);
+        Ext.getCmp('Iframe').body.unmask();
     },
 
     _initIFrameListeners : function() {
         var iFrame = Ext.getCmp('Iframe');
         iFrame.purgeListeners();
         iFrame.on('message', this.handleFrameMessages, this);
-        iFrame.on('unload', this._lock, this);
+        iFrame.on('unload', function () {
+            this._lock();
+        }, this);
         iFrame.on('documentloaded', function(frm) {
             var uri = frm.getDocumentURI();
+            if (!frm.domFired) {
+                this.initComposer();
+                return;
+            }
             if ((Ext.isSafari || Ext.isChrome) && uri !== '' && uri !== 'about:blank') {
                 this._onIframeDOMReady(frm);
             }
