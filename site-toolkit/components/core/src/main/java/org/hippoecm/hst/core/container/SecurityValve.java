@@ -130,7 +130,8 @@ public class SecurityValve extends AbstractValve {
             }
             
             try {
-                servletRequest.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
+                HttpSession httpSession = servletRequest.getSession(true);
+                httpSession.setAttribute(DESTINATION_ATTR_NAME, destinationLink.toUrlForm(requestContext, true));
                 if(authenticationRequired) {
                     servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, (securityException != null ? securityException.getLocalizedMessage() : null));
                 } else {
