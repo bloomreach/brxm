@@ -151,7 +151,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                             Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'], function(id) {
                                 if (id === 'yes') {
                                     retry = self.initialHstConnectionTimeout;
-                                    Hippo.Msg.wait(self.resources['loading-message']);
                                     composerMode(callback);
                                 } else {
                                     self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
@@ -282,6 +281,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     _lock : function(cb) {
         if (this.iframeCompletion.length == 0) {
+            Ext.getCmp('Iframe').body.mask();
             this.fireEvent('lock');
         }
         if (typeof cb === 'function') {
@@ -296,6 +296,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             cb.call(this);
         }
         this.fireEvent('unlock', this.pageContext);
+        Ext.getCmp('Iframe').body.unmask();
     },
 
     _fail : function() {
@@ -308,6 +309,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var iFrame = Ext.getCmp('Iframe');
         iFrame.purgeListeners();
         iFrame.on('message', this.handleFrameMessages, this);
+        iFrame.on('unload', this._lock, this);
         iFrame.on('documentloaded', function(frm) {
             var uri = frm.getDocumentURI();
             if ((Ext.isSafari || Ext.isChrome) && uri !== '' && uri !== 'about:blank') {

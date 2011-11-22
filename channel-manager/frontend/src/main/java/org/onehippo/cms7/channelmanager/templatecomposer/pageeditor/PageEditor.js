@@ -279,7 +279,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (channelPropertiesWindow) {
             channelPropertiesWindow.hide();
         }
-        Hippo.Msg.wait(this.resources['loading-message']);
     },
 
     initComponent : function() {
