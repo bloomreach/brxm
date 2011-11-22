@@ -31,7 +31,6 @@
   <packaging>pom</packaging>
 
   <repositories>
-    <!-- mvn repository for snapshots; will be available in next hippo-cms7-project release -->
     <repository>
       <id>hippo-maven2-snapshots</id>
       <name>Hippo Maven 2</name>
@@ -280,7 +279,7 @@
       <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket</artifactId>
-        <version>1.4.19-WICKET-3927</version>
+        <version>1.4.19-h1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wicket</groupId>

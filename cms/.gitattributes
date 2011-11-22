@@ -1,5 +1,4 @@
 * text=auto !eol
-/WICKET-3927.patch -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
 api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
@@ -2399,6 +2398,7 @@ translation/test/src/main/java/org/hippoecm/frontend/translation/components/fr.p
 translation/test/src/main/java/org/hippoecm/frontend/translation/components/nl.png -text svneol=unset#image/png
 upgrade/src/main/java/org/hippoecm/frontend/upgrade/RelaxingDoctypeUpdaterModule.java svneol=native#text/plain
 versioning/pom.xml svneol=native#text/plain
+/wicket.patch -text
 workflowmenu/pom.xml svneol=native#text/plain
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.html -text
 workflowmenu/src/main/java/org/hippoecm/addon/workflow/MenuAction.java -text

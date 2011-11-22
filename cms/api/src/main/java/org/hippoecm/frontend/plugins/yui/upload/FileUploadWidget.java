@@ -38,6 +38,9 @@ import java.util.Collection;
  * {@link FileUploadWidgetSettings}.
  */
 public class FileUploadWidget extends Panel {
+
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 

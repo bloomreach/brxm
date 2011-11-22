@@ -1,0 +1,91 @@
+Index: wicket/src/main/java/org/apache/wicket/ajax/wicket-ajax.js
+===================================================================
+--- wicket/src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(revision 1203185)
++++ wicket/src/main/java/org/apache/wicket/ajax/wicket-ajax.js	(working copy)
+@@ -1598,25 +1598,68 @@
+ 	// Process an external stylesheet element
+ 	processLink: function(steps, node) {		
+ 		steps.push(function(notify) {
+-			// if the element is already in head, skip it
+-			if (Wicket.Head.containsElement(node, "href")) {
++			// IE has an upper limit on the number of stylesheets in a page of 31
++			// However, we can use @import statements within <style> tags to work around that
++			// Each stylesheet also has an upper limit of 31 @import statements
++			// Making the total number of stylesheets that can be loaded by IE 961
++			if (Wicket.Browser.isIE()) {
++				var addImport = function (styleCount, node) {
++					var style = document.getElementById('wicketimportstyle' + styleCount);
++					if (style) {
++						var imports = style.styleSheet.imports;
++						// check if href already imported by this stylesheet
++						for (var i = 0; i < imports.length; i++) {
++							if (imports[i].href.indexOf(node.getAttribute("href")) != -1) {
++								return false;
++							}
++						}
++						// stylesheets can have no more than 31 imports
++						if (imports.length > 30) {
++							return addImport(styleCount+1, node);
++						}
++						style.styleSheet.addImport(node.getAttribute("href"));
++						return true;
++					}
++					style = document.createStyleSheet();
++					style.owningElement.id = 'wicketimportstyle' + styleCount;
++					style.owningElement.type = 'text/css';
++					style.addImport(node.getAttribute("href"));
++					return true;
++				}
++				var added = addImport(0, node);
++				if (!added) {
++					notify();
++					return;
++				}
++			} else {
++				// if the element is already in head, skip it
++				if (Wicket.Head.containsElement(node, "href")) {
++					notify();
++					return;
++				}
++				// create link element
++				var css = Wicket.Head.createElement("link");
++
++				// copy required attributes
++				css.id = node.getAttribute("id");
++				css.rel = node.getAttribute("rel");
++				css.href = node.getAttribute("href");
++				css.type = node.getAttribute("type");
++				
++				// add element to head
++				Wicket.Head.addElement(css);
++				
++			}
++
++			// cross browser way to check when the css is loaded
++			// taked from http://www.backalleycoder.com/2011/03/20/link-tag-css-stylesheet-load-event/
++			// this makes a second GET request to the css but it gets it either from the cache or
++			// downloads just the first several bytes and realizes that the MIME is wrong and ignores the rest
++			var img = document.createElement('img');
++			img.onerror = function() {
+ 				notify();
+-				return;
+ 			}
+-			// create link element
+-			var css = Wicket.Head.createElement("link");
+-
+-			// copy required attributes
+-			css.id = node.getAttribute("id");
+-			css.rel = node.getAttribute("rel");
+-			css.href = node.getAttribute("href");
+-			css.type = node.getAttribute("type");
+-			
+-			// add element to head
+-			Wicket.Head.addElement(css);
+-			
+-			// continue to next step
+-			notify();
++			img.src = css.href;
+ 		});
+ 	},
+ 	
+
