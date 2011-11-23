@@ -76,11 +76,14 @@ import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.domain.Domain;
+import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
+import org.hippoecm.repository.security.user.DummyUserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -831,6 +834,9 @@ public class SecurityManager implements JackrabbitSecurityManager {
     }
 
     class SimpleSecurityProvider implements SecurityProvider {
+        private UserManager userManager = new DummyUserManager();
+        private GroupManager groupManager = new DummyGroupManager();
+        private RoleManager roleManager = new DummyRoleManager();
         public void init(SecurityProviderContext context) throws RepositoryException {
         }
         public void sync() {
@@ -838,13 +844,13 @@ public class SecurityManager implements JackrabbitSecurityManager {
         public void remove() {
         }
         public UserManager getUserManager() throws RepositoryException {
-            throw new UnsupportedRepositoryOperationException("UserManager not supported.");
+            return userManager;
         }
         public GroupManager getGroupManager() throws RepositoryException {
-            throw new UnsupportedRepositoryOperationException("GroupManager not supported.");
+            return groupManager;
         }
         public RoleManager getRoleManager() throws RepositoryException {
-            throw new UnsupportedRepositoryOperationException("RoleManager not supported.");
+            return roleManager;
         }
     }
 }
