@@ -494,4 +494,8 @@ public class SessionDecorator implements XASession, HippoSession {
     public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public void registerSessionCloseCallback(CloseCallback callback) {
+        session.registerSessionCloseCallback(callback);
+    }
 }

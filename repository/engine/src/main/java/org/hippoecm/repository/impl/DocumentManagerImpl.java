@@ -42,6 +42,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.ocm.ConnectionFactoryImpl;
 import org.hippoecm.repository.ocm.JcrOID;
@@ -50,7 +51,7 @@ import org.hippoecm.repository.ocm.JcrStoreManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentManagerImpl implements DocumentManager {
+public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseCallback {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -83,6 +84,22 @@ public class DocumentManagerImpl implements DocumentManager {
             ph = (JcrPersistenceHandler) ((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager().getPersistenceHandler();
         } catch(IOException ex) {
             log.error("failed to initialize JDO layer: "+ex.getMessage(), ex);
+        }
+        ((HippoSession)session).registerSessionCloseCallback(this);
+    }
+
+    public void close() {
+        if (ph != null) {
+            ph.close();
+            ph = null;
+        }
+        if (pm != null) {
+            pm.close();
+            pm = null;
+        }
+        if (pmf != null) {
+            pmf.close();
+            pmf = null;
         }
     }
 

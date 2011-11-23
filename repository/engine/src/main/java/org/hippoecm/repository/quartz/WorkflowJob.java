@@ -19,6 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -49,7 +50,7 @@ public class WorkflowJob implements Job {
                 impersonated = session.impersonate(new SimpleCredentials(IMPERSONATED_USER, IMPERSONATED_PASSWORD));
             }
             String uuid = (String) jobDataMap.get("document");
-            invocation.setSubject(impersonated.getNodeByUUID(uuid));
+            invocation.setSubject(impersonated.getNodeByIdentifier(uuid));
             invocation.invoke(impersonated);
             impersonated.save();
 

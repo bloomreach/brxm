@@ -202,4 +202,8 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
             throw new RemoteRepositoryException(ex);
         }
     }
+
+    public void registerSessionCloseCallback(CloseCallback callback) {
+        throw new UnsupportedOperationException();
+    }
 }

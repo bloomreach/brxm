@@ -57,6 +57,7 @@ import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.RepositoryMapImpl;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
@@ -93,7 +94,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     List<WorkflowInvocation> invocationChain;
     ListIterator<WorkflowInvocation> invocationIndex;
     DocumentManagerImpl documentManager;
-    
+
     public WorkflowManagerImpl(Session session, Session rootSession) {
         this.session = session;
         this.rootSession = rootSession;
@@ -746,6 +747,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public static class WorkflowInvocationImpl implements WorkflowInvocation {
+        WorkflowManager workflowManager;
         Node workflowNode;
         Document workflowSubject;
         Node workflowSubjectNode;
@@ -766,7 +768,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             parameterTypes = null;
         }
 
-        WorkflowInvocationImpl(Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
+        WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
@@ -784,7 +786,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.parameterTypes = method.getParameterTypes();
         }
 
-        WorkflowInvocationImpl(Node workflowNode, Session rootSession, Node workflowSubject, Method method, Object[] args) throws RepositoryException {
+        WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Node workflowSubject, Method method, Object[] args) throws RepositoryException {
             this.workflowNode = workflowNode;
             this.workflowSubject = null;
             this.method = method;
@@ -832,13 +834,17 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         public void setSubject(Node node) {
+            try {
+                workflowManager = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager(); 
+            } catch(RepositoryException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            }
             workflowSubjectNode = node;
             workflowSubject = null;
         }
 
         public Object invoke(Session session) throws RepositoryException, WorkflowException {
             workflowSubjectNode = session.getNodeByUUID(workflowSubjectNode.getUUID());
-            WorkflowManagerImpl workflowManager = new WorkflowManagerImpl(session, session);
             Workflow workflow = workflowManager.getWorkflow(category, workflowSubjectNode);
             Method[] methods = workflow.getClass().getMethods();
             method = null;
@@ -1139,7 +1145,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, document, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(WorkflowManagerImpl.this, workflowNode, rootSession, document, method, args));
                            }
                        });
             }
@@ -1191,7 +1197,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, subject, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(WorkflowManagerImpl.this, workflowNode, rootSession, subject, method, args));
                            }
                        });
             }
@@ -1224,7 +1230,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public Object invoke(Method method, Object[] args) throws RepositoryException, WorkflowException {
-                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(workflowNode, rootSession, subject, method, args));
+                               return module.submit(WorkflowManagerImpl.this, new WorkflowInvocationImpl(WorkflowManagerImpl.this, workflowNode, rootSession, subject, method, args));
                            }
                        });
             }

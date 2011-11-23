@@ -48,6 +48,7 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.slf4j.Logger;
@@ -195,6 +196,10 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
 
     public Node getCanonicalNode(Node node) throws RepositoryException {
         return helper.getCanonicalNode((NodeImpl)node);
+    }
+    
+    public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
+        helper.registerSessionCloseCallback(callback);
     }
 
     @Override

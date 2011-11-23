@@ -42,6 +42,7 @@ import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -213,6 +214,10 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
 
     public Node getCanonicalNode(Node node) throws RepositoryException {
         return helper.getCanonicalNode((NodeImpl)node);
+    }
+
+    public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
+        helper.registerSessionCloseCallback(callback);
     }
 
     @Override

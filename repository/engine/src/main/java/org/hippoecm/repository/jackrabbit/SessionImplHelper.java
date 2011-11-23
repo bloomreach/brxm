@@ -18,9 +18,9 @@ package org.hippoecm.repository.jackrabbit;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -47,9 +47,7 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -65,6 +63,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.util.XMLChar;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
@@ -91,6 +90,7 @@ abstract class SessionImplHelper {
     Subject subject;
     org.apache.jackrabbit.core.SessionImpl sessionImpl;
     SessionContext context;
+    Set<HippoSession.CloseCallback> closeCallbacks = new LinkedHashSet<HippoSession.CloseCallback>();
 
     /**
      * Local namespace mappings. Prefixes as keys and namespace URIs as values.
@@ -107,9 +107,17 @@ abstract class SessionImplHelper {
      * namespace mappings to be carried over to a new session.
      */
     public void logout() {
+        for (HippoSession.CloseCallback callback : closeCallbacks) {
+            callback.close();
+        }
+        closeCallbacks.clear();
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
         localISM.setEnabled(false);
         namespaces.clear();
+    }
+
+    public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
+        closeCallbacks.add(callback);
     }
 
     //------------------------------------------------< Namespace handling >--

@@ -523,4 +523,8 @@ final public class UpdaterSession implements HippoSession {
     public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
+
+    public void registerSessionCloseCallback(CloseCallback callback) {
+        throw new UpdaterException("illegal method");
+    }
 }

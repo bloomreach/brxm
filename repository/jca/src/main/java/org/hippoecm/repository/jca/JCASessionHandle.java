@@ -414,4 +414,9 @@ public final class JCASessionHandle implements HippoSession {
     public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
         return getSession().getRetentionManager();
     }
+
+    @Override
+    public void registerSessionCloseCallback(CloseCallback callback) {
+        getSession().registerSessionCloseCallback(callback);
+    }
 }

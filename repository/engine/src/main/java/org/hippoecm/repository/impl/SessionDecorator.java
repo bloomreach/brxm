@@ -480,4 +480,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             throw new RepositoryException("Error creating an XML export content handler", e);
         }
     }
+
+    public void registerSessionCloseCallback(CloseCallback callback) {
+        if (session instanceof XASession) {
+            ((XASessionImpl)session).registerSessionCloseCallback(callback);
+        } else {
+            ((SessionImpl)session).registerSessionCloseCallback(callback);
+        }
+    }
 }

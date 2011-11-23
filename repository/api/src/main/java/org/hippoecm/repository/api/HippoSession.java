@@ -169,4 +169,29 @@ public interface HippoSession extends Session {
      * @throws RepositoryException  a generic error while accessing the repository
      */
     public ClassLoader getSessionClassLoader() throws RepositoryException;
+    
+    /**
+     * @exclude
+     * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
+     * This registers a callback at a JCR session, which will be called when the
+     * session is being logged out.  Either by an explicit call of the user
+     * program to the logout method or due to other reasons.  It can be used by
+     * user modules to clean up state.
+     * The session is only available if isLive() returns true, which is not
+     * guaranteed (though is guaranteed in case of a normal logout procedure.
+     */
+    public void registerSessionCloseCallback(CloseCallback callback);
+    
+    /**
+     * @exclude
+     * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
+     * The interface of the callback handler that is called when the session is
+     * logged out.
+     */
+    interface CloseCallback {
+        /** Called upon notification of the session is being logged out.
+         * No runtime exception may be thrown.
+         */
+        public void close();
+    }
 }
