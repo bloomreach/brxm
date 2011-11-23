@@ -32,7 +32,6 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 bottom: 0,
                 left: 0
             },
-            disabled: true,
             text: card.title,
             scope: this
         });
@@ -65,6 +64,11 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         var index = this.breadcrumbStackSize;
 
         var breadcrumbItem = this.createBreadcrumbItem(config.card);
+        breadcrumbItem.setDisabled(true);
+
+        // IE ignores all style attributes when a containing element (table in this case) has been disabled
+        breadcrumbItem.getEl().dom.disabled = false;
+
         breadcrumbItem.on('click', function() {
             if (index === this.breadcrumbStackSize) {
                 return;
