@@ -359,7 +359,7 @@ public class TabsPlugin extends RenderPlugin {
 
             } else {
                 if (editor.getMode() == IEditor.Mode.EDIT) {
-                    editor.done();
+                    editor.discard();
                 }
                 editor.close();
             }
