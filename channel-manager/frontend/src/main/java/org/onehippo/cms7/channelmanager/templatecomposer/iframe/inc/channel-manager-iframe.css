@@ -32,6 +32,7 @@
 .hst-overlay-container.hst-selected-container {
     background-color: #e3e3e3;
     opacity: 0.6;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
 }
 
 .hst-empty-container {
@@ -47,6 +48,7 @@
     opacity: 0.3;
     width: 100%;
     height: 100%;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
 }
 
 .hst-overlay-container.hst-empty-container {
@@ -57,6 +59,15 @@
     z-index: 100;
     border: 3px dotted #F9BE3D;
     min-height:22px;
+}
+
+.hst-overlay-inner {
+    width: 100%;
+    height: 100%;
+    /* IE cares; puts container on top to handle events */
+    opacity: 0;
+    background-color: white;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
 
 .hst-overlay-menu, .hst-dd-helper {
@@ -93,6 +104,7 @@
 .hst-overlay-container-item.hst-overlay-hover > div.hst-overlay-menu-button,
 .hst-overlay.hst-selected-containerItem > div.hst-overlay-menu-button{
     opacity: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     color: white;
     background-color: red;
 }
@@ -100,6 +112,7 @@
 .hst-overlay.hst-selected-containerItem {
     background-color: #ffff00;
     opacity: 0.4;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
 }
 
 .hst-overlay.hst-overlay-inherited {
@@ -131,6 +144,7 @@
     z-index: 500;
     background: red;
     opacity: 0.9;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
   	-moz-box-shadow: 3px 3px 3px #666;
@@ -149,6 +163,7 @@
 
 .hst-overlay.hst-overlay-container.hst-highlight {
     opacity: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     z-index: 1000;
     border: 2px solid #00ff33;
 }

@@ -48,6 +48,7 @@
                     base: 'hst-overlay',
                     hover : 'hst-overlay-hover',
                     inherited : 'hst-overlay-inherited',
+                    inner: 'hst-overlay-inner',
                     mark : null,
                     custom : null
                 }
@@ -683,6 +684,8 @@
         },
 
         onRender : function() {
+            this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
+
             this.menu = $('<div/>').addClass('hst-overlay-menu');
 
             var data = {element: this.element};
