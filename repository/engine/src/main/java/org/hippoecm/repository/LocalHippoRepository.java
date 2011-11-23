@@ -461,7 +461,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
             LoadInitializationModule.refresh(rootSession);
-            LoadInitializationModule.query(rootSession);
+            if (log.isDebugEnabled()) {
+                LoadInitializationModule.query(rootSession);
+            }
 
             if (!hasHippoNamespace) {
                 Session initializeSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
