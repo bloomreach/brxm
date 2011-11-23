@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,6 +26,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -65,18 +67,28 @@ public class FieldEditor extends Panel {
             }
 
             public void setObject(String path) {
-                try {
-                    if (path.indexOf(':') < 0) {
-                        getDescriptor().setPath(prefix + ":" + path);
-                    } else {
-                        getDescriptor().setPath(path);
+                if (StringUtils.isBlank(path)) {
+                    final StringResourceModel errorModel = new StringResourceModel("error-path-cannot-be-blank",
+                            FieldEditor.this, null, new Object[]{getDescriptor().getName()});
+                    showError(errorModel.getString());
+                } else {
+                    try {
+                        if (path.indexOf(':') < 0) {
+                            getDescriptor().setPath(prefix + ":" + path);
+                        } else {
+                            getDescriptor().setPath(path);
+                        }
+                    } catch (TypeException e) {
+                        showError(e.getLocalizedMessage());
                     }
-                } catch (TypeException e) {
-                    error(e.getLocalizedMessage());
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
-                    if (target != null) {
-                        target.addComponent(FieldEditor.this);
-                    }
+                }
+            }
+
+            private void showError(final String msg) {
+                error(msg);
+                AjaxRequestTarget target = AjaxRequestTarget.get();
+                if (target != null) {
+                    target.addComponent(FieldEditor.this);
                 }
             }
 
