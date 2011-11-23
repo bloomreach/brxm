@@ -533,14 +533,14 @@ public class TabbedPanel extends WebMarkupContainer {
             children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
             while (children.hasNext()) {
                 ListItem<TabsPlugin.Tab> item = children.next();
-                String cssClass = "none";
+                String display = "none";
                 if (item.getModelObject() == selected) {
-                    cssClass = "block";
+                    display = "block";
                 }
 
                 target.appendJavascript(
                     "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                    "element.setAttribute('style', 'display: " + cssClass + ";');");
+                    "element.setAttribute('style', 'display: " + display + ";');");
 
                 if (item.getModelObject() == selected) {
                     renderWireframes(item, target);
