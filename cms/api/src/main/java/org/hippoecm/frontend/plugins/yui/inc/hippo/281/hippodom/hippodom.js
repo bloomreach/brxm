@@ -88,11 +88,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
-            if (node.nodeType == 1
-                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
-                return true;
-            }
-            return false;
+            return (node.nodeType == 1);
         };
         
         YAHOO.hippo.Dom.getMargin = function(element) {
