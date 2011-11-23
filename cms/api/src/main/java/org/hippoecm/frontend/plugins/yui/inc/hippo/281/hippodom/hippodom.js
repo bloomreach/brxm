@@ -88,9 +88,13 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
-            return (node.nodeType == 1);
+            if (node.nodeType == 1 && (node.prefix == null || node.prefix == 'html')
+                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
+                return true;
+            }
+            return false;
         };
-        
+
         YAHOO.hippo.Dom.getMargin = function(element) {
             var margins = {w:0, h:0};
             margins.w += this.getBorderWidth(element);
