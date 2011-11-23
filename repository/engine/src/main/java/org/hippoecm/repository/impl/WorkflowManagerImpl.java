@@ -769,6 +769,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
+            this.workflowManager = workflowManager;
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
@@ -787,6 +788,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Node workflowSubject, Method method, Object[] args) throws RepositoryException {
+            this.workflowManager = workflowManager;
             this.workflowNode = workflowNode;
             this.workflowSubject = null;
             this.method = method;
