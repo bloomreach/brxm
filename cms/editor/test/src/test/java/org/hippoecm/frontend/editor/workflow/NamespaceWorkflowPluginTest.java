@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Node;
 
 import org.apache.wicket.MarkupContainer;
@@ -24,8 +22,8 @@ import org.apache.wicket.util.tester.FormTester;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.editor.layout.LayoutProviderPlugin;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,8 +36,13 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
+// Workaround for http://issues.onehippo.com/browse/REPO-256
+@Ignore
 public class NamespaceWorkflowPluginTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";
