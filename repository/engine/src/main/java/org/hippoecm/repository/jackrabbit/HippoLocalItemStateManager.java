@@ -183,14 +183,17 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         return virtualNodeNames.get(nodeTypeName);
     }
 
-    private final AtomicLong virtualNodeIdLsb = new AtomicLong(1);
-    //private long virtualNodeIdLsb = 1L;
+    private long virtualNodeIdLsb = 1L;
     private final long virtualNodeIdMsb = NodeId.valueOf("cafeface-0000-0000-0000-000000000000").getMostSignificantBits();
 
     public UUID generateUuid(StateProviderContext context, NodeId canonical) {
-        return new UUID(virtualNodeIdMsb,virtualNodeIdLsb.getAndIncrement());
-        //return UUID.randomUUID();
-        //return new UUID(virtualNodeIdMsb, virtualNodeIdLsb++);
+        /* There are alternative implementations possible here.  The default implementation, that would be
+         * similar to Jackrabbit is simply to return UUID.randomUUID();  However this can be slow at times.
+         * Another implemetnation is to use a global AtomicLong and return "new UUID(known-start-value,
+         * AtomicLong.getAndIncrement())".  However an atomic long isn't needed since these nodes only live
+         * during a single session.  Therefor a simple long is sufficient since no concurrent access is allowed.
+         */
+        return new UUID(virtualNodeIdMsb, virtualNodeIdLsb++);
     }
 
     public Name getQName(String name) throws IllegalNameException, NamespaceException {
