@@ -126,7 +126,7 @@ class HippoCachingPathResolver implements PathResolver {
         }
 
         @Override
-        public V put(K key, V value) {
+        public synchronized V put(K key, V value) {
             young.put(key, value);
 
             if (++age == maxAge) {
