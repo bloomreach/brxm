@@ -1262,7 +1262,7 @@ Wicket.Window.Mask.prototype = {
 		// disable user interaction
 		setTimeout(function() {this.hideSelectBoxes()}.bind(this), 300);
 		setTimeout(function() {this.disableTabs()}.bind(this), 400);
-		setTimeout(function() {this.disableFocus()}.bind(this), 1000); 		
+		setTimeout(function() {this.disableFocus()}.bind(this), 1000);
 	},
 	
 	/**
@@ -1400,10 +1400,10 @@ Wicket.Window.Mask.prototype = {
 	disableFocus: function() {
 		// explorer doesn't need this, because for IE disableTabs() is called.
 		// plus in IE this causes problems because it scrolls document		);
-		if (Wicket.Browser.isIE() == false) {			
-			this.focusRevertList = new Array();			
-			var body = this.document.getElementsByTagName("body")[0];			
-			for (var i = 0; i < body.childNodes.length; ++i) {		
+		if (Wicket.Browser.isIE() == false && this.document) {
+			this.focusRevertList = new Array();
+			var body = this.document.getElementsByTagName("body")[0];
+			for (var i = 0; i < body.childNodes.length; ++i) {
 				this.disableFocusElement(body.childNodes[i], this.focusRevertList);
 			}
 		}
