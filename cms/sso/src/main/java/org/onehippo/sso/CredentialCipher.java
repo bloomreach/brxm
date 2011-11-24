@@ -23,12 +23,17 @@ import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -55,12 +60,22 @@ public final class CredentialCipher {
         return instance;
     }
 
-    private final SecretKeySpec secret;
+    private SecretKeySpec secret;
 
     CredentialCipher() {
         String sharedKey = System.getProperty(HIPPO_CLUSTER_KEY);
         if (sharedKey != null) {
-            log.warn("The " + HIPPO_CLUSTER_KEY + " system property has been deprecated and will be ignored.");
+            try {
+                SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                KeySpec spec = new PBEKeySpec(sharedKey.toCharArray(), HIPPO_CLUSTER_KEY.getBytes(), 1024, 128);
+                SecretKey tmp = factory.generateSecret(spec);
+                secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+                return;
+            } catch (InvalidKeySpecException e) {
+                log.error("Could not initialize secret from shared secret in system property ''" + HIPPO_CLUSTER_KEY + "', generating own key", e);
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Could not initialize secret from shared secret in system property ''" + HIPPO_CLUSTER_KEY + "', generating own key", e);
+            }
         }
         KeyGenerator kgen;
         try {
