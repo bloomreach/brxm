@@ -190,6 +190,8 @@ gotolink/.settings
 gotolink/hippo-cms-gotolink.iml
 gotolink/target
 /hippo-cms.iml
+jquery/target
+perspectives/target
 plugins/*.tmp
 plugins/.classpath
 plugins/.project
@@ -212,6 +214,7 @@ reporting/.project
 reporting/.settings
 reporting/hippo-cms-reporting.iml
 reporting/target
+repository-dependencies/target
 resources/.classpath
 resources/.project
 resources/.settings
