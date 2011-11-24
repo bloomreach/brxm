@@ -322,7 +322,9 @@ public class HippoTester extends WicketTester {
         public RetentionManager getRetentionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
             throw new UnsupportedRepositoryOperationException();
         }
-        
+
+        public void registerSessionCloseCallback(CloseCallback callback) {
+        }
     }
     
     private IApplicationFactory appFactory;
