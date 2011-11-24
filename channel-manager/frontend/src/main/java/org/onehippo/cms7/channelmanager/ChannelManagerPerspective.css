@@ -35,7 +35,7 @@
 
 /* breadcrumb */
 .channel-manager .x-toolbar .breadcrumb-item { opacity: 1 }
-.channel-manager .x-toolbar .breadcrumb-item .x-btn-text { font-weight: bold; padding-left: 8px; color: #666666 !important}
+.channel-manager .x-toolbar .breadcrumb-item .x-btn-text { font-weight: bold; padding-left: 8px; color: #666666}
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over td { border: 0; background-image: none; }
 
 /* notification window */
