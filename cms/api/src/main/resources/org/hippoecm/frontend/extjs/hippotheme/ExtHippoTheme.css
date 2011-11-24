@@ -30,7 +30,7 @@
 }
 
 .x-item-disabled * {
-    color: gray !important;
+    color: gray;
 }
 
 .x-splitbar-proxy {
@@ -341,7 +341,7 @@ ul.x-tab-strip-bottom {
 }
 
 .x-btn-disabled *{
-	color:gray !important;
+	color:gray;
 }
 
 .x-btn-mc em.x-btn-arrow {
@@ -450,43 +450,43 @@ ul.x-tab-strip-bottom {
 }
 
 .x-tbar-page-first{
-	background-image: url(images/grid/page-first.gif) !important;
+	background-image: url(images/grid/page-first.gif);
 }
 
 .x-tbar-loading{
-	background-image: url(images/grid/refresh.gif) !important;
+	background-image: url(images/grid/refresh.gif);
 }
 
 .x-tbar-page-last{
-	background-image: url(images/grid/page-last.gif) !important;
+	background-image: url(images/grid/page-last.gif);
 }
 
 .x-tbar-page-next{
-	background-image: url(images/grid/page-next.gif) !important;
+	background-image: url(images/grid/page-next.gif);
 }
 
 .x-tbar-page-prev{
-	background-image: url(images/grid/page-prev.gif) !important;
+	background-image: url(images/grid/page-prev.gif);
 }
 
 .x-item-disabled .x-tbar-loading{
-	background-image: url(images/grid/refresh-disabled.gif) !important;
+	background-image: url(images/grid/refresh-disabled.gif);
 }
 
 .x-item-disabled .x-tbar-page-first{
-	background-image: url(images/grid/page-first-disabled.gif) !important;
+	background-image: url(images/grid/page-first-disabled.gif);
 }
 
 .x-item-disabled .x-tbar-page-last{
-	background-image: url(images/grid/page-last-disabled.gif) !important;
+	background-image: url(images/grid/page-last-disabled.gif);
 }
 
 .x-item-disabled .x-tbar-page-next{
-	background-image: url(images/grid/page-next-disabled.gif) !important;
+	background-image: url(images/grid/page-next-disabled.gif);
 }
 
 .x-item-disabled .x-tbar-page-prev{
-	background-image: url(images/grid/page-prev-disabled.gif) !important;
+	background-image: url(images/grid/page-prev-disabled.gif);
 }
 
 .x-paging-info {
@@ -494,7 +494,7 @@ ul.x-tab-strip-bottom {
 }
 
 .x-toolbar-more-icon {
-    background-image: url(images/toolbar/more.gif) !important;
+    background-image: url(images/toolbar/more.gif);
 }.x-resizable-handle {
 	background-color:#fff;
 }
@@ -643,18 +643,18 @@ td.grid-hd-group-cell {
 }
 
 .x-grid3-row-selected {
-	background-color: #FFE29A !important;
+	background-color: #FFE29A;
 	background-image: none;
 	border-color:#FFE29A;
 }
 
 .x-grid3-cell-selected{
-	background-color: #b8cfee !important;
+	background-color: #b8cfee;
 	color:#000;
 }
 
 .x-grid3-cell-selected span{
-	color:#000 !important;
+	color:#000;
 }
 
 .x-grid3-cell-selected .x-grid3-cell-text{
@@ -662,15 +662,15 @@ td.grid-hd-group-cell {
 }
 
 .x-grid3-locked td.x-grid3-row-marker, .x-grid3-locked .x-grid3-row-selected td.x-grid3-row-marker{
-    background-color:#ebeadb !important;
-    background-image:url(images/grid/grid-hrow.gif) !important;
+    background-color:#ebeadb;
+    background-image:url(images/grid/grid-hrow.gif);
     color:#000;
     border-top-color:#fff;
-    border-right-color:#6fa0df !important;
+    border-right-color:#6fa0df;
 }
 
 .x-grid3-locked td.x-grid3-row-marker div, .x-grid3-locked .x-grid3-row-selected td.x-grid3-row-marker div{
-    color:#15428b !important;
+    color:#15428b;
 }
 
 .x-grid3-dirty-cell {
@@ -686,12 +686,12 @@ td.grid-hd-group-cell {
 }
 
 .x-props-grid .x-grid3-td-name .x-grid3-cell-inner{
-	background-image:url(images/grid/grid3-special-col-bg.gif) !important;
-    color:#000 !important;
+	background-image:url(images/grid/grid3-special-col-bg.gif);
+    color:#000;
 }
 
 .x-props-grid .x-grid3-body .x-grid3-td-name{
-    background-color:#fff !important;
+    background-color:#fff;
     border-right-color:#eee;
 }
 
@@ -834,7 +834,7 @@ td.grid-hd-group-cell {
 }
 
 .x-tree-node-loading .x-tree-node-icon{
-	background-image:url(images/tree/loading.gif) !important;
+	background-image:url(images/tree/loading.gif);
 }
 
 .x-tree-node .x-tree-node-inline-icon {
@@ -920,7 +920,7 @@ td.grid-hd-group-cell {
 }
 
 .x-tree-node .x-tree-node-disabled a span{
-	color:gray !important;
+	color:gray;
 }
 
 .x-tree-node div.x-tree-drag-insert-below{
@@ -1050,7 +1050,7 @@ td.grid-hd-group-cell {
 }
 
 .x-date-mmenu{
-  background-color:#eee !important;
+  background-color:#eee;
 }
 
 .x-date-mmenu .x-menu-item {
@@ -1199,12 +1199,12 @@ a.x-menu-item {
 }
 
 .x-menu-plain {
-	background-color:#f0f0f0 !important;
+	background-color:#f0f0f0;
     background-image: none;
 }
 
 .x-date-menu, .x-color-menu{
-    background-color: #fff !important;
+    background-color: #fff;
 }
 
 .x-menu .x-date-picker{
@@ -1212,7 +1212,7 @@ a.x-menu-item {
 }
 
 .x-cycle-menu .x-menu-item-checked {
-    border-color:#a3bae9 !important;
+    border-color:#a3bae9;
     background-color:#def8f6;
 }
 
@@ -1316,7 +1316,7 @@ a.x-menu-item {
 }
 
 .x-combo-list .x-combo-selected{
-	border-color:#fff6e0 !important;
+	border-color:#fff6e0;
 	background-color: #fff6e0;
 }
 
