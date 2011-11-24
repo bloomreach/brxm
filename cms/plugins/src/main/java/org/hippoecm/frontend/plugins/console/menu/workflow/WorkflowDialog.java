@@ -69,7 +69,7 @@ public class WorkflowDialog extends AbstractDialog<Node> {
             dump.setDefaultModel(new Model<String>(ex.getClass().getName()+": "+ex.getMessage()));
         }
 
-        setCancelVisible(false);
+        setOkVisible(false);
         setFocusOnOk();
     }
 

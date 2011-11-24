@@ -116,7 +116,7 @@ public class PermissionsDialog extends AbstractDialog<Node> {
         } catch (RepositoryException ex) {
             actionsLabel.setDefaultModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
         }
-        setCancelVisible(false);
+        setOkVisible(false);
         setFocusOnOk();
     }
 

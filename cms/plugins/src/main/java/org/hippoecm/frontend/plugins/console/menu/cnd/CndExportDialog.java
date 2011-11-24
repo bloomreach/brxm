@@ -139,7 +139,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as..\""));
         link.setOutputMarkupId(true);
         add(link);
-        setCancelVisible(false);
+        setOkVisible(false);
     }
     
     public String getSelectedNs() {
