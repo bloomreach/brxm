@@ -123,11 +123,10 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
     protected void login() {
         PluginUserSession userSession = (PluginUserSession)getSession();
         HttpSession session = ((WebRequest)getRequest()).getHttpServletRequest().getSession(true);
-        String username = username();
-        if (username != null) {
-            ConcurrentLoginFilter.validateSession(session, username, false);
+        boolean success = userSession.login(new UserCredentials(this));
+        if (success) {
+            ConcurrentLoginFilter.validateSession(session, username(), false);
         }
-        userSession.login(new UserCredentials(this));
         userSession.setLocale(new Locale(selectedLocale));
         userSession.getJcrSession();
         /* FIXME: this would be a much better solution than a refresh,

@@ -104,13 +104,13 @@ public class LoginPlugin extends RenderPlugin {
     protected class SignInForm extends Form implements CallbackHandler {
         private static final long serialVersionUID = 1L;
 
-        protected final DropDownChoice locale;
+        protected final DropDownChoice<String> locale;
 
         public String selectedLocale;
-        protected final RequiredTextField usernameTextField;
+        protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
         private Label userLabel;
-        private Map parameters;
+        private Map<String, String[]> parameters;
 
         public SignInForm(final String id) {
             super(id);
@@ -142,18 +142,23 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
 
-            add(usernameTextField = new RequiredTextField("username", new PropertyModel<String>(LoginPlugin.this,
+            add(usernameTextField = new RequiredTextField<String>("username", new PropertyModel<String>(LoginPlugin.this,
                     "username")));
             add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
                     "password")));
-            add(locale = new DropDownChoice("locale", new PropertyModel<String>(this, "selectedLocale") {
+            add(locale = new DropDownChoice<String>("locale", 
+                new PropertyModel<String>(this, "selectedLocale") {
+                    private static final long serialVersionUID = 1L;
+
                     @Override
                     public void setObject(final String object) {
                         super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
                     }
-                }, Arrays.asList(localeArray),
+                }, 
+                Arrays.asList(localeArray),
                 // Display the language name from i18n properties
                 new IChoiceRenderer<String>() {
+                    private static final long serialVersionUID = 1L;
                     public String getDisplayValue(String object) {
                         return new StringResourceModel(object, LoginPlugin.this, null).getString();
                     }
@@ -188,7 +193,7 @@ public class LoginPlugin extends RenderPlugin {
                         userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null,
                                 new Object[] { username }));
                     } else {
-                        userLabel.setDefaultModel(new Model(""));
+                        userLabel.setDefaultModel(new Model<String>(""));
                     }
                     target.addComponent(userLabel);
                     LoginPlugin.this.username = username;
@@ -225,7 +230,9 @@ public class LoginPlugin extends RenderPlugin {
             String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
             boolean success = userSession.login(new UserCredentials(this));
-            ConcurrentLoginFilter.validateSession(session, username, false);
+            if (success) {
+                ConcurrentLoginFilter.validateSession(session, username, false);
+            }
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success);
         }

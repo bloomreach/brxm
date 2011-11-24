@@ -167,30 +167,32 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
             }
             boolean success = userSession.login(new UserCredentials(this));
-            if (success && rememberme) {
-                Session jcrSession = userSession.getJcrSession();
-                if (jcrSession.getUserID().equals(username)) {
-                    try {
-                        MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
-                        digest.update(username.getBytes());
-                        digest.update(password.getBytes());
-                        String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$" + Base64.encode(new String(digest.digest()));
-                        ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(
-                                RememberMeLoginPlugin.class.getName(), passphrase));
-                        Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
-                        String[] strings = passphrase.split("\\$");
-                        userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
-                        userinfo.save();
-                    } catch (NoSuchAlgorithmException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                    } catch (LoginException ex) {
-                        log.info("Invalid login as user: " + username);
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
+            if (success) {
+                ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
+                if (rememberme) {
+                    Session jcrSession = userSession.getJcrSession();
+                    if (jcrSession.getUserID().equals(username)) {
+                        try {
+                            MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+                            digest.update(username.getBytes());
+                            digest.update(password.getBytes());
+                            String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$" + Base64.encode(new String(digest.digest()));
+                            ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(
+                                    RememberMeLoginPlugin.class.getName(), passphrase));
+                            Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
+                            String[] strings = passphrase.split("\\$");
+                            userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
+                            userinfo.save();
+                        } catch (NoSuchAlgorithmException ex) {
+                            log.error(ex.getClass().getName() + ": " + ex.getMessage());
+                        } catch (LoginException ex) {
+                            log.info("Invalid login as user: " + username);
+                        } catch (RepositoryException ex) {
+                            log.error(ex.getClass().getName() + ": " + ex.getMessage());
+                        }
                     }
                 }
             }
-            ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success);
         }
