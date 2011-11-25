@@ -26,13 +26,12 @@ import org.hippoecm.frontend.util.PluginConfigMapper;
 
 public class DateFieldWidget extends Panel {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: DateFieldWidget.java 19048 2009-07-28 16:08:33Z abogaart $";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
         super(id, model);
-        
         YuiDatePickerSettings settings = new YuiDatePickerSettings();
         if (config.containsKey("datepicker")) {
             try {
@@ -41,11 +40,9 @@ public class DateFieldWidget extends Panel {
                 throw new RuntimeException(e);
             }
         }
-
         YuiDateTimeField dateTimeField = new YuiDateTimeField("widget", model, settings);
         boolean todayLinkVisible = config.getAsBoolean("show.today.button", true);
         dateTimeField.setTodayLinkVisible(todayLinkVisible);
         add(dateTimeField);
     }
-
 }
