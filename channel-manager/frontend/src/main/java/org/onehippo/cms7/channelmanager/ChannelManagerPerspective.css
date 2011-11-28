@@ -168,5 +168,5 @@
 }
 
 #Iframe .ext-el-mask {
-  background-color: transparent;
+  background: transparent url(loading.gif) no-repeat center;
 }
