@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2011 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,11 @@ import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
+import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.IRequestCycleProcessor;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
@@ -268,6 +272,21 @@ public class Main extends WebApplication {
         if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
             getDebugSettings().setOutputComponentPath(true);
         }
+        
+        setHeaderResponseDecorator(new IHeaderResponseDecorator() {
+            
+            @Override
+            public IHeaderResponse decorate(IHeaderResponse response) {
+                boolean isIE = ((WebClientInfo) RequestCycle.get().getClientInfo()).getProperties().isBrowserInternetExplorer();
+                boolean isAjax = ((WebRequest) RequestCycle.get().getRequest()).isAjax();
+                if (isIE && !isAjax) {
+                    return new CssImportingHeaderResponse(response);
+                }
+                return response;
+            }
+            
+        });
+
     }
 
     @Override
