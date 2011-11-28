@@ -32,7 +32,7 @@ public interface MutableVirtualHost extends VirtualHost {
     void addPortMount(MutablePortMount portMount) throws IllegalArgumentException;
 
     /**
-     * @return the cms location (fully qualified URL) and <code>null</code> if not configured
+     * @return the cms location (fully qualified URL) or <code>null</code> if not configured
      */
     String getCmsLocation();
     
