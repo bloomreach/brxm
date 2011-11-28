@@ -198,7 +198,11 @@
             and servletpath. The attributes 'link' and 'node' get the current servletpath in their
             result, the 'path' attribute does *not* get the servletpath. The reasoning is that the
             'path' attribute is used for static links, like for css and images. You should use one
-            of the three attributes (link|path|node) within one tag, and not more then one. </description>
+            of the three attributes (link|path|node) within one tag, and not more then one. 
+            If you do not specify the 'var' attribute, the output is directly written. Otherwise, the value 
+            is stored in the var attribute.
+            If you only specify a hst:link (with or without var), you get a hst link for the current URL
+            </description>
         <attribute>
             <name>var</name>
             <required>false</required>
@@ -339,8 +343,13 @@
              </c:choose>
            </c:forEach>
          </ul>
-         ]]></example>
-
+         
+         <!-- Create a hst link for the current URL: -->
+         <hst:link /> 
+         OR 
+         <hst:link var="current"/> to store it in the var 'current'
+         
+         ]]></example> 
     </tag>
 
     <tag>

@@ -110,6 +110,12 @@ public class HstLinkTag extends ParamContainerTag {
      */
     protected boolean fallback = true;
         
+    /**
+     * Whether either the <code>link</code>, <code>path</code>, <code>hippoBean</code> or <code>siteMapItemRefId</code> did 
+     * have its setter called. Also, only one of the setters is allowed. If none called, we return a hst link for the current
+     * URL
+     */
+    protected boolean linkForAttributeSet = false;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -133,21 +139,28 @@ public class HstLinkTag extends ParamContainerTag {
             cleanup();
             return EVAL_PAGE;
         }
-
+ 
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+        HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
         
-        if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
-            String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
-            if(dispatcher == null) {
-                log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
-            } else {
-                log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");  
+        if(linkForAttributeSet) {
+            if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
+                String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
+                if(dispatcher == null) {
+                    log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
+                } else {
+                    log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");  
+                }
+                cleanup();
+                return EVAL_PAGE; 
             }
-            cleanup();
-            return EVAL_PAGE;
+        } else {
+            // hst link for current URL requested
+            if(reqContext != null && reqContext.getResolvedSiteMapItem() != null) {
+                this.path = reqContext.getResolvedSiteMapItem().getPathInfo();
+            }
         }
         
-       HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
        
        if(reqContext == null) {
            if(this.path != null) {
@@ -363,6 +376,7 @@ public class HstLinkTag extends ParamContainerTag {
         navigationStateful = false;
         mountAlias = null;
         mountType = null;
+        linkForAttributeSet = false;
     }
     
     /* (non-Javadoc)
@@ -411,6 +425,11 @@ public class HstLinkTag extends ParamContainerTag {
     }
     
     public void setLink(HstLink hstLink) {
+        if(linkForAttributeSet) {
+           log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr link '{}'", link);
+           return;    
+        } 
+        linkForAttributeSet = true;
         this.link = hstLink;
     }
     
@@ -432,10 +451,20 @@ public class HstLinkTag extends ParamContainerTag {
     }
     
     public void setPath(String path) {
+        if(linkForAttributeSet) {
+            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr path '{}'", path);
+            return;    
+         } 
+         linkForAttributeSet = true;
         this.path = path;
     }
 
     public void setSiteMapItemRefId(String siteMapItemRefId) {
+        if(linkForAttributeSet) {
+            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr siteMapItemRefId '{}'", siteMapItemRefId);
+            return;    
+         } 
+         linkForAttributeSet = true;
         this.siteMapItemRefId = siteMapItemRefId;
     }
     
@@ -452,6 +481,11 @@ public class HstLinkTag extends ParamContainerTag {
     }
     
     public void setHippobean(HippoBean hippoBean) {
+        if(linkForAttributeSet) {
+            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr hippoBean '{}'", hippoBean.getPath());
+            return;    
+         } 
+         linkForAttributeSet = true;
         this.hippoBean = hippoBean;
     }
     
