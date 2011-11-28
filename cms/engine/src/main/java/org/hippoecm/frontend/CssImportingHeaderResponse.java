@@ -26,6 +26,14 @@ import org.apache.wicket.markup.html.DecoratingHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.lang.Objects;
 
+/**
+ * A header response that doesn't immediately render stylesheet references but
+ * collects them until close and just before closing creates a <code>&lt;style&gt;</code> tag in the head
+ * with <code>@import</code> statements for the individual css references.
+ * 
+ * This is a work-around for the limitation in Internet Explorer that doesn't allow more than 31 stylesheet
+ * objects per document.
+ */
 public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
     
     private List<Stylesheet> stylesheets = new ArrayList<Stylesheet>();
