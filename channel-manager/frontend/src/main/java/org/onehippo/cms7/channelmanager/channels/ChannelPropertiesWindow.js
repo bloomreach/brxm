@@ -37,7 +37,7 @@ Hippo.ChannelManager.ChannelPropertiesWindow = Ext.extend(Ext.Window, {
         Ext.apply(config, {
             id: 'channel-properties-window',
             cls: 'channel-properties-window',
-            title: 'Channel Properties',
+            title: self.resources['channel-properties-title'],
             width: 310,
             height: 500,
             closable: true,
@@ -46,12 +46,13 @@ Hippo.ChannelManager.ChannelPropertiesWindow = Ext.extend(Ext.Window, {
             constrainHeader: true,
             closeAction: 'hide',
             hidden: true,
-            bodyStyle: 'background-color: #ffffff'
+            bodyStyle: 'background-color: #ffffff',
+            padding: 10
         });
 
         config.items.push({
             xtype: 'button',
-            text: 'Save Changes',
+            text: self.resources['channel-properties-save'],
             listeners: {
                 click: {
                     fn:  self.saveChannel,

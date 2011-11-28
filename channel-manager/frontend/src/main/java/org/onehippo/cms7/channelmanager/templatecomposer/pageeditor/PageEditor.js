@@ -210,7 +210,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 allowDepress: false,
                 menu: {
                     items: {
-                        text: 'Edit HST Configuration',
+                        text: this.initialConfig.resources['edit-hst-configuration'],
                         listeners: {
                             click: {
                                 fn : function() {
