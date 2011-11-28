@@ -43,11 +43,11 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
             colModel: new Ext.grid.ColumnModel({
                 columns: [
                     {
-                        header: 'Blueprint Name',
+                        header: me.resources['new-channel-blueprint-name'],
                         align: 'left'
                     },
                     {
-                        header: 'Description',
+                        header: me.resources['new-channel-blueprint-description'],
                         align: 'left'
                     }
                 ]

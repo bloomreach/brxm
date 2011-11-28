@@ -40,19 +40,22 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         this.resources = config.resources;
         this.selectedChannelId = null;
         this.canModifyChannels = config.canModifyChannels;
+        this.blueprintsAvailable = config.blueprintsAvailable;
 
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-        var toolbar = new Ext.Toolbar({
-            layout: 'hbox',
-            layoutConfig: {
-                pack: 'left'
-            },
-            height: 28,
-            cls: 'channel-manager-toolbar',
-            items: []
-        });
-        if (this.canModifyChannels) {
+        var toolbar = null;
+
+        if (this.canModifyChannels && this.blueprintsAvailable) {
+            toolbar = new Ext.Toolbar({
+                layout: 'hbox',
+                layoutConfig: {
+                    pack: 'left'
+                },
+                height: 28,
+                cls: 'channel-manager-toolbar',
+                items: []
+            });
             toolbar.add({
                 text: config.resources['action.add.channel'],
                 handler: function() {

@@ -49,11 +49,21 @@ public class ChannelGridPanel extends ExtPanel {
     @ExtProperty
     private boolean canModifyChannels;
 
-    public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture) {
+    @ExtProperty
+    private boolean blueprintsAvailable;
+
+    public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture,
+                            boolean blueprintsAvailable) {
         super();
         this.store = (ChannelStore) storeFuture.getStore();
-        canModifyChannels = store.canModifyChannels();
         this.storeFuture = storeFuture;
+
+        canModifyChannels = store.canModifyChannels();
+        log.info("Current user is allowed to modify channels: {}", canModifyChannels);
+
+        this.blueprintsAvailable = blueprintsAvailable;
+        log.info("Blueprints for new channels are available: {}", blueprintsAvailable);
+
         visibleFields = parseChannelFields(config);
         visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
     }

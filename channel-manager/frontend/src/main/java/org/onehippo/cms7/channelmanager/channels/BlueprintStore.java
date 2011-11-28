@@ -38,7 +38,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final String FIELD_HAS_CONTENT_PROTOTYPE = "hasContentPrototype";
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
 
-    private long total;
+    private Long total;
 
     public BlueprintStore() {
         super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
@@ -46,7 +46,14 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     @Override
     protected long getTotal() {
+        if (this.total == null) {
+            this.total = Long.valueOf(getBlueprints().size());
+        }
         return this.total;
+    }
+
+    public boolean isEmpty() {
+        return getTotal() <= 0;
     }
 
     @Override
@@ -63,7 +70,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
         List<Blueprint> blueprints = getBlueprints();
-        this.total = blueprints.size();
+        this.total = Long.valueOf(blueprints.size());
         for (Blueprint blueprint : blueprints) {
             JSONObject object = new JSONObject();
             object.put("id", blueprint.getId());
