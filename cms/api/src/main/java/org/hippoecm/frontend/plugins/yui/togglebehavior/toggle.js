@@ -30,13 +30,13 @@ function toggleBox(num) {
     }
 }
 function showBox(num) {
-    console.log('show box ' + num);
+//    console.log('show box ' + num);
     document.getElementById('toggle-box-' + num).style.display = 'block';
     var src = document.getElementById('toggle-' + num).src;
     document.getElementById('toggle-' + num).src = src.replace('group-collapsed', 'group-expanded');
 }
 function hideBox(num) {
-    console.log('hide box ' + num);
+//    console.log('hide box ' + num);
     document.getElementById('toggle-box-' + num).style.display = 'none';
     var src = document.getElementById('toggle-' + num).src;
     document.getElementById('toggle-' + num).src = src.replace('group-expanded', 'group-collapsed');
@@ -59,7 +59,7 @@ for (i=0;i<ARRcookies.length;i++) {
   }
 }
 function boxesInit() {
-    console.log('boxes init');
+//    console.log('boxes init');
     for (var num=1; num <= 4; num++) {
         var openClose = getCookie("ConsoleToggleBox" + num);
         var box = document.getElementById('toggle-box-' + num);
