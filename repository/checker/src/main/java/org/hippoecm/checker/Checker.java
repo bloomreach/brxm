@@ -104,16 +104,18 @@ public class Checker {
                         repair.perform(bundleReader);
                     }
                 }
-                switch(repair.getStatus()) {
-                    case RECHECK:
-                        log.warn("Repaired repository but another check is required");
-                        break;
-                    case PENDING:
-                        log.info("Repaired repository");
-                        break;
-                    case FAILURE:
-                        log.error("FAILED TO REPAIR REPOSITORY");
-                        break;
+                if (fix) {
+                    switch(repair.getStatus()) {
+                        case RECHECK:
+                            log.warn("Repaired repository but another check is required");
+                            break;
+                        case PENDING:
+                            log.info("Repaired repository");
+                            break;
+                        case FAILURE:
+                            log.error("FAILED TO REPAIR REPOSITORY");
+                            break;
+                    }
                 }
                 {
                     ReferencesReader referenceReader = new ReferencesReader(persistMgr);
@@ -166,7 +168,7 @@ public class Checker {
         }
     }
 
-    public boolean checkBundles(String[] arguments) {
+    public boolean checkRepository(String[] arguments) {
         if (arguments.length == 0) {
             return true;
         }
@@ -301,17 +303,17 @@ public class Checker {
                     for (Name name : node.bundle.getPropertyNames()) {
                         if ("mixinTypes".equals(name.getLocalName()) && "http://www.jcp.org/jcr/1.0".equals(name.getNamespaceURI())) {
                             if(repairSet == null) {
-                            StringBuffer sb = new StringBuffer();
-                            sb.append("{").append(name.getNamespaceURI()).append("}").append(name.getLocalName());
-                            for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
-                                try {
-                                    Name nameValue = value.getName();
-                                    sb.append("{").append(nameValue.getNamespaceURI()).append("}").append(nameValue.getLocalName());
-                                } catch (RepositoryException ex) {
-                                    ex.printStackTrace();
+                                StringBuffer sb = new StringBuffer();
+                                sb.append("{").append(name.getNamespaceURI()).append("}").append(name.getLocalName());
+                                for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
+                                    try {
+                                        Name nameValue = value.getName();
+                                        sb.append("{").append(nameValue.getNamespaceURI()).append("}").append(nameValue.getLocalName());
+                                    } catch (RepositoryException ex) {
+                                        ex.printStackTrace();
+                                    }
                                 }
-                            }
-                            System.err.println(node.getNode() + " " + sb.toString());
+                                System.err.println(node.getNode() + " " + sb.toString());
                             }
                             if (repairSet != null) {
                                 switch (mode) {
@@ -349,17 +351,31 @@ public class Checker {
                 case DUMP:
                     if (repairSet != null) {
                         StringBuffer sb = new StringBuffer();
-                        sb.append("node=").append(node.getNode());
-                        sb.append(" parent=").append(node.getParent());
-                        sb.append(" children=");
-                        boolean first = true;
-                        for(ChildNodeEntry entry : node.bundle.getChildNodeEntries()) {
-                            if(first) {
-                                first = false;
-                            } else {
-                                sb.append(",");
+                        sb.append("node\t").append(node.getNode()).append("\n");
+                        sb.append(" parent\t").append(node.getParent()).append("\n");
+                        sb.append(" modcount\t").append(node.bundle.getModCount()).append("\n");
+                        sb.append(" isreferenceable\t").append(node.bundle.isReferenceable()).append("\n");
+                        sb.append(" nodetype\t").append(node.bundle.getNodeTypeName()).append("\n");
+                        sb.append(" mixintypes\n");
+                        for (Name name : node.bundle.getMixinTypeNames()) {
+                            sb.append("    ").append(name.toString()).append("\n");
+                        }
+                        sb.append(" children\n");
+                        for (ChildNodeEntry entry : node.bundle.getChildNodeEntries()) {
+                            sb.append("    ").append(entry.getName().toString()).append(":").append(entry.getId()).append("\n");
+                        }
+                        sb.append("  properties\n");
+                        for (Name name : node.bundle.getPropertyNames()) {
+                            sb.append("    ").append(name.toString()).append("\n");
+                            if ("mixinTypes".equals(name.getLocalName()) && "http://www.jcp.org/jcr/1.0".equals(name.getNamespaceURI())) {
+                                for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
+                                    try {
+                                        sb.append("      ").append(value.getName().toString());
+                                    } catch (RepositoryException ex) {
+                                        sb.append("      invalid");
+                                    }
+                                }
                             }
-                            sb.append(entry.getName()+":"+entry.getId());
                         }
                         System.err.println(sb.toString());
                     }

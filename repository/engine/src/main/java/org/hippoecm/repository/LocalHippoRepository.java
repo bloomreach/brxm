@@ -265,7 +265,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
         RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
         Checker checker = new Checker(repConfig);
-        checker.checkBundles(arguments);
+        checker.checkRepository(arguments);
     }
 
     private class LocalRepositoryImpl extends RepositoryImpl {
