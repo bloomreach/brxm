@@ -15,16 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.logout;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 
 public class LogoutDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -39,12 +39,12 @@ public class LogoutDialog extends AbstractDialog {
     public LogoutDialog() {
         setOutputMarkupId(true);
 
-        Label messageLabel = new Label("message", "There are unsaved changes. Do you want to logout?");
+        Label messageLabel = new Label("message", new StringResourceModel("message", this, null));
         add(messageLabel);
     }
 
-    public IModel getTitle() {
-        return new StringResourceModel("logout", this, null);
+    public IModel<String> getTitle() {
+        return new StringResourceModel("title", this, null);
     }
 
     @Override
@@ -68,5 +68,10 @@ public class LogoutDialog extends AbstractDialog {
             }
             userSession.logout();
         }
+    }
+    
+    @Override
+    public IValueMap getProperties() {
+        return SMALL;
     }
 }
