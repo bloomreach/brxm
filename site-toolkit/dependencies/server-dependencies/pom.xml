@@ -47,6 +47,7 @@
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     
   </dependencies>
