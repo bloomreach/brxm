@@ -24,17 +24,25 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.core.container.AbstractValve;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 
 /**
  * Sample tag filtering valve. Alternates between the tags 'aap' or 'noot' and none.
  */
-public class TagFilteringValve extends AbstractValve {
+public class TagFilteringValve implements Valve {
 
     static int counter = 0;
+
+    @Override
+    public void initialize() throws ContainerException {
+    }
+    
+    @Override
+    public void destroy() {
+    }
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -96,4 +104,5 @@ public class TagFilteringValve extends AbstractValve {
 
         context.invokeNext();
     }
+
 }
