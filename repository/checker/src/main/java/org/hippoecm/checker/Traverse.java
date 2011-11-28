@@ -280,6 +280,26 @@ public class Traverse {
                     assert (visited.size() == all.size());
                     assert (unvisited.size() == 0);
                 }
+                Map<UUID, UUID> missing = new TreeMap<UUID, UUID>();
+                Map<UUID, UUID> disconnected = new TreeMap<UUID, UUID>();
+                for (Map.Entry<UUID, UUID> entry : parentChildRelation) {
+                    UUID parent = entry.getKey();
+                    UUID child = entry.getValue();
+                    if (childParentRelation.get(child) == null) {
+                        missing.put(child, parent);
+                    } else if (!childParentRelation.contains(child, parent)) {
+                        disconnected.put(child, parent);
+                    }
+                }
+                missing.remove(UUID.fromString(RepositoryImpl.NODETYPES_NODE_ID.toString()));
+                missing.remove(UUID.fromString(RepositoryImpl.ACTIVITIES_NODE_ID.toString()));
+                missing.remove(UUID.fromString(RepositoryImpl.VERSION_STORAGE_NODE_ID.toString()));
+                for (Iterator<UUID> iter=orphaned.iterator(); iter.hasNext(); ) {
+                    UUID orphan = iter.next();
+                    if (disconnected.containsKey(orphan)) {
+                        iter.remove();
+                    }
+                }
                 if(roots.size() != 1) {
                     Checker.log.warn("FOUND " + roots.size() + " ROOTS");
                 } else {
@@ -338,20 +358,6 @@ public class Traverse {
                 } else {
                     Checker.log.info("FOUND " + orphaned.size() + " ORPHANED PATHS");
                 }
-                Map<UUID, UUID> missing = new TreeMap<UUID, UUID>();
-                Map<UUID, UUID> disconnected = new TreeMap<UUID, UUID>();
-                for (Map.Entry<UUID, UUID> entry : parentChildRelation) {
-                    UUID parent = entry.getKey();
-                    UUID child = entry.getValue();
-                    if (childParentRelation.get(child) == null) {
-                        missing.put(child, parent);
-                    } else if (!childParentRelation.contains(child, parent)) {
-                        disconnected.put(child, parent);
-                    }
-                }
-                missing.remove(UUID.fromString(RepositoryImpl.NODETYPES_NODE_ID.toString()));
-                missing.remove(UUID.fromString(RepositoryImpl.ACTIVITIES_NODE_ID.toString()));
-                missing.remove(UUID.fromString(RepositoryImpl.VERSION_STORAGE_NODE_ID.toString()));
                 if (missing.size() > 0) {
                     Checker.log.warn("FOUND " + missing.size() + " MISSING CHILD NODES");
                     clean = false;

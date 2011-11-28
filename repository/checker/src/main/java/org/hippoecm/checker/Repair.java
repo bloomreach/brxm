@@ -82,6 +82,7 @@ class Repair {
     void fixParent(RepairStatus statusChange, UUID child, UUID parent) {
         if (report(statusChange))
             return;
+        actions.add(new FixParent(child, parent));
     }
 
     void removeNode(RepairStatus statusChange, UUID node) {
@@ -144,6 +145,27 @@ class Repair {
                         break;
                     }
                 }
+                storage.access.storeBundle(bundle);
+            } catch (ItemStateException ex) {
+                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            }
+        }
+    }
+
+    private class FixParent extends Action {
+        UUID node;
+        UUID parent;
+        FixParent(UUID node, UUID parent) {
+            this.node = node;
+            this.parent = parent;
+        }
+
+        @Override
+        void perform(DatabaseDelegate storage) throws SQLException {
+            try {
+                NodePropBundle bundle = storage.access.loadBundle(new NodeId(node.toString()));
+                bundle.markOld();
+                bundle.setParentId(new NodeId(parent.toString()));
                 storage.access.storeBundle(bundle);
             } catch (ItemStateException ex) {
                 Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
