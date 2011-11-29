@@ -41,14 +41,10 @@ public class HstURLImpl implements HstURL {
     protected HstContainerURLProvider urlProvider;
     protected transient HstRequestContext requestContext;
     // the HstURLImpl might be meant for a cross webapp site : Thus for example from /site1 to  /site2 contextpath
-    protected String explicitContextPath = null;
+    protected String explicitContextPath;
     
     public HstURLImpl(String type, HstContainerURL baseContainerURL, String referenceNamespace, HstContainerURLProvider urlProvider, HstRequestContext requestContext) {
-        this.type = type;
-        this.baseContainerURL = baseContainerURL;
-        this.referenceNamespace = referenceNamespace;
-        this.urlProvider = urlProvider;
-        this.requestContext = requestContext;
+        this(type, baseContainerURL, referenceNamespace, urlProvider, requestContext, null);
     }
     
     public HstURLImpl(String type, HstContainerURL baseContainerURL, String referenceNamespace, HstContainerURLProvider urlProvider, HstRequestContext requestContext, String explicitContextPath) {
