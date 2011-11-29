@@ -69,6 +69,9 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                                     var parentIndex = store.findExact('id', parentId);
                                     var parentRecord = store.getAt(parentIndex);
                                     var children = parentRecord.get('children');
+                                    if (!children) {
+                                        children = [];
+                                    }
                                     children.push(record.get('id'));
                                     parentRecord.set('children', children);
                                 }
