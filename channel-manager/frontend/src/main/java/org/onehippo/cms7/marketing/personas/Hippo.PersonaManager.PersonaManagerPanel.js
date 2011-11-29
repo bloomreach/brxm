@@ -45,10 +45,10 @@ Hippo.PersonaManager.PersonaManagerPanel = Ext.extend(Ext.Panel, {
                     Ext.MessageBox.alert(this.errorTitle, errorMsg);
                     this.removeAll();
                     this.fireEvent('load', this);
-                },
+                }
             },
             proxy: new Ext.data.HttpProxy({
-                url: '/site/_rp/cafebabe-cafe-babe-cafe-babecafebabe./personas?org.hippoecm.hst.container.ignore_render_host=true'
+                url: '/site/_rp/cafebabe-cafe-babe-cafe-babecafebabe./personas?FORCE_CLIENT_HOST=true'
             }),
             restful: true,
             root: 'data',
