@@ -444,7 +444,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             assertTrue("There should be a canonical link for localhost hst:root, and for localhost examplecontextpathonly",
                     allCanonicalDevLocalNewsLinks.size() == 2);
            
-            List<String> expectedListOfLiveDevLocalURLs = Arrays.asList("http://localhost:8080/site/examplecontextpathonly/news/News1.html", "http://localhost:8080/site/news/News1.html");
+            List<String> expectedListOfLiveDevLocalURLs = Arrays.asList("http://localhost:8080/mycontextpath/examplecontextpathonly/news/News1.html", "http://localhost:8080/site/news/News1.html");
             
             for(HstLink link : allCanonicalDevLocalNewsLinks) {
                 assertEquals("The getPath for all links should be all 'news/News1.html' ", "news/News1.html" ,link.getPath());
