@@ -155,11 +155,12 @@
     <!--
       If 'hst-config-refresh-delay' parameter is greater than 0,
       then the HST configuration file changes will be monitored to re-initialize the HST Container.
-      This re-initialization option on configuration file changes is not turned on by default.
+      The value is in ms. If set to 0 or missing, the re-initialization option on configuration file changes is not turned on.
+      Default below is set to 3 sec
     -->
     <init-param>
       <param-name>hst-config-refresh-delay</param-name>
-      <param-value>30000</param-value>
+      <param-value>3000</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
