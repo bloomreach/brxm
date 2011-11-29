@@ -374,10 +374,13 @@ public class Checker {
                                     } catch (RepositoryException ex) {
                                         sb.append("      invalid");
                                     }
+                                    sb.append("\n");
                                 }
                             }
                         }
                         System.err.println(sb.toString());
+                    } else {
+                        System.err.println(node.getNode());
                     }
                     break;
                 case CORRUPTMIXINSET:
