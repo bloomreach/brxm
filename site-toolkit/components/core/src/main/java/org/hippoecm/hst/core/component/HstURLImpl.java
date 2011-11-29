@@ -40,6 +40,8 @@ public class HstURLImpl implements HstURL {
     protected String resourceID;
     protected HstContainerURLProvider urlProvider;
     protected transient HstRequestContext requestContext;
+    // the HstURLImpl might be meant for a cross webapp site : Thus for example from /site1 to  /site2 contextpath
+    protected String explicitContextPath = null;
     
     public HstURLImpl(String type, HstContainerURL baseContainerURL, String referenceNamespace, HstContainerURLProvider urlProvider, HstRequestContext requestContext) {
         this.type = type;
@@ -47,6 +49,15 @@ public class HstURLImpl implements HstURL {
         this.referenceNamespace = referenceNamespace;
         this.urlProvider = urlProvider;
         this.requestContext = requestContext;
+    }
+    
+    public HstURLImpl(String type, HstContainerURL baseContainerURL, String referenceNamespace, HstContainerURLProvider urlProvider, HstRequestContext requestContext, String explicitContextPath) {
+        this.type = type;
+        this.baseContainerURL = baseContainerURL;
+        this.referenceNamespace = referenceNamespace;
+        this.urlProvider = urlProvider;
+        this.requestContext = requestContext;
+        this.explicitContextPath = explicitContextPath;
     }
 
     public Map<String, String[]> getParameterMap() {
@@ -100,7 +111,7 @@ public class HstURLImpl implements HstURL {
         containerURL.setResourceId(getResourceID());
         
         try {
-            return this.urlProvider.toURLString(containerURL, requestContext);
+            return this.urlProvider.toURLString(containerURL, requestContext, explicitContextPath);
         } catch (UnsupportedEncodingException e) {
             throw new HstComponentException(e);
         } catch (ContainerException e) {

@@ -83,4 +83,15 @@ public class HstURLFactoryImpl implements HstURLFactory {
         
         return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(), requestContext);
     }
+    
+    public HstURL createURL(String type, String referenceNamespace, HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) {
+        // if container url == null, use the requestContext baseUrl
+        HstContainerURL baseContainerURL = (containerURL == null ? requestContext.getBaseURL() : containerURL);
+        
+        if (referenceNamespaceIgnored && HstURL.RENDER_TYPE.equals(type)) {
+            referenceNamespace = "";
+        }
+        
+        return new HstURLImpl(type, baseContainerURL, referenceNamespace, getContainerURLProvider(), requestContext, contextPath);
+    }
 }

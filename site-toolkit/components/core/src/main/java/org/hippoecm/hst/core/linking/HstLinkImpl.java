@@ -95,9 +95,19 @@ public class HstLinkImpl implements HstLink {
         }
         
         String urlString = null;
+
+        Mount requestMount = requestContext.getResolvedMount().getMount();
+        
+        // check if we need to set an explicit contextPath 
+        String explicitContextPath = null;
+        if(mount != null && requestMount != mount) {
+            if(mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
+                explicitContextPath = mount.onlyForContextPath();
+            }
+        }
         
         if (this.containerResource) {
-            HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext);
+            HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext, explicitContextPath);
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
@@ -116,10 +126,9 @@ public class HstLinkImpl implements HstLink {
             }
             
             HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL() , path);
-            urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext).toString();
+            urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext, explicitContextPath).toString();
         }
         
-        Mount requestMount = requestContext.getResolvedMount().getMount();
         /*
          * we create a url including http when the Mount is not null and one of the lines below is true
          * 0) requestContext.isFullyQualifiedURLs() = true

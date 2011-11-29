@@ -47,6 +47,8 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String namedResourceServer;
     private String pageErrorHandlerClassName;
     private String xType;
+    private String label;
+    private String iconPath;
     private boolean inherited;
     private boolean standalone;
 
@@ -228,6 +230,22 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     public void setStandalone(boolean standalone) {
         this.standalone = standalone;
     }
-    
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+    }
+
     
 }
