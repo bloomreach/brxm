@@ -68,6 +68,8 @@ public interface HstNodeTypes {
     public final static String COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME =  "hst:page_errorhandlerclassname";
     public final static String COMPONENT_PROPERTY_STANDALONE = "hst:standalone";
     public final static String COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES = "hst:parameternameprefixes";
+    public final static String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
+    public final static String COMPONENT_PROPERTY_LABEL = "hst:label";
     /**
      * @deprecated unused
      */

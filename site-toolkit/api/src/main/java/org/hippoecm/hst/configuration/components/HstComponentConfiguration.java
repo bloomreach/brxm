@@ -233,4 +233,14 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     boolean isInherited();
     
+    /**
+     * @return the label if present and <code>null</code> otherwise
+     */
+    String getLabel();
+
+    /**
+     * @return the icon path if present and <code>null</code> otherwise. The iconPath should be a path relative
+     * to the site webapp 
+     */
+    String getIconPath();
 }

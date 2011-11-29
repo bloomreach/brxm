@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 
 /**
  * A ContainerRepresentation extends {@link org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentRepresentation} with
@@ -32,8 +33,8 @@ public class ContainerRepresentation extends ComponentRepresentation {
     private List<String> children;
 
     @Override
-    public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration) {
-        super.represent(componentConfiguration);
+    public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
+        super.represent(componentConfiguration, mount);
         
         Map<String, HstComponentConfiguration> childrenMap = componentConfiguration.getChildren();
 

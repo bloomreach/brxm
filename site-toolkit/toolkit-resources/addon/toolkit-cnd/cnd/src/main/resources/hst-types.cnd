@@ -54,6 +54,10 @@
 - hst:xtype (string) mandatory
 // deprecated and unused : do not use
 - hst:dummycontent (string)
+// the label of the hst:containeritemcomponent
+- hst:label (string)
+// icon path relative to the sites webapp
+- hst:iconpath (string)
 - hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
 

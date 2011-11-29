@@ -15,9 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
  * @version $Id$
@@ -28,6 +30,9 @@ public class ComponentRepresentation {
     private String id;
     private String name;
     private String path;
+    private String label;
+    private String iconPath;
+    private String iconURL;
     private String parentId;
 
     private String componentClassName;
@@ -35,8 +40,9 @@ public class ComponentRepresentation {
 
     private String type;
     private String xtype;
+    private Mount mount;
 
-    public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration) {
+    public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
 
         id = componentConfiguration.getCanonicalIdentifier();
         name = componentConfiguration.getName();
@@ -48,6 +54,9 @@ public class ComponentRepresentation {
         template = componentConfiguration.getRenderPath();
         type = componentConfiguration.getComponentType().toString();
         xtype = componentConfiguration.getXType();
+        label = componentConfiguration.getLabel();
+        iconPath = componentConfiguration.getIconPath();
+        this.mount = mount;
         return this;
     }
 
@@ -118,5 +127,39 @@ public class ComponentRepresentation {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+    }
+
+    public String getIconURL() {
+        if(iconPath == null) {
+            return null;
+        }
+        if(iconURL == null) { 
+            // still need to create the iconURL from the iconPath
+            HstRequestContext requestContext = RequestContextProvider.get();
+            iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, true);
+        }
+        return iconURL;
+    }
+
+    public void setIconURL(String iconURL) {
+        this.iconURL = iconURL;
+    }
+    
+    
 
 }

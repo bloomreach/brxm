@@ -71,7 +71,7 @@ public class MountResource extends AbstractConfigResource {
                 log.error("Could not get the editing site to create the page model representation.");
                 return error("Could not get the editing site to create the page model representation.");
             }
-            final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingHstSite, pageId);
+            final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingHstSite, pageId, getEditingHstMount(requestContext));
             return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

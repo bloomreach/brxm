@@ -115,6 +115,18 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private Boolean standalone = null;
     
+    /**
+     * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit 
+     * from ancestor components
+     */
+    private String iconPath;
+    
+    /**
+     * Optional label of this component. if not configured, it is just <code>null</code>. It does not inherit 
+     * from ancestor components
+     */
+    private String label;
+    
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
@@ -159,7 +171,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.name = StringPool.get(node.getValueProvider().getName());
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
-
+        
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
         
         if(referenceComponent != null) {
@@ -172,6 +184,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.hstTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE));
         this.hstResourceTemplate = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_RESOURCE_TEMPLATE));
         this.pageErrorHandlerClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME));
+        
+        this.label = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_LABEL));
+        this.iconPath = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ICON_PATH));
         
         if(type == Type.CONTAINER_COMPONENT || type == Type.CONTAINER_ITEM_COMPONENT) {
             this.xtype = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_XTYPE));
@@ -385,6 +400,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return standalone == null ? true : standalone;
     }
     
+    @Override
+    public String getLabel() {
+        return label;
+    }
+
+    @Override
+    public String getIconPath() {
+        return iconPath;
+    }
+
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
@@ -398,6 +423,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.name = child.name;
         copy.referenceName = child.referenceName;
         copy.hstTemplate = child.hstTemplate;
+        copy.label = child.label;
+        copy.iconPath = child.iconPath;
         copy.renderPath = child.renderPath;
         copy.isNamedRenderer = child.isNamedRenderer;
         copy.hstResourceTemplate = child.hstResourceTemplate;
@@ -466,6 +493,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.hstTemplate == null) {
                     this.hstTemplate = referencedComp.hstTemplate;
+                }
+                if (this.label == null) {
+                    this.label = referencedComp.label;
+                }
+                if (this.iconPath == null) {
+                    this.iconPath = referencedComp.iconPath;
                 }
                 if (this.renderPath == null) {
                     this.renderPath = referencedComp.renderPath;
@@ -561,6 +594,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.hstTemplate == null) {
             this.hstTemplate = childToMerge.hstTemplate;
+        }
+        if (this.label == null) {
+            this.label = childToMerge.label;
+        }
+        if (this.iconPath == null) {
+            this.iconPath = childToMerge.iconPath;
         }
         if (this.hstResourceTemplate == null) {
             this.hstResourceTemplate = childToMerge.hstResourceTemplate;

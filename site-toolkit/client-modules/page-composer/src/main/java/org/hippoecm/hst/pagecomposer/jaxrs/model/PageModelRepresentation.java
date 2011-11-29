@@ -15,14 +15,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Representation of an entire in-memory pageModel for a given pageUUID
@@ -35,7 +36,7 @@ public class PageModelRepresentation {
 
     List<ComponentRepresentation> components = new ArrayList<ComponentRepresentation>();
 
-    public PageModelRepresentation represent(HstSite site, String rootComponentId) {
+    public PageModelRepresentation represent(HstSite site, String rootComponentId, Mount mount) {
         HstComponentConfiguration rootComponentConfig = null;
         for (HstComponentConfiguration config : site.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (config.getCanonicalIdentifier().equals(rootComponentId)) {
@@ -48,7 +49,7 @@ public class PageModelRepresentation {
             throw new RuntimeException("Cannot find component configuration for root id '" + rootComponentId + "'");
         }
 
-        populateContainersAndItems(rootComponentConfig);
+        populateContainersAndItems(rootComponentConfig, mount);
         return this;
     }
 
@@ -60,14 +61,14 @@ public class PageModelRepresentation {
         this.components = components;
     }
 
-    private void populateContainersAndItems(HstComponentConfiguration component) {
+    private void populateContainersAndItems(HstComponentConfiguration component, Mount mount) {
         for (HstComponentConfiguration child : component.getChildren().values()) {
             if (child.getComponentType() == Type.CONTAINER_COMPONENT) {
-                components.add(new ContainerRepresentation().represent(child));
+                components.add(new ContainerRepresentation().represent(child, mount));
             } else if (child.getComponentType() == Type.CONTAINER_ITEM_COMPONENT) {
-                components.add(new ContainerItemRepresentation().represent(child));
+                components.add(new ContainerItemRepresentation().represent(child, mount));
             }
-            populateContainersAndItems(child);
+            populateContainersAndItems(child, mount);
         }
     }
 
