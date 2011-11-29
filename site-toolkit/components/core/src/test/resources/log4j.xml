@@ -42,6 +42,11 @@
     <appender-ref ref="console"/>
   </category>
   
+  <category additivity="false" name="org.hippoecm.hst.core.logging.TestSlf4jLogger">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  
   <category additivity="false" name="net.sf.ehcache">
     <level value="error"/>
     <appender-ref ref="console"/>

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.core.logging;
 
-import java.lang.reflect.Method;
-
-import org.apache.commons.beanutils.MethodUtils;
 import org.hippoecm.hst.logging.Logger;
+import org.slf4j.helpers.MessageFormatter;
+import org.slf4j.spi.LocationAwareLogger;
 
 public class Slf4jLogger implements Logger {
 
@@ -36,9 +35,6 @@ public class Slf4jLogger implements Logger {
     private final org.slf4j.Logger logger;
     private final String fqcn;
     private boolean locationAware;
-    private Method locationAwareLoggerLogMethod;
-    private int locationAwareLoggerLogMethodArgsCount;
-    private Class<?> messageFormatterClazz;
 
     public Slf4jLogger(final org.slf4j.Logger logger) {
         this(logger, DEFAULT_FQCN);
@@ -47,41 +43,7 @@ public class Slf4jLogger implements Logger {
     public Slf4jLogger(final org.slf4j.Logger logger, final String fqcn) {
         this.logger = logger;
         this.fqcn = fqcn;
-        
-        try {
-            Class<?> locationAwareLoggerClazz = Thread.currentThread().getContextClassLoader().loadClass("org.slf4j.spi.LocationAwareLogger");
-            
-            if (locationAwareLoggerClazz.isAssignableFrom(logger.getClass())) {
-                locationAware = true;
-            }
-            
-            if (locationAware) {
-                for (Method method : locationAwareLoggerClazz.getMethods()) {
-                    if ("log".equals(method.getName())) {
-                        int argsCount = method.getParameterTypes().length;
-                        if (argsCount == 6 || argsCount == 5) { // slf4j-1.6.x when 6, slf4j-1.5.x when 5
-                            locationAwareLoggerLogMethod = method;
-                            locationAwareLoggerLogMethodArgsCount = argsCount;
-                            break;
-                        }
-                    }
-                }
-                
-                if (locationAwareLoggerLogMethod == null) {
-                    logger.warn("log method not found: org.slf4j.spi.LocationAwareLogger.");
-                    locationAware = false;
-                } else {
-                    messageFormatterClazz = Thread.currentThread().getContextClassLoader().loadClass("org.slf4j.helpers.MessageFormatter");
-                }
-            }
-        } catch (Exception e) {
-            if (logger.isDebugEnabled()) {
-                logger.warn("Class not found: org.slf4j.spi.LocationAwareLogger.", e);
-            } else {
-                logger.warn("Class not found: org.slf4j.spi.LocationAwareLogger. " + e);
-            }
-        }
-        
+        this.locationAware = (logger instanceof LocationAwareLogger);
     }
 
     public void debug(String msg) {
@@ -262,28 +224,15 @@ public class Slf4jLogger implements Logger {
 
     private void invokeLocationAwareLoggerLogMethod(int level, String format, Object[] argArray, Throwable t) {
         try {
-            if (locationAwareLoggerLogMethodArgsCount == 6) {
-                String msg = null;
-                
-                if (argArray == null || argArray.length == 0) {
-                    msg = format;
-                } else {
-                    Object formattingTuple = MethodUtils.invokeStaticMethod(messageFormatterClazz, "arrayFormat", new Object [] { format, argArray });
-                    msg = (String) MethodUtils.invokeMethod(formattingTuple, "getMessage", null);
-                }
-                
-                locationAwareLoggerLogMethod.invoke(logger, null, fqcn, level, msg, null, t);
+            String msg = null;
+            
+            if (argArray == null || argArray.length == 0) {
+                msg = format;
             } else {
-                String msg = null;
-                
-                if (argArray == null || argArray.length == 0) {
-                    msg = format;
-                } else {
-                    msg = (String) MethodUtils.invokeStaticMethod(messageFormatterClazz, "arrayFormat", new Object [] { format, argArray });
-                }
-                
-                locationAwareLoggerLogMethod.invoke(logger, null, fqcn, level, msg, t);
+                msg = MessageFormatter.arrayFormat(format, argArray).getMessage();
             }
+            
+            ((LocationAwareLogger) logger).log(null, fqcn, level, msg, null, t);
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.warn("Failed to invoke location aware logger", e);

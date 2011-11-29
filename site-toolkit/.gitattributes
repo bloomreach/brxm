@@ -623,6 +623,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
