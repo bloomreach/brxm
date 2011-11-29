@@ -36,9 +36,9 @@ public class ContainerRepresentation extends ComponentRepresentation {
         super.represent(componentConfiguration);
         
         Map<String, HstComponentConfiguration> childrenMap = componentConfiguration.getChildren();
-        
+
+        children = new LinkedList<String>();
         if (!childrenMap.isEmpty()) {
-            children = new LinkedList<String>();
             for (Map.Entry<String, HstComponentConfiguration> entry : componentConfiguration.getChildren().entrySet()) {
                 HstComponentConfiguration cc = entry.getValue();
                 children.add(cc.getCanonicalIdentifier());
