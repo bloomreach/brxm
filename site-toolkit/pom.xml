@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>10-SNAPSHOT</version>
+    <version>10-alpha</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -87,11 +87,11 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.21.07-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>2.21.06-SNAPSHOT</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.21.07-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.packages.version>2.21.07-SNAPSHOT</hippo.packages.version>
-    <hippo.addon-hst-configuration-editor.version>1.08.06-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.cms.version>2.21.07-alpha</hippo.cms.version>
+    <hippo.repository.version>2.21.06-alpha</hippo.repository.version>
+    <hippo.addon-publication-workflow.version>2.21.07-alpha</hippo.addon-publication-workflow.version>
+    <hippo.packages.version>2.21.08-alpha</hippo.packages.version>
+    <hippo.addon-hst-configuration-editor.version>1.08.06-alpha</hippo.addon-hst-configuration-editor.version>
     
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
@@ -108,7 +108,7 @@
     <jackson.version>1.3.2</jackson.version>
     <mime4j.version>0.6</mime4j.version>
     <atomikos.version>3.1.4</atomikos.version>
-    <forge.gallerypicker.version>1.09.03-alpha</forge.gallerypicker.version>
+    <forge.gallerypicker.version>1.09.04-alpha</forge.gallerypicker.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
   </properties>
