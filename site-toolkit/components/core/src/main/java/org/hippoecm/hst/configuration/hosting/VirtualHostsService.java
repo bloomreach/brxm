@@ -55,6 +55,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private Map<String, Mount> mountsByIdentifier = new HashMap<String, Mount>();
     private Map<String, Map<String, Mount>> mountByGroupAliasAndType = new HashMap<String, Map<String, Mount>>();
     
+    private List<Mount> registeredMounts = new ArrayList<Mount>();
   
     private String defaultHostName;
     /**
@@ -254,7 +255,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * @param mount
      */
     public void addMount(Mount mount) throws ServiceException {
-
+        if(registeredMounts.contains(mount)) {
+            log.debug(" Mount '{}' already added. Return", mount);
+            return;
+        }
+         
+        registeredMounts.add(mount);
         String hostGroup = mount.getVirtualHost().getHostGroupName();
 
         List<Mount> mountsForGroup = mountByHostGroup.get(hostGroup);
