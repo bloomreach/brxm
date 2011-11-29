@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -40,7 +41,6 @@ public class ComponentRepresentation {
 
     private String type;
     private String xtype;
-    private Mount mount;
 
     public ComponentRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
 
@@ -56,7 +56,11 @@ public class ComponentRepresentation {
         xtype = componentConfiguration.getXType();
         label = componentConfiguration.getLabel();
         iconPath = componentConfiguration.getIconPath();
-        this.mount = mount;
+        // still need to create the iconURL from the iconPath
+        if(iconPath != null) {
+            HstRequestContext requestContext = RequestContextProvider.get();
+            iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, true);
+        }
         return this;
     }
 
@@ -145,14 +149,6 @@ public class ComponentRepresentation {
     }
 
     public String getIconURL() {
-        if(iconPath == null) {
-            return null;
-        }
-        if(iconURL == null) { 
-            // still need to create the iconURL from the iconPath
-            HstRequestContext requestContext = RequestContextProvider.get();
-            iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, true);
-        }
         return iconURL;
     }
 
