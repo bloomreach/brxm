@@ -22,11 +22,13 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +65,7 @@ import javax.jcr.util.TraversingItemVisitor;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.NodeStateUtil;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -173,14 +176,15 @@ public class JcrObservationManager implements ObservationManager {
         private String path;
         private String userId;
         private Map<String, Value[]> properties;
-        private List<String> nodes;
+        private Map<String, String> nodes;
 
         NodeState(Node node, boolean skipBinaries) throws RepositoryException {
             this.path = node.getPath();
             this.userId = node.getSession().getUserID();
 
             properties = new HashMap<String, Value[]>();
-            nodes = new LinkedList<String>();
+            nodes = new LinkedHashMap<String, String>();
+//            nodes = new LinkedList<String>();
 
             ValueFactory factory = node.getSession().getValueFactory();
 
@@ -215,7 +219,7 @@ public class JcrObservationManager implements ObservationManager {
                 Node child = nodeIter.nextNode();
                 if (child != null) {
                     try {
-                        nodes.add(child.getName() + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""));
+                        nodes.put(child.getIdentifier(), child.getName());
                     } catch (RepositoryException e) {
                         log.warn("Unable to add child node to list: " + e.getMessage());
                         log.debug("Error while adding child node to list: ", e);
@@ -228,7 +232,7 @@ public class JcrObservationManager implements ObservationManager {
             List<Event> events = new LinkedList<Event>();
 
             Map<String, Value[]> newProperties = newState.properties;
-            List<String> nodes = newState.nodes;
+            Map<String, String> newNodes = newState.nodes;
 
             for (Map.Entry<String, Value[]> entry : this.properties.entrySet()) {
                 if (newProperties.containsKey(entry.getKey())) {
@@ -254,16 +258,30 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
-            for (String child : nodes) {
-                if (!this.nodes.contains(child)) {
-                    events.add(new NodeEvent(child, Event.NODE_ADDED));
+            Collection<String> oldNodeIds = this.nodes.keySet();
+            Collection<String> newNodeIds = newNodes.keySet();
+            
+            List<String> added = NodeStateUtil.added(oldNodeIds, newNodeIds);
+            if (added != null) {
+                for (String child : added) {
+                    events.add(new NodeEvent(newNodes.get(child), Event.NODE_ADDED));
                 }
             }
-            for (String child : this.nodes) {
-                if (!nodes.contains(child)) {
-                    events.add(new NodeEvent(child, Event.NODE_REMOVED));
+            
+            List<String> removed = NodeStateUtil.removed(oldNodeIds, newNodeIds);
+            if (removed != null) {
+                for (String child: removed) {
+                    events.add(new NodeEvent(nodes.get(child), Event.NODE_REMOVED));
                 }
             }
+                
+            List<String> moved = NodeStateUtil.moved(new ArrayList<String>(oldNodeIds), new ArrayList<String>(newNodeIds), added, removed);
+            if (moved != null) {
+                for (String child : moved) {
+                    events.add(new NodeEvent(nodes.get(child), Event.NODE_MOVED));
+                }
+            }
+
             return events.iterator();
         }
 
@@ -272,7 +290,7 @@ public class JcrObservationManager implements ObservationManager {
         }
 
     }
-
+    
     private class JcrListener extends WeakReference<EventListener> implements EventListener, Comparable<JcrListener> {
         
         String path;
@@ -820,12 +838,9 @@ public class JcrObservationManager implements ObservationManager {
 
             expandNew(nodes);
 
-            List<String> paths = new LinkedList<String>();
             for (Node node : nodes) {
-                String path;
                 try {
-                    path = node.getPath();
-                    paths.add(path);
+                    String path = node.getPath();
 
                     NodeState newState;
                     if (dirty.containsKey(path)) {

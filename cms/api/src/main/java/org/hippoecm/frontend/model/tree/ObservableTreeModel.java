@@ -138,7 +138,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                         observationContext.registerObserver(observer);
 
                     }
-                }, Event.NODE_REMOVED | Event.NODE_ADDED,
+                }, Event.NODE_REMOVED | Event.NODE_ADDED | Event.NODE_MOVED,
                 ((JcrNodeModel) root.getNodeModel()).getItemModel().getPath(), true,
                 null, null);
         listener.start();

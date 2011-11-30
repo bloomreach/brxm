@@ -31,6 +31,7 @@ import java.util.List;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
@@ -573,6 +574,7 @@ public class ObservationTest extends PluginTest {
         session.save();
     }
 
+/*
     @Test
     public void testRemoveAdd() throws Exception {
         Node root = session.getRootNode();
@@ -595,6 +597,7 @@ public class ObservationTest extends PluginTest {
         home.processEvents();
         assertEquals(0, events.size());
     }
+*/
 
     @Test
     public void testFixedNodeMonitor() throws Exception {
@@ -615,28 +618,45 @@ public class ObservationTest extends PluginTest {
         assertEquals(Event.PROPERTY_ADDED, jcrEvent.getEvent().getType());
     }
 
-    /*    @Test
-        public void testReordering() throws Exception {
-            Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
-            Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
-            Node childTwo = testNode.addNode("frontendtest:childnode", "nt:unstructured");
-            session.save();
-            
-            List<IEvent> events = new LinkedList<IEvent>();
-            JcrNodeModel model = new JcrNodeModel(testNode);
-            IObserver observer = new TestObserver(model, events);
-            context.registerService(observer, IObserver.class.getName());
+    @Test
+    public void testReordering() throws Exception {
+        Node testNode = session.getRootNode().addNode("test", "frontendtest:ordered");
+        Node childOne = testNode.addNode("frontendtest:childnode", "nt:unstructured");
+        Node childTwo = testNode.addNode("frontendtest:childnode", "nt:unstructured");
+        session.save();
+        
+        List<IEvent> events = new LinkedList<IEvent>();
+        JcrNodeModel model = new JcrNodeModel(testNode);
+        IObserver observer = new TestObserver(model, events);
+        context.registerService(observer, IObserver.class.getName());
 
-            home.processEvents();
-            assertEquals(0, events.size());
-
-            testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode[1]");
-            session.save();
-            
-            home.processEvents();
-            assertEquals(2, events.size());
+        home.processEvents();
+        assertEquals(0, events.size());
+        
+        NodeIterator iter = testNode.getNodes();
+        while (iter.hasNext()) {
+            System.out.println(iter.nextNode().getIdentifier());
         }
-    */
+        
+        testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode");
+
+        iter = testNode.getNodes();
+        while (iter.hasNext()) {
+            System.out.println(iter.nextNode().getIdentifier());
+        }
+        
+        home.processEvents();
+        assertEquals(2, events.size());
+        {
+            JcrEvent jcrEvent = (JcrEvent) events.get(0);
+            Event event = jcrEvent.getEvent();
+            assertEquals(Event.NODE_MOVED, event.getType());
+            jcrEvent = (JcrEvent) events.get(1);
+            event = jcrEvent.getEvent();
+            assertEquals(Event.NODE_MOVED, event.getType());
+        }
+    }
+
 
     @Test
     public void testWritingListenerDoesntDeadlock() throws Exception {

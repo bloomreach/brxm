@@ -127,7 +127,8 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             }
         };
         add(new DialogLink("copy-dialog", new Model<String>("Copy Node"), dialogFactory, dialogService));
-        
+
+// Doesn't fit in current design :/
 //        dialogFactory = new IDialogFactory() {
 //            private static final long serialVersionUID = 1L;
 //            @Override public Dialog createDialog() {

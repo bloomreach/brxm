@@ -384,7 +384,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
         provider.moveUp(model);
-        redraw();
     }
 
     private void addValidationFilter(Object key, ValidationFilter listener) {

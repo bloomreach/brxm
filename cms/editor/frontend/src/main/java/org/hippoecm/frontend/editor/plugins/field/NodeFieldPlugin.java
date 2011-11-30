@@ -118,6 +118,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                     modelChanged();
                     return;
                 case Event.NODE_ADDED:
+                case Event.NODE_MOVED:
                 case Event.NODE_REMOVED:
                     String path = event.getPath();
                     String name = path.substring(path.lastIndexOf('/') + 1);

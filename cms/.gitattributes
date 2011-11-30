@@ -1169,6 +1169,7 @@ engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlu
 engine/src/main/java/org/hippoecm/frontend/session/JcrSessionReference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/UnbindingHttpSessionStore.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/WorkflowManagerDecorator.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
 engine/src/main/resources/frontend.cnd -text
 engine/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
@@ -2064,6 +2065,7 @@ test/src/test/java/org/hippoecm/frontend/plugins/yui/layout/YuiIdTest.java svneo
 test/src/test/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidgetSettingTest.java -text
 test/src/test/java/org/hippoecm/frontend/session/UserSessionTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/util/MappingTestBean.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/frontend/util/NodeStateUtilTest.java -text
 test/src/test/java/org/hippoecm/frontend/util/PluginConfigMapperTest.java svneol=native#text/plain
 test/src/test/resources/mock.jar -text
 tools/development-content/README.txt svneol=native#text/plain

@@ -121,11 +121,11 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
         }
         if (itemModel.getRelativePath() == null) {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/", true, new String[] { itemModel.getUuid() },
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, "/", true, new String[] { itemModel.getUuid() },
                     null);
         } else {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, itemModel.getPath(), false, null, null);
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, itemModel.getPath(), false, null, null);
         }
         listener.start();
     }

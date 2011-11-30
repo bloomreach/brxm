@@ -68,7 +68,7 @@ public class NodeSortAction implements IClusterable, IDetachable {
     }
 
     public boolean moveUp() {
-        if (moveUp) { //failsave
+        if (moveUp) { //failsafe
             try {
                 Node node = nodeModel.getNode();
                 Node parentNode = node.getParent();
@@ -104,7 +104,7 @@ public class NodeSortAction implements IClusterable, IDetachable {
     }
 
     public boolean moveDown() {
-        if (moveDown) { //failsave
+        if (moveDown) { //failsafe
             try {
                 Node node = nodeModel.getNode();
                 Node parentNode = node.getParent();
