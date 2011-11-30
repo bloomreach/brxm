@@ -66,7 +66,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     id: 'url',
                     allowBlank: false,
                     validator: function(value) {
-                        var expr = /(^http:\/\/([\-\w]+\.)*\w(\/[%\-\w]+(\.\w{2,})?)*)/i;
+                        var expr = /(^(http|https):\/\/([\-\w]+\.)*\w(\/[%\-\w]+(\.\w{2,})?)*)/i;
                         if (expr.test(value) === true) {
                             return true;
                         } else {
