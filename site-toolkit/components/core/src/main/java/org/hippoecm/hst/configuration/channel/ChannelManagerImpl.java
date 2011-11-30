@@ -183,9 +183,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channel.setContextPath(mount.onlyForContextPath());
         channel.setHostname(mount.getVirtualHost().getHostName());
 
-        String url = mount.getScheme() + "://" + mount.getVirtualHost().getHostName() + (!"".equals(mountPath) ? "/" + mountPath : "");
-        channel.setUrl(url);
-
+        StringBuilder url = new StringBuilder();
+        url.append(mount.getScheme());
+        url.append("://");
+        url.append(mount.getVirtualHost().getHostName());
+        if (StringUtils.isNotEmpty(mountPath)) {
+            if (!mountPath.startsWith("/")) {
+                url.append('/');
+            }
+            url.append(mountPath);
+        }
+        channel.setUrl(url.toString());
     }
 
     /**
