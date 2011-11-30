@@ -58,6 +58,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEdi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
