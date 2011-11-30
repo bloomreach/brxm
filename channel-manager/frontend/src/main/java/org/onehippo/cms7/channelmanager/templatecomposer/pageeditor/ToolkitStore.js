@@ -33,6 +33,8 @@ Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelMan
             prototypeRecord :  [
                 {name: 'id', mapping: 'id'},
                 {name: 'name', mapping: 'name'},
+                {name: 'label', mapping: 'label'},
+                {name: 'iconURL', mapping: 'iconURL'},
                 {name: 'componentClassName', mapping: 'componentClassName'},
                 {name: 'template', mapping: 'template'},
                 {name: 'xtype', mapping: 'xtype'}

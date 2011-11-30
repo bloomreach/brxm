@@ -125,13 +125,7 @@
 
 .channel-manager .toolbar .icon {
     text-align: center;
-}
-
-.channel-manager .toolbar .img-div {
-    width: 20px;
-    height: 20px;
-    margin-left: auto;
-    margin-right: auto;
+    height: 37px;
 }
 
 .channel-manager .toolbar .name {

@@ -28,7 +28,7 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
 
     itemTpl: new Ext.Template('<li class="toolbar-item">',
                                 '<ul id="{id}" class="item">',
-                                  '<li class="icon"><div class="img-div" style="background-image: url(\'{icon}\')" /></li>',
+                                  '<li class="icon"><img src=\'{icon}\'" /></li>',
                                   '<li class="name">{name}</li>',
                                 '</ul>',
                               '</li>'),
@@ -106,7 +106,7 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
             master  : this.masterTpl
         });
 
-        for (name in templates) {
+        for (var name in templates) {
             var template = templates[name];
 
             if (template && Ext.isFunction(template.compile) && !template.compiled) {
@@ -156,9 +156,15 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
             record    = records[j];
 
             meta.id    = record.get('id');
-            meta.name  = record.get('name');
-            // TODO custom icon
-            meta.icon = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.PageEditor/component.png';
+            meta.name  = record.get('label');
+            if (!meta.name || meta.name === '') {
+                meta.name = record.get('name');
+            }
+            meta.icon = record.get('iconURL');
+            if (!meta.icon || meta.icon === '') {
+                // FIXME: let wicket generate URL
+                meta.icon = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.PageEditor/component.png';
+            }
 
             if (Ext.isEmpty(meta.value)) {
                 meta.value = '&#160;';

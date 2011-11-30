@@ -35,7 +35,7 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
         }
         config.items.push({
             xtype: 'h_toolkit_grid',
-            height: 60,
+            height: 65,
             id: 'ToolkitGrid',
             columns: [
                 {
