@@ -49,17 +49,17 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
         });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-        this.addEvents('cancel');
+        this.addEvents('save', 'cancel');
     },
 
     submitForm:function () {
+        this.fireEvent('save');
         this.getForm().submit({
             headers: {
                     'FORCE_CLIENT_HOST': 'true'
             },
             url: this.composerRestMountUrl +'/'+ this.id + './parameters?FORCE_CLIENT_HOST=true',
             method: 'POST' ,
-            waitMsg: this.resources['properties-panel-submit-form-message'],
             success: function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
             }
@@ -119,13 +119,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                         }
                         createDocumentWindow.hide();
 
-                        Hippo.Msg.wait(self.resources['create-new-document-message']);
                         Ext.Ajax.request({
                             url: createUrl,
                             params: options,
                             success: function () {
                                 Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
-                                Hippo.Msg.hide();
                             },
                             failure: function() {
                                 Hippo.Msg.alert(self.resources['create-new-document-message'], self.resources['create-new-document-failed'],
