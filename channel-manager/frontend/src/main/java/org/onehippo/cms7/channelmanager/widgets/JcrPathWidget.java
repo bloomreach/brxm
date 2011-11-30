@@ -56,7 +56,7 @@ public class JcrPathWidget extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPathWidget.class);
 
-    private String previewPath;
+    private String previewName;
     private AjaxLink<Void> remove;
 
     public JcrPathWidget(final IPluginContext context, final String id, final JcrPath path, final IModel<String> model) {
@@ -89,9 +89,9 @@ public class JcrPathWidget extends Panel {
         remove.add(new Label("remove-link-text", new StringResourceModel("path.remove", this, null)));
         add(remove);
 
-        previewPath = resolvePreviewPath(model.getObject());
+        previewName = resolvePreviewName(model.getObject());
 
-        Label previewLabel = new Label("preview-path", new PropertyModel<String>(this, "previewPath"));
+        Label previewLabel = new Label("preview-name", new PropertyModel<String>(this, "previewName"));
         add(previewLabel);
 
         updateDisplay(model.getObject());
@@ -122,8 +122,8 @@ public class JcrPathWidget extends Panel {
         return pickerConfig;
     }
 
-    String getPreviewPath() {
-        return previewPath;
+    String getPreviewName() {
+        return previewName;
     }
 
     /**
@@ -136,13 +136,22 @@ public class JcrPathWidget extends Panel {
     private void updateDisplay(String uuid) {
         this.setDefaultModelObject(uuid);
 
-        previewPath = resolvePreviewPath(uuid);
+        previewName = resolvePreviewName(uuid);
 
         if (uuid != null) {
             remove.setVisible(true);
         } else {
             remove.setVisible(false);
         }
+    }
+    
+    private String resolvePreviewName(String uuid) {
+        String previewPath = resolvePreviewPath(uuid);
+        int offset = previewPath.lastIndexOf('/');
+        if (offset != -1) {
+            return previewPath.substring(offset+1);
+        }
+        return previewPath;
     }
 
     private String resolvePreviewPath(String uuid) {
