@@ -47,18 +47,17 @@ Hippo.ChannelManager.ChannelPropertiesWindow = Ext.extend(Ext.Window, {
             closeAction: 'hide',
             hidden: true,
             bodyStyle: 'background-color: #ffffff',
-            padding: 10
-        });
-
-        config.items.push({
-            xtype: 'button',
-            text: self.resources['channel-properties-save'],
-            listeners: {
-                click: {
-                    fn:  self.saveChannel,
-                    scope: this
+            padding: 10,
+            buttons: [{
+            	id: 'save-button',
+                text: self.resources['channel-properties-save'],
+                listeners: {
+                    click: {
+                        fn:  self.saveChannel,
+                        scope: this
+                    }
                 }
-            }
+            }]
         });
 
         this.addEvents('savechannel');
