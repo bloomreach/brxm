@@ -28,7 +28,7 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
 
     itemTpl: new Ext.Template('<li class="toolbar-item">',
                                 '<ul id="{id}" class="item">',
-                                  '<li class="icon"><img src=\'{icon}\'" /></li>',
+                                  '<li class="icon"><img src="{icon}"/></li>',
                                   '<li class="name">{name}</li>',
                                 '</ul>',
                               '</li>'),
