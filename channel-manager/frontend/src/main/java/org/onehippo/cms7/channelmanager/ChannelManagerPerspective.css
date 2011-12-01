@@ -166,5 +166,8 @@
 }
 
 #Iframe .ext-el-mask {
-  background: transparent url(loading.gif) no-repeat center;
+    background: url(loading.gif) no-repeat center;
+    -moz-opacity: 0.9;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
 }
