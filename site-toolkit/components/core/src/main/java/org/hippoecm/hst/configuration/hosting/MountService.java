@@ -476,11 +476,20 @@ public class MountService implements ContextualizableMount, MutableMount {
         } else if(!mountPoint.startsWith("/")) {
             throw new ServiceException("Mount at '"+mount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
         } else if(!isMapped()){
-            log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured not to be a mount to a hstsite", getName(), mount.getValueProvider().getPath());
-            // for non Mounts, the contentPath is just the mountpoint
-            this.contentPath = mountPoint;
-            // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
-            this.canonicalContentPath = contentPath;
+            log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
+            
+            // check if the mountpoint points to a hst:site node:
+            HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
+            if(hstSiteNodeForMount == null) {
+                // for non Mounts, the contentPath is just the mountpoint when the mountpoint does not point to a hst:site
+                this.contentPath = mountPoint;
+                // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
+                this.canonicalContentPath = mountPoint;
+            } else {
+                // the mountpoint does point to a hst:site. Since we do not need the HstSiteMap because isMapped = false, we only use the content mapping
+                canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
+                contentPath = hstSiteNodeForMount.getContentPath();
+            }
         } else {
              
             HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
@@ -499,7 +508,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
             if(previewHstSiteNodeForMount == null || isPreview()) {
                 log.info("There is no preview version '{}-preview' for mount '{}' or the mount is already a preview" +
-                		"by itself. Cannot create a PREVIEW HstSite " +
+                		"by itself. Cannot create automatic PREVIEW HstSite " +
                 		"for this Mount. The mount '"+mountPoint+"' will be used.",  mountPoint,  mount.getValueProvider().getPath());
                 previewHstSite = hstSite;
                 previewCanonicalContentPath = canonicalContentPath;

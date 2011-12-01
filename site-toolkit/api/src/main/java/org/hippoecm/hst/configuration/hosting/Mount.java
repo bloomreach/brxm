@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -33,8 +34,8 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  * <p>A {@link Mount} object is the mount from a prefix to some (sub)site *or* content location: when the {@link Mount#isMapped()} property returns <code>true</code> or missing,
- * the {@link Mount} is linked to a {@link HstSite}. When {@link Mount#isMapped()} property returns <code>false</code>, the {@link Mount} should have it's own namedPipeline and the
- * <code>hst:mountpoint</code> property is used a content path: for example a simple jcr browser unaware of HstSite at all could be easily built with this. 
+ * the {@link Mount} is linked to a {@link HstSite} that uses a {@link HstSiteMap}. When {@link Mount#isMapped()} property returns <code>false</code>, the {@link Mount} won't use 
+ * a URL mapping through the {@link HstSiteMap}
  * </p>
  * <p>
  * {@link Mount} is a Composite pattern: Each {@link Mount} can contain any descendant
@@ -146,8 +147,10 @@ public interface Mount {
     String getAlias();
     
     /**
-     * When this {@link Mount} is not using a {@link HstSite} for the request processing, this method returns <code>false</code>. When it returns <code>false</code>, then 
+     * When this {@link Mount} is not using a {@link HstSiteMap} for the request processing, this method returns <code>false</code>. When it returns <code>false</code>, then 
      * {@link #getNamedPipeline()} should also be configured, and a pipeline should be invoked that is independent of the {@link ResolvedSiteMapItem} as their won't be one.
+     * Note that the {@link #getMountPoint()} can still point to a {@link HstSite} which in that case contains the hst:content node
+     * which is the filtered mirror for accessing the content
      */
     boolean isMapped();
     

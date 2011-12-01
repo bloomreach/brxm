@@ -218,7 +218,8 @@ public abstract class AbstractResource {
         String contentPathInfo = null;    
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem == null) {
-            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+            log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
+            return null;
         } else {
             contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
         }
@@ -229,9 +230,10 @@ public abstract class AbstractResource {
         try {
             HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
 
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
-            
+            if(bean != null) {
+                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
+                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
+            }
             return bean;
         } catch (ObjectBeanManagerException e) {
             throw e;
