@@ -207,8 +207,32 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
 
         public int count;
 
+        @Override
+        public int hashCode() {
+            return count;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (! (obj instanceof Count)) {
+                return false;
+            }
+            Count other = (Count) obj;
+            if (count != other.count) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
         public String toString() {
-            return Integer.toString(count);
+            return "Count [count=" + count + "]";
         }
     }
 

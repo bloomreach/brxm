@@ -205,19 +205,65 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
             this.count = count;
         }
 
+        /**
+         * This compareTo returns 0 only when count & facetValue are equal. 
+         */
+        @Override
         public int compareTo(FacetNavigationEntry entry) {
            if(entry == null) {
                throw new NullPointerException();
            }
-           if(entry.equals(this)) {
+           if(entry == this) {
                return 0;
            }
-           if(entry.count.count - this.count.count == 0) {
-               return 1;
+           if(entry.count.count - this.count.count != 0) {
+               return (entry.count.count - this.count.count);
            }
-           return (entry.count.count - this.count.count);
+           // now, if facetValue's are equal, we just return 0 : this is inline with the equals            
+           return facetValue.compareTo(entry.facetValue);
         }
-        
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 17;
+            result = prime * result + ((count == null) ? 0 : count.hashCode());
+            result = prime * result + ((facetValue == null) ? 0 : facetValue.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof FacetNavigationEntry)) {
+                return false;
+            }
+            FacetNavigationEntry other = (FacetNavigationEntry) obj;
+            if (count == null) {
+                if (other.count != null) {
+                    return false;
+                }
+            } else if (!count.equals(other.count))
+                return false;
+            if (facetValue == null) {
+                if (other.facetValue != null) {
+                    return false;
+                }
+            } else if (!facetValue.equals(other.facetValue)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "FacetNavigationEntry [facetValue=" + facetValue + ", count=" + count + "]";
+        }
     }
     
     /*
