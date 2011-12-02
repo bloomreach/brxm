@@ -115,7 +115,8 @@ public interface HstNodeTypes {
     public final static String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
     
     public final static String VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION =  "hst:cmslocation" ;
-    
+    public final static String VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT = "hst:defaultport";
+
 
     public final static String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     public final static String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";

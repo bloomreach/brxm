@@ -15,19 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
-import javax.security.auth.Subject;
-
 import org.easymock.IAnswer;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -46,17 +33,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static junit.framework.Assert.*;
+import static org.easymock.EasyMock.*;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
 
@@ -214,6 +204,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(newMount.getLocale()).andReturn("nl_NL").anyTimes();
         expect(newMount.getScheme()).andReturn("http").anyTimes();
         expect(newMount.getMountPath()).andReturn("").anyTimes();
+        expect(newMount.getPort()).andReturn(0).anyTimes();
 
         replay(testHost, testMount, newHost, newMount);
       
@@ -365,6 +356,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(mount.getLocale()).andReturn("en_EN");
         expect(mount.getScheme()).andReturn("http");
         expect(mount.getMountPath()).andReturn("");
+        expect(mount.isPortInUrl()).andReturn(false);
     }
 
 }

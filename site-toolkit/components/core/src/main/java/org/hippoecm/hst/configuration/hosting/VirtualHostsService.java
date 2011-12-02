@@ -15,14 +15,6 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -39,6 +31,10 @@ import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 
 public class VirtualHostsService implements MutableVirtualHosts {
     
@@ -177,8 +173,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
             
             String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
             if(cmsLocation == null) {
-                log.info("VirtualHostGroup '{}' does not have a property cms.location configured. It is preferred for surf & edit and the template composer" +
-                		"that this property is configured on the hst:virtualhosthgroup node.", hostGroupNode.getValueProvider().getName());
+                log.info("VirtualHostGroup '{}' does not have a property hst:cmslocation configured. It is preferred for surf & edit and the template composer" +
+                		"that this property is configured on the hst:virtualhostgroup node.", hostGroupNode.getValueProvider().getName());
             } else {
                 try {
                     URI testLocation = new URI(cmsLocation);
@@ -187,11 +183,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     log.warn("'{}' is an invalid cmsLocation. cms location can't be used and set to null for hostGroup '{}'", cmsLocation, hostGroupNode.getValueProvider().getName());
                 }
             }
+
+            Integer defaultPort = null;
+            Long longDefaultPort = hostGroupNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT);
+            if (longDefaultPort == null) {
+                log.info("VirtualHostGroup '{}' does not have a property hst:defaultport configured. It is necessary for the channel manager to generate correct URLs, " +
+                        "when the site should be available on a specific port (not 80 or 443).", hostGroupNode.getValueProvider().getName());
+            } else {
+                defaultPort = longDefaultPort.intValue();
+            }
             
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
                 
                 try {
-                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, (VirtualHostService)null, hostGroupNode.getValueProvider().getName(), cmsLocation ,hstManager);
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstManager);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ServiceException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);

@@ -15,13 +15,6 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -30,6 +23,12 @@ import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class VirtualHostService implements MutableVirtualHost {
     
@@ -81,13 +80,16 @@ public class VirtualHostService implements MutableVirtualHost {
     private boolean showPort;
     private String scheme;
     private String cmsLocation;
+    private Integer defaultPort;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, HstManagerImpl hstManager) throws ServiceException {        
+    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) throws ServiceException {
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.hostGroupName = StringPool.get(hostGroupName);
         this.cmsLocation = cmsLocation;
+        this.defaultPort = defaultPort;
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWCONTEXTPATH);
         } else {
@@ -209,7 +211,7 @@ public class VirtualHostService implements MutableVirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation,  hstManager);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation, defaultPort, hstManager);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -234,7 +236,11 @@ public class VirtualHostService implements MutableVirtualHost {
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
-                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, 0);
+                    int port = 0;
+                    if (defaultPort != null) {
+                        port = defaultPort;
+                    }
+                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, port);
                     MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
@@ -248,7 +254,7 @@ public class VirtualHostService implements MutableVirtualHost {
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, hstManager);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, defaultPort, hstManager);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -266,11 +272,12 @@ public class VirtualHostService implements MutableVirtualHost {
        
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, String cmsLocation, HstManagerImpl hstManager) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroup;
         this.cmsLocation = cmsLocation;
+        this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
         this.locale = parent.locale;
         this.homepage = parent.homepage;
@@ -281,7 +288,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, cmsLocation, hstManager);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, cmsLocation, defaultPort, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = StringPool.get(buildHostName());
@@ -354,7 +361,11 @@ public class VirtualHostService implements MutableVirtualHost {
     public String getCmsLocation() {
         return cmsLocation;
     }
-    
+
+    public Integer getDefaultPort() {
+        return defaultPort;
+    }
+
     public VirtualHosts getVirtualHosts() {
         return this.virtualHosts;
     }

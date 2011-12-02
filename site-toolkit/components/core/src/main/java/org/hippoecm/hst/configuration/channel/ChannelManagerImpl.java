@@ -15,54 +15,29 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.jcr.Credentials;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.nodetype.NodeType;
-import javax.security.auth.Subject;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.*;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.nodetype.NodeType;
+import javax.security.auth.Subject;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.RemoteException;
+import java.util.*;
 
 public class ChannelManagerImpl implements MutableChannelManager {
 
@@ -179,14 +154,26 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
-        channel.setCmsPreviewPrefix(mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+
+        VirtualHost virtualHost = mount.getVirtualHost();
+        channel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
         channel.setContextPath(mount.onlyForContextPath());
-        channel.setHostname(mount.getVirtualHost().getHostName());
+        channel.setHostname(virtualHost.getHostName());
 
         StringBuilder url = new StringBuilder();
         url.append(mount.getScheme());
         url.append("://");
-        url.append(mount.getVirtualHost().getHostName());
+        url.append(virtualHost.getHostName());
+        if (mount.isPortInUrl()) {
+            int port = mount.getPort();
+            if (port != 0) {
+                url.append(':');
+                url.append(mount.getPort());
+            }
+        }
+        if (virtualHost.isContextPathInUrl() && mount.onlyForContextPath() != null) {
+            url.append(mount.onlyForContextPath());
+        }
         if (StringUtils.isNotEmpty(mountPath)) {
             if (!mountPath.startsWith("/")) {
                 url.append('/');
