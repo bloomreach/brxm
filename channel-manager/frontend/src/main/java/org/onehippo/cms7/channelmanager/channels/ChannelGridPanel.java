@@ -16,10 +16,6 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONArray;
@@ -32,6 +28,10 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ext Grid Panel for Channels Listing.
@@ -117,6 +117,10 @@ public class ChannelGridPanel extends ExtPanel {
         fieldConfig.put("id", columnName);
         fieldConfig.put("header", store.getLocalizedFieldName(columnName));
         fieldConfig.put("hidden", isHidden);
+        if (ChannelStore.ChannelField.url.name().equals(columnName)) {
+            fieldConfig.put("xtype", "templatecolumn");
+            fieldConfig.put("tpl", "<a href=\"{url}\">{url}</a>");
+        }
         return fieldConfig;
     }
 
