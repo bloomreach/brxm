@@ -80,6 +80,9 @@
     <sv:property sv:name="hst:cmslocation" sv:type="String">
       <sv:value>http://localhost:8080/cms</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:defaultport" sv:type="Long">
+      <sv:value>8080</sv:value>
+    </sv:property>
     <sv:node sv:name="localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
@@ -377,6 +380,9 @@
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
       <sv:value>http://localhost:8080/cms</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:defaultport" sv:type="Long">
+      <sv:value>8080</sv:value>
     </sv:property>
     <sv:node sv:name="localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
