@@ -298,8 +298,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     }
 
     public class FacetSearchEntry implements Comparable<FacetSearchEntry> {
-        private String facetValue;
-        private Count count;
+        protected String facetValue;
+        protected Count count;
         public FacetSearchEntry(String facetValue, Count count) {
             this.facetValue = facetValue;
             this.count = count;
@@ -316,6 +316,8 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
            if(entry == this) {
                return 0;
            }
+           // count will never be negative and never in the range of MAX integer hence
+           // below will never fail
            if(entry.count.count - this.count.count != 0) {
                return (entry.count.count - this.count.count);
            }

@@ -216,6 +216,9 @@ public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvid
            if(entry == this) {
                return 0;
            }
+
+           // count will never be negative and never in the range of MAX integer hence
+           // below will never fail
            if(entry.count.count - this.count.count != 0) {
                return (entry.count.count - this.count.count);
            }

@@ -52,6 +52,12 @@
       <artifactId>hippo-repository-utilities</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>net.sf.json-lib</groupId>

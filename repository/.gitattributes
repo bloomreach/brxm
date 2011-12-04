@@ -245,6 +245,7 @@ modules/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 modules/src/main/resources/hipposched.cnd -text
 modules/src/site/apt/index.apt -text
 modules/src/site/site.xml svneol=native#text/plain
+modules/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetFilters.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetRange.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/HitsRequested.java svneol=native#text/plain
