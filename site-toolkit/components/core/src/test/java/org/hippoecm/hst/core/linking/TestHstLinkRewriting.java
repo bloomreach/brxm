@@ -540,7 +540,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
                 
                 HstLink homePageLink = linkCreator.createCanonical(node, requestContext);
                 assertEquals("wrong Mount ","sub1", homePageLink.getMount().getName());
-                assertEquals("wrong link.getPath for common/homepage","home", homePageLink.getPath());
+                assertEquals("wrong link.getPath for common/homepage","", homePageLink.getPath());
                 assertEquals("wrong absolute link for common/homepage" ,"/site/sub1", (homePageLink.toUrlForm(requestContext, false)));
                 
                 // we now have a node for the common/aboutfolder/about-us/about-us. 
