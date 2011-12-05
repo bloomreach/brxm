@@ -1,5 +1,8 @@
 * text=auto !eol
 frontend/pom.xml eol=lf
+frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.html -text
+frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.java -text
+frontend/src/main/java/org/hippoecm/frontend/service/documenturl/RestDocumentUrlService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelFormPanel.js -text
@@ -143,6 +146,7 @@ frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.jav
 /pom.xml eol=lf
 repository/pom.xml eol=lf
 repository/src/main/resources/channel-manager-perspective.xml eol=lf
+repository/src/main/resources/document-url-service.xml -text
 repository/src/main/resources/hippoecm-extension.xml eol=lf
 repository/src/main/resources/marketing-perspective.xml -text
 repository/src/main/resources/workflow-channelactions.xml -text
