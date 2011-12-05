@@ -69,7 +69,6 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         updateExternalListeners(external, events);
     }
 
-    @SuppressWarnings("unchecked")
     public void updateInternalListeners(ChangeLog changes, EventStateCollectionFactory factory) {
         EventStateCollection events = null;
         try {
@@ -89,7 +88,6 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void updateExternalListeners(ChangeLog changes, EventStateCollection events) {
         synchronized (updateListeners) {
             for (ReplicationUpdateEventListener listener : updateListeners) {

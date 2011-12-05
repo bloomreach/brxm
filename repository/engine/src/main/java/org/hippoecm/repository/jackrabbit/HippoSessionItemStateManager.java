@@ -16,28 +16,24 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.EnumSet;
-import java.util.Iterator;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
-
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.SessionStateThresholdEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoSessionItemStateManager extends SessionItemStateManager {
     @SuppressWarnings("unused")

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

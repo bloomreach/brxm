@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;

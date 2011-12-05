@@ -16,20 +16,9 @@
  */
 package org.apache.jackrabbit.core;
 
-import org.apache.jackrabbit.core.state.*;
-import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.core.config.WorkspaceConfig;
-import org.apache.jackrabbit.core.lock.LockManager;
-import org.apache.jackrabbit.core.lock.LockManagerImpl;
-import org.apache.jackrabbit.core.lock.XALockManager;
-import org.apache.jackrabbit.core.security.authentication.AuthContext;
-import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.core.state.XAItemStateManager;
-import org.apache.jackrabbit.core.version.InternalVersionManager;
-import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
-import org.apache.jackrabbit.core.version.InternalXAVersionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.RepositoryException;
@@ -37,9 +26,18 @@ import javax.security.auth.Subject;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.jackrabbit.api.XASession;
+import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.lock.LockManager;
+import org.apache.jackrabbit.core.lock.LockManagerImpl;
+import org.apache.jackrabbit.core.lock.XALockManager;
+import org.apache.jackrabbit.core.security.authentication.AuthContext;
+import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
+import org.apache.jackrabbit.core.version.InternalVersionManager;
+import org.apache.jackrabbit.core.version.InternalXAVersionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Session extension that provides XA support.

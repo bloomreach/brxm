@@ -17,19 +17,8 @@ package org.hippoecm.repository.quartz;
 
 import java.util.Date;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.ext.WorkflowInvocation;
-import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 
 public class DateSchedulerInvocationModule extends AbstractSchedulerInvocationModule {
     @SuppressWarnings("unused")

@@ -16,27 +16,21 @@
 package org.hippoecm.repository.ocm;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.jcr.Node;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.datanucleus.ClassLoaderResolver;
 import org.datanucleus.OMFContext;
-import org.datanucleus.ObjectManager;
-import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.store.AbstractStoreManager;
-import org.datanucleus.store.DefaultCandidateExtent;
 import org.datanucleus.store.ExecutionContext;
-import org.datanucleus.store.Extent;
 import org.datanucleus.store.NucleusConnection;
 import org.datanucleus.store.NucleusConnectionImpl;
 import org.datanucleus.store.connection.ConnectionFactory;
 import org.datanucleus.store.connection.ManagedConnection;
-import org.datanucleus.store.exceptions.NoExtentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

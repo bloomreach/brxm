@@ -23,7 +23,6 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
@@ -36,9 +35,6 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
@@ -48,6 +44,8 @@ import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.updater.UpdaterEngine;
 import org.hippoecm.repository.updater.UpdaterNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")

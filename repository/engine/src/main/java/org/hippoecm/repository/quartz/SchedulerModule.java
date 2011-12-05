@@ -17,19 +17,14 @@ package org.hippoecm.repository.quartz;
 
 import java.util.Properties;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.ext.DaemonModule;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
-
-import org.hippoecm.repository.ext.DaemonModule;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

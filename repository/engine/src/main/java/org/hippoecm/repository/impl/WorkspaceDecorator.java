@@ -39,7 +39,6 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
-import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventJournal;
@@ -48,7 +47,6 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;

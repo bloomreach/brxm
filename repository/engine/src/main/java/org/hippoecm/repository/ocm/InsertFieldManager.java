@@ -18,7 +18,6 @@ package org.hippoecm.repository.ocm;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.store.ObjectProvider;

@@ -16,10 +16,7 @@
  */
 package org.apache.jackrabbit.core.state;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.jcr.PropertyType;
 import javax.jcr.ReferentialIntegrityException;

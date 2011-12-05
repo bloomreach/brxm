@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
-import javax.jcr.InvalidItemStateException;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.core.id.NodeId;
@@ -29,7 +29,6 @@ import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.spi.Name;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
@@ -41,6 +40,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     private static final String SVN_ID = "$Id$";
 
     protected class BootstrapNodeId extends HippoNodeId {
+        private static final long serialVersionUID = 1L;
         NodeId upstream;
 
         protected BootstrapNodeId(HippoVirtualProvider provider, NodeId parent, StateProviderContext context, Name name, NodeId upstream) {
@@ -74,8 +74,8 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         String docbase = getProperty(nodeId, docbaseName)[0];
         NodeState upstream = getNodeState(new NodeId(UUID.fromString(docbase)), context);
         if (upstream != null) {
-            for (Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                ChildNodeEntry entry = (ChildNodeEntry)iter.next();
+            for (Iterator<ChildNodeEntry> iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+                ChildNodeEntry entry = iter.next();
                 NodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
                 state.addChildNodeEntry(entry.getName(), childNodeId);
             }
@@ -100,8 +100,8 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
             state.setMixinTypeNames(mixins);
         }
 
-        for(Iterator iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
-            Name propName = (Name) iter.next();
+        for(Iterator<Name> iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
+            Name propName = iter.next();
             PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), upstream.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             if(propName.equals(jcrUUIDdocbaseName)) {
@@ -119,8 +119,8 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
     }
 
     protected void populateChildren(StateProviderContext context, NodeId nodeId, NodeState state, NodeState upstream) {
-        for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-            ChildNodeEntry entry = (ChildNodeEntry) iter.next();
+        for(Iterator<ChildNodeEntry> iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+            ChildNodeEntry entry = iter.next();
             BootstrapNodeId childNodeId = new BootstrapNodeId(nodeId, entry.getId(), context, entry.getName());
             state.addChildNodeEntry(entry.getName(), childNodeId);
         }

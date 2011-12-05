@@ -26,12 +26,10 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.apache.jackrabbit.api.XASession;
+import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.jackrabbit.api.XASession;
-
-import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.DecoratorFactoryImpl implements DecoratorFactory {
     @SuppressWarnings("unused")

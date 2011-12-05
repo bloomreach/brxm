@@ -16,7 +16,6 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,13 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentManager;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowContext;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class NullWorkflowImpl implements NullWorkflow, InternalWorkflow {

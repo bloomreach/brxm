@@ -16,7 +16,6 @@
 package org.hippoecm.repository.quartz;
 
 import java.text.ParseException;
-import java.util.Date;
 
 import org.quartz.CronExpression;
 import org.quartz.CronTrigger;

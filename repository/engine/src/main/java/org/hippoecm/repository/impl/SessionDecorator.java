@@ -53,7 +53,6 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.commons.xml.Exporter;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.DerivedDataEngine;

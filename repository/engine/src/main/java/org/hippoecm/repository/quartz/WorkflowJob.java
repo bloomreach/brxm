@@ -19,16 +19,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
-import org.hippoecm.repository.ext.WorkflowInvocation;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.hippoecm.repository.api.WorkflowException;
 
 public class WorkflowJob implements Job {
     @SuppressWarnings("unused")

@@ -15,11 +15,10 @@
  */
 package org.hippoecm.repository.ocm;
 
-import java.lang.Cloneable;
-import java.lang.InstantiationException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -34,7 +33,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
-import javax.jdo.spi.PersistenceCapable;
+
 import org.apache.jackrabbit.JcrConstants;
 import org.datanucleus.StateManager;
 import org.datanucleus.exceptions.NucleusDataStoreException;
@@ -45,7 +44,6 @@ import org.datanucleus.state.StateManagerFactory;
 import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.types.ObjectStringConverter;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.ocm.JcrOID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

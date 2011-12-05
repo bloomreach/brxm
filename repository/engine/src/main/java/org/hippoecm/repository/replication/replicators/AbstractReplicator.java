@@ -31,8 +31,6 @@ import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.QPropertyDefinition;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.replication.FatalReplicationException;
 import org.hippoecm.repository.replication.Filter;
 import org.hippoecm.repository.replication.RecoverableReplicationException;

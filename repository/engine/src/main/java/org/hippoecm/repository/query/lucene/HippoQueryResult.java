@@ -16,15 +16,14 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.io.IOException;
+
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.ItemManager;
-import org.apache.jackrabbit.core.SessionImpl;
+
 import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
 import org.apache.jackrabbit.core.query.lucene.ExcerptProvider;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.QueryResultImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
-import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.query.qom.ColumnImpl;

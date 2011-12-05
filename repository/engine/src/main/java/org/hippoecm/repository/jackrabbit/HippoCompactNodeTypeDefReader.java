@@ -23,17 +23,14 @@ import java.util.TreeSet;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.commons.cnd.DefinitionBuilderFactory;
-import org.apache.jackrabbit.spi.QNodeDefinition;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
+import org.apache.jackrabbit.commons.cnd.DefinitionBuilderFactory;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
-
 import org.hippoecm.repository.util.VersionNumber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader<T,N> {
     @SuppressWarnings("unused")

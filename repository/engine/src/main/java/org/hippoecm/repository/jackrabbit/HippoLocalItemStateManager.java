@@ -27,9 +27,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.jcr.InvalidItemStateException;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;

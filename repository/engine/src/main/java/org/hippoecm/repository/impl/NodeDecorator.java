@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Binary;
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidLifecycleTransitionException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.MergeException;
@@ -35,13 +32,11 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;

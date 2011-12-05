@@ -34,14 +34,10 @@ import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
 import org.apache.jackrabbit.spi.commons.name.CargoNamePath;
 import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HippoHierarchyManager implements HierarchyManager {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
-
-    private static Logger log = LoggerFactory.getLogger(HippoHierarchyManager.class);
 
     protected HierarchyManager hierMgr;
     protected HippoSessionItemStateManager itemStateMgr;
