@@ -659,7 +659,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             
             if(linkInfoList.isEmpty()) {
-                log.warn("Cannot create a link for node with path '{}'. Return empty list for canonicalLinks.", nodePath);
+                log.debug("Cannot create any link for node with path '{}'. Return empty list for canonicalLinks.", nodePath);
                 return Collections.emptyList();
             }
             
