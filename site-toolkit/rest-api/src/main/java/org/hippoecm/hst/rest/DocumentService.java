@@ -47,4 +47,27 @@ public interface DocumentService {
     @Produces(MediaType.APPLICATION_JSON)
     List<ChannelDocument> getChannels(@PathParam("uuid") String uuid);
 
+    /**
+     * Returns a fully qualified URL for a document in a mount of a certain type. The document is identified by its UUID.
+     * When the type parameter is null or empty, the value 'live' is used.
+     *
+     * Note that only one link is returned, even when the document is available in multiple channels (i.e. under
+     * multiple mounts). When multiple mounts match, we use the one that has the closest canonical content path to the
+     * path of the document handle. If multiple mounts have an equally well suited* canonical content path, we use the
+     * mount with the fewest types. These mounts are in general the most generic ones. If multiple mounts have an
+     * equally well suited canonical content path and an equal number of types, we use a random one.
+     *
+     * @param uuid the identifier of the document
+     * @param type the type of the mounts that can be used to generate a link to the document. When null or empty,
+     * the value 'live' is used.
+     *
+     * @return a fully qualified link to the document, or an empty string if no link could be created.
+     *
+     * @throws javax.ws.rs.WebApplicationException when the client-side invocation of this service fails
+     */
+    @GET
+    @Path("/{uuid}/url/{type}/")
+    @Produces(MediaType.TEXT_PLAIN)
+    String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type);
+
 }

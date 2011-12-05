@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -137,6 +138,75 @@ public class DocumentsResource {
         }
 
         return channelDocuments;
+    }
+
+    @GET
+    @Path("/{uuid}/url/{type}/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type, @Context HttpServletRequest servletRequest) {
+        if (hstLinkCreator == null) {
+            log.warn("Cannot generate URL of type '{}' for document with UUID '{}' because hstLinkCreator is null", type, uuid);
+            return "";
+        }
+
+        HstRequestContext requestContext = ResourceUtil.getRequestContext(servletRequest);
+
+        Node handle = ResourceUtil.getNode(requestContext, uuid);
+        if (handle == null) {
+            return "";
+        }
+
+        String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
+        List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, type, hostGroupNameForChannelMngr);
+
+        if (canonicalLinks.isEmpty()) {
+            log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
+                    new Object[]{type, uuid, hostGroupNameForChannelMngr});
+            return "";
+        }
+
+        String handlePath = null;
+        try {
+            handlePath = handle.getPath();
+        } catch (RepositoryException e) {
+            log.warn("Cannot generate URL of type '" + type + " for document with UUID '" + uuid + "': cannot get the JCR path", e);
+            return "";
+        }
+
+        // Determine the 'best' canonical link: the one whose mount has the closest content path
+        // {@link Mount#getCanonicalContentPath()} to the path of the document handle. If multiple {@link Mount}'s have
+        // an equally well suited {@link Mount#getCanonicalContentPath()}, we pick the mount with the fewest types.
+        // These mounts are in general the most generic ones. If multiple {@link Mount}'s have equally well suited
+        // {@link Mount#getCanonicalContentPath()} and an equal number of types, we pick one at random.
+        List<HstLink> candidateLinks = new ArrayList<HstLink>();
+        int bestPathLength = 0;
+        for (HstLink link : canonicalLinks) {
+            Mount mount = link.getMount();
+
+            if (mount.getCanonicalContentPath().length() == bestPathLength) {
+                // equally well as already found ones. Add to the candidates.
+                candidateLinks.add(link);
+            } else if (mount.getCanonicalContentPath().length() > bestPathLength) {
+                // this is a better one than the ones already found. Clear the candidates first.
+                candidateLinks.clear();
+                candidateLinks.add(link);
+                bestPathLength = mount.getCanonicalContentPath().length();
+            } else {
+                // ignore, we already have a better link
+            }
+        }
+
+        HstLink bestLink = candidateLinks.get(0);
+        int typeCount = Integer.MAX_VALUE;
+        for (HstLink link : candidateLinks) {
+            final Mount mount = link.getMount();
+            if (mount.getTypes().size() < typeCount) {
+                typeCount = mount.getTypes().size();
+                bestLink = link;
+            }
+        }
+
+        return bestLink.toUrlForm(requestContext, true);
     }
 
 }
