@@ -165,6 +165,14 @@
     background-color: #d3d3d3;
 }
 
+.channel-manager .x-grid3-col-url input[type=button] {
+    float: right;
+    font-size: 10px;
+    padding: 1px 7px;
+    margin: 0px;
+    color: #333;
+}
+
 #Iframe .ext-el-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 0.9;

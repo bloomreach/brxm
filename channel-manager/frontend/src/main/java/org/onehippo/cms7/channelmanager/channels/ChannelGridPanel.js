@@ -147,7 +147,18 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     g.on("beforetooltipshow", function(grid, value) {
                         grid.tooltip.body.update(value);
                     });
-                }
+                },
+                cellclick: function(grid, index, column, e) {
+                    var target = e.getTarget();
+                    if (target.name == 'show-preview') {
+                        var record = this.getStore().getAt(index);
+                        window.open(record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath'));
+                        return false;
+                    } else if (target.name == 'show-live') {
+                        return false;
+                    }
+                },
+                scope: this
             }
 
         });
