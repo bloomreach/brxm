@@ -70,14 +70,9 @@ public class ProductPlainResource extends AbstractResource {
             
             HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
            
-            HippoBean scope = null;
-            try {
-                // was there a sitemap item with a relative content path pointing to a bean. If so, use this as scope
-                scope = getRequestContentBean(requestContext);
-            } catch (ObjectBeanManagerException e) {
-                // we did not find a bean for a matched sitemap item (or there was no matched sitemap item). Try the site content base bean:
-                scope = getMountContentBaseBean(requestContext);
-            }
+            // for plain jaxrs, we do not have a requestContentBean because no resolved sitemapitem
+            HippoBean scope  = getMountContentBaseBean(requestContext);
+           
             
             HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);
             Filter filter = hstQuery.createFilter();
