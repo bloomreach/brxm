@@ -124,6 +124,8 @@
 // deprecated and unused : do not use
 - hst:refidsitemapitem (string)
 - hst:externallink (string)
+// if this sitemenu item should link to a specific mount, you can specify it through the mountalias below
+- hst:mountalias (string)
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)

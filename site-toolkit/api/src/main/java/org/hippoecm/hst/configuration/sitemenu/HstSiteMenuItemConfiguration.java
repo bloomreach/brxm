@@ -18,6 +18,9 @@ package org.hippoecm.hst.configuration.sitemenu;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.request.HstRequestContext;
+
 /**
  * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
  * be able to modify the configuration
@@ -117,4 +120,10 @@ public interface HstSiteMenuItemConfiguration {
      * @return the Map of parameters contained in this <code>HstSiteMenuItemConfiguration</code>. If no parameters present, and empty map is returned
      */
     Map<String, String> getLocalParameters();
+    
+    /**
+     * If not <code>null</code> the mount belonging to this alias is used for creating the sitemenu item link
+     * @return the alias of the {@link Mount} to create the link for and <code>null</code> if the mount from the {@link HstRequestContext} can be used
+     */
+    String getMountAlias();
 }

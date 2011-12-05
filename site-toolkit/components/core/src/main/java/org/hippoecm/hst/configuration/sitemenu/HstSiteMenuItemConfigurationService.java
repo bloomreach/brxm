@@ -41,6 +41,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
     private String externalLink;
+    private String mountAlias;
     private int depth;
     private boolean repositoryBased;
     private Map<String, Object> properties;
@@ -69,6 +70,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         } else {
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }
+        
+        this.mountAlias = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_MOUNTALIAS);
         
         if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
             this.repositoryBased = siteMenuItem.getValueProvider().getBoolean(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED);
@@ -168,6 +171,11 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     
     public Map<String, Object> getProperties() {
         return properties;
+    }
+ 
+    @Override
+    public String getMountAlias() {
+        return mountAlias;
     }
 
 }
