@@ -69,7 +69,7 @@ public class YuiDateTimeField extends DateTimeField {
 
         if (settings == null) {
             final StringResourceModel pickerFormat = new StringResourceModel("picker-format", this, null);
-            settings = new YuiDatePickerSettings(pickerFormat.toString());
+            settings = new YuiDatePickerSettings(pickerFormat.getString());
         }
 
         this.settings = settings;
