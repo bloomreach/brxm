@@ -82,38 +82,38 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
-            assertEquals("wrong absolute link for homepage" ,"/site/home", (homePageLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site/home", (homePageLink.toUrlForm(requestContext, true)));
+            assertEquals("link.getPath for homepage node should be '","", homePageLink.getPath());
+            assertEquals("wrong absolute link for homepage" ,"/site", (homePageLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
            
             
             requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:80","/home");
             obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
-            assertEquals("wrong absolute link for homepage" ,"/site/home", (homePageLink.toUrlForm(requestContext, false)));
+            assertEquals("link.getPath for homepage node should be ''","", homePageLink.getPath());
+            assertEquals("wrong absolute link for homepage" ,"/site", (homePageLink.toUrlForm(requestContext, false)));
             // for absolute links, we do not include port 80 !!
-            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site/home", (homePageLink.toUrlForm(requestContext, true)));
+            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
            
             requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:443","/home");
             obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
-            assertEquals("wrong absolute link for homepage" ,"/site/home", (homePageLink.toUrlForm(requestContext, false)));
+            assertEquals("link.getPath for homepage node should be ''","", homePageLink.getPath());
+            assertEquals("wrong absolute link for homepage" ,"/site", (homePageLink.toUrlForm(requestContext, false)));
             // for absolute links, we do not include port 443 !!
-            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site/home", (homePageLink.toUrlForm(requestContext, true)));
+            assertEquals("wrong fully qualified url for homepage" ,"http://localhost/site", (homePageLink.toUrlForm(requestContext, true)));
            
             
             requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/home");
             obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
-            assertEquals("wrong absolute link for homepage" ,"/site/home", (homePageLink.toUrlForm(requestContext, false)));
+            assertEquals("link.getPath for homepage node should be ''","", homePageLink.getPath());
+            assertEquals("wrong absolute link for homepage" ,"/site", (homePageLink.toUrlForm(requestContext, false)));
             // for absolute links, we do not include port 443 !!
-            assertEquals("wrong fully qualified url for homepage" ,"http://localhost:8080/site/home", (homePageLink.toUrlForm(requestContext, true)));
+            assertEquals("wrong fully qualified url for homepage" ,"http://localhost:8080/site", (homePageLink.toUrlForm(requestContext, true)));
            
             
             
@@ -122,9 +122,9 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be 'home","home", homePageLink.getPath());
-            assertEquals("wrong absolute link for homepage" ,"/site/home", (homePageLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for homepage" ,"http://localhost:8081/site/home", (homePageLink.toUrlForm(requestContext, true)));
+            assertEquals("link.getPath for homepage node should be ''","", homePageLink.getPath());
+            assertEquals("wrong absolute link for homepage" ,"/site", (homePageLink.toUrlForm(requestContext, false)));
+            assertEquals("wrong fully qualified url for homepage" ,"http://localhost:8081/site", (homePageLink.toUrlForm(requestContext, true)));
            
 
             requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/home");
@@ -158,7 +158,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/home");
             Node siteRootContentNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject");
             HstLink homePageLink = linkCreator.create(siteRootContentNode, requestContext);
-            assertEquals("wrong link.getPath for /unittestcontent/documents/unittestproject : We expect the homepage for the site content root node ","home", homePageLink.getPath());
+            assertEquals("wrong link.getPath for /unittestcontent/documents/unittestproject : We expect the homepage for the site content root node ","", homePageLink.getPath());
         }
         
         @Test 
@@ -282,7 +282,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         public void testLinkBySitemapItemRefId() throws Exception {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080","/news");
             HstLink homePageLink = linkCreator.createByRefId("homeRefId", requestContext.getResolvedMount().getMount());
-            assertEquals("Wrong link for sitemapItemRefId 'homeRefId' ","home", homePageLink.getPath());
+            assertEquals("Wrong link for sitemapItemRefId 'homeRefId' ","", homePageLink.getPath());
 
             HstLink newsPageLink = linkCreator.createByRefId("newsRefId", requestContext.getResolvedMount().getMount());
             assertEquals("Wrong link for sitemapItemRefId 'newsRefId' ","news", newsPageLink.getPath());
@@ -541,7 +541,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
                 HstLink homePageLink = linkCreator.createCanonical(node, requestContext);
                 assertEquals("wrong Mount ","sub1", homePageLink.getMount().getName());
                 assertEquals("wrong link.getPath for common/homepage","home", homePageLink.getPath());
-                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1/home", (homePageLink.toUrlForm(requestContext, false)));
+                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1", (homePageLink.toUrlForm(requestContext, false)));
                 
                 // we now have a node for the common/aboutfolder/about-us/about-us. 
                 // the current global site's sitemap cannot create a link for the about-us node (although the content is below its root content). 
@@ -589,8 +589,8 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
                 
                 HstLink homePageLink = linkCreator.createCanonical(homePageNode, requestContext);
                 assertEquals("wrong Mount ","sub1", homePageLink.getMount().getName());
-                assertEquals("wrong link.getPath for common/homepage","home", homePageLink.getPath());
-                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1/home", (homePageLink.toUrlForm(requestContext, false)));
+                assertEquals("wrong link.getPath for common/homepage","", homePageLink.getPath());
+                assertEquals("wrong absolute link for common/homepage" ,"/site/sub1", (homePageLink.toUrlForm(requestContext, false)));
                
                 
                 HstLink newsLink = linkCreator.createCanonical(newsNode, requestContext);

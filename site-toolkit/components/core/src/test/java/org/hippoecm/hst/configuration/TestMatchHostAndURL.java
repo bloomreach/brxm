@@ -596,30 +596,30 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
                 // second test: change request uri to "" : the expected resolvedSiteMapItem is now the homepage from the www.unit.test, thus myhometest2
-                // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest2 = _default_ , we should have myparam='myhometest2'
-                request.setRequestURI("/site");
+                // since we have a parameter configured as testparam = ${1} and the expected match for /foo = _default_ , we should have myparam='myhometest2'
+                request.setRequestURI("/site/foo");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
 
                 
-                assertTrue("We expect the parameter 'testparam to resolve to 'myhometest2' ","myhometest2".equals(resolvedSiteMapItem.getParameter("testparam")));
+                assertTrue("We expect the parameter 'testparam to resolve to 'foo' but was '"+resolvedSiteMapItem.getParameter("testparam")+ "'","foo".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
                 // third test: change request hostname to "preview.unit.test" : the expected resolvedSiteMapItem is now the homepage from the preview.unit.test, thus myhometest1 from the host preview.unit.test
                 // since we have a parameter configured as testparam = ${1} and the expected match for /myhometest1 = _default_ , we should have myparam='myhometest1'
                
-                
+                previewRequest.setRequestURI("/site/foo");
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
-                assertTrue("We expect the parameter 'testparam to resolve to 'myhometestpreview' but it was '"+resolvedSiteMapItem.getParameter("testparam")+"'","myhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
+                assertTrue("We expect the parameter 'testparam to resolve to 'foo' but it was '"+resolvedSiteMapItem.getParameter("testparam")+"'","foo".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
                 // fourth test: change request uri to "/custompipeline" : the expected resolvedSiteMapItem is now the homepage from the preview.unit.test/custompipeline, thus mycustomhometestpreview
                 // since we have a parameter configured as testparam = ${1} and the expected match for /mycustomhometestpreview = _default_ , we should have myparam='mycustomhometestpreview'
                 
-                previewRequest.setRequestURI("/site/custompipeline");
+                previewRequest.setRequestURI("/site/custompipeline/foo");
                 
                 mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
                 // The custompipeline Mount also has hst:versioninpreviewheader = false
@@ -628,7 +628,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewRequest, response, mount);
                 resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 
-                assertTrue("We expect the parameter 'testparam to resolve to 'mycustomhometestpreview' ","mycustomhometestpreview".equals(resolvedSiteMapItem.getParameter("testparam")));
+                assertTrue("We expect the parameter 'testparam to resolve to 'foo' ","foo".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
