@@ -40,9 +40,19 @@ public class HstLinkImpl implements HstLink {
     }
     
     public HstLinkImpl(String path, Mount mount, boolean containerResource) {
+        this(path, mount,containerResource, true);
+    } 
+    
+    public HstLinkImpl(String path, Mount mount, boolean containerResource, boolean rewriteHomePagePath) {
         this.path = PathUtils.normalizePath(path);
         this.mount = mount;
         this.containerResource = containerResource;
+        if(rewriteHomePagePath) {
+            // check whether path is equal to homepage : if so, replace with ""
+            if(this.path != null && !containerResource && mount != null && (path.equals(mount.getHomePage()) || ("/"+path).equals(mount.getHomePage()))) {
+                this.path = "";
+            }
+        }
     }
     
     public Mount getMount() {

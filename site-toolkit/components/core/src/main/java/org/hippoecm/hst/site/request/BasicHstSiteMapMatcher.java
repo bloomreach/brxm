@@ -63,7 +63,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         pathInfo = PathUtils.normalizePath(pathInfo);
         
         if(linkProcessor != null) {
-            HstLink link = new HstLinkImpl(pathInfo, resolvedMount.getMount());
+            HstLink link = new HstLinkImpl(pathInfo, resolvedMount.getMount(), false, false);
             link = linkProcessor.preProcess(link);
             pathInfo = link.getPath();
         }
