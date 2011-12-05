@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.social;
+package org.onehippo.cms7.channelmanager.plugins.social;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;

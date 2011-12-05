@@ -15,17 +15,18 @@
   limitations under the License.
 -->
 <sv:node sv:name="cms-services" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:node sv:name="liveSiteDocumentUrlService">
+  <sv:node sv:name="channelDocumentUrlService">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.documenturl.RestDocumentUrlService</sv:value>
+      <sv:value>org.onehippo.cms7.channelmanager.service.ChannelDocumentUrlService</sv:value>
     </sv:property>
     <sv:property sv:name="rest.proxy.service.id" sv:type="String">
       <sv:value>hst.rest.proxy.service</sv:value>
     </sv:property>
     <sv:property sv:name="service.id" sv:type="String">
+      <!-- use the same service ID as the old 'live site document URL service' in the CMS -->
       <sv:value>live.site.document.url.service</sv:value>
     </sv:property>
     <sv:property sv:name="type" sv:type="String">

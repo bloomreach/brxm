@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service.documenturl;
+package org.onehippo.cms7.channelmanager.service;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -23,6 +23,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.frontend.service.documenturl.IDocumentUrlService;
 import org.hippoecm.hst.rest.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,17 +41,17 @@ import org.slf4j.LoggerFactory;
  * <li>'type': the type of mounts to use for link creation. If omitted or empty, the type 'live' is used.</li>
  * </ul>
  */
-public class RestDocumentUrlService extends Plugin implements IDocumentUrlService {
+public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlService {
 
     public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
 
     private static final String DEFAULT_TYPE = "live";
-    private static final Logger log = LoggerFactory.getLogger(RestDocumentUrlService.class);
+    private static final Logger log = LoggerFactory.getLogger(ChannelDocumentUrlService.class);
 
     private final IRestProxyService restProxyService;
     private final String type;
 
-    public RestDocumentUrlService(IPluginContext context, IPluginConfig config) {
+    public ChannelDocumentUrlService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // load REST proxy service
