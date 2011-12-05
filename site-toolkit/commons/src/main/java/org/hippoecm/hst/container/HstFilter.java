@@ -602,7 +602,6 @@ public class HstFilter implements Filter {
      * @param req HTTP servlet request
      * @param res HTTP servlet response
      * @param requestContext the HST request context
-     * @param jcrUuid the UUID of the JCR node
      * @param logger
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
