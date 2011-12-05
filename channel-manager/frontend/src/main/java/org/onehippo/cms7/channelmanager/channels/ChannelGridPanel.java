@@ -121,8 +121,8 @@ public class ChannelGridPanel extends ExtPanel {
         if (ChannelStore.ChannelField.url.name().equals(columnName)) {
             CharSequence previewLabel = Strings.escapeMarkup(getLocalizer().getString("action.preview", this));
             fieldConfig.put("xtype", "templatecolumn");
-            fieldConfig.put("tpl", "<a href=\"{url}\" name=\'show-live\'>{url}</a>" +
-                        "<input type=\'button\' name=\'show-preview\' value=\'" + previewLabel + "\' />");
+            fieldConfig.put("tpl", "<input type=\'button\' name=\'show-preview\' value=\'" + previewLabel + "\' />" +
+                        "<a href=\"{url}\" name=\'show-live\'>{url}</a>");
         }
         return fieldConfig;
     }

@@ -168,8 +168,8 @@
 .channel-manager .x-grid3-col-url input[type=button] {
     float: right;
     font-size: 10px;
-    padding: 1px 7px;
-    margin: 0px;
+    padding: 0 7px;
+    margin: -3px 0;
     color: #333;
 }
 
