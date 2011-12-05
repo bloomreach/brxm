@@ -72,18 +72,21 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             targetMount = hstRequestContext.getResolvedMount().getMount();
         }
         String siteMapItemRefIdOrPath = PathUtils.normalizePath(hstSiteMenuItemConfiguration.getSiteMapItemPath());
-        HstSiteMapItem siteMapItemByRefId = targetMount.getHstSite().getSiteMap().getSiteMapItemByRefId(siteMapItemRefIdOrPath);
         
-        if (siteMapItemByRefId != null) {
-            hstSiteMapItemRefId = siteMapItemRefIdOrPath;
-            hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
-            if (log.isDebugEnabled()) {
-                log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
-            }
-        } else {
-            hstSiteMapItemPath = siteMapItemRefIdOrPath;
-            if (log.isDebugEnabled()) {
-                log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
+        if(targetMount != null) {
+            HstSiteMapItem siteMapItemByRefId = targetMount.getHstSite().getSiteMap().getSiteMapItemByRefId(siteMapItemRefIdOrPath);
+            
+            if (siteMapItemByRefId != null) {
+                hstSiteMapItemRefId = siteMapItemRefIdOrPath;
+                hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
+                if (log.isDebugEnabled()) {
+                    log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
+                }
+            } else {
+                hstSiteMapItemPath = siteMapItemRefIdOrPath;
+                if (log.isDebugEnabled()) {
+                    log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
+                }
             }
         }
         
