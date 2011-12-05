@@ -17,7 +17,7 @@ package org.hippoecm.frontend.session;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.protocol.http.WebSession;
-import org.hippoecm.frontend.IFacetRootsObserver;
+import org.hippoecm.frontend.observation.IFacetRootsObserver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
 

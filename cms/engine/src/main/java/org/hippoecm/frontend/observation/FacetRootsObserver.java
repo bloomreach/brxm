@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.observation;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.frontend.observation.IFacetRootsObserver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

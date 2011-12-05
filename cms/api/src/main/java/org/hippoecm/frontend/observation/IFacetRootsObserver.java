@@ -1,4 +1,4 @@
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.observation;
 
 public interface IFacetRootsObserver {
 

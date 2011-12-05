@@ -56,6 +56,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.UserCredentials;
+import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;

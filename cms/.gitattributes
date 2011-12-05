@@ -3,7 +3,6 @@ api/pom.xml -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
 api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/Home.java -text
-api/src/main/java/org/hippoecm/frontend/IFacetRootsObserver.java -text
 api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
@@ -104,6 +103,7 @@ api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeNode.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/ILabelTreeNode.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/ObservableTreeModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/observation/IFacetRootsObserver.java -text
 api/src/main/java/org/hippoecm/frontend/plugin/IClusterControl.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/IPlugin.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/IPluginContext.java -text
@@ -1104,13 +1104,11 @@ editor/test/src/test/resources/log4j.xml -text
 editor/test/src/test/resources/repository-test.cnd -text
 engine/src/main/java/org/hippoecm/frontend/ClassFromKeyStringResourceLoader.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/CssImportingHeaderResponse.java -text
-engine/src/main/java/org/hippoecm/frontend/FacetRootsObserver.java -text
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage.properties -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_fr.properties -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_it.properties -text
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_nl.properties -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/JcrObservationManager.java -text
 engine/src/main/java/org/hippoecm/frontend/JcrResourceRequestTarget.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/NoRepositoryAvailablePage.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/NoRepositoryAvailablePage.properties svneol=native#text/plain
@@ -1139,6 +1137,11 @@ engine/src/main/java/org/hippoecm/frontend/i18n/NodeWrapper.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/SearchingTranslatorPlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/i18n/TranslationSelectionStrategy.java -text
 engine/src/main/java/org/hippoecm/frontend/model/JcrSessionModel.java -text
+engine/src/main/java/org/hippoecm/frontend/observation/FacetRootsObserver.java -text
+engine/src/main/java/org/hippoecm/frontend/observation/JcrListener.java -text
+engine/src/main/java/org/hippoecm/frontend/observation/JcrObservationManager.java -text
+engine/src/main/java/org/hippoecm/frontend/observation/NodeState.java -text
+engine/src/main/java/org/hippoecm/frontend/observation/ObservationException.java -text
 engine/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrApplicationFactory.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/empty/EmptyPlugin.html svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/plugin/empty/EmptyPlugin.java svneol=native#text/plain

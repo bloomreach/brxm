@@ -112,7 +112,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
     
     private boolean isVersionable() {
         try {
-            return getModelObject().isNodeType("mix:versionable");
+            return getModelObject() == null ? false : getModelObject().isNodeType("mix:versionable");
         } catch (RepositoryException e) {
             log.error("An error occurred determining if node is versionable.", e);
             return false;
