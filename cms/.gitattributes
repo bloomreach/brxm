@@ -2027,7 +2027,6 @@ surf/repository/pom.xml -text
 surf/repository/src/main/resources/cms-services-surf.xml -text
 surf/repository/src/main/resources/hippoecm-extension.xml -text
 surf/repository/src/main/resources/workflow-socialsharing.xml -text
-surf/repository/src/main/resources/workflow-websiteactions.xml -text
 test/src/main/java/org/hippoecm/frontend/PluginSuite.java -text
 test/src/main/java/org/hippoecm/frontend/RepositoryTest.java -text
 test/src/main/resources/domain-defaultread.xml -text

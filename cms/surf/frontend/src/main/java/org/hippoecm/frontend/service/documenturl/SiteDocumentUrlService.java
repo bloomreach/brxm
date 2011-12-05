@@ -36,7 +36,10 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * The created URL gets two additional parameters: 'uuid' with the UUID of the document, and 'type' with the
  * configured type.
+ *
+ * @deprecated From CMS 7.7, this service has been replaced by the document URL service in the channel manager.
  */
+@Deprecated
 public class SiteDocumentUrlService extends Plugin implements IDocumentUrlService {
 
     private static final Logger log = LoggerFactory.getLogger(SiteDocumentUrlService.class);

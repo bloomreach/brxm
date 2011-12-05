@@ -34,6 +34,10 @@ import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated From CMS 7.7, this plugin has been replaced by the ChannelActionsPlugin in the channel manager.
+ */
+@Deprecated
 @SuppressWarnings("deprecation")
 public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 

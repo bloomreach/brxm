@@ -39,8 +39,11 @@ import org.slf4j.LoggerFactory;
  * medium. The document URL is constructed via the {@link IDocumentUrlService}} specified by the property
  * "document.url.service.id". The document URL can be shared on all media supported by the {@link ISocialMediaService}
  * specified by the property "social.media.service.id".
+ *
+ * @deprecated From CMS 7.7, this plugin has been replaced by the social sharing plugin in the channel manager.
  */
 @SuppressWarnings("deprecation")
+@Deprecated
 public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
     private static final String CONFIG_DOCUMENT_URL_SERVICE_ID = "document.url.service.id";
