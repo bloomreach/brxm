@@ -117,7 +117,7 @@
             <sv:value>fr_FR</sv:value>
           </sv:property>
           <sv:property sv:name="hst:homepage" sv:type="String">
-            <sv:value>home</sv:value>
+            <sv:value>accueil</sv:value>
           </sv:property>
           <sv:property sv:name="hst:pagenotfound" sv:type="String">
             <sv:value>error</sv:value>
