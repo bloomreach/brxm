@@ -15,6 +15,13 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -23,12 +30,6 @@ import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class VirtualHostService implements MutableVirtualHost {
     
@@ -82,7 +83,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String cmsLocation;
     private Integer defaultPort;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) throws ServiceException {
+    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
        
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
@@ -236,11 +237,7 @@ public class VirtualHostService implements MutableVirtualHost {
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
-                    int port = 0;
-                    if (defaultPort != null) {
-                        port = defaultPort;
-                    }
-                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, port);
+                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, defaultPort);
                     MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {

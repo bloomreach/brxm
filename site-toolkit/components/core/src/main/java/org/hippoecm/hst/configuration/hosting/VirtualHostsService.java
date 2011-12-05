@@ -188,7 +188,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 }
             }
 
-            Integer defaultPort = null;
+            int defaultPort = 0;
             Long longDefaultPort = hostGroupNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT);
             if (longDefaultPort == null) {
                 log.info("VirtualHostGroup '{}' does not have a property hst:defaultport configured. It is necessary for the channel manager to generate correct URLs, " +
