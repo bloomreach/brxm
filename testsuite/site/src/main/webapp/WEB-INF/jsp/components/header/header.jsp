@@ -71,11 +71,11 @@
         <!-- BELOW WE SHOW EXAMPLES OF LINKS BY *REF-ID* AND SHOW I18N WITHOUT NEEDING TO SET THE LOCALE: THE LOCALE IS
              RETRIEVED FROM THE BACKING SITEMAPITEM/MOUNT 
         -->
-        <hst:link var="home" siteMapItemRefId="home"/>
+        <hst:link var="home" siteMapItemRefId="homeId"/>
         <li>
             <a href="${home}"><fmt:message key="key.home"/> </a>
         </li>
-        <hst:link var="about" siteMapItemRefId="about"/>
+        <hst:link var="about" siteMapItemRefId="aboutId"/>
         <li>
             <a href="${about}"><fmt:message key="key.aboutus"/></a>
         </li>

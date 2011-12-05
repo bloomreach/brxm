@@ -31,6 +31,29 @@
                 <sv:value>home</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="French Home by path">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <sv:value>accueil</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountalias" sv:type="String">
+              <sv:value>fr_site</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="French Home by id">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemenuitem</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+                <!-- The french sitemap home item contains hst:refId = homeId hence home should also work -->
+                <sv:value>homeId</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:mountalias" sv:type="String">
+              <sv:value>fr_site</sv:value>
+            </sv:property>
+        </sv:node>
         <sv:node sv:name="About">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>

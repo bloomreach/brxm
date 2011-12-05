@@ -30,7 +30,7 @@
             <sv:value>common/home-page</sv:value>
         </sv:property>
         <sv:property sv:name="hst:refId" sv:type="String">
-            <sv:value>home</sv:value>
+            <sv:value>homeId</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="about">
@@ -44,7 +44,7 @@
             <sv:value>common/about-us</sv:value>
         </sv:property>
         <sv:property sv:name="hst:refId" sv:type="String">
-            <sv:value>about</sv:value>
+            <sv:value>aboutId</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="news">
