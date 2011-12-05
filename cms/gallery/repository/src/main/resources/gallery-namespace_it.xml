@@ -55,7 +55,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Thumbnail</sv:value>
+        <sv:value>Miniatura</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:property" sv:type="String">
         <sv:value>hippogallery:thumbnail</sv:value>

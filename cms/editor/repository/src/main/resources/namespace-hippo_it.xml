@@ -55,7 +55,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Facet Link</sv:value>
+        <sv:value>Collegamento Facet</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -69,7 +69,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Link</sv:value>
+        <sv:value>Collegamento</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

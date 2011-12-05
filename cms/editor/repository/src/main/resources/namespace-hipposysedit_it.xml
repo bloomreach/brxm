@@ -27,7 +27,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Template</sv:value>
+        <sv:value>Modello</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

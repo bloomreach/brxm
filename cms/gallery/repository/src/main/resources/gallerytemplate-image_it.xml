@@ -26,7 +26,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Nouvo immagine</sv:value>
+      <sv:value>Nuova immagine</sv:value>
     </sv:property>
   </sv:node>
 
