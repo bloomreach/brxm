@@ -22,7 +22,6 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.CachingNameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.MalformedPathException;
-import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
@@ -72,24 +71,4 @@ public class HippoNamePathResolver implements NamePathResolver {
         return pResolver.getJCRPath(path);
     }
 
-    private class NameResolverImpl implements NameResolver {
-        NamespaceResolver resolver;
-
-        NameResolverImpl(NamespaceResolver nsResolver) {
-            this.resolver = nsResolver;
-        }
-
-        public Name getQName(String name) throws IllegalNameException, NamespaceException {
-            return NameParser.parse(name, resolver, NameFactoryImpl.getInstance());
-        }
-
-        public String getJCRName(Name name) throws NamespaceException {
-            String uri = name.getNamespaceURI();
-            if (resolver.getPrefix(uri).length() == 0) {
-                return name.getLocalName();
-            } else {
-                return resolver.getPrefix(uri) + ":" + name.getLocalName();
-            }
-        }
-    }
 }
