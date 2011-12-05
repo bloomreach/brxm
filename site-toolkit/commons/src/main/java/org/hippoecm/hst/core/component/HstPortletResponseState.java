@@ -88,6 +88,10 @@ public class HstPortletResponseState extends AbstractHstResponseState {
         this.response.addProperty(name, value);
     }
     
+    protected void setResponseHeader(String name, String value) {
+        this.response.setProperty(name, value);
+    }
+    
     protected void addResponseHeadElement(Element element, String keyHint) {
         ClassLoader paCL = Thread.currentThread().getContextClassLoader();
         

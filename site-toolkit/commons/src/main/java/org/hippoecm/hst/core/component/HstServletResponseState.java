@@ -90,6 +90,10 @@ public class HstServletResponseState extends AbstractHstResponseState
         this.response.addHeader(name, value);
     }
     
+    protected void setResponseHeader(String name, String value) {
+        this.response.setHeader(name, value);
+    }
+    
     protected void addResponseHeadElement(Element element, String keyHint) {
         if (this.response instanceof HstResponse) {
             ((HstResponse) this.response).addHeadElement(element, keyHint);

@@ -76,7 +76,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected CharArrayWriterBuffer charOutputBuffer;
     protected ServletOutputStream outputStream;
     protected PrintWriter printWriter;
-    protected Map<String, List<String>> headers;
+    protected Map<String, List<String>> addedHeaders;
+    protected Map<String, List<String>> setHeaders;
     protected List<Cookie> cookies;
     protected List<KeyValue<String, Element>> headElements;
     protected List<Comment> preambleNodes;
@@ -105,16 +106,31 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         this.defaultLocale = null;
     }
 
-    protected List<String> getHeaderList(String name, boolean create) {
-        if (headers == null) {
-            headers = new HashMap<String, List<String>>();
+    protected List<String> getAddedHeaderList(String name, boolean create) {
+        if (addedHeaders == null) {
+            addedHeaders = new HashMap<String, List<String>>();
         }
         
-        List<String> headerList = headers.get(name);
+        List<String> headerList = addedHeaders.get(name);
         
         if (headerList == null && create) {
             headerList = new ArrayList<String>();
-            headers.put(name, headerList);
+            addedHeaders.put(name, headerList);
+        }
+        
+        return headerList;
+    }
+
+    protected List<String> getSetHeaderList(String name, boolean create) {
+        if (setHeaders == null) {
+            setHeaders = new HashMap<String, List<String>>();
+        }
+        
+        List<String> headerList = setHeaders.get(name);
+        
+        if (headerList == null && create) {
+            headerList = new ArrayList<String>();
+            setHeaders.put(name, headerList);
         }
         
         return headerList;
@@ -177,7 +193,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      */
     public void addHeader(String name, String value) {
         if (isMimeResponse && !committed) {
-            getHeaderList(name, true).add(value);
+            getAddedHeaderList(name, true).add(value);
         }
     }
 
@@ -197,7 +213,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      */
     public boolean containsHeader(String name) {
         // Note: Portlet Spec 2.0 demands this to always return false...
-        return isMimeResponse && getHeaderList(name, false) != null;
+        return isMimeResponse && (getAddedHeaderList(name, false) != null || getSetHeaderList(name, false) != null);
     }
 
     /*
@@ -284,7 +300,7 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      */
     public void setHeader(String name, String value) {
         if (isMimeResponse && !committed) {
-            List<String> headerList = getHeaderList(name, true);
+            List<String> headerList = getSetHeaderList(name, true);
             headerList.clear();
             headerList.add(value);
         }
@@ -441,7 +457,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
      */
     public void reset() {
         resetBuffer(); // fails if committed
-        headers = null;
+        addedHeaders = null;
+        setHeaders = null;
         cookies = null;
         hasStatus = false;
         contentLength = -1;
@@ -617,7 +634,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
         charOutputBuffer = null;
         outputStream = null;
         printWriter = null;
-        headers = null;
+        addedHeaders = null;
+        setHeaders = null;
         cookies = null;
         committed = false;
         hasStatus = false;
@@ -674,13 +692,22 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 setResponseCharacterEncoding(characterEncoding);
             }
 
-            if (headers != null) {
-                for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            if (addedHeaders != null) {
+                for (Map.Entry<String, List<String>> entry : addedHeaders.entrySet()) {
                     for (String value : entry.getValue()) {
                         addResponseHeader(entry.getKey(), value);
                     }
                 }
-                headers = null;
+                addedHeaders = null;
+            }
+
+            if (setHeaders != null) {
+                for (Map.Entry<String, List<String>> entry : setHeaders.entrySet()) {
+                    for (String value : entry.getValue()) {
+                        setResponseHeader(entry.getKey(), value);
+                    }
+                }
+                setHeaders = null;
             }
 
             // NOTE: To allow setting status code from each component.
@@ -794,6 +821,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected abstract void setResponseContentType(String contentType);
     
     protected abstract void addResponseHeader(String name, String value);
+    
+    protected abstract void setResponseHeader(String name, String value);
     
     protected abstract void addResponseHeadElement(Element element, String keyHint);
     
