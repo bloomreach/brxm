@@ -103,7 +103,6 @@ public class ModifyingHstConfigurationServlet  extends HttpServlet {
                 session = repository.login(defaultCredentials);
                 while (true) {
                     try {
-                        System.out.println(counter);
                         Node node = session.getNode("/hst:hst/hst:hosts");
                         node.setProperty("hst:defaulthostname", "127.0.0." + counter++);
                         session.save();
