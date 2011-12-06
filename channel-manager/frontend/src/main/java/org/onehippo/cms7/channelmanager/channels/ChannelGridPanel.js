@@ -152,7 +152,18 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     var target = e.getTarget();
                     if (target.name == 'show-preview') {
                         var record = this.getStore().getAt(index);
-                        window.open(record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath'));
+                        Ext.Ajax.request({
+                            headers: {
+                                'CMS-User': this.cmsUser,
+                                'FORCE_CLIENT_HOST': 'true'
+                            },
+                            url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+record.get('hostname')+'/?FORCE_CLIENT_HOST=true',
+                            success: function() {
+                                var previewUrl = record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath');
+                                window.open(previewUrl, 'hippo-channel-manager-preview', 'location=no,menubar=no');
+                            },
+                            scope: this
+                        });
                         return false;
                     } else if (target.name == 'show-live') {
                         return false;

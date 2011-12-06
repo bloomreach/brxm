@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,15 +53,24 @@ public class ChannelGridPanel extends ExtPanel {
 
     @ExtProperty
     private boolean blueprintsAvailable;
+    
+    @ExtProperty
+    private String cmsUser;
+    
+    @ExtProperty
+    private String composerRestMountUrl;
 
     public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture,
                             boolean blueprintsAvailable) {
-        super();
         this.store = (ChannelStore) storeFuture.getStore();
         this.storeFuture = storeFuture;
 
         canModifyChannels = store.canModifyChannels();
         log.info("Current user is allowed to modify channels: {}", canModifyChannels);
+
+        this.cmsUser = UserSession.get().getJcrSession().getUserID();
+        this.composerRestMountUrl = config.getString("templateComposerContextPath", "/site") +
+                config.getString("composerRestMountPath", "/_rp");
 
         this.blueprintsAvailable = blueprintsAvailable;
         log.info("Blueprints for new channels are available: {}", blueprintsAvailable);
