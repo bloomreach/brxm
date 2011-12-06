@@ -101,7 +101,6 @@ public class ImageSetPathWidget extends Panel {
             }
 
         };
-        remove.add(new Label("remove-link-text", new StringResourceModel("imageset.remove", this, null)));
         add(remove);
 
         previewImage = new InlinePreviewImage("preview-image", model, imageSetPath.previewVariant());

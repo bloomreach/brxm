@@ -86,7 +86,6 @@ public class JcrPathWidget extends Panel {
             }
 
         };
-        remove.add(new Label("remove-link-text", new StringResourceModel("path.remove", this, null)));
         add(remove);
 
         previewName = resolvePreviewName(model.getObject());

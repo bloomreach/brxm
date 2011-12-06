@@ -48,14 +48,24 @@
 
 /* channel properties window */
 .channel-manager .hide-channel-properties { display: none }
-.channel-manager .channel-properties { display: block }
+.channel-manager .channel-properties { display: block; position: relative; width: 276px; }
 .channel-manager .channel-properties .fieldgroup { border-bottom: 16px solid #fff; }
-.channel-manager .channel-properties .fieldgrouptitle { font-weight: bold; border-bottom: 2px solid #fff; }
-.channel-manager .channel-properties tr > td.key { padding: 0px 10px 6px 4px; }
-.channel-manager .channel-properties tr > td.value { padding: 0 0px 6px 0; }
-.channel-manager .channel-properties a.channel-button, .channel-manager .channel-properties .channel-button > a { background-color: #f2f2f2; border: 1px solid #999; padding: 2px; margin-right: 4px; }
-.channel-manager .channel-properties a.channel-button:hover, .channel-manager .channel-properties .channel-button > a:hover { background-color: #fff6e0 }
+.channel-manager .channel-properties .fieldgrouptitle { font-weight: bold; border-bottom: 13px solid #fff; }
+.channel-manager .channel-properties tr > td.key { width: 80px; min-width: 80px; max-width: 80px; padding: 0 10px 11px 0; }
+.channel-manager .channel-properties tr > td.value { padding: 0 0 11px 0; vertical-align: middle; }
+.channel-manager .channel-properties input { width: 180px; }
+.channel-manager .channel-properties select { width: 186px; max-width: 186px; }
+.channel-manager .channel-properties .channel-preview-name { display: inline-block; margin-right: 6px; max-width: 124px; }
+.channel-manager .channel-properties .channel-preview-image { display: inline-block; margin-right: 6px; max-width: 124px; margin-bottom: 5px; overflow: hidden; }
+.channel-manager .channel-properties .channel-widget-buttons { position: absolute; right: 0; }
+.channel-manager .channel-properties .channel-remove-button { display: inline-block; width: 10px; height: 10px; margin-right: 4px; }
+.channel-manager .channel-properties .channel-remove-button > a { display: inline-block; width: 10px; height: 10px; background: url(icon-close-gray-small.png) no-repeat center; }
+.channel-manager .channel-properties .channel-remove-button > a:hover { background: url(icon-close-red-small.png) no-repeat center; }
+.channel-manager .channel-properties a.channel-select-button, .channel-manager .channel-properties .channel-select-button > a { display: inline-block; background-color: #f2f2f2; border: 1px solid #999; padding: 2px; }
+.channel-manager .channel-properties a.channel-select-button:hover, .channel-manager .channel-properties .channel-select-button > a:hover { background-color: #fff6e0 }
 .channel-manager .channel-properties-window .x-window-body { overflow: auto }
+.channel-manager .x-window-footer { padding-right: 0px; }
+.channel-manager .x-window-footer .x-toolbar-cell { padding-right: 0px; }
 
 .channel-manager .x-btn-small .add-channel {
   background-image: url("add-channel.png");
