@@ -108,7 +108,7 @@
     float: left;
     padding: 0;
     margin: 0;
-    width: 5000px; /* TODO set by javascript according to amount of items */
+    white-space: nowrap;
 }
 
 .channel-manager .toolbar .toolbar-item {

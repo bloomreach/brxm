@@ -229,12 +229,24 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
         // register scrolling handlers, maybe should move somewhere else
         var scrollLeft = this.mainBody.child('.scroll-left');
         scrollLeft.on('click', function() {
-            this.toolbarBody.move('r', 150, {duration: 0.25, easing: 'easeIn'});
+            var inner = this.toolbarBody.getRegion();
+            var outer = this.mainBody.getRegion();
+            var to = 150;
+            if (inner.left + 150 > outer.left) {
+                to = outer.left - inner.left;
+            }
+            this.toolbarBody.move('r', to, {duration: 0.25, easing: 'easeIn'});
         }, this);
 
         var scrollRight = this.mainBody.child('.scroll-right');
         scrollRight.on('click', function() {
-            this.toolbarBody.move('l', 150, {duration: 0.25, easing: 'easeIn'});
+            var inner = this.toolbarBody.getRegion();
+            var outer = this.mainBody.getRegion();
+            var to = 150;
+            if (inner.right - 150 < outer.right) {
+                to = inner.right - outer.right;
+            }
+            this.toolbarBody.move('l', to, {duration: 0.25, easing: 'easeIn'});
         }, this);
 
         this.grid.fireEvent('viewready', this.grid);
