@@ -92,6 +92,7 @@ site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TopProductsResource.java
 site/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text
+site/src/main/java/org/hippoecm/hst/demo/servlet/ModifyingHstConfigurationServlet.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/PageCachingSiteMapHandler.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/spring/ContactSpring.java -text
 site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactFormController.java -text

@@ -37,6 +37,7 @@
     <sv:value>/images/</sv:value>
     <sv:value>/login/</sv:value>
     <sv:value>/examples/</sv:value>
+    <sv:value>/hstconfigmodifier/</sv:value>
   </sv:property>
   <sv:property sv:name="hst:homepage" sv:type="String">
     <sv:value>home</sv:value>
