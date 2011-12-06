@@ -203,7 +203,13 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         return tlCurrentRepository.get();
     }
     
-    protected void setCurrentThreadRepository(Repository repository) {
+    protected void setCurrentThreadRepository(Repository repository) throws RepositoryException {
+        if (tlCurrentRepository == null) {
+            throw new RepositoryException("Application is possibly being stopped. " +
+                    "\"When an app is stopped, Tomcat nullifies the value of all static class variables " +
+                    "of classes loaded by the WebAppClassLoader.\"");
+        }
+        
         tlCurrentRepository.set(repository);
     }
 
