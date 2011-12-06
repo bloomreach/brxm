@@ -91,7 +91,7 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
         private int position;
 
         /** The underlying array of events. */
-        private Event[] events;
+        final private Event[] events;
 
         /**
          * Creates an iterator for the given array of objects.
@@ -150,12 +150,12 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
      * a {@link Session} or NodeState which we do not want in our asynchronous dispatching
      */
     private class DetachedEvent implements Event {
-        long date; 
-        String identifier; 
-        String path;
-        int type;
-        String userData;
-        String userID; 
+        final long date; 
+        final String identifier; 
+        final String path;
+        final int type;
+        final String userData;
+        final String userID; 
         
         // NEVER STORE THE EVENT : IT CONTAINS THE JCR SESSION. 
         // only fetch the serializable data
