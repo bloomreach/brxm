@@ -37,7 +37,11 @@ import javax.jcr.observation.EventIterator;
  */
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
    
-    // concrete implementations will get this method invoked asynchronously
+    /**
+     * This method is called when a bundle of events is dispatched asynchronously from the repository listener.
+     *
+     * @param events The event set received.
+     */
     abstract public void onAsynchronousEvent(EventIterator events);
     
     @Override
