@@ -12,7 +12,7 @@
                 <sv:value>hst:sitemenuitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>home</sv:value>
+                <sv:value>homeId</sv:value>
             </sv:property>
         </sv:node>
         <sv:node sv:name="A propos">
