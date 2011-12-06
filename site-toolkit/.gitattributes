@@ -148,6 +148,7 @@ api/src/main/java/org/hippoecm/hst/core/internal/HstMutableRequestContext.java s
 api/src/main/java/org/hippoecm/hst/core/internal/MountDecorator.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/MutableResolvedMount.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItem.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerListener.java -text
