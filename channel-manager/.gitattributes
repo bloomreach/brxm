@@ -54,8 +54,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/C
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/channel-icon-16.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/SocialSharingPlugin.html -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/social/SocialSharingPlugin.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/ChannelDocumentUrlService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalBundle.java -text
