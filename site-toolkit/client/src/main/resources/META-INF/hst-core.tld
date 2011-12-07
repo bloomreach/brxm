@@ -726,7 +726,7 @@
             Tests if the property of the bean is a readable one 
         </description>
         <name>isReadable</name>
-        <function-class>org.apache.commons.beanutils.PropertyUtils</function-class>
+        <function-class>org.hippoecm.hst.utils.PropertyUtils</function-class>
         <function-signature>boolean isReadable(java.lang.Object, java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${hst:isReadable(object, 'propertyName')}"&gt;
