@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -38,6 +40,26 @@ import javax.jcr.observation.EventIterator;
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
    
     /**
+     * The service that will execute the {@link AsynchronousEventDispatcher}
+     */
+    private ExecutorService executor;
+    
+    /**
+     * Creates a AsynchronousDispatchingEventListener where the ExecutorService is a single threaded executor
+     */
+    public AsynchronousDispatchingEventListener() {
+        this.executor = Executors.newSingleThreadExecutor();
+    }
+    
+    /**
+     * Creates a AsynchronousDispatchingEventListener with ExecutorService <code>executor</code>
+     * @param executor the ExecutorService
+     */
+    public AsynchronousDispatchingEventListener(ExecutorService executor) {
+        this.executor = executor;
+    }
+    
+    /**
      * This method is called when a bundle of events is dispatched asynchronously and detached from the repository listener.
      *
      * @param events The event set received.
@@ -55,17 +77,17 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
             } catch (RepositoryException e) {
                 continue;
             }
-        }
+        } 
         DetachedEventIterator iterator = new DetachedEventIterator(detachedEventList.toArray(new Event[detachedEventList.size()]));
-        // start the asynchronous dispatching with another Thread
-        new AsynchronousEventDispatcher(iterator, this).start();
+        
+        executor.execute(new AsynchronousEventDispatcher(iterator, this));
        
     }
     
     /**
-     * A dispatcher Thread that when run is called dispatches the events to the {@link AsynchronousDispatchingEventListener}
+     * A Runnable that when run is called dispatches the events to the {@link AsynchronousDispatchingEventListener}
      */
-    private class AsynchronousEventDispatcher extends Thread {
+    private class AsynchronousEventDispatcher implements Runnable {
         
         EventIterator events;
         AsynchronousDispatchingEventListener listener;
