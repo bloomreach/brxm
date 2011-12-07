@@ -6,7 +6,6 @@ conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
 content/src/main/resources/behavioral-configuration.xml -text
-content/src/main/resources/cms/cms-services-localhost.xml -text svneol=unset#text/plain
 content/src/main/resources/default-ecm-content.xml -text
 content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-facetproducts.xml svneol=native#text/plain

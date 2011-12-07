@@ -21,23 +21,6 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <!-- CMS preview -->
-
-  <sv:node sv:name="demosuite-cms-services-localhost">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>12001</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>cms/cms-services-localhost.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
-    </sv:property>
-  </sv:node>
-  
   <sv:node sv:name="demosite">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
