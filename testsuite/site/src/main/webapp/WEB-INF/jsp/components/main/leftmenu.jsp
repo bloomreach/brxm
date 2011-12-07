@@ -21,6 +21,9 @@
 <hst:defineObjects/>
 
 <div class="yui-u first">
+
+<hst:link path=""/>
+
   <ul class="sitenav">
   <c:forEach var="item" items="${menu.menuItems}">
   <li>
