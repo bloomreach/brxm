@@ -121,6 +121,7 @@
     margin: 0;
     white-space: nowrap;
     height: 65px;
+    background: #f6f6f6;
 }
 
 .channel-manager .toolbar .toolbar-item {
@@ -157,6 +158,7 @@
     width: 20px;
     line-height: 65px;
     text-align: center;
+    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-left.png) no-repeat center center;
 }
 
 .channel-manager .toolbar-window .scroll-right {
@@ -168,6 +170,7 @@
     width: 20px;
     line-height: 65px;
     text-align: center;
+    background: #f6f6f6 url(templatecomposer/component-toolbar-arrow-right.png) no-repeat center center;
 }
 
 .channel-manager .toolbar-window .scroll-right:hover {

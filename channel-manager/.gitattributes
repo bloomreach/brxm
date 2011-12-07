@@ -69,6 +69,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save-close.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-save.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-left.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-right.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/components.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
