@@ -45,6 +45,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             viewConfig: {
                 forceFit: true
             },
+            border: false,
             tbar: this.toolbar
         });
 

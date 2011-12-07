@@ -62,7 +62,8 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                self.setWidth(arguments[0].body.w-scrollBarWidth);
+                // add 3 pixels to make the toolbar as wide as the visible iframe body
+                self.setWidth(arguments[0].body.w - scrollBarWidth + 3);
             }, true);
         }, this, {single: true});
 

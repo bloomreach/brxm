@@ -17,6 +17,7 @@ Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
 Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observable, {
 
+    TOOLBAR_ITEM_WIDTH: 150,
 
     masterTpl: new Ext.Template('<ul class="toolbar-window">',
                                   '<li class="scroll-left">&lt;</li>',
@@ -183,9 +184,18 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
         this.fireEvent('beforerefresh', this);
         this.grid.stopEditing(true);
         if (this.toolbarBody) {
+            this.toolbarBody.setLeft('0');
+            this.toolbarBody.setWidth(this.getItemsTotalWidth());
             this.toolbarBody.update(this.doRenderItems());
             this.fireEvent('refresh', this);
         }
+    },
+
+    getItemsTotalWidth: function() {
+        if (!this.grid.store) {
+            return 0;
+        }
+        return this.grid.store.getCount() * this.TOOLBAR_ITEM_WIDTH
     },
 
     destroy : function() {
@@ -229,24 +239,28 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
         // register scrolling handlers, maybe should move somewhere else
         var scrollLeft = this.mainBody.child('.scroll-left');
         scrollLeft.on('click', function() {
-            var inner = this.toolbarBody.getRegion();
-            var outer = this.mainBody.getRegion();
-            var to = 150;
-            if (inner.left + 150 > outer.left) {
-                to = outer.left - inner.left;
+            var innerLeft = this.toolbarBody.getLeft();
+            var outerLeft = this.mainBody.getLeft();
+            var to = this.TOOLBAR_ITEM_WIDTH;
+            if (innerLeft + this.TOOLBAR_ITEM_WIDTH > outerLeft) {
+                to = outerLeft - innerLeft;
             }
-            this.toolbarBody.move('r', to, {duration: 0.25, easing: 'easeIn'});
+            if (to > 0) {
+                this.toolbarBody.move('r', to, {duration: 0.25, easing: 'easeIn'});
+            }
         }, this);
 
         var scrollRight = this.mainBody.child('.scroll-right');
         scrollRight.on('click', function() {
-            var inner = this.toolbarBody.getRegion();
-            var outer = this.mainBody.getRegion();
-            var to = 150;
-            if (inner.right - 150 < outer.right) {
-                to = inner.right - outer.right;
+            var innerRight = this.toolbarBody.getRight();
+            var outerRight = this.mainBody.getRight();
+            var to = this.TOOLBAR_ITEM_WIDTH;
+            if (innerRight - this.TOOLBAR_ITEM_WIDTH < outerRight) {
+                to = innerRight - outerRight;
             }
-            this.toolbarBody.move('l', to, {duration: 0.25, easing: 'easeIn'});
+            if (to > 0) {
+                this.toolbarBody.move('l', to, {duration: 0.25, easing: 'easeIn'});
+            }
         }, this);
 
         this.grid.fireEvent('viewready', this.grid);

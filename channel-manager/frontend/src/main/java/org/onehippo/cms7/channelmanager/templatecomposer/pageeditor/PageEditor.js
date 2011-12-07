@@ -288,7 +288,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                Ext.getCmp('Iframe').setSize(arguments[0].body.w, arguments[0].body.h);
+                // correct for the border of the outer panel: 1 pixel left and right, so 2px in total
+                Ext.getCmp('Iframe').setSize(arguments[0].body.w - 2, arguments[0].body.h);
             }, true);
         }, this, {single: true});
 
