@@ -42,8 +42,16 @@ public class StringPool {
         if(string == null) {
             return null;
         }
-        String cached = stringPool.putIfAbsent(string, string);
-        return (cached == null) ? string : cached;
+        // it is faster in ConcurrentHashMap to first check with a get and only when null
+        // use the putIfAbsent : ConcurrentHashMap is optimized for retrieval operations
+        String cached = stringPool.get(string);
+        if(cached == null) {
+            cached = stringPool.putIfAbsent(string, string);
+            if (cached == null) {
+                cached = string;
+            }
+        }
+        return cached;
     }
     
     /**
