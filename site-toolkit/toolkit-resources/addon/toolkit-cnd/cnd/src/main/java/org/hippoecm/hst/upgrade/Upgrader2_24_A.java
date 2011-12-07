@@ -21,11 +21,11 @@ import org.hippoecm.repository.ext.UpdaterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Upgrader2_22_A implements UpdaterModule {
+public class Upgrader2_24_A implements UpdaterModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static Logger log = LoggerFactory.getLogger(Upgrader2_22_A.class);
+    private static Logger log = LoggerFactory.getLogger(Upgrader2_24_A.class);
 
     public void register(final UpdaterContext context) {
         context.registerName("upgrader-hst2_22A");
