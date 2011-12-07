@@ -80,9 +80,9 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
                 detachedEventList.add(detachedEvent);
             } catch (RepositoryException e) {
                 if(path == null) {
-                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event. Could not getPath() for the event. Processing next event", path);
+                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event. Could not getPath() for the event. Processing next event", e);
                 } else {
-                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event with path '{}'. Processing next event", path);
+                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event with path '"+path+"'. Processing next event", e);
                 }
                 continue;
             }
