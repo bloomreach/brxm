@@ -28,6 +28,8 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
+import org.hippoecm.hst.site.HstServices;
+
 /**
  * This abstract class can be used if the events need to be processed asynchronous. By default, hippo repository creates 
  * synchronous observers. If you depend on a synchronous observer in a synchronized method and at the same time read nodes 
@@ -71,10 +73,17 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
         List<Event> detachedEventList = new ArrayList<Event>();
         while (events.hasNext()) {
             Event event = events.nextEvent();
+            String path = null;
             try {
+                path = event.getPath();
                 Event detachedEvent = new DetachedEvent(event);
                 detachedEventList.add(detachedEvent);
             } catch (RepositoryException e) {
+                if(path == null) {
+                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event. Could not getPath() for the event. Processing next event", path);
+                } else {
+                    HstServices.getLogger(getClass().getName()).warn("Repository exception during processing event with path '{}'. Processing next event", path);
+                }
                 continue;
             }
         } 

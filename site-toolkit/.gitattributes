@@ -148,7 +148,6 @@ api/src/main/java/org/hippoecm/hst/core/internal/HstMutableRequestContext.java s
 api/src/main/java/org/hippoecm/hst/core/internal/MountDecorator.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/MutableResolvedMount.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItem.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerListener.java -text
@@ -362,6 +361,7 @@ commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneo
 commons/src/main/java/org/hippoecm/hst/core/component/HstPortletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -text
+commons/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/DelegatingEventListener.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItemImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerImpl.java svneol=native#text/plain
