@@ -408,5 +408,10 @@ public class VirtualHostService implements MutableVirtualHost {
         return builder.toString();
     }
 
+    @Override
+    public String toString() {
+        return "VirtualHostService [name=" + name + ", hostName =" + hostName + ", hostGroupName=" + hostGroupName + "]";
+    }
+    
 
 }

@@ -77,4 +77,9 @@ public class PortMountService implements MutablePortMount {
         this.rootMount = mount;
     }
 
+    @Override
+    public String toString() {
+        return "PortMountService [portNumber=" + portNumber + "]";
+    }
+    
 }

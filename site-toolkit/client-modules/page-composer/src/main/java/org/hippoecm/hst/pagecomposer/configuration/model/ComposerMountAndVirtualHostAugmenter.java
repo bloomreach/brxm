@@ -393,6 +393,12 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
         public String getCmsLocation() {
             return cmsLocation;
         }
+        
+
+        @Override
+        public String toString() {
+            return "ComposerVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
+        }
 
     }
     
@@ -418,6 +424,11 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
         @Override
         public void setRootMount(MutableMount mount) {
             this.rootMount = mount;
+        }
+
+        @Override
+        public String toString() {
+            return "ComposerPortMount [port=" + port + "]";
         }
         
     }

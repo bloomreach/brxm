@@ -303,11 +303,17 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
             return null;
         }
 
+        @Override
+        public String toString() {
+            return "CmsRestVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
+        }
+        
     }
     
     private class CmsRestPortMount implements MutablePortMount {
         
         Mount rootMount;
+        int port = 0;
         
         private CmsRestPortMount(VirtualHost virtualHost) throws ServiceException {
             rootMount = new CmsRestMount(virtualHost, noopPipeline);
@@ -315,7 +321,7 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
         
         @Override
         public int getPortNumber() {
-            return 0;
+            return port;
         }
 
         @Override
@@ -326,6 +332,11 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
         @Override
         public void setRootMount(MutableMount mount) {
             this.rootMount = mount;
+        }
+
+        @Override
+        public String toString() {
+            return "CmsRestPortMount [port=" + port + "]";
         }
         
     }
