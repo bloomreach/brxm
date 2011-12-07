@@ -507,7 +507,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             // now also try to get hold of the previewHstSite. If we cannot load it, we log an info: 
             HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
             if(previewHstSiteNodeForMount == null || isPreview()) {
-                log.info("There is no preview version '{}-preview' for mount '{}' or the mount is already a preview" +
+                log.info("There is no preview version '{}-preview' for mount '{}' UNLESS the mount is already a preview" +
                 		"by itself. Cannot create automatic PREVIEW HstSite " +
                 		"for this Mount. The mount '"+mountPoint+"' will be used.",  mountPoint,  mount.getValueProvider().getPath());
                 previewHstSite = hstSite;
