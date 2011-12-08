@@ -75,9 +75,6 @@ public class ExtLinkPicker extends ExtObservable {
                 String current = JsonUtil.getStringParameter(parameters, EVENT_PICK_PARAM_CURRENT);
 
                 IPluginConfig pickerConfig = parsePickerConfig(parameters, EVENT_PICK_PARAM_PICKER_CONFIG, current);
-                if (pickerConfig == null) {
-                    log.error("Cannot open link picker: no picker configuration specified");
-                }
 
                 Model<String> pathModel = new Model<String>(current) {
                     @Override
