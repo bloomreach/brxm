@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * JSON utility methods.
  */
-class JsonUtil {
+final class JsonUtil {
 
     private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
 

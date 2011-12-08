@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods to retrieve methods and fields via reflection.
  */
-class ReflectionUtil {
+final class ReflectionUtil {
 
     private static final Logger log = LoggerFactory.getLogger(ReflectionUtil.class);
 

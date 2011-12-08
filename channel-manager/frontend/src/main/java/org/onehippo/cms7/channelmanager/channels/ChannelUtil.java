@@ -11,7 +11,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ChannelUtil {
+final class ChannelUtil {
 
     private static Logger log = LoggerFactory.getLogger(ChannelUtil.class);
 
