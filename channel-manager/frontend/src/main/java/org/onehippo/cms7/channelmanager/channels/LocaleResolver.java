@@ -41,13 +41,4 @@ class LocaleResolver implements IClusterable {
         return null;
     }
 
-    private Collection<String> getAllLocaleNames() {
-        List<? extends ILocaleProvider.HippoLocale> all = localeProvider.getLocales();
-        ArrayList result = new ArrayList<String>(all.size());
-        for (ILocaleProvider.HippoLocale hippoLocale : localeProvider.getLocales()) {
-            result.add(hippoLocale.getName());
-        }
-        return result;
-    }
-
 }
