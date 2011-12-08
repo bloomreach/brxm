@@ -63,6 +63,7 @@
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
     <property name="defaultCredentialsUserID" value="admin@default" />
+    <property name="defaultCredentialsUserIDSeparator" value="@"/>
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${default.repository.maxActive}" />
@@ -83,6 +84,7 @@
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
     <property name="defaultCredentialsUserID" value="admin@preview" />
+    <property name="defaultCredentialsUserIDSeparator" value="@"/>
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${preview.repository.maxActive}" />
@@ -103,6 +105,7 @@
     <!-- delegated JCR repository -->
     <property name="repositoryAddress"><null/></property>
     <property name="defaultCredentialsUserID" value="admin@writable" />
+    <property name="defaultCredentialsUserIDSeparator" value="@"/>
     <property name="defaultCredentialsPassword" value="admin" />
     <!-- Pool properties. Refer to the GenericObjectPool of commons-pool library. -->
     <property name="maxActive" value="${writable.repository.maxActive}" />
