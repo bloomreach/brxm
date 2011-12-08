@@ -259,7 +259,8 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
         private String hostName;
         private MutablePortMount portMount;
         private String cmsLocation;
-        
+        private final String hostGroupName;
+
         private ComposerVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position) throws ServiceException {
             this.virtualHosts = virtualHosts;
             name = hostSegments[position];
@@ -279,6 +280,7 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
             } else {
                  childs.put(hostSegments[position], new ComposerVirtualHost(virtualHosts, hostSegments, cmsLocation,  position));
             }
+            hostGroupName = ComposerMountAndVirtualHostAugmenter.class.getName() + "-" + UUID.randomUUID();
         }
         
         @Override
@@ -334,8 +336,8 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String getHostGroupName() {
-            // as long as it is unique for ths cms host
-            return ComposerMountAndVirtualHostAugmenter.class.getName() + "-" + UUID.randomUUID();
+            // as long as it is unique for the cms host
+            return hostGroupName;
         }
 
 
@@ -397,7 +399,7 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String toString() {
-            return "ComposerVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
+            return "ComposerVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + hostGroupName + "]";
         }
 
     }

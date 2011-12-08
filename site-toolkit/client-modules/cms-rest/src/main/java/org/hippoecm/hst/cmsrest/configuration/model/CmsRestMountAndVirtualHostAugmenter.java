@@ -312,16 +312,16 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
     
     private class CmsRestPortMount implements MutablePortMount {
         
+        private static final int PORT = 0;
         Mount rootMount;
-        int port = 0;
-        
+
         private CmsRestPortMount(VirtualHost virtualHost) throws ServiceException {
             rootMount = new CmsRestMount(virtualHost, noopPipeline);
         }
         
         @Override
         public int getPortNumber() {
-            return port;
+            return PORT;
         }
 
         @Override
@@ -336,7 +336,7 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
 
         @Override
         public String toString() {
-            return "CmsRestPortMount [port=" + port + "]";
+            return "CmsRestPortMount [port=" + PORT + "]";
         }
         
     }

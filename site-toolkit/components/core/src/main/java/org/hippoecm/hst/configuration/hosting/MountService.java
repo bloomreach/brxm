@@ -817,7 +817,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         .append(", namedPipeline=").append(namedPipeline).append(", mountPath=").append(mountPath)
         .append(", contentPath=").append(contentPath).append(", mountPoint=").append(mountPoint)
         .append( ", isMapped=").append(isMapped).append(", homepage=").append(homepage).append(", pageNotFound=").append(pageNotFound)
-        .append(", contextPathInUrl=").append(contextPathInUrl).append(isSite).append(isSite).append(", showPort=")
+        .append(", contextPathInUrl=").append(contextPathInUrl).append(", isSite=").append(isSite).append(", showPort=")
         .append(showPort).append(", port=").append(port).append(", onlyForContextPath=").append(onlyForContextPath)
         .append(", scheme=").append(scheme).append(", locale=").append(locale).append(", authenticated=").append(authenticated)
         .append(", roles=").append(roles).append(", users=").append(users).append(", subjectBasedSession=")
