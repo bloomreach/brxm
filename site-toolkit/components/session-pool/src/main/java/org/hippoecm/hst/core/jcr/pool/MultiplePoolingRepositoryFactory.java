@@ -150,6 +150,10 @@ public class MultiplePoolingRepositoryFactory implements ObjectFactory {
                 for (int i = 0; i < Math.min(valueArray.length, repositoryCount); i++) {
                     poolingRepositoryArray[i].setDefaultCredentialsUserID(valueArray[i]);
                 }
+            } else if (type.equals("defaultCredentialsUserIDSeparator")) {
+                for (int i = 0; i < Math.min(valueArray.length, repositoryCount); i++) {
+                    poolingRepositoryArray[i].setDefaultCredentialsUserIDSeparator(valueArray[i]);
+                }
             } else if (type.equals("defaultCredentialsPassword")) {
                 for (int i = 0; i < Math.min(valueArray.length, repositoryCount); i++) {
                     poolingRepositoryArray[i].setDefaultCredentialsPassword(valueArray[i].toCharArray());
