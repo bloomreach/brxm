@@ -79,6 +79,10 @@ public class HstSiteMapUtils {
             return null;
         }
         
+        if(mount.getHstSite() == null || mount.getHstSite().getSiteMap() == null) {
+            return refIdOrPath;
+        }
+        
         HstSiteMapItem siteMapItemByRefId = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(refIdOrPath);
         
         if (siteMapItemByRefId != null) {

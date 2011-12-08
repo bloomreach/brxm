@@ -21,6 +21,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,14 @@ public class HstLinkImpl implements HstLink {
         this.containerResource = containerResource;
         if(rewriteHomePagePath) {
             // check whether path is equal to homepage : if so, replace with ""
-            if(this.path != null && !containerResource && mount != null && (path.equals(mount.getHomePage()) || ("/"+path).equals(mount.getHomePage()))) {
-                this.path = "";
+            if(this.path != null && !containerResource && mount != null) {
+                // get the homePagePath : the mount.getHomePage can be the homepage path OR the sitemap item refId
+                // with HstSiteMapUtils.getPath we get the homepage path regardless whether mount.getHomePage() is the path of the refId 
+                String homePagePath = HstSiteMapUtils.getPath(mount, mount.getHomePage());
+                if(path.equals(homePagePath) || ("/"+path).equals(homePagePath)) {
+                    // homepage link : Set path to "";
+                    this.path = "";
+                }
             }
         }
     }
