@@ -49,6 +49,7 @@ public class TestMultiplePoolingRepositoryFactory {
     public void setUp() {
         multiplePoolConfigMap.put("repositoryAddress", " , ");
         multiplePoolConfigMap.put("defaultCredentialsUserID", "admin@1, admin@2");
+        multiplePoolConfigMap.put("defaultCredentialsUserIDSeparator", "@");
         multiplePoolConfigMap.put("defaultCredentialsPassword", "admin, admin");
         multiplePoolConfigMap.put("maxActive", "4, 4");
         multiplePoolConfigMap.put("maxIdle", "2, 2");

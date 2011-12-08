@@ -69,8 +69,10 @@ public class TestLazyMultiplePoolingRepository {
         basicPoolConfigMap.put("numTestsPerEvictionRun", "1");
         basicPoolConfigMap.put("minEvictableIdleTimeMillis", "0");
         basicPoolConfigMap.put("refreshOnPassivate", "true");
+        basicPoolConfigMap.put("defaultCredentialsUserIDSeparator", "@");
         
         multipleRepository = new LazyMultipleRepositoryImpl(defaultCreds, basicPoolConfigMap);
+        ((LazyMultipleRepositoryImpl)multipleRepository).setCredentialsDomainSeparator("@");
         assertEquals(0, multipleRepository.getRepositoryMap().size());
     }
     
