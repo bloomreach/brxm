@@ -3,6 +3,10 @@ package org.onehippo.cms7.channelmanager.templatecomposer.iframe;
 
 public final class IFrameBundle {
 
+    private IFrameBundle() {
+        // prevent instantiation
+    }
+
     public static final String CHANNEL_MANAGER_IFRAME_CSS = "inc/channel-manager-iframe.css";
 
     public static final String SURFANDEDIT = "surfandedit.js";

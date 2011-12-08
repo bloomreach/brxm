@@ -2,6 +2,10 @@ package org.onehippo.cms7.channelmanager.templatecomposer.pageeditor;
 
 public class PageEditorBundle {
 
+    private PageEditorBundle() {
+        // prevent instantiation
+    }
+
     public static final String ICON_GRID_VIEW = "IconGridView.js";
 
     public static final String TOOLKIT_GRID_PANEL = "ToolkitGridPanel.js";

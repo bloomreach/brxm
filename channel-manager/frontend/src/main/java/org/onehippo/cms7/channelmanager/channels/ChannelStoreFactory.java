@@ -37,6 +37,10 @@ public class ChannelStoreFactory {
     public static final String CONFIG_SORT_COLUMN = "sort.column";
     public static final String CONFIG_SORT_ORDER = "sort.order";
 
+    private ChannelStoreFactory() {
+        // prevent instantiation
+    }
+
     public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
         Set<String> storeFieldNames = parseChannelFields(config);
 

@@ -2,6 +2,10 @@ package org.onehippo.cms7.channelmanager.templatecomposer.plugins;
 
 public class PluginsBundle {
 
+    private PluginsBundle() {
+        // prevent instantiation
+    }
+
     public static final String COLOR_FIELD = "colorfield/colorfield.js";
 
     public static final String FLOATING_WINDOW = "floatingwindow/FloatingWindow.js";
