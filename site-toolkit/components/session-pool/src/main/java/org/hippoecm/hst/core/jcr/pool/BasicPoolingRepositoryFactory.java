@@ -114,6 +114,8 @@ public class BasicPoolingRepositoryFactory implements ObjectFactory {
                 poolingRepository.setRepositoryAddress(value);
             } else if (type.equals("defaultCredentialsUserID")) {
                 poolingRepository.setDefaultCredentialsUserID(value);
+            } else if (type.equals("defaultCredentialsUserIDSeparator")) {
+                poolingRepository.setDefaultCredentialsUserIDSeparator(value);
             } else if (type.equals("defaultCredentialsPassword")) {
                 poolingRepository.setDefaultCredentialsPassword(value.toCharArray());
             } else if (type.equals("defaultWorkspaceName")) {

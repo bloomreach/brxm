@@ -232,6 +232,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="${disposable.global.repository.timeBetweenEvictionRunsMillis}"/>
     
     <property name="disposableUserIDPattern" value=".*;disposable"/>
+    <property name="credentialsDomainSeparator" value="${repository.pool.user.name.separator}"/>
   </bean>
   
   <!-- Delegating repository to the raw hippo repository -->
