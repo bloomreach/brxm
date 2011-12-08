@@ -33,9 +33,12 @@ public class HstCacheEhCacheImpl implements HstCache {
         this.ehcache = ehcache;
     }
 
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        ehcache.setStatisticsEnabled(statisticsEnabled);
+    }
+    
     public CacheElement get(Object key) {
         Element element = ehcache.get(key);
-
         if (element == null) {
             return null;
         }
