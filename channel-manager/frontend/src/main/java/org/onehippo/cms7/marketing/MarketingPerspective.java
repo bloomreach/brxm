@@ -57,9 +57,4 @@ public class MarketingPerspective extends Perspective {
         return new ResourceReference(MarketingPerspective.class, "marketing-perspective-" + type.getSize() + ".png");
     }
 
-    @Override
-    public IPluginContext getPluginContext() {
-        return super.getPluginContext();
-    }
-
 }

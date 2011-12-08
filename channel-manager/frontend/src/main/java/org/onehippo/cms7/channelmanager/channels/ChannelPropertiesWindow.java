@@ -318,11 +318,6 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         return null;
     }
 
-    @Override
-    protected void onRenderProperties(JSONObject properties) throws JSONException {
-        super.onRenderProperties(properties);
-    }
-
     /**
      * Abstract model that can store a string in a map under a certain key.
      *
