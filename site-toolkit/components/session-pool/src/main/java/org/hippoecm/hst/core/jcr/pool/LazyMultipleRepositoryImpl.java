@@ -48,7 +48,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     private BasicPoolingRepositoryFactory poolingRepositoryFactory;
     private Map<String, String> defaultConfigMap;
     private boolean pooledSessionLifecycleManagementActive = true;
-    private String credentialsDomainSeparator = "@";
+    private String credentialsDomainSeparator = String.valueOf('\uFFFF');
     
     private long timeBetweenEvictionRunsMillis;
     private Pattern disposableUserIDPatternObject;

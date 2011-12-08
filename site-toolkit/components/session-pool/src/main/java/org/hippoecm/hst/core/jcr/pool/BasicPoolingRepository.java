@@ -57,7 +57,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private JcrRepositoryProvider jcrRepositoryProvider;
     private String repositoryAddress;
     private String defaultCredentialsUserID;
-    private String defaultCredentialsUserIDSeparator = "@";
+    private String defaultCredentialsUserIDSeparator = String.valueOf('\uFFFF');
     private char [] defaultCredentailsPassword;
     private String defaultWorkspaceName;
     
