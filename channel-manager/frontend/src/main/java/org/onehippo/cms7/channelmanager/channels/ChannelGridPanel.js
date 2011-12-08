@@ -160,7 +160,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                             url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+record.get('hostname')+'/?FORCE_CLIENT_HOST=true',
                             success: function() {
                                 var previewUrl = record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath');
-                                window.open(previewUrl, 'hippo-channel-manager-preview', 'location=no,menubar=no');
+                                window.open(previewUrl, 'hippochannelmanagerpreview', 'location=no,menubar=no,resizable=yes');
                             },
                             scope: this
                         });
