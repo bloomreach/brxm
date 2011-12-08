@@ -354,7 +354,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     /**
      * Model that stores a string in a map under a certain key.
      */
-    private class StringModel extends AbstractPropertiesModel<String> implements IModel<String> {
+    private class StringModel extends AbstractPropertiesModel<String> {
 
         StringModel(final Map<String, Object> properties, final String key) {
             super(properties, key);
@@ -376,7 +376,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     /**
      * Model that converts Booleans to strings and stores the strings.
      */
-    private class BooleanModel extends AbstractPropertiesModel<Boolean> implements IModel<Boolean> {
+    private class BooleanModel extends AbstractPropertiesModel<Boolean> {
 
         BooleanModel(final Map<String, Object> properties, final String key) {
             super(properties, key);
