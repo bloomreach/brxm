@@ -58,28 +58,15 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
 
     initComponent: function() {
         var self = this;
-        var scrollBarWidth = this.getScrollBarWidth();
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                // add 3 pixels to make the toolbar as wide as the visible iframe body
-                self.setWidth(arguments[0].body.w - scrollBarWidth + 3);
+                // add 5 pixels to make the toolbar as wide as the visible iframe body
+                self.setWidth(arguments[0].body.w - Ext.getScrollBarWidth() + 5);
             }, true);
         }, this, {single: true});
 
         Hippo.ChannelManager.TemplateComposer.IconToolbarWindow.superclass.initComponent.apply(this, arguments);
-    },
-
-    getScrollBarWidth: function() {
-        document.body.style.overflow = 'hidden';
-        var width = document.body.clientWidth;
-        document.body.style.overflow = 'scroll';
-        width -= document.body.clientWidth;
-        if (!width) {
-            width = document.body.offsetWidth - document.body.clientWidth;
-        }
-        document.body.style.overflow = '';
-        return width;
     },
 
     show: function() {
