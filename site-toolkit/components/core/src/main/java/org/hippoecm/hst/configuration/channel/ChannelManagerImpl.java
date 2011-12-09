@@ -33,6 +33,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
@@ -340,8 +341,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public synchronized String persist(final String blueprintId, Channel channel) throws ChannelException {
-        String channelId = createUniqueChannelId(channel.getName());
-
+       
         if (!blueprints.containsKey(blueprintId)) {
             throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
         }
@@ -351,6 +351,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         try {
             session = getSession(true);
             Node configNode = session.getNode(rootPath);
+            String channelId = createUniqueChannelId(channel.getName(), session);
             createChannel(configNode, bps, session, channelId, channel);
 
             channels = null;
@@ -367,28 +368,27 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    String createUniqueChannelId(String channelName) throws ChannelException {
+    protected String createUniqueChannelId(String channelName, Session session) throws ChannelException {
         if (StringUtils.isBlank(channelName)) {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
         }
+        try {
+            String channelId = channelIdCodec.encode(channelName);
+            int retries = 0;
+            Node channelsNode = session.getNode(channelsRoot);
+            
+            while (channelsNode.hasNode(channelId)) {
+                retries += 1;
+                StringBuilder builder = new StringBuilder(channelName);
+                builder.append('-');
+                builder.append(retries);
+                channelId = channelIdCodec.encode(builder.toString());
+            }
 
-        // TODO replace load() here and just check on jcr nodes whether the node
-        // already exists or not
-        
-        load();
-
-        String channelId = channelIdCodec.encode(channelName);
-        int retries = 0;
-
-        while (channels.containsKey(channelId)) {
-            retries += 1;
-            StringBuilder builder = new StringBuilder(channelName);
-            builder.append('-');
-            builder.append(retries);
-            channelId = channelIdCodec.encode(builder.toString());
+            return channelId;
+        } catch (RepositoryException e) {
+            throw new ChannelException("Cannot create channel ID for channelName '" + channelName + "'", e);
         }
-
-        return channelId;
     }
 
     @Override

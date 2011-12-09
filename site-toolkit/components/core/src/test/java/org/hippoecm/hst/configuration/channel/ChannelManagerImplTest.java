@@ -103,11 +103,11 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     public void createUniqueChannelId() throws RepositoryException, ChannelException {
         ChannelManagerImpl manager = createManager();
 
-        assertEquals("test", manager.createUniqueChannelId("test"));
-        assertEquals("name-with-spaces", manager.createUniqueChannelId("Name with Spaces"));
-        assertEquals("special-characters--and---and", manager.createUniqueChannelId("Special Characters: % and / and []"));
+        assertEquals("test", manager.createUniqueChannelId("test", getSession()));
+        assertEquals("name-with-spaces", manager.createUniqueChannelId("Name with Spaces", getSession()));
+        assertEquals("special-characters--and---and", manager.createUniqueChannelId("Special Characters: % and / and []", getSession()));
         assertEquals("'testchannel' already exists in the default unit test content, so the new channel ID should get a suffix",
-                "testchannel-1", manager.createUniqueChannelId("testchannel"));
+                "testchannel-1", manager.createUniqueChannelId("testchannel", getSession()));
 
     }
 
