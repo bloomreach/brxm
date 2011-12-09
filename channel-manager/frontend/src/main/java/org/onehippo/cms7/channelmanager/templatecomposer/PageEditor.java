@@ -348,4 +348,12 @@ public class PageEditor extends ExtPanel {
         this.cmsPreviewPrefix = cmsPreviewPrefix;
     }
 
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+
+        for (Observer<JcrNodeModel> observer : observers) {
+            observer.getObservable().detach();
+        }
+    }
 }
