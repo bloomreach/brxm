@@ -89,6 +89,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
+    private String channelPropertiesContainerClass = "hide-channel-properties";
 
     private class ChannelChoiceRenderer implements IChoiceRenderer<String> {
 
@@ -214,6 +215,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                     if (channelId.length() > 0) {
                         try {
                             channel = getChannel((String) channelId.get(0));
+                            channelPropertiesContainerClass = "channel-properties";
                         } catch (JSONException e) {
                             log.error("Invalid JSON", e);
                         }
@@ -230,6 +232,10 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                 target.prependJavascript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
             }
         });
+    }
+
+    public String getChannelPropertiesContainerClass() {
+        return channelPropertiesContainerClass;
     }
 
     private void save() {
