@@ -104,6 +104,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                     hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
                 }
             }
+            if(jcrNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES)) {
+                log.warn("Setting parameter names / values through the template composer for a hst component that also contains" +
+                		" '{}' does not work in the 7.7. The '{}' property will now be removed for " +
+                		"component '"+jcrNode.getPath()+"'", HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
+                jcrNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES).remove();
+            }
             for (String param : params.keySet()) {
                 // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
                 // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
