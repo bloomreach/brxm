@@ -125,8 +125,8 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
 
         try {
             obj = pm.getObjectById(new JcrOID(uuid, classname));
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ex) {
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } finally {
             storeManager.setTypes(null);
         }

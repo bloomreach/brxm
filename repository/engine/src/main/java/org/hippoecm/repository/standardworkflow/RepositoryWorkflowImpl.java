@@ -178,20 +178,15 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
             UpdaterModule module =  getUpdaterModule(contentUpdater, contentUpdaterCargo);
             updateModel(prefix, cnd, module);
         } catch (ClassNotFoundException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (NoSuchMethodException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (InstantiationException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (IllegalAccessException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (InvocationTargetException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
     }
 
@@ -201,20 +196,15 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
                 UpdaterModule module =  getUpdaterModule(contentUpdater, changes);
                 updateModel(prefix, cnd, module, changes);
             } catch (ClassNotFoundException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (NoSuchMethodException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (InstantiationException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (IllegalAccessException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (InvocationTargetException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                throw new WorkflowException(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         } else {
             updateModel(prefix, cnd, (UpdaterModule)null, changes);

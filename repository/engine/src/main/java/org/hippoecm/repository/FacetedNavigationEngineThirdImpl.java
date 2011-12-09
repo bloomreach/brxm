@@ -138,7 +138,6 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
                     org.apache.lucene.search.Query query = parser.parse(parameter);
                     queryAndSort = new QueryAndSort(query, null);
                 } catch (ParseException ex) {
-                    ex.printStackTrace();
                     throw new IllegalArgumentException("Unable to parse query", ex);
                 }
             }

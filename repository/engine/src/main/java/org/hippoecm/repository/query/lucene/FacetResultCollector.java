@@ -50,8 +50,7 @@ public class FacetResultCollector extends HitCollector {
             try {
                 this.internalName = ServicingNameFormat.getInternalFacetName(propertyName);
             } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
         this.numhits = 0;
@@ -87,8 +86,7 @@ public class FacetResultCollector extends HitCollector {
                 }
             }
         } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
     }
 

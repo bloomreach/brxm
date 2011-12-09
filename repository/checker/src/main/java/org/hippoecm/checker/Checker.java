@@ -332,7 +332,7 @@ public class Checker {
                                             }
                                             repair.setMixins(Repair.RepairStatus.PENDING, nodeDescription.getNode(), newMixinNames);
                                         } catch(RepositoryException ex) {
-                                            ex.printStackTrace(System.err);
+                                            ex.printStackTrace();
                                         }
                                         break;
                                 }

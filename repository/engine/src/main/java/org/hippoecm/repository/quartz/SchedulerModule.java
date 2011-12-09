@@ -65,7 +65,7 @@ public class SchedulerModule implements DaemonModule
             scheduler = (JCRScheduler) schedFactory.getScheduler();
             scheduler.start();
         } catch (SchedulerException ex) {
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
     }
 
