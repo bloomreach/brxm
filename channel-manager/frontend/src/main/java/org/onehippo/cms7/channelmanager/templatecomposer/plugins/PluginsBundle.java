@@ -1,6 +1,6 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.plugins;
 
-public class PluginsBundle {
+public final class PluginsBundle {
 
     private PluginsBundle() {
         // prevent instantiation

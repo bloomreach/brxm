@@ -1,7 +1,7 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 
-public class GlobalBundle {
+public final class GlobalBundle {
 
     private GlobalBundle() {
         // prevent instantiation

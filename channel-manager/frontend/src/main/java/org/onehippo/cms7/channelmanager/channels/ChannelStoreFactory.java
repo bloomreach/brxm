@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 
 
-public class ChannelStoreFactory {
+public final class ChannelStoreFactory {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
 

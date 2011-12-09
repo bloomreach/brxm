@@ -1,6 +1,6 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.pageeditor;
 
-public class PageEditorBundle {
+public final class PageEditorBundle {
 
     private PageEditorBundle() {
         // prevent instantiation
