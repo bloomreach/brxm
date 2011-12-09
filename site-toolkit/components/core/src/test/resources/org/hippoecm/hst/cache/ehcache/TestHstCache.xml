@@ -24,6 +24,7 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml" />
 
   <bean id="simpleEhCache" parent="abstractEhCache">
