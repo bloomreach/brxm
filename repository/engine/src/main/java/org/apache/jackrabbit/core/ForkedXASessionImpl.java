@@ -16,17 +16,20 @@
  */
 package org.apache.jackrabbit.core;
 
-import org.apache.jackrabbit.core.state.*;
+import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.lock.LockManager;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.lock.XALockManager;
+import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
+import org.apache.jackrabbit.core.session.SessionContext;
+import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
+import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.core.version.InternalVersionManager;
-import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
 import org.apache.jackrabbit.core.version.InternalXAVersionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -320,7 +323,7 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
         if (tx == null) {
             throw new XAException(XAException.XAER_NOTA);
         }
-        tx.prepare();
+        tx.prepare(false);
         return XA_OK;
     }
 
@@ -333,9 +336,9 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
             throw new XAException(XAException.XAER_NOTA);
         }
         if (onePhase) {
-            tx.prepare();
+            tx.prepare(onePhase);
         }
-        tx.commit();
+        tx.commit(onePhase);
 
         txGlobal.remove(xid);
     }
