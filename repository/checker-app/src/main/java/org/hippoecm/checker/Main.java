@@ -28,9 +28,9 @@ public class Main {
             InputStream in = Main.class.getResource("usage.txt").openStream();
             byte[] buffer = new byte[1024];
             int len;
-                    while((len = in.read(buffer)) >= 0) {
-                        System.out.write(buffer, 0, len);
-                    }
+            while((len = in.read(buffer)) >= 0) {
+              System.out.write(buffer, 0, len);
+            }
         } catch(IOException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace();
