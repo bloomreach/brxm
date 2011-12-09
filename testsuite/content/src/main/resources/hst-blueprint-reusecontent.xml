@@ -4,10 +4,10 @@
     <sv:value>hst:blueprint</sv:value>
   </sv:property>
   <sv:property sv:name="hst:name" sv:type="String">
-    <sv:value>Demo Blueprint without content</sv:value>
+    <sv:value>Demo Blueprint reusing existing content</sv:value>
   </sv:property>
   <sv:property sv:name="hst:description" sv:type="String">
-    <sv:value>Blueprint for demo suite without content</sv:value>
+    <sv:value>Blueprint for demo suite that reuses existing content</sv:value>
   </sv:property>
   <sv:node sv:name="hst:configuration">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

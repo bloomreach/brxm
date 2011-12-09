@@ -110,7 +110,7 @@
       <sv:value>/hst:hst/hst:blueprints</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosuite-hst-blueprint-nocontent">
+  <sv:node sv:name="demosuite-hst-blueprint-reusecontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -118,7 +118,7 @@
       <sv:value>10054.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hst-blueprint-nocontent.xml</sv:value>
+      <sv:value>hst-blueprint-reusecontent.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hst:hst/hst:blueprints</sv:value>
