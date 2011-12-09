@@ -35,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
@@ -104,7 +105,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 }
             }
             for (String param : params.keySet()) {
-                hstParameters.put(param, params.getFirst(param));
+                // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
+                // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
+                // has been replaced by a request header.
+                if(!param.equals("FORCE_CLIENT_HOST")) {
+                   hstParameters.put(param, params.getFirst(param));
+                } 
             }
 
             String[] values = new String[hstParameters.size()];
