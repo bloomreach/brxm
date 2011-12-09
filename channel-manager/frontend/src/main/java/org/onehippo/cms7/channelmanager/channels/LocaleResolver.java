@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 class LocaleResolver implements IClusterable {
 
-    private static Logger log = LoggerFactory.getLogger(LocaleResolver.class);
+    private static final long serialVersionUID = 1L;
     private ILocaleProvider localeProvider;
 
     LocaleResolver(ILocaleProvider localeProvider) {

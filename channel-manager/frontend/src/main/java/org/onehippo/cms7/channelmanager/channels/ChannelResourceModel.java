@@ -8,6 +8,8 @@ import org.hippoecm.hst.configuration.channel.Channel;
 
 class ChannelResourceModel extends LoadableDetachableModel<String> {
 
+    private static final long serialVersionUID = 1L;
+
     private final Channel channel;
     private final String key;
 

@@ -37,6 +37,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_HAS_CONTENT_PROTOTYPE = "hasContentPrototype";
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
+    private static final long serialVersionUID = 1L;
 
     private Long total;
 

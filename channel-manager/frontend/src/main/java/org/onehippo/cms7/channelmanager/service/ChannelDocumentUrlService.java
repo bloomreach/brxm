@@ -47,6 +47,7 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
 
     private static final String DEFAULT_TYPE = "live";
     private static final Logger log = LoggerFactory.getLogger(ChannelDocumentUrlService.class);
+    private static final long serialVersionUID = 1L;
 
     private final IRestProxyService restProxyService;
     private final String type;

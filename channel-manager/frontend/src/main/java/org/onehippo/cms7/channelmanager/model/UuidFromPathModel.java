@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
  */
 public class UuidFromPathModel implements IModel<String> {
 
-    private static Logger log = LoggerFactory.getLogger(UuidFromPathModel.class);
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(UuidFromPathModel.class);
+
     private IModel<String> delegate;
 
     public UuidFromPathModel(IModel<String> delegate) {

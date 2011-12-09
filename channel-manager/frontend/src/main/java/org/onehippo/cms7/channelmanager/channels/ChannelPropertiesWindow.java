@@ -86,10 +86,14 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     private static final String EVENT_SELECT_CHANNEL = "selectchannel";
     private static final String EVENT_SELECT_CHANNEL_PARAM_ID = "id";
     private static final FieldGroup[] ZERO_FIELD_GROUPS = new FieldGroup[0];
+    private static final long serialVersionUID = 1L;
 
     private Channel channel;
 
     private class ChannelChoiceRenderer implements IChoiceRenderer<String> {
+
+        private static final long serialVersionUID = 1L;
+
         private final String key;
 
         public ChannelChoiceRenderer(final String key) {
@@ -351,6 +355,8 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
      */
     private class StringModel extends AbstractPropertiesModel<String> {
 
+        private static final long serialVersionUID = 1L;
+
         StringModel(final Map<String, Object> properties, final String key) {
             super(properties, key);
         }
@@ -372,6 +378,8 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
      * Model that converts Booleans to strings and stores the strings.
      */
     private class BooleanModel extends AbstractPropertiesModel<Boolean> {
+
+        private static final long serialVersionUID = 1L;
 
         BooleanModel(final Map<String, Object> properties, final String key) {
             super(properties, key);

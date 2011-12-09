@@ -11,6 +11,8 @@ import org.wicketstuff.js.ext.data.ExtStore;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
+    private static final long serialVersionUID = 1L;
+
     public static final String ROOT_PANEL = "RootPanel.js";
 
     public static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";

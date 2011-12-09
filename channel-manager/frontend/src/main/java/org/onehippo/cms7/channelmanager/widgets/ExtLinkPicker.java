@@ -65,6 +65,7 @@ public class ExtLinkPicker extends ExtObservable {
     private static final String EVENT_PICK = "pick";
     private static final String EVENT_PICK_PARAM_CURRENT = "current";
     private static final String EVENT_PICK_PARAM_PICKER_CONFIG = "pickerConfig";
+    private static final long serialVersionUID = 1L;
 
     private final Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
 

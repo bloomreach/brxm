@@ -26,6 +26,7 @@ public class HstConfigEditorResourceBehaviour extends AbstractYuiBehavior {
 
     public static final String HST_EXTWIREFRAME_JS = "ExtWireframe.js";
     public static final String HST_CONFIG_EDITOR_JS = "HstConfigEditor.js";
+    private static final long serialVersionUID = 1L;
 
     @Override
     public void bind(final Component component) {

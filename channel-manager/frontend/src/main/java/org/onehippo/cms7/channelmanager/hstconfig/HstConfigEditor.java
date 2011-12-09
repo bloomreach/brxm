@@ -42,6 +42,7 @@ import org.wicketstuff.js.ext.util.ExtClass;
 public class HstConfigEditor extends ExtPanel {
 
     public static final String EXT_CLASS = "Hippo.ChannelManager.HstConfigEditor.Container";
+    private static final long serialVersionUID = 1L;
 
     static final String EXTENSION_EDITOR = "extension.editor";
     static final String EXTENSION_NAVIGATOR = "extension.navigator";

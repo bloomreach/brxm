@@ -42,6 +42,7 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 public class ChannelGridPanel extends ExtPanel {
 
     public static final String CHANNEL_GRID_PANEL_JS = "ChannelGridPanel.js";
+    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;

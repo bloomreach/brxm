@@ -39,6 +39,8 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
 
+    private static final long serialVersionUID = 1L;
+
     public enum CardId {
         CHANNEL_MANAGER(0),
         TEMPLATE_COMPOSER(1),

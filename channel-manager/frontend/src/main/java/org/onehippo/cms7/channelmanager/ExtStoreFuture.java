@@ -27,6 +27,7 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 public class ExtStoreFuture<T> extends ExtObservable {
 
     public static final String EXT_STORE_FUTURE = "ExtStoreFuture.js";
+    private static final long serialVersionUID = 1L;
 
     private ExtStore<T> store;
 

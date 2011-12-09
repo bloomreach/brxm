@@ -34,6 +34,7 @@ public class PersonaManagerPanel extends ExtPanel {
 
     private static final String CONFIG_PERSONA_LIST_WIDTH = "persona.list.width";
     private static final int DEFAULT_PERSONA_LIST_WIDTH = 216;
+    private static final long serialVersionUID = 1L;
 
     // names of all available avatars; should exactly match a part of the file names of the icons
     private static enum AvatarName { black, blue, green, orange, pink, purple, red, yellow };

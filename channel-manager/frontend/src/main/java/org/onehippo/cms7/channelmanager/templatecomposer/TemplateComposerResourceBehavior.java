@@ -9,6 +9,8 @@ import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 
 public class TemplateComposerResourceBehavior extends AbstractBehavior {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {

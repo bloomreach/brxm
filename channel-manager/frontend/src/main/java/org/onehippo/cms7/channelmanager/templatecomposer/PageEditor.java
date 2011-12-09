@@ -66,7 +66,8 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 @ExtClass("Hippo.ChannelManager.TemplateComposer.PageEditor")
 public class PageEditor extends ExtPanel {
 
-    static final Logger log = LoggerFactory.getLogger(PageEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(PageEditor.class);
+    private static final long serialVersionUID = 1L;
 
     @ExtProperty
     public Boolean debug = false;

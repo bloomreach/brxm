@@ -16,6 +16,9 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 public class DefaultChannelPropertyEditor extends  AbstractChannelPropertyEditor {
+
+    private static final long serialVersionUID = 1L;
+
     public DefaultChannelPropertyEditor(String id) {
         super(id);
     }
