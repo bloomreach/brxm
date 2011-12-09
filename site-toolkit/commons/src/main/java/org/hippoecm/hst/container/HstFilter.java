@@ -46,6 +46,7 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerC
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
@@ -420,6 +421,13 @@ public class HstFilter implements Filter {
                 logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+        } catch (ContainerNotFoundException e) {
+           if(logger.isDebugEnabled()) {
+                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+            } else {
+                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+            }
+           sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
            if(logger.isDebugEnabled()) {
                 logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
