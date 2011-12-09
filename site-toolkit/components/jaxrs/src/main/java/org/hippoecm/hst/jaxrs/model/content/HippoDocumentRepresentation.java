@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 
-import com.sun.xml.txw2.annotation.XmlElement;
-
 /**
  * HippoDocumentRepresentation
  * @version $Id$
@@ -41,9 +39,11 @@ public class HippoDocumentRepresentation extends NodeRepresentation {
 		return this;
 	}
 	
-	@XmlElement
 	public String getCanonicalHandleUuid() {
 		return canonicalHandleUuid;
 	}
 
+	public void setCanonicalHandleUuid(String canonicalHandleUuid) {
+		this.canonicalHandleUuid = canonicalHandleUuid;
+	}
 }
