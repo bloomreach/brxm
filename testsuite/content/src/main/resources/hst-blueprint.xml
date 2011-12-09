@@ -124,9 +124,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:mount</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:alias" sv:type="String">
-      <sv:value>site</sv:value>
-    </sv:property>
   </sv:node>
   <sv:node sv:name="hst:channel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
