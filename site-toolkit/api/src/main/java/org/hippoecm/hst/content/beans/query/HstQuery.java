@@ -52,7 +52,7 @@ public interface HstQuery {
     /**
      * Returns the query as string. When <code>skipDefaultOrder</code> is <codee>TRUE</code>, the string representation will only include an 'order by' clause
      * when there is set one explicitly.
-     * @param skipDefaultOrder
+     * @param skipDefaultOrderBy
      * @return the query as string
      * @throws QueryException if we cannot build the query string
      */
