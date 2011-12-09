@@ -60,8 +60,7 @@ public class ChannelGridPanel extends ExtPanel {
     @ExtProperty
     private String composerRestMountUrl;
 
-    public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture,
-                            boolean blueprintsAvailable) {
+    public ChannelGridPanel(IPluginConfig config, ExtStoreFuture storeFuture, boolean blueprintsAvailable) {
         this.store = (ChannelStore) storeFuture.getStore();
 
         canModifyChannels = store.canModifyChannels();

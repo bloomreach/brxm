@@ -92,7 +92,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setLayout(new BorderLayout());
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
-        final ChannelGridPanel channelPanel = new ChannelGridPanel(context, channelListConfig, this.channelStoreFuture,
+        final ChannelGridPanel channelPanel = new ChannelGridPanel(channelListConfig, this.channelStoreFuture,
                 !blueprintStore.isEmpty());
         channelPanel.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelPanel);
