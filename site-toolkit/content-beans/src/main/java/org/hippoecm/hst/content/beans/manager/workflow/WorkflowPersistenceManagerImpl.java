@@ -316,8 +316,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 }
                 return added;
             } else {
-                throw new ObjectBeanPersistenceException("The workflow is not a FolderWorkflow for "
-                        + folderNode.getPath() + ": " + wf);
+                throw new ObjectBeanPersistenceException("Can't create folder " + name + " [" + nodeTypeName + "] in the folder " + folderNode.getPath() + ", because there is no FolderWorkflow possible on the folder node: " + wf);
             }
         } catch (RepositoryException e) {
             throw new ObjectBeanPersistenceException(e);
