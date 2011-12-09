@@ -47,7 +47,6 @@ public class ChannelGridPanel extends ExtPanel {
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
     private List<String> visibleFields;
-    private ExtStoreFuture storeFuture;
 
     @ExtProperty
     private boolean canModifyChannels;
@@ -64,7 +63,6 @@ public class ChannelGridPanel extends ExtPanel {
     public ChannelGridPanel(IPluginContext context, IPluginConfig config, ExtStoreFuture storeFuture,
                             boolean blueprintsAvailable) {
         this.store = (ChannelStore) storeFuture.getStore();
-        this.storeFuture = storeFuture;
 
         canModifyChannels = store.canModifyChannels();
         log.info("Current user is allowed to modify channels: {}", canModifyChannels);

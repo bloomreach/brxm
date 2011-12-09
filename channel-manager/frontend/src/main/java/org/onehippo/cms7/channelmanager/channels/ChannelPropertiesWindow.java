@@ -115,8 +115,6 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         }
     }
 
-    private String channelPropertiesContainerClass = "hide-channel-properties";
-
     public ChannelPropertiesWindow(final IPluginContext context, final ChannelStore channelStore) {
         super();
 
@@ -216,7 +214,6 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                     if (channelId.length() > 0) {
                         try {
                             channel = getChannel((String) channelId.get(0));
-                            channelPropertiesContainerClass = "channel-properties";
                         } catch (JSONException e) {
                             log.error("Invalid JSON", e);
                         }
