@@ -181,10 +181,10 @@ public class PageEditor extends ExtPanel {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
                 try {
-                    final String channelId = (String) getValue(parameters, "channelId");
-                    final String hstMountPoint = (String) getValue(parameters, "hstMountPoint");
+                    final String paramChannelId = (String) getValue(parameters, "channelId");
+                    final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
                     target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
-                    hstConfigEditor.setMountPoint(target, channelId, hstMountPoint);
+                    hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
                 }
