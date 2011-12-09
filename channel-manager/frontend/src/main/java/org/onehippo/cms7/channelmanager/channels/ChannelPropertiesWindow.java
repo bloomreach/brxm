@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.io.Serializable;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
@@ -31,7 +30,6 @@ import javax.security.auth.Subject;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -39,7 +37,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
@@ -60,7 +57,6 @@ import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.onehippo.cms7.channelmanager.widgets.DropDownListWidget;
 import org.onehippo.cms7.channelmanager.widgets.ImageSetPathWidget;
@@ -69,7 +65,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtBoxComponent;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
-import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.form.ExtFormPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
@@ -86,6 +81,11 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     private static final String EVENT_SELECT_CHANNEL = "selectchannel";
     private static final String EVENT_SELECT_CHANNEL_PARAM_ID = "id";
     private static final FieldGroup[] ZERO_FIELD_GROUPS = new FieldGroup[0];
+    private static final String WICKET_ID_FIELDGROUPS = "fieldgroups";
+    private static final String WICKET_ID_FIELDGROUPTITLE = "fieldgrouptitle";
+    private static final String WICKET_ID_KEY = "key";
+    private static final String WICKET_ID_PROPERTIES = "properties";
+    private static final String WICKET_ID_VALUE = "value";
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
@@ -121,7 +121,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
 
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
         container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
-        container.add(new ListView<FieldGroup>("fieldgroups", new LoadableDetachableModel<List<FieldGroup>>() {
+        container.add(new ListView<FieldGroup>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroup>>() {
             @Override
             protected List<FieldGroup> load() {
                 return Arrays.asList(getFieldGroups());
@@ -131,14 +131,14 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             protected void populateItem(final ListItem<FieldGroup> item) {
                 final FieldGroup fieldGroup = item.getModelObject();
 
-                item.add(new Label("fieldgrouptitle", new ChannelResourceModel(channel, fieldGroup.titleKey())) {
+                item.add(new Label(WICKET_ID_FIELDGROUPTITLE, new ChannelResourceModel(channel, fieldGroup.titleKey())) {
                     @Override
                     public boolean isVisible() {
                         return getModelObject() != null;
                     }
                 });
 
-                item.add(new ListView<String>("properties", new LoadableDetachableModel<List<String>>() {
+                item.add(new ListView<String>(WICKET_ID_PROPERTIES, new LoadableDetachableModel<List<String>>() {
                     @Override
                     protected List<String> load() {
                         if (channel == null) {
@@ -159,7 +159,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                             return;
                         }
 
-                        item.add(new Label("key", new ChannelResourceModel(channel, key)));
+                        item.add(new Label(WICKET_ID_KEY, new ChannelResourceModel(channel, key)));
 
                         HstValueType propType = propDef.getValueType();
 
@@ -168,7 +168,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         if (imageSetPath != null && propType.equals(HstValueType.STRING)) {
                             IModel<String> delegate = new StringModel(channel.getProperties(), key);
                             IModel<String> model = new UuidFromPathModel(delegate);
-                            item.add(new ImageSetPathWidget(context, "value", imageSetPath, model));
+                            item.add(new ImageSetPathWidget(context, WICKET_ID_VALUE, imageSetPath, model));
                             return;
                         }
 
@@ -177,7 +177,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         if (jcrPath != null && propType.equals(HstValueType.STRING)) {
                             IModel<String> delegate = new StringModel(channel.getProperties(), key);
                             IModel<String> model = new UuidFromPathModel(delegate);
-                            item.add(new JcrPathWidget(context, "value", jcrPath, model));
+                            item.add(new JcrPathWidget(context, WICKET_ID_VALUE, jcrPath, model));
                             return;
                         }
 
@@ -185,18 +185,18 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
                         if (dropDownList != null) {
                             IModel<String> model = new StringModel(channel.getProperties(), key);
-                            item.add(new DropDownListWidget("value", dropDownList, model, new ChannelChoiceRenderer(key)));
+                            item.add(new DropDownListWidget(WICKET_ID_VALUE, dropDownList, model, new ChannelChoiceRenderer(key)));
                             return;
                         }
 
                         // render a boolean field?
                         if (propType.equals(HstValueType.BOOLEAN)) {
-                            item.add(new BooleanFieldWidget("value", new BooleanModel(channel.getProperties(), key)));
+                            item.add(new BooleanFieldWidget(WICKET_ID_VALUE, new BooleanModel(channel.getProperties(), key)));
                             return;
                         }
 
                         // default: render a text field
-                        item.add(new TextFieldWidget("value", new StringModel(channel.getProperties(), key)));
+                        item.add(new TextFieldWidget(WICKET_ID_VALUE, new StringModel(channel.getProperties(), key)));
                     }
                 });
             }
