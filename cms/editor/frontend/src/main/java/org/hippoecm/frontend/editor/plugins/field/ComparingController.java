@@ -194,6 +194,12 @@ public class ComparingController<C extends IModel> implements IDetachable {
             if (newFir != null) {
                 newFir.detach();
             }
+            if (oldModel != null) {
+                oldModel.detach();
+            }
+            if (newModel != null) {
+                newModel.detach();
+            }
             super.onDetach();
         }
     }

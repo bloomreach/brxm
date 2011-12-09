@@ -255,6 +255,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (provider != null) {
             provider.detach();
         }
+        if (oldProvider != null) {
+            oldProvider.detach();
+        }
+        if (newProvider != null) {
+            newProvider.detach();
+        }
         helper.detach();
         if (templateController != null) {
             templateController.detach();
