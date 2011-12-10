@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <!-- Disable session persistence across Tomcat restarts -->
+    <Manager pathname="" />
+
+    <Parameter name="repository-address" value="rmi://127.0.0.1:1099/hipporepository" override="false"/>
+
+    <!--
+    <Parameter name="repository-directory" value="/data/storage" override="false"/>
+    -->
+
+    <!--
+    <Parameter name="hst-config-properties" value="file:${catalina.base}/conf/hst.properties" override="false"/>
+    -->
+
+</Context>

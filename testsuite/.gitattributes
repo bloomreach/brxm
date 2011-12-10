@@ -2,6 +2,7 @@
 /README.txt -text svneol=unset#text/plain
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
+conf/context.xml -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
@@ -194,3 +195,4 @@ site/src/main/webapp/images/volgende.gif -text
 site/src/main/webapp/images/vorige.gif -text
 site/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
 site/src/main/webapp/javascript/simple-io.js -text
+src/main/assembly/distribution.xml -text
