@@ -65,3 +65,8 @@ startup cmd:
 
 The automatic export can then be switch off/on through the /cms/console. By default it is switched on.
   
+Monitoring with JMX Console
+===========================
+You may run the following command:
+
+  $ jconsole service:jmx:rmi:///jndi/rmi://localhost:9875/jmxrmi
