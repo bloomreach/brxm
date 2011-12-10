@@ -88,16 +88,16 @@
       <bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
         <property name="interfaceMappings">
           <props>
-            <prop key="bean:name=defaultSessionPool">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
-            <prop key="bean:name=defaultSessionPoolCounter">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
-            <prop key="bean:name=previewSessionPool">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
-            <prop key="bean:name=previewSessionPoolCounter">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
-            <prop key="bean:name=binariesSessionPool">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
-            <prop key="bean:name=binariesSessionPoolCounter">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
-            <prop key="bean:name=writableSessionPool">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
-            <prop key="bean:name=writableSessionPoolCounter">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
-            <prop key="bean:name=hstconfigreaderSessionPool">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
-            <prop key="bean:name=hstconfigreaderSessionPoolCounter">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPool,name=default">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPoolCounter,name=default">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPool,name=preview">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPoolCounter,name=preview">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPool,name=binaries">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPoolCounter,name=binaries">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPool,name=writable">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPoolCounter,name=writable">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPool,name=hstconfigreader">org.hippoecm.hst.core.jcr.pool.PoolingRepositoryMBean</prop>
+            <prop key="org.onehippo.hst:type=SessionPoolCounter,name=hstconfigreader">org.hippoecm.hst.core.jcr.pool.PoolingCounterMBean</prop>
           </props>
         </property>
       </bean>
