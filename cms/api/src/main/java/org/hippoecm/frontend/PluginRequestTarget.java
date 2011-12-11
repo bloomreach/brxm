@@ -39,7 +39,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of {@link Component}s that have been added.
+ * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of
+ * {@link Component}s that have been added.
+ * <p>
+ * This implementation of the AjaxRequestTarget allows components to be
+ * added to the request target even when they are later on removed from the
+ * (visible) component tree.  The default wicket way requires that the
+ * component that responds to an ajax request knows which components need to
+ * be redrawn and which changes are made in the component hierarchy.
+ * <p>
+ * For the CMS plugin framework, this coupling has been lifted using this
+ * extension, the PluginRequestTarget.  In the processing of ajax requests,
+ * the action phase (invocation of the listener) marks components that need
+ * to be redrawn (see RenderService#redraw), that later on can actually
+ * register for rendering (IRenderService#render).
+ * <p>
+ * For regular wicket components, this is not an option.  So for those are
+ * still able to rerender themselves after e.g. a model change.  Since other
+ * plugins might change the hierarchy in response to the changes, the
+ * component might no longer be there during the rendering though.  The
+ * PluginRequestTarget handles this case by discarding the component.
  */
 public class PluginRequestTarget extends AjaxRequestTarget implements AjaxRequestTarget.IListener {
     @SuppressWarnings("unused")
