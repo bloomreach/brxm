@@ -50,6 +50,7 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
                 super.onComponentTag(tag);
             }
         });
+        t.setType(String.class);
         if (labelModel != null) {
            t.setLabel(labelModel);
         }
