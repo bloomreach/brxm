@@ -114,7 +114,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
                 // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
                 // has been replaced by a request header.
-                if(!param.equals("FORCE_CLIENT_HOST")) {
+                if(!"FORCE_CLIENT_HOST".equals(param)) {
                    hstParameters.put(param, params.getFirst(param));
                 } 
             }
