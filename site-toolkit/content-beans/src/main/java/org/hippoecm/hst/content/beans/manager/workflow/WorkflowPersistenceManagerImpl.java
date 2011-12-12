@@ -653,13 +653,12 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             } else {
                 log.warn("Exception in workflow: {}", e.toString());
             }
+            return null;
         } finally {
             if (workspaceClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
         }
-        
-        return null;
     }
     
     private Node getCanonicalNode(Node folderNode) throws ObjectBeanPersistenceException {
