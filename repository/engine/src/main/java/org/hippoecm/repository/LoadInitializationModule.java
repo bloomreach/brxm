@@ -30,10 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import java.util.concurrent.TimeUnit;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidItemStateException;
@@ -85,12 +82,12 @@ import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LoadInitializationModule implements DaemonModule, EventListener {
+public class LoadInitializationModule extends Thread implements DaemonModule, EventListener {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
-    
+
     /** Query for finding initialization items
      * TODO: move this query into the repository as query node
      * FIXME: this assumes all initailizeitem are also system, but they aren't necessarily
@@ -108,15 +105,16 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     private Session session;
-    private ExecutorService executor;
+    private boolean doCycle;
 
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
+        doCycle = false;
         ObservationManager obMgr = session.getWorkspace().getObservationManager();
+        start();
         obMgr.addEventListener(this, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
                 + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
                 true, null, null, true);
-        executor = Executors.newSingleThreadExecutor();
     }
 
     public void shutdown() {
@@ -133,24 +131,51 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
             } catch (Exception ex) {
                 log.error("Error while removing listener: " + ex.getMessage(), ex);
             }
-            try {
-                executor.awaitTermination(3, TimeUnit.MINUTES);
-            } catch(InterruptedException ex) {
-                // deliberate ignore, external timeout
-            }
             session.logout();
         }
+        doCycle = false;
+        if (session.isLive()) {
+            session.logout();
+        }
+        interrupt();
+    }
+
+    public void run() {
+        boolean keepRunning = true;
+        while (keepRunning) {
+            try {
+                if (session != null && session.isLive()) {
+                    session.refresh(true);
+                    if (doCycle) {
+                        cycle();
+                        doCycle = false;
+                    }
+                } else {
+                    log.info("Session is gone. Stopping event listener refresher.");
+                    keepRunning = false;
+                    break;
+                }
+            } catch (RepositoryException e) {
+                log.error("Error while refreshing session. Stopping event listener refresher.", e);
+                keepRunning = false;
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+            }
+        }
+    }
+    
+    protected void cycle() {
+        refresh(session);
     }
 
     public void onEvent(EventIterator events) {
         log.debug("received initialization change event.");
-        executor.submit(new Runnable() {
-            public void run() {
-                refresh(session);
-            }
-        });
+        doCycle = true; // refresh(session);
     }
-
+    
     static void query(Session session) {
         try {
             Node initializeFolder = session.getRootNode().addNode("initialize");
