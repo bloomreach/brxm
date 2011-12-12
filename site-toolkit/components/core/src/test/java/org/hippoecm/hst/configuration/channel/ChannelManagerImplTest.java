@@ -57,8 +57,16 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertNull;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
+
+    public static interface TestChannelInfo extends ChannelInfo {
+
+        @Parameter(name = "title", defaultValue = "default")
+        String getTitle();
+
+    }
 
     private List<Mount> mounts;
     private VirtualHost testHost;
@@ -126,6 +134,39 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
+    public void channelWithContextPathIsSavedCorrectly() throws ChannelException, RepositoryException, PrivilegedActionException {
+        final ChannelManagerImpl manager = createManager();
+
+        Map<String, Channel> channels = manager.getChannels();
+        assertEquals(1, channels.size());
+
+        final Channel channel = channels.values().iterator().next();
+        assertNull("Initial channel should not have a context path", channel.getContextPath());
+        channel.setUrl("http://localhost:8080/site");
+        channel.setContextPath("/site");
+        channel.setMountPath("");
+        channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
+        channel.getProperties().put("title", "test title");
+
+        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<Void>() {
+            @Override
+            public Void run() throws ChannelException {
+                manager.save(channel);
+                return null;
+            }
+        }, null);
+
+
+        channels = createManager().getChannels();
+        assertEquals(1, channels.size());
+        Channel savedChannel = channels.values().iterator().next();
+
+        Map<String, Object> savedProperties = savedChannel.getProperties();
+        assertTrue(savedProperties.containsKey("title"));
+        assertEquals("test title", savedProperties.get("title"));
+    }
+
+    @Test
     public void channelsAreClonedWhenRetrieved() throws ChannelException, RepositoryException {
         ChannelManagerImpl manager = createManager();
 
@@ -175,7 +216,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         Node siteNode = getSession().getNode(sitePath);
         assertEquals("/hst:hst/hst:configurations/" + channelId, siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
-        assertEquals(getSession().getNode("/unittestcontent/documents").getUUID(),
+        assertEquals(getSession().getNode("/unittestcontent/documents").getIdentifier(),
                 siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE).getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
     }
 
@@ -368,5 +409,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(mount.getMountPath()).andReturn("");
         expect(mount.isPortInUrl()).andReturn(false);
     }
+
 
 }

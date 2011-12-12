@@ -33,7 +33,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
@@ -711,9 +710,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } else {
             throw new MountNotFoundException(virtualHost.getPath() + "/" + HstNodeTypes.MOUNT_HST_ROOTNAME);
         }
-        final String path = channelUri.getPath();
-        if (path != null) {
-            for (String mountPathElement : StringUtils.split(path, '/')) {
+        final String mountPath = channel.getMountPath();
+        if (mountPath != null) {
+            for (String mountPathElement : StringUtils.split(mountPath, '/')) {
                 if (mount.hasNode(mountPathElement)) {
                     mount = mount.getNode(mountPathElement);
                 } else {
