@@ -70,3 +70,8 @@ Monitoring with JMX Console
 You may run the following command:
 
   $ jconsole service:jmx:rmi:///jndi/rmi://localhost:9875/jmxrmi
+  
+  
+Adding a debugger like Yourkit
+=============================
+-Dcargo.jvm.args=" -Xmx200m -Xms200m -agentpath:/usr/local/yourkit/yjp-9.0.9/bin/linux-x86-64/libyjpagent.so"
