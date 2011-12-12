@@ -165,14 +165,6 @@ public class DocumentsResource {
             return "";
         }
 
-        String handlePath = null;
-        try {
-            handlePath = handle.getPath();
-        } catch (RepositoryException e) {
-            log.warn("Cannot generate URL of type '" + type + " for document with UUID '" + uuid + "': cannot get the JCR path", e);
-            return "";
-        }
-
         // Determine the 'best' canonical link: the one whose mount has the closest content path
         // {@link Mount#getCanonicalContentPath()} to the path of the document handle. If multiple {@link Mount}'s have
         // an equally well suited {@link Mount#getCanonicalContentPath()}, we pick the mount with the fewest types.
