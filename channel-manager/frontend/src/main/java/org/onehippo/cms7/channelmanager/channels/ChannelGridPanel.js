@@ -17,18 +17,6 @@
 
 Ext.namespace('Hippo.ChannelManager');
 
-Ext.ToolTip.prototype.onTargetOver =
-        Ext.ToolTip.prototype.onTargetOver.createInterceptor(function(e) {
-            this.baseTarget = e.getTarget();
-        });
-Ext.ToolTip.prototype.onMouseMove =
-        Ext.ToolTip.prototype.onMouseMove.createInterceptor(function(e) {
-            if (!e.within(this.baseTarget)) {
-                this.onTargetOver(e);
-                return false;
-            }
-        });
-
 /**
  * @class Hippo.ChannelManager.ChannelGridPanel
  * @extends Ext.grid.GridPanel
@@ -106,67 +94,35 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             }),
 
             tbar: toolbar,
+            disableSelection: true,
+            trackMouseOver: false,
 
-            sm: new Ext.grid.RowSelectionModel({
-                singleSelect: true
-            }),
-
-            // enable per-cell tooltips
-            onRender: function() {
-                Hippo.ChannelManager.ChannelGridPanel.superclass.onRender.apply(this, arguments);
-                this.addEvents("beforetooltipshow");
-                this.tooltip = new Ext.ToolTip({
-                    renderTo: Ext.getBody(),
-                    target: this.view.mainBody,
-                    listeners: {
-                        beforeshow: function(tooltip) {
-                            var v = this.getView();
-                            var row = v.findRowIndex(tooltip.baseTarget);
-                            if (row === false) {
-                                return false;
-                            }
-                            var cell = v.findCellIndex(tooltip.baseTarget);
-                            if (cell === false) {
-                                return false;
-                            }
-                            var record = this.getStore().getAt(row);
-                            var colName = this.getColumnModel().getDataIndex(cell);
-                            var value = record.get(colName);
-                            if (value == '') {
-                                this.tooltip.hide();
-                                return false;
-                            }
-                            this.fireEvent("beforetooltipshow", this, value);
-                        },
-                        scope: this
-                    }
-                });
-            },
             listeners: {
-                render: function(g) {
-                    g.on("beforetooltipshow", function(grid, value) {
-                        grid.tooltip.body.update(value);
-                    });
-                },
-                cellclick: function(grid, index, column, e) {
-                    var target = e.getTarget();
-                    if (target.name == 'show-preview') {
-                        var record = this.getStore().getAt(index);
-                        Ext.Ajax.request({
-                            headers: {
-                                'CMS-User': this.cmsUser,
-                                'FORCE_CLIENT_HOST': 'true'
-                            },
-                            url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+record.get('hostname')+'/?FORCE_CLIENT_HOST=true',
-                            success: function() {
-                                var previewUrl = record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath');
-                                window.open(previewUrl, 'hippochannelmanagerpreview', 'location=no,menubar=no,resizable=yes');
-                            },
-                            scope: this
-                        });
-                        return false;
-                    } else if (target.name == 'show-live') {
-                        return false;
+                cellclick: function(grid, rowIndex, columnIndex, e) {
+                    var record = this.getStore().getAt(rowIndex);
+                    switch (e.getTarget().name) {
+                        case 'show-channel':
+                            this.selectedChannelId = record.get('id');
+                            e.stopEvent();
+                            this.fireEvent('channel-selected', this.selectedChannelId, record);
+                            break;
+                        case 'show-preview':
+                            e.stopEvent();
+                            Ext.Ajax.request({
+                                headers: {
+                                    'CMS-User': this.cmsUser,
+                                    'FORCE_CLIENT_HOST': 'true'
+                                },
+                                url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
+                                success: function() {
+                                    var previewUrl = record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath');
+                                    window.open(previewUrl, 'hippochannelmanagerpreview', 'location=no,menubar=no,resizable=yes');
+                                },
+                                scope: this
+                            });
+                            break;
+                        case 'show-live':
+                            break;
                     }
                 },
                 scope: this
@@ -180,14 +136,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     initComponent: function() {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
         this.addEvents('add-channel', 'channel-selected');
-
-        var sm = this.getSelectionModel();
-        this.on('rowclick', function(grid, rowIndex, eventObject) {
-            var record = this.store.getAt(rowIndex);
-            this.selectedChannelId = record.get('id');
-            this.fireEvent('channel-selected', this.selectedChannelId, record);
-        }, this);
-
     },
 
     // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.Localizer;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -126,11 +127,22 @@ public class ChannelGridPanel extends ExtPanel {
         fieldConfig.put("id", columnName);
         fieldConfig.put("header", store.getLocalizedFieldName(columnName));
         fieldConfig.put("hidden", isHidden);
-        if (ChannelStore.ChannelField.url.name().equals(columnName)) {
-            CharSequence previewLabel = Strings.escapeMarkup(getLocalizer().getString("action.preview", this));
+
+        if (ChannelStore.ChannelField.name.name().equals(columnName)) {
+            // render the 'name' column as a link to the template composer
+            String tooltipNamePrefix = getLocalizer().getString("tooltip.name.prefix", this);
             fieldConfig.put("xtype", "templatecolumn");
-            fieldConfig.put("tpl", "<input type=\'button\' name=\'show-preview\' value=\'" + previewLabel + "\' />" +
-                        "<a href=\"{url}\" name=\'show-live\' target=\"_blank\">{url}</a>");
+            fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix + " {name}\">{name}</a>");
+        } else if (ChannelStore.ChannelField.url.name().equals(columnName)) {
+            // render the 'url' column as two links: one to the live site, and one to the preview site
+            Localizer localizer = getLocalizer();
+            CharSequence previewLabel = Strings.escapeMarkup(localizer.getString("action.preview", this));
+            CharSequence liveTooltip = Strings.escapeMarkup(localizer.getString("tooltip.live", this));
+            CharSequence previewTooltip = Strings.escapeMarkup(localizer.getString("tooltip.preview", this));
+            fieldConfig.put("xtype", "templatecolumn");
+            fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" title=\"" +
+                    liveTooltip + "\">{url}</a><a href=\"#\" name=\"show-preview\" class=\"show-preview\" title=\"" +
+                    previewTooltip + "\">" + previewLabel + "</a>");
         }
         return fieldConfig;
     }
