@@ -127,6 +127,7 @@
 - hippo:contentdelete (string) // deprecated
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
+- hippo:reloadonstartup (boolean)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time

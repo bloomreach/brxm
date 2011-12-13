@@ -23,6 +23,7 @@
 
 [hipposys:initializeitem] > hippo:initializeitem
 - hipposys:extensionsource (string)
+- hipposys:extensionbuild (long)
 
 // REPOSITORY: DOCUMENT DATA TYPES AND MARKERS
 
