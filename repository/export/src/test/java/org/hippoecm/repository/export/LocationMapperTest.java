@@ -106,6 +106,32 @@ public class LocationMapperTest {
         contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:configurations/project/hst:sitemap/home/subnode/prop", false);
         assertEquals("/hst:hst/hst:configurations/project/hst:sitemap", contextNode);
 
+        // /hst:hst/hst:blueprints
+        file = LocationMapper.fileForPath("/hst:hst/hst:blueprints", true);
+        assertEquals("hst/blueprints.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints", true);
+        assertEquals("/hst:hst/hst:blueprints", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/prop", false);
+        assertEquals("/hst:hst/hst:blueprints", contextNode);
+        
+        file = LocationMapper.fileForPath("/hst:hst/hst:blueprints/site", true);
+        assertEquals("hst/blueprints/site.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site", true);
+        assertEquals("/hst:hst/hst:blueprints/site", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site/prop", false);
+        assertEquals("/hst:hst/hst:blueprints/site", contextNode);
+        
+        file = LocationMapper.fileForPath("/hst:hst/hst:blueprints/site/pages", true);
+        assertEquals("hst/blueprints/site/pages.xml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site/pages", true);
+        assertEquals("/hst:hst/hst:blueprints/site/pages", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site/pages/prop", false);
+        assertEquals("/hst:hst/hst:blueprints/site/pages", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site/pages/subnode", true);
+        assertEquals("/hst:hst/hst:blueprints/site/pages", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hst:hst/hst:blueprints/site/pages/subnode/prop", false);
+        assertEquals("/hst:hst/hst:blueprints/site/pages", contextNode);
+        
         // hippo:configuration
         file = LocationMapper.fileForPath("/hippo:configuration", true);
         assertEquals("configuration.xml", file);

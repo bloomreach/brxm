@@ -79,10 +79,28 @@ class LocationMapper {
         file = "hst/configurations/$1/$2/$3.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /hst:hst/hst:configurations/project
-        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME + ANY};
+        nodePatterns = new String[] {"/hst:hst/hst:configurations/" + NAME + "/" + NAME + "/" + ANY};
         propertyPatterns = nodePatterns;
         contextNode = "/hst:hst/hst:configurations/$1/$2";
         file = "hst/configurations/$1/$2.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /hst:hst/hst:blueprints
+        nodePatterns = new String[] {"/hst:hst/hst:blueprints"};
+        propertyPatterns = new String[] {"/hst:hst/hst:blueprints/" + NAME};
+        contextNode = "/hst:hst/hst:blueprints";
+        file = "hst/blueprints.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /hst:hst/hst:blueprints/subsite
+        nodePatterns = new String[] {"/hst:hst/hst:blueprints/" + NAME};
+        propertyPatterns = new String[] {"/hst:hst/hst:blueprints/" + NAME + "/" + NAME};
+        contextNode = "/hst:hst/hst:blueprints/$1";
+        file = "hst/blueprints/$1.xml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /hst:hst/hst:blueprints/subsite/subtree
+        nodePatterns = new String[] {"/hst:hst/hst:blueprints/" + NAME + "/" + NAME, "/hst:hst/hst:blueprints/" + NAME + "/" + NAME + "/" + ANY};
+        propertyPatterns = new String[] {"/hst:hst/hst:blueprints/" + NAME + "/" + NAME + "/" + NAME, "/hst:hst/hst:blueprints/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/hst:hst/hst:blueprints/$1/$2";
+        file = "hst/blueprints/$1/$2.xml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /hippo:configuration
         nodePatterns = new String[] {"/hippo:configuration", "/hippo:configuration/" + NAME};
