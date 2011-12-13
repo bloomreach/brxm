@@ -107,19 +107,13 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                             this.fireEvent('channel-selected', this.selectedChannelId, record);
                             break;
                         case 'show-preview':
-                            e.stopEvent();
-                            Ext.Ajax.request({
-                                headers: {
-                                    'CMS-User': this.cmsUser,
-                                    'FORCE_CLIENT_HOST': 'true'
-                                },
-                                url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
-                                success: function() {
-                                    var previewUrl = record.get('contextPath') + '/' + record.get('cmsPreviewPrefix') + record.get('mountPath');
-                                    window.open(previewUrl, 'hippochannelmanagerpreview', 'location=no,menubar=no,resizable=yes');
-                                },
-                                scope: this
-                            });
+                            this.synchronousAjaxRequest(
+                                    this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
+                                    {
+                                        'CMS-User': this.cmsUser,
+                                        'FORCE_CLIENT_HOST': 'true'
+                                    }
+                            );
                             break;
                         case 'show-live':
                             break;
@@ -131,6 +125,25 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         });
 
         Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
+    },
+
+    synchronousAjaxRequest: function(url, headers) {
+        var AJAX;
+        if (window.XMLHttpRequest) {
+            AJAX = new XMLHttpRequest();
+        } else {
+            AJAX = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        if (AJAX) {
+            AJAX.open("POST", url, false);
+            for (var i in headers) {
+                AJAX.setRequestHeader(i, headers[i]);
+            }
+            AJAX.send(null);
+            return AJAX.responseText;
+        } else {
+            return false;
+        }
     },
 
     initComponent: function() {

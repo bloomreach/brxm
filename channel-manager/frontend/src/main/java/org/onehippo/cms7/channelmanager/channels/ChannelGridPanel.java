@@ -140,9 +140,11 @@ public class ChannelGridPanel extends ExtPanel {
             CharSequence liveTooltip = Strings.escapeMarkup(localizer.getString("tooltip.live", this));
             CharSequence previewTooltip = Strings.escapeMarkup(localizer.getString("tooltip.preview", this));
             fieldConfig.put("xtype", "templatecolumn");
-            fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" title=\"" +
-                    liveTooltip + "\">{url}</a><a href=\"#\" name=\"show-preview\" class=\"show-preview\" title=\"" +
-                    previewTooltip + "\">" + previewLabel + "</a>");
+            fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" "
+                    + "title=\"" + liveTooltip + "\">{url}</a>"
+                    + "<a href=\"{contextPath}/{cmsPreviewPrefix}{mountPath}\" name=\"show-preview\" "
+                    + "class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
+                    + previewTooltip + "\">" + previewLabel + "</a>");
         }
         return fieldConfig;
     }
