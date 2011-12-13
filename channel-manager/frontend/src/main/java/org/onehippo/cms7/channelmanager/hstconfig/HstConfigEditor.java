@@ -56,7 +56,8 @@ public class HstConfigEditor extends ExtPanel {
     public HstConfigEditor(final IPluginContext context) {
         this.context = context;
 
-        setTitle(new Model("HST Configuration"));
+        final String title = getLocalizer().getString("edit-hst-configuration", this);
+        setTitle(new Model<String>(title));
 
         add(new HstConfigEditorResourceBehaviour());
 

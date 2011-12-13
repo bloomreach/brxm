@@ -47,6 +47,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEdito
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-close-gray-small.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-close-red-small.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/loading.gif -text
