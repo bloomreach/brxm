@@ -78,7 +78,9 @@ public class RootPanel extends ExtPanel {
 
         add(new ChannelManagerResourceBehaviour());
 
-        this.channelStore = ChannelStoreFactory.createStore(context, config);
+        final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
+
+        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig);
         this.channelStoreFuture = new ExtStoreFuture<Object>(channelStore);
         add(this.channelStore);
         add(this.channelStoreFuture);
@@ -91,7 +93,6 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
         final ChannelGridPanel channelPanel = new ChannelGridPanel(channelListConfig, this.channelStoreFuture,
                 !blueprintStore.isEmpty());
         channelPanel.setRegion(BorderLayout.Region.CENTER);
