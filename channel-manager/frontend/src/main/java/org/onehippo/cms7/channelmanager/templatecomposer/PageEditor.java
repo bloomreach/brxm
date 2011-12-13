@@ -70,34 +70,34 @@ public class PageEditor extends ExtPanel {
     private static final long serialVersionUID = 1L;
 
     @ExtProperty
-    public Boolean debug = false;
+    private Boolean debug = false;
 
     @ExtProperty
-    public String composerRestMountPath = "/_rp";
+    private String composerRestMountPath = "/_rp";
 
     @ExtProperty
-    public String renderPathInfo = "";
+    private String renderPathInfo = "";
 
     @ExtProperty
-    public String contextPath = "/site";
+    private String contextPath = "/site";
 
     @ExtProperty
-    public String cmsPreviewPrefix;
+    private String cmsPreviewPrefix;
 
     @ExtProperty
-    public String templateComposerContextPath = "/site";
+    private String templateComposerContextPath = "/site";
 
     @ExtProperty
-    public String renderHostParameterName = ContainerConstants.RENDERING_HOST;
+    private String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
     @ExtProperty
-    public String cmsUser;
+    private String cmsUser;
 
     @ExtProperty
-    public Boolean previewMode = true;
+    private Boolean previewMode = true;
 
     @ExtProperty
-    public Long initialHstConnectionTimeout = 60000L;
+    private Long initialHstConnectionTimeout = 60000L;
 
     @ExtProperty
     private String locale;
