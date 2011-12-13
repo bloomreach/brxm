@@ -574,14 +574,19 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                     String configurationURLString = configurationURL.toString();
                     if (configurationURLString.endsWith("hippoecm-extension.xml")) {
                         String manifestUrlString = configurationURLString.substring(0, configurationURLString.length() - "hippoecm-extension.xml".length()) + "META-INF/MANIFEST.MF";
-                        Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
-                        String buildString = manifest.getMainAttributes().getValue("Implementation-Build");
-                        if (buildString != null) {
-                            buildNumber = Long.parseLong(buildString);
+                        try {
+                            Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
+                            String buildString = manifest.getMainAttributes().getValue("Implementation-Build");
+                            if (buildString != null) {
+                                buildNumber = Long.parseLong(buildString);
+                            }
+                        } catch (IOException ex) {
+                            System.err.println("");
+                            // deliberate ignore, manifest file not available so no build number can be obtained
                         }
                     }
                     long existingBuildNumber = -1;
-                    if (initializationFolder.getNode(n.getName()).hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD))
+                    if (initializationFolder.hasNode(n.getName()) && initializationFolder.getNode(n.getName()).hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD))
                         existingBuildNumber = initializationFolder.getNode(n.getName()).getProperty(HippoNodeType.HIPPO_EXTENSIONBUILD).getLong();
                     if (!initializationFolder.hasNode(n.getName()) ||
                         (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && (buildNumber < 0 || existingBuildNumber < 0 || buildNumber > existingBuildNumber))) {
@@ -594,7 +599,9 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                        ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
                                        : configurationURL.getFile())) {
                             moved.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-                            moved.setProperty(HippoNodeType.HIPPO_EXTENSIONBUILD, buildNumber);
+                            if (buildNumber >= 0) {
+                                moved.setProperty(HippoNodeType.HIPPO_EXTENSIONBUILD, buildNumber);
+                            }
                         }
                         for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD }) {
                             if(n.hasProperty(propertyName)) {
