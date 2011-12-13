@@ -200,8 +200,10 @@ ul.x-tab-strip-bottom {
 
 .x-tab-panel-bbar .x-toolbar, .x-tab-panel-tbar .x-toolbar {
     border-color:#b3b3b3;
-}.x-form-field {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+}
+
+.x-form-field {
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
 .x-form-text, textarea.x-form-field {
@@ -280,11 +282,11 @@ ul.x-tab-strip-bottom {
 }
 
 .x-form-grow-sizer {
-	font:normal 12px tahoma, arial, helvetica, sans-serif;
+	font:normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
 .x-form-item {
-    font:normal 12px tahoma, arial, helvetica, sans-serif;
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
 .x-form-invalid-msg {
@@ -1290,10 +1292,12 @@ a.x-menu-item {
 
 .x-box-blue .x-box-mr {
 	background-image: url(images/box/r.gif);
-}.x-combo-list {
+}
+
+.x-combo-list {
   border-color:#b3b3b3; /* d4d4d4 */
   background-color:#d4d4d4;
-  font:normal 12px tahoma, arial, helvetica, sans-serif;
+  font:normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
 .x-combo-list-inner {
@@ -1627,7 +1631,9 @@ body.x-body-masked .x-window-plain .x-window-mc {
 
 .x-slider-vert .x-slider-thumb {
     background-image:url(images/slider/slider-v-thumb.png);
-}.x-window-dlg .ext-mb-text,
+}
+
+.x-window-dlg .ext-mb-text,
 .x-window-dlg .x-window-header-text {
     font-size:12px;
 }
