@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2010 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.session.SessionContext;
 
 import org.slf4j.Logger;
@@ -27,11 +26,8 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     private static Logger log = LoggerFactory.getLogger(ItemManager.class);
 
-    private NodeId rootNodeId;
-
     protected ItemManager(SessionContext context) {
         super(context);
-        this.rootNodeId = context.getRootNodeId();
         context.getItemStateManager().addListener(this);
     }
 }
