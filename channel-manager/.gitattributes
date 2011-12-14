@@ -124,6 +124,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/InlinePreviewIma
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JsonUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/marketing/MarketingPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/marketing/MarketingPerspective.java -text
