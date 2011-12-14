@@ -392,6 +392,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         forceStore(state);
                         return nodeState;
                     } catch(InvalidItemStateException ex) {
+                        log.debug("InvalidItemStateException for nodeTypeName '"+nodeTypeName+"'. ", ex);
                         return nodeState;
                     } catch (RepositoryException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
