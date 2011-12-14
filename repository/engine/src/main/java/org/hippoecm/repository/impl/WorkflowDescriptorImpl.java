@@ -102,6 +102,17 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     public String getAttribute(String key) throws RepositoryException {
+        if(key == null) {
+            StringBuffer sb = null;
+            for(String k : attributes.keySet()) {
+                if(sb == null)
+                    sb = new StringBuffer();
+                else
+                    sb.append(" ");
+                sb.append(k);
+            }
+            return sb.toString();
+        }
         return attributes.get(key);
     }
 

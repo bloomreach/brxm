@@ -82,7 +82,9 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
         } catch(IOException ex) {
             log.error("failed to initialize JDO layer: "+ex.getMessage(), ex);
         }
-        ((HippoSession)session).registerSessionCloseCallback(this);
+        if (session instanceof HippoSession) {
+            ((HippoSession)session).registerSessionCloseCallback(this);
+        }
     }
 
     public void close() {

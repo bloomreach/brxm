@@ -83,6 +83,7 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
+import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
     private static final String SVN_ID = "$Id$";
 
     protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
-    
+
     /** Query for finding initialization items
      * TODO: move this query into the repository as query node
      * FIXME: this assumes all initailizeitem are also system, but they aren't necessarily
@@ -181,7 +182,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    static void refresh(Session session) {
+    public static void refresh(Session session) {
         try {
             Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
             refresh(session, getInitializeItems, false);
@@ -428,7 +429,12 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                         }
                         log.info("Initializin content set/add property " + root);
                         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-                        HierarchyResolver hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
+                        HierarchyResolver hierarchyResolver;
+                        if (session.getWorkspace() instanceof HippoWorkspace) {
+                            hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
+                        } else {
+                            hierarchyResolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
+                        }
                         Property property = hierarchyResolver.getProperty(session.getRootNode(), root.substring(1), last);
                         if (property == null) {
                             String propertyName = root.substring(root.lastIndexOf("/") + 1);
@@ -537,7 +543,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    static void locateExtensionResources(Session rootSession, Node initializationFolder) throws IOException, RepositoryException {
+    public static void locateExtensionResources(Session rootSession, Node initializationFolder) throws IOException, RepositoryException {
         List<URL> extensions = new LinkedList<URL>();
         for(Enumeration iter = Thread.currentThread().getContextClassLoader().getResources("org/hippoecm/repository/extension.xml");
             iter.hasMoreElements(); ) {
@@ -655,7 +661,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    static void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri)
+    public static void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri)
             throws UnsupportedRepositoryOperationException, AccessDeniedException, RepositoryException {
         try {
 
@@ -693,7 +699,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
+    public static void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException,
             RepositoryException {
         CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
         List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
@@ -733,7 +739,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    static void removeNodecontent(Session session, String absPath, boolean save) {
+    public static void removeNodecontent(Session session, String absPath, boolean save) {
         if ("".equals(absPath) || "/".equals(absPath)) {
             log.warn("Not allowed to delete rootNode from initialization.");
             return;
@@ -757,14 +763,18 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
 
     }
 
-    static void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
+    public static void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
         try {
             String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
-            ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+            if (session instanceof HippoSession) {
+                ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                        ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+            } else {
+                session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            }
         } catch (IOException ex) {
             if (log.isDebugEnabled()) {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
