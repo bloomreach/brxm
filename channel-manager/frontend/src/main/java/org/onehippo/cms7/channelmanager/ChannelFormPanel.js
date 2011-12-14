@@ -75,11 +75,6 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     }
                 },
                 {
-                    xtype: 'textarea',
-                    fieldLabel: me.resources['new-channel-field-description'],
-                    id: 'description'
-                },
-                {
                     xtype: 'linkpicker',
                     fieldLabel: me.resources['new-channel-field-content'],
                     id: 'contentRoot',
