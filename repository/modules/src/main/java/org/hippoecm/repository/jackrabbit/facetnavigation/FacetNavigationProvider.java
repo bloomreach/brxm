@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.jcr.InvalidItemStateException;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -62,6 +62,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
     Name facetSortBy;
     Name facetSortOrder;
     Name facetFilters;
+    Name skipResultSetFacedNavigationRoot;
+    Name skipResultSetFacetsAvailableName;
     
     @Override
     protected void initialize() throws RepositoryException {
@@ -76,6 +78,8 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         facetSortOrder = resolveName(FacNavNodeType.HIPPOFACNAV_FACETSORTORDER);
         
         facetFilters = resolveName(FacNavNodeType.HIPPOFACNAV_FILTERS);
+        skipResultSetFacedNavigationRoot = resolveName(FacNavNodeType.HIPPOFACNAV_SKIP_RESULTSET_FOR_FACET_NAVIGATION_ROOT);
+        skipResultSetFacetsAvailableName = resolveName(FacNavNodeType.HIPPOFACNAV_SKIP_RESULTSET_FOR_FACETS_AVAILABLE);
         
         virtualNodeName = resolveName(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION);
         register(resolveName(FacNavNodeType.NT_FACETNAVIGATION), virtualNodeName);
@@ -83,7 +87,6 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
-        long startTime = System.currentTimeMillis();
         NodeId nodeId = state.getNodeId();
 
         String[] property = getProperty(nodeId, docbaseName);
@@ -105,6 +108,12 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         String[] sortbys = getProperty(nodeId, facetSortBy, null);
         String[] sortorders = getProperty(nodeId, facetSortOrder, null);
         String[] filters = getProperty(nodeId, facetFilters, null);
+        
+        // check whether to skip resultset for root faceted navigation node
+        boolean skipResultSetForFacetNavigationRoot = getPropertyAsBoolean(nodeId, skipResultSetFacedNavigationRoot);
+                
+        // check whether to skip resultset for facets available nodes
+        boolean skipResultSetForFacetsAvailable = getPropertyAsBoolean(nodeId, skipResultSetFacetsAvailableName);
         
         String facetedFiltersString = null;
         if(filters != null) {
@@ -175,11 +184,11 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
                     Name childName = resolveName(NodeNameCodec.encode(parsedFacet.getDisplayFacetName()));
                     FacetNavigationNodeId childNodeId = new FacetNavigationNodeId(facetsAvailableNavigationProvider,state.getNodeId(), context, childName);
                     childNodeId.availableFacets = facets;
-                    
                     childNodeId.facetedFiltersString  = facetedFiltersString;
                     childNodeId.facetNodeViews = newFacetNodeViews;
                     childNodeId.currentFacetNodeView = facetNodeView;
                     childNodeId.docbase = docbase;
+                    childNodeId.skipResultSetForFacetsAvailable = skipResultSetForFacetsAvailable;
                     if(limit > -1) {
                         childNodeId.limit = limit;
                     }
@@ -251,16 +260,27 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
         
         populateCount(state, count);
         
-        // Add resultset
-        FacetResultSetProvider.FacetResultSetNodeId childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
-                docbase, new ArrayList<KeyValue<String, String>>(), null, facetedFiltersString);
-        if(limit > -1) {
-            childNodeId.setLimit(limit);
+        // Add resultset if skipResultSetForFacetNavigationRoot is not true
+        if (!skipResultSetForFacetNavigationRoot) {
+            FacetResultSetProvider.FacetResultSetNodeId childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
+                    docbase, new ArrayList<KeyValue<String, String>>(), null, facetedFiltersString);
+            if(limit > -1) {
+                childNodeId.setLimit(limit);
+            }
+            childNodeId.setOrderByList(orderByList);
+            state.addChildNodeEntry(resultSetChildName, childNodeId);
         }
-        childNodeId.setOrderByList(orderByList);
-        state.addChildNodeEntry(resultSetChildName, childNodeId);
-        
         return state;
+    }
+
+    /*
+     * returns the value of the property is 'true' or boolean true
+     * When property is missing, false is returned
+     */
+    private boolean getPropertyAsBoolean(NodeId nodeId, Name propName) throws InvalidItemStateException, RepositoryException {
+        String[] skips = getProperty(nodeId, propName, null);
+        String skip = (skips != null && skips.length > 0 ? skips[0] : "false");
+        return Boolean.parseBoolean(skip);
     }
 
     private void populateCount(NodeState state, int count) throws RepositoryException {

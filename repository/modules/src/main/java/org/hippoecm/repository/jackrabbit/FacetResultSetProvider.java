@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -58,7 +58,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
+    private final Logger log = LoggerFactory.getLogger(FacetResultSetProvider.class);
 
     private static Pattern facetPropertyPattern;
     static {
@@ -217,10 +217,12 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 filters.put(entry.getKey().toString(), entry.getValue());
             }
         }
+        long start = System.currentTimeMillis();
         facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, (context != null ? context.getParameterQuery(facetedEngine) : null), null, filters,
                                            hitsRequested);
+        
         if(log.isDebugEnabled()) {
-            FacetedNavigationModulesTimer.log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());
+            log.debug("Creating facetedResultSet took '{}' ms for '{}' number of results.", (System.currentTimeMillis() - t1),  facetedResult.length());
         }
         long count = facetedResult.length();
 

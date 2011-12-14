@@ -69,5 +69,15 @@ public interface FacNavNodeType {
      * 
      */
     public static final String HIPPOFACNAV_FILTERS = "hippofacnav:filters";
+    
+    /**
+     * 
+     */
+    public static final String HIPPOFACNAV_SKIP_RESULTSET_FOR_FACET_NAVIGATION_ROOT =  "hippofacnav:skipresultsetfacetnavigationroot";
+    
+    /**
+     * 
+     */
+    public static final String HIPPOFACNAV_SKIP_RESULTSET_FOR_FACETS_AVAILABLE = "hippofacnav:skipresultsetfacetsavailable";
 
 }

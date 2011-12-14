@@ -233,7 +233,6 @@ modules/pom.xml svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetResultSetProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSelectProvider.java -text
-modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetedNavigationModulesTimer.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/ViewVirtualProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/AbstractFacetNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacNavNodeType.java svneol=native#text/plain

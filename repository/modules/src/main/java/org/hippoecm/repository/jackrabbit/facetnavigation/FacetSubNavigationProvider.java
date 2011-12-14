@@ -133,6 +133,7 @@ public class FacetSubNavigationProvider extends AbstractFacetNavigationProvider 
                 childNodeId.facetNodeViews = newFacetNodeViews;
                 childNodeId.currentFacetNodeView = facetNodeView;
                 childNodeId.ancestorAndSelfUsedCombinations = facetNavigationNodeId.ancestorAndSelfUsedCombinations;
+                childNodeId.skipResultSetForFacetsAvailable = facetNavigationNodeId.skipResultSetForFacetsAvailable;
                 childNodeId.docbase = docbase;
                 childNodeId.currentSearch = currentSearch;
                 childNodeId.currentRanges = currentRanges;

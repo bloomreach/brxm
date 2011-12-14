@@ -38,6 +38,8 @@
 - hippofacnav:sortby (string) multiple
 - hippofacnav:sortorder (string) multiple < 'descending', 'ascending'
 - hippofacnav:filters (string) multiple
+- hippofacnav:skipresultsetfacetnavigationroot (boolean)
+- hippofacnav:skipresultsetfacetsavailable (boolean)
 - hippo:count (long)
 + hippo:resultset (hippo:facetresult) = hippo:facetresult ignore
 + * (hippofacnav:abstractfacetnavigation) multiple ignore

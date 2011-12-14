@@ -25,8 +25,8 @@ import java.util.Map.Entry;
 
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -37,12 +37,10 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.HitsRequested;
 import org.hippoecm.repository.KeyValue;
 import org.hippoecm.repository.ParsedFacet;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
-import org.hippoecm.repository.jackrabbit.FacetedNavigationModulesTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,15 +133,15 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 }
                 
                 long start = 0;
-                if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {
+                if(log.isDebugEnabled()) {
                     start   = System.currentTimeMillis();
                 }
                 
                 facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, (context != null ? context.getParameterQuery(facetedEngine) : null),
                     facetSearchResultMap, filters, hitsRequested);
                 
-                if(FacetedNavigationModulesTimer.log.isDebugEnabled()) {
-                    FacetedNavigationModulesTimer.log.debug("Creating facetResult took '{}' ms for '{}' number of unique facet values.", (System.currentTimeMillis() - start),  facetSearchResult.size());
+                if(log.isDebugEnabled()) {
+                    log.debug("Creating facetResult took '{}' ms for '{}' number of unique facet values.", (System.currentTimeMillis() - start),  facetSearchResult.size());
                 }
                 
             } catch (IllegalArgumentException e) {
@@ -246,6 +244,7 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                     childNodeId.docbase = docbase;
                     childNodeId.availableFacets = availableFacets;
                     childNodeId.facetedFiltersString = facetNavigationNodeId.facetedFiltersString;
+                    childNodeId.skipResultSetForFacetsAvailable = facetNavigationNodeId.skipResultSetForFacetsAvailable;
                     childNodeId.currentSearch = newSearch;
                     childNodeId.currentRanges = newRanges;
                     childNodeId.count = entry.count.count;
@@ -274,21 +273,22 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 }
             }
 
-            // add child node resultset:
-            // we add to the search now the current facet with no value: this will make sure that 
-            // the result set nodes at least contain the facet
-
-            List<KeyValue<String, String>> resultSetSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
-            // we add here the 'facet' without value, to make sure we only get results having at least the current facet as property
-            resultSetSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), null));
-
-            FacetResultSetProvider.FacetResultSetNodeId childNodeId;
-            childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
-                    docbase, resultSetSearch, currentRanges, facetedFiltersString);
-            childNodeId.setLimit(facetNavigationNodeId.limit);
-            childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
-            state.addChildNodeEntry(resultSetChildName, childNodeId);
-
+            if (!facetNavigationNodeId.skipResultSetForFacetsAvailable) {
+                // add child node resultset only if facetNavigationNodeId.skipResultSetForFacetsAvailable is not true
+                // we add to the search now the current facet with no value: this will make sure that 
+                // the result set nodes at least contain the facet
+    
+                List<KeyValue<String, String>> resultSetSearch = new ArrayList<KeyValue<String, String>>(currentSearch);
+                // we add here the 'facet' without value, to make sure we only get results having at least the current facet as property
+                resultSetSearch.add(new FacetKeyValue(parsedFacet.getNamespacedProperty(), null));
+    
+                FacetResultSetProvider.FacetResultSetNodeId childNodeId;
+                childNodeId = subNodesProvider.new FacetResultSetNodeId(state.getNodeId(), context, resultSetChildName, null,
+                        docbase, resultSetSearch, currentRanges, facetedFiltersString);
+                childNodeId.setLimit(facetNavigationNodeId.limit);
+                childNodeId.setOrderByList(facetNavigationNodeId.orderByList);
+                state.addChildNodeEntry(resultSetChildName, childNodeId);
+            }
         }
         
         if(log.isDebugEnabled()) {
