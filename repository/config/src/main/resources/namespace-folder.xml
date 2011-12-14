@@ -26,7 +26,5 @@
   </sv:property>
   <sv:property sv:name="hippo:paths" sv:type="String">
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-  </sv:property>
 </sv:node>
 
