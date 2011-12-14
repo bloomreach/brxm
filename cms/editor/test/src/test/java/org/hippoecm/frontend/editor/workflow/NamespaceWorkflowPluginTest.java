@@ -36,13 +36,10 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-// Workaround for http://issues.onehippo.com/browse/REPO-256
-@Ignore
 public class NamespaceWorkflowPluginTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: ";

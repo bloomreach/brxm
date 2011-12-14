@@ -46,7 +46,7 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", root);
         repositoryWorkflow.createNamespace(prefix, uri);
 
-        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext(null).getWorkflow("internal");
+        FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String, String> replacements = new TreeMap<String, String>();
         replacements.put("name", prefix);
         replacements.put("uri", uri);

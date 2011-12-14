@@ -31,11 +31,12 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 
-public class NamespaceWorkflowImpl implements NamespaceWorkflow, InternalWorkflow {
+public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWorkflow, InternalWorkflow {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -44,14 +45,10 @@ public class NamespaceWorkflowImpl implements NamespaceWorkflow, InternalWorkflo
     private final String prefix;
 
     private final Session session;
-    private final Node subject;
-    private final WorkflowContext workflowContext;
 
-    public NamespaceWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject)
+    public NamespaceWorkflowImpl(Session userSession, Session rootSession, Node subject)
             throws RemoteException, RepositoryException {
-        this.workflowContext = context;
         this.session = rootSession;
-        this.subject = subject;
         this.prefix = subject.getName();
     }
 
@@ -65,7 +62,7 @@ public class NamespaceWorkflowImpl implements NamespaceWorkflow, InternalWorkflo
     @Override
     public void addCompoundType(String name) throws WorkflowException, MappingException, RepositoryException,
             RemoteException {
-        WorkflowContext context = workflowContext.getWorkflowContext(null);
+        WorkflowContext context = getWorkflowContext();
 
         NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
@@ -84,7 +81,7 @@ public class NamespaceWorkflowImpl implements NamespaceWorkflow, InternalWorkflo
     @Override
     public void addDocumentType(String name) throws WorkflowException, MappingException, RepositoryException,
             RemoteException {
-        WorkflowContext context = workflowContext.getWorkflowContext(null);
+        WorkflowContext context = getWorkflowContext().getWorkflowContext(null);
 
         NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
@@ -102,8 +99,8 @@ public class NamespaceWorkflowImpl implements NamespaceWorkflow, InternalWorkflo
 
     public void updateModel(String cnd, Map<String, List<Change>> updates) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) workflowContext.getWorkflow("internal",
-                workflowContext.getDocument("root", "root"));
+        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal",
+                getWorkflowContext().getDocument("root", "root"));
         repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.editor.repository.impl.TemplateConverter", updates);
     }
 }
