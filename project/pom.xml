@@ -874,12 +874,11 @@
                   <directory>.</directory>
                   <includes>
                     <include>**/*~</include>
-                    <include>**/derby.log</include>
-                    <include>**/tmlog*</include>
-                    <include>**/tm.*</include>
+                    <include>derby.log</include>
+                    <include>tmlog*</include>
+                    <include>tm.*</include>
                     <include>**/.lock</include>
                     <include>**/atomikos</include>
-                    <include>**/jpox.log</include>
                   </includes>
                 </fileset>
               </filesets>
