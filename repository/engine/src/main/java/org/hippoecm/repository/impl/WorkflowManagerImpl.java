@@ -109,6 +109,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
+    public void close() {
+        documentManager.close();
+    }
+
     public Session getSession() throws RepositoryException {
         return session;
     }
@@ -167,6 +171,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                     log.debug("item matches but no permission on "+item.getPath()+" for role "+privileges[i].getString());
                                     hasPermission = false;
                                     break;
+                                } catch(IllegalArgumentException ex) {
+                                    /* Still haspermission is true because the underlying repository does not recognized the
+                                     * permission requested.  This is a fallback for a mis-configured are more bare repository
+                                     * implementation.
+                                     */
                                 }
                             }
                         }
