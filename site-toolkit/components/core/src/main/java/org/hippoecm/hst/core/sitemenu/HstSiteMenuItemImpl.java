@@ -137,7 +137,9 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         } else if (hstSiteMapItemPath != null) {
             return linkCreator.create(hstSiteMapItemPath, targetMount);
         }
-        log.warn("Sitemenu item '{}' does not contain a hstSiteMapItemRefId nor hstSiteMapItemPath, cannot create link, return null", hstSiteMenu.getName());
+        if (externalLink == null) {
+            log.warn("Sitemenu item '{}' does not contain a hstSiteMapItemRefId, a hstSiteMapItemPath or a externalLink. cannot create link for sitemenu item, return null", hstSiteMenu.getName());
+        }
         return null;
     }
     
