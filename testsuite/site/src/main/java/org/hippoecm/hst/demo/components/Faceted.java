@@ -29,7 +29,7 @@ import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.demo.beans.ProductBean;
+import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.BeanUtils;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class Faceted extends AbstractFacetedComponnent {
         
         HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, hstQuery, getObjectConverter());
         
-        List<ProductBean> resultset = new ArrayList<ProductBean>();
+        List<BaseBean> resultset = new ArrayList<BaseBean>();
         request.setAttribute("resultset", resultset);
 
         request.setAttribute("facetNavigation", facetNav);
@@ -59,7 +59,7 @@ public class Faceted extends AbstractFacetedComponnent {
             return;
         }
        
-        HippoDocumentIterator<ProductBean> it = resultSetBean.getDocumentIterator(ProductBean.class);
+        HippoDocumentIterator<BaseBean> it = resultSetBean.getDocumentIterator(BaseBean.class);
         int skip = 0;
         it.skip(skip);
         while(it.hasNext() && it.getPosition() < 10 + (skip - 1)) {
