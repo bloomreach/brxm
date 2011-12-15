@@ -66,7 +66,9 @@
 		                      </c:otherwise>
 		                   </c:choose>
 	                    </td>
+	                    <c:if test="${hst:isReadable(result, 'price')}">
 	                    <td>price : ${result.price}</td>
+	                    </c:if>
 	                 </tr>
 	            </c:forEach>
 	          </tbody>
