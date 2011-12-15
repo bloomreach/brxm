@@ -82,7 +82,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             names.add(field.name());
         }
         ALL_FIELD_NAMES = Collections.unmodifiableList(names);
-        INTERNAL_FIELDS = Collections.unmodifiableList(Arrays.asList("cmsPreviewPrefix"));
+        INTERNAL_FIELDS = Collections.unmodifiableList(Arrays.asList(ChannelField.cmsPreviewPrefix.name()));
     }
 
     public static enum SortOrder { ascending, descending }
@@ -241,7 +241,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
             Locale locale = getLocale(contentRoot);
             if (locale != null) {
-                newChannel.setLocale(locale.toString());
+                if (StringUtils.isNotBlank(locale.getLanguage())) {
+                    newChannel.setLocale(locale.toString());
+                } else {
+                    log.info("Ignoring locale '{}' of the content root path '{}' of channel '{}': the locale does not define a language",
+                            new Object[]{locale, contentRoot, channelName});
+                }
             }
         }
 
@@ -318,10 +323,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 return null;
             }
             Node node = session.getNode(absPath);
-            Locale locale = localeResolver.getLocale(node);
-            if ("".equals(locale.getLanguage())) {
-                return null;
-            }
+            return localeResolver.getLocale(node);
         } catch (RepositoryException e) {
             log.warn("Could not retrieve the locale of node '" + absPath + "'", e);
         }
