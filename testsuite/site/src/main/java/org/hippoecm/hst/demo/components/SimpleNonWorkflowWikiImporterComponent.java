@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.components;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Random;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -143,6 +144,8 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
         int maxDocsPerFolder = 50;
         int maxSubFolders = 25;
         long startTime = 0;
+        private final String[] users = {"ard","bard","arje","artur","reijn","berry","frank","mathijs","junaid","ate","tjeerd","verberg","simon","jannis"};
+        private Random rand;
 
         public WikiPediaToJCRHandler(Node wikiFolder, int total) throws Exception {
             this.wikiFolder = wikiFolder;
@@ -151,6 +154,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
             currentFolder.addMixin("hippo:harddocument");
             currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
             currentSubFolder.addMixin("hippo:harddocument");
+            rand = new Random(System.currentTimeMillis());
         }
 
         @Override
@@ -199,8 +203,8 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                     doc.setProperty("hippo:availability", availability );
                     doc.setProperty("hippostd:stateSummary", "live");
                     doc.setProperty("hippostd:state", "published");
-                    doc.setProperty("hippostdpubwf:lastModifiedBy", wikiFolder.getSession().getUserID());
-                    doc.setProperty("hippostdpubwf:createdBy", wikiFolder.getSession().getUserID());
+                    doc.setProperty("hippostdpubwf:lastModifiedBy", users[rand.nextInt(users.length)]);
+                    doc.setProperty("hippostdpubwf:createdBy", users[rand.nextInt(users.length)]);
                     doc.setProperty("hippostdpubwf:lastModificationDate",  Calendar.getInstance());
                     doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance() );
                     doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance() );
