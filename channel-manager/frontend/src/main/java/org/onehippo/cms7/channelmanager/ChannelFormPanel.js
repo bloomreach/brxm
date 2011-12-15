@@ -108,6 +108,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 contentRootCmp.setDefaultValue(blueprint.get('contentRoot'));
                 contentRootCmp.show();
             }
+
+            this.getComponent('name').focus(false, 10);
         }, this);
 
         this.doLayout();
