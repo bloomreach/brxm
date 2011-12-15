@@ -82,8 +82,8 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                         marginLeft: '69px'
                     },
                     pickerConfig: {
-                        configuration: "cms-pickers/folders",
-                        selectableNodeTypes: "hippostd:folder"
+                        configuration: 'cms-pickers/folders',
+                        selectableNodeTypes: 'hippostd:folder'
                     }
                 }
             ]
