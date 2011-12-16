@@ -46,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -184,8 +185,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
-    private static String getResourceValue(String key) {
-        return new ClassResourceModel(key, ChannelStore.class).getObject();
+    private static String getResourceValue(String key, Object... parameters) {
+        return new ClassResourceModel(key, ChannelStore.class, parameters).getObject();
     }
 
     public void reload() {
@@ -216,7 +217,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     @Override
-    protected JSONObject createRecord(JSONObject record) throws JSONException {
+    protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
         final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         // create new channel
@@ -225,9 +226,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         try {
             newChannel = channelManager.getBlueprint(blueprintId).createChannel();
         } catch (ChannelException e) {
-            final String errorMsg = "Could not create new channel with blueprint '" + blueprintId + "'";
-            log.warn(errorMsg, e);
-            return createdRecordResult(false, errorMsg + ": " + e.getMessage());
+            log.warn("Could not create new channel with blueprint '{}': {}", blueprintId, e.getMessage());
+            log.debug("Cause:", e);
+            throw new ActionFailedException(getResourceValue("error.blueprint.cannot.create.channel", blueprintId));
         }
 
         // set channel parameters
@@ -260,9 +261,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     }, null);
             log.info("Created new channel with ID '{}'", channelId);
         } catch (PrivilegedActionException e) {
-            final String errorMsg = "Could not save channel '" + newChannel.getName() + "'";
-            log.error(errorMsg, e.getException());
-            return createdRecordResult(false, errorMsg + ": " + e.getException().getMessage());
+            log.info("Could not persist new channel '" + newChannel.getName() + "'", e.getException());
+            throw createActionFailedException(e.getException(), newChannel);
         } finally {
             HstSubject.clearSubject();
         }
@@ -270,7 +270,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // removed the old cached channels to force a refresh
         this.channels = null;
 
-        return createdRecordResult(true, "");
+        // no need to return the create record; it will be loaded when the list of channels is refreshed
+        return null;
     }
 
     private Subject createSubject() {
@@ -282,11 +283,20 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return subject;
     }
 
-    private JSONObject createdRecordResult(boolean success, String message) throws JSONException {
-        final JSONObject result = new JSONObject();
-        result.put("success", success);
-        result.put("msg", message);
-        return result;
+    private ActionFailedException createActionFailedException(Exception cause, Channel newChannel) {
+        if (cause instanceof ChannelException) {
+            ChannelException ce = (ChannelException)cause;
+            switch(ce.getType()) {
+                case MOUNT_NOT_FOUND:
+                case MOUNT_EXISTS:
+                    String channelUrl = newChannel.getUrl();
+                    String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl));
+            }
+        }
+        log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
+        log.debug("Stacktrace:", cause);
+        return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
     }
 
     private Map<String, Channel> getChannels() {

@@ -42,6 +42,15 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
             },
             items:[
                 {
+                    xtype: 'panel',
+                    id: 'errorMessage',
+                    width: '100%',
+                    baseCls: 'x-form-invalid',
+                    padding: 10,
+                    style: 'margin-bottom: 10px',
+                    hidden: true
+                },
+                {
                     xtype: 'displayfield',
                     fieldLabel: me.resources['new-channel-field-blueprint'],
                     id: 'displayedBlueprintId',
@@ -66,7 +75,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     id: 'url',
                     allowBlank: false,
                     validator: function(value) {
-                        var expr = /(^(http|https):\/\/([\-\w]+\.)*\w(\/[%\-\w]+(\.\w{2,})?)*)/i;
+                        var expr = /^https?:\/\/([\-\w]+\.)*\w+(\/[\-\w]+)*$/i;
                         if (expr.test(value) === true) {
                             return true;
                         } else {
@@ -96,6 +105,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
 
         this.on('beforeshow', function () {
             this.getForm().reset();
+            this.hideError();
 
             var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
             Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
@@ -124,7 +134,6 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     xaction: 'create',
                     records: Ext.encode(form.getValues())
                 },
-
                 success: function(form, action) {
                     //Event to hide the window & rerender the channels panel
                     panel.fireEvent('channel-created');
@@ -132,19 +141,30 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 failure: function(form, action) {
                     switch (action.failureType) {
                         case Ext.form.Action.CLIENT_INVALID:
-                            Ext.Msg.alert("Error", "Please check the highlighted fields");
+                            panel.showError(panel.resources['error-check-highlighted-fields']);
                             break;
                         case Ext.form.Action.CONNECT_FAILURE:
-                            Ext.Msg.alert("Error", "Unable to connect to the server");
+                            panel.showError(panel.resources['error-cannot-connect-to-server']);
                             break;
                         case Ext.form.Action.SERVER_INVALID:
-                            Ext.Msg.alert("Error", "Error while creating the Channel " + action.result.msg);
+                            panel.showError(action.result.message);
                             break;
                     }
                 }
             });
         }
+    },
+
+    showError: function(message) {
+        var panel = this.getComponent('errorMessage');
+        panel.update(message);
+        panel.show();
+    },
+
+    hideError: function() {
+        this.getComponent('errorMessage').hide();
     }
+
 });
 
 Ext.reg('Hippo.ChannelManager.ChannelFormPanel', Hippo.ChannelManager.ChannelFormPanel);
