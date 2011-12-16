@@ -49,7 +49,12 @@ public interface ChannelManager {
      * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
      * @param channel a channel instance to be persisted
      * @return the channel ID of the created channel
-     * @throws ChannelException when the channel ID already exists, or the channel could not be persisted.
+     * @throws ChannelException with type @{link ChannelException.Type#MOUNT_NOT_FOUND} when all but the last path-step
+     * in the URL path of a new channel do not map to existing mounts. The exception has one parameter: the absolute
+     * JCR path of the missing mount.
+     * @throws ChannelException with type @{link ChannelException.Type#MOUNT_EXISTS} when the mount of a new channel
+     * already exists. The exception has one parameter: the absolute JCR path of the existing mount.
+     * </ul>
      */
     String persist(String blueprintId, Channel channel) throws ChannelException;
 
@@ -62,9 +67,10 @@ public interface ChannelManager {
      * </p>
      *
      * @param channel the channel to persist
-     * @throws MountNotFoundException when all but the last path-step in the URL path of a new channel
-     * do not map to existing mounts, or the URL path of an existing channel does not map to an existing mount.
-     * @throws ChannelException when the channel could not be persisted.
+     * @throws ChannelException with type @{link ChannelException.Type#MOUNT_NOT_FOUND} when all but the last path-step
+     * in the URL path of a new channel do not map to existing mounts, or the URL path of an existing channel does not
+     * map to an existing mount. The exception has one parameter: the absolute JCR path of the missing mount.
+     * @throws ChannelException with type {@link ChannelException.Type#UNKNOWN}} when the channel could not be persisted.
      */
     void save(Channel channel) throws ChannelException;
 

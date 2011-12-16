@@ -295,9 +295,9 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                     return manager.persist(blueprint.getId(), channel);
                 }
             }, null);
-            fail("Expected a " + MountNotFoundException.class.getName());
+            fail("Expected a ChannelException with type " + ChannelException.Type.MOUNT_NOT_FOUND);
         } catch (PrivilegedActionException e) {
-            assertEquals(MountNotFoundException.class, e.getCause().getClass());
+            assertEquals(ChannelException.Type.MOUNT_NOT_FOUND, ((ChannelException)e.getCause()).getType());
         }
     }
 

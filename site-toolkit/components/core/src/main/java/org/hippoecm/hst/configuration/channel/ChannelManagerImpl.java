@@ -210,9 +210,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     /**
-     * Make sure that hst manager is initialized.
+     * Make sure that HST manager is initialized.
      *
-     * @throws ChannelException
+     * @throws ChannelException when initializing the HST manager failed
      */
     void load() throws ChannelException {
         if (channels == null) {
@@ -593,7 +593,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath) throws MountNotFoundException, RepositoryException {
+    private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath)
+            throws ChannelException, RepositoryException {
         ArrayList<String> mountPathElements = new ArrayList<String>();
         mountPathElements.add(HstNodeTypes.MOUNT_HST_ROOTNAME);
         mountPathElements.addAll(Arrays.asList(StringUtils.split(mountPath, '/')));
@@ -605,11 +606,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
             if (mount.hasNode(mountPathElement)) {
                 mount = mount.getNode(mountPathElement);
             } else {
-                throw new MountNotFoundException(mount.getPath() + "/" + mountPathElement);
+                throw mountNotFoundException(mount.getPath() + "/" + mountPathElement);
             }
         }
 
         String lastMountPathElementName = mountPathElements.get(mountPathElements.size() - 1);
+
+        if (mount.hasNode(lastMountPathElementName)) {
+            throw mountExistsException(mount.getPath() + '/' + lastMountPathElementName);
+        }
 
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_MOUNT)) {
             mount = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_MOUNT), mount, lastMountPathElementName);
@@ -638,13 +643,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } else {
             return parent.addNode(nodeName, nodeType);
         }
-    }
-
-    private static String getStringPropertyOrDefault(Node node, String propName, String defaultValue) throws RepositoryException {
-        if (node.hasProperty(propName)) {
-            return node.getProperty(propName).getString();
-        }
-        return defaultValue;
     }
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
@@ -708,7 +706,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (virtualHost.hasNode(HstNodeTypes.MOUNT_HST_ROOTNAME)) {
             mount = virtualHost.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         } else {
-            throw new MountNotFoundException(virtualHost.getPath() + "/" + HstNodeTypes.MOUNT_HST_ROOTNAME);
+            throw mountNotFoundException(virtualHost.getPath() + "/" + HstNodeTypes.MOUNT_HST_ROOTNAME);
         }
         final String mountPath = channel.getMountPath();
         if (mountPath != null) {
@@ -716,7 +714,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 if (mount.hasNode(mountPathElement)) {
                     mount = mount.getNode(mountPathElement);
                 } else {
-                    throw new MountNotFoundException(mount.getPath() + "/" + mountPathElement);
+                    throw mountNotFoundException(mount.getPath() + "/" + mountPathElement);
                 }
             }
         }
@@ -752,6 +750,24 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return uri;
     }
 
+    /**
+     * Static factory method for a ChannelException of type {@link ChannelException.Type#MOUNT_NOT_FOUND}.
+     *
+     * @param missingMount the absolute JCR path of the missing mount
+     * @return a ChannelException of type {@link ChannelException.Type#MOUNT_NOT_FOUND}.
+     */
+    static ChannelException mountNotFoundException(String missingMount) {
+        return new ChannelException("Mount not found: " + missingMount, ChannelException.Type.MOUNT_NOT_FOUND, missingMount);
+    }
 
+    /**
+     * Static factory method for a ChannelException of type {@link ChannelException.Type#MOUNT_EXISTS}.
+     *
+     * @param existingMount the absolute JCR path of the mount that already exists
+     * @return a ChannelException of type {@link ChannelException.Type#MOUNT_EXISTS}.
+     */
+    static ChannelException mountExistsException(String existingMount) {
+        return new ChannelException("Mount already exists: " + existingMount, ChannelException.Type.MOUNT_EXISTS, existingMount);
+    }
 
 }
