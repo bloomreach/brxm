@@ -367,6 +367,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
+    /**
+     * Creates a unique ID for a channel. The ID can safely be used as a new JCR node name in the hst:channels,
+     * hst:sites, and hst:configurations configuration.
+     *
+     * @param channelName the name of the channel
+     * @param session JCR session to use for sanity checks of node names
+     * @return a unique channel ID based on the given channel name
+     * @throws ChannelException
+     */
     protected String createUniqueChannelId(String channelName, Session session) throws ChannelException {
         if (StringUtils.isBlank(channelName)) {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
@@ -375,8 +384,11 @@ public class ChannelManagerImpl implements MutableChannelManager {
             String channelId = channelIdCodec.encode(channelName);
             int retries = 0;
             Node channelsNode = session.getNode(channelsRoot);
-            
-            while (channelsNode.hasNode(channelId)) {
+            Node rootNode = session.getNode(rootPath);
+            Node sitesNode = rootNode.getNode(sites);
+            Node configurationsNode = rootNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
+
+            while (channelsNode.hasNode(channelId) || sitesNode.hasNode(channelId) || configurationsNode.hasNode(channelId)) {
                 retries += 1;
                 StringBuilder builder = new StringBuilder(channelName);
                 builder.append('-');

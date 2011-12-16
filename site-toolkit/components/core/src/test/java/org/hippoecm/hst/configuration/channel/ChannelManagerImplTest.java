@@ -116,7 +116,10 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals("special-characters--and---and", manager.createUniqueChannelId("Special Characters: % and / and []", getSession()));
         assertEquals("'testchannel' already exists in the default unit test content, so the new channel ID should get a suffix",
                 "testchannel-1", manager.createUniqueChannelId("testchannel", getSession()));
-
+        assertEquals("'unittestproject' already exists as an hst:site node in the default unit test content, so the new channel ID should get a suffix",
+                "unittestproject-1", manager.createUniqueChannelId("unittestproject", getSession()));
+        assertEquals("'unittestcommon' already exists as an hst:configuration node in the default unit test content, so the new channel ID should get a suffix",
+                "unittestcommon-1", manager.createUniqueChannelId("unittestcommon", getSession()));
     }
 
     @Test
