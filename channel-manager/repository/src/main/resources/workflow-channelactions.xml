@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0.2" xmlns:hipposys="http://www.onehippo.org/jcr/hipposys/nt/1.0" xmlns:frontend="http://www.onehippo.org/jcr/frontend/nt/2.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="channelactions">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="channelactions">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
