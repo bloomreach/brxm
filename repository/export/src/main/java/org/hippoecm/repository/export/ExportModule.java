@@ -19,11 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -201,12 +199,16 @@ public final class ExportModule implements DaemonModule {
             }
         };
         private final Set<Event> events = new HashSet<Event>(100);
+        private final EventPreProcessor eventPreProcessor;
         private ScheduledFuture<?> future;
+
 
         private ExportEventListener(Extension extension, Session session, ScheduledExecutorService executor) throws RepositoryException {
             this.extension = extension;
             this.session = session;
             this.executor = executor;
+            
+            this.eventPreProcessor = new EventPreProcessor(session);
 
             // cache the registered namespace uris so we can detect when any were added 
             String[] _uris = session.getWorkspace().getNamespaceRegistry().getURIs();
@@ -259,57 +261,28 @@ public final class ExportModule implements DaemonModule {
             }
         }
         
-        /*
-         * We don't always add events to the set of events to be processed.
-         * The reason for this is that because we accumulate events for a period of time
-         * before we actually process them the situation can occur that 1) a node was both added and
-         * removed or conversely 2) both removed and added in that period. Because we don't know whether either
-         * 1) or 2) was the case we don't know whether the node is actually there or not. But we do
-         * know that the events cancelled each other out. So in these two cases we can safely ignore
-         * these events. 
-         * Note that this is important only in the case of node events. This is because
-         * the added or removed node could be the root of a content file and thus either remove or add
-         * events could trigger a content file to be removed or added.
-         * Also note that the scenario described where we have both add and remove events on the same node
-         * in the queue is not likely to occur in normal usage. We probably only encounter it during unit testing.
-         */
         private void addEvent(Event event) {
-            for (Iterator<Event> iter = events.iterator(); iter.hasNext();) {
-                Event evt = iter.next();
-                try {
-                    if (evt.getPath().equals(event.getPath())) {
-                        if (evt.getType() == Event.NODE_ADDED && event.getType() == Event.NODE_REMOVED) {
-                            iter.remove();
-                            return;
-                        }
-                        if (evt.getType() == Event.NODE_REMOVED && event.getType() == Event.NODE_ADDED) {
-                            iter.remove();
-                            return;
-                        }
-                    }
-                }
-                catch (RepositoryException e) { 
-                    log.error("Failed to check if event should be added to the set of to-be-processed events", e);
-                }
+            try {
+                events.add(new ExportEvent(event));
+            } catch (RepositoryException e) {
+                log.error("Unable to add event because unable to compute event path", e);
             }
-            events.add(event);
         }
 
         private void processEvents() {
             long startTime = System.nanoTime();
 
-            // sort the events (see EventComparator)
-            List<Event> _events = new ArrayList<Event>(events);
-            Collections.sort(_events, new EventComparator());
+            // preprocess the events
+            List<Event> events = eventPreProcessor.preProcessEvents(this.events);
 
             // process the events
-            for (Event event : _events) {
+            for (Event event : events) {
                 try {
                     String path = event.getPath();
                     if (log.isDebugEnabled()) {
                         log.debug(eventString(event) + " on " + path);
                     }
-                    boolean isNode = EventComparator.isNodeEventType(event);
+                    boolean isNode = event.getType() == Event.NODE_ADDED || event.getType() == Event.NODE_REMOVED;
                     ResourceInstruction instruction = extension.findResourceInstruction(path, isNode);
                     if (instruction != null) {
                         if (log.isDebugEnabled()) {
@@ -342,6 +315,13 @@ public final class ExportModule implements DaemonModule {
                                     // the root node of this instruction was removed, remove the instruction
                                     extension.removeInstruction(instruction);
                                     removeInitializeItem(instruction);
+                                }
+                                for (ContentResourceInstruction child : extension.findDescendentContentResourceInstructions(path)) {
+                                    if (log.isDebugEnabled()) {
+                                        log.debug("Removing additional nested instruction " + child);
+                                    }
+                                    extension.removeInstruction(child);
+                                    removeInitializeItem(child);
                                 }
                             } else {
                                 log.warn("Change not handled by export. "
@@ -494,41 +474,6 @@ public final class ExportModule implements DaemonModule {
                     return "Property removed";
             }
             return null;
-        }
-
-        /**
-         * Sorts Events according to the following rules:
-         * - Events on nodes are ordered before events on properties
-         * - Shorter paths are ordered before longer paths
-         */
-        private static class EventComparator implements Comparator<Event> {
-            @Override
-            public int compare(Event e1, Event e2) {
-                int compareType = compareType(e1, e2);
-                return compareType == 0 ? comparePath(e1, e2) : compareType;
-            }
-
-            private static int compareType(Event e1, Event e2) {
-                if (isNodeEventType(e1)) {
-                    return isNodeEventType(e2) ? 0 : -1;
-                } else {
-                    return isNodeEventType(e2) ? 1 : 0;
-                }
-            }
-
-            private static int comparePath(Event e1, Event e2) {
-                try {
-                    return e1.getPath().length() - e2.getPath().length();
-                } catch (RepositoryException e) {
-                    log.error(e.getClass().getName()+": "+e.getMessage(), e);
-                }
-                return 0;
-            }
-
-            private static boolean isNodeEventType(Event event) {
-                return event.getType() == Event.NODE_ADDED
-                        || event.getType() == Event.NODE_REMOVED;
-            }
         }
     }
 }

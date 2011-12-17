@@ -157,6 +157,19 @@ final class Extension {
         }
         return result;
     }
+    
+    List<ContentResourceInstruction> findDescendentContentResourceInstructions(String path) {
+        String prefixPath = path + "/";
+        List<ContentResourceInstruction> result = new ArrayList<ContentResourceInstruction>();
+        for (Instruction instruction : instructions) {
+            if (instruction instanceof ContentResourceInstruction) {
+                if (((ContentResourceInstruction) instruction).context.startsWith(prefixPath)) {
+                    result.add((ContentResourceInstruction)instruction);
+                }
+            }
+        }
+        return result;
+    }
 
     NamespaceInstruction findNamespaceInstruction(String namespace) {
         for (Instruction instruction : instructions) {
@@ -328,7 +341,9 @@ final class Extension {
             Document document;
             try {
                 document = reader.read(new File(file.getParentFile(), contentresource));
-                String context = contentroot + "/" + document.getRootElement().attributeValue(NAME_QNAME);
+                String context = contentroot.equals("/") 
+                        ?  contentroot + document.getRootElement().attributeValue(NAME_QNAME)
+                        : contentroot + "/" + document.getRootElement().attributeValue(NAME_QNAME);
                 // if contentresource file uses delta xml (h:merge) semantics, then disable export
                 // we don't deal with that (yet)
                 String mergeValue = document.getRootElement().attributeValue("merge");

@@ -96,7 +96,7 @@ class ContentResourceInstruction extends ResourceInstruction {
                     if (instruction instanceof ContentResourceInstruction) {
                         String _context = ((ContentResourceInstruction)instruction).context;
                         if (!_context.equals(context) && _context.startsWith(context)) {
-                            String subcontext = _context.substring(root.length());
+                            String subcontext = root.length() == 1 ? _context :  _context.substring(root.length());
                             excluded.add(subcontext);
                         }
                     }

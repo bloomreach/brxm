@@ -22,7 +22,7 @@ import javax.jcr.Session;
 abstract class ResourceInstruction extends AbstractInstruction {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id: ";
-
+    
     /** the resource */
     final File file;
     /** dirty flag */
@@ -40,6 +40,9 @@ abstract class ResourceInstruction extends AbstractInstruction {
     abstract void export(Session session);
 
     void delete() {
+        if (log.isInfoEnabled()) {
+            log.info("Removing " + file.getPath());
+        }
         file.delete();
     }
 

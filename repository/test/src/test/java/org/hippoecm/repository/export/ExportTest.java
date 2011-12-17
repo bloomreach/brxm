@@ -35,7 +35,6 @@ import java.util.Map;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
@@ -44,6 +43,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+
+import junit.framework.Assert;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.custommonkey.xmlunit.Diff;
@@ -65,13 +66,13 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Test for org.hippoecm.repository.export.ExportModule
+ * Test for {@link ExportModule}
  */
 public class ExportTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id: ";
 
-    private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
+    private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export.test");
     private static final long SLEEP_AFTER_SAVE = 2*1000 + 500;
     
     private static final String BUILD_HOME;
@@ -106,10 +107,8 @@ public class ExportTest extends TestCase {
         // results manually
         File configHome = new File(CONFIG_HOME);
         if (configHome.exists()) {
-            for (File file : configHome.listFiles()) {
-                file.delete();
-            }
-            configHome.delete();
+            log.debug("deleting config home: " + configHome.getPath());
+            delete(configHome);
         }
         System.setProperty("hippoecm.export.dir", CONFIG_HOME);
         // startup the repository
@@ -134,8 +133,8 @@ public class ExportTest extends TestCase {
         try {
             manager.unregisterNodeType("et:example2");
         } catch (NoSuchNodeTypeException e) {
-        } 
-        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
+        }
+//        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
         // unregistering namespace is not supported by jackrabbit...
 //            try { registry.unregisterNamespace("etx"); } catch (NamespaceException e) {}
         super.session.save();
@@ -161,6 +160,16 @@ public class ExportTest extends TestCase {
         super.session.save();
         Thread.sleep(SLEEP_AFTER_SAVE);
         compare("simple");
+    }
+    
+    @Test
+    public void testAddDeepNode() throws Exception {
+        Node node = m_testRoot.addNode("foo", "et:node");
+        Node sub = node.addNode("foo", "et:node");
+        sub.addNode("foo", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("deep");
     }
     
     @Test
@@ -197,6 +206,20 @@ public class ExportTest extends TestCase {
         super.session.save();
         Thread.sleep(SLEEP_AFTER_SAVE);
         compare("simple");
+    }
+    
+    @Test
+    public void testMoveDeepNode() throws Exception {
+        Node node = m_testRoot.addNode("bar", "et:node");
+        Node sub = node.addNode("foo", "et:node");
+        sub.addNode("foo", "et:node");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        // move
+        super.session.move("/bar", "/foo");
+        super.session.save();
+        Thread.sleep(SLEEP_AFTER_SAVE);
+        compare("deep");
     }
     
     /*
@@ -276,9 +299,8 @@ public class ExportTest extends TestCase {
         Thread.sleep(SLEEP_AFTER_SAVE);
         compare("nodetypes");
     }
-        
+
     @Test
-    @Ignore
     public void testFilterContentHandler() throws Exception {
         File contentFile = new File(CONTENT_HOME, "nested-content.xml");
         FileReader contentFileReader = new FileReader(contentFile);
@@ -306,25 +328,28 @@ public class ExportTest extends TestCase {
 
     private void compare(String testCase) throws Exception {
         Thread.sleep(2 * 1000); // allow export to do its work
-        Map<String, Reader> changes = loadFiles(new File(CONFIG_HOME));
-        Map<String, Reader> expected = loadFiles(new File(EXTENSION_HOME, testCase));
+        Map<String, Reader> changes = new HashMap<String, Reader>();
+        loadFiles(new File(CONFIG_HOME), new File(CONFIG_HOME), changes);
+        Map<String, Reader> expected = new HashMap<String, Reader>();
+        loadFiles(new File(EXTENSION_HOME, testCase), new File(EXTENSION_HOME, testCase), expected);
         assertEquals(changes, expected);
     }
 
-    private Map<String, Reader> loadFiles(File directory) throws IOException {
-        Map<String, Reader> result = new HashMap<String, Reader>();
-        File[] files = directory.listFiles();
-        for (File file : files) {
-            if (!file.isDirectory()) {
-                Reader r = new FileReader(file);
-                String name = file.getName();
-                result.put(name, r);
+    private void loadFiles(File basedir, File file, Map<String, Reader> readers) throws IOException {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                loadFiles(basedir, child, readers);
             }
         }
-        return result;
+        else if (file.getName().endsWith(".xml") || file.getName().endsWith(".cnd")) {
+            Reader reader = new FileReader(file);
+            String path = file.getPath().substring(basedir.getPath().length()+1);
+            readers.put(path, reader);
+        }
     }
 
     private void assertEquals(Map<String, Reader> changes, Map<String, Reader> expected) throws IOException, SAXException {
+        Assert.assertEquals(expected.size(), changes.size());
         for (String file : expected.keySet()) {
             log.debug("Comparing file " + file);
             Reader change = changes.get(file);
@@ -414,5 +439,14 @@ public class ExportTest extends TestCase {
             }
             return (control.getNodeName().equals("sv:value") && test.getNodeName().equals("sv:value"));
         }
+    }
+    
+    private static void delete(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                delete(child);
+            }
+        }
+        file.delete();
     }
 }
