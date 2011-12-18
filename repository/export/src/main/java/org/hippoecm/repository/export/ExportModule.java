@@ -61,8 +61,8 @@ public final class ExportModule implements DaemonModule {
     // ---------- Static variables
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.export");
     private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";
+    
     // ---------- Member variables
-    private Session session;
     // we keep the listener, the manager and the executor here as members
     // so we can shutdown properly
     private EventListener listener;
@@ -76,8 +76,6 @@ public final class ExportModule implements DaemonModule {
     // ---------- DaemonModule implementation
     @Override
     public void initialize(Session session) throws RepositoryException {
-
-        this.session = session;
 
         // read 'hippoecm.export.dir' system property
         String configDir = System.getProperty("hippoecm.export.dir");
@@ -94,20 +92,7 @@ public final class ExportModule implements DaemonModule {
             configDirectory.mkdirs();
         }
 
-        // set export location property in the repository
-        String path = null;
-        try {
-            path = configDirectory.getCanonicalPath();
-            Node node = session.getNode(CONFIG_NODE_PATH);
-            node.setProperty("hipposys:location", path);
-            session.save();
-        } catch (RepositoryException e) {
-            log.warn("Cannot set export location property: " + e.getMessage());
-        } catch (IOException e) {
-            log.warn("Cannot set export location property: " + e.getMessage());
-        }
-
-        log.info("Automatically exporting changes to directory " + path);
+        log.info("Automatically exporting changes to directory " + configDirectory.getPath());
 
         // create extension
         Extension extension;
@@ -153,15 +138,6 @@ public final class ExportModule implements DaemonModule {
         if (executor != null) {
             executor.shutdown();
         }
-        // remove location property
-        try {
-            session.getNode(CONFIG_NODE_PATH).getProperty("hipposys:location").remove();
-            session.save();
-        } catch (PathNotFoundException e) {
-            log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:location");
-        } catch (RepositoryException e) {
-            log.error("Error removing location property from repository. ", e);
-        }
     }
 
     // ---------- Implementation
@@ -196,6 +172,11 @@ public final class ExportModule implements DaemonModule {
             public synchronized void run() {
                 processEvents();
                 events.clear();
+                try {
+                    session.save();
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException while trying to save session", e);
+                }
             }
         };
         private final Set<Event> events = new HashSet<Event>(100);
@@ -417,7 +398,6 @@ public final class ExportModule implements DaemonModule {
                 Node node = parent.addNode(instruction.getName());
                 node.setPrimaryType(HippoNodeType.NT_INITIALIZEITEM);
                 node.setProperty("hippo:sequence", instruction.getSequence());
-                session.save();
             }
             catch (RepositoryException e) {
                 log.error("Failed to add initialize item: " + instruction.getName(), e);
@@ -431,7 +411,6 @@ public final class ExportModule implements DaemonModule {
                 }
                 Node node = session.getNode("/hippo:configuration/hippo:initialize/" + instruction.getName());
                 node.remove();
-                session.save();
             }
             catch (RepositoryException e) {
                 log.error("Failed to remove initialize item: " + instruction.getName(), e);
