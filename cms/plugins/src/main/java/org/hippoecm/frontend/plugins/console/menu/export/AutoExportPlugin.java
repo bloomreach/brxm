@@ -45,14 +45,12 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
-        final String location = getExportLocation();
-        
         // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
             
             @Override public String getObject() {
-                if (location == null) {
+                if (!isExportAvailable()) {
                     return "Auto export unavailable";
                 }
                 return isExportEnabled() ? "Disable Auto Export" : "Enable Auto Export";
@@ -63,7 +61,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             private static final long serialVersionUID = 1L;
             @Override
             public String getObject() {
-                if (location == null) {
+                if (!isExportAvailable()) {
                     return "color:grey";
                 }
                 return isExportEnabled() ? "color:green" : "color:red";
@@ -80,7 +78,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                 = new ResourceReference(AutoExportPlugin.class, "autoexport_off.png");
             @Override
             protected ResourceReference getImageResourceReference() {
-                if (location == null) {
+                if (!isExportAvailable()) {
                     return emptyGif;
                 }
                 return isExportEnabled() ? on : off;
@@ -102,8 +100,13 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             
         };
         link.add(label);
-        link.setEnabled(location != null);
+        link.setEnabled(isExportAvailable());
         add(link);
+    }
+    
+    private boolean isExportAvailable() {
+        String configDir = System.getProperty("hippoecm.export.dir");
+        return configDir != null && !configDir.isEmpty();
     }
 
     private boolean isExportEnabled() {
@@ -134,19 +137,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         } catch (RepositoryException e) {
             log.error("An error occurred trying to set export enabled flag", e);
         }
-    }
-
-    private String getExportLocation() {
-        String location = null;
-        try {
-            Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
-            location = node.getProperty("hipposys:location").getString();
-        } catch (PathNotFoundException e) {
-            log.debug("No such item: " + CONFIG_NODE_PATH + "/hipposys:location");
-        } catch (RepositoryException e) {
-            log.error("An error occurred looking up export location", e);
-        }
-        return location;
     }
     
     private Session getJcrSession() {
