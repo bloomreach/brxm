@@ -162,6 +162,12 @@ public final class ExportModule implements DaemonModule {
             ignored.add("/hippo:configuration/hippo:temporary");
             ignored.add("/hippo:configuration/hippo:initialize");
             ignored.add("/formdata");
+            ignored.add("/initialize");
+            ignored.add("/jcr:system/jcr:nodeTypes/hipposys");
+            ignored.add("/jcr:system/jcr:nodeTypes/hippo");
+            ignored.add("/jcr:system/jcr:nodeTypes/rep");
+            ignored.add("/jcr:system/jcr:nodeTypes/hipposysedit");
+            ignored.add("/jcr:system/jcr:nodeTypes/hippofacnav");
         }
         private final Extension extension;
         private final Session session;
