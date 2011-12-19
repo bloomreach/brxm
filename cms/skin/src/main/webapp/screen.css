@@ -159,11 +159,18 @@ body.hippo-root #doc3 {
 /* ================================================ */
 .hippo-body-back-hack {
   background: white;
+  /* 
+  	 "Swirly" photo by Ibrahim Iujaz
+  	 http://www.flickr.com/photos/notsogoodphotography/4688403812/
+     Used under the http://creativecommons.org/licenses/by/2.0/deed.en license
+  */
+  background: url(images/island.jpg) top left;
+
   position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 150px;
+  height: 100%;
 }
 
 .hippo-login-panel {
@@ -171,7 +178,12 @@ body.hippo-root #doc3 {
   margin: 100px auto;
   position: relative;
   text-align: left;
-  width: 460px;
+  width: 448px;
+
+  -moz-box-shadow: 6px 6px 10px #333;
+  -webkit-box-shadow: 6px 6px 10px #333;
+  box-shadow: 6px 6px 10px #333;
+
 }
 
 .hippo-login-panel h2 {
