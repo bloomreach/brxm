@@ -159,12 +159,7 @@ body.hippo-root #doc3 {
 /* ================================================ */
 .hippo-body-back-hack {
   background: white;
-  /* 
-  	 "Swirly" photo by Ibrahim Iujaz
-  	 http://www.flickr.com/photos/notsogoodphotography/4688403812/
-     Used under the http://creativecommons.org/licenses/by/2.0/deed.en license
-  */
-  background: url(images/island.jpg) top left;
+  background: url(images/wadden.jpg) top left;
 
   position: absolute;
   top: 0px;

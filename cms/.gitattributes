@@ -1982,7 +1982,6 @@ skin/src/main/webapp/images/icons/workflow-requestunpublish-128.png -text
 skin/src/main/webapp/images/icons/workflow-requestunpublish-16.png -text
 skin/src/main/webapp/images/icons/workflow-requestunpublish-32.png -text
 skin/src/main/webapp/images/icons/workflow-requestunpublish-48.png -text
-skin/src/main/webapp/images/island.jpg -text
 skin/src/main/webapp/images/list-add-16.png -text
 skin/src/main/webapp/images/loginback.png -text
 skin/src/main/webapp/images/loginbottom.png -text
@@ -2000,6 +1999,7 @@ skin/src/main/webapp/images/tabs-vertical-top-back.png -text
 skin/src/main/webapp/images/transparent2.png -text
 skin/src/main/webapp/images/tree-console-icons.png -text
 skin/src/main/webapp/images/tree-icons.png -text
+skin/src/main/webapp/images/wadden.jpg -text
 skin/src/main/webapp/screen-console.css svneol=native#text/css
 skin/src/main/webapp/screen.css svneol=native#text/css
 skin/src/main/webapp/screen_ie.css -text svneol=unset#text/plain
