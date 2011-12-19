@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.plugins.channelactions;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

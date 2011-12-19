@@ -7,7 +7,6 @@ import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
-import org.wicketstuff.js.ext.data.ExtStore;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 

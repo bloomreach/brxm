@@ -1,8 +1,5 @@
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -11,8 +8,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to resolve the locale of a JCR node.

@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.wicket.Localizer;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONArray;
