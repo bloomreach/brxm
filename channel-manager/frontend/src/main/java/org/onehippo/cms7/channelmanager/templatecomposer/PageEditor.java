@@ -69,6 +69,9 @@ public class PageEditor extends ExtPanel {
     private static final Logger log = LoggerFactory.getLogger(PageEditor.class);
     private static final long serialVersionUID = 1L;
 
+    // default initial connection timeout in milliseconds
+    private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
+
     @ExtProperty
     private Boolean debug = false;
 
@@ -97,7 +100,7 @@ public class PageEditor extends ExtPanel {
     private Boolean previewMode = true;
 
     @ExtProperty
-    private Long initialHstConnectionTimeout = 60000L;
+    private Long initialHstConnectionTimeout = DEFAULT_INITIAL_CONNECTION_TIMEOUT;
 
     @ExtProperty
     private String locale;
@@ -118,7 +121,7 @@ public class PageEditor extends ExtPanel {
             this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
             this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
             this.contextPath = config.getString("contextPath", contextPath);
-            this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", 60000L);
+            this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
             }
