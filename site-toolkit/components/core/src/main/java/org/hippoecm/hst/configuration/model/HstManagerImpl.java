@@ -15,23 +15,6 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
@@ -50,6 +33,11 @@ import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
+import java.util.*;
 
 /**
  * This class handles the loading of {@link HstNodeImpl}'s. 
@@ -227,17 +215,20 @@ public class HstManagerImpl implements HstManager {
     }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
-         
-        if (virtualHosts == null) {
+
+        //
+        VirtualHosts currentHosts = virtualHosts;
+        if (currentHosts == null) {
             synchronized(this) {
                 if (virtualHosts == null) {
                     buildSites();
                     this.channelManager.load(virtualHosts);
-                } 
+                }
+                currentHosts = virtualHosts;
             }
         }
         
-        return virtualHosts;
+        return currentHosts;
     }
 
     protected void buildSites() throws RepositoryNotAvailableException {
