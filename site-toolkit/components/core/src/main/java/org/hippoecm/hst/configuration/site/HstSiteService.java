@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 
 public class HstSiteService implements HstSite {
 
-    private static final long serialVersionUID = 1L;
-    
     private static final String FQCN = HstSiteService.class.getName();
 
     private HstSiteMapService siteMapService;
