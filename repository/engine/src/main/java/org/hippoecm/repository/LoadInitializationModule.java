@@ -34,6 +34,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import java.util.concurrent.TimeUnit;
+import java.util.jar.Attributes;
+import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -582,12 +584,11 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                         String manifestUrlString = configurationURLString.substring(0, configurationURLString.length() - "hippoecm-extension.xml".length()) + "META-INF/MANIFEST.MF";
                         try {
                             Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
-                            String buildString = manifest.getMainAttributes().getValue("Implementation-Build");
+                            String buildString = manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
                             if (buildString != null) {
                                 buildNumber = Long.parseLong(buildString);
                             }
                         } catch (IOException ex) {
-                            System.err.println("");
                             // deliberate ignore, manifest file not available so no build number can be obtained
                         }
                     }
