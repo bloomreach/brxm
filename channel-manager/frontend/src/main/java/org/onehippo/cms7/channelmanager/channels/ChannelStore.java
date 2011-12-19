@@ -292,6 +292,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     String channelUrl = newChannel.getUrl();
                     String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
                     return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl));
+                default:
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), ce.getParameters()));
             }
         }
         log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
