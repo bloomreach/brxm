@@ -17,6 +17,6 @@ public interface IChannelManagerService extends IClusterable {
      * @param cmsPreviewPrefix the prefix for viewing the preview
      * @param templateComposerContextPath the context path for the template composer
      */
-    public void viewChannel(String channelId, String pathInfo, String contextPath, String cmsPreviewPrefix, String templateComposerContextPath);
+    void viewChannel(String channelId, String pathInfo, String contextPath, String cmsPreviewPrefix, String templateComposerContextPath);
 
 }
