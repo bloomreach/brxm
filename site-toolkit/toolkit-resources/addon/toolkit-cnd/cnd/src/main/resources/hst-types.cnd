@@ -300,7 +300,7 @@
 // prototype for the channel properties.
 // Used for default values
 + hst:channel (hst:channel)
-+ hst:configuration (hst:configuration) mandatory
++ hst:configuration (hst:configuration)
 + hst:site (hst:site)
 + hst:mount (hst:mount)
 

@@ -511,98 +511,99 @@ public class ChannelManagerImpl implements MutableChannelManager {
     // private - internal - methods
 
     private void createChannel(Node configRoot, BlueprintService bps, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
-        Node blueprintNode = bps.getNode(session);
+        // Create virtual host
+        final URI channelUri = getChannelUri(channel);
+        final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
-        URI channelUri = getChannelUri(channel);
-        Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
+        // Create channel
+        copyOrCreateChannelNode(configRoot, channelId, channel);
 
+        // Create or reuse HST configuration
+        final Node blueprintNode = bps.getNode(session);
+        final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
+        channel.setHstConfigPath(hstConfigPath);
+
+        // Determine the content path to use in the 'site' node. If the blueprint has a content prototype, we will use
+        // '/' for now to ensure valid Hippo mirrors, and fill in the created path *after* creating all HST
+        // configuration (due to the Session.save() in the workflow action, all HST configuration should be created
+        // first to avoid a partial save). Otherwise, we can directly use the existing content path in the channel.
+        Session jcrSession = configRoot.getSession();
+        Node contentRoot = jcrSession.getRootNode();
+        if (!bps.hasContentPrototype()) {
+            String channelContentRoot = channel.getContentRoot();
+            if (StringUtils.isNotEmpty(channelContentRoot) && jcrSession.nodeExists(channelContentRoot)) {
+                contentRoot = jcrSession.getNode(channelContentRoot);
+            } else {
+                throw new ChannelException("Blueprint '" + bps.getId() + "' does not have a content prototype, and channel '"
+                    + channelId + "' refers to a non-existing content root: '" + channelContentRoot + "'");
+            }
+        }
+
+        // Create live and preview site nodes. We don't need to set the property 'hst:configurationpath', as the
+        // HST derives it by convention. If the site node in the blueprint contains an explicit configuration path,
+        // that property will be copied and used instead of the derived one.
+        final Node sitesNode = configRoot.getNode(sites);
+        final Node liveSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId, "live", contentRoot);
+        final Node previewSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId + "-preview", "preview", contentRoot);
+
+        final String mountPointPath = liveSiteNode.getPath();
+        channel.setHstMountPoint(mountPointPath);
+
+        // Create mount
+        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
+        final String locale = channel.getLocale();
+        if (locale != null) {
+            mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
+        }
+
+        // Create content if the blueprint contains a content prototype. The path of the created content node has to
+        // be set on the HST site nodes.
+        if (bps.hasContentPrototype()) {
+            final Node contentRootNode = createContent(bps, session, channelId, channel);
+
+            final Node liveContentMirror = liveSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+            final Node previewContentMirror = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+
+            liveContentMirror.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRootNode.getIdentifier());
+            previewContentMirror.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRootNode.getIdentifier());
+        }
+    }
+
+    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException {
         if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
             configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
         }
         Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channelId, HstNodeTypes.NODETYPE_HST_CHANNEL);
         ChannelPropertyMapper.saveChannel(channelNode, channel);
+    }
 
+    private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelId)
+            throws ChannelException, RepositoryException {
+        // first try to copy existing blueprint configuration
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-            copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION), configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS), channelId);
+            Node blueprintConfiguration = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATION);
+            Node hstConfigurations = configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
+            Node configuration = copyNodes(blueprintConfiguration, hstConfigurations, channelId);
+            return configuration.getPath();
         }
 
-        Session jcrSession = configRoot.getSession();
-        String mountPointPath = null;
+        // next, try to reuse the configuration path specified in the hst:site node of the blueprint
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-            Node siteNode = copyNodes(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE), configRoot.getNode(sites), channelId);
-            mountPointPath = siteNode.getPath();
-            channel.setHstMountPoint(siteNode.getPath());
-
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {
-                siteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, configRoot.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS).getPath() + "/" + channelId);
-            } else {
-                // reuse the configuration path specified in the hst:site node, if it exists
+            Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
+            if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                if (!jcrSession.nodeExists(configurationPath)) {
-                    throw new ChannelException("The hst:site node in blueprint '" + blueprintNode.getPath()
-                            + "' does not have a custom HST configuration in a child node 'hst:configuration' and property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "' points to a non-existing node");
+                if (!session.nodeExists(configurationPath)) {
+                    throw new ChannelException("Blueprint '" + blueprintNode.getPath() + "' does not have an hst:configuration node, and its hst:site node points to a non-existing node: '" + configurationPath + "'");
                 }
-            }
-            channel.setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
-            Node previewSiteNode = copyNodes(siteNode, configRoot.getNode(sites), channelId + "-preview");
-
-            Node previewContentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:availability"});
-            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {"preview"});
-            previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
-
-            // set up content
-            final String contentRootPath;
-            if (bps.hasContentPrototype()) {
-                String blueprintContentPath = bps.getContentRoot();
-                if(blueprintContentPath == null) {
-                    blueprintContentPath = contentRoot;
-                }
-                FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(blueprintContentPath));
-                try {
-                    contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
-                    session.refresh(true);
-
-                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", session.getNode(contentRootPath));
-                    defaultWorkflow.localizeName(channel.getName());
-
-                    session.refresh(true);
-                } catch (WorkflowException e) {
-                    throw new ChannelException("Could not create content root", e);
-                } catch (RemoteException e) {
-                    throw new ChannelException("Could not create content root", e);
-                }
-            } else {
-                contentRootPath = channel.getContentRoot();
-            }
-            if (contentRootPath != null) {
-                final Node contentMirrorNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                previewContentMirrorNode = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                if (jcrSession.itemExists(contentRootPath)) {
-                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
-                    previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
-                } else {
-                    log.warn("Specified content root '" + contentRootPath + "' does not exist");
-                    contentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
-                    previewContentMirrorNode.setProperty(HippoNodeType.HIPPO_DOCBASE, jcrSession.getNode(contentRootPath).getIdentifier());
-                }
-
+                return configurationPath;
             }
         }
 
-        // create mount
-        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
-        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
-
-            final String locale = channel.getLocale();
-            if (locale != null) {
-                mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
-            }
-        } else if (mount.hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
-            mount.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).remove();
-        }
+        // no clue which configuration to use
+        throw new ChannelException("Blueprint '" + blueprintNode.getPath() + "' does not specify any hst:configuration to use. " +
+                "Either include an hst:configuration node to copy, or include an hst:site node with an existing hst:configurationpath property.");
     }
 
     private Node createMountNode(Node virtualHost, final Node blueprintNode, final String mountPath)
@@ -647,6 +648,80 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
 
         return mount;
+    }
+
+    private Node copyOrCreateSiteNode(final Node blueprintNode, final Node sitesNode, final String siteNodeName,
+                                      final String hippoAvailability, final Node contentRoot) throws RepositoryException {
+
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            return copySiteNode(blueprintNode, sitesNode, siteNodeName, contentRoot, hippoAvailability);
+        } else {
+            return createSiteNode(sitesNode, siteNodeName, contentRoot, hippoAvailability);
+        }
+    }
+
+    private Node copySiteNode(final Node blueprintNode, final Node sitesNode, final String siteNodeName,
+                              final Node contentRoot, final String hippoAvailability) throws RepositoryException {
+        Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Copying site node '{}' to '{}'", blueprintSiteNode.getPath(), sitesNode.getPath() + "/" + siteNodeName);
+        }
+        Node siteNode = copyNodes(blueprintSiteNode, sitesNode, siteNodeName);
+
+        Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+        contentNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {hippoAvailability});
+        contentNode.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRoot.getIdentifier());
+
+        return siteNode;
+    }
+
+    private Node createSiteNode(final Node sitesNode, final String siteNodeName, final Node contentRoot,
+                                final String hippoAvailability) throws RepositoryException {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating site node '{}'; content root='{}',hippo:availability='{}'",
+                    new Object[]{sitesNode.getPath() + "/" + siteNodeName, contentRoot.getPath(), hippoAvailability});
+        }
+        final Node siteNode = sitesNode.addNode(siteNodeName, HstNodeTypes.NODETYPE_HST_SITE);
+
+        final Node contentNode = siteNode.addNode(HstNodeTypes.NODENAME_HST_CONTENTNODE, HippoNodeType.NT_FACETSELECT);
+        contentNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {"hippo:availability"});
+        contentNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {hippoAvailability});
+        contentNode.setProperty(HippoNodeType.HIPPO_MODES, new String[] {"single"});
+        contentNode.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRoot.getIdentifier());
+
+        return siteNode;
+    }
+
+    private Node createContent(final BlueprintService bps, final Session session, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
+        String blueprintContentPath = bps.getContentRoot();
+        if (blueprintContentPath == null) {
+            blueprintContentPath = contentRoot;
+        }
+
+        log.debug("Creating new subsite content from blueprint '{}' under '{}'", bps.getId(), blueprintContentPath);
+
+        FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(blueprintContentPath));
+        if (fw == null) {
+            throw cannotCreateContent(blueprintContentPath, null);
+        }
+        try {
+            String contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
+            session.refresh(true);
+
+
+            final Node contentRootNode = session.getNode(contentRootPath);
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow("core", contentRootNode);
+            defaultWorkflow.localizeName(channel.getName());
+
+            session.refresh(true);
+
+            return contentRootNode;
+        } catch (WorkflowException e) {
+            throw cannotCreateContent(blueprintContentPath, e);
+        } catch (RemoteException e) {
+            throw cannotCreateContent(blueprintContentPath, e);
+        }
     }
 
     private static Node getOrAddNode(Node parent, String nodeName, String nodeType) throws RepositoryException {
@@ -780,6 +855,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
      */
     static ChannelException mountExistsException(String existingMount) {
         return new ChannelException("Mount already exists: " + existingMount, ChannelException.Type.MOUNT_EXISTS, existingMount);
+    }
+
+    /**
+     * Static factory method for a ChannelException of type {@link ChannelException.Type#CANNOT_CREATE_CONTENT}.
+     *
+     * @param contentRoot the absolute JCR path of the path at which the content could not be created
+     * @return a ChannelException of type {@link ChannelException.Type#CANNOT_CREATE_CONTENT}.
+     */
+    static ChannelException cannotCreateContent(String contentRoot, Throwable cause) {
+        return new ChannelException("Could not create content at '" + contentRoot + "'", cause,
+                ChannelException.Type.CANNOT_CREATE_CONTENT, contentRoot);
     }
 
 }

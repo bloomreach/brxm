@@ -218,7 +218,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertTrue(getSession().itemExists(sitePath));
 
         Node siteNode = getSession().getNode(sitePath);
-        assertEquals("/hst:hst/hst:configurations/" + channelId, siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
         assertEquals(getSession().getNode("/unittestcontent/documents").getIdentifier(),
                 siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE).getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
     }
@@ -327,6 +326,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         final Channel channel = manager.getBlueprint("cmit-test-bp").createChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
+        channel.setContentRoot("/");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));

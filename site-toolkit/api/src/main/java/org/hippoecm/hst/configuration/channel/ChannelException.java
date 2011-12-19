@@ -29,7 +29,8 @@ public class ChannelException extends Exception {
 
         UNKNOWN("unknown"),
         MOUNT_EXISTS("mount.exists"),
-        MOUNT_NOT_FOUND("mount.not.found");
+        MOUNT_NOT_FOUND("mount.not.found"),
+        CANNOT_CREATE_CONTENT("cannot.create.content");
 
         private final String key;
 
