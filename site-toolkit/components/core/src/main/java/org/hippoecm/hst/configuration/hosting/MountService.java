@@ -543,7 +543,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                         log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
                     }
                 } catch (ServiceException e) {
-                    log.error("Skipping incorrect configured child mount for '"+childMount.getParent()+"'", e);
+                    log.error("Skipping incorrect configured child mount '"+childMount.getValueProvider().getName()+"' for '"+childMount.getParent()+"'", e);
                 }
             }
         }
