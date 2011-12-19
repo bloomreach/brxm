@@ -121,7 +121,7 @@ public class EventPreProcessor {
                 if (otherPath.equals(path)) {
                     continue;
                 }
-                if (path.startsWith(otherPath) && event.getType() == Event.NODE_REMOVED) {
+                if (path.startsWith(otherPath + "/") && event.getType() == Event.NODE_REMOVED) {
                     return true;
                 }
             } catch (RepositoryException e) {
