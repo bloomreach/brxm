@@ -15,24 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeDefinition;
-
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -45,6 +27,11 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeDefinition;
+import java.util.*;
 
 public class DereferencedSessionImporter implements Importer {
 
@@ -122,7 +109,9 @@ public class DereferencedSessionImporter implements Importer {
                     node.addMixin(mixinNames[i]);
                 }
             }
-            node.setPrimaryType(nodeTypeName.toString());
+            if (nodeTypeName != null) {
+                node.setPrimaryType(nodeTypeName.toString());
+            }
            /*NodeImpl origin = nodeInfo.getOrigin();
             node = parent.replaceChildNode(origin.getNodeId(), nodeName, nodeTypeName, mixinNames);
             for(PropertyIterator iter = origin.getProperties(); iter.hasNext(); ) {
