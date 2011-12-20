@@ -38,7 +38,7 @@
 
   <properties>
     <hippo.repository.version>2.22.00</hippo.repository.version>
-    <hippo.cms.version>2.21.08-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>2.22.00</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.21.08-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.21.08-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.08.07-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
@@ -65,14 +65,6 @@
   </properties>
 
   <repositories>
-    <repository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2-snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
     <repository>
       <id>hippo</id>
       <name>Hippo Maven 2</name>
