@@ -262,6 +262,8 @@ public class FieldEditor extends Panel {
     
     private static class CheckBoxDisableCssClassAppender extends CssClassAppender {
 
+        private static final long serialVersionUID = 1L;
+
         public CheckBoxDisableCssClassAppender(final CheckBox checkBox) {
             super(new LoadableDetachableModel<String>() {
                 private static final long serialVersionUID = 1L;
