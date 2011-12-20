@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.channelmanager.plugins.channelactions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -198,7 +199,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         }
     }
 
-    protected static class ChannelDocumentNameComparator implements Comparator<ChannelDocument> {
+    protected static class ChannelDocumentNameComparator implements Comparator<ChannelDocument>, Serializable {
 
         @Override
         public int compare(final ChannelDocument o1, final ChannelDocument o2) {
