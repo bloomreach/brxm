@@ -18,8 +18,6 @@ package org.hippoecm.hst.content.rewriter;
 import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
