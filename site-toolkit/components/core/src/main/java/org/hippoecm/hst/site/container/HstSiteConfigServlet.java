@@ -254,7 +254,7 @@ public class HstSiteConfigServlet extends HttpServlet {
             
             configurationReloadingStrategy.setRefreshDelay(configurationRefreshDelay);
             ((AbstractFileConfiguration) this.configuration).setReloadingStrategy(configurationReloadingStrategy);
-            log.warn("HstSiteConfigServlet enables component manager reloading on configuration change with refreshing delay = {} ms", configurationRefreshDelay);
+            log.info("HstSiteConfigServlet enables component manager reloading on configuration change with refreshing delay = {} ms", configurationRefreshDelay);
             
             destroyHstSiteConfigurationChangesCheckerThread();
             hstSiteConfigurationChangesCheckerThread = new HstSiteConfigurationChangesChecker();
