@@ -104,6 +104,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     /**
      * Workflow callback handler
      */
+    @SuppressWarnings("rawtypes")
     protected WorkflowCallbackHandler workflowCallbackHandler;
 
     /**
@@ -270,6 +271,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         }
     }
     
+    @SuppressWarnings("rawtypes")
     protected String createNodeByWorkflow(Node folderNode, String nodeTypeName, String name)
             throws ObjectBeanPersistenceException {
         try {
@@ -381,6 +383,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * @param customContentNodeBinder
      * @throws ObjectBeanPersistenceException
      */
+    @SuppressWarnings("unchecked")
     public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ObjectBeanPersistenceException {
         String path = null; 
         if (content instanceof HippoBean) {
@@ -405,7 +408,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             boolean changed = customContentNodeBinder.bind(content, contentNode);
                             
                             if (changed) {
-                                contentNode.save();
+                                contentNode.getSession().save();
                                 // we need to recreate the EditableWorkflow because the node has changed
                                 ewf = (EditableWorkflow) getWorkflow(documentNodeWorkflowCategory, contentNode);
                                 document = ewf.commitEditableInstance();
@@ -427,9 +430,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     } else if (workflowCallbackHandler != null) {
                         if (wf != null) {
                             workflowCallbackHandler.processWorkflow(wf);
-                        } else {
-                            throw new ObjectBeanPersistenceException("Workflow callback cannot be called because the workflow is null. ");
-                        }
+                        } 
                     }
                 }
             } catch (ObjectBeanPersistenceException e) {
