@@ -223,13 +223,13 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                     if(log.isDebugEnabled()) {
                         log.debug("Not a search in a virtual structure. Return the scope for the node '{}' only.", currentNode.getPath());
                     }
-                    String scopeUUID =  canonical.getUUID();
+                    String scopeUUID =  canonical.getIdentifier();
                     facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                 }
             } else {
                 // we are searching in a virtual node. Let's compute the context where clause to represent this in a physical search
                 // when we can get a canonical, we know for sure it is referenceable
-                String scopeUUID =  canonical.getUUID();
+                String scopeUUID =  canonical.getIdentifier();
                 facetSelectClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(scopeUUID).append("'");
                 appendFacetSelectClauses(currentNode.getSession(), currentNode, facetSelectClauses , true);
             }

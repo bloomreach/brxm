@@ -38,6 +38,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     private javax.jcr.Node canonicalHandleNode;
 
     private boolean availableTranslationsBeanMappingClassInitialized;
+    @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslationsBeanMappingClass;
     
     /**
@@ -57,6 +58,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
      * @param beanMappingClass
      * @return the {@link HippoCompoundBean} at <code>relPath</code> if there is a compound of type <code>beanMappingClass</code> and <code>null</code> otherwise
      */
+    @SuppressWarnings("unchecked")
     public <T extends HippoCompoundBean> T getHippoCompound(String relPath, Class<T> beanMappingClass) {
         if(compounds == null) {
             compounds = new BeansWrapper<HippoCompoundBean>(this);
@@ -129,6 +131,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         }
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
         if(!availableTranslationsBeanMappingClassInitialized) {
             availableTranslationsBeanMappingClassInitialized = true;

@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is a useful bean for finding available translations of one and the same bean (folder or document). Because there is already also 
@@ -33,8 +31,6 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType="hippotranslation:translations")
 public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
 
-    private static Logger log = LoggerFactory.getLogger(HippoAvailableTranslations.class);
-    
     private Map<String, K> translations;
     private Class<HippoBean> beanMappingClass;
     
@@ -49,6 +45,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
     }
 
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<K> getTranslations() {
         populate();        
         return new ArrayList(translations.values());
@@ -60,6 +57,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
     }
     
 
+    @SuppressWarnings("unchecked")
     private void populate() {
         if(translations != null) {
             return;

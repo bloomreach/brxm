@@ -27,12 +27,10 @@ import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.slf4j.LoggerFactory;
 
 
 public class HstQueryManagerImpl implements HstQueryManager{
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
     private ObjectConverter objectConverter;
     private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     private Session session;
@@ -66,6 +64,7 @@ public class HstQueryManagerImpl implements HstQueryManager{
      * the result may also contain HippoBean's whose primarytype is a subtype of the filterBean type. 
      * 
      */
+    @SuppressWarnings("unchecked")
     public HstQuery createQuery(Node scope, Class<? extends HippoBean> filterBean, boolean includeSubTypes) throws QueryException {
         if(!includeSubTypes) {
            return createQuery(scope, filterBean);

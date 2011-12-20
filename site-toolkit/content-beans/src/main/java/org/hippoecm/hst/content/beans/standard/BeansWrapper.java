@@ -32,6 +32,8 @@ public class BeansWrapper<B extends HippoBean> {
        this.bean = bean;
     }
     
+    
+    @SuppressWarnings("unchecked")
     public B getBean(String relPath, Class<B> beanMappingClass){
         BeanWrapper<B> wrapped = wrappedBeans.get(relPath);
         if(wrapped != null) {

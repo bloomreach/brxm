@@ -156,7 +156,7 @@ public class HstQueryImpl implements HstQuery {
                     } else {
                         Node canonicalExcludeScope = ((HippoNode)excludeScope).getCanonicalNode();
                         if(canonicalExcludeScope != null && canonicalExcludeScope.isNodeType("mix:referenceable")) {
-                            scopeUUID = canonicalExcludeScope.getUUID();
+                            scopeUUID = canonicalExcludeScope.getIdentifier();
                         } else {
                             if(canonicalExcludeScope == null) {
                                log.warn("Cannot use a virtual only node in exclude scopes. Exclude Scope '{}' is ignored",excludeScope.getPath()); 

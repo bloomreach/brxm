@@ -55,7 +55,8 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     public List<HippoFolderBean> getFolders(){
          return this.getFolders(false);
     }
-    
+
+    @SuppressWarnings("unchecked")
     public List<HippoFolderBean> getFolders(boolean sorted){
         if(this.hippoFolders != null) {
             if(sorted) {
@@ -113,7 +114,8 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
             return new ArrayList<HippoDocumentBean>();
         }
     }
-    
+
+    @SuppressWarnings("unchecked")
     public <T> List<T> getDocuments(Class<T> beanMappingClass) {
         List<HippoDocumentBean> documents = getDocuments();
         List<T> documentOfClass = new ArrayList<T>();
@@ -124,7 +126,8 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
         }
         return documentOfClass;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public List<HippoDocumentBean> getDocuments(boolean sorted) {
         if(this.hippoDocuments != null) {
             if(sorted) {
@@ -176,7 +179,8 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
         return null;
     }
     
-   
+
+    @SuppressWarnings("unchecked")
    private <T> T getHippoDocument(javax.jcr.Node node, Class<T> beanMappingClass) {
        HippoDocumentBean bean = getHippoDocument(node);
        if(bean == null) {
@@ -233,10 +237,6 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
         Class<T> beanMappingClass;
         T nextHippoDocument;
         int position = -1;
-        
-        public HippoDocumentIteratorImpl() {
-            this(null);
-         }
         
         public HippoDocumentIteratorImpl(Class<T> beanMappingClass) {
             if(beanMappingClass == null) {

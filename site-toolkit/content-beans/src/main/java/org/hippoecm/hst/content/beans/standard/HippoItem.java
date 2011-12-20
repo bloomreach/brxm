@@ -53,6 +53,7 @@ public class HippoItem implements HippoBean {
     protected boolean detached = false;
 
     private boolean availableTranslationsBeanInitialized;
+    @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslationsBean;
     
     
@@ -114,6 +115,7 @@ public class HippoItem implements HippoBean {
         return properties;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getProperty(String name) {
         return (T) getProperties().get(name);
     }
@@ -122,6 +124,7 @@ public class HippoItem implements HippoBean {
     @Override
     public <T> T getProperty(String name, T defaultValue) {
         
+        @SuppressWarnings("unchecked")
         T val = (T) getProperties().get(name);
         if(val == null) {
             return defaultValue;
@@ -138,6 +141,7 @@ public class HippoItem implements HippoBean {
         return this.getProperties();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getBean(String relPath) {
         try {
             Object o = this.objectConverter.getObject(node, relPath);
@@ -152,6 +156,7 @@ public class HippoItem implements HippoBean {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass) {
         try {
             Object o = this.objectConverter.getObject(node, relPath);
@@ -171,6 +176,7 @@ public class HippoItem implements HippoBean {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> List<T> getChildBeans(Class<T> beanMappingClass) {
         List<T> childBeans = new ArrayList<T>();
         NodeIterator nodes;
@@ -207,10 +213,12 @@ public class HippoItem implements HippoBean {
 
 
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T> List<T> getChildBeansByName(String childNodeName) {
         return getChildBeansByName(childNodeName, (Class)null);
     }
     
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass) {
         List<T> childBeans = new ArrayList<T>();
         NodeIterator nodes;
@@ -249,7 +257,9 @@ public class HippoItem implements HippoBean {
 
     
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
+        @SuppressWarnings("rawtypes")
         Class annotatedClass = this.objectConverter.getAnnotatedClassFor(jcrPrimaryNodeType);
         if (annotatedClass == null) {
             log.warn("Cannot get ChildBeans for jcrPrimaryNodeType '{}' because there is no annotated class for this node type. Return null",
@@ -294,6 +304,7 @@ public class HippoItem implements HippoBean {
         return childBeans;
     }
   
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> T getLinkedBean(String relPath, Class<T> beanMappingClass) {
         HippoMirrorBean mirror = getBean(relPath, HippoMirrorBean.class);
         if (mirror == null) {
@@ -311,6 +322,7 @@ public class HippoItem implements HippoBean {
         return (T) bean;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass) {
         List<T> childBeans = new ArrayList<T>();
         String fromNode = null;
@@ -498,6 +510,7 @@ public class HippoItem implements HippoBean {
     }
 
     
+    @SuppressWarnings("unchecked")
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
         if(!availableTranslationsBeanInitialized) {
             availableTranslationsBeanInitialized = true;
