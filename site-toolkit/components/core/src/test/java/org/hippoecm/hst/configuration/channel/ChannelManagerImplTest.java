@@ -256,6 +256,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(newHost.getVirtualHosts()).andReturn(vhosts).anyTimes();
         expect(newMount.getLocale()).andReturn("nl_NL").anyTimes();
         expect(newMount.getScheme()).andReturn("http").anyTimes();
+        expect(newMount.isPreview()).andReturn(false);
+        expect(newMount.isMapped()).andReturn(true);
         expect(newMount.getMountPath()).andReturn("").anyTimes();
         expect(newMount.getPort()).andReturn(0).anyTimes();
 
@@ -410,6 +412,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(mount.getLocale()).andReturn("en_EN");
         expect(mount.getScheme()).andReturn("http");
         expect(mount.getMountPath()).andReturn("");
+        expect(mount.isPreview()).andReturn(false);
+        expect(mount.isMapped()).andReturn(true);
         expect(mount.isPortInUrl()).andReturn(false);
     }
 
