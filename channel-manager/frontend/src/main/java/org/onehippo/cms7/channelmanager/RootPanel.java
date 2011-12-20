@@ -46,10 +46,14 @@ public class RootPanel extends ExtPanel {
         TEMPLATE_COMPOSER(1),
         HST_CONFIG_EDITOR(2);
 
-        private Integer tabIndex;
+        private final int tabIndex;
 
-        private CardId(Integer tabIndex) {
+        private CardId(int tabIndex) {
             this.tabIndex = tabIndex;
+        }
+
+        int getTabIndex() {
+            return tabIndex;
         }
 
     }
@@ -157,7 +161,7 @@ public class RootPanel extends ExtPanel {
     }
 
     public void setActiveCard(CardId rootPanelCard) {
-        this.activeItem = rootPanelCard.tabIndex;
+        this.activeItem = rootPanelCard.getTabIndex();
         redraw();
     }
 
