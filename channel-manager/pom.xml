@@ -36,11 +36,6 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
-    <repository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2 Snapshots</name>
-      <url>http://maven.onehippo.com/maven2-snapshots/</url>
-    </repository>
   </repositories>
 
   <dependencyManagement>
