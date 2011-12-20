@@ -139,6 +139,13 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     private void loadFromMount(MutableMount mount) {
+        // we are only interested in Mount's that have isMapped = true and that 
+        // are live mounts: We do not display 'preview' Mounts in cms: instead, a 
+        // live mount decorated as preview are shown
+        if(!mount.isMapped() || mount.isPreview()) {
+            log.debug("Skipping mount '{}' because it is either not mapped or is a preview mount", mount.getName());
+            return;
+        }
         String channelPath = mount.getChannelPath();
         if (channelPath == null) {
             // mount does not have an associated channel
