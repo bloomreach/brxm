@@ -24,6 +24,10 @@ Ext.namespace('Hippo.ChannelManager');
  */
 Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
 
+    // The name and URL of a channel should not end in "-preview" because
+    // the HST uses this suffix internally to distinguish live and preview sites
+    ILLEGAL_CHANNEL_SUFFIX: "-preview",
+
     constructor: function(config) {
         this.store = config.store;
         this.resources = config.resources;
@@ -67,7 +71,10 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'textfield',
                     fieldLabel: me.resources['new-channel-field-name'],
                     id: 'name',
-                    allowBlank: false
+                    allowBlank: false,
+                    validator: function(value) {
+                        return !me.endsWith(value, me.ILLEGAL_CHANNEL_SUFFIX);
+                    }
                 },
                 {
                     xtype: 'textfield',
@@ -77,7 +84,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     validator: function(value) {
                         var expr = /^https?:\/\/([\-\w]+\.)*\w+(\/[\-\w]+)*$/i;
                         if (expr.test(value) === true) {
-                            return true;
+                            return !me.endsWith(value, me.ILLEGAL_CHANNEL_SUFFIX);
                         } else {
                             return me.resources['error-new-channel-url-format'];
                         }
@@ -123,6 +130,11 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
         }, this);
 
         this.doLayout();
+    },
+
+    // checks whether str ends with suffix
+    endsWith: function(str, suffix) {
+        return str !== null && suffix !== null && str.indexOf(suffix, str.length - suffix.length) !== -1;
     },
 
     submitForm: function() {
