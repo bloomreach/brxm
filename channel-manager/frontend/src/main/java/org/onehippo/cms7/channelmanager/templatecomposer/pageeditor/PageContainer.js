@@ -182,6 +182,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             if (this.renderPathInfo) {
                 iFrameUrl += this.renderPathInfo;
             }
+            if (iFrameUrl === this.contextPath) {
+                // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
+                // The iframe url should therefore end with '/'.
+                iFrameUrl += '/';
+            }
             iFrame.setSrc(iFrameUrl);
 
             // keep session active
