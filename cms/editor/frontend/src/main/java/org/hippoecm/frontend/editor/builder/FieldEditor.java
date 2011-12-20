@@ -95,7 +95,8 @@ public class FieldEditor extends Panel {
             public void detach() {
             }
         }));
-        addFormField(new CheckBox("mandatory", new IModel<Boolean>() {
+        // required checkbox
+        CheckBox mandatoryCheckBox = new CheckBox("mandatory", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 
             public Boolean getObject() {
@@ -127,9 +128,59 @@ public class FieldEditor extends Panel {
                 if (getDescriptor().isMandatory()) {
                     return false;
                 }
+                if (getDescriptor().getValidators().contains("optional")) {
+                    return false;
+                }
                 return super.isEnabled();
             }
-        });
+        };
+        addFormField(mandatoryCheckBox);
+        Label mandatoryLabel = new Label("mandatory-label", new ResourceModel("mandatory"));
+        mandatoryLabel.add(new CheckBoxDisableCssClassAppender(mandatoryCheckBox));
+        add(mandatoryLabel);
+        
+        // optional checkbox
+        CheckBox optionalCheckBox = new CheckBox("optional", new IModel<Boolean>() {
+            private static final long serialVersionUID = 1L;
+
+            public Boolean getObject() {
+                return getDescriptor().getValidators().contains("optional");
+            }
+
+            public void setObject(Boolean object) {
+                IFieldDescriptor field = getDescriptor();
+                if (object) {
+                    field.addValidator("optional");
+                } else {
+                    field.removeValidator("optional");
+                }
+            }
+
+            public void detach() {
+            }
+        }) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isEnabled() {
+                if (getDescriptor().isMandatory()) {
+                    return false;
+                }
+                if (getDescriptor().getValidators().contains("required")) {
+                    return false;
+                }
+                if (getDescriptor().isMultiple()) {
+                    return false;
+                }
+                return super.isEnabled();
+            }
+        };
+        addFormField(optionalCheckBox);
+        Label optionalLabel = new Label("optional-label", new ResourceModel("optional"));
+        optionalLabel.add(new CheckBoxDisableCssClassAppender(optionalCheckBox));
+        add(optionalLabel);
+        
+        // multiple checkbox
         addFormField(new CheckBox("multiple", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 
@@ -139,26 +190,18 @@ public class FieldEditor extends Panel {
 
             public void setObject(Boolean object) {
                 getDescriptor().setMultiple(object);
+                if (object) {
+                    getDescriptor().removeValidator("optional");
+                }
             }
 
             public void detach() {
             }
         }));
-        Label orderedLabel = new Label("ordered-label", new ResourceModel("ordered"));
-        orderedLabel.add(new CssClassAppender(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String load() {
-                if (getDescriptor().isMultiple()) {
-                    return "";
-                } else {
-                    return "disabled";
-                }
-            }
-        }));
-        add(orderedLabel);
-        CheckBox ordered = new CheckBox("ordered", new IModel<Boolean>() {
+        add(new Label("multiple-label", new ResourceModel("multiple")));
+        
+        // ordered checkbox
+        CheckBox orderedCheckBox = new CheckBox("ordered", new IModel<Boolean>() {
             private static final long serialVersionUID = 1L;
 
             public Boolean getObject() {
@@ -179,7 +222,10 @@ public class FieldEditor extends Panel {
                 return super.isEnabled() && getDescriptor().isMultiple();
             }
         };
-        addFormField(ordered);
+        addFormField(orderedCheckBox);
+        Label orderedLabel = new Label("ordered-label", new ResourceModel("ordered"));
+        orderedLabel.add(new CheckBoxDisableCssClassAppender(orderedCheckBox));
+        add(orderedLabel);
     }
 
     IFieldDescriptor getDescriptor() {
@@ -212,5 +258,24 @@ public class FieldEditor extends Panel {
     }
 
     protected void onUpdate(AjaxRequestTarget target) {
+    }
+    
+    private static class CheckBoxDisableCssClassAppender extends CssClassAppender {
+
+        public CheckBoxDisableCssClassAppender(final CheckBox checkBox) {
+            super(new LoadableDetachableModel<String>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public String load() {
+                    if (checkBox.isEnabled()) {
+                        return "";
+                    } else {
+                        return "disabled";
+                    }
+                }
+            });
+        }
+        
     }
 }
