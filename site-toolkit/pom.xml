@@ -140,15 +140,7 @@
   </distributionManagement>
   
   <repositories>
-    <repository>
-      <id>hippo-maven2-snapshots</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2-snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
+   <repository>
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>http://maven.onehippo.com/maven2/</url>
