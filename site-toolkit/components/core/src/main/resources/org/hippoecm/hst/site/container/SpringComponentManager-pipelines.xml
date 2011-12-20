@@ -127,7 +127,6 @@
 
   <bean id="componentRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ComponentRenderingValve">
   </bean>
- 
   <!-- Post-processing valves -->
   
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
@@ -171,7 +170,13 @@
         </entry>
         <!-- A noop pipeline -->
         <entry key="NoopPipeline">
-           <bean class="org.hippoecm.hst.core.container.HstSitePipeline"/>
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+             <property name="initializationValves">
+              <list>
+                 <bean class="org.hippoecm.hst.core.container.NoContentValve"/>
+              </list>
+             </property>
+           </bean>
         </entry>
       </map>
     </property>
