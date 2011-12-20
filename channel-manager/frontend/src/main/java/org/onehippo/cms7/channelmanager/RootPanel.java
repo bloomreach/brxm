@@ -127,7 +127,7 @@ public class RootPanel extends ExtPanel {
             try {
                 update.put("activeItem", activeItem);
             } catch (JSONException e) {
-                throw new RuntimeException("could not populate property updates");
+                throw new RuntimeException("could not populate property updates", e);
             }
             target.appendJavascript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
             redraw = false;

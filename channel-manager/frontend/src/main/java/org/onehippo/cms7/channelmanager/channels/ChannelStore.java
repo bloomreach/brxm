@@ -228,7 +228,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         } catch (ChannelException e) {
             log.warn("Could not create new channel with blueprint '{}': {}", blueprintId, e.getMessage());
             log.debug("Cause:", e);
-            throw new ActionFailedException(getResourceValue("error.blueprint.cannot.create.channel", blueprintId));
+            throw new ActionFailedException(getResourceValue("error.blueprint.cannot.create.channel", blueprintId), e);
         }
 
         // set channel parameters
@@ -291,9 +291,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 case MOUNT_EXISTS:
                     String channelUrl = newChannel.getUrl();
                     String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
-                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl));
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl), cause);
                 default:
-                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), ce.getParameters()));
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), ce.getParameters()), cause);
             }
         }
         log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
