@@ -223,12 +223,10 @@ a.hst-cmseditlink {
     float: left;
     font: normal 12px arial, sans-serif;
     height: 24px;
-    margin-right: 6px;
-    padding-right: 8px;
     text-decoration: none;
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0;
+    right: 0;
 }
 
 a.hst-cmseditlink span {
