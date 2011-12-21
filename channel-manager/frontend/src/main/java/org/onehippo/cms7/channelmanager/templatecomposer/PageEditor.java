@@ -32,6 +32,7 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -206,6 +207,9 @@ public class PageEditor extends ExtPanel {
                 try {
                     for (int i = 0; i < values.length(); i++) {
                         String uuid = values.getString(i);
+                        if (Strings.isEmpty(uuid)) {
+                            continue;
+                        }
                         try {
                             javax.jcr.Node node = UserSession.get().getJcrSession().getNodeByIdentifier(uuid);
                             JcrNodeModel nodeModel = new JcrNodeModel(node);
