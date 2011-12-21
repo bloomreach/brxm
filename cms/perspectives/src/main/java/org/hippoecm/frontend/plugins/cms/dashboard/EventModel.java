@@ -28,6 +28,7 @@ import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,12 @@ public class EventModel implements IComponentAssignedModel<String> {
             this.user = node.getProperty("hippolog:eventUser").getString();
             this.nameModel = nameModel;
         } catch (RepositoryException ex) {
-            log.error("Could not parse event node " + eventNode.getItemModel().getPath());
+            JcrItemModel itemModel = eventNode.getItemModel();
+            if (itemModel.exists()) {
+                log.error("Could not parse event node " + itemModel.getPath());
+            } else {
+                log.warn("Event node retrieved that no longer exists");
+            }
         }
     }
 
