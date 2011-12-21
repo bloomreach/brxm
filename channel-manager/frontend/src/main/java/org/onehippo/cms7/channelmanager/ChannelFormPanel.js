@@ -94,6 +94,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     xtype: 'linkpicker',
                     fieldLabel: me.resources['new-channel-field-content'],
                     id: 'contentRoot',
+                    hideMode: 'visibility',
                     style: {
                         marginLeft: '69px'
                     },
@@ -122,7 +123,9 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
             if (blueprint.get('hasContentPrototype')) {
                 contentRootCmp.hide();
             } else {
-                contentRootCmp.setDefaultValue(blueprint.get('contentRoot'));
+                var contentRoot = blueprint.get('contentRoot');
+                contentRootCmp.setDefaultValue(contentRoot);
+                contentRootCmp.setValue(contentRoot);
                 contentRootCmp.show();
             }
 
