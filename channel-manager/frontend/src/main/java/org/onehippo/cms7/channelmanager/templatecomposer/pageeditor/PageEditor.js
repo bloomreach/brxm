@@ -124,9 +124,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
 
         if (!this.pageContainer.previewMode) {
-            if (!this.propertiesWindow) {
-                this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
+            if (this.propertiesWindow) {
+                this.propertiesWindow.destroy();
             }
+            this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
 
             var toolkitGrid = Ext.getCmp('ToolkitGrid');
             toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
