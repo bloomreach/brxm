@@ -18,6 +18,9 @@ Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
 Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
+    // height of the toolbar (in pixels)
+    TOOLBAR_HEIGHT: 28,
+
     constructor : function(config) {
         if (config.debug) {
             Ext.Ajax.timeout = 90000; // this changes the 30 second default to 90 seconds
@@ -59,7 +62,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     tbar: {
                         id: 'pageEditorToolbar',
                         cls: 'channel-manager-toolbar',
-                        height: 28,
+                        height: this.TOOLBAR_HEIGHT,
                         items: [
                         ]
                     }
@@ -289,8 +292,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('afterrender', function() {
             var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                // correct for the border of the outer panel: 1 pixel left and right, so 2px in total
-                Ext.getCmp('Iframe').setSize(arguments[0].body.w - 2, arguments[0].body.h);
+                // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
+                // The height of the yui layout div also includes the space for the toolbar, so subtract that.
+                Ext.getCmp('Iframe').setSize(arguments[0].body.w - 2, arguments[0].body.h - this.TOOLBAR_HEIGHT);
             }, true);
         }, this, {single: true});
 
