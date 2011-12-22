@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>7.8.0-SNAPSHOT</version>
+  <version>7.7.0-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -37,7 +37,7 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.22.00</hippo.repository.version>
+    <hippo.repository.version>2.22.01</hippo.repository.version>
     <hippo.cms.version>2.22.00</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.22.00</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.22.00</hippo.addon-publication-workflow.version>
