@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>1.01.05-SNAPSHOT</version>
+    <version>1.02.00</version>
   </parent>
 
   <name>Hippo Test Suite CMS</name>
   <description>Hippo Test Suite CMS</description>
   <artifactId>hippo-testsuite-cms</artifactId>
-  <version>1.01.05-SNAPSHOT</version>
+  <version>1.02.00</version>
   <packaging>war</packaging>
 
   <dependencies>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-content</artifactId>
-      <version>1.01.05-SNAPSHOT</version>
+      <version>1.02.00</version>
     </dependency>
     
     <!--  Gallery picker dependency -->
