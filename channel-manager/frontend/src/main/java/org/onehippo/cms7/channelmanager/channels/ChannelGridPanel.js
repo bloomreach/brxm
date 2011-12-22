@@ -135,7 +135,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
             AJAX = new ActiveXObject("Microsoft.XMLHTTP");
         }
         if (AJAX) {
-            AJAX.open("POST", url, false);
+            AJAX.open('GET', url, false);
             for (var i in headers) {
                 AJAX.setRequestHeader(i, headers[i]);
             }
