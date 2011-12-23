@@ -546,7 +546,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     return Collections.emptyList();
                 } 
                 if(canonicalNode == null) {
-                    log.warn("The HST has no support to return all available canonical links for virtual only nodes");
+                    log.debug("The HST has no support to return all available canonical links for virtual only nodes");
                     return Collections.emptyList();
                 } 
                 
@@ -554,7 +554,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 if(node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                     node = NodeUtils.getDeref(node);
                     if( node == null ) {
-                        log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", nodePath);
+                        log.debug("Broken content internal link for '{}'. Cannot create a HstLink for it. Return an empty list for canonical links.", nodePath);
                         return Collections.emptyList();
                     }
                 }
@@ -579,7 +579,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 } else {
                     mountsForHostGroup = mount.getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);    
                     if(mountsForHostGroup == null || mountsForHostGroup.isEmpty()) {
-                        log.warn("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
+                        log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
                         return Collections.emptyList();
                     }
                 }
@@ -655,7 +655,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
                 
             } catch(RepositoryException e){
-                log.error("Repository Exception during creating link", e);
+                log.warn("Repository Exception during creating link", e);
             }
             
             if(linkInfoList.isEmpty()) {
