@@ -141,8 +141,10 @@ public class ChannelGridPanel extends ExtPanel {
             fieldConfig.put("xtype", "templatecolumn");
             fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" "
                     + "title=\"" + liveTooltip + "\">{url}</a>"
-                    + "<a href=\"{contextPath}/{cmsPreviewPrefix}{mountPath}\" name=\"show-preview\" "
-                    + "class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
+                    + "<a href=\"{contextPath}"
+                    + "{[values.cmsPreviewPrefix !== '' ? '/' : '']}{cmsPreviewPrefix}"
+                    + "{[values.mountPath === '' ? '/' : '']}{mountPath}\" "
+                    + "name=\"show-preview\" class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
                     + previewTooltip + "\">" + previewLabel + "</a>");
         }
         return fieldConfig;
