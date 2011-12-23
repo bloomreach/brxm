@@ -568,9 +568,9 @@
         <body-content>JSP</body-content>
         <description> This tag can be used to create DOM Element to create head contribution
             element. If you create a DOM Element via this tag and pass the variable to a
-            head-contribution tag, then the head-contribution element does not need to parse the
+            headContribution tag, then the headContribution element does not need to parse the
             text content to create the head contribution DOM element. So, this tag provides an
-            optimized way to create a head-contribution element. This tag can contain zero, one or
+            optimized way to create a headContribution element. This tag can contain zero, one or
             more attribute tags to set attributes. Also, this tag can contain text content to set
             the text content of the DOM element. </description>
         <attribute>
@@ -596,7 +596,7 @@
         <description> A HstComponent can contribute HTML HEAD elements to the page aggregation.
             Because the output of a HstComponent is usually put in the middle of BODY area, it is
             not recommended to include some javascripts or style definitions in its view page. If
-            the view page uses this head-contribution tag including some head element, then the
+            the view page uses this headContribution tag including some head element, then the
             container will include the head element at the final page aggregation phase. </description>
         <attribute>
             <name>keyHint</name>
@@ -617,7 +617,7 @@
             <type>org.w3c.dom.Element</type>
             <description> For more optimized way to create and use DOM element, this tag supports
                 setting a DOM element by element attribute. If this attribute is set, then the
-                head-contribution tag will not try to parse the body content to create a DOM
+                headContribution tag will not try to parse the body content to create a DOM
                 element. Instead, it will use the passed DOM element by this attribute.
             </description>
         </attribute>
