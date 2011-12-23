@@ -42,7 +42,7 @@
     <hippo.addon-faceteddate.version>2.22.00</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.22.00</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.09.00</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.22.00</hippo.addon-channel-manager.version>
+    <hippo.addon-channel-manager.version>2.22.01-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.22.00</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>1.01.06</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.22.00</hippo.packages.version>
