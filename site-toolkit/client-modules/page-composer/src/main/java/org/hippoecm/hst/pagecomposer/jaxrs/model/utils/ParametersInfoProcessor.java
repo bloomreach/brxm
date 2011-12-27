@@ -15,15 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model.utils;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -32,6 +23,10 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class ParametersInfoProcessor {
 
@@ -111,9 +106,11 @@ public class ParametersInfoProcessor {
         Class<?> returnType = method.getReturnType();
         if (returnType == Date.class) {
             return ComponentWrapper.ParameterType.DATE;
-        } else if (returnType == Long.class || returnType == Integer.class) {
+        } else if (returnType == Long.class || returnType == long.class 
+                || returnType == Integer.class || returnType == int.class 
+                || returnType == Short.class || returnType == short.class) {
             return ComponentWrapper.ParameterType.NUMBER;
-        } else if (returnType == Boolean.class) {
+        } else if (returnType == Boolean.class || returnType == boolean.class) {
             return ComponentWrapper.ParameterType.BOOLEAN;
         } else if (returnType == String.class) {
             return ComponentWrapper.ParameterType.STRING;

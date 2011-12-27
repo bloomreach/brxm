@@ -15,39 +15,59 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import org.hippoecm.hst.core.parameters.*;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.ParametersInfoProcessor;
+import org.junit.Test;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
-import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.ImageSetPath;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.ParametersInfoProcessor;
-import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
 public class ParametersInfoProcessorTest {
 
     static interface NewstyleInterface {
-        @Parameter(name="color", defaultValue = "blue")
+        @Parameter(name="00-color", defaultValue = "blue")
         @Color
         String getColor();
 
-        @Parameter(name="documentLocation")
+        @Parameter(name="01-documentLocation")
         @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
         String getDocumentLocation();
 
-        @Parameter(name="image", defaultValue = "/content/gallery/default.png")
+        @Parameter(name="02-image", defaultValue = "/content/gallery/default.png")
         @ImageSetPath
         String getImage();
 
-        @Parameter(name="start")
-        Date getStart();
+        @Parameter(name="03-date")
+        Date getDate();
+
+        @Parameter(name="04-boolean")
+        boolean isBoolean();
+
+        @Parameter(name="05-booleanClass")
+        Boolean isBooleanClass();
+
+        @Parameter(name="06-int")
+        int getInt();
+
+        @Parameter(name="07-integerClass")
+        Integer getIntegerClass();
+
+        @Parameter(name="08-long")
+        long getLong();
+
+        @Parameter(name="09-longClass")
+        Long getLongClass();
+
+        @Parameter(name="10-short")
+        short getShort();
+
+        @Parameter(name="11-shortClass")
+        Short getShortClass();
     }
     @ParametersInfo(type=NewstyleInterface.class)
     static class NewstyleContainer {
@@ -57,7 +77,7 @@ public class ParametersInfoProcessorTest {
     public void additionalAnnotationBasedProcessing() {
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<Property> properties = ParametersInfoProcessor.getProperties(parameterInfo);
-        assertEquals(4, properties.size());
+        assertEquals(12, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -77,8 +97,32 @@ public class ParametersInfoProcessorTest {
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
         assertEquals("/content/gallery/default.png", imageProperty.getValue());
 
-        Property startProperty = properties.get(3);
-        assertEquals("datefield", startProperty.getType());
+        Property dateProperty = properties.get(3);
+        assertEquals("datefield", dateProperty.getType());
+
+        Property booleanProperty = properties.get(4);
+        assertEquals("checkbox", booleanProperty.getType());
+
+        Property booleanClassProperty = properties.get(5);
+        assertEquals("checkbox", booleanClassProperty.getType());
+
+        Property intProperty = properties.get(6);
+        assertEquals("numberfield", intProperty.getType());
+
+        Property integerClassProperty = properties.get(7);
+        assertEquals("numberfield", integerClassProperty.getType());
+
+        Property longProperty = properties.get(8);
+        assertEquals("numberfield", longProperty.getType());
+
+        Property longClassProperty = properties.get(9);
+        assertEquals("numberfield", longClassProperty.getType());
+
+        Property shortProperty = properties.get(10);
+        assertEquals("numberfield", shortProperty.getType());
+
+        Property shortClassProperty = properties.get(11);
+        assertEquals("numberfield", shortClassProperty.getType());
     }
 
     private static class PropertyComparator implements Comparator<Property> {
