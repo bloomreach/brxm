@@ -15,38 +15,27 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.util.TraversingItemVisitor;
 
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * <code>AbstractSAXEventGenerator</code> serves as the base class for
@@ -89,11 +78,6 @@ abstract class AbstractSAXEventGenerator {
     protected final Node startNode;
     protected final boolean skipBinary;
     protected final boolean noRecurse;
-
-    /**
-     * the set of namespace declarations that have already been serialized
-     */
-    protected NamespaceStack namespaces;
 
     /**
      * The jcr:primaryType property name (allowed for session-local prefix mappings)
@@ -142,8 +126,6 @@ abstract class AbstractSAXEventGenerator {
         this.contentHandler = contentHandler;
         this.skipBinary = skipBinary;
         this.noRecurse = noRecurse;
-        // start with an empty set of known prefixes
-        this.namespaces = new NamespaceStack(null);
 
         resolver = new DefaultNamePathResolver(nsResolver);
 
@@ -174,175 +156,12 @@ abstract class AbstractSAXEventGenerator {
     public void serialize() throws RepositoryException, SAXException {
         // start document and declare namespaces
         contentHandler.startDocument();
-        startNamespaceDeclarations();
 
         // serialize node and subtree
         process(startNode, 0);
 
         // clear namespace declarations and end document
-        endNamespaceDeclarations();
         contentHandler.endDocument();
-    }
-
-    /**
-     * @throws RepositoryException
-     * @throws SAXException
-     */
-    protected void startNamespaceDeclarations()
-            throws RepositoryException, SAXException {
-        // start namespace declarations
-        final Set<String> prefixes = new HashSet();
-        startNode.accept(new TraversingItemVisitor.Default(false) {
-            @Override
-            public void visit(Node node) throws RepositoryException {
-                if (isVirtual(node)) {
-                    return;
-                }
-                super.visit(node);
-            }
-            @Override
-            protected void entering(Node node, int level) throws RepositoryException {
-                String name = node.getName();
-                if(name.contains(":")) {
-                    prefixes.add(name.substring(0, name.indexOf(":")));
-                }
-            }
-            @Override
-            protected void entering(Property property, int level) throws RepositoryException {
-                if (property.getType() == PropertyType.NAME) {
-                    if (property.getDefinition().isMultiple()) {
-                        for (Value value : property.getValues()) {
-                            String name = value.getString();
-                            if (name.contains(":")) {
-                                prefixes.add(name.substring(0, name.indexOf(":")));
-                            }
-                        }
-                    } else {
-                        String name = property.getString();
-                        prefixes.add(name.substring(0, name.indexOf(":")));
-                    }
-                }
-            }
-        });
-        for (String prefix : prefixes) {
-            if (Name.NS_XML_PREFIX.equals(prefix)) {
-                // skip 'xml' prefix as this would be an illegal namespace declaration
-                continue;
-            }
-            String uri = session.getNamespaceURI(prefix);
-            contentHandler.startPrefixMapping(prefix, uri);
-        }
-    }
-
-    /**
-     * @throws RepositoryException
-     * @throws SAXException
-     */
-    protected void endNamespaceDeclarations()
-            throws RepositoryException, SAXException {
-        // end namespace declarations
-        String[] prefixes = session.getNamespacePrefixes();
-        for (int i = 0; i < prefixes.length; i++) {
-            String prefix = prefixes[i];
-            if (Name.NS_XML_PREFIX.equals(prefix)) {
-                // skip 'xml' prefix as this would be an illegal namespace declaration
-                continue;
-            }
-            contentHandler.endPrefixMapping(prefix);
-        }
-    }
-
-    /**
-     * Adds explicit <code>xmlns:prefix="uri"</code> attributes to the
-     * XML element as required (e.g., normally just on the root
-     * element). The effect is the same as setting the
-     * "<code>http://xml.org/sax/features/namespace-prefixes</code>"
-     * property on an SAX parser.
-     *
-     * @param level level of the current XML element
-     * @param attributes attributes of the current XML element
-     * @throws RepositoryException on a repository error
-     */
-    protected void addNamespacePrefixes(Node node, AttributesImpl attributes)
-            throws RepositoryException {
-        final Set<String> prefixes = new HashSet();
-        prefixes.add(Name.NS_SV_PREFIX);
-        node.accept(new TraversingItemVisitor.Default(false) {
-            @Override
-            public void visit(Node node) throws RepositoryException {
-                if (isVirtual(node)) {
-                    return;
-                }
-                super.visit(node);
-            }
-            @Override
-            protected void entering(Node node, int level) throws RepositoryException {
-                String name = node.getName();
-                if(name.contains(":")) {
-                    prefixes.add(name.substring(0, name.indexOf(":")));
-                }
-            }
-            @Override
-            protected void entering(Property property, int level) throws RepositoryException {
-                if (property.getType() == PropertyType.NAME) {
-                    if (property.getDefinition().isMultiple()) {
-                        for (Value value : property.getValues()) {
-                            String name = value.getString();
-                            if (name.contains(":")) {
-                                prefixes.add(name.substring(0, name.indexOf(":")));
-                            }
-                        }
-                    } else {
-                        String name = property.getString();
-                        prefixes.add(name.substring(0, name.indexOf(":")));
-                    }
-                }
-            }
-        });
-
-        NamespaceStack newNamespaces = null;
-        for (String prefix : prefixes) {
-            if (prefix.length() > 0 && !Name.NS_XML_PREFIX.equals(prefix)) {
-                String uri = session.getNamespaceURI(prefix);
-
-                // get the matching namespace from previous declarations
-                String mappedToNs = this.namespaces.getNamespaceURI(prefix);
-
-                if (!uri.equals(mappedToNs)) {
-                    // when not the same, add a declaration
-                    attributes.addAttribute(
-                        Name.NS_XMLNS_URI,
-                        prefix,
-                        Name.NS_XMLNS_PREFIX + ":" + prefix,
-                        "CDATA",
-                        uri);
-
-                    if (newNamespaces == null) {
-                        // replace current namespace stack when needed
-                        newNamespaces = new NamespaceStack(this.namespaces);
-                        this.namespaces = newNamespaces;
-                    }
-
-                    // remember the new declaration
-                    newNamespaces.setNamespacePrefix(prefix, uri);
-                }
-            }
-        }
-    }
-
-    protected boolean isVirtual(Node node) throws RepositoryException {
-        if (node instanceof HippoNode) {
-            try {
-                HippoNode hippoNode = (HippoNode) node;
-                Node canonical = hippoNode.getCanonicalNode();
-                if (canonical == null || !node.isSame(canonical)) {
-                    return true;
-                }
-            } catch (ItemNotFoundException ex) {
-                return true;
-            }
-        }
-        return false;
     }
     
     /**
@@ -396,14 +215,9 @@ abstract class AbstractSAXEventGenerator {
             while (nodeIter.hasNext()) {
                 // recurse
                 Node childNode = nodeIter.nextNode();
-                // remember the current namespace declarations
-                NamespaceStack previousNamespaces = this.namespaces;
 
                 process(childNode, level + 1);
 
-                // restore the effective namespace declarations
-                // (from before visiting the child node)
-                this.namespaces = previousNamespaces;
             }
         }
 
@@ -478,60 +292,5 @@ abstract class AbstractSAXEventGenerator {
     protected abstract void leaving(Property prop, int level)
             throws RepositoryException, SAXException;
 
-    /**
-     * Implements a simple stack of namespace declarations.
-     */
-    private static class NamespaceStack {
-
-        /**
-         * Parent stack (may be <code>null</code>)
-         */
-        private final NamespaceStack parent;
-
-        /**
-         * Local namespace declarations.
-         */
-        private final Map<String, String> namespaces;
-
-        /**
-         * Instantiate a new stack
-         *
-         * @param parent parent stack (may be <code>null</code> for the initial stack)
-         */
-        public NamespaceStack(NamespaceStack parent) {
-            this.parent = parent;
-            this.namespaces = new HashMap<String, String>();
-        }
-
-        /**
-         * Obtain namespace URI for a prefix
-         *
-         * @param prefix prefix
-         * @return namespace URI (or <code>null</code> when unknown)
-         */
-        public String getNamespaceURI(String prefix) {
-            String namespace = namespaces.get(prefix);
-            if (namespace != null) {
-                // found in this element, return right away
-                return namespace;
-            } else if (parent != null) {
-                // ask parent, when present
-                return parent.getNamespaceURI(prefix);
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * Add a new prefix mapping
-         *
-         * @param prefix namespace prefix
-         * @param uri namespace URI
-         */
-        public void setNamespacePrefix(String prefix, String uri) {
-            namespaces.put(prefix, uri);
-        }
-
-    }
 
 }
