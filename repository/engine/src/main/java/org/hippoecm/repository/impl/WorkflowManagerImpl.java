@@ -650,7 +650,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     while (!invocationChain.isEmpty()) {
                         WorkflowInvocationImpl current = (WorkflowInvocationImpl) invocationChain.remove(0);
                         invocationIndex = invocationChain.listIterator();
-                        current.invoke(WorkflowManagerImpl.this);
+                        returnObject = current.invoke(WorkflowManagerImpl.this);
                     }
                     if (!targetMethod.getName().equals("hints")) {
                         EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
