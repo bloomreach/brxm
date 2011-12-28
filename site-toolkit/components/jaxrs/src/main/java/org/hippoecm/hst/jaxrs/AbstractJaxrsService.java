@@ -227,8 +227,10 @@ public abstract class AbstractJaxrsService implements JAXRSService {
         try {
             HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
 
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
+            if (bean != null) {
+                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
+                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
+            }
             
             return bean;
         } catch (LoginException e) {
