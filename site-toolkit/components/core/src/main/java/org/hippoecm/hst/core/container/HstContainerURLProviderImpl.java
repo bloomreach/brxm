@@ -181,7 +181,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         return url;
     }
     
-    public HstContainerURL createURL(Mount mount ,HstContainerURL baseContainerURL, String pathInfo) {
+    public HstContainerURL createURL(Mount mount, HstContainerURL baseContainerURL, String pathInfo) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         
         url.setContextPath(baseContainerURL.getContextPath());
@@ -200,9 +200,19 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             includeTrailingSlash = true; 
         }
         
+        // if pathInfo starts with or is equal to the rest call subPath prefix (default ./), then, we must not include a 
+        // leading / to the pathInfo, because then for the homepage, which has a empty pathInfo before the subPath, we would
+        // get a wrong URL like /mountPath/./subPath : It must be /mountPath./subPath instead. Thus, hence this check
+        boolean includeLeadingSlash = true;
+        if(pathInfo != null && mount != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+            includeLeadingSlash = false;
+        }
+        
         pathInfo = PathUtils.normalizePath(pathInfo);
         if (pathInfo != null) {
-            pathInfo = "/" + pathInfo;
+            if(includeLeadingSlash) {
+                pathInfo = "/" + pathInfo;
+            }
             if(includeTrailingSlash) {
                 pathInfo = pathInfo + "/";
             }
@@ -284,7 +294,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         if(mountPrefix != null) {
             url.append(mountPrefix);
         }
-        String pathInfo = buildHstURLPath(containerURL);
+        String pathInfo = buildHstURLPath(containerURL, requestContext);
         url.append(pathInfo);
         return url.toString();
     }
@@ -303,10 +313,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     	return this.embeddedPortletContainerURLWriter;
     }
     
-    protected String buildHstURLPath(HstContainerURL containerURL) throws UnsupportedEncodingException {
+    protected String buildHstURLPath(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException {
         String characterEncoding = containerURL.getCharacterEncoding();
         StringBuilder url = new StringBuilder(100);
-        
+        String pathSuffixDelimiter = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
         if (containerURL.getActionWindowReferenceNamespace() != null) {
             url.append(this.urlNamespacePrefixedPath);
             
@@ -340,13 +350,23 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             url.append(URLEncoder.encode(requestInfo, characterEncoding));
         }
         
+        boolean includeSlash = true;
+        if(containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
+            includeSlash = false;
+        }
         String[] unEncodedPaths = containerURL.getPathInfo().split("/");
         for(String path : unEncodedPaths) {
             if(!"".equals(path)) {
-                url.append("/").append(URLEncoder.encode(path, characterEncoding));
+                if(includeSlash) {
+                    url.append("/");
+                } else {
+                    // apparently due to pathSuffixDelimiter the first / was skipped. From now include it
+                    includeSlash = true;
+                }
+                url.append(URLEncoder.encode(path, characterEncoding));
             }
         }
-        if(containerURL.getPathInfo().endsWith(HstLink.PATH_SUBPATH_DELIMITER)) {
+        if(pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
             // the trailing slash is removed above, but for ./ we need to append the slash again
             url.append("/");
         }
@@ -534,7 +554,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 containerURL.setResourceWindowReferenceNamespace(null);
                 ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
                 ((HstContainerURLImpl) containerURL).setParameters(null);
-                path = buildHstURLPath(containerURL);
+                path = buildHstURLPath(containerURL, requestContext);
             } finally {
                 containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                 ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
@@ -547,7 +567,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             }
             
             urlBuilder.append(containerURL.getResolvedMountPath());
-            path = buildHstURLPath(containerURL);
+            path = buildHstURLPath(containerURL, requestContext);
         }
         
         urlBuilder.append(path);

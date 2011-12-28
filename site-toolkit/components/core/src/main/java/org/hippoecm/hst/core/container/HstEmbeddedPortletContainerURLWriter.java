@@ -58,7 +58,7 @@ public class HstEmbeddedPortletContainerURLWriter {
                     containerURL.setResourceWindowReferenceNamespace(null);
                     ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
                     ((HstContainerURLImpl) containerURL).setParameters(null);
-                    pathInfo = urlProvider.buildHstURLPath(containerURL);
+                    pathInfo = urlProvider.buildHstURLPath(containerURL, requestContext);
                 } finally {
                     containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
@@ -77,7 +77,7 @@ public class HstEmbeddedPortletContainerURLWriter {
                 urlString = path.toString();
             }
             else {
-                pathInfo = urlProvider.buildHstURLPath(containerURL);
+                pathInfo = urlProvider.buildHstURLPath(containerURL, requestContext);
                 if (actionWindowReferenceNamespace != null) {
                     PortletURL url = ((MimeResponse)prc.getPortletResponse()).createActionURL();
                     url.setParameter(HstContainerPortlet.HST_PATH_PARAM_NAME, pathInfo);

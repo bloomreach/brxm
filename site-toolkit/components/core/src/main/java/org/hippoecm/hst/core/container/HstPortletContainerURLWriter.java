@@ -61,7 +61,7 @@ public class HstPortletContainerURLWriter {
                     containerURL.setResourceWindowReferenceNamespace(null);
                     ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
                     ((HstContainerURLImpl) containerURL).setParameters(null);
-                    pathInfo = urlProvider.buildHstURLPath(containerURL);
+                    pathInfo = urlProvider.buildHstURLPath(containerURL, requestContext);
                 } finally {
                     containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                     ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
@@ -78,7 +78,7 @@ public class HstPortletContainerURLWriter {
                 
             } else {
                 path.append(containerURL.getResolvedMountPath());
-                path.append(urlProvider.buildHstURLPath(containerURL));
+                path.append(urlProvider.buildHstURLPath(containerURL, requestContext));
                 
                 BaseURL url = null;
                 PortletResponse response = prc.getPortletResponse();

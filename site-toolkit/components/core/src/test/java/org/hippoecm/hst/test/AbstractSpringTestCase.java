@@ -106,6 +106,8 @@ public abstract class AbstractSpringTestCase
         ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
         Mount mount = createNiceMock(Mount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
+        HstManager hstManager = createNiceMock(HstManager.class);
         
         expect(resolvedMount.getResolvedMountPath()).andReturn("").anyTimes();
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
@@ -113,9 +115,15 @@ public abstract class AbstractSpringTestCase
         expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(virtualHost.isContextPathInUrl()).andReturn(true).anyTimes();
 
+        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
+        expect(virtualHosts.getHstManager()).andReturn(hstManager).anyTimes();
+        expect(hstManager.getPathSuffixDelimiter()).andReturn("./").anyTimes();
+        
         replay(resolvedMount);
         replay(mount);
         replay(virtualHost);
+        replay(virtualHosts);
+        replay(hstManager);
         
         // to parse a url, there must be a ResolvedMount on the HstRequestContext
         requestContext.setResolvedMount(resolvedMount);
