@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
 		
 	    HippoBean bean = getRequestContentBean(requestContext, HippoBean.class);
 	    if(bean == null) {
-	        throw new ContainerException("Cannot find content node for '"+requestContext.getBaseURL().getRequestPath()+"'",new WebApplicationException(Response.Status.NOT_FOUND));
+	        throw new ContainerNotFoundException("Cannot find content node for '"+requestContext.getBaseURL().getRequestPath()+"'",new WebApplicationException(Response.Status.NOT_FOUND));
 	    }
 	    
 	    org.hippoecm.hst.content.beans.Node annotation = bean.getClass().getAnnotation(org.hippoecm.hst.content.beans.Node.class);

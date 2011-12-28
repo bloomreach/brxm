@@ -132,6 +132,8 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 			ServletController controller = getController(requestContext.getServletContext());
 			HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request); 
 			controller.invoke(jaxrsRequest, response);
+		} catch (ContainerException e) {
+		    throw e;
 		} catch (Throwable th) {
 			throw new ContainerException(th);
 		} finally {
