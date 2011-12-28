@@ -432,6 +432,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             workflowCallbackHandler.processWorkflow(wf);
                         } 
                     }
+                } else {
+                    log.warn("Could not obtain workflow '{}' for '{}'. Make sure that user '{}' has enough workflow rights on the node.", new Object[]{documentNodeWorkflowCategory, contentNode.getPath(), contentNode.getSession().getUserID()});
                 }
             } catch (ObjectBeanPersistenceException e) {
                 throw e;
@@ -621,9 +623,14 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             return wfm.getWorkflow(category, node);
         } catch (RepositoryException e) {
             throw e;
-        } catch (Exception ignore) {
-            // Just ignore other exceptions which are not handled properly in the repository such as NPE.
-        } finally {
+        } catch (Exception e) {
+            // other exception which are not handled properly in the repository (we cannot do better here then just log them)
+            if(log.isDebugEnabled()) {
+                log.warn("Exception in workflow", e);
+            } else {
+                log.warn("Exception in workflow: {}", e.toString());
+            }
+        } finally { 
             if (workspaceClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
             }
