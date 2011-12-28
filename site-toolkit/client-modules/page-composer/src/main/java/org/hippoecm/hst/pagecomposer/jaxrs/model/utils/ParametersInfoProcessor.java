@@ -15,6 +15,15 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model.utils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -23,10 +32,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.*;
 
 public class ParametersInfoProcessor {
 
