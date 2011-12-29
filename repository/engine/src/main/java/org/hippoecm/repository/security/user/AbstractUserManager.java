@@ -118,7 +118,6 @@ public abstract class AbstractUserManager implements UserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        session.refresh(false);
         if (useQueries) {
             String userId = sanitizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
