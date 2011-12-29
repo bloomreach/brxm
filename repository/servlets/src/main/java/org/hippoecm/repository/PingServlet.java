@@ -217,7 +217,7 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private synchronized void doRepositoryChecks() throws PingException {
+    private void doRepositoryChecks() throws PingException {
         Session session = null;
         try {
             obtainRepository();
@@ -286,11 +286,11 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void doWriteTest(Session session) throws PingException {
+    private synchronized void doWriteTest(Session session) throws PingException {
         try {
             Node writePath = getOrCreateWriteNode(session);
             writePath.setProperty("lastcheck", Calendar.getInstance());
-            writePath.save();
+            session.save();
         } catch (RepositoryException e) {
             String msg = "FAILURE - Error during write test. There could be an issue with the (connection to) the storage.";
             throw new PingException(msg, e);
