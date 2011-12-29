@@ -88,6 +88,13 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
         
         try {
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+
+            // first fetch the TextDocument through the persistence jcr session of wpm (wpm is backed by 
+            // a jcr session with userID sitewriter): Otherwise it tries to invoke
+            // workflow with the siteuser while we need the sitewriter:
+
+            textBean = (TextBean) wpm.getObject(textBean.getPath());
+            
             final BaseDocumentRepresentation documentRepresentationInput = documentRepresentation;
             
             wpm.update(textBean, new ContentNodeBinder() {
