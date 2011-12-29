@@ -394,7 +394,7 @@
               <sv:value>JaxrsRestPlainPipeline</sv:value>
             </sv:property>
             <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
-              <sv:value>rest</sv:value>
+              <sv:value>preview-rest</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
