@@ -262,9 +262,6 @@
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/hst:hst/hst:sites/demosite_fr-preview</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:type" sv:type="String">
-              <sv:value>preview</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:locale" sv:type="String">
               <sv:value>fr_FR</sv:value>
             </sv:property>
@@ -284,9 +281,6 @@
             </sv:property>
             <sv:property sv:name="hst:alias" sv:type="String">
               <sv:value>restapi</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:type" sv:type="String">
-              <sv:value>preview</sv:value>
             </sv:property>
             <sv:property sv:name="hst:types" sv:type="String">
               <sv:value>preview-rest</sv:value>
@@ -326,9 +320,6 @@
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi-gallery</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:type" sv:type="String">
-                <sv:value>preview</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>preview-rest</sv:value>
               </sv:property>
@@ -359,9 +350,6 @@
               </sv:property>
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi-assets</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:type" sv:type="String">
-                <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>preview-rest</sv:value>
