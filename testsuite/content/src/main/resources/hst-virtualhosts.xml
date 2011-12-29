@@ -377,6 +377,26 @@
               </sv:property>
             </sv:node>
           </sv:node>
+          <sv:node sv:name="restservices">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hst:mount</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+              <sv:value>restservices</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:isSite" sv:type="Boolean">
+              <sv:value>false</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:ismapped" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:namedpipeline" sv:type="String">
+              <sv:value>JaxrsRestPlainPipeline</sv:value>
+            </sv:property>
+            <sv:property sv:multiple="true" sv:name="hst:types" sv:type="String">
+              <sv:value>rest</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
