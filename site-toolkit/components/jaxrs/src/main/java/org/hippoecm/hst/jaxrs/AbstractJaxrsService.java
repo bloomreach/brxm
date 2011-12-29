@@ -209,10 +209,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return the HippoBean where the relative contentpath of the sitemap item points to or <code>null</code> when not found, or no relative content path is present, or no resolved sitemap item
      */
     public HippoBean getRequestContentBean(HstRequestContext requestContext) {
-        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY) != null) {
-            return (HippoBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY);
-        }
-            
+       
         String contentPathInfo = null;    
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem == null) {
@@ -223,15 +220,8 @@ public abstract class AbstractJaxrsService implements JAXRSService {
         String requestContentPath = getMountContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
         
-        
         try {
             HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-
-            if (bean != null) {
-                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
-                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
-            }
-            
             return bean;
         } catch (LoginException e) {
             log.warn("Login Exception during fetching bean. Return null" , e.toString());
@@ -250,14 +240,10 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return the siteContentBaseBean if it can be found and <code>null</code> otherwise
      */
     public HippoFolderBean getSiteContentBaseBean(HstRequestContext requestContext) {
-        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY) != null) {
-            return (HippoFolderBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY);
-        }
         String requestContentPath = getMountContentPath(requestContext);
         
         try {
             HippoFolderBean bean = (HippoFolderBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY, bean);
             return bean;
         } catch (LoginException e) {
             log.warn("Login Exception during fetching site content base bean. Return null" , e.toString());

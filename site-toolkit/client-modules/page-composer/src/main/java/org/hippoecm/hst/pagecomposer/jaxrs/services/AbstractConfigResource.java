@@ -17,7 +17,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
@@ -95,7 +98,17 @@ public class AbstractConfigResource {
 
 
     protected Node getRequestConfigNode(HstRequestContext requestContext) {
-        return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
+        String id = (String)requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+        if(id == null) {
+            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+        }
+        try {
+            return requestContext.getSession().getNodeByIdentifier(id);
+        } catch (RepositoryException e) {
+            log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
+            return null;
+        }
+        
     }
 
     protected Response ok(String msg) {

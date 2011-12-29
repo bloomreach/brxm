@@ -45,7 +45,6 @@ import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,11 +209,6 @@ public abstract class AbstractResource {
      * @return the HippoBean where the relative contentpath of the sitemap item points to
      */
     protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY) != null) {
-            return (HippoBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY);
-        }
-            
-            
         String contentPathInfo = null;    
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem == null) {
@@ -229,11 +223,6 @@ public abstract class AbstractResource {
         
         try {
             HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-
-            if(bean != null) {
-                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_BEAN_KEY, bean);
-                requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, bean.getNode());
-            }
             return bean;
         } catch (ObjectBeanManagerException e) {
             throw e;
@@ -250,14 +239,10 @@ public abstract class AbstractResource {
      * @return HippoFolderBean the mountContentBaseBean 
      */
     public HippoFolderBean getMountContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        if(requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY) != null) {
-            return (HippoFolderBean) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY);
-        }
         String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath();
         
         try {
             HippoFolderBean bean = (HippoFolderBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY, bean);
             return bean;
         } catch (ObjectBeanManagerException e) {
             throw e;

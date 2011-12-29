@@ -116,7 +116,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		    return setErrorMessageAndReturn(requestContext, request, e.toString());
 		} 
 
-        requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY, node);
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
     	
         // use JAX-RS service endpoint url-template: /{resourceType}/{suffix}

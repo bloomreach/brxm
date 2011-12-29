@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -58,7 +59,17 @@ public abstract class AbstractContentResource extends AbstractResource {
      * @return
      */
     protected Node getRequestContentNode(HstRequestContext requestContext) {
-    	return (Node) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_NODE_KEY);
+    	try {
+    	    HippoBean bean = getRequestContentBean(requestContext);
+            return (bean == null) ? null : bean.getNode(); 
+        } catch (ObjectBeanManagerException e) {
+            if(log.isDebugEnabled()) {
+                log.warn("Could not get request content node.", e);
+            } else {
+                log.warn("Could not get request content node '{}'", e.toString());
+            }
+            return null;
+        }
     }
     
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
