@@ -966,8 +966,13 @@ public class UpdaterEngine {
             for (Iterator<QNodeTypeDefinition> iter = ntdList.iterator(); iter.hasNext();) {
                 QNodeTypeDefinition ntd = (QNodeTypeDefinition)iter.next();
                 try {
-                    log.info("upgrade registering new nodetype " + ntd.getName());
-                    /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                    if (ntreg.isRegistered(ntd.getName())) {
+                        log.info("upgrade reregistering nodetype " + ntd.getName());
+                        /* EffectiveNodeType effnt = */ ntreg.reregisterNodeType(ntd);
+                    } else {
+                        log.info("upgrade registering new nodetype " + ntd.getName());
+                        /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                    }
                 } catch (InvalidNodeTypeDefException ex) {
                     log.error("upgrade failed to register new nodetype " + ntd.getName(), ex);
                 }
