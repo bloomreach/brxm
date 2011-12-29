@@ -201,9 +201,7 @@ public abstract class AbstractResource {
     }
 
     /**
-     * Returns the content HippoBean for the current request. If there cannot be found a bean for the relative content path of the
-     * resolved sitemap item a ObjectBeanManagerException is thrown
-     * If there is no resolved sitemap item, <code>null</code> is returned. 
+     * Returns the content HippoBean for the current request. 
      * @param requestContext
      * @param beanMappingClass 
      * @throws ObjectBeanManagerException when there cannot be returned a bean
