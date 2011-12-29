@@ -45,6 +45,7 @@ import org.hippoecm.hst.jaxrs.model.content.Link;
 import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ObjectConverterUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,12 +211,18 @@ public abstract class AbstractResource {
      */
     protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
         String contentPathInfo = null;    
-        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        if (resolvedSiteMapItem == null) {
-            log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
-            return null;
+        // first check whehter we have a resolved mount that has isMapped = true. If not mapped, we take the 
+        // contentPathInfo directly from the requestContext.getBaseURL().getPathInfo()
+        if(requestContext.getResolvedMount().getMount().isMapped()) {
+            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+            if (resolvedSiteMapItem == null) {
+                log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
+                return null;
+            } else {
+                contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+            }
         } else {
-            contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
         }
            
         String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath() + "/" + (contentPathInfo != null ? contentPathInfo : "");
