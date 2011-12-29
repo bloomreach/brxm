@@ -201,9 +201,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     }
     
     /**
-     * Returns the content HippoBean for the current request. If there cannot be found a bean for the relative content path of the
-     * resolved sitemap item, <code>null</code> is returned.
-     * If there is no resolved sitemap item, <code>null</code> is returned. 
+     * Returns the content HippoBean for the current request.
      * @param requestContext
      * @param beanMappingClass 
      * @return the HippoBean where the relative contentpath of the sitemap item points to or <code>null</code> when not found, or no relative content path is present, or no resolved sitemap item
@@ -211,11 +209,18 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     public HippoBean getRequestContentBean(HstRequestContext requestContext) {
        
         String contentPathInfo = null;    
-        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        if (resolvedSiteMapItem == null) {
-            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+        // first check whehter we have a resolved mount that has isMapped = true. If not mapped, we take the 
+        // contentPathInfo directly from the requestContext.getBaseURL().getPathInfo()
+        if(requestContext.getResolvedMount().getMount().isMapped()) {
+            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+            if (resolvedSiteMapItem == null) {
+                log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
+                return null;
+            } else {
+                contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+            }
         } else {
-            contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
+            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
         }
         String requestContentPath = getMountContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
         requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
