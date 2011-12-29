@@ -16,6 +16,6 @@
 mvn clean install
 
 # run
-sh target/canonicalize/bin/canonicalize <input> > <output>
+sh target/canonicalsv/bin/canonicalsv <input.xml> > <output file>
 # or
-cat <input> | sh target/canonicalize/bin/canonicalize > <output>
+cat <input.xml> | sh target/canonicalsv/bin/canonicalsv > <output file>
