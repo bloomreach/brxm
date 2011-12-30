@@ -41,9 +41,11 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
@@ -58,6 +60,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
     private static final String MOUNT_CONTENTPATH = "/hst:hst/hst:sites/testproject-preview/hst:content";
     private static final String MOUNT_CANONICAL_CONTENTPATH = "/documents/testproject";
+    private static final String MOUNT_PATH = "/preview/services";
     
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
@@ -124,34 +127,45 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
         EasyMock.expect(resolvedMount.getResolvedVirtualHost()).andReturn(resolvedVirtualHost).anyTimes();
         EasyMock.expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
-        EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn("/preview/services").anyTimes();
+        EasyMock.expect(resolvedMount.getResolvedMountPath()).andReturn(MOUNT_PATH).anyTimes();
         
-       linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
-
+        linkCreator = EasyMock.createNiceMock(HstLinkCreator.class);
+ 
         EasyMock.replay(resolvedVirtualHost);
         EasyMock.replay(virtualHosts);
         EasyMock.replay(virtualHost);
         EasyMock.replay(mount);
         EasyMock.replay(resolvedMount);
         EasyMock.replay(linkCreator);
-        
+       
         urlFactory = getComponent(HstURLFactory.class.getName());
         urlProvider = this.urlFactory.getContainerURLProvider();        
     }
     
-    public HstMutableRequestContext createRequestContext() {
+    public HstMutableRequestContext createRequestContext(String siteMapItemRelativeContentPath) {
+        ResolvedSiteMapItem resolvedSiteMapItem = EasyMock.createNiceMock(ResolvedSiteMapItem.class);
+        EasyMock.expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        EasyMock.expect(resolvedSiteMapItem.getRelativeContentPath()).andReturn(siteMapItemRelativeContentPath).anyTimes();
+        
+        EasyMock.replay(resolvedSiteMapItem);
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        
         requestContext.setServletContext(servletContext);
         requestContext.setResolvedMount(resolvedMount);
+        requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setLinkCreator(linkCreator);
         return requestContext;
     }
     
     protected void invokeJaxrsPipeline(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
         // every time a jaxrs pipeline is invoked, we also need to create a new request context
-        HstMutableRequestContext requestContext = createRequestContext();
+
+        HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
+        String requestPath = HstRequestUtils.getRequestPath(cr);
+        String pathInfo = requestPath.substring(MOUNT_PATH.length() + 1);
+        
+        HstMutableRequestContext requestContext = createRequestContext(pathInfo);
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-    	HstContainerRequest cr = new HstContainerRequestImpl(request, "./");
     	requestContext.setPathSuffix(cr.getPathSuffix());
     	requestContext.setBaseURL(urlProvider.parseURL(cr, response, requestContext.getResolvedMount()));
         
