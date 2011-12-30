@@ -85,10 +85,7 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    <sv:node sv:name="nopic.gif"
-      xmlns:hippo="http://www.onehippo.org/jcr/hippo/nt/2.0.2"
-      xmlns:hippogallery="http://www.onehippo.org/jcr/hippogallery/nt/2.0"
-      xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:node sv:name="nopic.gif">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
