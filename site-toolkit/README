@@ -30,6 +30,10 @@ How to test and build Hippo Site Toolkit
    In addition, "The User API JavaDocs", which includes only api, mock, commons, content-beans and client, are generated in target/site/userapidocs/ separately.
    Also, a menu link item for "The User API JavaDocs" has been added in site.xml. 
    
-   If you want to see sub-module links you have to generated site with `$ mvn -o site:stage', also see
+   Use 
+   
+   $ mvn -o site:stage 
+   
+   If you want to see sub-module links in your generated site, also see
    http://maven.apache.org/plugins/maven-site-plugin/usage.html
       
