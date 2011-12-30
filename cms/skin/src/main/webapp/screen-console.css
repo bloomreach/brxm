@@ -9,7 +9,7 @@
 
 .hippo-root em, .hippo-root strong {font-weight: bold;}
 
-.hippo-console-menu-advanced{position: absolute; top: 0px; right: 150px;}
+.hippo-console-menu-advanced{position: absolute; top: 0; right: 150px;}
 .hippo-console-save{position: absolute; top: 37px; right: 5px;}
 .hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 563px; margin-top: 10px; height: 21px;}
 
@@ -26,7 +26,7 @@
 .hippo-console-tree .hippo-tree{ font-size: 13px; }
 
 /* Styling for tree in Dialog */
-.hippo-window .hippo-console-tree .hippo-tree{ padding-top: 0px; padding-bottom: 5px; }
+.hippo-window .hippo-console-tree .hippo-tree{ padding-top: 0; padding-bottom: 5px; }
 .hippo-window label { display: block; }
 
 .hippo-window .hippo-console-tree { float: left; width: 479px; border-right: 1px solid #e3e3e3; height: 270px; overflow: auto; border: 1px solid #e3e3e3;}
@@ -35,9 +35,9 @@
 
 .hippo-window .window-details { width:450px; float: left; padding-top: 10px; padding-left: 10px; clear:left}
 
-.hippo-window .xml-dump span.activated p { height: 270px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0px; padding-left: 3px;}
+.hippo-window .xml-dump span.activated p { height: 270px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px;}
 
-.hippo-window .cnd-export-dump span { height: 317px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0px; padding-left: 3px; padding-bottom: 3px;}
+.hippo-window .cnd-export-dump span { height: 317px; display:block; overflow: auto; border: 1px solid #666; border-bottom:0; padding-left: 3px; padding-bottom: 3px;}
 
 .hippo-window form .message { margin-bottom: 10px; font-size: 13px;}
 .hippo-window form fieldset {margin-bottom: 5px;}
@@ -57,7 +57,7 @@
 .hippo-tree .wicket-tree span.indent-blank {background-image: url("images/tree-console-icons.png"); width: 18px;} 
 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
-.hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0px; padding-bottom: 0px}
+.hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
 
 .hippo-console-menu-advanced {padding: 10px;}
 .hippo-console-menu-advanced li{float: left; margin-left: 10px; font-size: 11px;}
@@ -81,7 +81,7 @@
   background: transparent; 
 }
 
-.hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0px 0px;}
+.hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
  
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px;}
 
@@ -118,16 +118,29 @@
 .hippo-console-save li.hippo-console-menu-actions-reset a{padding: 5px}
 .hippo-console-save li.hippo-console-menu-actions-reset a:hover{background: red;}
 
-.hippo-console-editor{padding: 20px;}
-.hippo-console-editor *{font-size: 14px; margin-bottom: 4px; margin-top: 4px;}
-.hippo-console-editor strong{color:#666666;}
-.hippo-console-editor sup a{color:#32629b;}
-.hippo-console-editor textarea {width: 100%;}
-.hippo-console-editor h3 {color:#32629B;}
-.hippo-console-editor hr {color:#32629B;background-color: #32629B;border: 0;height: 1px;margin: 0px;}
+.hippo-console-editor {padding: 20px;}
+.hippo-console-editor h3 {font-size: 14px; color:#32629B; margin: 4px 0 16px; padding: 0 0 4px 0; border-bottom: 1px solid #32629B;}
+.hippo-console-editor h4 {font-size: 14px; color:#32629B; margin: 4px 0 8px;}
+.hippo-console-editor .toggle-header {cursor: pointer; user-select: none; -moz-user-select: none; -webkit-user-select: none; -khtml-user-select: none; -o-user-select: none;}
+.hippo-console-editor .editor-types-table {margin-bottom: 12px;}
+.hippo-console-editor .editor-types-table td {padding: 0 4px 4px 0; font-size: 14px;}
+.hippo-console-editor .editor-types-table .type-name {font-weight: bold;}
+.hippo-console-editor .properties { margin-bottom: 16px; }
+.hippo-console-editor .properties-group { padding-left: 16px; }
+.hippo-console-editor .property { margin: 10px 0 10px; }
+.hippo-console-editor .property-name {font-size: 14px; color:#333; font-weight: bold; }
+.hippo-console-editor .property-type {font-size: 14px; color:#666; margin-right: 20px;}
+.hippo-console-editor .property-add {font-size: 14px; color:#32629b; }
+.hippo-console-editor .property-remove {font-size: 14px; color:#32629b; }
+.hippo-console-editor .property-value-container {margin: 4px 0 4px;}
+.hippo-console-editor .property-value {font-size: 12px;}
+.hippo-console-editor .property-value a {color:#32629b;}
+.hippo-console-editor .property-value-remove {font-size: 14px; color:#32629b; display: inline-block; }
+.hippo-console-editor textarea {width: 95%; font-size: 14px; display: inline-block; margin: 3px 0 3px;}
+.hippo-console-editor .mixin-type {font-size: 14px; margin: 3px 0 3px;}
+.hippo-console-editor .mixin-type .mixin-name {margin-left: 4px; font-weight: bold; color: #666;}
 
-.editor-types-table td {padding: 0px 4px 4px 0px;}
-.editor-toggle-icon {vertical-align: top;width: 12px;height: 12px;cursor: pointer;}
+.hippo-console-editor .editor-toggle-icon {vertical-align: top;width: 12px;height: 12px;cursor: pointer;}
 
 .hippo-tree-dropdown-icon { background-image: none; }
 .hippo-tree div.wicket-tree div.row{background-image: none; }
@@ -139,12 +152,12 @@
 .hippo-projectexport-tree .wicket-tree a{color: #666666}
 .hippo-projectexport-tree .wicket-tree a:hover{color: #32629b}
 .hippo-projectexport-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
-.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0px; padding-bottom: 0px}
+.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
 .hippo-projectexport-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
 .hippo-projectexport-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
   background: transparent; 
 }
-.hippo-projectexport-tree .hippo-tree-dropdown-icon:hover {background-position: 0px 0px;}
+.hippo-projectexport-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
 
 .wicket-modal .hippo-root { padding: 10px; }
 
@@ -164,7 +177,7 @@ body.hippo-root div.yui-log-container {
   border: 1px solid #666666;
   position: absolute;
   top: 3px;
-  left: 0px;
+  left: 0;
   width: 150px;
   -moz-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);

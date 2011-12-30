@@ -14,54 +14,58 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-        <form wicket:id="editor">
-            <h3><img wicket:id="toggle-icon-1" class="editor-toggle-icon" onclick="javascript:toggleBox('1');"/> Types</h3>
-            <hr/>
-            <table class="editor-types-table" id="toggle-box-1" style="display:block;">
-                <tr><td><strong>Primary: </strong></td><td><span wicket:id="primarytype"/></td></tr>
-                <tr><td><strong>Mixin: </strong></td><td><span wicket:id="types"/></td></tr>
-            </table>
-            <br/>
-            <h3><img wicket:id="toggle-icon-2" class="editor-toggle-icon" onclick="javascript:toggleBox('2');"/> Properties</h3>
-            <hr/>
-            <ul id="toggle-box-2" style="display:block;">
-                <li wicket:id="properties">
-                    <strong><span wicket:id="name">Property name</span></strong>
-                    &nbsp;
-                    <span wicket:id="type" class='type'>Property type</span>
-                    <sup><a wicket:id="delete">(delete)</a></sup>
-                    <table width="100%">
-                        <tr>
-                            <td>
-                                <ul style="list-style: none">
-                                    <li wicket:id="values">
-                                        <span wicket:id="value"></span>
-                                        <sup><a wicket:id="remove">X</a></sup>
-                                    </li>
-                                </ul>
-                            </td>
-                            <td>
-                                <sup><a wicket:id="add">(add)</a></sup>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                </li>
-            </ul>
-            <h3><img wicket:id="toggle-icon-3" class="editor-toggle-icon" onclick="javascript:toggleBox('3');"/> Mixin Types</h3>
-            <hr/>
-            <div id="toggle-box-3" style="display:none">
-              <div wicket:id="mixintypes">
-                  <ul style="list-style: none;">
-                      <li wicket:id="type">
-                          <input type="checkbox" wicket:id="check">
-                              <strong><span wicket:id="name">Mixin name</span></strong>
-                          </input>
-                      </li>
+<wicket:panel>
+  <form wicket:id="editor">
+    <h3 wicket:id="toggle-header-1">[Types]</h3>
+    <table class="editor-types-table" id="toggle-box-1" style="display:block;">
+      <tr class="type-primary">
+        <td class="type-name">Primary: </td>
+        <td class="type-value"><span wicket:id="primarytype"/></td>
+      </tr>
+      <tr class="type-mixin">
+        <td class="type-name">Mixin: </td>
+        <td class="type-value"><span wicket:id="types"/></td>
+      </tr>
+    </table>
+
+    <h3 wicket:id="toggle-header-2">[Properties]</h3>
+    <ul id="toggle-box-2" class="properties" style="display:block;">
+      <li wicket:id="namespaces">
+        <h4 wicket:id="toggle-namespace">[namespace]</h4>
+        <ul wicket:id="propertiesContainer" style="display:block;" class="properties-group">
+          <li class="property" wicket:id="properties">
+            <span class="property-name" wicket:id="name">Property name</span>
+            &nbsp;
+            <span wicket:id="type" class="property-type">Property type</span>
+            <a wicket:id="delete">(delete)</a>
+            <table class="property-value-container" width="100%">
+              <tr>
+                <td width="100%">
+                  <ul style="list-style: none">
+                    <li class="property-value" wicket:id="values">
+                      <span wicket:id="value"></span><a class="property-value-remove" wicket:id="remove">X</a>
+                    </li>
                   </ul>
-              </div>
-            </div>
-        </form>
-    </wicket:panel>
+                </td>
+                <td>
+                  <a class="property-add" wicket:id="add">(add)</a>
+                </td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h3 wicket:id="toggle-header-3">[Mixin Types]</h3>
+    <div class="mixin-types" id="toggle-box-3" style="display:block">
+      <div wicket:id="mixintypes">
+        <ul style="list-style: none;">
+          <li class="mixin-type" wicket:id="type">
+            <input type="checkbox" wicket:id="check"><span class="mixin-name" wicket:id="name">[mixin name]</span></input>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </form>
+</wicket:panel>
 </html>

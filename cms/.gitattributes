@@ -1564,6 +1564,7 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.html svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.java svneol=native#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/JcrName.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeEditor.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/NodeTypesEditor.java svneol=native#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertiesEditor.java svneol=native#text/plain
@@ -1572,6 +1573,8 @@ plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEdit
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.java -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ResourceEditor.html -text svneol=unset#text/plain
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ResourceEditor.java -text svneol=unset#text/plain
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.html -text
+plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.java -text
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-collapsed.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-expanded.png -text svneol=unset#image/png
 plugins/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.html svneol=native#text/plain

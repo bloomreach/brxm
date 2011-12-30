@@ -19,11 +19,15 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TextAreaWidget extends AjaxUpdatingWidget<String> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final Logger log = LoggerFactory.getLogger(TextAreaWidget.class);
+    
     private static final long serialVersionUID = 1L;
     private String rows;
     @Deprecated
@@ -38,7 +42,14 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
 
             @Override
             protected void onComponentTag(final ComponentTag tag) {
-                if (getRows() != null) {
+                String rows = getRows();
+                if (rows != null) {
+                    try {
+                        double rowCount = Double.parseDouble(rows);
+                        tag.put("style", "height: " + (rowCount * 1.2) + "em;");
+                    } catch (NumberFormatException e) {
+                        log.info("Cannot set height of textarea. Expected 'rows' to be a double, but got: '" + rows + "'");
+                    }
                     tag.put("rows", getRows());
                 }
                 super.onComponentTag(tag);

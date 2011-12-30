@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -27,13 +29,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.EmptyDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
@@ -46,64 +50,34 @@ class NodeEditor extends Form {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
     @SuppressWarnings("unused")
     private String primaryType;
+    @SuppressWarnings("unused")
     private String mixinTypes;
-    private PropertyProvider propertyProvider;
-    private PropertiesEditor propertiesEditor;
+    private NamespaceProvider namespaceProvider;
+    private NamespacePropertiesEditor namespacePropertiesEditor;
     private NodeTypesEditor typesEditor;
 
     NodeEditor(String id) {
         super(id);
         setOutputMarkupId(true);
 
+        add(new ToggleHeader("toggle-header-1", "1", "Types"));
         add(new Label("primarytype", new PropertyModel<String>(this, "primaryType")));
         add(new Label("types", new PropertyModel<String>(this, "mixinTypes")));
 
-        propertyProvider = new PropertyProvider(new EmptyDataProvider());
-        propertiesEditor = new PropertiesEditor("properties", propertyProvider);
-        add(propertiesEditor);
-        
-        // add toggle icon
-        Image toggleIcon1 = new Image("toggle-icon-1") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected ResourceReference getImageResourceReference() {
-                return new ResourceReference(EditorPlugin.class, "group-expanded.png");
-            }
-        };
-        toggleIcon1.setOutputMarkupId(true);
-        toggleIcon1.setMarkupId("toggle-1");
-        add(toggleIcon1);
+        add(new ToggleHeader("toggle-header-2", "2", "Properties"));
+        namespaceProvider = new NamespaceProvider(new EmptyDataProvider());
+        namespacePropertiesEditor = new NamespacePropertiesEditor("namespaces", namespaceProvider);
+        add(namespacePropertiesEditor);
 
-        Image toggleIcon2 = new Image("toggle-icon-2") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected ResourceReference getImageResourceReference() {
-                return new ResourceReference(EditorPlugin.class, "group-expanded.png");
-            }
-        };
-        toggleIcon2.setOutputMarkupId(true);
-        toggleIcon2.setMarkupId("toggle-2");
-        add(toggleIcon2);
-
-        Image toggleIcon3 = new Image("toggle-icon-3") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            protected ResourceReference getImageResourceReference() {
-                return new ResourceReference(EditorPlugin.class, "group-collapsed.png");
-            }
-        };
-        toggleIcon3.setOutputMarkupId(true);
-        toggleIcon3.setMarkupId("toggle-3");
-        add(toggleIcon3);
-
+        add(new ToggleHeader("toggle-header-3", "3", "Mixin Types"));
         typesEditor = new NodeTypesEditor("mixintypes", new ArrayList<String>(), null);
         add(typesEditor);
-
     }
 
     @Override
@@ -114,7 +88,7 @@ class NodeEditor extends Form {
             try {
                 JcrNodeModel newModel = (JcrNodeModel) model;
 
-                propertyProvider.setWrappedProvider(new PropertiesFilter(new JcrPropertiesProvider(newModel)));
+                namespaceProvider.setWrapped(new JcrPropertiesProvider(newModel));
 
                 List<String> result = new ArrayList<String>();
                 NodeType[] nodeTypes = newModel.getNode().getMixinNodeTypes();
@@ -124,7 +98,7 @@ class NodeEditor extends Form {
                 typesEditor.setModelObject(result);
                 typesEditor.setNodeModel(newModel);
                 typesEditor.setVisible(true);
-                propertiesEditor.setVisible(true);
+                namespacePropertiesEditor.setVisible(true);
 
                 primaryType = newModel.getNode().getPrimaryNodeType().getName();
                 mixinTypes = joinNames(nodeTypes);
@@ -134,12 +108,12 @@ class NodeEditor extends Form {
             }
         } else {
             typesEditor.setVisible(false);
-            propertiesEditor.setVisible(false);
+            namespacePropertiesEditor.setVisible(false);
         }
     }
 
     private String joinNames(NodeType[] nodeTypes) {
-        final StringBuffer result = new StringBuffer();
+        final StringBuilder result = new StringBuilder();
         String concat = StringUtils.EMPTY;
 
         for (NodeType type: nodeTypes) {
@@ -151,89 +125,158 @@ class NodeEditor extends Form {
         return result.toString();
     }
 
-    private static class PropertyProvider implements IDataProvider {
+    private static class NamespacePropertiesEditor extends DataView<NamespacePropertiesProvider> {
+        @SuppressWarnings("unused")
         private static final long serialVersionUID = 1L;
 
-        private IDataProvider wrapped;
+        protected NamespacePropertiesEditor(String id, IDataProvider<NamespacePropertiesProvider> dataProvider) {
+            super(id, dataProvider);
+        }
 
-        public PropertyProvider(IDataProvider wrapped) {
+        @Override
+        protected void populateItem(final Item<NamespacePropertiesProvider> item) {
+            NamespacePropertiesProvider propertiesProvider = item.getModelObject();
+
+            final String namespace = propertiesProvider.getNamespace();
+
+            final String namespaceHeading = namespace + " (" + propertiesProvider.size() + ")";
+            item.add(new ToggleHeader("toggle-namespace", namespace, namespaceHeading));
+
+            final WebMarkupContainer propertiesContainer = new WebMarkupContainer("propertiesContainer");
+            propertiesContainer.setOutputMarkupId(true);
+            propertiesContainer.setMarkupId("toggle-box-" + namespace);
+
+            final PropertiesEditor propertiesEditor = new PropertiesEditor("properties", propertiesProvider);
+            propertiesContainer.add(propertiesEditor);
+            item.add(propertiesContainer);
+        }
+    }
+
+    private static class NamespaceProvider implements IDataProvider<NamespacePropertiesProvider> {
+        @SuppressWarnings("unused")
+        private static final long serialVersionUID = 1L;
+
+        private List<NamespacePropertiesProvider> namespaces;
+        private IDataProvider<Property> wrapped;
+
+        NamespaceProvider(IDataProvider<Property> wrapped) {
+            this.wrapped = wrapped;
+            namespaces = Collections.emptyList();
+        }
+
+        void setWrapped(IDataProvider<Property> wrapped) {
             this.wrapped = wrapped;
         }
 
-        void setWrappedProvider(IDataProvider provider) {
-            this.wrapped = provider;
+        @Override
+        public Iterator<? extends NamespacePropertiesProvider> iterator(final int first, final int count) {
+            load();
+            return namespaces.subList(first, first + count).iterator();
         }
 
+        @Override
+        public int size() {
+            load();
+            return namespaces.size();
+        }
+
+        @Override
+        public IModel<NamespacePropertiesProvider> model(final NamespacePropertiesProvider object) {
+            return new Model<NamespacePropertiesProvider>(object);
+        }
+
+        @Override
         public void detach() {
+            namespaces = null;
             wrapped.detach();
         }
 
-        public Iterator iterator(int first, int count) {
-            return wrapped.iterator(first, count);
-        }
-
-        public IModel model(Object object) {
-            return wrapped.model(object);
-        }
-
-        public int size() {
-            return wrapped.size();
-        }
-    }
-
-    private class PropertiesFilter implements IDataProvider {
-        private static final long serialVersionUID = 1L;
-
-        private JcrPropertiesProvider decorated;
-        private List<JcrPropertyModel> entries;
-
-        public PropertiesFilter(JcrPropertiesProvider propertiesProvider) {
-            decorated = propertiesProvider;
-        }
-
-        public Iterator<JcrPropertyModel> iterator(int first, int count) {
-            load();
-            return entries.subList(first, first + count).iterator();
-        }
-
-        public JcrPropertyModel model(Object object) {
-            return (JcrPropertyModel) object;
-        }
-
-        public int size() {
-            load();
-            return entries.size();
-        }
-
-        public void detach() {
-            entries = null;
-            decorated.detach();
-        }
-
         private void load() {
-            entries = new ArrayList<JcrPropertyModel>();
+            namespaces = new ArrayList<NamespacePropertiesProvider>();
+
+            Map<String, NamespacePropertiesProvider> namespaceMap = new TreeMap<String, NamespacePropertiesProvider>();
             try {
-                Iterator<Property> it = decorated.iterator(0, decorated.size());
+                Iterator<? extends Property> it = wrapped.iterator(0, wrapped.size());
                 while (it.hasNext()) {
                     Property p = it.next();
-                    if (!p.getName().equals("jcr:primaryType") && !p.getName().equals("jcr:mixinTypes")) {
-                        entries.add(new JcrPropertyModel(p));
+                    String propName = p.getName();
+                    if (!propName.equals("jcr:primaryType") && !propName.equals("jcr:mixinTypes")) {
+                        String propNamespace = new JcrName(propName).getNamespace();
+                        if (propNamespace == null) {
+                            propNamespace = "<none>";
+                        }
+                        NamespacePropertiesProvider propertiesProvider = namespaceMap.get(propNamespace);
+                        if (propertiesProvider == null) {
+                            propertiesProvider = new NamespacePropertiesProvider(propNamespace);
+                            namespaceMap.put(propNamespace, propertiesProvider);
+                        }
+
+                        propertiesProvider.addProperty(p);
                     }
                 }
+                namespaces.addAll(namespaceMap.values());
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            Collections.sort(entries, new PropertyComparator());
         }
     }
 
-    private class PropertyComparator implements Comparator<JcrPropertyModel> {
+    private static class NamespacePropertiesProvider implements IDataProvider<Property> {
+        @SuppressWarnings("unused")
         private static final long serialVersionUID = 1L;
 
-        public int compare(JcrPropertyModel o1, JcrPropertyModel o2) {
+        private final String namespace;
+        private List<Property> properties;
+        private boolean sorted;
+
+        NamespacePropertiesProvider(String namespace) {
+            this.namespace = namespace;
+            properties = new ArrayList<Property>();
+            sorted = true;
+        }
+
+        public String getNamespace() {
+            return namespace;
+        }
+
+        void addProperty(Property p) {
+            properties.add(p);
+            if (properties.size() > 1) {
+                sorted = false;
+            }
+        }
+        
+        @Override
+        public Iterator iterator(final int first, final int count) {
+            if (!sorted) {
+                Collections.sort(properties, PROPERTY_COMPARATOR);
+                sorted = true;
+            }
+            return properties.subList(first, first + count).iterator();
+        }
+
+        @Override
+        public int size() {
+            return properties.size();
+        }
+
+        @Override
+        public IModel<Property> model(final Property object) {
+            return new JcrPropertyModel(object);
+        }
+
+        @Override
+        public void detach() {
+            properties = null;
+        }
+    }
+
+    private static class NamespacePropertyComparator implements Comparator<Property> {
+        @SuppressWarnings("unused")
+        private static final long serialVersionUID = 1L;
+
+        public int compare(Property p1, Property p2) {
             try {
-                Property p1 = o1.getProperty();
-                Property p2 = o2.getProperty();
                 if (p1 == null) {
                     if (p2 == null) {
                         return 0;
@@ -242,19 +285,9 @@ class NodeEditor extends Form {
                 } else if (p2 == null) {
                     return -1;
                 }
-
-                Boolean p1_isProtected = p1.getDefinition().isProtected();
-                Boolean p2_isProtected = p2.getDefinition().isProtected();
-                int compare_protected = p1_isProtected.compareTo(p2_isProtected);
-                if (compare_protected != 0) {
-                    return compare_protected;
-                }
-
-                Boolean p1_isReference = ReferenceEditor.isReference(o1);
-                Boolean p2_isReference = ReferenceEditor.isReference(o2);
-                return p1_isReference.compareTo(p2_isReference);
+                return p1.getName().compareTo(p2.getName());
             } catch (RepositoryException e) {
-                return 0;
+                throw new IllegalStateException("Error while comparing properties", e);
             }
         }
     }

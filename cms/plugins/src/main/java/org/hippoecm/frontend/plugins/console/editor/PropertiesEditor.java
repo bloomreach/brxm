@@ -24,6 +24,7 @@ import javax.jcr.ValueFormatException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
@@ -51,9 +52,13 @@ public class PropertiesEditor extends DataView {
         JcrPropertyModel model = (JcrPropertyModel) item.getModel();
         try {
             item.add(deleteLink("delete", model));
-            item.add(new Label("name", model.getProperty().getName()));
+
+            JcrName propName = new JcrName(model.getProperty().getName());
+            item.add(new Label("name", propName.getName()));
+
             item.add(new Label("type", PropertyType.nameFromValue(model.getProperty().getType())));
             item.add(new PropertyValueEditor("values", model));
+
             if (model.getProperty().getDefinition().isMultiple() && !model.getProperty().getDefinition().isProtected()) {
                 item.add(addLink("add", model));
             } else {
@@ -74,6 +79,12 @@ public class PropertiesEditor extends DataView {
         } else {
             result = new AjaxLink(id, model) {
                 private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    super.onComponentTag(tag);
+                    tag.put("class", "property-value-remove");
+                }
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
