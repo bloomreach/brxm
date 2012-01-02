@@ -36,11 +36,11 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>2.22.00</hippo.repository.version>
-    <hippo.cms.version>2.22.00</hippo.cms.version>
+    <hippo.repository.version>2.22.02-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.22.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-publication-workflow.version>2.22.00</hippo.addon-publication-workflow.version>
     <hippo.addon-faceteddate.version>2.22.00</hippo.addon-faceteddate.version>
-    <hippo.addon-brokenlinks.version>1.01.06</hippo.addon-brokenlinks.version>
+    <hippo.addon-brokenlinks.version>1.01.07-SNAPSHOT</hippo.addon-brokenlinks.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
