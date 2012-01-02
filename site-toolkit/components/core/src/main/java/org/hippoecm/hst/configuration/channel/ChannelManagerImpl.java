@@ -199,7 +199,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         url.append(virtualHost.getHostName());
         if (mount.isPortInUrl()) {
             int port = mount.getPort();
-            if (port != 0) {
+            if (port != 0 && port != 80 && port != 443) {
                 url.append(':');
                 url.append(mount.getPort());
             }
