@@ -24,7 +24,20 @@
       <div class="yui-gf">
         <hst:include ref="leftmenu"/>
         <div class="yui-u">
-          <hst:include ref="content" />
+          <br/>
+          HORIZONTAL SPAN
+          <hst:include ref="span-content" /><br/>
+          VERTICAL DIV
+          <hst:include ref="div-content" />
+          <br/>
+          TABLE 
+          <hst:include ref="table-content" />
+          <br/>
+          UL
+          <hst:include ref="ul-content" />
+          <br/>
+          OL
+          <hst:include ref="ol-content" />
         </div>
       </div>
     </div>
