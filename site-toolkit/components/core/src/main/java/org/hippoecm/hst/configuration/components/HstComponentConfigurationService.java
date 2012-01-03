@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration {
 
-    private static final long serialVersionUID = 1L;
-
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
 
     private Map<String, HstComponentConfiguration> componentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
@@ -585,8 +583,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             List<HstComponentConfiguration> populated) throws ServiceException {
         
         if(this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
-            throw new ServiceException("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
-            		"components. Cannot merge '"+childToMerge.getId()+"' and '"+this.getId()+"' because at least one of them is a Container component. Fix configuration.");
+            log.warn("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
+                    "components. Cannot merge '{}' and '{}' because at least one of them is a Container component. Fix configuration.", childToMerge.getId(), this.getId());
+            return;
         }
         
         if (this.componentClassName == null) {
