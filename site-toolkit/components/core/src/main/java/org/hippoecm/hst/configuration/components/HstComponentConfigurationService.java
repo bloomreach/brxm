@@ -146,17 +146,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
         this.inherited = node.isInherited();
-        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
-          type = Type.COMPONENT;
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
-          type = Type.CONTAINER_COMPONENT;
-        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
-            type = Type.CONTAINER_ITEM_COMPONENT;
-            dummyContent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
-            componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
-        } else {
-            throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
-        }
 
         this.parent = parent;
 
@@ -166,9 +155,27 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.id = StringPool.get(parent.getId() + "/" + node.getValueProvider().getName());   
         }
         
+        this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
+        
+        if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())) {
+          type = Type.COMPONENT;
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
+          type = Type.CONTAINER_COMPONENT;
+          if(componentClassName == null) {
+              // TODO do not depend on hardcoded location 'org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent'
+              log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'", new String[]{"org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent",HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+              componentClassName = "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent";
+          }
+        } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
+            type = Type.CONTAINER_ITEM_COMPONENT;
+            dummyContent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
+            componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
+        } else {
+            throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
+        }
+
         this.name = StringPool.get(node.getValueProvider().getName());
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
-        this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
         
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
         
