@@ -269,10 +269,10 @@ public class VirtualHostService implements MutableVirtualHost {
        
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroup, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) {
+    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroupName, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
-        this.hostGroupName = hostGroup;
+        this.hostGroupName = hostGroupName;
         this.cmsLocation = cmsLocation;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
@@ -281,11 +281,12 @@ public class VirtualHostService implements MutableVirtualHost {
         this.pageNotFound = parent.pageNotFound;
         this.versionInPreviewHeader = parent.versionInPreviewHeader;
         this.contextPathInUrl = parent.contextPathInUrl;
+        this.onlyForContextPath = parent.onlyForContextPath;
         this.showPort = parent.showPort;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroup, cmsLocation, defaultPort, hstManager);
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroupName, cmsLocation, defaultPort, hstManager);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = StringPool.get(buildHostName());
