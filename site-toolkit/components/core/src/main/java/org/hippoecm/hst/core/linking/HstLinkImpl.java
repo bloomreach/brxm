@@ -164,7 +164,7 @@ public class HstLinkImpl implements HstLink {
             if(requestContext.getRenderHost() != null) {
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
-                // '/site' in cms preview contenxt: It must there be '/site/' 
+                // '/site' in cms preview context: It must there be '/site/'
                 if(urlString.equals(mount.onlyForContextPath())) {
                     urlString += "/";
                 }
