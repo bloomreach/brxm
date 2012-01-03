@@ -104,14 +104,12 @@ public class ImportTest extends TestCase {
     }
 
     @Test
-    @Ignore
     public void testWhiteSpacesInSmallBinary() throws Exception {
         data = new byte[32];
         testWhiteSpacesInBinary(data);
     }
 
     @Test
-    @Ignore
     public void testWhiteSpacesInLargeBinary() throws Exception {
         data = new byte[1024*125];
         testWhiteSpacesInBinary(data);
