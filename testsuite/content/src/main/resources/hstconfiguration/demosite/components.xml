@@ -80,9 +80,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>07560767-c53d-4aa2-8669-77c12b3203d0</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:xtype" sv:type="String">
           <sv:value>HST.vBox</sv:value>
         </sv:property>
@@ -133,9 +130,6 @@
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>500bc85b-3b63-4911-9d27-480d76f11cc0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:xtype" sv:type="String">
           <sv:value>HST.Table</sv:value>
@@ -200,9 +194,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>f4664ed0-0c2e-49f6-8ee7-a726e8131d14</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:xtype" sv:type="String">
           <sv:value>HST.OrderedList</sv:value>
         </sv:property>
@@ -247,9 +238,6 @@
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>ea6e1a69-53af-45aa-aa79-fcd8da218dd0</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentclassname" sv:type="String">
-          <sv:value>org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:xtype" sv:type="String">
           <sv:value>HST.UnorderedList</sv:value>
