@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -195,7 +194,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
         
         boolean includeTrailingSlash = false;
-        if(pathInfo != null && pathInfo.endsWith(HstLink.PATH_SUBPATH_DELIMITER)) {
+        if(pathInfo != null && pathInfo.endsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
             // we now must not strip the trailing slash because it is part of the rest call ./
             includeTrailingSlash = true; 
         }
