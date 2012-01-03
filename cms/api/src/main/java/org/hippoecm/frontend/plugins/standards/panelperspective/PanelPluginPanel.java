@@ -93,7 +93,7 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
                     }
                 };
                 link.add(new Image("img", service.getImage()));
-                link.add(new Label("title", service.getTitle()).setRenderBodyOnly(true));
+                link.add(new Label("title", service.getTitle()));
                 link.add(new Label("help", service.getHelp()));
                 item.add(link);
             }
