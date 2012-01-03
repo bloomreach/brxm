@@ -16,26 +16,40 @@
 
 -->
 <sv:node sv:name="hst:catalog" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-	<sv:property sv:name="jcr:primaryType" sv:type="Name">
-		<sv:value>hst:catalog</sv:value>
-	</sv:property>
-	<sv:node sv:name="demosite-catalog-items">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:containeritempackage</sv:value>
-		</sv:property>
-		<sv:node sv:name="banner-demosite">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:containeritemcomponent</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:xtype" sv:type="String">
-              <sv:value>HST.Item</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:template" sv:type="String">
-                <sv:value>banner</sv:value>
-            </sv:property>
-        </sv:node>
-	</sv:node>
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:catalog</sv:value>
+  </sv:property>
+  <sv:node sv:name="demosite-catalog-items">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:containeritempackage</sv:value>
+    </sv:property>
+    <sv:node sv:name="banner-demosite">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>HST.Item</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>banner</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="block">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:containeritemcomponent</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:xtype" sv:type="String">
+        <sv:value>HST.Item</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentclassname" sv:type="String">
+        <sv:value>org.hippoecm.hst.demo.components.Block</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:template" sv:type="String">
+        <sv:value>block</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>

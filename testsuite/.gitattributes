@@ -62,6 +62,8 @@ site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.ja
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/BannerInfo.java -text
+site/src/main/java/org/hippoecm/hst/demo/components/Block.java -text
+site/src/main/java/org/hippoecm/hst/demo/components/BlockInfo.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/CustomDefaultHstComponent.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/Detail.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/DummyCarDocsCreator.java svneol=native#text/plain
@@ -138,9 +140,11 @@ site/src/main/webapp/WEB-INF/jetty-env.xml -text
 site/src/main/webapp/WEB-INF/jsp/components/footer/footer.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/archive.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/banner.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/block.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/contact.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/contactdispatch.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/detailpage-ajaxresult.jsp -text svneol=unset#text/plain

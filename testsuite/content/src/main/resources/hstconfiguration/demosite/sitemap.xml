@@ -47,6 +47,17 @@
             <sv:value>aboutId</sv:value>
         </sv:property>
     </sv:node>
+    <sv:node sv:name="mashup">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/mashup</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:refId" sv:type="String">
+        <sv:value>mashupId</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="news">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
@@ -226,7 +237,7 @@
             </sv:node>
         </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="rss.xml">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
@@ -456,5 +467,5 @@
       <sv:value>JaxrsRestPlainPipeline</sv:value>
     </sv:property>
   </sv:node>
-  
+
 </sv:node>

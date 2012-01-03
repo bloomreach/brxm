@@ -62,6 +62,14 @@
                 <sv:value>about</sv:value>
             </sv:property>
         </sv:node>
+        <sv:node sv:name="Mashup">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:sitemenuitem</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+            <sv:value>mashup</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="News">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hst:sitemenuitem</sv:value>

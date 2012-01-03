@@ -16,261 +16,277 @@
 
 -->
 <sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-	<sv:property sv:name="jcr:primaryType" sv:type="Name">
-		<sv:value>hst:templates</sv:value>
-	</sv:property>
-	<sv:node sv:name="webpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:containers" sv:type="String">
-			<sv:value>header</sv:value>
-			<sv:value>body</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/templates/webpage.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="header">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/header/header.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-    <sv:node sv:name="footer">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/footer/footer.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="datetime">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>DateTimeServlet</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:isnamed" sv:type="Boolean">
-            <sv:value>true</sv:value>
-        </sv:property>
-    </sv:node>
-	<sv:node sv:name="threecolumnlayout">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:containers" sv:type="String">
-			<sv:value>content</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="leftmenu">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/leftmenu.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="right">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/right.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="homepage.ftl">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-        <sv:property sv:name="hst:script" sv:type="String">
-          <sv:value>&lt;#assign
-            hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
-            &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
-            &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html 
-            hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
-            &lt;#if "${document.resource!}" != ""&gt;
-            &lt;@hst.link var="resource"
-            hippobean=document.resource /&gt; &lt;#if
-            "${resource!}" != ""&gt; &lt;a
-            href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
-            &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
-            &lt;/div&gt; &lt;hr/&gt;
-            &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
-            var="imageset" hippobean=image
-            mount="restapi-gallery" /&gt; &lt;@hst.link var="original"
-            hippobean=image subPath="original"
-            mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
-            hippobean=image subPath="thumbnail"
-            mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
-            target="_blank"
-            href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
-            Thumbnail : &lt;a target="_blank"
-            href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
-            &lt;p&gt; Original : &lt;a target="_blank"
-            href="${original}"&gt;${original}&lt;/a&gt;&lt;/p&gt;
-            &lt;br/&gt;
-            &lt;br/&gt;
-            &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
-            &lt;p
-            style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
-        </sv:property>
-	</sv:node>
-	<sv:node sv:name="homelayout">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/layout/homelayout.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="archive">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/archive.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="detailpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-            <!--
-			<sv:value>jsp/components/main/detailpage.jsp</sv:value>
-            -->
-            <sv:value>ftl/components/main/detailpage.ftl</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="rss">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:containers" sv:type="String"/>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/templates/rss.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="searchresults">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:containers" sv:type="String"/>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/search.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-    <sv:node sv:name="todolist">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:containers" sv:type="String"/>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/todolist.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-	<sv:node sv:name="bodyerror">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:containers" sv:type="String"/>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/error.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="wikipedia">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/wikipedia.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="facetedaddproduct">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/facetedaddproduct.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-	<sv:node sv:name="faceted">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/faceted.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-	<sv:node sv:name="facetedright">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/facetedright.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-    <sv:node sv:name="facetedproductpage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/facetedproductpage.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-	<sv:node sv:name="productpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/productpage.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-    <sv:node sv:name="formpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/formpage.jsp</sv:value>
-		</sv:property>
-	</sv:node>
-    <sv:node sv:name="contactspring">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>/spring/contactspring.do</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="contactspringmvc">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>/spring/contactspringmvc.do</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="thankyou">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:renderpath" sv:type="String">
-            <sv:value>jsp/components/main/thankyou.jsp</sv:value>
-        </sv:property>
-    </sv:node>
-	<sv:node sv:name="banner">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:template</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:renderpath" sv:type="String">
-			<sv:value>jsp/components/main/banner.jsp</sv:value>
-		</sv:property>
-	</sv:node>
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:templates</sv:value>
+  </sv:property>
+  <sv:node sv:name="webpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String">
+      <sv:value>header</sv:value>
+      <sv:value>body</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/templates/webpage.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="header">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/header/header.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="footer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/footer/footer.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="datetime">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>DateTimeServlet</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:isnamed" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="threecolumnlayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String">
+      <sv:value>content</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="leftmenu">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/leftmenu.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="right">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/right.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="homepage.ftl">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:script" sv:type="String">
+      <sv:value>&lt;#assign
+        hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
+        &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
+        &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
+        hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
+        &lt;#if "${document.resource!}" != ""&gt;
+        &lt;@hst.link var="resource"
+        hippobean=document.resource /&gt; &lt;#if
+        "${resource!}" != ""&gt; &lt;a
+        href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
+        &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
+        &lt;/div&gt; &lt;hr/&gt;
+        &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
+        var="imageset" hippobean=image
+        mount="restapi-gallery" /&gt; &lt;@hst.link var="original"
+        hippobean=image subPath="original"
+        mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
+        hippobean=image subPath="thumbnail"
+        mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
+        target="_blank"
+        href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
+        Thumbnail : &lt;a target="_blank"
+        href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
+        &lt;p&gt; Original : &lt;a target="_blank"
+        href="${original}"&gt;${original}&lt;/a&gt;&lt;/p&gt;
+        &lt;br/&gt;
+        &lt;br/&gt;
+        &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
+        &lt;p
+        style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="homelayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/layout/homelayout.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="archive">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/archive.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="detailpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <!--
+<sv:value>jsp/components/main/detailpage.jsp</sv:value>
+      -->
+      <sv:value>ftl/components/main/detailpage.ftl</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="rss">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String"/>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/templates/rss.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="searchresults">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String"/>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/search.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="todolist">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String"/>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/todolist.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="bodyerror">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String"/>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/error.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="wikipedia">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/wikipedia.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="facetedaddproduct">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/facetedaddproduct.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="faceted">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/faceted.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="facetedright">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/facetedright.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="facetedproductpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/facetedproductpage.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="productpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/productpage.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="formpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/formpage.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="contactspring">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>/spring/contactspring.do</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="contactspringmvc">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>/spring/contactspringmvc.do</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="thankyou">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/thankyou.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="banner">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/banner.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="block">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/block.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="mashup">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/layout/mashup.jsp</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
