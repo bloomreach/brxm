@@ -278,6 +278,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/RootResource.java -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ol.ftl -text
+client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/span.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/table.ftl -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/builtin/components/ul.ftl -text
 client-modules/page-composer/src/site/site.xml -text
