@@ -18,6 +18,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<div style="width: 200px; height: 200px; background-color:${info.bgColor}; border: 2px solid red; margin: 5px; display: inline-block;">
+<div style="width: 80px; height: 80px; background-color:${info.bgColor}; border: 2px solid red; margin: 5px; display: inline-block;">
   My block
 </div>
