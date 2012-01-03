@@ -219,7 +219,6 @@
 
             this.ddTolerance = 'intersect';
             this.dropIndicator = null;
-            this.direction = HST.DIR.VERTICAL;
             this.draw = new Hippo.Util.Draw({min: 3, thresholdLow: 0});
 
             this.parentMargin = 0; //margin of overlay
@@ -599,6 +598,8 @@
             this.sel.append.item = this.sel.container + ' > tbody > tr.' + this.cls.item;
             this.sel.append.container = this.sel.container + ' > tbody';
             this.sel.append.insertAt = this.sel.container + ' > tbody > tr';
+
+            this.direction = HST.DIR.VERTICAL;
         },
 
         createItemElement : function(element) {
@@ -617,6 +618,8 @@
             this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
             this.sel.append.container = this.sel.container;
             this.sel.append.insertAt = this.sel.container + ' > li';
+
+            this.direction = HST.DIR.VERTICAL;
         },
 
         createItemElement : function(element) {
@@ -634,6 +637,8 @@
             this.sel.append.item = this.sel.container + ' > li.' + this.cls.item;
             this.sel.append.container = this.sel.container;
             this.sel.append.insertAt = this.sel.container + ' > li';
+
+            this.direction = HST.DIR.VERTICAL;
         },
 
         createItemElement : function(element) {
@@ -651,6 +656,8 @@
             this.sel.append.item = this.sel.container + ' > div.' + this.cls.item;
             this.sel.append.container = this.sel.container;
             this.sel.append.insertAt = this.sel.container + ' > div';
+
+            this.direction = HST.DIR.VERTICAL;
         },
 
         createItemElement : function(element) {
@@ -659,6 +666,26 @@
 
     });
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.vBox', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.VerticalBox);
+
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Span = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base.extend({
+
+        init : function(id, element, resources) {
+            this._super(id, element, resources);
+
+            this.sel.append.item = this.sel.container + ' > span.' + this.cls.item;
+            this.sel.append.container = this.sel.container;
+            this.sel.append.insertAt = this.sel.container + ' > span';
+
+            this.direction = HST.DIR.HORIZONTAL;
+        },
+
+        createItemElement : function(element) {
+            return $('<span class="' + this.cls.item + '"></span>').append(element);
+        }
+
+    });
+    Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.register('HST.Span', Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Span);
+
 
     //Container items
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({

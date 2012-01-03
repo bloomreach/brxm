@@ -43,6 +43,14 @@
     position: relative;
 }
 
+span.hst-container-item {
+    display: inline-block;
+    vertical-align: top;
+    /* For IE 7 */
+    zoom: 1;
+    *display: inline;
+}
+
 .hst-overlay-container-item.hst-overlay-hover .hst-overlay-background {
     background-color: #fffcc9;
     opacity: 0.3;
@@ -59,6 +67,7 @@
     z-index: 100;
     border: 3px dotted #F9BE3D;
     min-height:22px;
+    float: left; /* changes jQuery's sortable behavior */
 }
 
 .hst-overlay-inner {
