@@ -129,7 +129,6 @@ public class DereferencedImportHandler extends ImportHandler {
      */
     public void startPrefixMapping(String prefix, String uri)
             throws SAXException {
-        localNamespaceMappings.put(prefix, uri);
     }
 
     /**
