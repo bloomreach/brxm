@@ -157,7 +157,7 @@ public class HstPingServlet extends HttpServlet {
         return (customMessage != null);
     }
 
-    private synchronized void doRepositoryChecks(HttpServletRequest req) throws PingException {
+    private void doRepositoryChecks(HttpServletRequest req) throws PingException {
         Session session = null;
         try {
             session = obtainSession(req);
