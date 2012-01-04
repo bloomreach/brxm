@@ -67,6 +67,14 @@
       <type>jar</type>
     </dependency>
 
+    <!-- jQuery plugins -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-jquery</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- Template editor -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
