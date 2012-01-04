@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -118,6 +119,27 @@ public class EventLabelTest extends PluginTest {
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
         eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + docNode.getUUID() + ",path='"
                 + docNode.getPath() + "']");
+
+        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        assertEquals("/test/testDocument", parser.getDocumentPath());
+
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
+        TestLabel testLabel = new TestLabel(label);
+        assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
+    }
+
+    @Test
+    public void testEventWithVersion() throws Exception {
+        Node docNode = root.getNode("test").addNode("testDocument");
+        docNode.addMixin("mix:versionable");
+        session.save();
+
+        Version version = docNode.checkin();
+
+        Long timestamp = Calendar.getInstance().getTimeInMillis();
+        Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
+        eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + version.getUUID() + ",path='"
+                + version.getPath() + "']");
 
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());

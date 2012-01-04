@@ -23,6 +23,8 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
@@ -98,6 +100,25 @@ public class DocumentEvent extends JcrObject {
                 } else {
                     targetVariant = null;
                     targetVariantExists = false;
+                }
+
+                if (targetVariantExists) {
+                    Node target = session.getNode(targetVariant);
+                    if (target instanceof Version) {
+                        Version version = (Version) target;
+                        VersionHistory containingHistory = version.getContainingHistory();
+                        String versionableUUID = containingHistory.getVersionableUUID();
+                        String path = uuid2Path(versionableUUID);
+                        if (path != null && !path.equals("")) {
+                            targetVariantExists = session.itemExists(path);
+                            if (targetVariantExists) {
+                                targetVariant = path;
+                            }
+                        } else {
+                            targetVariantExists = false;
+                            targetVariant = null;
+                        }
+                    }
                 }
             } else if (sourceVariantExists && node.getProperty("hippolog:eventMethod").getString().equals("delete")
                     && node.hasProperty("hippolog:eventArguments")
