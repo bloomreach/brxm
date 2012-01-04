@@ -341,8 +341,9 @@
                 update  : $.proxy(this.ddOnUpdate, this),
                 receive : $.proxy(this.ddOnReceive, this),
                 remove  : $.proxy(this.ddOnRemove, this),
-                tolerance : this.ddTolerance,
-                change : $.proxy(this.ddOnChange, this)
+                over    : $.proxy(this.ddOnOver, this),
+                change  : $.proxy(this.ddOnChange, this),
+                tolerance : this.ddTolerance
             }).disableSelection();
         },
 
@@ -378,6 +379,10 @@
 
         ddOnUpdate : function(event, ui) {
             this.state.syncItemsWithOverlayOrder = true;
+        },
+
+        ddOnOver : function(event, ui) {
+            this.parent.onOver(ui, this);
         },
 
         ddOnReceive : function(event, ui) {

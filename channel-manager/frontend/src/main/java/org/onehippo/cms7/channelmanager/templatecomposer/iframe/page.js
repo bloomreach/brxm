@@ -26,6 +26,7 @@
         overlay : null,
         current : null,
         containers : {},
+        currentContainer: null,
         dropIndicator : null,
         syncRequested : false,
         resources : [],
@@ -187,7 +188,13 @@
         },
 
         onDrag : function(ui, container) {
-            container.drawDropIndicator(ui, this.dropIndicator);
+            var c = this.currentContainer == null ? container : this.currentContainer;
+            c.drawDropIndicator(ui, this.dropIndicator);
+        },
+
+        onOver : function(ui, container) {
+            this.currentContainer = container;
+            this.currentContainer.drawDropIndicator(ui, this.dropIndicator);
         },
 
         onDragStop : function() {
@@ -198,6 +205,7 @@
             $.each(this.containers, function(key, value) {
                 value.afterDrag();
             });
+            this.currentContainer = null;
         },
 
         highlight : function(groups) {
