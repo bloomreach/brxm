@@ -104,6 +104,8 @@ public class ImageUtils {
      * @param image the image to write.
      *
      * @return an output stream with the data of the given image.
+     *
+     * @@throws IOException when creating the binary output stream failed.
      */
     public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -135,10 +137,10 @@ public class ImageUtils {
      * @param targetHeight
      *            the desired height of the scaled instance, in pixels
      * @param hint
-     *            one of the rendering hints that corresponds to {@link RenderingHints.KEY_INTERPOLATION}
-     *            (e.g. {@link RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-     *            {@link RenderingHints.VALUE_INTERPOLATION_BILINEAR},
-     *            {@link RenderingHints.VALUE_INTERPOLATION_BICUBIC})
+     *            one of the rendering hints that corresponds to {@link RenderingHints#KEY_INTERPOLATION}
+     *            (e.g. {@link RenderingHints#VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
+     *            {@link RenderingHints#VALUE_INTERPOLATION_BILINEAR},
+     *            {@link RenderingHints#VALUE_INTERPOLATION_BICUBIC})
      * @param highQuality
      *            if true, this method will use a multi-step scaling technique that provides higher quality than the
      *            usual one-step technique (only useful in downscaling cases, where {@code targetWidth} or
