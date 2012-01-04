@@ -1281,7 +1281,7 @@ table.hippo-window-form {
 .hippo-picker-navigation {
   background: url("images/silver4.png") repeat-x;
   height: 20px;
-  width: 645px;
+  width: auto;
   border-bottom: 1px solid #afafaf;
   margin-left: 194px;
   padding-top: 2px;
