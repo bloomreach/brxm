@@ -72,7 +72,6 @@ function updateBox(boxName, display, oldGroup, newGroup) {
     if (boxName === '') {
         return;
     }
-    console.log('updating box \'' + boxName + '\': display=' + display + ',oldGroup=' + oldGroup + ',newGroup=' + newGroup);
     var box = document.getElementById('toggle-box-' + boxName);
     if (box != null) {
         box.style.display = display;
