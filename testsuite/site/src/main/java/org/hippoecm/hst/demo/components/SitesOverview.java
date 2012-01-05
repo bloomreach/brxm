@@ -75,12 +75,12 @@ public class SitesOverview extends BaseHstComponent {
                 
                 Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
                 Node mount = host.addNode("hst:root", "hst:mount");
-                mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many-live"+tryToAdd);
+                mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
                 mount.setProperty("hst:alias", "mount"+tryToAdd);
                 
                 // add a new hst:site
                 
-                Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many-live"+tryToAdd, "hst:site");
+                Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
                 site.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/demosite-test-many" + tryToAdd);
                 Node content = site.addNode("hst:content", "hippo:facetselect");
                 String[] availability = {"hippo:availability"};
@@ -89,7 +89,7 @@ public class SitesOverview extends BaseHstComponent {
                 content.setProperty("hippo:values", values);
                 String[] modes = {"single"};
                 content.setProperty("hippo:modes", modes);
-                content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many-live/hst:content").getProperty("hippo:docbase").getString());
+                content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many/hst:content").getProperty("hippo:docbase").getString());
 
                 writableSession.save();
 
