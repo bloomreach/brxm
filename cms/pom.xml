@@ -76,7 +76,7 @@
   </modules>
 
   <properties>
-    <hippo.repository.version>2.22.00</hippo.repository.version>
+    <hippo.repository.version>2.22.02</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
