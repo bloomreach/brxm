@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository-tools</artifactId>
-    <version>2.21.01-SNAPSHOT</version>
+    <version>2.22.02-SNAPSHOT</version>
   </parent>
 
   <groupId>org.onehippo.cms7</groupId>
