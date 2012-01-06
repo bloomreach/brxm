@@ -51,21 +51,17 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private boolean detached = false;
     private boolean isLoaded = false;
-    private List<Integer> supportedPropertyTypes = new ArrayList<Integer>();
-   
-    //private Map<String, Object> properties = new HashMap<String, Object>();
-    
-    private PropertyMapImpl propertyMap = new PropertyMapImpl();
+    private final static List<Integer> SUPPORTED_PROPERTY_TYPES = new ArrayList<Integer>();
     
     {
-        supportedPropertyTypes.add(PropertyType.STRING);
-        supportedPropertyTypes.add(PropertyType.BOOLEAN);
-        supportedPropertyTypes.add(PropertyType.DATE);
-        supportedPropertyTypes.add(PropertyType.DOUBLE);
-        supportedPropertyTypes.add(PropertyType.LONG);
+        SUPPORTED_PROPERTY_TYPES.add(PropertyType.STRING);
+        SUPPORTED_PROPERTY_TYPES.add(PropertyType.BOOLEAN);
+        SUPPORTED_PROPERTY_TYPES.add(PropertyType.DATE);
+        SUPPORTED_PROPERTY_TYPES.add(PropertyType.DOUBLE);
+        SUPPORTED_PROPERTY_TYPES.add(PropertyType.LONG);
     }
     
-    
+    private PropertyMapImpl propertyMap = new PropertyMapImpl();
     
     public JCRValueProviderImpl(Node jcrNode) {
         this(jcrNode, true);
@@ -126,6 +122,9 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
         this.detached = true;
         this.jcrNode = null;
+        // AFTER a valueprovider is detached, properties cannot be populated any more. This means 
+        // we can optimize the PropertyMapImpl now to not use all unique empty hashmaps. 
+        propertyMap.providerDetached();
     }
     
     public boolean isDetached(){
@@ -573,7 +572,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     // already loaded
                     continue;
                 }
-                if(supportedPropertyTypes.contains(p.getType())) {
+                if(SUPPORTED_PROPERTY_TYPES.contains(p.getType())) {
                    loadProperty(p, p.getDefinition(), p.getName());
                 }
             }
