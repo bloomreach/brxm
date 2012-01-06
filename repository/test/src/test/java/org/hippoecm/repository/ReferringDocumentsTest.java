@@ -48,7 +48,7 @@ public class ReferringDocumentsTest extends TestCase
     /** height (depth) of the tree of documents to build, together with the fan-out this determins the number of documents the
      * tree holds
      */
-    private final int DEPTH = 3; // use 4 for a proper test
+    private final int DEPTH = 1; // use 4 for a proper test
 
     /** the number of subfolders and the number of documents for each folder, the total number of html-consisting
      * documents will be FANOUT^DEPTH
