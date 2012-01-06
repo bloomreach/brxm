@@ -57,7 +57,7 @@ public class PropertyMapImpl implements PropertyMap, Serializable {
     
     public void addAvailableProperty(String name) {
         if(availableProps == null) {
-            throw new IllegalStateException("availableProps is already nullified. Cannot call addAvailableProperty at this point");
+            availableProps = new HashSet<String>();;
         }
         availableProps.add(name);
     }
@@ -71,7 +71,7 @@ public class PropertyMapImpl implements PropertyMap, Serializable {
     
     public void addUnAvailableProperty(String name) {
         if(unAvailableProps == null) {
-            throw new IllegalStateException("unAvailableProps is already nullified. Cannot call addUnAvailableProperty at this point");
+            unAvailableProps = new HashSet<String>();
         }
         unAvailableProps.add(name);
     }
