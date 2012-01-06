@@ -57,7 +57,7 @@ public class PropertyMapImpl implements PropertyMap, Serializable {
     
     public void addAvailableProperty(String name) {
         if(availableProps == null) {
-            availableProps = new HashSet<String>();;
+            availableProps = new HashSet<String>();
         }
         availableProps.add(name);
     }
