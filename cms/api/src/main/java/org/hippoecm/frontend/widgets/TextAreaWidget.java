@@ -48,7 +48,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
                         double rowCount = Double.parseDouble(rows);
                         tag.put("style", "height: " + (rowCount * 1.2) + "em;");
                     } catch (NumberFormatException e) {
-                        log.info("Cannot set height of textarea. Expected 'rows' to be a double, but got: '" + rows + "'");
+                        log.warn("Cannot set height of textarea. Expected 'rows' to be a double, but got: '" + rows + "'");
                     }
                     tag.put("rows", getRows());
                 }
