@@ -119,9 +119,7 @@ public class HstNodeImpl implements HstNode {
         this.parent = parent;
         this.inherited = inherited;
         if(node.children != null) {
-            if (children == null) {
-                children = new LinkedHashMap<String, HstNode>();
-            }
+            children = new LinkedHashMap<String, HstNode>();
             for(Entry<String, HstNode> entry : node.children.entrySet()) {
                 children.put(entry.getKey(), new HstNodeImpl(inherited, (HstNodeImpl)entry.getValue(), this));
             }
