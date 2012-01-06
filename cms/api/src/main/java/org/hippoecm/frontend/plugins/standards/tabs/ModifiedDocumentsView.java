@@ -44,12 +44,28 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
     private ListDataTable dataTable;
     private ModifiedDocumentsProvider provider;
 
-    public ModifiedDocumentsView(String id, ModifiedDocumentsProvider provider) {
+    public ModifiedDocumentsView(String id, final ModifiedDocumentsProvider provider) {
         super(id);
 
         setOutputMarkupId(true);
         this.provider = provider;
-        add(new Label("message", new Model<String>("There are " + provider.size() + " modified document(s)")));
+
+        add(new Label("message", new LoadableDetachableModel<String>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String load() {
+                if (provider.size() > 1) {
+                    return new StringResourceModel("message", ModifiedDocumentsView.this, new Model(provider))
+                            .getObject();
+                } else if (provider.size() == 1) {
+                    return new StringResourceModel("message-single", ModifiedDocumentsView.this, null).getObject();
+                } else {
+                    return "";
+                }
+            }
+
+        }));
 
         dataTable = new ListDataTable("datatable", getTableDefinition(), this.provider, new ListDataTable.TableSelectionListener(){
             public void selectionChanged(IModel iModel) {
@@ -78,11 +94,8 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-
         ListColumn column = new ListColumn(new StringResourceModel("doclisting-name", this, null), null);
         column.setAttributeModifier(new DocumentAttributeModifier());
-        columns.add(column);
-
         columns.add(column);
 
         return new TableDefinition(columns);
