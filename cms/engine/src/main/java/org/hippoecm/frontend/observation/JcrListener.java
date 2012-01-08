@@ -50,6 +50,7 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.RestartResponseException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -95,8 +96,13 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
         // during a valid session. If this number is exceeded we can
         // assume the session is no longer valid.
         if (this.events.size() > 10000) {
-            log.error("The event queue is full. Logging out the user.");
-            getSession().logout();
+            String userID = getSession().getJcrSession().getUserID();
+            log.error("The event queue is full. Logging out user " + userID);
+            try {
+                getSession().logout();
+            } catch (RestartResponseException e) {
+                // expected: ignore
+            }
         }
     }
 
