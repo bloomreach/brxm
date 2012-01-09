@@ -7,6 +7,7 @@ conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
 content/src/main/resources/behavioral-configuration.xml -text
+content/src/main/resources/content/documents/demosite/wikipedia.xml -text
 content/src/main/resources/default-ecm-content.xml -text
 content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-facetproducts.xml svneol=native#text/plain
@@ -26,6 +27,7 @@ content/src/main/resources/hst-configurations.xml -text svneol=unset#text/plain
 content/src/main/resources/hst-sites.xml -text
 content/src/main/resources/hst-subsite-template.xml -text
 content/src/main/resources/hst-virtualhosts.xml svneol=native#text/plain
+content/src/main/resources/hst/configurations/democommon/components/bodywikipediaarchive.xml -text
 content/src/main/resources/hstconfiguration/catalog_common.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/democommon/components.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/democommon/pages.xml svneol=native#text/plain
@@ -44,6 +46,7 @@ content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text s
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/namespaces/demosite/wikidocument.xml -text
 content/src/main/resources/security/group-sitegroup.xml -text svneol=unset#text/plain
 content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
@@ -58,6 +61,7 @@ site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svneol=native#
 site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain

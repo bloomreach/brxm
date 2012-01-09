@@ -30,3 +30,5 @@
 [demosite:commentdocument] > demosite:basedocument, hippostd:relaxed
 
 [demosite:productdocument] > demosite:basedocument, hippostd:relaxed
+
+[demosite:wikidocument] > demosite:basedocument, hippostd:relaxed

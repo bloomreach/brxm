@@ -83,8 +83,18 @@
         <sv:property sv:name="hst:referencecomponent" sv:type="String">
             <sv:value>hst:pages/newsarchive</sv:value>
         </sv:property>
+        <sv:node sv:name="body">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:component</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>10235913-f97f-4fc9-9b4d-78de1ee8fdda</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:referencecomponent" sv:type="String">
+                <sv:value>hst:components/bodywikipediaarchive</sv:value>
+            </sv:property>
+        </sv:node>
     </sv:node>
-    
 	<sv:node sv:name="detailpage">
 		<sv:property sv:name="jcr:primaryType" sv:type="Name">
 			<sv:value>hst:component</sv:value>
