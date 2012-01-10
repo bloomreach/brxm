@@ -18,6 +18,7 @@ package org.hippoecm.frontend.session;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
@@ -30,6 +31,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.util.collections.ConcurrentHashSet;
 
 /**
  * HTTP Session store that invokes {@link #unbind()} on the PluginUserSession when
@@ -43,10 +45,21 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private Map<String, WeakReference<UserSession>> sessions = new HashMap<String, WeakReference<UserSession>>();
+    private final Map<String, WeakReference<UserSession>> sessions = new HashMap<String, WeakReference<UserSession>>();
+    private final Set<String> sessionsWithInvalidPageMaps = new ConcurrentHashSet<String>();
 
     public UnbindingHttpSessionStore(Application application) {
         super(application);
+    }
+    
+    @Override
+    public void onBeginRequest(Request request) {
+        WebRequest webRequest = toWebRequest(request);
+        HttpSession httpSession = getHttpSession(webRequest);
+        if (httpSession != null && sessionsWithInvalidPageMaps.contains(httpSession.getId())) {
+            sessionsWithInvalidPageMaps.remove(httpSession.getId());
+            clearPageMaps(request);
+        }
     }
 
     // only one page map is supported - wicket sychronizes request on pagemaps.
@@ -68,7 +81,7 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
             HttpSession httpSession = getHttpSession(webRequest);
 
             sessions.put(httpSession.getId(), new WeakReference<UserSession>((UserSession) newSession));
-            ((PluginUserSession) newSession).onBind();
+            ((PluginUserSession) newSession).onBind(httpSession.getId());
         }
     }
 
@@ -81,7 +94,25 @@ public class UnbindingHttpSessionStore extends HttpSessionStore {
                 userSession.unbind();
             }
         }
+        sessionsWithInvalidPageMaps.remove(sessionId);
         super.onUnbind(sessionId);
+    }
+    
+    void setClearPageMaps(String sessionId) {
+        if (sessionId != null) {
+            sessionsWithInvalidPageMaps.add(sessionId);
+        }
+    }
+    
+    private void clearPageMaps(Request request) {
+        for (String attribute : getAttributeNames(request)) {
+            if (attribute.startsWith("m:")) {
+                IPageMap pageMap = (IPageMap) getAttribute(request,attribute);
+                if (pageMap != null) {
+                    pageMap.clear();
+                }
+            }
+        }
     }
 
 }

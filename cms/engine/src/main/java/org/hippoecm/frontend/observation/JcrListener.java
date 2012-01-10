@@ -50,7 +50,7 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.wicket.RestartResponseException;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -61,6 +61,8 @@ import org.slf4j.LoggerFactory;
 class JcrListener extends WeakReference<EventListener> implements EventListener, Comparable<JcrListener> {
     
     private final static Logger log = LoggerFactory.getLogger(JcrListener.class);
+    
+    private final static int MAX_EVENTS = Integer.getInteger("hippoecm.observation.maxevents", 10000);
     
     private Map<Session, Map<String, NodeState>> cache;
     
@@ -93,16 +95,15 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
         // its session, then the event queue just keeps growing,
         // risking out of memory errors. We therefore set a limit
         // on the amount of events that may reasonably accumulate
-        // during a valid session. If this number is exceeded we can
-        // assume the session is no longer valid.
-        if (this.events.size() > 10000) {
+        // during a valid session. If this number is exceeded we
+        // flush the session causing its listeners to be removed and
+        // and its pagemaps to be emptied.
+        // This in turn causes wicket to send a page expired response
+        // to the browser on the next request that comes in.
+        if (this.events.size() > MAX_EVENTS) {
             String userID = getSession().getJcrSession().getUserID();
-            log.error("The event queue is full. Logging out user " + userID);
-            try {
-                getSession().logout();
-            } catch (RestartResponseException e) {
-                // expected: ignore
-            }
+            log.warn("The event queue is full. Flushing session of user " + userID);
+            ((PluginUserSession)getSession()).flush();
         }
     }
 

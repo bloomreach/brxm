@@ -32,7 +32,6 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
@@ -347,11 +346,18 @@ public class PluginUserSession extends UserSession {
         super.detach();
     }
 
+    public void flush() {
+        JcrObservationManager.getInstance().cleanupListeners(this);
+        ((UnbindingHttpSessionStore) getSessionStore()).setClearPageMaps(sessionId);
+    }
+    
     @SuppressWarnings("unused")
     private boolean bound = false;
+    private String sessionId;
 
-    void onBind() {
-        bound = true;
+    void onBind(String sessionId) {
+        this.bound = true;
+        this.sessionId = sessionId;
     }
 
     void unbind() {
