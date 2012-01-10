@@ -21,10 +21,38 @@
       <sv:value>0d298512-4512-4ba0-b21d-600c20f706d9</sv:value>
     </sv:property>
     <sv:property sv:name="hippofacnav:facets" sv:type="String" sv:multiple="true">
-      <sv:value>demosite:categories</sv:value>
+      <sv:value>demosite:categories$[
+{name:'A', resolution:'string', lower:'a', upper:'b'},
+{name:'B', resolution:'string', lower:'b', upper:'c'},
+{name:'C', resolution:'string', lower:'c', upper:'d'},
+{name:'D', resolution:'string', lower:'d', upper:'e'},
+{name:'E', resolution:'string', lower:'e', upper:'f'},
+{name:'F', resolution:'string', lower:'f', upper:'g'},
+{name:'G', resolution:'string', lower:'g', upper:'h'},
+{name:'H', resolution:'string', lower:'h', upper:'i'},
+{name:'I', resolution:'string', lower:'i', upper:'j'},
+{name:'J', resolution:'string', lower:'j', upper:'k'},
+{name:'K', resolution:'string', lower:'k', upper:'l'},
+{name:'L', resolution:'string', lower:'l', upper:'m'},
+{name:'M', resolution:'string', lower:'m', upper:'n'},
+{name:'N', resolution:'string', lower:'n', upper:'o'},
+{name:'O', resolution:'string', lower:'o', upper:'p'},
+{name:'P', resolution:'string', lower:'p', upper:'q'},
+{name:'Q', resolution:'string', lower:'q', upper:'r'},
+{name:'R', resolution:'string', lower:'r', upper:'s'},
+{name:'S', resolution:'string', lower:'s', upper:'t'},
+{name:'T', resolution:'string', lower:'t', upper:'u'},
+{name:'U', resolution:'string', lower:'u', upper:'v'},
+{name:'V', resolution:'string', lower:'v', upper:'w'},
+{name:'W', resolution:'string', lower:'w', upper:'x'},
+{name:'X', resolution:'string', lower:'x', upper:'y'},
+{name:'Y', resolution:'string', lower:'y', upper:'z'},
+{name:'Z', resolution:'string', lower:'z', upper:'}'}
+]
+      </sv:value>
     </sv:property>
     <sv:property sv:name="hippofacnav:facetnodenames" sv:type="String" sv:multiple="true">
-      <sv:value>Categories</sv:value>
+      <sv:value>Categories starting with</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
