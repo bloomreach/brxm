@@ -48,11 +48,7 @@
         <property name="jaxrsServerFactoryBean">
           <bean class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
             <property name="address" value="/" />
-            <property name="providers">
-              <list>
-                <ref bean="jaxrsRestJsonProvider" />
-              </list>
-            </property>
+            <property name="providers" ref="jaxrsRestAllEntityProviders" />
             <property name="resourceProviders" ref="jaxrsRestContentResourceProviders" />
             <!-- Configure the SecuredJAXRSInvoker if you need (javax.annotation.security based secured JAXRS methods.
                  Note: this requires a provided dependency on JEE 1.5 annotation spec, like geronimo-annotation_1.1_spec-1.1.jar

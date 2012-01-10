@@ -64,5 +64,33 @@
     <property name="mapper" ref="jaxrsRestJacksonObjectMapper" />
   </bean>
 
+  <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
+  <bean id="jaxrsRestDefaultEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <ref bean="jaxrsRestJsonProvider"/>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Custom Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
+  <bean id="customJaxrsRestEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="jaxrsRestAllEntityProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="jaxrsRestDefaultEntityProviders" />
+        <ref bean="customJaxrsRestEntityProviders" />
+      </list>
+    </property>
+  </bean>
+
 </beans>
 
