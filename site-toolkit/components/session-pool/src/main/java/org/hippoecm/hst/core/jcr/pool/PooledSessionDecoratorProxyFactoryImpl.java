@@ -80,6 +80,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
         
         public PooledSessionInterceptor(String userID) {
             this.userID = userID;
+            lastRefreshed = System.currentTimeMillis();
         }
         
         public Object intercept(Invocation invocation) throws Throwable {

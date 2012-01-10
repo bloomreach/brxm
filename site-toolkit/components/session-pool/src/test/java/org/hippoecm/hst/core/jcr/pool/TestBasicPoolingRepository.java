@@ -136,8 +136,6 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         try {
             session = repository.login();
             assertTrue("session is not a PooledSession.", session instanceof PooledSession);
-            assertFalse("The session's lastRefreshed should be non-positive number by default.", 
-                        ((PooledSession) session).lastRefreshed() > 0);
         } finally {
             if (session != null) {
                 session.logout();
@@ -168,6 +166,7 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         Repository repository = poolingRepository;
         
         poolingRepository.setRefreshOnPassivate(true);
+        poolingRepository.setMaxRefreshIntervalOnPassivate(0);
         
         PooledSession session = null;
         long lastRefreshed = 0L;
@@ -177,8 +176,9 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
             lastRefreshed = session.lastRefreshed();
         } finally {
             if (session != null) {
+                Thread.sleep(10);
                 session.logout();
-                assertTrue("The session is not refreshed.", session.lastRefreshed() > lastRefreshed);
+                assertTrue("The session is not refreshed. session.lastRefreshed(): " + session.lastRefreshed() + ", lastRefreshed: " + lastRefreshed, session.lastRefreshed() > lastRefreshed);
             }
         }
     }
