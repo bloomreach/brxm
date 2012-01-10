@@ -43,7 +43,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -364,11 +363,7 @@ public class BeanUtils {
             absPath += "/" + relPath;
         }
         
-        String parsedQuery = SearchInputParsingUtils.parse(query, false);
-        if (parsedQuery != null && !parsedQuery.equals(query)) {
-           log.debug("Parsed input query '{}' to '{}' to strip out illegal chars.", query, parsedQuery); 
-        }
-        if(StringUtils.isEmpty(parsedQuery)) {
+        if(StringUtils.isEmpty(query)) {
            try {
                 ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(hstRequest.getRequestContext().getSession(), objectConverter);
                 HippoBean bean  = (HippoBean)objectBeanMngr.getObject(absPath);
@@ -391,7 +386,7 @@ public class BeanUtils {
         // we have free text search. Now, we have to fetch from the root every descendant one-by-one until we hit a FacetedNavigationNode. 
         
         // first, let's get a disposable session:
-        Session disposablePoolSession = getDisposablePoolSession(hstRequest, parsedQuery);
+        Session disposablePoolSession = getDisposablePoolSession(hstRequest, query);
         ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(disposablePoolSession, objectConverter);
         
         HippoFacetNavigationBean facetNavBean = null;
@@ -415,7 +410,7 @@ public class BeanUtils {
                     if(stepInto.isNodeType("hippofacnav:facetnavigation")) {
                         // we found the faceted navigation node! Now, append the free text search
                         // note we get the faceted navigation now with the object bean mngr backed by disposablePoolSession
-                        facetNavBean = (HippoFacetNavigationBean)objectBeanMngr.getObject(stepInto.getPath() + "[{"+parsedQuery+"}]");
+                        facetNavBean = (HippoFacetNavigationBean)objectBeanMngr.getObject(stepInto.getPath() + "[{"+query+"}]");
                     }
                 } else {
                     if(remainderPath == null) {
@@ -426,22 +421,22 @@ public class BeanUtils {
                 }
             }
             if(facetNavBean == null) {
-                log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, parsedQuery);
+                log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, query);
                 return null;
             } else {
                 // now we have the faceted navigation bean with search. Let's try to fetch the remainder path
                 T bean = facetNavBean.getBean(remainderPath, beanMappingClass);
                 if(bean == null) {
-                    log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, parsedQuery);
+                    log.info("We did not find a Document in the faceted navigation for path '{}' and query '{}'. Return null.",absPath, query);
                 }
                 return bean;
             }
         } catch (PathNotFoundException e) {
-            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+parsedQuery+"'", e);
+            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+query+"'", e);
         } catch (RepositoryException e) {
-            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+parsedQuery+"'", e);
+            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+query+"'", e);
         } catch (ObjectBeanManagerException e) {
-            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+parsedQuery+"'", e);
+            throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"' and query '"+query+"'", e);
         }
     }
         
