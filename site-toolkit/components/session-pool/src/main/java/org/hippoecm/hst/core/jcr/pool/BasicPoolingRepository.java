@@ -64,7 +64,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private boolean refreshOnPassivate = true;
     private long maxRefreshIntervalOnPassivate;
     private boolean keepChangesOnRefresh = false;
-    private long sessionsRefreshPendingTimeMillis; 
+    private long sessionsRefreshPendingTimeMillis;
+    
+    private PooledSessionRefresher pooledSessionRefresher;
+    
     private ResourceLifecycleManagement pooledSessionLifecycleManagement;
     private MultipleRepository multipleRepository;
     
@@ -194,6 +197,14 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     
     public long getSessionsRefreshPendingAfter() {
         return this.sessionsRefreshPendingTimeMillis;
+    }
+
+    public PooledSessionRefresher getPooledSessionRefresher() {
+        return pooledSessionRefresher;
+    }
+
+    public void setPooledSessionRefresher(PooledSessionRefresher pooledSessionRefresher) {
+        this.pooledSessionRefresher = pooledSessionRefresher;
     }
 
     public void setSessionDecorator(SessionDecorator sessionDecorator) {
@@ -515,6 +526,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         }
         
         setSessionDecorator(new PooledSessionDecoratorProxyFactoryImpl());
+        
+        if (getPooledSessionRefresher() == null) {
+            setPooledSessionRefresher(new DefaultPooledSessionRefresher());
+        }
         
         if (getResourceLifecycleManagement() == null) {
             setResourceLifecycleManagement(new PooledSessionResourceManagement());
@@ -1010,10 +1025,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             
                 if (sessionsRefreshPendingTimeMillis > 0L) { 
                     if (session.lastRefreshed() < sessionsRefreshPendingTimeMillis) {  
-                     // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
-                        if (session.isLive()) {
-                            session.refresh(keepChangesOnRefresh);
-                        }
+                        getPooledSessionRefresher().refresh(session, keepChangesOnRefresh);
                     }
                 }
             }
@@ -1082,16 +1094,10 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 if (refreshOnPassivate) {
                     if (maxRefreshIntervalOnPassivate > 0L) {
                         if (System.currentTimeMillis() - pooledSession.lastRefreshed() > maxRefreshIntervalOnPassivate) {
-                            // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
-                            if (session.isLive()) {
-                                pooledSession.refresh(keepChangesOnRefresh);
-                            }
+                            getPooledSessionRefresher().refresh(pooledSession, keepChangesOnRefresh);
                         }
                     } else {
-                        // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
-                        if (session.isLive()) {
-                            pooledSession.refresh(keepChangesOnRefresh);
-                        }
+                        getPooledSessionRefresher().refresh(pooledSession, keepChangesOnRefresh);
                     }
                 }
                 

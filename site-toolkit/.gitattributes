@@ -159,6 +159,7 @@ api/src/main/java/org/hippoecm/hst/core/jcr/pool/MultipleRepository.java svneol=
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/MultipleRepositoryAware.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/NoAvailableSessionException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSession.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSessionRefresher.java -text
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingCounter.java -text
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingCounterMBean.java -text
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepository.java svneol=native#text/plain
@@ -770,6 +771,7 @@ components/security/src/test/resources/log4j.xml -text
 components/session-pool/pom.xml svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/BasicPoolingRepository.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/BasicPoolingRepositoryFactory.java svneol=native#text/plain
+components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/DefaultPooledSessionRefresher.java -text
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/DefaultPoolingCounter.java -text
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/JcrHippoRepository.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/JcrHippoRepositoryProvider.java svneol=native#text/plain
