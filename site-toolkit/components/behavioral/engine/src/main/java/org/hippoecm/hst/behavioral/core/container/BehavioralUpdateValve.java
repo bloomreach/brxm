@@ -26,6 +26,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.Valve;
 import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
 
 public class BehavioralUpdateValve implements Valve {
@@ -44,6 +45,16 @@ public class BehavioralUpdateValve implements Valve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
+        HstRequestContext requestContext = context.getRequestContext();
+        
+        
+        if (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null
+                || requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null) {
+            
+            // for action or resource URLs we do not update BehavioralData
+            context.invokeNext();
+            return;
+        }
         
         BehavioralService bs = BehavioralUtils.getBehavioralService();
         bs.updateBehavioralData(servletRequest, servletResponse);
