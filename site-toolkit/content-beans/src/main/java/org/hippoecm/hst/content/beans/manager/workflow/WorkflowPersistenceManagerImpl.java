@@ -495,9 +495,6 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     public void save() throws ObjectBeanPersistenceException {
         try {
             session.save();
-            // also do a refresh, because it is possible that through workflow another jcr session made the changes, and that the current
-            // has no changes, hence a session.save() does not trigger a refresh
-            session.refresh(false); 
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
         }
