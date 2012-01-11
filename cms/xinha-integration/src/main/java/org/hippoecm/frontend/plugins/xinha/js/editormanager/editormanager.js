@@ -566,11 +566,12 @@ if (!YAHOO.hippo.EditorManager) {
                 var textarea = this.config.textarea;
                 var xinha = Xinha.makeEditors([textarea], xinhaConfig, this.config.plugins)[textarea];
                 var add = function(_base, _new) {
+                    _base = typeof _base === 'undefined' || _base == null ? {} : _base;
                     for (var i = 0; i < _new.length; i++) {
                         _base[_new[i].key] = _new[i].value;
                     }
                     return _base;
-                }
+                };
 
                 //concatenate default properties with configured properties
                 xinha.config = add(xinha.config, this.config.properties);
