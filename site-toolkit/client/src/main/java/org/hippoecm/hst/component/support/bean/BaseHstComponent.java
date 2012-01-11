@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -591,7 +592,8 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return
      */
     protected Session getPersistableSession(HstRequest request, Credentials credentials) throws RepositoryException {
-        return request.getRequestContext().getSession().impersonate(credentials);
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        return repository.login(credentials);
     }
     
     /**

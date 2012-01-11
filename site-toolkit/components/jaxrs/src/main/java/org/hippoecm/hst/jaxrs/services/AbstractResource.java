@@ -18,6 +18,7 @@ package org.hippoecm.hst.jaxrs.services;
 import java.util.List;
 
 import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -387,7 +388,8 @@ public abstract class AbstractResource {
      * @return
      */
     protected Session getPersistableSession(HstRequestContext requestContext, Credentials credentials) throws RepositoryException {
-        return requestContext.getSession().impersonate(credentials);
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        return repository.login(credentials);
     }
     
     
