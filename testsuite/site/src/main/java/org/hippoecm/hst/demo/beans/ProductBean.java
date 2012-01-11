@@ -15,11 +15,22 @@
  */
 package org.hippoecm.hst.demo.beans;
 
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.content.beans.ContentNodeBinder;
+import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:productdocument")
-public class ProductBean extends TextBean{
+public class ProductBean extends TextBean implements ContentNodeBinder {
+    
+    private String brand;
+    private String product;
+    private String color;
+    private String type;
+    private Double price;
+    private String [] tags;
     
     private HippoGalleryImageSetBean imageBean;
     private boolean imagesLoaded = false;
@@ -29,28 +40,70 @@ public class ProductBean extends TextBean{
         return this.getLocalizedName();
     }
     
-    public String getBrand(){
-        return this.getProperty("demosite:brand");
+    public String getBrand() {
+        if (brand == null) {
+            brand = getProperty("demosite:brand");
+        }
+        return brand;
     }
     
-    public String getProduct(){
-        return this.getProperty("demosite:product");
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
     
-    public String getColor(){
-        return this.getProperty("demosite:color");
+    public String getProduct() {
+        if (product == null) {
+            product = getProperty("demosite:product");
+        }
+        return product;
     }
     
-    public String getType(){
-        return this.getProperty("demosite:type");
+    public void setProduct(String product) {
+        this.product = product;
     }
     
-    public Double getPrice(){
-        return this.getProperty("demosite:price");
+    public String getColor() {
+        if (color == null) {
+            color = getProperty("demosite:color");
+        }
+        return color;
     }
     
-    public String[] getTags(){
-        return this.getProperty("hippostd:tags");
+    public void setColor(String color) {
+        this.color = color;
+    }
+    
+    public String getType() {
+        if (type == null) {
+            type = getProperty("demosite:type");
+        }
+        return type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    public Double getPrice() {
+        if (price == null) {
+            price = getProperty("demosite:price");
+        }
+        return price;
+    }
+    
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+    
+    public String[] getTags() {
+        if (tags == null) {
+            tags = getProperty("hippostd:tags");
+        }
+        return tags;
+    }
+    
+    public void setTags(String [] tags) {
+        this.tags = tags;
     }
     
     public HippoGalleryImageSetBean getImage() {
@@ -62,4 +115,18 @@ public class ProductBean extends TextBean{
         return imageBean;
     }
     
+    public boolean bind(Object content, javax.jcr.Node node) throws ContentNodeBindingException {
+        try {
+            ProductBean product = (ProductBean) content;
+            node.setProperty("demosite:brand", product.getBrand());
+            node.setProperty("demosite:product", product.getProduct());
+            node.setProperty("demosite:color", product.getColor());
+            node.setProperty("demosite:type", product.getType());
+            node.setProperty("demosite:price", product.getPrice());
+            node.setProperty("hippostd:tags", product.getTags());
+            return true;
+        } catch (RepositoryException e) {
+            throw new ContentNodeBindingException(e);
+        }
+    }
 }

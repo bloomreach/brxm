@@ -18,28 +18,42 @@ package org.hippoecm.hst.demo.jaxrs.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.MatrixParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +66,14 @@ public class ProductPlainResource extends AbstractResource {
     private static Logger log = LoggerFactory.getLogger(ProductPlainResource.class);
     
     @GET
-    @Path("/{productType}/")
-    public List<ProductRepresentation> getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
-            @PathParam("productType") String productType,
+    @Path("/search/")
+    public List<ProductRepresentation> searchProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @QueryParam("brand") String brand,
+            @QueryParam("product") String productType,
+            @QueryParam("color") String color,
+            @QueryParam("query") String query,
+            @QueryParam("begin") @DefaultValue("0") int begin,
+            @QueryParam("psize") @DefaultValue("10") int pageSize,
             @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
         
         List<ProductRepresentation> products = new ArrayList<ProductRepresentation>();
@@ -66,17 +85,31 @@ public class ProductPlainResource extends AbstractResource {
             HstRequestContext requestContext = RequestContextProvider.get();
             
             HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
-           
+            
             // for plain jaxrs, we do not have a requestContentBean because no resolved sitemapitem
             HippoBean scope  = getMountContentBaseBean(requestContext);
-           
             
             HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);
+            hstQuery.setOffset(begin);
+            hstQuery.setLimit(pageSize);
+            
             Filter filter = hstQuery.createFilter();
-            filter.addEqualTo("demosite:product", productType);
+            
+            if (!StringUtils.isEmpty(brand)) {
+                filter.addEqualTo("demosite:brand", brand);
+            }
+            if (!StringUtils.isEmpty(productType)) {
+                filter.addEqualTo("demosite:product", productType);
+            }
+            if (!StringUtils.isEmpty(color)) {
+                filter.addEqualTo("demosite:color", color);
+            }
+            if (!StringUtils.isEmpty(query)) {
+                filter.addContains(".", query);
+            }
+            
             hstQuery.setFilter(filter);
             hstQuery.addOrderByDescending("demosite:price");
-            hstQuery.setLimit(10);
             
             HstQueryResult result = hstQuery.execute();
             HippoBeanIterator iterator = result.getHippoBeans();
@@ -98,14 +131,277 @@ public class ProductPlainResource extends AbstractResource {
             
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to query products by tag.", e);
+                log.warn("Failed to query products.", e);
             } else {
-                log.warn("Failed to query products by tag. {}", e.toString());
+                log.warn("Failed to query products. {}", e.toString());
             }
             
             throw new WebApplicationException(e);
         }
         
         return products;
+    }
+    
+    @GET
+    @Path("/brand/{brand}/")
+    public ProductRepresentation getProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("brand") String brand,
+            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+        
+        ProductRepresentation productRep = null;
+        
+        if (!StringUtils.isEmpty(brand)) {
+            try {
+                // You can use either getRequestContext(servletRequest) or RequestContextProvider.get().
+                //
+                //HstRequestContext requestContext = getRequestContext(servletRequest);
+                HstRequestContext requestContext = RequestContextProvider.get();
+                
+                HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
+                
+                // for plain jaxrs, we do not have a requestContentBean because no resolved sitemapitem
+                HippoBean scope = getMountContentBaseBean(requestContext);
+                
+                HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);
+                hstQuery.setOffset(0);
+                hstQuery.setLimit(1);
+                
+                Filter filter = hstQuery.createFilter();
+                filter.addEqualTo("demosite:brand", brand);
+                
+                hstQuery.setFilter(filter);
+                
+                HstQueryResult result = hstQuery.execute();
+                HippoBeanIterator iterator = result.getHippoBeans();
+    
+                if (iterator.hasNext()) {
+                    ProductBean productBean = (ProductBean) iterator.nextHippoBean();
+                    
+                    if (productBean != null) {
+                        productRep = new ProductRepresentation().represent(productBean);
+                        productRep.addLink(getNodeLink(requestContext, productBean));
+                        
+                        if (siteLink) {
+                            productRep.addLink(getSiteLink(requestContext, productBean));
+                        }
+                    }
+                }
+                
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to query product by tag.", e);
+                } else {
+                    log.warn("Failed to query product by tag. {}", e.toString());
+                }
+                
+                throw new WebApplicationException(e);
+            }
+        }
+        
+        if (productRep == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND.getStatusCode());
+        }
+        
+        return productRep;
+    }
+    
+    @POST
+    public ProductRepresentation createProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            ProductRepresentation productRepresentation,
+            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+        
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            HippoFolderBean contentBaseFolder = getMountContentBaseBean(requestContext);
+            String productFolderPath = contentBaseFolder.getPath() + "/products";
+            String beanPath = wpm.createAndReturn(productFolderPath, "demosite:productdocument", productRepresentation.getBrand(), true);
+            ProductBean productBean = (ProductBean) wpm.getObject(beanPath);
+            
+            productBean.setBrand(productRepresentation.getBrand());
+            productBean.setProduct(productRepresentation.getProduct());
+            productBean.setColor(productRepresentation.getColor());
+            productBean.setType(productRepresentation.getType());
+            productBean.setPrice(productRepresentation.getPrice());
+            productBean.setTags(productRepresentation.getTags());
+
+            wpm.update(productBean);
+            wpm.save();
+
+            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            productRepresentation = new ProductRepresentation().represent(productBean);
+            productRepresentation.addLink(getNodeLink(requestContext, productBean));
+            if (siteLink) {
+                productRepresentation.addLink(getSiteLink(requestContext, productBean));
+            }
+        } catch (ObjectBeanManagerException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to create product.", e);
+            } else {
+                log.warn("Failed to create product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to create product.", e);
+            } else {
+                log.warn("Failed to create product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+
+        return productRepresentation;
+    }
+    
+    @PUT
+    @Path("/brand/{brand}/")
+    public ProductRepresentation updateProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("brand") String brand,
+            @QueryParam("wfaction") String workflowAction,
+            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink,
+            ProductRepresentation productRepresentation) {
+        
+        ProductBean productBean = null;
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            Session persistableSession = getPersistableSession(requestContext);
+            HstQueryManager hstQueryMgr = getHstQueryManager(persistableSession, requestContext);
+            HippoBean contentBaseBean = this.getMountContentBaseBean(requestContext);
+            HstQuery hstQuery = hstQueryMgr.createQuery(contentBaseBean, ProductBean.class, true);
+            Filter filter = hstQuery.createFilter();
+            filter.addEqualTo("demosite:brand", brand);
+            hstQuery.setFilter(filter);
+            HstQueryResult result = hstQuery.execute();
+            HippoBeanIterator it = result.getHippoBeans();
+            
+            if (it.hasNext()) {
+                productBean = (ProductBean) it.nextHippoBean();
+            }
+            
+            if (productBean == null) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+            
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            productBean.setProduct(productRepresentation.getProduct());
+            productBean.setColor(productRepresentation.getColor());
+            productBean.setType(productRepresentation.getType());
+            productBean.setPrice(productRepresentation.getPrice());
+            productBean.setTags(productRepresentation.getTags());
+
+            if (StringUtils.equals("publish", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.publish();
+                    }
+                });
+            } else if (StringUtils.equals("depublish", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.depublish();
+                    }
+                });
+            }
+
+            wpm.update(productBean);
+            wpm.save();
+
+            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            productRepresentation = new ProductRepresentation().represent(productBean);
+            productRepresentation.addLink(getNodeLink(requestContext, productBean));
+            if (siteLink) {
+                productRepresentation.addLink(getSiteLink(requestContext, productBean));
+            }
+        } catch (ObjectBeanManagerException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to update product.", e);
+            } else {
+                log.warn("Failed to update product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } catch (QueryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to update product.", e);
+            } else {
+                log.warn("Failed to update product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to update product.", e);
+            } else {
+                log.warn("Failed to update product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+
+        return productRepresentation;
+    }
+    
+    @DELETE
+    @Path("/brand/{brand}/")
+    public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @PathParam("brand") String brand,
+            @MatrixParam("sitelink") @DefaultValue("true") boolean siteLink) {
+        ProductBean productBean = null;
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            Session persistableSession = getPersistableSession(requestContext);
+            HstQueryManager hstQueryMgr = getHstQueryManager(persistableSession, requestContext);
+            HippoBean contentBaseBean = this.getMountContentBaseBean(requestContext);
+            HstQuery hstQuery = hstQueryMgr.createQuery(contentBaseBean, ProductBean.class, true);
+            Filter filter = hstQuery.createFilter();
+            filter.addEqualTo("demosite:brand", brand);
+            hstQuery.setFilter(filter);
+            HstQueryResult result = hstQuery.execute();
+            HippoBeanIterator it = result.getHippoBeans();
+            
+            if (it.hasNext()) {
+                productBean = (ProductBean) it.nextHippoBean();
+            }
+            
+            if (productBean == null) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+            
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            wpm.remove(productBean);
+            wpm.save();
+        } catch (ObjectBeanManagerException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to remove product.", e);
+            } else {
+                log.warn("Failed to remove product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } catch (QueryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to remove product.", e);
+            } else {
+                log.warn("Failed to remove product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to remove product.", e);
+            } else {
+                log.warn("Failed to remove product. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return Response.ok().build();
     }
 }

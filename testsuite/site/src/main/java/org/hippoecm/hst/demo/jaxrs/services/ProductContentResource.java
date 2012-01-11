@@ -16,24 +16,26 @@
 package org.hippoecm.hst.demo.jaxrs.services;
 
 import javax.annotation.security.RolesAllowed;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.hippoecm.hst.content.beans.ContentNodeBinder;
-import org.hippoecm.hst.content.beans.ContentNodeBindingException;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
 import org.hippoecm.hst.jaxrs.services.content.AbstractContentResource;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +72,7 @@ public class ProductContentResource extends AbstractContentResource {
     @PUT
     @Path("/")
     public ProductRepresentation updateProductResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+            @QueryParam("wfaction") String workflowAction,
             ProductRepresentation productRepresentation) {
         ProductBean productBean = null;
         HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -88,24 +91,29 @@ public class ProductContentResource extends AbstractContentResource {
         
         try {
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            final ProductRepresentation productRepresentationInput = productRepresentation;
+            productBean.setProduct(productRepresentation.getProduct());
+            productBean.setColor(productRepresentation.getColor());
+            productBean.setType(productRepresentation.getType());
+            productBean.setPrice(productRepresentation.getPrice());
+            productBean.setTags(productRepresentation.getTags());
             
-            wpm.update(productBean, new ContentNodeBinder() {
-                public boolean bind(Object content, Node node) throws ContentNodeBindingException {
-                    try {
-                        node.setProperty("demosite:brand", productRepresentationInput.getBrand());
-                        node.setProperty("demosite:color", productRepresentationInput.getColor());
-                        node.setProperty("demosite:product", productRepresentationInput.getProduct());
-                        node.setProperty("demosite:price", productRepresentationInput.getPrice());
-                        node.setProperty("hippostd:tags", productRepresentationInput.getTags());
-                        return true;
-                    } catch (RepositoryException e) {
-                        throw new ContentNodeBindingException(e);
+            if (StringUtils.equals("publish", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.publish();
                     }
-                }
-            });
+                });
+            } else if (StringUtils.equals("depublish", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.depublish();
+                    }
+                });
+            }
+
+            wpm.update(productBean);
             wpm.save();
-            
+
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productRepresentation = new ProductRepresentation().represent(productBean);
             productRepresentation.addLink(getNodeLink(requestContext, productBean));
@@ -121,5 +129,43 @@ public class ProductContentResource extends AbstractContentResource {
         }
         
         return productRepresentation;
+    }
+    
+    @RolesAllowed( { "admin", "author", "editor" } )
+    @DELETE
+    @Path("/")
+    public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
+        
+        ProductBean productBean = null;
+        HstRequestContext requestContext = getRequestContext(servletRequest);
+        
+        try {
+            productBean = (ProductBean) getRequestContentBean(requestContext);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        try {
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            wpm.remove(productBean);
+            wpm.save();
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve content bean.", e);
+            } else {
+                log.warn("Failed to retrieve content bean. {}", e.toString());
+            }
+            
+            throw new WebApplicationException(e);
+        }
+        
+        return Response.ok().build();
     }
 }

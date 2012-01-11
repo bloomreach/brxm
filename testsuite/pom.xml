@@ -51,6 +51,8 @@
     <yui.sources.version>1.01.09</yui.sources.version>
     
     <jmxremote.port>9875</jmxremote.port>
+    
+    <hippo.hst.version>2.24.02-SNAPSHOT</hippo.hst.version>
 
   </properties>
   

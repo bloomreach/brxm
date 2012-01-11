@@ -33,6 +33,7 @@ public class ProductRepresentation extends BaseDocumentRepresentation {
     private String brand;
     private String product;
     private String color;
+    private String type;
     private double price;
     private String [] tags;
     
@@ -41,6 +42,7 @@ public class ProductRepresentation extends BaseDocumentRepresentation {
         this.brand = bean.getBrand();
         this.product = bean.getProduct();
         this.color = bean.getColor();
+        this.type = bean.getType();
         this.price = bean.getPrice();
         this.tags = (String []) ArrayUtils.clone(bean.getTags());
         return this;
@@ -68,6 +70,14 @@ public class ProductRepresentation extends BaseDocumentRepresentation {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public double getPrice() {
