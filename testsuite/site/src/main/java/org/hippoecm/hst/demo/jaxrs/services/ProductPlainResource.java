@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.jaxrs.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -206,6 +207,7 @@ public class ProductPlainResource extends AbstractResource {
         return productRep;
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @POST
     public ProductRepresentation createProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             ProductRepresentation productRepresentation,
@@ -258,6 +260,7 @@ public class ProductPlainResource extends AbstractResource {
         return productRepresentation;
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @PUT
     @Path("/brand/{brand}/")
     public ProductRepresentation updateProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -362,6 +365,7 @@ public class ProductPlainResource extends AbstractResource {
         return productRepresentation;
     }
     
+    @RolesAllowed( { "admin", "author", "editor" } )
     @DELETE
     @Path("/brand/{brand}/")
     public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
