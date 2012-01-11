@@ -103,7 +103,10 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
         if (this.events.size() > MAX_EVENTS) {
             String userID = getSession().getJcrSession().getUserID();
             log.warn("The event queue is full. Flushing session of user " + userID);
-            ((PluginUserSession)getSession()).flush();
+            PluginUserSession session = ((PluginUserSession)getSession());
+            if (session != null) {
+                session.flush();
+            }
         }
     }
 
