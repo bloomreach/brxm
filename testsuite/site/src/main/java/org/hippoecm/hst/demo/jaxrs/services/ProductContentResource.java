@@ -34,6 +34,7 @@ import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManage
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
+import org.hippoecm.hst.demo.jaxrs.services.util.ResponseUtils;
 import org.hippoecm.hst.jaxrs.services.content.AbstractContentResource;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class ProductContentResource extends AbstractContentResource {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
     }
     
@@ -86,21 +87,35 @@ public class ProductContentResource extends AbstractContentResource {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         try {
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            // Note: Need to retrieve bean again by persistableSession because WorkflowPersistenceManager#update() uses its underlying JCR node to save.
+            productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productBean.setProduct(productRepresentation.getProduct());
             productBean.setColor(productRepresentation.getColor());
             productBean.setType(productRepresentation.getType());
             productBean.setPrice(productRepresentation.getPrice());
             productBean.setTags(productRepresentation.getTags());
             
-            if (StringUtils.equals("publish", workflowAction)) {
+            if (StringUtils.equals("requestPublication", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.requestPublication();
+                    }
+                });
+            } else if (StringUtils.equals("publish", workflowAction)) {
                 wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                     public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                         wf.publish();
+                    }
+                });
+            } else if (StringUtils.equals("requestDepublication", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.requestDepublication();
                     }
                 });
             } else if (StringUtils.equals("depublish", workflowAction)) {
@@ -114,6 +129,7 @@ public class ProductContentResource extends AbstractContentResource {
             wpm.update(productBean);
             wpm.save();
 
+            // Note: Retrieve bean again from the repository to return.
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productRepresentation = new ProductRepresentation().represent(productBean);
             productRepresentation.addLink(getNodeLink(requestContext, productBean));
@@ -125,7 +141,7 @@ public class ProductContentResource extends AbstractContentResource {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         return productRepresentation;
@@ -148,7 +164,7 @@ public class ProductContentResource extends AbstractContentResource {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         try {
@@ -163,7 +179,7 @@ public class ProductContentResource extends AbstractContentResource {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         return Response.ok().build();

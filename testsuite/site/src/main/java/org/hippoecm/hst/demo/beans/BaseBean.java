@@ -19,6 +19,7 @@ import java.util.Calendar;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
@@ -77,6 +78,11 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     */
     public Calendar getDate() {
         return null;
+    }
+    
+    public boolean isPublished() {
+        String[] availability = getProperty("hippo:availability");
+        return ArrayUtils.contains(availability, "live");
     }
     
     /**

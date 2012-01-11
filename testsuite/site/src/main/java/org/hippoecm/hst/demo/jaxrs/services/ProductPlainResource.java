@@ -52,6 +52,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.ProductBean;
 import org.hippoecm.hst.demo.jaxrs.model.ProductRepresentation;
+import org.hippoecm.hst.demo.jaxrs.services.util.ResponseUtils;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to query products. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         return products;
@@ -194,7 +195,7 @@ public class ProductPlainResource extends AbstractResource {
                     log.warn("Failed to query product by tag. {}", e.toString());
                 }
                 
-                throw new WebApplicationException(e);
+                throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
             }
         }
         
@@ -229,6 +230,7 @@ public class ProductPlainResource extends AbstractResource {
             wpm.update(productBean);
             wpm.save();
 
+            // Note: Retrieve bean again from the repository to return.
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productRepresentation = new ProductRepresentation().represent(productBean);
             productRepresentation.addLink(getNodeLink(requestContext, productBean));
@@ -242,7 +244,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to create product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to create product.", e);
@@ -250,7 +252,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to create product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
 
         return productRepresentation;
@@ -287,6 +289,7 @@ public class ProductPlainResource extends AbstractResource {
             }
             
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            // Note: Need to retrieve bean again by persistableSession because WorkflowPersistenceManager#update() uses its underlying JCR node to save.
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productBean.setProduct(productRepresentation.getProduct());
             productBean.setColor(productRepresentation.getColor());
@@ -294,10 +297,22 @@ public class ProductPlainResource extends AbstractResource {
             productBean.setPrice(productRepresentation.getPrice());
             productBean.setTags(productRepresentation.getTags());
 
-            if (StringUtils.equals("publish", workflowAction)) {
+            if (StringUtils.equals("requestPublication", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.requestPublication();
+                    }
+                });
+            } else if (StringUtils.equals("publish", workflowAction)) {
                 wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                     public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                         wf.publish();
+                    }
+                });
+            } else if (StringUtils.equals("requestDepublication", workflowAction)) {
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        wf.requestDepublication();
                     }
                 });
             } else if (StringUtils.equals("depublish", workflowAction)) {
@@ -311,6 +326,7 @@ public class ProductPlainResource extends AbstractResource {
             wpm.update(productBean);
             wpm.save();
 
+            // Note: Retrieve bean again from the repository to return.
             productBean = (ProductBean) wpm.getObject(productBean.getPath());
             productRepresentation = new ProductRepresentation().represent(productBean);
             productRepresentation.addLink(getNodeLink(requestContext, productBean));
@@ -324,7 +340,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to update product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         } catch (QueryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to update product.", e);
@@ -332,7 +348,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to update product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to update product.", e);
@@ -340,7 +356,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to update product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
 
         return productRepresentation;
@@ -383,7 +399,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to remove product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         } catch (QueryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to remove product.", e);
@@ -391,7 +407,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to remove product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to remove product.", e);
@@ -399,7 +415,7 @@ public class ProductPlainResource extends AbstractResource {
                 log.warn("Failed to remove product. {}", e.toString());
             }
             
-            throw new WebApplicationException(e);
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
         
         return Response.ok().build();

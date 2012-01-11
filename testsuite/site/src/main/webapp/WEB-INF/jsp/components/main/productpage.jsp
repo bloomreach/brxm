@@ -147,6 +147,32 @@
       |
       <a href="#" id="<hst:namespace/>deleteViaPlain" href="#" title='Click to remove this product document by a Plain JAX-RS Service.'>Delete via Plain REST</a>
     </p>
+    <c:choose>
+      <c:when test="${document.published}">
+        <p>
+          <a href="#" id="<hst:namespace/>requestDepublishViaContent" href="#" title='Click to request depublication this product document by a Context/Content-Aware JAX-RS Service.'>Request Depublication via Content-Aware REST</a>
+          |
+          <a href="#" id="<hst:namespace/>requestDepublishViaPlain" href="#" title='Click to request depublication this product document by a Plain JAX-RS Service.'>Request Depublication via Plain REST</a>
+        </p>
+        <p>
+          <a href="#" id="<hst:namespace/>depublishViaContent" href="#" title='Click to depublish this product document by a Context/Content-Aware JAX-RS Service.'>Depublish via Content-Aware REST</a>
+          |
+          <a href="#" id="<hst:namespace/>depublishViaPlain" href="#" title='Click to depublish this product document by a Plain JAX-RS Service.'>Depublish via Plain REST</a>
+        </p>
+      </c:when>
+      <c:otherwise>
+        <p>
+          <a href="#" id="<hst:namespace/>requestPublishViaContent" href="#" title='Click to request publication this product document by a Context/Content-Aware JAX-RS Service.'>Request Publication via Content-Aware REST</a>
+          |
+          <a href="#" id="<hst:namespace/>requestPublishViaPlain" href="#" title='Click to request publication this product document by a Plain JAX-RS Service.'>Request Publication via Plain REST</a>
+        </p>
+        <p>
+          <a href="#" id="<hst:namespace/>publishViaContent" href="#" title='Click to publish this product document by a Context/Content-Aware JAX-RS Service.'>Publish via Content-Aware REST</a>
+          |
+          <a href="#" id="<hst:namespace/>publishViaPlain" href="#" title='Click to publish this product document by a Plain JAX-RS Service.'>Publish via Plain REST</a>
+        </p>
+      </c:otherwise>
+    </c:choose>
   </c:when>
   <c:otherwise>
     <p>
@@ -164,14 +190,26 @@ function(Y) {
   var updateViaPlainLink = Y.one("#<hst:namespace/>updateViaPlain");
   var deleteViaContentLink = Y.one("#<hst:namespace/>deleteViaContent");
   var deleteViaPlainLink = Y.one("#<hst:namespace/>deleteViaPlain");
+  var requestPublishViaContentLink = Y.one("#<hst:namespace/>requestPublishViaContent");
+  var requestPublishViaPlainLink = Y.one("#<hst:namespace/>requestPublishViaPlain");
+  var publishViaContentLink = Y.one("#<hst:namespace/>publishViaContent");
+  var publishViaPlainLink = Y.one("#<hst:namespace/>publishViaPlain");
+  var requestDepublishViaContentLink = Y.one("#<hst:namespace/>requestDepublishViaContent");
+  var requestDepublishViaPlainLink = Y.one("#<hst:namespace/>requestDepublishViaPlain");
+  var depublishViaContentLink = Y.one("#<hst:namespace/>depublishViaContent");
+  var depublishViaPlainLink = Y.one("#<hst:namespace/>depublishViaPlain");
   
   var uploadForm = Y.one("#uploadForm");
   var uploadFile = Y.one("#<hst:namespace/>uploadFile");
   var uploadButton = Y.one("#<hst:namespace/>uploadButton");
   
   var onUpdateComplete = function(id, o, args) {
-    if (o.status > 400) {
-      alert("You are not authorized to edit the tags.");
+    if (o.status >= 400) {
+      var msg = "Update failed with " + o.status + " error.";
+      if (o.responseText) {
+        msg += "\n\n(" + o.responseText + ")";
+      }
+      alert(msg);
       return;
     }
      
@@ -198,7 +236,7 @@ function(Y) {
       Y.one("#<hst:namespace/>price").set("value", dataOut["price"]);
       Y.one("#<hst:namespace/>tags").set("value", dataOut["tags"].join(", "));
 
-      alert("Update completed.");
+      alert("Update completed.\nYou may need to refresh the page if you requested any workflow action like (request) publishing/depublishing.");
     } catch (e) {
       Y.log("Error: " + e.message);
       return;
@@ -242,6 +280,46 @@ function(Y) {
     e.halt();
   };
   
+  var requestPublishViaContent = function(e) {
+    updateVia('<hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="requestPublication"/></hst:link>');
+    e.halt();
+  };
+  
+  var requestPublishViaPlain = function(e) {
+    updateVia('<hst:link path="/products/brand/${document.brand}/" mount="restservices"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="requestPublication"/></hst:link>');
+    e.halt();
+  };
+  
+  var publishViaContent = function(e) {
+    updateVia('<hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="publish"/></hst:link>');
+    e.halt();
+  };
+  
+  var publishViaPlain = function(e) {
+    updateVia('<hst:link path="/products/brand/${document.brand}/" mount="restservices"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="publish"/></hst:link>');
+    e.halt();
+  };
+  
+  var requestDepublishViaContent = function(e) {
+    updateVia('<hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="requestDepublication"/></hst:link>');
+    e.halt();
+  };
+  
+  var requestDepublishViaPlain = function(e) {
+    updateVia('<hst:link path="/products/brand/${document.brand}/" mount="restservices"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="requestDepublication"/></hst:link>');
+    e.halt();
+  };
+  
+  var depublishViaContent = function(e) {
+    updateVia('<hst:link path="${hstRequest.requestContext.resolvedSiteMapItem.pathInfo}" mount="restapi"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="depublish"/></hst:link>');
+    e.halt();
+  };
+  
+  var depublishViaPlain = function(e) {
+    updateVia('<hst:link path="/products/brand/${document.brand}/" mount="restservices"><hst:param name="_type" value="json"/><hst:param name="wfaction" value="depublish"/></hst:link>');
+    e.halt();
+  };
+  
   var refreshProductImage = function() {
     var productImg = Y.one("#productImg");
 	if (productImg) {
@@ -280,7 +358,7 @@ function(Y) {
       alert("You are not authorized to edit the tags.");
       return;
     } else if (o.status == 200) {
-      alert("The product content has been removed.");
+      alert("The product content has been removed.\nYou will get 404 on refresh for the current document.");
       return;
     }
   };
@@ -326,6 +404,30 @@ function(Y) {
   }
   if (deleteViaPlainLink) {
     deleteViaPlainLink.on("click", deleteViaPlain);
+  }
+  if (requestPublishViaContentLink) {
+	requestPublishViaContentLink.on("click", requestPublishViaContent);
+  }
+  if (requestPublishViaPlainLink) {
+	requestPublishViaPlainLink.on("click", requestPublishViaPlain);
+  }
+  if (publishViaContentLink) {
+	publishViaContentLink.on("click", publishViaContent);
+  }
+  if (publishViaPlainLink) {
+	publishViaPlainLink.on("click", publishViaPlain);
+  }
+  if (requestDepublishViaContentLink) {
+	requestDepublishViaContentLink.on("click", requestDepublishViaContent);
+  }
+  if (requestDepublishViaPlainLink) {
+	requestDepublishViaPlainLink.on("click", requestDepublishViaPlain);
+  }
+  if (depublishViaContentLink) {
+	depublishViaContentLink.on("click", depublishViaContent);
+  }
+  if (depublishViaPlainLink) {
+	depublishViaPlainLink.on("click", depublishViaPlain);
   }
 });
 
