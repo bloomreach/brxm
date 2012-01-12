@@ -40,6 +40,23 @@
     </property>
   </bean>
 
+  <bean id="jaxrsRestContentServiceInvoker" class="org.hippoecm.hst.jaxrs.cxf.AroundProcessableJAXRSInvoker">
+    <property name="invokerPreprocessors">
+      <list>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.SecurityAnnotationInvokerPreprocessor">
+        </bean>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.PersistableAnnotationInvokerPreprocessor">
+        </bean>
+      </list>
+    </property>
+    <property name="invokerPostprocessors">
+      <list>
+        <bean class="org.hippoecm.hst.jaxrs.cxf.PersistableAnnotationInvokerPostprocessor">
+        </bean>
+      </list>
+    </property>
+  </bean>
+
   <bean id="jaxrsRestContentServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"> 
     <constructor-arg>
       <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsContentService">
@@ -54,10 +71,7 @@
                  Note: this requires a provided dependency on JEE 1.5 annotation spec, like geronimo-annotation_1.1_spec-1.1.jar
                        to be present, either through the JEE container or provided by the project 
             -->
-            <property name="invoker">
-              <bean class="org.hippoecm.hst.jaxrs.cxf.SecuredJAXRSInvoker">
-              </bean>
-            </property>
+            <property name="invoker" ref="jaxrsRestContentServiceInvoker" />
           </bean>
         </property>
         <property name="inInterceptors">

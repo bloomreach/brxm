@@ -142,11 +142,17 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
     
     public Session getSession() throws LoginException, RepositoryException {
+        return getSession(true);
+    }
+    
+    public Session getSession(boolean create) throws LoginException, RepositoryException {
         if (this.session == null) {
-            if (contextCredentialsProvider != null) {
-                this.session = this.repository.login(contextCredentialsProvider.getDefaultCredentials(this));
-            } else {
-                this.session = this.repository.login();
+            if (create) {
+                if (contextCredentialsProvider != null) {
+                    this.session = this.repository.login(contextCredentialsProvider.getDefaultCredentials(this));
+                } else {
+                    this.session = this.repository.login();
+                }
             }
         } else if (!this.session.isLive()) {
             throw new HstComponentException("Invalid session.");

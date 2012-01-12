@@ -205,6 +205,10 @@ public class MockHstRequestContext implements HstRequestContext {
         return this.session;
     }
     
+    public Session getSession(boolean create) throws LoginException, RepositoryException {
+        return this.session;
+    }
+    
     public HstURLFactory getURLFactory() {
         return this.urlFactory;
     }

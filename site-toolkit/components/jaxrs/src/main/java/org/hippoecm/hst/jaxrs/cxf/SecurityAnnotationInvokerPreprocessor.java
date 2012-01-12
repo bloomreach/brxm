@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.jaxrs.impl.SecurityContextImpl;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
@@ -33,31 +32,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SecuredJAXRSInvoker
+ * SecurityAnnotationInvokerPreprocessor
  * <P>
- * A custom JAXRSInvoker which checks security annotation of the target operation and
- * return 403 Forbidden error when not authorized.
+ * This <CODE>InvokerPreprocessor</CODE> implementation checks the security annotations of the target operation
+ * and return a 403 Forbidden error message when not authorized for the operation by the annotation.
  * </P>
  * 
  * @version $Id$
- * @deprecated Deprecated because {@link SecurityAnnotationInvokerPreprocessor} plugged into {@link AroundProcessableJAXRSInvoker} is preferred.
  */
-public class SecuredJAXRSInvoker extends JAXRSInvoker {
+public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocessor {
     
-    private static Logger log = LoggerFactory.getLogger(SecuredJAXRSInvoker.class);
-    
-    public SecuredJAXRSInvoker() {
-        super();
-    }
-    
-    @Override
-    public Object invoke(Exchange exchange, Object requestParams, Object resourceObject) {
-        
+    private static Logger log = LoggerFactory.getLogger(SecurityAnnotationInvokerPreprocessor.class);
+
+    public Object preprocoess(Exchange exchange, Object request) {
         if (isForbiddenOperation(exchange)) {
             return new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
         }
         
-        return super.invoke(exchange, requestParams, resourceObject);
+        return null;
     }
     
     protected boolean isForbiddenOperation(Exchange exchange) {
@@ -138,5 +130,5 @@ public class SecuredJAXRSInvoker extends JAXRSInvoker {
         
         return false;
     }
-    
+
 }

@@ -71,12 +71,31 @@ public interface HstRequestContext {
     
     /**
      * Returns a session which is normally retrieved from a session pooling repository.
+     * <p>Returns the current <code>javax.jcr.Session</code>
+     * associated with this requestContext or, if if there is no
+     * current JCR session, creates and returns a new JCR session.<p>
      * 
      * @return a session, which is normally retrieved from a session pooling repository
      * @throws LoginException
      * @throws RepositoryException
      */
     Session getSession() throws LoginException, RepositoryException;
+    
+    /**
+     * Returns a session which can be retrieved from a session pooling repository.
+     * <p>Returns the current <code>javax.jcr.Session</code>
+     * associated with this requestContext or, if if there is no
+     * current JCR session and <code>create</code> is true, returns 
+     * a new JCR session.<p>
+     * <p>If <code>create</code> is <code>false</code>
+     * and the requestContext has no <code>javax.jcr.Session</code>,
+     * this method returns <code>null</code>.
+     * 
+     * @return a session, which is normally retrieved from a session pooling repository
+     * @throws LoginException
+     * @throws RepositoryException
+     */
+    Session getSession(boolean create) throws LoginException, RepositoryException;
     
     /**
      * Returns the {@link ResolvedMount} for this request

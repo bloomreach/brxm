@@ -45,6 +45,7 @@ api/src/main/java/org/hippoecm/hst/container/HstContainerRequest.java -text
 api/src/main/java/org/hippoecm/hst/container/HstPortalContextProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/HstPortletRequestDispatcherPathProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/annotations/Persistable.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/ContentNodeBinder.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/ContentNodeBindingException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/Node.java svneol=native#text/plain
@@ -669,10 +670,16 @@ components/core/src/test/resources/org/hippoecm/hst/service/jcr/TestJCRServiceBe
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 components/jaxrs/pom.xml svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/AbstractJaxrsService.java svneol=native#text/plain
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/AroundProcessableJAXRSInvoker.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/CXFJaxrsContentService.java svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/CXFJaxrsService.java svneol=native#text/plain
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/InvokerPostprocessor.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/InvokerPreprocessor.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/PersistableAnnotationInvokerPostprocessor.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/PersistableAnnotationInvokerPreprocessor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/QueryStringReplacingInterceptor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/SecuredJAXRSInvoker.java -text
+components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/SecurityAnnotationInvokerPreprocessor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractDataset.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractNodeRepresentationDataset.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/HippoDocumentRepresentation.java svneol=native#text/plain

@@ -117,18 +117,13 @@ public abstract class AbstractResource {
     /**
      * @param requestContext
      * @return
-     * @deprecated use {@link #getHstQueryManager(Session, HstRequestContext)} instead
      */
-    @Deprecated 
     public HstQueryManager getHstQueryManager(HstRequestContext requestContext) {
-        if (hstQueryManager == null) {
-            ComponentManager compManager = HstServices.getComponentManager();
-            if (compManager != null) {
-                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
-                hstQueryManager = hstQueryManagerFactory.createQueryManager(getObjectConverter(requestContext));
-            }
+        try {
+            return getHstQueryManager(requestContext.getSession(), requestContext);
+        } catch (RepositoryException e) {
+            throw new RuntimeException(e);
         }
-        return hstQueryManager;
     }
     
     public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
@@ -170,8 +165,40 @@ public abstract class AbstractResource {
         this.contentRewriter = contentRewriter;
     }
     
+    /**
+     * @deprecated Use {@link #getPersistableSession(HstRequestContext)} with {@link org.hippoecm.hst.content.annotations.Persistable} annotation on the method, or 
+     *                 {@link #getPersistenceManager(HstRequestContext, Session)} with {@link #getPersistableSession(HstRequestContext)} argument instead.
+     * @param requestContext
+     * @return
+     * @throws RepositoryException
+     */
     protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
-        Session persistableSession =  getPersistableSession(requestContext);
+        Session persistableSession = getPersistableSession(requestContext);
+        return getPersistenceManager(requestContext, persistableSession);
+    }
+    
+    /**
+     * Creates and returns a persistence manager with the default session of the requestContext.
+     * <P>
+     * Note: when the operation is annotated with {@link org.hippoecm.hst.content.annotations.Persistable}, the default session of the requestContext
+     *       should already be a persistable (writable) session.
+     * </P>
+     * @param requestContext
+     * @return
+     * @throws RepositoryException
+     */
+    protected ObjectBeanPersistenceManager getPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
+        return getPersistenceManager(requestContext, requestContext.getSession());
+    }
+    
+    /**
+     * Creates and returns a persistence manager with the specified session.
+     * @param requestContext
+     * @param persistableSession
+     * @return
+     * @throws RepositoryException
+     */
+    protected ObjectBeanPersistenceManager getPersistenceManager(HstRequestContext requestContext, Session persistableSession) throws RepositoryException {
         return new WorkflowPersistenceManagerImpl(persistableSession, getObjectConverter(requestContext));
     }
     
