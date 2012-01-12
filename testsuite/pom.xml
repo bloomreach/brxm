@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.7.1-SNAPSHOT</version>
+    <version>7.8.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>hippo-testsuite</artifactId>
@@ -52,8 +52,6 @@
     
     <jmxremote.port>9875</jmxremote.port>
     
-    <hippo.hst.version>2.24.02-SNAPSHOT</hippo.hst.version>
-
   </properties>
   
   <repositories>
