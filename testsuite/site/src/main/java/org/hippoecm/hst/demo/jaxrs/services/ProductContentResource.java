@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -70,6 +71,7 @@ public class ProductContentResource extends AbstractContentResource {
     }
     
     @RolesAllowed( { "admin", "author", "editor" } )
+    @Persistable
     @PUT
     @Path("/")
     public ProductRepresentation updateProductResource(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -91,9 +93,7 @@ public class ProductContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            // Note: Need to retrieve bean again by persistableSession because WorkflowPersistenceManager#update() uses its underlying JCR node to save.
-            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             productBean.setProduct(productRepresentation.getProduct());
             productBean.setColor(productRepresentation.getColor());
             productBean.setType(productRepresentation.getType());
@@ -146,8 +146,9 @@ public class ProductContentResource extends AbstractContentResource {
         
         return productRepresentation;
     }
-    
+
     @RolesAllowed( { "admin", "author", "editor" } )
+    @Persistable
     @DELETE
     @Path("/")
     public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo) {
@@ -168,8 +169,7 @@ public class ProductContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             wpm.remove(productBean);
             wpm.save();
         } catch (Exception e) {

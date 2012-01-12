@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
@@ -39,6 +38,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
@@ -86,10 +86,10 @@ public class ProductPlainResource extends AbstractResource {
             //HstRequestContext requestContext = getRequestContext(servletRequest);
             HstRequestContext requestContext = RequestContextProvider.get();
             
-            HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
+            HstQueryManager hstQueryManager = getHstQueryManager(requestContext);
             
             // for plain jaxrs, we do not have a requestContentBean because no resolved sitemapitem
-            HippoBean scope  = getMountContentBaseBean(requestContext);
+            HippoBean scope = getMountContentBaseBean(requestContext);
             
             HstQuery hstQuery = hstQueryManager.createQuery(scope, ProductBean.class, true);
             hstQuery.setOffset(begin);
@@ -159,7 +159,7 @@ public class ProductPlainResource extends AbstractResource {
                 //HstRequestContext requestContext = getRequestContext(servletRequest);
                 HstRequestContext requestContext = RequestContextProvider.get();
                 
-                HstQueryManager hstQueryManager = getHstQueryManager(requestContext.getSession(), requestContext);
+                HstQueryManager hstQueryManager = getHstQueryManager(requestContext);
                 
                 // for plain jaxrs, we do not have a requestContentBean because no resolved sitemapitem
                 HippoBean scope = getMountContentBaseBean(requestContext);
@@ -206,8 +206,9 @@ public class ProductPlainResource extends AbstractResource {
         
         return productRep;
     }
-    
+
     @RolesAllowed( { "admin", "author", "editor" } )
+    @Persistable
     @POST
     public ProductRepresentation createProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
             ProductRepresentation productRepresentation,
@@ -216,7 +217,7 @@ public class ProductPlainResource extends AbstractResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             HippoFolderBean contentBaseFolder = getMountContentBaseBean(requestContext);
             String productFolderPath = contentBaseFolder.getPath() + "/products";
             String beanPath = wpm.createAndReturn(productFolderPath, "demosite:productdocument", productRepresentation.getBrand(), true);
@@ -261,6 +262,7 @@ public class ProductPlainResource extends AbstractResource {
     }
     
     @RolesAllowed( { "admin", "author", "editor" } )
+    @Persistable
     @PUT
     @Path("/brand/{brand}/")
     public ProductRepresentation updateProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -273,9 +275,8 @@ public class ProductPlainResource extends AbstractResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            Session persistableSession = getPersistableSession(requestContext);
-            HstQueryManager hstQueryMgr = getHstQueryManager(persistableSession, requestContext);
-            HippoBean contentBaseBean = this.getMountContentBaseBean(requestContext);
+            HstQueryManager hstQueryMgr = getHstQueryManager(requestContext);
+            HippoBean contentBaseBean = getMountContentBaseBean(requestContext);
             HstQuery hstQuery = hstQueryMgr.createQuery(contentBaseBean, ProductBean.class, true);
             Filter filter = hstQuery.createFilter();
             filter.addEqualTo("demosite:brand", brand);
@@ -291,9 +292,7 @@ public class ProductPlainResource extends AbstractResource {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
-            // Note: Need to retrieve bean again by persistableSession because WorkflowPersistenceManager#update() uses its underlying JCR node to save.
-            productBean = (ProductBean) wpm.getObject(productBean.getPath());
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             productBean.setProduct(productRepresentation.getProduct());
             productBean.setColor(productRepresentation.getColor());
             productBean.setType(productRepresentation.getType());
@@ -366,6 +365,7 @@ public class ProductPlainResource extends AbstractResource {
     }
     
     @RolesAllowed( { "admin", "author", "editor" } )
+    @Persistable
     @DELETE
     @Path("/brand/{brand}/")
     public Response deleteProductResources(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
@@ -375,9 +375,8 @@ public class ProductPlainResource extends AbstractResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         
         try {
-            Session persistableSession = getPersistableSession(requestContext);
-            HstQueryManager hstQueryMgr = getHstQueryManager(persistableSession, requestContext);
-            HippoBean contentBaseBean = this.getMountContentBaseBean(requestContext);
+            HstQueryManager hstQueryMgr = getHstQueryManager(requestContext);
+            HippoBean contentBaseBean = getMountContentBaseBean(requestContext);
             HstQuery hstQuery = hstQueryMgr.createQuery(contentBaseBean, ProductBean.class, true);
             Filter filter = hstQuery.createFilter();
             filter.addEqualTo("demosite:brand", brand);
@@ -393,7 +392,7 @@ public class ProductPlainResource extends AbstractResource {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
             
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             wpm.remove(productBean);
             wpm.save();
         } catch (ObjectBeanManagerException e) {
