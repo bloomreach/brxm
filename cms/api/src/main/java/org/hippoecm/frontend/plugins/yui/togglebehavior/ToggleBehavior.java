@@ -15,24 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.yui.togglebehavior;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.onehippo.yui.YuiNamespace;
 
-public class ToggleBehavior extends AbstractBehavior {
+public class ToggleBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
-    private static final ResourceReference SCRIPT = new JavascriptResourceReference(ToggleBehavior.class, "toggle.js");
 
     public ToggleBehavior() {
         super();
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        response.renderJavascriptReference(SCRIPT);
-        response.renderOnDomReadyJavascript("boxesInit();");
+    public void addHeaderContribution(IYuiContext context) {
+        super.addHeaderContribution(context);
+        context.addModule(new YuiNamespace() {
+            @Override
+            public String getPath() {
+                return "";
+            }
+        }, "toggle");
+        context.addOnDomLoad("YAHOO.hippo.ToggleInit();");
     }
 
 }

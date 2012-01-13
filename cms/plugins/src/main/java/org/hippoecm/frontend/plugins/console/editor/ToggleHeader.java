@@ -37,7 +37,7 @@ class ToggleHeader extends Panel {
     protected void onComponentTag(final ComponentTag tag) {
         super.onComponentTag(tag);
         tag.put("class", "toggle-header");
-        tag.put("onclick", "javascript:toggleBox('" + name + "');");
+        tag.put("onclick", "javascript:YAHOO.hippo.ToggleBox('" + name + "');");
     }
 }
 

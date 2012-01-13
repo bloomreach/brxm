@@ -374,6 +374,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/rightclick/RightClickBehavio
 api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/ScrollBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/init_scroll.js -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/scrollbehavior/scroll.js -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/togglebehavior/toggle/toggle.js -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeNamespace.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/TreeSettings.java svneol=native#text/plain
