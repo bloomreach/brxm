@@ -66,7 +66,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         if (hstSiteMenuItemConfiguration.getMountAlias() != null) {
             targetMount = hstRequestContext.getMount(hstSiteMenuItemConfiguration.getMountAlias());
             if(targetMount == null) {
-                log.warn("Cannot create links for SiteMenuItem '"+hstSiteMenu.getName()+"' because could not lookup mount with alias '{}' for current mount '{}'", hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
+                log.warn("Cannot create links for sitemenu item '"+name+"' of menu '"+hstSiteMenu.getName()+"' because could not lookup mount with alias '{}' for current mount '{}'", hstSiteMenuItemConfiguration.getMountAlias(), hstRequestContext.getResolvedMount().getMount());
             }
         } else {
             targetMount = hstRequestContext.getResolvedMount().getMount();
@@ -104,7 +104,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
                 this.selected = true;
                 ((HstSiteMenuImpl)hstSiteMenu).setSelectedSiteMenuItem(this);
             }
-             
+            
             if(currentPathInfo.startsWith(hstSiteMapItemPath)) {
                 // check if the match was until a slash, otherwise it is not a sitemenu item we want to expand
                 String sub = currentPathInfo.substring(hstSiteMapItemPath.length());
@@ -129,7 +129,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
 
     public HstLink getHstLink() {
         if(targetMount == null) {
-            log.warn("Cannot create link for sitemenu item '{}' because target mount is null. Return null", hstSiteMenu.getName());
+            log.warn("Cannot create link for sitemenu item '{}' of menu '{}' because target mount is null. Return null", name, hstSiteMenu.getName());
             return null;
         }
         if (hstSiteMapItemRefId != null) {
@@ -138,7 +138,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             return linkCreator.create(hstSiteMapItemPath, targetMount);
         }
         if (externalLink == null) {
-            log.warn("Sitemenu item '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. Cannot create link for sitemenu item, return null", hstSiteMenu.getName());
+            log.warn("Sitemenu item '{}' of menu '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. Cannot create link for sitemenu item, return null", name, hstSiteMenu.getName());
         }
         return null;
     }
