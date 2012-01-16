@@ -49,7 +49,6 @@ public class TemplateFactory implements IClusterable {
 
         JavaPluginConfig root = new JavaPluginConfig("root");
         root.put("plugin.class", layout.getPluginClass());
-        root.put("wicket.id", "${wicket.id}");
         Map<String, ILayoutPad> pads = layout.getLayoutPads();
         String[] extensions = new String[pads.size()];
         int i = 0;

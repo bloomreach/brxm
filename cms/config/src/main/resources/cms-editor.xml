@@ -36,9 +36,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>${editor.id}</sv:value>
-    </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>${cluster.id}.editor</sv:value>
     </sv:property>
@@ -48,24 +45,12 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditPerspective</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>${wicket.behavior}</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.editor</sv:value>
       <sv:value>extension.workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>${wicket.id}</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${wicket.model}</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.feedback" sv:type="String">
       <sv:value>${cluster.id}.feedback</sv:value>
-    </sv:property>
-    <sv:property sv:name="validator.id" sv:type="String">
-      <sv:value>${validator.id}</sv:value>
     </sv:property>
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -92,14 +77,8 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.editor.validator.ValidationPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="validator.id" sv:type="String">
-      <sv:value>${validator.id}</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.feedback" sv:type="String">
       <sv:value>${cluster.id}.feedback</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${wicket.model}</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="editorPlugin">
@@ -112,15 +91,9 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.editor</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${wicket.model}</sv:value>
-    </sv:property>
     <sv:node sv:name="cluster.options">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="validator.id" sv:type="String">
-        <sv:value>${validator.id}</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -128,26 +101,14 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>${browser.id}</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>${editor.id}</sv:value>
-    </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.addon.workflow.WorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.workflows</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${wicket.model}</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.feedback" sv:type="String">
       <sv:value>${cluster.id}.feedback</sv:value>
-    </sv:property>
-    <sv:property sv:name="validator.id" sv:type="String">
-      <sv:value>${validator.id}</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>editing</sv:value>

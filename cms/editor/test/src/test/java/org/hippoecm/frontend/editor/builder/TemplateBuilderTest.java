@@ -49,8 +49,6 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -128,26 +126,10 @@ public class TemplateBuilderTest extends EditorTestCase {
         home.processEvents();
 
         assertEquals(1, added.size());
-        assertEquals(added.get(0).getName(), pluginSelectModel.getObject());
-    }
-
-    @Test
-    /**
-     * verify that an added plugin will get the model.compareTo reference
-     */
-    public void testAddWithCompare() throws Exception {
-        TemplateBuilder builder = new TemplateBuilder("test:comparable", false, context, new ExtPtModel(), new PluginSelectModel());
-
-        IClusterConfig config = builder.getTemplate();
-
-        BuiltinTypeStore builtinTypes = new BuiltinTypeStore();
-        ITypeDescriptor type = builder.getTypeDescriptor();
-        type.addField(new JavaFieldDescriptor("test", builtinTypes.load("nt:unstructured")));
-
-        assertEquals(2, config.getPlugins().size());
-        IPluginConfig pluginConfig = config.getPlugins().get(1);
-        assertTrue(pluginConfig.containsKey("model.compareTo"));
-        assertEquals("${model.compareTo}", pluginConfig.get("model.compareTo"));
+        IPluginConfig pluginConfig = added.get(0);
+        assertEquals(pluginConfig.getName(), pluginSelectModel.getObject());
+        assertEquals("${cluster.id}.field", pluginConfig.get("wicket.id"));
+        assertEquals("nt_unstructured", pluginConfig.get("field"));
     }
 
     @Test

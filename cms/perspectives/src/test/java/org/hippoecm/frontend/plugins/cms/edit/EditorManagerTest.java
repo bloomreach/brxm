@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +43,9 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EditorManagerTest extends PluginTest implements IClusterable {
     @SuppressWarnings("unused")
@@ -105,24 +105,18 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-editor/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
-                    "wicket.id", "${wicket.id}",
-                    "wicket.model", "${wicket.model}",
             "/config/test-app/cms-preview", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-preview/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
-                    "wicket.id", "${wicket.id}",
-                    "wicket.model", "${wicket.model}",
             "/config/test-app/cms-compare", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-compare/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
-                    "wicket.id", "${wicket.id}",
-                    "wicket.model", "${wicket.model}",
     };
 
     final static String[] testdocument = new String[] {

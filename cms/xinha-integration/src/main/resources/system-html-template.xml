@@ -115,29 +115,8 @@
         <sv:property sv:name="Xinha.skin" sv:type="String">
           <sv:value>hippo-lite</sv:value>
         </sv:property>
-        <sv:property sv:name="engine" sv:type="String">
-          <sv:value>${engine}</sv:value>
-        </sv:property>
-        <sv:property sv:name="height" sv:type="String">
-          <sv:value>${height}</sv:value>
-        </sv:property>
-        <sv:property sv:name="mode" sv:type="String">
-          <sv:value>${mode}</sv:value>
-        </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.xinha.XinhaPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-          <sv:value>${wicket.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.model" sv:type="String">
-          <sv:value>${wicket.model}</sv:value>
-        </sv:property>
-        <sv:property sv:name="model.compareTo" sv:type="String">
-          <sv:value>${model.compareTo}</sv:value>
-        </sv:property>
-        <sv:property sv:name="width" sv:type="String">
-          <sv:value>${width}</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

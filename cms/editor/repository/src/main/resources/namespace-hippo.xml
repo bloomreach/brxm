@@ -93,17 +93,8 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.HippoQueryTemplatePlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -273,9 +264,6 @@
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
         </sv:node>
         <sv:node sv:name="display">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -287,31 +275,16 @@
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
         </sv:node>
         <sv:node sv:name="upload">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
           </sv:property>
           <sv:property sv:name="fileupload.autoUpload" sv:type="String">
             <sv:value>true</sv:value>
@@ -617,44 +590,11 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="cluster.name" sv:type="String">
-            <sv:value>${cluster.name}</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
           <sv:property sv:name="item" sv:type="String">
             <sv:value>${cluster.id}.field</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="nodetypes" sv:type="String">
-            <sv:value>${nodetypes}</sv:value>
-          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.linkpicker.MirrorTemplatePlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="size" sv:type="String">
-            <sv:value>${size}</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-          <sv:property sv:name="base.uuid" sv:type="String">
-            <sv:value>${base.uuid}</sv:value>
-          </sv:property>
-          <sv:property sv:name="last.visited.key" sv:type="String">
-            <sv:value>${last.visited.key}</sv:value>
-          </sv:property>
-          <sv:property sv:name="last.visited.enabled" sv:type="String">
-            <sv:value>${last.visited.enabled}</sv:value>
-          </sv:property>
-          <sv:property sv:name="last.visited.nodetypes" sv:type="String">
-            <sv:value>${last.visited.nodetypes}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

@@ -89,7 +89,6 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
         List<IPluginConfig> list = new LinkedList<IPluginConfig>();
         IPluginConfig config = new JavaPluginConfig("root");
         config.put("plugin.class", ListViewPlugin.class.getName());
-        config.put("wicket.id", "${wicket.id}");
         config.put("item", "${cluster.id}.field");
         list.add(config);
 
@@ -141,10 +140,6 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
                 config.put("plugin.class", PropertyFieldPlugin.class.getName());
             }
             config.put("wicket.id", "${cluster.id}.field");
-            config.put("wicket.model", "${wicket.model}");
-            config.put("model.compareTo", "${model.compareTo}");
-            config.put("engine", "${engine}");
-            config.put("mode", "${mode}");
             config.put("caption", entry.getKey());
             config.put("field", entry.getKey());
             list.add(config);

@@ -15,9 +15,6 @@
  */
 package org.hippoecm.editor.template;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +35,9 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BuiltinTemplateStoreTest {
     @SuppressWarnings("unused")
@@ -138,12 +138,6 @@ public class BuiltinTemplateStoreTest {
 
         IClusterConfig cluster = clusters.next();
         assertTrue(cluster.getReferences().contains("model.compareTo"));
-
-        List<IPluginConfig> plugins = cluster.getPlugins();
-        assertEquals(2, plugins.size());
-        IPluginConfig fieldPlugin = plugins.get(1);
-        assertTrue(fieldPlugin.containsKey("model.compareTo"));
-        assertEquals("${model.compareTo}", fieldPlugin.get("model.compareTo"));
     }
 
 }

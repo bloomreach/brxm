@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="hippostd">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>
@@ -337,29 +336,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Tags</sv:value>
           </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
           <sv:property sv:name="field" sv:type="String">
             <sv:value>tags</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="type" sv:type="String">
             <sv:value>hippostd:taggable</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.compareTo" sv:type="String">
-            <sv:value>${model.compareTo}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

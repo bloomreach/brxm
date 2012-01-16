@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:rep="internal"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="cms-folder-views">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:clusterfolder</sv:value>
@@ -51,20 +50,8 @@
       <sv:property sv:name="gallery.thumbnail.size" sv:type="String">
         <sv:value>60</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -189,20 +176,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.gallery.AssetGalleryPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -309,14 +284,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.TypesListingPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -341,14 +310,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.NamespaceListingPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -498,20 +461,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -648,32 +599,12 @@
       <sv:property sv:name="expand.collapse.supported" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
       </sv:property>
-      <!-- sv:node sv:name="yui.config">
-       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>frontend:pluginconfig</sv:value>
-       </sv:property>
-       <sv:property sv:name="groups" sv:type="String">
-         <sv:value>drop-on-xinha</sv:value>
-       </sv:property>
-     </sv:node -->
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
@@ -800,20 +731,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -900,20 +819,8 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.FacetSearchListingPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
@@ -953,32 +860,12 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.FolderViewPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.folder}</sv:value>
       </sv:property>
-      <!-- sv:node sv:name="yui.config">
-       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-         <sv:value>frontend:pluginconfig</sv:value>
-       </sv:property>
-       <sv:property sv:name="groups" sv:type="String">
-         <sv:value>drop-on-xinha</sv:value>
-       </sv:property>
-     </sv:node -->
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
@@ -1083,10 +970,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
-

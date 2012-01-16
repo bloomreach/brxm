@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +49,9 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DefaultEditorFactoryTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -180,27 +180,20 @@ public class DefaultEditorFactoryTest extends PluginTest {
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-editor/plugin", "frontend:plugin",
                     "plugin.class", Editor.class.getName(),
-                    "wicket.id", "${wicket.id}",
             "/config/test-app/cms-preview", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "editor.id",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-preview/plugin", "frontend:plugin",
                     "plugin.class", Preview.class.getName(),
-                    "wicket.id", "${wicket.id}",
-                    "wicket.model", "${wicket.model}",
                 "/config/test-app/cms-preview/filter", "frontend:plugin",
                     "plugin.class", CloseFilter.class.getName(),
-                    "editor.id", "${editor.id}",
             "/config/test-app/cms-compare", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:references", "model.compareTo",
                 "frontend:services", "wicket.id",
                 "/config/test-app/cms-compare/plugin", "frontend:plugin",
                     "plugin.class", Comparer.class.getName(),
-                    "wicket.id", "${wicket.id}",
-                    "wicket.model", "${wicket.model}",
-                    "model.compareTo", "${model.compareTo}",
     };
 
     final static String[] cmstestdocument = new String[] {

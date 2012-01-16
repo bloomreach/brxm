@@ -28,13 +28,9 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.Navigator</sv:value>
@@ -56,9 +52,6 @@
       </sv:property>
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content/gallery</sv:value>
@@ -102,9 +95,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
       </sv:property>
@@ -145,8 +135,7 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
-
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
@@ -159,17 +148,12 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-    
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>nodetypes</sv:value>
     </sv:property>
-
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.Navigator</sv:value>
@@ -199,9 +183,6 @@
       </sv:property>
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>
@@ -245,9 +226,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
       </sv:property>
@@ -280,12 +258,6 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.content</sv:value>
         </sv:property>
-
-        <sv:property sv:name="nodetypes" sv:type="String">
-          <sv:value>${nodetypes}</sv:value>
-        </sv:property>
-
-        <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -294,7 +266,7 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
+        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="imagesTreeLoader">
@@ -314,8 +286,6 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.images</sv:value>
         </sv:property>
-        
-        <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -324,8 +294,7 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
-        
+        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="assetsTreeLoader">
@@ -345,8 +314,6 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.files</sv:value>
         </sv:property>
-        
-        <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -355,12 +322,10 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
-        
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="folders">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
@@ -370,13 +335,9 @@
       <sv:value>wicket.model</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.Navigator</sv:value>
@@ -406,9 +367,6 @@
       </sv:property>
       <sv:property sv:name="model.document" sv:type="String">
         <sv:value>${wicket.model}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
       </sv:property>
       <sv:property sv:name="model.default.path" sv:type="String">
         <sv:value>/content</sv:value>
@@ -452,9 +410,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.standards.browse.BreadcrumbPlugin</sv:value>
       </sv:property>
@@ -487,7 +442,7 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.content</sv:value>
         </sv:property>
-        
+
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -497,7 +452,7 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
+        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="imagesTreeLoader">
@@ -517,7 +472,7 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.images</sv:value>
         </sv:property>
-        
+
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -527,8 +482,7 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
-        
+        </sv:property>
       </sv:node>
     </sv:node>
     <sv:node sv:name="assetsTreeLoader">
@@ -548,7 +502,7 @@
         <sv:property sv:name="wicket.id" sv:type="String">
           <sv:value>service.dialog.tree.files</sv:value>
         </sv:property>
-        
+
         <!-- Wicket tree helper properties -->
         <sv:property sv:name="bind.to.layout.unit" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -558,10 +512,8 @@
         </sv:property>
         <sv:property sv:name="use.width.from.classname" sv:type="String">
           <sv:value>hippo-picker-tree</sv:value>
-        </sv:property>    
-        
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
 </sv:node>
-

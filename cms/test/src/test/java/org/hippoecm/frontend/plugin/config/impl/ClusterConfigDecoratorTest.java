@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ClusterConfigDecoratorTest {
     @SuppressWarnings("unused")
@@ -61,6 +61,28 @@ public class ClusterConfigDecoratorTest {
             count++;
         }
         assertEquals(0, count);
+    }
+
+    @Test
+    public void testDecoratedPluginConfigContainsImplicitProperty() {
+        JavaPluginConfig baseConfig = new JavaPluginConfig("plugin");
+        JavaClusterConfig baseCluster = new JavaClusterConfig();
+        baseCluster.addPlugin(baseConfig);
+        baseCluster.getProperties().add("property");
+
+        ClusterConfigDecorator decorated = new ClusterConfigDecorator(baseCluster, "cluster");
+        decorated.put("property", "value");
+        IPluginConfig decoratedPlugin = decorated.getPlugins().get(0);
+
+        assertTrue(decoratedPlugin.containsKey("property"));
+        assertEquals("value", decoratedPlugin.get("property"));
+
+        assertEquals(1, decoratedPlugin.entrySet().size());
+        int count = 0;
+        for (Map.Entry<String, Object> entry : decoratedPlugin.entrySet()) {
+            count++;
+        }
+        assertEquals(1, count);
     }
 
 }

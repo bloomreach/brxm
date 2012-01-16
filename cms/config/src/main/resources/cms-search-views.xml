@@ -43,23 +43,11 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="list.page.size" sv:type="String">
-        <sv:value>${list.page.size}</sv:value>
-      </sv:property>
-      <sv:property sv:name="list.view.size" sv:type="String">
-        <sv:value>${list.view.size}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.SearchViewPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>${model.search}</sv:value>
-      </sv:property>
-      <sv:property sv:name="model.document" sv:type="String">
-        <sv:value>${model.document}</sv:value>
       </sv:property>
       <sv:property sv:name="column.id" sv:type="String">
         <sv:value>${cluster.id}.columns</sv:value>

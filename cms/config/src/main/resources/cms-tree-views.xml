@@ -31,7 +31,7 @@
       <sv:value>wicket.id</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-    
+
     <!-- Wicket tree helper properties -->
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
@@ -39,20 +39,15 @@
       <sv:value>workflow.enabled</sv:value>
       <sv:value>nodetypes</sv:value>
     </sv:property>
-
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.tree</sv:value>
@@ -70,17 +65,10 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/documents</sv:value>
       </sv:property>
-      <sv:property sv:name="nodetypes" sv:type="String">
-          <sv:value>${nodetypes}</sv:value>
-      </sv:property>
     </sv:node>
-
     <sv:node sv:name="documentsBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -100,27 +88,9 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-
-      <!-- Wicket tree helper properties -->
-      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
-        <sv:value>${bind.to.layout.unit}</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
-      <sv:property sv:name="use.width.from.classname" sv:type="String">
-        <sv:value>${use.width.from.classname}</sv:value>
-      </sv:property>    
-
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value>${browser.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value>${editor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
@@ -134,25 +104,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
-
-        <!-- Normally in the quickstart the attic resides in /content/attic,
-             which isn't accessible from the CMS.  In case you want to start your
-             documents browser from /content, you need this.  In addition, you
-             need this entry if you want to move locate the attic in
-             /content/documents/attic, and change the path below accordingly.
-        <sv:node sv:name="hideAttic">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="path" sv:type="String">
-            <sv:value>/content/attic</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        -->
-
         <sv:node sv:name="showFolderType">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
@@ -203,12 +154,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="option.location" sv:type="String">
         <sv:value>/content/documents</sv:value>
       </sv:property>
@@ -227,9 +172,6 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="images">
@@ -244,27 +186,20 @@
       <sv:value>wicket.id</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-
-    <!-- Wicket tree helper properties -->
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
       <sv:value>workflow.enabled</sv:value>
     </sv:property>
-    
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.tree</sv:value>
@@ -282,14 +217,10 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/gallery</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="imagesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -306,18 +237,6 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-
-      <!-- Wicket tree helper properties -->
-      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
-        <sv:value>${bind.to.layout.unit}</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
-      <sv:property sv:name="use.width.from.classname" sv:type="String">
-        <sv:value>${use.width.from.classname}</sv:value>
-      </sv:property>    
-      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${cluster.id}.tree</sv:value>
       </sv:property>
@@ -327,12 +246,6 @@
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value>${browser.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value>${editor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
@@ -418,12 +331,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="option.location" sv:type="String">
         <sv:value>/content/gallery</sv:value>
       </sv:property>
@@ -439,12 +346,8 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="assets">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
@@ -457,24 +360,17 @@
       <sv:value>wicket.id</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-
-    <!-- Wicket tree helper properties -->
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
       <sv:value>workflow.enabled</sv:value>
     </sv:property>
-    
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.SearchingSectionPlugin</sv:value>
@@ -495,14 +391,10 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/content/assets</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="filesBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -519,18 +411,6 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>true</sv:value>
       </sv:property>
-
-      <!-- Wicket tree helper properties -->
-      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
-        <sv:value>${bind.to.layout.unit}</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
-      <sv:property sv:name="use.width.from.classname" sv:type="String">
-        <sv:value>${use.width.from.classname}</sv:value>
-      </sv:property>
-      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${cluster.id}.tree</sv:value>
       </sv:property>
@@ -540,12 +420,6 @@
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value>${browser.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value>${editor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
@@ -631,12 +505,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="option.location" sv:type="String">
         <sv:value>/content/assets</sv:value>
       </sv:property>
@@ -652,9 +520,6 @@
       <sv:property sv:name="workflow.categories" sv:type="String">
         <sv:value>threepane</sv:value>
       </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="configuration">
@@ -669,27 +534,20 @@
       <sv:value>wicket.id</sv:value>
       <sv:value>model.folder</sv:value>
     </sv:property>
-    
-    <!-- Wicket tree helper properties -->
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>use.width.from.classname</sv:value>
       <sv:value>bind.to.layout.unit</sv:value>
       <sv:value>workflow.enabled</sv:value>
     </sv:property>
-    
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
-    
     <sv:node sv:name="sectionPlugin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.cms.browse.section.BrowsingSectionPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>${wicket.id}</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.tree</sv:value>
@@ -703,14 +561,10 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
       </sv:property>
-      <sv:property sv:name="model.folder" sv:type="String">
-        <sv:value>${model.folder}</sv:value>
-      </sv:property>
       <sv:property sv:name="model.folder.root" sv:type="String">
         <sv:value>/</sv:value>
       </sv:property>
     </sv:node>
-
     <sv:node sv:name="configurationBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -727,18 +581,6 @@
       <sv:property sv:name="rootless" sv:type="String">
         <sv:value>false</sv:value>
       </sv:property>
-      
-      <!-- Wicket tree helper properties -->
-      <sv:property sv:name="bind.to.layout.unit" sv:type="String">
-        <sv:value>${bind.to.layout.unit}</sv:value>
-      </sv:property>
-      <sv:property sv:name="workflow.enabled" sv:type="String">
-        <sv:value>${workflow.enabled}</sv:value>
-      </sv:property>
-      <sv:property sv:name="use.width.from.classname" sv:type="String">
-        <sv:value>${use.width.from.classname}</sv:value>
-      </sv:property>
-      
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>${cluster.id}.tree</sv:value>
       </sv:property>
@@ -748,12 +590,6 @@
       <sv:node sv:name="module.workflow">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="browser.id" sv:type="String">
-          <sv:value>${browser.id}</sv:value>
-        </sv:property>
-        <sv:property sv:name="editor.id" sv:type="String">
-          <sv:value>${editor.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
           <sv:value>org.hippoecm.addon.workflow.ContextWorkflowPlugin</sv:value>
@@ -894,4 +730,3 @@
     </sv:node>
   </sv:node>
 </sv:node>
-

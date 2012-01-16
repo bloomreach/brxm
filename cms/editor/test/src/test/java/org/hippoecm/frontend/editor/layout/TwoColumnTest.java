@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +37,8 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class TwoColumnTest extends PluginTest {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -51,7 +51,6 @@ public class TwoColumnTest extends PluginTest {
                     "frontend:services", "wicket.id",
                     "/test/config/layout", "frontend:plugin",
                         "plugin.class", getClass().getPackage().getName() + ".TwoColumn",
-                        "wicket.id", "${wicket.id}",
                         // "wicket.extensions", "extension.left",
                         // "wicket.extensions", "extension.right",
                         "extension.left", "${cluster.id}.left",

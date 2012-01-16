@@ -138,9 +138,6 @@
             <sv:value>extension.form</sv:value>
             <sv:value>extension.helpers</sv:value>
           </sv:property>
-          <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>${wicket.id}</sv:value>
-          </sv:property>
         </sv:node>
         <sv:node sv:name="rootLayout">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -174,15 +171,6 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.type" sv:type="String">
-            <sv:value>${model.type}</sv:value>
-          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.builder.TemplateTypeEditorPlugin</sv:value>
           </sv:property>
@@ -194,12 +182,6 @@
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>${cluster.id}.form</sv:value>
-          </sv:property>
-          <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>${wicket.model}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.extensionpoint" sv:type="String">
-            <sv:value>${model.extensionpoint}</sv:value>
           </sv:property>
         </sv:node>
         <sv:node sv:name="helpers">
@@ -224,12 +206,6 @@
             <sv:value>templateactions</sv:value>
             <sv:value>actionspanel</sv:value>
           </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
             <sv:value>org.hippoecm.frontend.editor.builder.TemplateListPlugin</sv:value>
           </sv:property>
@@ -238,9 +214,6 @@
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${model.type}</sv:value>
-          </sv:property>
-          <sv:property sv:name="model.extensionpoint" sv:type="String">
-            <sv:value>${model.extensionpoint}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
