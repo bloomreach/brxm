@@ -128,12 +128,12 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
         formTest.selectMultiple("view:checkgroup", new int[] { 0 });
 
         // "next"
-        formTest.submit("buttons:next");
+        tester.executeAjaxEvent("dialog:content:form:buttons:next", "onclick");
 
         // "select layout"
         tester.clickLink("dialog:content:form:view:layouts:0:link");
-        formTest = tester.newFormTester("dialog:content:form");
-        formTest.submit("buttons:finish");
+
+        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "onclick");
 
         JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());
@@ -156,12 +156,11 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
         formTest.setValue("view:name:widget", "testtype");
 
         // "next"
-        formTest.submit("buttons:next");
+        tester.executeAjaxEvent("dialog:content:form:buttons:next", "onclick");
 
         // "select layout"
         tester.clickLink("dialog:content:form:view:layouts:0:link");
-        formTest = tester.newFormTester("dialog:content:form");
-        formTest.submit("buttons:finish");
+        tester.executeAjaxEvent("dialog:content:form:buttons:finish", "onclick");
 
         JcrNodeModel nsNode = new JcrNodeModel("/hippo:namespaces/testns/testtype");
         assertTrue(nsNode.getItemModel().exists());

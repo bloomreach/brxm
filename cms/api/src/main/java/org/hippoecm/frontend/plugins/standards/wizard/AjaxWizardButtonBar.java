@@ -34,9 +34,30 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
 
         setOutputMarkupId(true);
 
+        addOrReplace(new CancelButton(wizard));
         addOrReplace(new NextButton(wizard));
         addOrReplace(new PreviousButton(wizard));
         addOrReplace(new FinishButton(wizard));
+
+    }
+
+    private class CancelButton extends AjaxWizardButton {
+        private static final long serialVersionUID = 1L;
+
+        public CancelButton(final Wizard wizard) {
+            super("cancel", wizard, "cancel");
+        }
+
+        @Override
+        public final boolean isEnabled() {
+            return true;
+        }
+
+        @Override
+        protected void onClick(AjaxRequestTarget target, Form form) {
+            IWizardModel wizardModel = getWizardModel();
+            wizardModel.cancel();
+        }
 
     }
 
