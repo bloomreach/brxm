@@ -87,7 +87,7 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.22.00</hippo.cms.version>
+    <hippo.cms.version>2.23.00-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.22.00</hippo.repository.version>
     <hippo.addon-publication-workflow.version>2.22.00</hippo.addon-publication-workflow.version>
     <hippo.packages.version>2.22.00</hippo.packages.version>

@@ -298,9 +298,6 @@
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
                     </sv:property>
-                    <sv:property sv:name="wicket.id" sv:type="String">
-                        <sv:value>${wicket.id}</sv:value>
-                    </sv:property>
                 </sv:node>
                 <sv:node sv:name="30cf016f-30aa-4ab7-973c-c33b7d45708a">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -309,23 +306,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Title</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>title</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -340,23 +328,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Summary</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>summary</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -371,23 +350,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Body</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>body</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -402,23 +372,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Date</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>date</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -665,9 +626,6 @@
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
                     </sv:property>
-                    <sv:property sv:name="wicket.id" sv:type="String">
-                        <sv:value>${wicket.id}</sv:value>
-                    </sv:property>
                 </sv:node>
                 <sv:node sv:name="7f4a5adb-8e89-4d49-ab31-47057f75041b">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -676,23 +634,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Title</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>title</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -707,23 +656,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Summary</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>summary</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -738,23 +678,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Body</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>body</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -769,23 +700,14 @@
                     <sv:property sv:name="caption" sv:type="String">
                         <sv:value>Date</sv:value>
                     </sv:property>
-                    <sv:property sv:name="engine" sv:type="String">
-                        <sv:value>${engine}</sv:value>
-                    </sv:property>
                     <sv:property sv:name="field" sv:type="String">
                         <sv:value>date</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="mode" sv:type="String">
-                        <sv:value>${mode}</sv:value>
                     </sv:property>
                     <sv:property sv:name="plugin.class" sv:type="String">
                         <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
                     </sv:property>
                     <sv:property sv:name="wicket.id" sv:type="String">
                         <sv:value>${cluster.id}.field</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="wicket.model" sv:type="String">
-                        <sv:value>${wicket.model}</sv:value>
                     </sv:property>
                     <sv:node sv:name="cluster.options">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
