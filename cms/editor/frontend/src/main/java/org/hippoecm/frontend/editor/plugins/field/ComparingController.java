@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Item;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IDetachable;
@@ -28,13 +30,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
-import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceContext;
@@ -43,7 +45,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComparingController<C extends IModel> implements IDetachable {
+public class ComparingController<P extends Item, C extends IModel> implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -279,7 +281,7 @@ public class ComparingController<C extends IModel> implements IDetachable {
         return useCompareWhenPossible;
     }
 
-    public void start(AbstractProvider<C> oldProvider, AbstractProvider<C> newProvider, ITypeDescriptor type) {
+    public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider, ITypeDescriptor type) {
         List<ItemValue<C>> oldItems = new LinkedList<ItemValue<C>>();
         Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
         while (oldIter.hasNext()) {

@@ -71,7 +71,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
+    protected AbstractProvider<Node, JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);

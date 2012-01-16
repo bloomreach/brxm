@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * Provider of {@link JcrPropertyValueModel}s, based on a {@link JcrItemModel} for a
  * {@link Property}.
  */
-public class PropertyValueProvider extends AbstractProvider<JcrPropertyValueModel> {
+public class PropertyValueProvider extends AbstractProvider<Property, JcrPropertyValueModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

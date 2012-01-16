@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * on a {@link IFieldDescriptor} and a {@link JcrNodeModel}.  A prototype is used to
  * add new child nodes.
  */
-public class ChildNodeProvider extends AbstractProvider<JcrNodeModel> {
+public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

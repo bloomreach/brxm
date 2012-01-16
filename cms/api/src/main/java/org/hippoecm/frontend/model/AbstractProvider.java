@@ -18,6 +18,8 @@ package org.hippoecm.frontend.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.jcr.Item;
+
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -25,7 +27,7 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 /**
  * Provider that can turn a {@link JcrItemModel} into a {@link IDataProvider}.
  */
-public abstract class AbstractProvider<M extends IModel> extends ItemModelWrapper {
+public abstract class AbstractProvider<T extends Item, M extends IModel> extends ItemModelWrapper<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Item;
+import javax.jcr.Node;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -59,7 +60,7 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<P> implements
+public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -107,17 +108,17 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private boolean restartTemplates = true;
 
     // view and edit modes
-    protected AbstractProvider<C> provider;
+    protected AbstractProvider<P,C> provider;
     private FieldPluginHelper helper;
-    private TemplateController<C> templateController;
+    private TemplateController<P, C> templateController;
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
 
     // compare mode
-    private IModel<P> compareTo;
-    protected AbstractProvider<C> oldProvider;
-    protected AbstractProvider<C> newProvider;
-    private ComparingController<C> comparingController;
+    private IModel<Node> compareTo;
+    protected AbstractProvider<P,C> oldProvider;
+    protected AbstractProvider<P,C> newProvider;
+    private ComparingController<P,C> comparingController;
 
     protected AbstractFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -145,7 +146,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
         if (IEditor.Mode.COMPARE == mode) {
             if (config.containsKey("model.compareTo")) {
-                IModelReference<P> compareToModelRef = context.getService(config.getString("model.compareTo"),
+                IModelReference<Node> compareToModelRef = context.getService(config.getString("model.compareTo"),
                         IModelReference.class);
                 if (compareToModelRef != null) {
                     // TODO: add observer
@@ -165,7 +166,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
 
         if (IEditor.Mode.COMPARE == mode) {
-            comparingController = new ComparingController<C>(context, config, this, getComparer(), getItemId());
+            comparingController = new ComparingController<P,C>(context, config, this, getComparer(), getItemId());
 
             if (helper.getField().isMultiple()) {
                 // always use managed compare for multi-valued properties
@@ -177,7 +178,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (IEditor.Mode.EDIT == mode) {
                 validationModel = helper.getValidationModel();
             }
-            templateController = new TemplateController<C>(context, config, validationModel, this,
+            templateController = new TemplateController<P, C>(context, config, validationModel, this,
                     getItemId());
 
             provider = getProvider(getModel());
@@ -311,13 +312,13 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         super.onBeforeRender();
     }
 
-    private AbstractProvider<C> getProvider(IModel<P> model) {
+    private AbstractProvider<P, C> getProvider(IModel<Node> model) {
         IFieldDescriptor field = helper.getField();
         if (field != null) {
             ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
                 ITypeDescriptor subType = field.getTypeDescriptor();
-                AbstractProvider<C> provider = newProvider(field, subType, model);
+                AbstractProvider<P, C> provider = newProvider(field, subType, model);
                 if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
                         && (!field.isMultiple() || field.getValidators().contains("required")) && 
                         !field.getValidators().contains("optional")) {
@@ -340,8 +341,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
      * @param parentModel
      * @return
      */
-    protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel<P> parentModel);
+    protected abstract AbstractProvider<P, C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
+            IModel<Node> parentModel);
 
     protected boolean canAddItem() {
         IFieldDescriptor field = getFieldHelper().getField();

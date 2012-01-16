@@ -102,7 +102,7 @@ public class JcrFieldValidator implements ITypeValidator {
                 return violations;
             }
             JcrNodeModel nodeModel = (JcrNodeModel) model;
-            AbstractProvider<? extends IModel> provider;
+            AbstractProvider<?, ? extends IModel> provider;
             if (fieldType.isNode()) {
                 provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
             } else {

@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -44,7 +45,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyValueModel> {
+public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrPropertyValueModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -122,8 +123,8 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Node, JcrPropertyVa
     }
 
     @Override
-    protected AbstractProvider<JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel nodeModel) {
+    protected AbstractProvider<Property, JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
+            IModel<Node> nodeModel) {
         if (!descriptor.getPath().equals("*")) {
             return new PropertyValueProvider(descriptor, type, newPropertyModel((JcrNodeModel) nodeModel).getItemModel());
         }

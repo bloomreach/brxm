@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.Item;
+
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -32,7 +34,7 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateController<C extends IModel> implements IDetachable {
+public class TemplateController<P extends Item, C extends IModel> implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,7 +60,7 @@ public class TemplateController<C extends IModel> implements IDetachable {
         childTemplates = new HashMap<C, FieldItem<C>>();
     }
 
-    public void start(AbstractProvider<C> provider) {
+    public void start(AbstractProvider<P, C> provider) {
         Iterator<C> iter = provider.iterator(0, provider.size());
         while (iter.hasNext()) {
             C model = iter.next();
