@@ -463,7 +463,6 @@ api/src/main/java/org/hippoecm/frontend/util/MaxLengthStringFormatter.java svneo
 api/src/main/java/org/hippoecm/frontend/util/PluginConfigMapper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/validation/IValidationListener.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/validation/IValidationService.java -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/frontend/wicket1985/Tree.java -text
 api/src/main/java/org/hippoecm/frontend/widgets/AbstractView.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.java -text svneol=unset#text/plain
