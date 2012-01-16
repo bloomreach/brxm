@@ -48,7 +48,7 @@
     <hippo.packages.version>2.23.00-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.25.00-SNAPSHOT</hippo.hst.version>
 
-    <forge.dashboard-document-wizard.version>1.03.07</forge.dashboard-document-wizard.version>
+    <forge.dashboard-document-wizard.version>1.03.08-SNAPSHOT</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
     <forge.easy-forms-cms.version>2.09.03</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.08.02</forge.easy-forms-hst.version>
