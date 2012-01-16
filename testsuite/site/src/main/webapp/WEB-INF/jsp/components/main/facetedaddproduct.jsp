@@ -22,10 +22,10 @@
 <hst:headContribution keyHint="title"><title>Faceted Navigation Add Products</title></hst:headContribution>
 
 <div id="yui-u">
-    <h1>Add Sample Products</h1>
+    <h1>Add Sample Cars</h1>
     <p>
-      Want to populate some dummy news items to see faceted navigation in real action? <br />
-      <b>Note:</b> adding more than approximately 1000 news items takes some time.
+      Want to see faceted navigation in action? Click the buttons to add some dummy cars.<br />
+      <b>Note:</b> adding more than approximately 1000 cars takes some time.
     </p>
     <form action="<hst:actionURL/>" method="get">
        <input type="hidden" name="number" value="5"/>
