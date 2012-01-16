@@ -18,25 +18,19 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.Action;
+import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 
-public abstract class CreateTypeDialog extends Wizard implements IDialogService.Dialog {
+public abstract class CreateTypeDialog extends AjaxWizard implements IDialogService.Dialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -67,40 +61,6 @@ public abstract class CreateTypeDialog extends Wizard implements IDialogService.
         });
 
         setOutputMarkupId(true);
-    }
-
-    @Override
-    protected Component newButtonBar(String id) {
-        MarkupContainer container = (MarkupContainer) super.newButtonBar(id);
-        container.visitChildren(Button.class, new IVisitor() {
-
-            public Object component(Component component) {
-                component.add(newOnClickBehavior(component));
-
-                return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-            }
-
-        });
-
-        return container;
-    }
-
-    protected IBehavior newOnClickBehavior(final Component component) {
-        return new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected CharSequence getEventHandler() {
-                return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
-            }
-
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                ((Button) component).onSubmit();
-                target.addComponent(CreateTypeDialog.this);
-            }
-
-        };
     }
 
     @Override
