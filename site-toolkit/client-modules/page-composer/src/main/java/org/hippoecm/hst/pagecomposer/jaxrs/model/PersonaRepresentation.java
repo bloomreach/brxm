@@ -28,13 +28,11 @@ public class PersonaRepresentation {
     private String description;
     private String avatarName;
 
-    public PersonaRepresentation represent(String id, String name, String description, String avatarName) {
+    public PersonaRepresentation(String id, String name, String description, String avatarName) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.avatarName = avatarName;
-
-        return this;
     }
 
     public String getId() {

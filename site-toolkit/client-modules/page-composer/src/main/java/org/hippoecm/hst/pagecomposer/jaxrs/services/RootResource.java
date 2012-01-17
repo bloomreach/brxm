@@ -15,6 +15,7 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -90,11 +91,15 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response personas(@Context HttpServletRequest servletRequest,
                              @Context HttpServletResponse servletResponse) {
-
-        PersonasRepresentation personasRepresentation = new PersonasRepresentation();
-        Object personaArray = personasRepresentation.getPersonas().toArray();
-
-        return ok("Personas loaded successfully", personaArray);
+        try {
+            Node personasNode = getRequestContext(servletRequest).getSession().getNode("/behavioral:configuration/behavioral:personas");
+            PersonasRepresentation personasRepresentation = new PersonasRepresentation(personasNode);
+            Object personaArray = personasRepresentation.getPersonas().toArray();
+            return ok("Personas loaded successfully", personaArray);
+        } catch (RepositoryException e) {
+            // TODO: log error
+            return error("Could not load personas", e);
+        }
     }
 
 }

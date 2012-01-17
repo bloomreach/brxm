@@ -16,9 +16,11 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,26 +29,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "data")
 public class PersonasRepresentation {
 
-    private static final PersonaRepresentation[] HARDCODED_PERSONAS = {
-            new PersonaRepresentation().represent("buyer", "Buyer", "A visitor that may be interested in buying one of our products.", "orange"),
-            new PersonaRepresentation().represent("customer", "Customer", "A logged-in user of our site.", "green"),
-            new PersonaRepresentation().represent("default", "Default", "A visitor of our site that does not fit any of the other personas. This persona cannot be removed.", "blue"),
-            new PersonaRepresentation().represent("developer", "Developer", "A visitor that has come to our site by searching for technical terms in a search engine, or through a developer-oriented website.", "black"),
-    };
+    private final List<PersonaRepresentation> personas;
 
-    private List<PersonaRepresentation> personas;
-
-    public PersonasRepresentation() {
+    public PersonasRepresentation(Node node) throws RepositoryException {
         personas = new ArrayList<PersonaRepresentation>();
-        personas.addAll(Arrays.asList(HARDCODED_PERSONAS));
+        NodeIterator iter = node.getNodes();
+        while (iter.hasNext()) {
+            Node child = iter.nextNode();
+            String id = child.getName();
+            String name = child.getProperty("behavioral:name").getString();
+            personas.add(new PersonaRepresentation(id, name, null, null));
+        }
     }
 
     public List<PersonaRepresentation> getPersonas() {
         return personas;
-    }
-
-    public void setPersonas(final List<PersonaRepresentation> personas) {
-        this.personas = personas;
     }
 
 }

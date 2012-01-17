@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -35,14 +38,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The REST resource handler for the nodes that are of the type "hst:containeritemcomoponent". This is specified using the @Path annotation.
+ * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using the @Path annotation.
  *
  * @version $Id$
  */
@@ -52,15 +54,23 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
+    private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
 
 
     @GET
-    @Path("/parameters/{locale}")
+    @Path("/parameters/{locale}/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
     public ComponentWrapper getParameters(@Context HttpServletRequest servletRequest,
-                                          @Context HttpServletResponse servletResponse, @PathParam("locale") String localeString) {
+                                          @Context HttpServletResponse servletResponse, 
+                                          @PathParam("locale") String localeString,
+                                          @PathParam("prefix") String prefix) {
 
         try {
+            
+            if (prefix == null || prefix.equals("default")) {
+                prefix = "";
+            }
+            
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Locale locale = null;
             if (localeString != null) {
@@ -75,7 +85,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                     log.warn("Failed to create Locale from string '{}'", localeString);
                 }
             }
-            return new ComponentWrapper(getRequestConfigNode(requestContext), locale);
+            return new ComponentWrapper(getRequestConfigNode(requestContext), locale, prefix);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
@@ -87,41 +97,85 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/parameters/")
+    @Path("/parameters/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setNode(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse,
+    public Response setNode(@Context HttpServletRequest servletRequest, 
+                            @Context HttpServletResponse servletResponse,
+                            @PathParam("prefix") String prefix,
                             MultivaluedMap<String, String> params) {
         try {
+            
+            if (prefix == null || prefix.isEmpty()) {
+                prefix = "default";
+            }
+            
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Node jcrNode = getRequestConfigNode(requestContext);
 
-            Map<String, String> hstParameters = new HashMap<String, String>();
+            Map<String, Map<String, String>> hstParameters = new HashMap<String, Map<String, String>>();
             if (jcrNode.hasProperty(HST_PARAMETERNAMES) && jcrNode.hasProperty(HST_PARAMETERVALUES)) {
-                hstParameters = new HashMap<String, String>();
-                Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
-                Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
-                for (int i = 0; i < paramNames.length; i++) {
-                    hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                if (jcrNode.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
+                    Value[] paramPrefixes = jcrNode.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
+                    Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
+                    Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
+                    if (!(paramPrefixes.length == paramNames.length && paramPrefixes.length == paramValues.length)) {
+                        // TODO: log warning
+                        return error(HST_PARAMETERNAMEPREFIXES + ", " + HST_PARAMETERNAMES + " and " 
+                                + HST_PARAMETERVALUES + " properties do not have the same number of values");
+                    }
+                    for (int i = 0; i < paramNames.length; i++) {
+                        String paramPrefix = paramPrefixes[i].getString().isEmpty() ? "default" : paramPrefixes[i].getString();
+                        Map<String, String> prefixedParameters = hstParameters.get(paramPrefix);
+                        if (prefixedParameters == null) {
+                            prefixedParameters = new HashMap<String, String>();
+                            hstParameters.put(paramPrefix, prefixedParameters);
+                        }
+                        prefixedParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                    }
+                } else {
+                    Map<String, String> parameters = new HashMap<String, String>();
+                    Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
+                    Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
+                    if (paramNames.length != paramValues.length) {
+                        // TODO: log warning
+                        return error(HST_PARAMETERNAMES + " and " + HST_PARAMETERVALUES 
+                                + " properties do not have the same number of values");
+                    }
+                    for (int i = 0; i < paramNames.length; i++) {
+                        parameters.put(paramNames[i].getString(), paramValues[i].getString());
+                    }
+                    hstParameters.put("default", parameters);
                 }
             }
-            if(jcrNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES)) {
-                log.warn("Setting parameter names / values through the template composer for a hst component that also contains" +
-                		" '{}' does not work in the 7.7. The '{}' property will now be removed for " +
-                		"component '"+jcrNode.getPath()+"'", HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES, HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES);
-                jcrNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES).remove();
+            
+            Map<String, String> prefixedParameters = hstParameters.get(prefix);
+            if (prefixedParameters == null) {
+                prefixedParameters = new HashMap<String, String>();
+                hstParameters.put(prefix, prefixedParameters);
             }
             for (String param : params.keySet()) {
                 // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
                 // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
                 // has been replaced by a request header.
                 if(!"FORCE_CLIENT_HOST".equals(param)) {
-                   hstParameters.put(param, params.getFirst(param));
+                   prefixedParameters.put(param, params.getFirst(param));
                 } 
             }
 
-            String[] values = new String[hstParameters.size()];
-            jcrNode.setProperty(HST_PARAMETERNAMES, hstParameters.keySet().toArray(values));
-            jcrNode.setProperty(HST_PARAMETERVALUES, hstParameters.values().toArray(values));
+            List<String> prefixes = new ArrayList<String>();
+            List<String> names = new ArrayList<String>();
+            List<String> values = new ArrayList<String>();
+            for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
+                String paramPrefix = e.getKey();
+                for (Entry<String, String> f : e.getValue().entrySet()) {
+                    prefixes.add(paramPrefix.equals("default") ? "" : paramPrefix);
+                    names.add(f.getKey());
+                    values.add(f.getValue());
+                } 
+            }
+            jcrNode.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
+            jcrNode.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
+            jcrNode.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
             jcrNode.getSession().save();
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component " + e, e);

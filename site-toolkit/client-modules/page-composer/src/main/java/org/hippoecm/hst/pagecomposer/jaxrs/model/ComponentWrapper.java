@@ -39,6 +39,7 @@ public class ComponentWrapper {
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
+    private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
 
     private List<Property> properties;
     private Boolean success = false;
@@ -49,10 +50,11 @@ public class ComponentWrapper {
      *
      * @param node JcrNode for a component.
      * @param locale the locale to get localized names, can be null
-     * @throws RepositoryException    Thrown if the reposiotry exception occurred during reading of the properties.
+     * @param prefix  the parameter prefix
+     * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
-    public ComponentWrapper(Node node, Locale locale) throws RepositoryException, ClassNotFoundException {
+    public ComponentWrapper(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
 
         //Get the parameter names and values from the component node.
@@ -60,8 +62,17 @@ public class ComponentWrapper {
             hstParameters = new HashMap<String, String>();
             Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
             Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
-            for (int i = 0; i < paramNames.length; i++) {
-                hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+            if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
+                Value[] paramPrefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
+                for (int i = 0; i < paramNames.length; i++) {
+                    if (paramPrefixes[i].getString().equals(prefix)) {
+                        hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                    }
+                }
+            } else {
+                for (int i = 0; i < paramNames.length; i++) {
+                    hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                }
             }
         }
 
