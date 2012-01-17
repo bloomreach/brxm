@@ -16,7 +16,63 @@
 "use strict";
 Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel, {
+Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel, {
+    
+    composerRestMountUrl: null,
+    mountId: null,
+    resources: null,
+    personas: null,
+    
+    constructor: function(config) {
+        this.composerRestMountUrl = config.composerRestMountUrl;
+        this.mountId = config.mountId;
+        this.resources = config.resources;
+        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
+    },
+    
+    initComponent: function() {
+        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
+        this.personas = this.loadPersonas();
+        for (var i = 0; i < this.personas.length; i++) {
+            var form = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
+                persona: this.personas[i],
+                mountId: this.mountId,
+                composerRestMountUrl: this.composerRestMountUrl,
+                resources: this.resources
+            });
+            this.relayEvents(form, ['cancel']);
+            this.add(form);
+        }
+    },
+    
+    loadPersonas: function() {
+        return ['default', 'example'];
+    },
+    
+    reload: function() {
+        this.items.each(function(item) { item.reload(); }, this);
+    },
+    
+    setItemId: function(itemId) {
+        this.items.each(function(item) { item.setItemId(itemId); }, this);
+    }
+
+});
+Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
+    mountId: null,
+    persona: null,
+    composerRestMountUrl: null,
+    resources: null,
+    
+    constructor: function(config) {
+        this.persona = config.persona;
+        this.title = config.persona;
+        this.mountId = config.mountId;
+        this.composerRestMountUrl = config.composerRestMountUrl;
+        this.resources = config.resources;
+        Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, config);
+    },
+    
     initComponent:function() {
         Ext.apply(this, {
             autoHeight: true,
@@ -47,7 +103,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                 }
             ]
         });
-        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
+        Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
 
         this.addEvents('save', 'cancel');
     },
@@ -64,10 +120,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
                 Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
             }
         });
-    },
-
-    onRender:function() {
-        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.onRender.apply(this, arguments);
     },
 
     createDocument: function (ev, target, options) {
@@ -268,8 +320,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.FormPanel
     }
 
 });
-
-Ext.reg('h_properties_panel', Hippo.ChannelManager.TemplateComposer.PropertiesPanel);
 
 //Add * to the required fields 
 

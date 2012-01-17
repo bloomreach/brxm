@@ -93,7 +93,7 @@ public class RootPanel extends ExtPanel {
 
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
-        channelManagerCard.setTitle(new Model("Channel Manager"));
+        channelManagerCard.setTitle(new Model<String>("Channel Manager"));
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
