@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2012 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -337,8 +337,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             x:10, y: 120,
             width: 310,
             height: 350,
-            initRegion: 'right',
-            layout: 'border',
+            layout: 'fit',
             closable: true,
             closeAction: 'hide',
             collapsible: false,
@@ -356,7 +355,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             items: [ 
                 new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
                     id: 'componentPropertiesPanel',
-                    region: 'center',
                     resources: this.resources,
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
@@ -365,8 +363,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         cancel: function() {
                             window1.hide();
                         }
-                    },
-                    activeTab: 0
+                    }
                 })
             ]
         });
@@ -375,7 +372,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     showProperties : function(record) {
         var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
-        componentPropertiesPanel.setItemId(record.get('id'));
+        componentPropertiesPanel.setComponentId(record.get('id'));
         componentPropertiesPanel.reload();
         if (this.propertiesWindow) {
             this.propertiesWindow.setTitle(record.get('name'));

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2012 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,34 +27,57 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.mountId = config.mountId;
         this.resources = config.resources;
+        config = Ext.apply(config, { activeTab: 0 })
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
     },
     
     initComponent: function() {
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
-        this.personas = this.loadPersonas();
+        var personasStore = new Ext.data.JsonStore({
+            autoLoad: true,
+            method: 'GET',
+            root: 'data',
+            fields:['id', 'name', 'description'],
+            url: this.composerRestMountUrl +'/cafebabe-cafe-babe-cafe-babecafebabe./personas/'
+        });
+        personasStore.on('load', this.loadPersonas, this);
+        personasStore.on('exception', this.loadException, this);
+    },
+    
+    loadPersonas: function(store, records, options) {
+        this.personas = ['default'];
+        for (var i = 0; i < records.length; i++) {
+            this.personas.push(records[i].get('id'));
+        }
+        this.initTabs();
+    },
+    
+    loadException: function() {
+        Hippo.Msg.alert('Failed to get personas. Only default persona will be available'); 
+        this.personas = ['default'];
+        this.initTabs();
+    },
+    
+    initTabs: function() {
         for (var i = 0; i < this.personas.length; i++) {
             var form = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
                 persona: this.personas[i],
                 mountId: this.mountId,
                 composerRestMountUrl: this.composerRestMountUrl,
-                resources: this.resources
+                resources: this.resources,
             });
             this.relayEvents(form, ['cancel']);
             this.add(form);
         }
-    },
-    
-    loadPersonas: function() {
-        return ['default', 'example'];
+        this.setActiveTab(0);
     },
     
     reload: function() {
         this.items.each(function(item) { item.reload(); }, this);
     },
     
-    setItemId: function(itemId) {
-        this.items.each(function(item) { item.setItemId(itemId); }, this);
+    setComponentId: function(itemId) {
+        this.items.each(function(item) { item.setComponentId(itemId); }, this);
     }
 
 });
@@ -63,6 +86,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     persona: null,
     composerRestMountUrl: null,
     resources: null,
+    componentId: null,
     
     constructor: function(config) {
         this.persona = config.persona;
@@ -114,7 +138,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             headers: {
                     'FORCE_CLIENT_HOST': 'true'
             },
-            url: this.composerRestMountUrl +'/'+ this.id + './parameters?FORCE_CLIENT_HOST=true',
+            url: this.composerRestMountUrl +'/'+ this.componentId + './parameters/' + this.persona + '?FORCE_CLIENT_HOST=true',
             method: 'POST' ,
             success: function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
@@ -308,15 +332,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             method: 'GET',
             root: 'properties',
             fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
-            url: this.composerRestMountUrl +'/'+ this.id + './parameters/' + this.locale + '?FORCE_CLIENT_HOST=true'
+            url: this.composerRestMountUrl +'/'+ this.componentId + './parameters/' + this.locale + '/' + this.persona + '?FORCE_CLIENT_HOST=true'
         });
 
         this.componentPropertiesStore.on('load', this.loadProperties, this);
         this.componentPropertiesStore.on('exception', this.loadException, this);
     },
 
-    setItemId: function(itemId) {
-        this.id = itemId;
+    setComponentId: function(componentId) {
+        this.componentId = componentId;
     }
 
 });
