@@ -32,8 +32,8 @@ import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.test.basic.BasicHstTestCase;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,6 +192,37 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
                     wpm.remove(newFolder);
                 }
             }
+
+            wpm.save();
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+        }
+    }
+
+    @Test
+    public void testCreateDocumentUnderFolderHavingSameNameDocumentSibling() throws Exception {
+        Session session = null;
+
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+
+            session = this.getSession();
+
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+
+            String docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, "node-a", true);
+            HippoDocumentBean newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+            assertNotNull(newDocument);
+
+            docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-b", true);
+            newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+            assertNotNull(newDocument);
+
+            docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-c", true);
+            newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+            assertNotNull(newDocument);
 
             wpm.save();
         } finally {

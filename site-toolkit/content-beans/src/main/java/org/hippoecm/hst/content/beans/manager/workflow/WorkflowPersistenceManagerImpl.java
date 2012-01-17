@@ -17,16 +17,17 @@ package org.hippoecm.hst.content.beans.manager.workflow;
 
 import java.rmi.RemoteException;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -36,7 +37,6 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -204,15 +204,14 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      */
     public String createAndReturn(final String absPath, final String nodeTypeName, final String name, final boolean autoCreateFolders) throws ObjectBeanPersistenceException {
         try {
-            final Node parentFolderNode;
-            if (!session.itemExists(absPath)) {
+            Node parentFolderNode = getExistingFolderNode(absPath);
+            
+            if (parentFolderNode == null) {
                 if (!autoCreateFolders) {
                     throw new ObjectBeanPersistenceException("The folder node is not found on the path: " + absPath);
                 } else {
                     parentFolderNode = createMissingFolders(absPath);
                 }
-            } else {
-                parentFolderNode = session.getNode(absPath);
             }
 
             return createNodeByWorkflow(parentFolderNode, nodeTypeName, name);
@@ -225,7 +224,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     protected Node createMissingFolders(String absPath) throws ObjectBeanPersistenceException {
         try {
-            String [] folderNames = absPath.split("/");
+            String [] folderNames = StringUtils.split(absPath, "/");
 
             Node rootNode = session.getRootNode();
             Node curNode = rootNode;
@@ -234,33 +233,21 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             for (String folderName : folderNames) {
                 String folderNodeName = uriEncoding.encode(folderName);
 
-                if (!"".equals(folderNodeName)) {
-                    if (curNode == rootNode) {
-                        folderNodePath = "/" + folderNodeName;
-                    } else {
-                        folderNodePath = curNode.getPath() + "/" + folderNodeName;
-                    }
-                    
-                    if (!session.itemExists(folderNodePath)) {
-                        curNode = session.getNode(createNodeByWorkflow(curNode, folderNodeTypeName, folderName));
-                    } else {
-                        curNode = curNode.getNode(folderNodeName);
-                    }
-
-                    if (curNode.isNodeType(HippoNodeType.NT_FACETSELECT) || curNode.isNodeType(HippoNodeType.NT_MIRROR )) {
-                        String docbaseUuid = curNode.getProperty("hippo:docbase").getString();
-                        // check whether docbaseUuid is a valid uuid, otherwise a runtime IllegalArgumentException is thrown
-                        try {
-                            UUID.fromString(docbaseUuid);
-                        } catch (IllegalArgumentException e){
-                            throw new ObjectBeanPersistenceException("hippo:docbase in mirror does not contain a valid uuid", e);
-                        }
-                        // this is always the canonical
-                        curNode = session.getNodeByIdentifier(docbaseUuid);
-                    } else {
-                        curNode = getCanonicalNode(curNode);
-                    }
+                if (curNode == rootNode) {
+                    folderNodePath = "/" + folderNodeName;
+                } else {
+                    folderNodePath = curNode.getPath() + "/" + folderNodeName;
                 }
+                
+                Node existingFolderNode = getExistingFolderNode(folderNodePath);
+                
+                if (existingFolderNode == null) {
+                    curNode = session.getNode(createNodeByWorkflow(curNode, folderNodeTypeName, folderName));
+                } else {
+                    curNode = existingFolderNode;
+                }
+
+                curNode = NodeUtils.getNonVirtualCanonicalNode(session, curNode);
             }
 
             return curNode;
@@ -674,4 +661,63 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         return folderNode;
     }
 
+    private Node getExistingFolderNode(String absPath) throws RepositoryException {
+        if (!session.itemExists(absPath)) {
+            return null;
+        }
+        
+        Item item = session.getItem(absPath);
+        
+        if (item == null || !item.isNode()) {
+            return null;
+        }
+        
+        Node node = (Node) item;
+        Node candidateNode = null;
+        
+        if (session.getRootNode().isSame(node)) {
+            return session.getRootNode();
+        } else {
+            Node parentNode = node.getParent();
+            for (NodeIterator nodeIt = parentNode.getNodes(node.getName()); nodeIt.hasNext(); ) {
+                Node siblingNode = nodeIt.nextNode();
+                if (!isNodeUnderDocumentHandle(siblingNode)) {
+                    candidateNode = siblingNode;
+                    break;
+                }
+            }
+        }
+        
+        if (candidateNode == null) {
+            return null;
+        }
+        
+        Node canonicalFolderNode = NodeUtils.getNonVirtualCanonicalNode(session, candidateNode);
+        
+        if (canonicalFolderNode == null) {
+            return null;
+        }
+        
+        if (isNodeUnderDocumentHandle(canonicalFolderNode)) {
+            return null;
+        }
+        
+        return canonicalFolderNode;
+    }
+    
+    private boolean isNodeUnderDocumentHandle(Node node) throws RepositoryException  {
+        if (NodeUtils.isAnyNodeType(node, "hippo:handle", "hippo:hardhandle")) {
+            return true;
+        } else if (NodeUtils.isAnyNodeType(node, "hippo:document", "hippo:harddocument")) {
+            if (!session.getRootNode().isSame(node)) {
+                Node parentNode = node.getParent();
+                
+                if (NodeUtils.isAnyNodeType(parentNode, "hippo:handle", "hippo:hardhandle")) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
 }

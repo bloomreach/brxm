@@ -20,6 +20,7 @@ import java.util.UUID;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
@@ -128,5 +129,51 @@ public class NodeUtils {
         }
         
         return null;
+    }
+    
+    /**
+     * Checks if the node is type of either one from the nodeTypeNames.
+     * @param node
+     * @param nodeTypeNames
+     * @return
+     * @throws RepositoryException
+     */
+    public static boolean isAnyNodeType(Node node, String ... nodeTypeNames) throws RepositoryException {
+        if (nodeTypeNames != null) {
+            for (String nodeTypeName : nodeTypeNames) {
+                if (node.isNodeType(nodeTypeName)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Finds and returns a non-virtual canonical node
+     * @param session
+     * @param node
+     * @return
+     * @throws RepositoryException
+     */
+    public static Node getNonVirtualCanonicalNode(Session session, Node node) throws RepositoryException {
+        Node nonVirtualCanonicalNode = null;
+        
+        if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+            String docbaseUuid = node.getProperty("hippo:docbase").getString();
+            // check whether docbaseUuid is a valid uuid, otherwise a runtime IllegalArgumentException is thrown
+            try {
+                UUID.fromString(docbaseUuid);
+            } catch (IllegalArgumentException e){
+                throw new RepositoryException("hippo:docbase in mirror does not contain a valid uuid", e);
+            }
+            // this is always the canonical
+            nonVirtualCanonicalNode = session.getNodeByIdentifier(docbaseUuid);
+        } else {
+            nonVirtualCanonicalNode = getCanonicalNode(node);
+        }
+        
+        return nonVirtualCanonicalNode;
     }
 }
