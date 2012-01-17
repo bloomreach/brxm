@@ -50,7 +50,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             if (value != null) {
                 return value;
             }
-            return ClusterConfigDecorator.this.get(key);
+            return ClusterConfigDecorator.this.values.get(key);
         }
 
         @Override
