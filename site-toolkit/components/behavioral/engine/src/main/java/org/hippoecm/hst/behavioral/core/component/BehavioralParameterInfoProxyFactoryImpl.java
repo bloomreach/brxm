@@ -53,8 +53,8 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                         int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
                         if (offset != -1) {
                             if(name.substring(offset + 1).equals(parameterName)) {
-                                String id = name.substring(0, offset);
-                                if (profile.isPersona(id)) { 
+                                String prefix = name.substring(0, offset);
+                                if (profile.isPersona(prefix)) {
                                     prefixedParameterName = name;
                                     break;
                                 } 
@@ -62,13 +62,17 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                         }
                     }
                 }
-                return config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem()); 
+                String value = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
+                if (value == null || value.isEmpty()) {
+                    // fallback semantics should be the same as fallback to annotated value:
+                    // if prefixed value is empty then use the default value
+                    value = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem());
+                }
+                return value;
             }
         };
         
         return parameterInfoInvocationHandler;
     }
 
-    
-    
 }
