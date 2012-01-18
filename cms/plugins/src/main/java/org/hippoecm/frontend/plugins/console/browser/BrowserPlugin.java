@@ -20,7 +20,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -137,7 +136,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             Object object = item.getDefaultModelObject();
             if (object instanceof IJcrTreeNode) {
                 IJcrTreeNode treeNode = (IJcrTreeNode) object;
-                final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel(), item);
+                final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel());
                 item.add(menu);
                 item.add(new RightClickBehavior(menu, item) {
                     @Override
@@ -167,7 +166,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             }
         }
 
-        private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model, MarkupContainer item) {
+        private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model) {
             WebMarkupContainer menuContainer = new Fragment(contextMenu, "menu", BrowserTree.this);
             menuContainer.setOutputMarkupId(true);
             menuContainer.setVisible(false);
