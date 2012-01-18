@@ -64,6 +64,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     initialize: function(frm, canEdit) {
+        this.frm = frm;
+
         this._requestHstMetaData(frm.getDocumentURI(), canEdit).when(function() {
             this._initializeIFrameHead(frm, this.previewMode).when(function() {
                 if (canEdit) {
@@ -79,6 +81,10 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
 
     getPageContainer: function() {
         return this.pageContainer;
+    },
+
+    renderComponent: function(id, parameters) {
+        this.frm.sendMessage({id: id, parameters: parameters}, 'setParameters');
     },
 
     _initToolkitStore : function(mountId) {

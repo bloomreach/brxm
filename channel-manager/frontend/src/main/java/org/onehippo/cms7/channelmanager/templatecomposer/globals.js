@@ -75,7 +75,8 @@
             TYPE : 'type',
             XTYPE : 'xtype',
             INHERITED : 'inherited',
-            URL : 'url'
+            URL : 'url',
+            REF_NS : 'refNS'
         },
 
         CLASS : {

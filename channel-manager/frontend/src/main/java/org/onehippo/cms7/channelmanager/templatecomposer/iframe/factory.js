@@ -37,30 +37,28 @@
                 if (this.objects[element.id]) {
                     return this.objects[element.id];
                 }
-                var verified = this.verify(element);
-                if (verified === null) {
+                var data = this._enhance(element);
+                if (data === null) {
                     return null;
                 }
-                return this._create(verified, true);
+                return this._create(data);
             },
 
-            _create : function(data, verify) {
+            _create : function(data) {
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
                     die(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
                 console.log('_create xtype:'+data.xtype+', element: '+Hippo.Util.getElementPath(data.element));
                 var c = new this.registry[data.xtype](data.id, data.element, this.resources);
-                if(verify) {
-                    if (!c instanceof data.base) {
-                        Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['factory-inheritance-error'].format(data.id, data.base));
-                    }
+                if (!c instanceof data.base) {
+                    Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['factory-inheritance-error'].format(data.id, data.base));
                 }
                 this.objects[c.id] = c;
                 return c;
             },
 
-            verify : function(element) {
+            _enhance : function(element) {
                 var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
                 var hstContainerMetaData = this.getContainerMetaData(element);
@@ -110,8 +108,19 @@
                 }
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
 
-                if (typeof hstContainerMetaData[HST.ATTR.INHERITED] !== 'undefined') {
-                    element.setAttribute(HST.ATTR.INHERITED, hstContainerMetaData[HST.ATTR.INHERITED]);
+                var url = hstContainerMetaData[HST.ATTR.URL];
+                if (typeof url !== 'undefined') {
+                    element.setAttribute(HST.ATTR.URL, url);
+                }
+
+                var refNS = hstContainerMetaData[HST.ATTR.REF_NS];
+                if (typeof refNS !== 'undefined') {
+                    element.setAttribute(HST.ATTR.REF_NS, refNS);
+                }
+
+                var inherited = hstContainerMetaData[HST.ATTR.INHERITED];
+                if (typeof inherited !== 'undefined') {
+                    element.setAttribute(HST.ATTR.INHERITED, inherited);
                 }
 
                 return {

@@ -81,6 +81,11 @@
             }, this, false, 'unhighlight');
 
             onhostmessage(function(msg) {
+                this.setParameters(msg.data.id, msg.data.parameters);
+                return false;
+            }, this, false, 'setParameters');
+
+            onhostmessage(function(msg) {
                 this.requestSync();
                 this.sync();
                 return false;
@@ -218,6 +223,11 @@
             $.each(this.containers, function(key, value) {
                 value.unhighlight();
             });
+        },
+
+        setParameters : function(id, parameters) {
+            var o = this.retrieve(id);
+            o.setParameters(parameters);
         },
 
         checkStateChanges : function() {

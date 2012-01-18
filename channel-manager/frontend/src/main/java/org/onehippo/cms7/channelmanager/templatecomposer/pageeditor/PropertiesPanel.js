@@ -57,14 +57,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         this.personas = ['default'];
         this.initTabs();
     },
-    
+
     initTabs: function() {
         for (var i = 0; i < this.personas.length; i++) {
             var form = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
                 persona: this.personas[i],
                 mountId: this.mountId,
                 composerRestMountUrl: this.composerRestMountUrl,
-                resources: this.resources,
+                resources: this.resources
             });
             this.relayEvents(form, ['cancel']);
             this.add(form);

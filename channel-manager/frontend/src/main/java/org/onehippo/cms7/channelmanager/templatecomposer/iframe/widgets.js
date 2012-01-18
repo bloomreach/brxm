@@ -703,6 +703,7 @@
             this.cls.activated = this.cls.activated + '-containerItem';
             this.cls.overlay.mark = 'hst-overlay-container-item';
 
+            // FIXME: is this used?
             var el = $(element);
             var tmp = el.attr("hst:temporary");
             this.isTemporary = typeof tmp !== 'undefined';
@@ -732,6 +733,25 @@
           
             this.overlay.append(this.menu);
          },
+
+        setParameters: function(parameters) {
+            if (this.el.attr(HST.ATTR.URL)) {
+                var prefix = this.el.attr(HST.ATTR.REF_NS);
+                var data = {};
+                data[prefix + ':persona'] = parameters.persona;
+                $.ajax({
+                    url: this.el.attr(HST.ATTR.URL),
+                    context: this,
+                    data: data,
+                    dataType: 'html',
+                    success: function(response) {
+                        console.log(response);
+                        this.el.html(response);
+                    }
+                });
+                this.el.html();
+            }
+        },
 
         sync: function() {
             this._super();

@@ -352,7 +352,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 },
                 scope: this
             },
-            items: [ 
+            items: [
                 new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
                     id: 'componentPropertiesPanel',
                     resources: this.resources,
@@ -362,7 +362,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     listeners: {
                         cancel: function() {
                             window1.hide();
-                        }
+                        },
+                        tabchange: function(panel, tab) {
+                            var id = tab.componentId;
+                            if (id != null) {
+                                this.pageContainer.pageContext.renderComponent(id, { persona: tab.persona });
+                            }
+                        },
+                        scope: this
                     }
                 })
             ]
