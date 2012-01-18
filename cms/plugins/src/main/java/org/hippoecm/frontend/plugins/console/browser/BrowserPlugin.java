@@ -20,11 +20,14 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -131,24 +134,29 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         protected void populateTreeItem(WebMarkupContainer item, int level){
             super.populateTreeItem(item, level);
 
-            IJcrTreeNode treeNode = (IJcrTreeNode) item.getDefaultModelObject();
-            final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel());
-            item.add(menu);
-            item.add(new RightClickBehavior(menu, item) {
-                @Override
-                protected void respond(AjaxRequestTarget target) {
-                    getContextmenu().setVisible(true);
-                    target.addComponent(getComponentToUpdate());
-                    IContextMenuManager menuManager = findParent(IContextMenuManager.class);
-                    if (menuManager != null) {
-                        menuManager.showContextMenu(this);
-                        String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
-                        String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                        target.appendJavascript("Hippo.ContextMenu.renderAtPosition('"
-                                + menu.getMarkupId() + "', " + x + ", " + y + ");");
+            Object object = item.getDefaultModelObject();
+            if (object instanceof IJcrTreeNode) {
+                IJcrTreeNode treeNode = (IJcrTreeNode) object;
+                final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel(), item);
+                item.add(menu);
+                item.add(new RightClickBehavior(menu, item) {
+                    @Override
+                    protected void respond(AjaxRequestTarget target) {
+                        getContextmenu().setVisible(true);
+                        target.addComponent(getComponentToUpdate());
+                        IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+                        if (menuManager != null) {
+                            menuManager.showContextMenu(this);
+                            String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
+                            String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
+                            target.appendJavascript(
+                                    "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                item.add(new EmptyPanel("contextMenu"));
+            }
         }
 
         @Override
@@ -159,8 +167,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             }
         }
 
-        private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model) {
-            WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
+        private WebMarkupContainer createContextMenu(String contextMenu, final JcrNodeModel model, MarkupContainer item) {
+            WebMarkupContainer menuContainer = new Fragment(contextMenu, "menu", BrowserTree.this);
             menuContainer.setOutputMarkupId(true);
             menuContainer.setVisible(false);
 

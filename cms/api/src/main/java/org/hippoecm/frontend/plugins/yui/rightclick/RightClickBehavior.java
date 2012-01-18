@@ -57,7 +57,7 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
                 " function(env) { var " + MOUSE_X_PARAM + " = YAHOO.util.Event.getPageX(env); " +
                 "var " + MOUSE_Y_PARAM + " = YAHOO.util.Event.getPageY(env);" +
                 "YAHOO.util.Event.stopEvent(env); " + handler + " });";
-        response.renderOnLoadJavascript(addEvent);
+        response.renderOnDomReadyJavascript(addEvent);
     }
     
     /**

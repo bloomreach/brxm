@@ -15,53 +15,53 @@
    limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div class="hippo-tree">
-      <div class="wicket-tree">
-        <div wicket:id="i">
-          <div class="a_">
-            <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
-            <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
-            <div wicket:id="contextMenu" class="hippo-console-tree-dropdown">
-              <ul class="hippo-console-contextmenu">
-                <li>
-                  <img wicket:id="icon-add-node" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="add-node"></span>
-                </li>
-                <li class="separator">
-                  <img wicket:id="icon-delete-node" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="delete-node"></span>
-                </li>
-                <li>
-                  <img wicket:id="icon-copy-node" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="copy-node"></span>
-                </li>
-                <li>
-                  <img wicket:id="icon-move-node" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="move-node"></span>
-                </li>
-                <li class="separator">
-                  <img wicket:id="icon-rename-node" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="rename-node"></span>
-                </li>
-                <li>
-                  <img wicket:id="icon-xml-export" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="xml-export">
-                  </span>
-                </li>
-                <li class="separator">
-                  <img wicket:id="icon-xml-import" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="xml-import"></span>
-                </li>
-                <li>
-                  <img wicket:id="icon-t9ids" style="vertical-align:top" width="16" height="16"/>
-                  <span class="menu-item" wicket:id="t9ids"></span>
-                </li>
-              </ul>
-            </div>
-          </div>
+<wicket:panel>
+  <div class="hippo-tree">
+    <div class="wicket-tree">
+      <div wicket:id="i">
+        <div class="a_">
+          <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
+          <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+          <div wicket:id="contextMenu" class="hippo-console-tree-dropdown"></div>
         </div>
       </div>
     </div>
-  </wicket:panel>
+  </div>
+  <wicket:fragment wicket:id="menu">
+    <ul class="hippo-console-contextmenu">
+      <li>
+        <img wicket:id="icon-add-node" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="add-node"></span>
+      </li>
+      <li class="separator">
+        <img wicket:id="icon-delete-node" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="delete-node"></span>
+      </li>
+      <li>
+        <img wicket:id="icon-copy-node" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="copy-node"></span>
+      </li>
+      <li>
+        <img wicket:id="icon-move-node" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="move-node"></span>
+      </li>
+      <li class="separator">
+        <img wicket:id="icon-rename-node" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="rename-node"></span>
+      </li>
+      <li>
+        <img wicket:id="icon-xml-export" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="xml-export"></span>
+      </li>
+      <li class="separator">
+        <img wicket:id="icon-xml-import" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="xml-import"></span>
+      </li>
+      <li>
+        <img wicket:id="icon-t9ids" style="vertical-align:top" width="16" height="16"/>
+        <span class="menu-item" wicket:id="t9ids"></span>
+      </li>
+    </ul>
+  </wicket:fragment>
+</wicket:panel>
 </html>
