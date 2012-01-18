@@ -168,9 +168,24 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
                 String paramPrefix = e.getKey();
                 for (Entry<String, String> f : e.getValue().entrySet()) {
-                    prefixes.add(paramPrefix.equals("default") ? "" : paramPrefix);
-                    names.add(f.getKey());
-                    values.add(f.getValue());
+                    paramPrefix = paramPrefix.equals("default") ? "" : paramPrefix;
+                    String name = f.getKey();
+                    String value = f.getValue();
+                    if (value == null || value.isEmpty()) {
+                        // value is empty so don't persist
+                        continue;
+                    }
+                    if (!paramPrefix.isEmpty()) {
+                        Map<String, String> defaultParams = hstParameters.get("default");
+                        String defaultValue = defaultParams == null ? null : defaultParams.get(name);
+                        if (value.equals(defaultValue)) {
+                            // doesn't override the default value so don't persist
+                            continue;
+                        }
+                    }
+                    prefixes.add(paramPrefix);
+                    names.add(name);
+                    values.add(value);
                 } 
             }
             jcrNode.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));

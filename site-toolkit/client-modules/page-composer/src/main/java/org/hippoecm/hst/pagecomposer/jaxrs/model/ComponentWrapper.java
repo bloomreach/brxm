@@ -43,7 +43,6 @@ public class ComponentWrapper {
 
     private List<Property> properties;
     private Boolean success = false;
-    private Map<String, String> hstParameters;
 
     /**
      * Constructs a component node wrapper
@@ -56,7 +55,7 @@ public class ComponentWrapper {
      */
     public ComponentWrapper(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
-
+        Map<String, String> hstParameters = null;
         //Get the parameter names and values from the component node.
         if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
             hstParameters = new HashMap<String, String>();
