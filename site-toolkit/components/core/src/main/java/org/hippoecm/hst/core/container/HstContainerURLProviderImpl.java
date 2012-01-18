@@ -236,6 +236,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         
         containerURL.setActionWindowReferenceNamespace(null);
         containerURL.setResourceWindowReferenceNamespace(null);
+        containerURL.setComponentRenderingWindowReferenceNamespace(null);
         
         String type = hstUrl.getType();
         
@@ -543,7 +544,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
         String path = null;
-        
+
         if (ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
             String oldPathInfo = containerURL.getPathInfo();
             String resourcePath = containerURL.getResourceId();
