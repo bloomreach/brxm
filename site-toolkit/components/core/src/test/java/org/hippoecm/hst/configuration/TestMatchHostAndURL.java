@@ -16,24 +16,24 @@
 package org.hippoecm.hst.configuration;
 
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
@@ -209,6 +209,37 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+            } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        /**
+         * The matching ignored prefix should be put on the resolved mount path.
+         */
+        @Test
+        public void testMatchingIgnoredPrefix() {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            MockHttpServletRequest request = new MockHttpServletRequest();
+
+            request.setScheme("http");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
+            request.setContextPath("/site");
+            request.setRequestURI("/site/_cmsinternal/news/2009");
+            try {
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                assertEquals("The matching ignored prefix should equal the default", "_cmsinternal", mount.getMatchingIgnoredPrefix());
+                assertEquals("The resolved mount path should contain the matching ignored prefix", "", mount.getResolvedMountPath());
+
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
+                ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
+                assertEquals("News/2009", resolvedSiteMapItem.getRelativeContentPath());
+                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
+                assertFalse("We should have a LIVE match", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();

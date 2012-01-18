@@ -564,7 +564,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             if(!StringUtils.isEmpty(requestContext.getResolvedMount().getMatchingIgnoredPrefix())) {
                 urlBuilder.append("/").append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
             }
-            
+
             urlBuilder.append(containerURL.getResolvedMountPath());
             path = buildHstURLPath(containerURL, requestContext);
         }

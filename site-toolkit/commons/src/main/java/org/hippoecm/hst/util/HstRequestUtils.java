@@ -157,6 +157,10 @@ public class HstRequestUtils {
             if(mount == null) {
                 throw new IllegalArgumentException("Cannot strip the mountPath when the resolved Mount is null");
             }
+            String ignoredPrefix = mount.getMatchingIgnoredPrefix();
+            if (ignoredPrefix != null) {
+                encodePathInfo = encodePathInfo.substring(ignoredPrefix.length() + 1);
+            }
             encodePathInfo = encodePathInfo.substring(mount.getResolvedMountPath().length());
         }
         

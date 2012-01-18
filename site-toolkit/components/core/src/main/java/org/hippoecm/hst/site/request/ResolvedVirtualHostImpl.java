@@ -109,9 +109,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost{
         while(position > 0) {
             builder.insert(0,requestPathSegments[--position]).insert(0,"/");
         }
-        if(matchingIgnoredPrefix != null) {
-            builder.insert(0,matchingIgnoredPrefix).insert(0,"/");
-        }
         String resolvedMountPath = builder.toString();
         
         ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath, matchingIgnoredPrefix);
