@@ -16,6 +16,8 @@
 package org.hippoecm.hst.behavioral.core.component;
 
 import java.lang.reflect.InvocationHandler;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.hippoecm.hst.behavioral.BehavioralProfile;
 import org.hippoecm.hst.behavioral.util.BehavioralUtils;
@@ -43,21 +45,26 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
 
             @Override
             public String getParameterValue(final String parameterName, ComponentConfiguration config, HstRequest req) {
-                
                 String prefixedParameterName = parameterName;
-                
-                BehavioralProfile profile = BehavioralUtils.getBehavioralProfile(req);
 
-                if (profile != null && profile.hasPersona()) {
-                    for (String name : config.getParameterNames()) {
-                        int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
-                        if (offset != -1) {
-                            if(name.substring(offset + 1).equals(parameterName)) {
-                                String prefix = name.substring(0, offset);
-                                if (profile.isPersona(prefix)) {
-                                    prefixedParameterName = name;
-                                    break;
-                                } 
+                Map<String,String[]> parameterMap = req.getParameterMap();
+                String[] personas = parameterMap.get("persona");
+                if (personas != null && personas.length > 0) {
+                    String persona = personas[0];
+                    for (Map.Entry<String,String> entry : getParameterNames(config, parameterName).entrySet()) {
+                        String prefix = entry.getKey();
+                        if (prefix.equals(persona)) {
+                            prefixedParameterName = entry.getValue();
+                            break;
+                        }
+                    }
+                } else {
+                    BehavioralProfile profile = BehavioralUtils.getBehavioralProfile(req);
+                    if (profile != null && profile.hasPersona()) {
+                        for (Map.Entry<String,String> entry : getParameterNames(config, parameterName).entrySet()) {
+                            String prefix = entry.getKey();
+                            if (profile.isPersona(prefix)) {
+                                prefixedParameterName = entry.getValue();
                             }
                         }
                     }
@@ -73,6 +80,19 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
         };
         
         return parameterInfoInvocationHandler;
+    }
+
+    Map<String, String> getParameterNames(ComponentConfiguration config, String paramName) {
+        Map<String, String> names = new TreeMap<String, String>();
+        for (String name : config.getParameterNames()) {
+            int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
+            if (offset != -1) {
+                if (name.substring(offset + 1).equals(paramName)) {
+                    names.put(name.substring(0, offset), name);
+                }
+            }
+        }
+        return names;
     }
 
 }

@@ -41,6 +41,7 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
@@ -356,8 +357,6 @@ public class AggregationValve extends AbstractValve {
                         rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(isPreviewConfig));
                         //"-" + Mount.PREVIEW_NAME;
                     } else if(Boolean.TRUE.equals(composerMode)) {
-                         // TODO replace by json marshaller
-                        
                         HashMap<String, String> attributes = new HashMap<String, String>();
                         attributes.put("uuid", compConfig.getCanonicalIdentifier());
                         if(compConfig.getXType() != null) {
@@ -367,6 +366,13 @@ public class AggregationValve extends AbstractValve {
                             attributes.put("inherited", "true"); 
                         }
                         attributes.put("type", compConfig.getComponentType().toString());
+                        HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
+                        HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
+                                                          window.getReferenceNamespace(), null,
+                                                          request.getRequestContext());
+                        attributes.put("url", url.toString());
+                        attributes.put("refNS", window.getReferenceNamespace());
+
                         Comment comment = createCommentWithAttr(attributes, response);
                         response.addPreamble(comment);
                     }
@@ -386,7 +392,8 @@ public class AggregationValve extends AbstractValve {
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
         }
     }
-    
+
+    // TODO replace by json marshaller
     private Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
         StringBuilder builder = new StringBuilder();
         for(Entry<String, String> attr : attributes.entrySet()) {
