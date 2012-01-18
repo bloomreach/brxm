@@ -32,9 +32,13 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PersonasRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
+    
+    private static Logger log = LoggerFactory.getLogger(RootResource.class);
 
     private String rootPath;
 
@@ -97,7 +101,7 @@ public class RootResource extends AbstractConfigResource {
             Object personaArray = personasRepresentation.getPersonas().toArray();
             return ok("Personas loaded successfully", personaArray);
         } catch (RepositoryException e) {
-            // TODO: log error
+            log.error("Failed to load personas", e);
             return error("Could not load personas", e);
         }
     }
