@@ -56,6 +56,7 @@ public class ComponentWrapper {
     public ComponentWrapper(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<Property>();
         Map<String, String> hstParameters = null;
+        Map<String, String> parameterDefaults = new HashMap<String, String>();
         //Get the parameter names and values from the component node.
         if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
             hstParameters = new HashMap<String, String>();
@@ -66,11 +67,17 @@ public class ComponentWrapper {
                 for (int i = 0; i < paramNames.length; i++) {
                     if (paramPrefixes[i].getString().equals(prefix)) {
                         hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                    } else if (paramPrefixes[i].getString().isEmpty()) {
+                        parameterDefaults.put(paramNames[i].getString(), paramValues[i].getString());
                     }
                 }
             } else if (prefix == null || prefix.isEmpty()) {
                 for (int i = 0; i < paramNames.length; i++) {
                     hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                }
+            } else {
+                for (int i = 0; i < paramNames.length; i++) {
+                    parameterDefaults.put(paramNames[i].getString(), paramValues[i].getString());
                 }
             }
         }
@@ -94,8 +101,13 @@ public class ComponentWrapper {
             }
             if (hstParameters != null) {
                 for (Property prop : properties) {
-                    if (hstParameters.get(prop.getName()) != null) {
-                        prop.setValue(hstParameters.get(prop.getName()));
+                    String value = hstParameters.get(prop.getName());
+                    if (value != null && !value.isEmpty()) {
+                        prop.setValue(value);
+                    }
+                    String defaultValue = parameterDefaults.get(prop.getName());
+                    if (defaultValue != null && !defaultValue.isEmpty()) {
+                        prop.setDefaultValue(defaultValue);
                     }
                 }
             }

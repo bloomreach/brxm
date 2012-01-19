@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +41,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
 import org.slf4j.Logger;
@@ -56,6 +61,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
     private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
+    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
 
     @GET
@@ -174,10 +180,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                    prefixedParameters.put(param, params.getFirst(param));
                 }
             }
+            
+            Map<String, String> annotatedDefaultValues = getAnnotatedDefaultValues(jcrNode);
 
             List<String> prefixes = new ArrayList<String>();
             List<String> names = new ArrayList<String>();
             List<String> values = new ArrayList<String>();
+            boolean addPrefixes = false;
             for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
                 String paramPrefix = e.getKey();
                 for (Entry<String, String> f : e.getValue().entrySet()) {
@@ -196,12 +205,25 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                             continue;
                         }
                     }
+                    String annotatedDefaultValue = annotatedDefaultValues.get(name);
+                    if (value.equals(annotatedDefaultValue)) {
+                        continue;
+                    }
+                    if (!paramPrefix.isEmpty()) {
+                        // only add the HST_PARAMETERNAMEPREFIXES property 
+                        // if there are actually prefixed name/value pairs
+                        addPrefixes = true;
+                    }
                     prefixes.add(paramPrefix);
                     names.add(name);
                     values.add(value);
                 } 
             }
-            jcrNode.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
+            if (addPrefixes) {
+                jcrNode.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
+            } else if (jcrNode.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
+                jcrNode.getProperty(HST_PARAMETERNAMEPREFIXES).remove();
+            }
             jcrNode.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
             jcrNode.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
             jcrNode.getSession().save();
@@ -210,6 +232,55 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             throw new WebApplicationException(e);
         }
 
-        return ok("Properties saved successfully, please refresh to see the changes.", null);
+        return ok("Properties saved successfully.", null);
+    }
+    
+    private static Map<String, String> getAnnotatedDefaultValues(Node node) {
+        try {
+            String componentClassName = null;
+            if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
+                componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
+            }
+
+            if (componentClassName != null) {
+                Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
+                if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
+                    ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                    Class<?> classType = parametersInfo.type();
+                    if (classType == null) {
+                        return Collections.emptyMap();
+                    }
+                    Map<String, String> result = new HashMap<String, String>();
+                    for (Method method : classType.getMethods()) {
+                        if (method.isAnnotationPresent(Parameter.class)) {
+                            Parameter annotation = method.getAnnotation(Parameter.class);
+                            result.put(annotation.name(), annotation.defaultValue());
+                        }
+                    }
+                    return result;
+                }
+                if (componentClass.isAnnotationPresent(org.hippoecm.hst.configuration.components.ParametersInfo.class)) {
+                    org.hippoecm.hst.configuration.components.ParametersInfo parametersInfo = (org.hippoecm.hst.configuration.components.ParametersInfo) componentClass.getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
+                    Class<?> classType = parametersInfo.type();
+                    if (classType == null) {
+                        return Collections.emptyMap();
+                    }
+                    Map<String, String> result = new HashMap<String, String>();
+                    for (Method method : parametersInfo.type().getMethods()) {
+                        if (method.isAnnotationPresent(org.hippoecm.hst.configuration.components.Parameter.class)) {
+                            org.hippoecm.hst.configuration.components.Parameter annotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
+                            result.put(annotation.name(), annotation.defaultValue());
+                        }
+                    }
+                    return result;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to load annotated default values", e);
+        } catch (ClassNotFoundException e) {
+            log.error("Failed to load annotated default values", e);
+        }
+
+        return Collections.emptyMap();
     }
 }
