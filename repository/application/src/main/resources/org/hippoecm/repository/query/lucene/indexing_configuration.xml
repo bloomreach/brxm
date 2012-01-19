@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    Copyright 2007 Hippo
+    Copyright 2007-2012 Hippo
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@
         <nodetype>hippostd:holder</nodetype>
         <nodetype>hippostdpubwf:createdBy</nodetype>
         <nodetype>hippostdpubwf:lastModifiedBy</nodetype>
+        <nodetype>hipposys:active</nodetype>
+        <nodetype>hipposys:password</nodetype>
+        <nodetype>hipposys:system</nodetype>
     </excludefromnodescope>
     
     <nosingleindexterm>
