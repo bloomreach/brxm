@@ -68,7 +68,7 @@ public class ComponentWrapper {
                         hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
                     }
                 }
-            } else {
+            } else if (prefix == null || prefix.isEmpty()) {
                 for (int i = 0; i < paramNames.length; i++) {
                     hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
                 }

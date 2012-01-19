@@ -99,7 +99,6 @@ public class ParametersInfoProcessor {
                 prop.setType(type);
 
                 // Set the value to be default value before setting it with original value
-                prop.setValue(propAnnotation.defaultValue());
                 properties.add(prop);
             }
         }
