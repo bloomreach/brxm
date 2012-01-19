@@ -22,6 +22,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     mountId: null,
     resources: null,
     personas: null,
+    defaultForm: null,
+    personaForms: [],
     
     constructor: function(config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -38,7 +40,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             method: 'GET',
             root: 'data',
             fields:['id', 'name', 'description'],
-            url: this.composerRestMountUrl +'/cafebabe-cafe-babe-cafe-babecafebabe./personas/'
+            url: this.composerRestMountUrl +'/cafebabe-cafe-babe-cafe-babecafebabe./personas/?FORCE_CLIENT_HOST=true'
         });
         personasStore.on('load', this.loadPersonas, this);
         personasStore.on('exception', this.loadException, this);
@@ -52,8 +54,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         this.initTabs();
     },
     
-    loadException: function() {
-        Hippo.Msg.alert('Failed to get personas. Only default persona will be available'); 
+    loadException: function(proxy, type, actions, options, response) {
+        Hippo.Msg.alert('Failed to get personas.', 'Only default persona will be available: ' + response.status + ':' + response.statusText); 
         this.personas = ['default'];
         this.initTabs();
     },
@@ -68,12 +70,30 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             });
             this.relayEvents(form, ['cancel']);
             this.add(form);
+            if (this.personas[i] === 'default') {
+                this.defaultForm = form;
+            } else {
+                this.personaForms.push(form);
+            }
         }
         this.setActiveTab(0);
     },
     
     reload: function() {
-        this.items.each(function(item) { item.reload(); }, this);
+        var that = this;
+        // first load the default form: we need the default property values
+        // before the other forms can be populated
+        this.defaultForm.reload(function(store, records, options) {
+            var defaults = {}
+            for (var i = 0; i < records.length; i++) {
+                defaults[records[i].get('name')] = records[i].get('value');
+            }
+            for (var i = 0; i < that.personaForms.length; i++) {
+                that.personaForms[i].setDefaultValues(defaults);
+                that.personaForms[i].reload();
+            }
+        });
+        this.setActiveTab(0);
     },
     
     setComponentId: function(itemId) {
@@ -87,6 +107,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     composerRestMountUrl: null,
     resources: null,
     componentId: null,
+    defaultValues: null,
     
     constructor: function(config) {
         this.persona = config.persona;
@@ -106,7 +127,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             labelWidth: 100,
             labelSeparator: '',
             defaults:{
-                width: 170,
                 anchor: '100%'
             },
 
@@ -134,15 +154,32 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
     submitForm:function () {
         this.fireEvent('save');
+        // don't send the override checkbox fields
+        this.items.each(function(item) {
+            if (item.name === 'override') {
+                item.setDisabled(true);
+            }
+        });
         this.getForm().submit({
             headers: {
                     'FORCE_CLIENT_HOST': 'true'
             },
             url: this.composerRestMountUrl +'/'+ this.componentId + './parameters/' + this.persona + '?FORCE_CLIENT_HOST=true',
-            method: 'POST' ,
+            method: 'POST',
             success: function () {
-                Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();
-            }
+                Hippo.ChannelManager.TemplateComposer.Instance.renderComponent(this.componentId, { persona: this.persona });
+                if (this.persona === 'default') {
+                    // defaults have changed reload the whole panel
+                    Ext.getCmp('componentPropertiesPanel').reload();                    
+                } else {
+                    // enable checkboxes again after save
+                    this.items.each(function(item) {
+                        if (item.name === 'override') {
+                            item.setDisabled(false);
+                        }
+                    });
+                }
+            }.bind(this)
         });
     },
 
@@ -224,6 +261,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     loadProperties:function(store, records, options) {
+        var that = this;
         var length = records.length;
         if (length == 0) {
             this.add({
@@ -237,6 +275,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         } else {
             for (var i = 0; i < length; ++i) {
                 var property = records[i];
+                var value = this.getValue(property);
+                var isDefault = this.isDefaultValue(property);
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
@@ -246,10 +286,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
                     var field = this.add({
                         fieldLabel: property.get('label'),
-                        xtype: property.get('type'),
+                        xtype: 'combo',
                         allowBlank: !property.get('required'),
                         name: property.get('name'),
-                        value: property.get('value'),
+                        value: value,
+                        disabled: isDefault,
                         store: comboStore,
                         forceSelection: true,
                         triggerAction: 'all',
@@ -270,20 +311,43 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
                         this.doLayout(false, true); //Layout the form otherwise we can't use the link in the panel.
                         Ext.get("combo" + i).on("click", this.createDocument, this, 
-					    {      docType: property.get('docType'), 
+					    {   
+                            docType: property.get('docType'), 
 						    docLocation: property.get('docLocation'),
 						    comboId: field.id
 					     });
                     }
 
                 } else {
-                    this.add({
+                    var propertyField = this.add({
                         fieldLabel: property.get('label'),
                         xtype: property.get('type'),
-                        value: property.get('value'),
+                        value: value,
                         allowBlank: !property.get('required'),
-                        name: property.get('name')
+                        name: property.get('name'),
+                        disabled: isDefault
                     });
+                    this.add({
+                            xtype: 'checkbox',
+                            name: 'override',
+                            checked: !isDefault,
+                            propertyField: propertyField,
+                            property: property,
+                            listeners: {
+                                check: function(checkbox, checked) {
+                                    if (checked) {
+                                        this.propertyField.setDisabled(false);
+                                    } else {
+                                        this.propertyField.setDisabled(true);
+                                        this.propertyField.setValue(that.getDefaultValue(this.property));
+                                    }
+                                }
+                            }
+                    });
+//                    this.add({
+//                        xtype: 'compositefield',
+//                        items: [propertyField, overrideCheckbox]
+//                    });
                 }
 
 
@@ -293,7 +357,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         }
 
         this.doLayout(false, true);
-        this.getForm().clearInvalid();
     },
 
     loadException:function(proxy, type, actions, options, response) {
@@ -319,10 +382,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.buttons[1].hide();
     },
 
-    reload: function() {
+    reload: function(onloadCallback) {
         this.removeAll();
-        this.buttons[0].show();
-        this.buttons[1].show();
         if (this.componentPropertiesStore) {
             this.componentPropertiesStore.destroy();
         }
@@ -331,16 +392,50 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             autoLoad: true,
             method: 'GET',
             root: 'properties',
-            fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation' ],
+            fields:['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue' ],
             url: this.composerRestMountUrl +'/'+ this.componentId + './parameters/' + this.locale + '/' + this.persona + '?FORCE_CLIENT_HOST=true'
         });
 
         this.componentPropertiesStore.on('load', this.loadProperties, this);
+        if (onloadCallback) {
+            this.componentPropertiesStore.on('load', onloadCallback, this);
+        }
         this.componentPropertiesStore.on('exception', this.loadException, this);
     },
 
     setComponentId: function(componentId) {
         this.componentId = componentId;
+    },
+    
+    setDefaultValues: function(defaults) {
+        this.defaultValues = defaults;
+    },
+    
+    isDefaultValue: function(property) {
+        var value = property.get('value');
+        return !value || value.length === 0;
+    },
+    
+    getValue: function(property) {
+        var value = property.get('value');
+        if (!value || value.length === 0) {
+            value = this.getDefaultValue(property);
+        }
+        return value;
+    },
+    
+    getDefaultValue: function(property) {
+        var value;
+        if (this.persona !== 'default') {
+            // this is a persona properties form
+            // if no value set, try to fall back on configured default property value
+            value = this.defaultValues[property.get('name')];
+        }
+        // fall back on annotated default value
+        if (!value || value.length === 0) {
+            value = property.get('defaultValue');
+        }
+        return value;
     }
 
 });

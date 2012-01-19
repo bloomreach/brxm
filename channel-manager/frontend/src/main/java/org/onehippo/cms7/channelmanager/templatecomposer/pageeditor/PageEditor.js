@@ -366,7 +366,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         tabchange: function(panel, tab) {
                             var id = tab.componentId;
                             if (id != null) {
-                                this.pageContainer.pageContext.renderComponent(id, { persona: tab.persona });
+                                this.renderComponent(id, { persona: tab.persona });
                             }
                         },
                         scope: this
@@ -408,6 +408,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.pageContainer.previewMode = true;
             this.initComposer();
         }.createDelegate(this));
+    },
+    
+    renderComponent: function(id, parameters) {
+        this.pageContainer.pageContext.renderComponent(id, parameters);
     }
 
 });
