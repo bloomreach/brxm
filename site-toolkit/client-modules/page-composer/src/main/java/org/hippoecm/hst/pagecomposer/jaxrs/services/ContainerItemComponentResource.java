@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -153,13 +154,25 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 prefixedParameters = new HashMap<String, String>();
                 hstParameters.put(prefix, prefixedParameters);
             }
+            
+            // remove parameters for which there are no new values
+            Iterator<Entry<String,String>> iter = prefixedParameters.entrySet().iterator();
+            while (iter.hasNext()) {
+                String paramName = iter.next().getKey();
+                List<String> newValues = params.get(paramName);
+                if (newValues == null || newValues.isEmpty()) {
+                    iter.remove();
+                }
+            }
+            
+            // add / replace parameters for which there are values
             for (String param : params.keySet()) {
                 // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
                 // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
                 // has been replaced by a request header.
                 if(!"FORCE_CLIENT_HOST".equals(param)) {
                    prefixedParameters.put(param, params.getFirst(param));
-                } 
+                }
             }
 
             List<String> prefixes = new ArrayList<String>();
