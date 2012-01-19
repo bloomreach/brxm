@@ -277,6 +277,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 var property = records[i];
                 var value = this.getValue(property);
                 var isDefault = this.isDefaultValue(property);
+                var propertyField;
                 if (property.get('type') == 'combo') {
                     var comboStore = new Ext.data.JsonStore({
                         root: 'data',
@@ -284,7 +285,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         fields:['path']
                     });
 
-                    var field = this.add({
+                    propertyField = this.add({
                         fieldLabel: property.get('label'),
                         xtype: 'combo',
                         allowBlank: !property.get('required'),
@@ -314,7 +315,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 					    {   
                             docType: property.get('docType'), 
 						    docLocation: property.get('docLocation'),
-						    comboId: field.id
+						    comboId: propertyField.id
 					     });
                     }
 
@@ -327,29 +328,24 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         name: property.get('name'),
                         disabled: isDefault
                     });
-                    this.add({
-                            xtype: 'checkbox',
-                            name: 'override',
-                            checked: !isDefault,
-                            propertyField: propertyField,
-                            property: property,
-                            listeners: {
-                                check: function(checkbox, checked) {
-                                    if (checked) {
-                                        this.propertyField.setDisabled(false);
-                                    } else {
-                                        this.propertyField.setDisabled(true);
-                                        this.propertyField.setValue(that.getDefaultValue(this.property));
-                                    }
-                                }
-                            }
-                    });
-//                    this.add({
-//                        xtype: 'compositefield',
-//                        items: [propertyField, overrideCheckbox]
-//                    });
                 }
-
+                this.add({
+                    xtype: 'checkbox',
+                    name: 'override',
+                    checked: !isDefault,
+                    propertyField: propertyField,
+                    property: property,
+                    listeners: {
+                        check: function(checkbox, checked) {
+                            if (checked) {
+                                this.propertyField.setDisabled(false);
+                            } else {
+                                this.propertyField.setDisabled(true);
+                                this.propertyField.setValue(that.getDefaultValue(this.property));
+                            }
+                        }
+                    }
+                });
 
             }
             this.buttons[0].show();
