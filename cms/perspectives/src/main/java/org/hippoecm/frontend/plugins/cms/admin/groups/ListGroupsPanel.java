@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
@@ -30,18 +31,25 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This panel displays a pageable, searchable list of groups.
+ */
 public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     @SuppressWarnings("unused")
@@ -49,6 +57,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ListGroupsPanel.class);
 
+    private final GroupDataProvider groupDataProvider = new GroupDataProvider();
     private AdminDataTable table;
 
     public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
@@ -74,7 +83,6 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        //panel.showView(target, model);
                         activate(new IBreadCrumbPanelFactory()
                         {
                             public BreadCrumbPanel create(String componentId,
@@ -114,7 +122,26 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        table = new AdminDataTable("table", columns, new GroupDataProvider(), 20);
+        final Form form = new Form("search-form");
+        form.setOutputMarkupId(true);
+        add(form);
+
+        TextField search = new TextField("search-query", new PropertyModel(groupDataProvider, "query"));
+        search.add(StringValidator.minimumLength(1));
+        search.setRequired(false);
+        search.add(new DefaultFocusBehavior());
+        form.add(search);
+
+        form.add(new AjaxButton("search-button", form) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form form) {
+                target.addComponent(table);
+            }
+        });
+
+        table = new AdminDataTable("table", columns, groupDataProvider, 20);
         add(table);
     }
 

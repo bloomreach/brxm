@@ -1433,6 +1433,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/Pa
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/DefaultFocusBehavior.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.html svneol=native#text/plain
@@ -1535,6 +1536,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.
 perspectives/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 perspectives/src/main/resources/reporting.cnd -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseServiceTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2008-2012 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -20,6 +20,11 @@
     <ul class="hippo-controlpanel-options">
       <li><a href="#" wicket:id="create-group"><wicket:message key="group-create"/></a></li>
       <li><wicket:message key="group-view-instructions"/></li>
+      <li><wicket:message key="group-search"/>
+        <form wicket:id="search-form">
+          <input type="text" size="35" wicket:id="search-query" wicket:message="title:group-search-help"/><input type="submit" wicket:message="value:group-search-action" wicket:id="search-button"/>
+        </form>
+      </li>
     </ul>
     <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
   </wicket:extend>

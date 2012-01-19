@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableUser extends LoadableDetachableModel {
+public final class DetachableUser extends LoadableDetachableModel<User> {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -52,7 +52,7 @@ public final class DetachableUser extends LoadableDetachableModel {
     }
 
     public User getUser() {
-        return (User) getObject();
+        return getObject();
     }
 
     @Override
