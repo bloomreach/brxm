@@ -101,10 +101,10 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
         // This in turn causes wicket to send a page expired response
         // to the browser on the next request that comes in.
         if (this.events.size() > MAX_EVENTS) {
-            String userID = getSession().getJcrSession().getUserID();
-            log.warn("The event queue is full. Flushing session of user " + userID);
             PluginUserSession session = ((PluginUserSession)getSession());
             if (session != null) {
+                String userID = session.getJcrSession().getUserID();
+                log.warn("The event queue is full. Flushing session of user " + userID);
                 session.flush();
             }
         }
