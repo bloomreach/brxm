@@ -89,7 +89,6 @@ public class ParametersInfoProcessorTest {
         Property colorProperty = properties.get(0);
         assertEquals("colorfield", colorProperty.getType());
         assertEquals("blue", colorProperty.getDefaultValue());
-        assertEquals("blue", colorProperty.getValue());
 
         Property docLocProperty = properties.get(1);
         assertEquals("/content", docLocProperty.getDocLocation());
@@ -99,7 +98,6 @@ public class ParametersInfoProcessorTest {
         Property imageProperty = properties.get(2);
         assertEquals("textfield", imageProperty.getType());
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
-        assertEquals("/content/gallery/default.png", imageProperty.getValue());
 
         Property dateProperty = properties.get(3);
         assertEquals("datefield", dateProperty.getType());
