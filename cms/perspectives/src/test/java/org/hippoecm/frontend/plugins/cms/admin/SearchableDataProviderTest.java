@@ -50,15 +50,16 @@ public class SearchableDataProviderTest {
         assertEquals("foo bar", SearchableDataProvider.escapeJcrContainsQuery("foo bar and "));
         assertEquals("foo bar", SearchableDataProvider.escapeJcrContainsQuery(" and foo bar"));
 
-        // escape special JCR characters
+        // escape Lucene special characters
         assertEquals("foo\\!", SearchableDataProvider.escapeJcrContainsQuery("foo!"));
-        assertEquals("foo[0\\]", SearchableDataProvider.escapeJcrContainsQuery("foo[0]"));
+        assertEquals("foo\\[0\\]", SearchableDataProvider.escapeJcrContainsQuery("foo[0]"));
+        assertEquals("foo \\(bar\\)", SearchableDataProvider.escapeJcrContainsQuery("foo (bar)"));
+        assertEquals("foo  bar", SearchableDataProvider.escapeJcrContainsQuery("foo~ bar"));
+        assertEquals("foo \\+bar", SearchableDataProvider.escapeJcrContainsQuery("foo +bar"));
+        assertEquals("foo \\{bar\\}\\}", SearchableDataProvider.escapeJcrContainsQuery("foo {bar}}"));
 
         // replace single quotes with double ones
         assertEquals("''foo''", SearchableDataProvider.escapeJcrContainsQuery("'foo'"));
-
-        // escape parentheses
-        assertEquals("foo \\(bar\\)", SearchableDataProvider.escapeJcrContainsQuery("foo (bar)"));
 
         // remove all standalone occurences of '*', '**', etc. to avoid an expensive search
         assertEquals("", SearchableDataProvider.escapeJcrContainsQuery("*"));
@@ -68,6 +69,15 @@ public class SearchableDataProviderTest {
         assertEquals("", SearchableDataProvider.escapeJcrContainsQuery("* or * or *"));
         assertEquals("", SearchableDataProvider.escapeJcrContainsQuery("**"));
         assertEquals("", SearchableDataProvider.escapeJcrContainsQuery("  ** or *** or * "));
+
+        // avoid multiple occurences of '-' after each other
+        assertEquals("foo -bar", SearchableDataProvider.escapeJcrContainsQuery("foo --bar"));
+        assertEquals("foo -bar", SearchableDataProvider.escapeJcrContainsQuery("foo -----bar"));
+
+        // remove - without anything after it
+        assertEquals("foo", SearchableDataProvider.escapeJcrContainsQuery("foo -"));
+        assertEquals("foo", SearchableDataProvider.escapeJcrContainsQuery("- foo"));
+        assertEquals("foo  bar", SearchableDataProvider.escapeJcrContainsQuery("foo - bar"));
     }
 
     @Test

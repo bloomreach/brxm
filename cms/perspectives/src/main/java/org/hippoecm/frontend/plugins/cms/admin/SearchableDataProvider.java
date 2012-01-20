@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.hippoecm.frontend.session.UserSession;
@@ -46,9 +45,27 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
     private static final Logger log = LoggerFactory.getLogger(SearchableDataProvider.class);
 
     private static final String[][] JCR_CONTAINS_QUERY_REPLACEMENTS = {
+            // replace single quotes by double ones to avoid the search query breaking out of the SQL query itself
             { "'", "''" },
+            // escape Lucene special characters: + && || ! ( ) { } [ ] ^ " ~ : \
+            // we keep the - for negating, and * and ? for wildcards
+            { "\\", "\\\\" },
+            { "+", "\\+" },
+            { "&&", "\\&&" },
+            { "||", "\\||" },
+            { "!", "\\!" },
             { "(", "\\(" },
             { ")", "\\)" },
+            { "{", "\\{" },
+            { "}", "\\}" },
+            { "[", "\\[" },
+            { "]", "\\]" },
+            { "^", "\\^" },
+            { "\"", "\\\"" },
+            { ":", "\\:" },
+            // escaping ~ does not work, so we remove it entirely
+            { "~", " " },
+            // for usability, replace 'or' by 'OR' so users do not have to explicitly type capitals
             { " or ", " OR "}
     };
 
@@ -107,6 +124,8 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
 
     /**
      * Populate list, refresh when a new session id is found or when dirty
+     *
+     * @param query the query used for free text search to limit the list
      */
     private synchronized void populateList(String query) {
         // synchronize on the runtime class, as there can be multiple implementations of this abstract class
@@ -150,8 +169,11 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
      * Set the search query. Only beans that match the query will be included. A '*' in the query acts as a wildcard.
      * When the query is null or empty, all beans will be included.
      *
+     * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
+     *
      * @param newQuery the query to search for users with
      */
+    @SuppressWarnings("unused")
     public void setQuery(final String newQuery) {
         this.query = escapeJcrContainsQuery(newQuery);
         setDirty(true);
@@ -161,8 +183,11 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
      * Returns the query used by this provider to limit the provided beans. The query can be null or empty,
      * in which case there are no limitations and all beans will be included.
      *
+     * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
+     *
      * @return the search query to use
      */
+    @SuppressWarnings("unused")
     public String getQuery() {
         return this.query;
     }
@@ -184,7 +209,6 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
     static String escapeJcrContainsQuery(String input) {
         String result = StringUtils.trimToEmpty(input);
         if (StringUtils.isNotEmpty(result)) {
-            result = Text.escapeIllegalXpathSearchChars(result);
             for (String[] replacement : JCR_CONTAINS_QUERY_REPLACEMENTS) {
                 result = StringUtils.replace(result, replacement[0], replacement[1]);
             }
@@ -201,6 +225,13 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
             result = removeStartIgnoreCase(result, "or ");
             result = removeEndIgnoreCase(result, " and");
             result = removeEndIgnoreCase(result, " or");
+            
+            // replace multiple -'s by a single -
+            result = result.replaceAll("--+", "-");
+            
+            // remove - without anything after it
+            result = StringUtils.replace(result, "- ", " ");
+            result = removeEndIgnoreCase(result, "-");
 
             // replace a single '*' with an empty string
             result = result.trim();
