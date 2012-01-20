@@ -48,7 +48,7 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                 String prefixedParameterName = parameterName;
 
                 Map<String,String[]> parameterMap = req.getParameterMap();
-                String[] personas = parameterMap.get("persona");
+                String[] personas = parameterMap.get("variant");
                 if (personas != null && personas.length > 0) {
                     String persona = personas[0];
                     for (Map.Entry<String,String> entry : getParameterNames(config, parameterName).entrySet()) {
