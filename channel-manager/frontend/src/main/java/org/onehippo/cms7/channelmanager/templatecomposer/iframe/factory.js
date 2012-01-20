@@ -123,6 +123,12 @@
                     element.setAttribute(HST.ATTR.INHERITED, inherited);
                 }
 
+                var variant = hstContainerMetaData[HST.ATTR.VARIANT];
+                if (typeof variant !== 'undefined') {
+                    element.setAttribute(HST.ATTR.VARIANT, variant);
+                }
+
+
                 return {
                     id: id,
                     type: type,

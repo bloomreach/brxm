@@ -83,8 +83,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         return this.pageContainer;
     },
 
-    renderComponent: function(id, parameters) {
-        this.frm.sendMessage({id: id, parameters: parameters}, 'setParameters');
+    selectVariant: function(id, variant) {
+        this.frm.sendMessage({id: id, variant: variant}, 'selectVariant');
     },
 
     _initToolkitStore : function(mountId) {

@@ -734,22 +734,21 @@
             this.overlay.append(this.menu);
          },
 
-        setParameters: function(parameters) {
+        selectVariant: function(variant) {
             if (this.el.attr(HST.ATTR.URL)) {
+                this.el.attr(HST.ATTR.VARIANT, variant);
                 var prefix = this.el.attr(HST.ATTR.REF_NS);
                 var data = {};
-                data[prefix + ':persona'] = parameters.persona;
+                data[prefix + ':variant'] = variant;
                 $.ajax({
                     url: this.el.attr(HST.ATTR.URL),
                     context: this,
                     data: data,
                     dataType: 'html',
                     success: function(response) {
-                        console.log(response);
                         this.el.html(response);
                     }
                 });
-                this.el.html();
             }
         },
 
@@ -782,7 +781,8 @@
                 sendMessage({}, 'refresh');
             } else {
                 var id = this.element.getAttribute('id');
-                sendMessage({elementId: id}, 'onclick');
+                var variant = this.el.attr(HST.ATTR.VARIANT);
+                sendMessage({elementId: id, variant: variant}, 'onclick');
             }
         },
 

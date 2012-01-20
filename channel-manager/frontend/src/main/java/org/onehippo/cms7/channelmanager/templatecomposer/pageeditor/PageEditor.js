@@ -310,9 +310,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.enableUI(pageContext);
         }, this);
 
-        this.on('selectItem', function(record) {
+        this.on('selectItem', function(record, variant) {
             if (record.get('type') === HST.CONTAINERITEM) {
-                this.showProperties(record);
+                this.showProperties(record, variant);
             }
         }, this);
 
@@ -363,10 +363,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         cancel: function() {
                             window1.hide();
                         },
-                        tabchange: function(panel, tab) {
-                            var id = tab.componentId;
+                        variantChange: function(id, variant) {
                             if (id != null) {
-                                this.renderComponent(id, { persona: tab.persona });
+                                this.selectVariant(id, variant);
                             }
                         },
                         scope: this
@@ -377,9 +376,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return window1;
     },
 
-    showProperties : function(record) {
+    showProperties : function(record, variant) {
         var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
         componentPropertiesPanel.setComponentId(record.get('id'));
+        componentPropertiesPanel.selectVariant(variant);
         componentPropertiesPanel.reload();
         if (this.propertiesWindow) {
             this.propertiesWindow.setTitle(record.get('name'));
@@ -409,9 +409,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.initComposer();
         }.createDelegate(this));
     },
-    
-    renderComponent: function(id, parameters) {
-        this.pageContainer.pageContext.renderComponent(id, parameters);
+
+    selectVariant: function(id, variant) {
+        this.pageContainer.pageContext.selectVariant(id, variant);
     }
 
 });

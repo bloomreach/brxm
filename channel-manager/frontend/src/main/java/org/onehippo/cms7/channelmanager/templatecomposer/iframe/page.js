@@ -81,9 +81,9 @@
             }, this, false, 'unhighlight');
 
             onhostmessage(function(msg) {
-                this.setParameters(msg.data.id, msg.data.parameters);
+                this.selectVariant(msg.data.id, msg.data.variant);
                 return false;
-            }, this, false, 'setParameters');
+            }, this, false, 'selectVariant');
 
             onhostmessage(function(msg) {
                 this.requestSync();
@@ -225,9 +225,9 @@
             });
         },
 
-        setParameters : function(id, parameters) {
+        selectVariant : function(id, variant) {
             var o = this.retrieve(id);
-            o.setParameters(parameters);
+            o.selectVariant(variant);
         },
 
         checkStateChanges : function() {
