@@ -249,8 +249,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
             List<Mount> mounts = Collections.emptyList();
             if(hostGroup == null) {
                 log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");
-            } else if (!virtualHosts.getHostGroupNames().contains(virtualHosts.getChannelManagerHostGroupName())) {
-                log.warn("Configured channel manager host group name does not exist");
+            } else if (!virtualHosts.getHostGroupNames().contains(hostGroup)) {
+                log.warn("Configured channel manager host group name " + hostGroup + " does not exist");
             } else {
                 // in channel manager only the mounts for at most ONE single hostGroup are shown
                 mounts = virtualHosts.getMountsByHostGroup(hostGroup);
