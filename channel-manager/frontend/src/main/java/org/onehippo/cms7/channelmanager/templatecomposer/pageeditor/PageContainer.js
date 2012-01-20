@@ -209,7 +209,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             window.scrollBy(scrollSave.x, scrollSave.y);
         });
 
-        iframe.setSrc(iframe.getFrameDocument().location.href); //following links in the iframe doesn't set iframe.src..
+        iframe.getFrameDocument().location.reload(true);
     },
 
     toggleMode: function () {
