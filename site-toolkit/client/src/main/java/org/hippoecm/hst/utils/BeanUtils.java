@@ -342,7 +342,9 @@ public class BeanUtils {
      * 
      * @param <T>
      * @param hstRequest the hstRequest
-     * @param query the free text search as String that is used for this faceted navigation
+     * @param query the free text search as String that is used for this faceted navigation. The query should already
+     *              have been processed by {@link org.hippoecm.hst.util.SearchInputParsingUtils#parse(String, boolean)}
+     *              if necessary.
      * @param relPath the relative path from site base content to the faceted navigation node, which must not start with a / and is relative to the site content base path
      * @param objectConverter
      * @param beanMappingClass the class T must be of 
