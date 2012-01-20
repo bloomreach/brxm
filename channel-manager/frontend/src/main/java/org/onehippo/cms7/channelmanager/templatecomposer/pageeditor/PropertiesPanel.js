@@ -22,8 +22,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     mountId: null,
     resources: null,
     personas: null,
-    defaultForm: null,
-    personaForms: [],
     
     constructor: function(config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -70,11 +68,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             });
             this.relayEvents(form, ['cancel']);
             this.add(form);
-            if (this.personas[i] === 'default') {
-                this.defaultForm = form;
-            } else {
-                this.personaForms.push(form);
-            }
         }
         this.setActiveTab(0);
     },
@@ -94,7 +87,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     composerRestMountUrl: null,
     resources: null,
     componentId: null,
-    defaultValues: null,
     
     constructor: function(config) {
         this.persona = config.persona;
