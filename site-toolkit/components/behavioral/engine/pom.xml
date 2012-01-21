@@ -61,7 +61,13 @@
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-content-beans</artifactId>
       <version>${project.version}</version>
-    </dependency> 
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     
     <!-- Test dependencies -->
     <dependency>

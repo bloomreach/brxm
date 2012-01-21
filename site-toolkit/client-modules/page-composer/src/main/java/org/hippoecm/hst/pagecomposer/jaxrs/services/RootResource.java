@@ -15,7 +15,6 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +30,6 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.PersonasRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,22 +86,6 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
         return ok("Preview-Mode successful", null);
-    }
-
-    @GET
-    @Path("/personas/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response personas(@Context HttpServletRequest servletRequest,
-                             @Context HttpServletResponse servletResponse) {
-        try {
-            Node personasNode = getRequestContext(servletRequest).getSession().getNode("/behavioral:configuration/behavioral:personas");
-            PersonasRepresentation personasRepresentation = new PersonasRepresentation(personasNode);
-            Object personaArray = personasRepresentation.getPersonas().toArray();
-            return ok("Personas loaded successfully", personaArray);
-        } catch (RepositoryException e) {
-            log.error("Failed to load personas", e);
-            return error("Could not load personas", e);
-        }
     }
 
 }

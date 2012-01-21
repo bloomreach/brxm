@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2010-2012 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@
     <property name="servletPath" value=""/>
     <property name="jaxrsServerFactoryBean" ref="jaxrsHstConfigCxfServerFactoryBean"/>
   </bean>
-
 
   <bean id="abstractConfigResource" abstract="true" >
     <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />

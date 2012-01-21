@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.model;
+package org.hippoecm.hst.behavioral.rest;
 
 import java.util.ArrayList;
 import java.util.List;
