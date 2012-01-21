@@ -44,7 +44,7 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
         InvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request) {
 
             @Override
-            public String getParameterValue(final String parameterName, ComponentConfiguration config, HstRequest req) {
+            protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
                 String prefixedParameterName = parameterName;
 
                 Map<String,String[]> parameterMap = req.getParameterMap();
@@ -69,20 +69,16 @@ public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoPro
                         }
                     }
                 }
-                String value = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
-                if (value == null || value.isEmpty()) {
-                    // fallback semantics should be the same as fallback to annotated value:
-                    // if prefixed value is empty then use the default value
-                    value = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem());
-                }
-                return value;
+                
+                return prefixedParameterName;
             }
+
         };
         
         return parameterInfoInvocationHandler;
     }
 
-    Map<String, String> getParameterNames(ComponentConfiguration config, String paramName) {
+    private Map<String, String> getParameterNames(ComponentConfiguration config, String paramName) {
         Map<String, String> names = new TreeMap<String, String>();
         for (String name : config.getParameterNames()) {
             int offset = name.indexOf(HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
