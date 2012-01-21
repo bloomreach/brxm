@@ -227,7 +227,10 @@
 
         selectVariant : function(id, variant) {
             var o = this.retrieve(id);
-            o.selectVariant(variant);
+            o.selectVariant(variant, function() {
+                this.requestSync();
+                this.sync();
+            }.bind(this));
         },
 
         checkStateChanges : function() {

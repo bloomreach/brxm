@@ -734,7 +734,7 @@
             this.overlay.append(this.menu);
          },
 
-        selectVariant: function(variant) {
+        selectVariant: function(variant, callback) {
             if (this.el.attr(HST.ATTR.URL)) {
                 this.el.attr(HST.ATTR.VARIANT, variant);
                 var prefix = this.el.attr(HST.ATTR.REF_NS);
@@ -747,6 +747,7 @@
                     dataType: 'html',
                     success: function(response) {
                         this.el.html(response);
+                        callback();
                     }
                 });
             }
