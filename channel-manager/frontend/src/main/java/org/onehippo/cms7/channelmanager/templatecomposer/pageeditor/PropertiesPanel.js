@@ -124,7 +124,32 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.resources = config.resources;
+
+        var fieldTpl = new Ext.Template(
+            '<div class="x-form-item {itemCls}" tabIndex="-1">',
+                '<label for="{id}" style="width: 95px;" class="x-form-item-label">{label}{labelSeparator}</label>',
+                '<div class="x-form-element" id="x-form-el-{id}" style="display: inline-block; padding-left: 5px;"></div>',
+                '<div id="hippo-properties-el-{id}" style="display:inline-block;"></div>',
+                '<div class="{clearCls}"></div>',
+            '</div>'
+        );
+        fieldTpl.disableFormats = true;
+
+        Ext.applyIf(config, {
+            forceLayout: true,
+            layoutConfig: {
+                fieldTpl: fieldTpl.compile()
+            }
+        });
         Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, config);
+
+        this.on('afterrender', function () {
+            var adjust = this.getLayout().adjustWidthAnchor;
+            this.getLayout().adjustWidthAnchor = function(value, c) {
+                var val = adjust(value, c);
+                return val - 10;
+            };
+        }, this);
     },
     
     initComponent:function() {
@@ -323,7 +348,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     }
 
                 } else {
-                    var propertyField = this.add({
+                    propertyField = this.add({
                         fieldLabel: property.get('label'),
                         xtype: property.get('type'),
                         value: value,
@@ -332,24 +357,28 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         disabled: isDefault
                     });
                 }
-                this.add({
-                    xtype: 'checkbox',
-                    name: 'override',
-                    checked: !isDefault,
-                    propertyField: propertyField,
-                    property: property,
-                    listeners: {
-                        check: function(checkbox, checked) {
-                            if (checked) {
-                                this.propertyField.setDisabled(false);
-                            } else {
-                                this.propertyField.setDisabled(true);
-                                this.propertyField.setValue(this.property.get('defaultValue'));
+                var origRender = propertyField.render;
+                propertyField.render = function() {
+                    origRender.apply(this, arguments);
+                    new Ext.form.Checkbox({
+                        xtype: 'checkbox',
+                        name: 'override',
+                        checked: !isDefault,
+                        propertyField: propertyField,
+                        property: property,
+                        renderTo: 'hippo-properties-el-' + propertyField.getId(),
+                        listeners: {
+                            check: function(checkbox, checked) {
+                                if (checked) {
+                                    this.propertyField.setDisabled(false);
+                                } else {
+                                    this.propertyField.setDisabled(true);
+                                    this.propertyField.setValue(this.property.get('defaultValue'));
+                                }
                             }
                         }
-                    }
-                });
-
+                    });
+                };
             }
             this.buttons[0].show();
             this.buttons[1].show();
