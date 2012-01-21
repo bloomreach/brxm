@@ -106,6 +106,9 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     private String locale;
 
+    @ExtProperty
+    private String variantsUuid;
+    
     private IPluginContext context;
     private ExtStoreFuture channelStoreFuture;
     private ChannelPropertiesWindow channelPropertiesWindow;
@@ -118,6 +121,7 @@ public class PageEditor extends ExtPanel {
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
         this.channelStoreFuture = channelStoreFuture;
+        String variantsPath = null;
         if (config != null) {
             this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
             this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
@@ -126,10 +130,22 @@ public class PageEditor extends ExtPanel {
             if (config.get("previewMode") != null) {
                 this.previewMode = config.getBoolean("previewMode");
             }
+            variantsPath = config.getString("variantsPath");
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
+        if (variantsPath != null) {
+            try {
+                if (UserSession.get().getJcrSession().nodeExists(variantsPath)) {
+                    this.variantsUuid = UserSession.get().getJcrSession().getNode(variantsPath).getIdentifier();
+                } else {
+                    log.warn("No node at " + variantsPath + ": variants will not be available.");
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve variants node " + variantsPath, e);
+            }
+        }
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(new TemplateComposerResourceBehavior());

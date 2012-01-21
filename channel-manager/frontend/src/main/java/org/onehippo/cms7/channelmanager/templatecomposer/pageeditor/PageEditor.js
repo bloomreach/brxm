@@ -20,6 +20,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     // height of the toolbar (in pixels)
     TOOLBAR_HEIGHT: 28,
+    variantsUuid: null,
 
     constructor : function(config) {
         if (config.debug) {
@@ -30,6 +31,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         config.header = false;
 
         this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
+        this.variantsUuid = config.variantsUuid;
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
 
         this.initUI(config);
@@ -358,6 +360,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     resources: this.resources,
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
+                    variantsUuid: this.variantsUuid,
                     mountId: mountId,
                     listeners: {
                         cancel: function() {

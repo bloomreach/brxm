@@ -34,6 +34,12 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="templatecomposer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:pluginconfig</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="layout.wireframe">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
