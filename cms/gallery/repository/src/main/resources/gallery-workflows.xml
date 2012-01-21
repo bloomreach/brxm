@@ -43,12 +43,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="gallery.processor.id" sv:type="String">
         <sv:value>service.gallery.processor</sv:value>
       </sv:property>
@@ -130,12 +124,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
         <sv:value>60</sv:value>
       </sv:property>
@@ -184,4 +172,3 @@
     </sv:node>
   </sv:node>
 </sv:node>
-

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2009 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -86,19 +87,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="validator.id" sv:type="String">
-        <sv:value>${validator.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="feedback.id" sv:type="String">
-        <sv:value>${feedback.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.editor.workflow.CommitTypeWorkflowPlugin</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>
-

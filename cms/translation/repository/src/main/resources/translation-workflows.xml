@@ -40,12 +40,6 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
-      <sv:property sv:name="editor.id" sv:type="String">
-        <sv:value>${editor.id}</sv:value>
-      </sv:property>
-      <sv:property sv:name="browser.id" sv:type="String">
-        <sv:value>${browser.id}</sv:value>
-      </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.translation.workflow.TranslationWorkflowPlugin</sv:value>
       </sv:property>
