@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="behavioral:configuration" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>behavioral:configuration</sv:value>
-  </sv:property>
-  <sv:node sv:name="behavioral:providers">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>behavioral:providers</sv:value>
-    </sv:property>
+<sv:node sv:name="behavioral:configuration" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" h:merge="combine" xmlns:h="http://www.onehippo.org/jcr/xmlimport">
+  <sv:node sv:name="behavioral:providers" h:merge="combine">
     <sv:node sv:name="tagDataProvider">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>behavioral:provider</sv:value>
@@ -69,10 +63,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="behavioral:personas">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>behavioral:personas</sv:value>
-    </sv:property>
+  <sv:node sv:name="behavioral:personas" h:merge="combine">
     <sv:node sv:name="youngcyclist">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>behavioral:persona</sv:value>
