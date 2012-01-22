@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +22,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,6 +31,10 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class PluginContextTest {
     @SuppressWarnings("unused")
@@ -107,6 +106,47 @@ public class PluginContextTest {
             super(context, config);
 
             context.registerService(new IClusterable() {}, config.getString("test.id"));
+        }
+    }
+
+    public static class IdService implements IClusterable {
+        private final String id;
+
+        public IdService(final String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+    }
+    
+    public static class ClusterStartingPlugin extends Plugin {
+
+        public ClusterStartingPlugin(IPluginContext context, IPluginConfig config) {
+            super(context, config);
+        }
+
+        @Override
+        public void start() {
+            IPluginContext context = getPluginContext();
+
+            JavaPluginConfig config = new JavaPluginConfig("test");
+            config.put("plugin.class", DummyPlugin.class.getName());
+            JavaClusterConfig cluster = new JavaClusterConfig();
+            cluster.addReference("test.id");
+            cluster.addService("test.id");
+            cluster.addPlugin(config);
+            JavaPluginConfig params = new JavaPluginConfig();
+            params.add("test.id", "service.test");
+
+            IClusterControl control = context.newCluster(cluster, params);
+
+            String id = control.getClusterConfig().getString("test.id");
+            IClusterable service = new IdService(id);
+            context.registerService(service, id);
+
+            control.start();
         }
     }
 
@@ -216,7 +256,36 @@ public class PluginContextTest {
         assertEquals(service, context.getService("service.test", IClusterable.class));
         assertNull(context.getService(id, IClusterable.class));
     }
-    
+
+    @Test
+    public void pluginThatStartsClusterWithForwardersIsCleanedUp() {
+        JavaPluginConfig config = new JavaPluginConfig("test");
+        config.put("plugin.class", ClusterStartingPlugin.class.getName());
+        JavaClusterConfig cluster = new JavaClusterConfig();
+        cluster.addPlugin(config);
+
+        JavaPluginConfig params = new JavaPluginConfig();
+
+        IClusterControl control = context.newCluster(cluster, params);
+        control.start();
+
+        List<IClusterable> services = context.getServices("service.test", IClusterable.class);
+        assertEquals(1, services.size());
+        String serviceId = null;
+        for (IClusterable service : services) {
+            if (service instanceof IdService) {
+                serviceId = ((IdService) service).getId();
+            }
+        }
+
+        String id = context.getReference(context.getServices("service.test", IClusterable.class).get(0)).getServiceId();
+        control.stop();
+
+        assertEquals(0, context.getServices("service.test", IClusterable.class).size());
+        assertNull(context.getService(id, IClusterable.class));
+        assertEquals(0, context.getServices(serviceId, IClusterable.class).size());
+    }
+
     @Test
     public void testServiceIsInvisibleDuringConstruction() {
         ServiceTracker<ITestService> tracker = new ServiceTracker<ITestService>(ITestService.class) {

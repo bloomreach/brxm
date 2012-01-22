@@ -106,9 +106,17 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
         
         running = true;
         contexts = new PluginContext[config.getPlugins().size()];
+
+        // start forwarders in two steps
+        // all need to have started before they actually register services;
+        // this is necessary for them to be able to detect loops.
         for (ServiceForwarder forwarder : forwarders) {
             forwarder.start();
         }
+        for (ServiceForwarder forwarder : forwarders) {
+            forwarder.connect();
+        }
+
         for (String service : config.getServices()) {
             context.registerTracker(this, config.getString(service));
         }
@@ -153,6 +161,9 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
 
         for (String service : config.getServices()) {
             context.unregisterTracker(this, config.getString(service));
+        }
+        for (ServiceForwarder forwarder : forwarders) {
+            forwarder.disconnect();
         }
         for (ServiceForwarder forwarder : forwarders) {
             forwarder.stop();

@@ -109,6 +109,7 @@ public class FieldItem<C extends IModel> implements IDetachable {
         if (validationService != null) {
             if (validationObserver != null) {
                 context.unregisterService(validationObserver, IObserver.class.getName());
+                validationObserver = null;
             }
             context.unregisterService(validationService, validationServiceId);
             validationService = null;

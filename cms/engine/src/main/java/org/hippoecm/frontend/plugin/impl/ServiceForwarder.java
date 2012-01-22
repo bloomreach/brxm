@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.plugin.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
                 return false;
             }
             StackEntry seThat = (StackEntry) that;
-            return new EqualsBuilder().append(seThat.name, this.name).append(seThat.service, this.service).isEquals();
+            return seThat.name.equals(this.name) && (seThat.service == this.service);
         }
 
         @Override
@@ -68,6 +68,9 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
     private String target;
     private List<IClusterable> forwarded;
 
+    private List<IClusterable> pending;
+    private boolean started;
+
     ServiceForwarder(PluginManager mgr, Class<IClusterable> clazz, String source, String target) {
         super(clazz);
 
@@ -78,15 +81,42 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
     }
 
     public void start() {
+        pending = new LinkedList<IClusterable>();
         pluginMgr.registerTracker(this, source);
+        started = true;
+    }
+
+    public void connect() {
+        for (IClusterable service : pending) {
+            forwardService(service, source);
+        }
+        pending = null;
+    }
+
+    public void disconnect() {
+        pending = new ArrayList<IClusterable>(forwarded);
+        for (IClusterable service : pending) {
+            unforwardService(service, source);
+        }
     }
 
     public void stop() {
         pluginMgr.unregisterTracker(this, source);
+        pending = null;
     }
 
     @Override
     protected void onServiceAdded(IClusterable service, String name) {
+        if (pending != null) {
+            if (!started) {
+                pending.add(service);
+            }
+            return;
+        }
+        forwardService(service, name);
+    }
+    
+    protected void forwardService(IClusterable service, String name) {
         Set<StackEntry> stack = threadLocal.get();
         if (stack == null) {
             threadLocal.set(stack = new HashSet<StackEntry>());
@@ -114,6 +144,14 @@ public final class ServiceForwarder extends ServiceTracker<IClusterable> {
 
     @Override
     protected void onRemoveService(IClusterable service, String name) {
+        if (pending != null) {
+            pending.remove(service);
+            return;
+        }
+        unforwardService(service, name);
+    }
+
+    protected void unforwardService(IClusterable service, String name) {
         if (forwarded.contains(service)) {
             forwarded.remove(service);
             Set<StackEntry> stack = threadLocal.get();
