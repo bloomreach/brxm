@@ -284,6 +284,11 @@ client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/bu
 client-modules/page-composer/src/site/site.xml -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/OldParametersInfoProcessorTest.java -text
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ParametersInfoProcessorTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/DummyComponent.java -text
+client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/DummyInfo.java -text
+client-modules/page-composer/src/test/resources/log4j.dtd -text
+client-modules/page-composer/src/test/resources/log4j.xml -text
 client-modules/pom.xml -text svneol=unset#text/plain
 client-modules/src/site/site.xml -text
 client/pom.xml svneol=native#text/plain

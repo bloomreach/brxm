@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -92,7 +91,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                     log.warn("Failed to create Locale from string '{}'", localeString);
                 }
             }
-            return new ComponentWrapper(getRequestConfigNode(requestContext), locale, prefix);
+            return doGetParameters(getRequestConfigNode(requestContext), locale, prefix);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
@@ -102,135 +101,157 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
         return null;
     }
+    
+    ComponentWrapper doGetParameters(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
+        return new ComponentWrapper(node, locale, prefix);
+    }
 
     @POST
     @Path("/parameters/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setNode(@Context HttpServletRequest servletRequest, 
+    public Response setParameters(@Context HttpServletRequest servletRequest, 
                             @Context HttpServletResponse servletResponse,
                             @PathParam("prefix") String prefix,
                             MultivaluedMap<String, String> params) {
         try {
-            
-            if (prefix == null || prefix.isEmpty()) {
-                prefix = "default";
-            }
-            
-            HstRequestContext requestContext = getRequestContext(servletRequest);
-            Node jcrNode = getRequestConfigNode(requestContext);
-
-            Map<String, Map<String, String>> hstParameters = new HashMap<String, Map<String, String>>();
-            if (jcrNode.hasProperty(HST_PARAMETERNAMES) && jcrNode.hasProperty(HST_PARAMETERVALUES)) {
-                if (jcrNode.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
-                    Value[] paramPrefixes = jcrNode.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
-                    Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
-                    Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
-                    if (!(paramPrefixes.length == paramNames.length && paramPrefixes.length == paramValues.length)) {
-                        // TODO: log warning
-                        return error(HST_PARAMETERNAMEPREFIXES + ", " + HST_PARAMETERNAMES + " and " 
-                                + HST_PARAMETERVALUES + " properties do not have the same number of values");
-                    }
-                    for (int i = 0; i < paramNames.length; i++) {
-                        String paramPrefix = paramPrefixes[i].getString().isEmpty() ? "default" : paramPrefixes[i].getString();
-                        Map<String, String> prefixedParameters = hstParameters.get(paramPrefix);
-                        if (prefixedParameters == null) {
-                            prefixedParameters = new HashMap<String, String>();
-                            hstParameters.put(paramPrefix, prefixedParameters);
-                        }
-                        prefixedParameters.put(paramNames[i].getString(), paramValues[i].getString());
-                    }
-                } else {
-                    Map<String, String> parameters = new HashMap<String, String>();
-                    Value[] paramNames = jcrNode.getProperty(HST_PARAMETERNAMES).getValues();
-                    Value[] paramValues = jcrNode.getProperty(HST_PARAMETERVALUES).getValues();
-                    if (paramNames.length != paramValues.length) {
-                        // TODO: log warning
-                        return error(HST_PARAMETERNAMES + " and " + HST_PARAMETERVALUES 
-                                + " properties do not have the same number of values");
-                    }
-                    for (int i = 0; i < paramNames.length; i++) {
-                        parameters.put(paramNames[i].getString(), paramValues[i].getString());
-                    }
-                    hstParameters.put("default", parameters);
-                }
-            }
-            
-            Map<String, String> prefixedParameters = hstParameters.get(prefix);
-            if (prefixedParameters == null) {
-                prefixedParameters = new HashMap<String, String>();
-                hstParameters.put(prefix, prefixedParameters);
-            }
-            
-            // remove parameters for which there are no new values
-            Iterator<Entry<String,String>> iter = prefixedParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                String paramName = iter.next().getKey();
-                List<String> newValues = params.get(paramName);
-                if (newValues == null || newValues.isEmpty()) {
-                    iter.remove();
-                }
-            }
-            
-            // add / replace parameters for which there are values
-            for (String param : params.keySet()) {
-                // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
-                // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
-                // has been replaced by a request header.
-                if(!"FORCE_CLIENT_HOST".equals(param)) {
-                   prefixedParameters.put(param, params.getFirst(param));
-                }
-            }
-            
-            Map<String, String> annotatedDefaultValues = getAnnotatedDefaultValues(jcrNode);
-
-            List<String> prefixes = new ArrayList<String>();
-            List<String> names = new ArrayList<String>();
-            List<String> values = new ArrayList<String>();
-            boolean addPrefixes = false;
-            for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
-                String paramPrefix = e.getKey();
-                for (Entry<String, String> f : e.getValue().entrySet()) {
-                    paramPrefix = paramPrefix.equals("default") ? "" : paramPrefix;
-                    String name = f.getKey();
-                    String value = f.getValue();
-                    if (value == null || value.isEmpty()) {
-                        // value is empty so don't persist
-                        continue;
-                    }
-                    if (!paramPrefix.isEmpty()) {
-                        Map<String, String> defaultParams = hstParameters.get("default");
-                        String defaultValue = defaultParams == null ? null : defaultParams.get(name);
-                        if (value.equals(defaultValue)) {
-                            // doesn't override the default value so don't persist
-                            continue;
-                        }
-                    }
-                    String annotatedDefaultValue = annotatedDefaultValues.get(name);
-                    if (value.equals(annotatedDefaultValue)) {
-                        continue;
-                    }
-                    if (!paramPrefix.isEmpty()) {
-                        // only add the HST_PARAMETERNAMEPREFIXES property 
-                        // if there are actually prefixed name/value pairs
-                        addPrefixes = true;
-                    }
-                    prefixes.add(paramPrefix);
-                    names.add(name);
-                    values.add(value);
-                } 
-            }
-            if (addPrefixes) {
-                jcrNode.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
-            } else if (jcrNode.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
-                jcrNode.getProperty(HST_PARAMETERNAMEPREFIXES).remove();
-            }
-            jcrNode.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
-            jcrNode.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
-            jcrNode.getSession().save();
+            return doSetParameters(getRequestConfigNode(getRequestContext(servletRequest)), prefix, params);
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component " + e, e);
             throw new WebApplicationException(e);
         }
+    }
+    
+    Response doSetParameters(Node node, String prefix, MultivaluedMap<String, String> params) throws RepositoryException {
+        if (prefix == null || prefix.isEmpty()) {
+            prefix = "default";
+        }
+
+        Map<String, Map<String, String>> hstParameters = new HashMap<String, Map<String, String>>();
+        if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
+            if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
+                Value[] paramPrefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
+                Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
+                Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
+                if (!(paramPrefixes.length == paramNames.length && paramPrefixes.length == paramValues.length)) {
+                    // TODO: log warning
+                    return error(HST_PARAMETERNAMEPREFIXES + ", " + HST_PARAMETERNAMES + " and " 
+                            + HST_PARAMETERVALUES + " properties do not have the same number of values");
+                }
+                for (int i = 0; i < paramNames.length; i++) {
+                    String paramPrefix = paramPrefixes[i].getString().isEmpty() ? "default" : paramPrefixes[i].getString();
+                    Map<String, String> prefixedParameters = hstParameters.get(paramPrefix);
+                    if (prefixedParameters == null) {
+                        prefixedParameters = new HashMap<String, String>();
+                        hstParameters.put(paramPrefix, prefixedParameters);
+                    }
+                    prefixedParameters.put(paramNames[i].getString(), paramValues[i].getString());
+                }
+            } else {
+                Map<String, String> parameters = new HashMap<String, String>();
+                Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
+                Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
+                if (paramNames.length != paramValues.length) {
+                    // TODO: log warning
+                    return error(HST_PARAMETERNAMES + " and " + HST_PARAMETERVALUES 
+                            + " properties do not have the same number of values");
+                }
+                for (int i = 0; i < paramNames.length; i++) {
+                    parameters.put(paramNames[i].getString(), paramValues[i].getString());
+                }
+                hstParameters.put("default", parameters);
+            }
+        }
+        
+        Map<String, String> prefixedParameters = hstParameters.get(prefix);
+        if (prefixedParameters == null) {
+            prefixedParameters = new HashMap<String, String>();
+            hstParameters.put(prefix, prefixedParameters);
+        }
+        
+        // remove parameters for which there are no new values
+        Iterator<Entry<String,String>> iter = prefixedParameters.entrySet().iterator();
+        while (iter.hasNext()) {
+            String paramName = iter.next().getKey();
+            List<String> newValues = params.get(paramName);
+            if (newValues == null || newValues.isEmpty()) {
+                iter.remove();
+            }
+        }
+        
+        // add / replace parameters for which there are values
+        for (String param : params.keySet()) {
+            // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
+            // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
+            // has been replaced by a request header.
+            if(!"FORCE_CLIENT_HOST".equals(param)) {
+               prefixedParameters.put(param, params.getFirst(param));
+            }
+        }
+        
+        Map<String, String> annotatedDefaultValues = getAnnotatedDefaultValues(node);
+
+        List<String> prefixes = new ArrayList<String>();
+        List<String> names = new ArrayList<String>();
+        List<String> values = new ArrayList<String>();
+        boolean addPrefixes = false;
+        for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
+            String paramPrefix = e.getKey().equals("default") ? "" : e.getKey();
+            for (Entry<String, String> f : e.getValue().entrySet()) {
+                String name = f.getKey();
+                String value = f.getValue();
+                if (value == null || value.isEmpty()) {
+                    // value is empty so don't persist
+                    continue;
+                }
+                if (!paramPrefix.isEmpty()) {
+                    Map<String, String> defaultParams = hstParameters.get("default");
+                    String defaultValue = defaultParams == null ? null : defaultParams.get(name);
+                    if (value.equals(defaultValue)) {
+                        // doesn't override the default value so don't persist
+                        continue;
+                    }
+                    if (defaultValue == null || defaultValue.isEmpty()) {
+                        // will fall back on annotated default
+                        String annotatedDefaultValue = annotatedDefaultValues.get(name);
+                        if (value.equals(annotatedDefaultValue)) {
+                            continue;
+                        }
+                    }
+                } else {
+                    String annotatedDefaultValue = annotatedDefaultValues.get(name);
+                    if (value.equals(annotatedDefaultValue)) {
+                        continue;
+                    }
+                }
+                if (!paramPrefix.isEmpty()) {
+                    // only add the HST_PARAMETERNAMEPREFIXES property 
+                    // if there are actually prefixed name/value pairs
+                    addPrefixes = true;
+                }
+                prefixes.add(paramPrefix);
+                names.add(name);
+                values.add(value);
+            } 
+        }
+        if (addPrefixes) {
+            node.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
+        } else if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
+            node.getProperty(HST_PARAMETERNAMEPREFIXES).remove();
+        }
+        if (names.size() == 0) {
+            if (node.hasProperty(HST_PARAMETERNAMES)) {
+                node.getProperty(HST_PARAMETERNAMES).remove();
+            }
+            assert values.size() == 0;
+            if (node.hasProperty(HST_PARAMETERVALUES)) {
+                node.getProperty(HST_PARAMETERVALUES).remove();
+            }
+        } else {
+            node.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
+            node.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
+        }
+        node.getSession().save();
+
 
         return ok("Properties saved successfully.", null);
     }
