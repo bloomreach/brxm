@@ -2,7 +2,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation.ParameterType;
 
-public class ContainerItemComponentProperty {
+public class ContainerItemComponentPropertyRepresentation {
     private String name;
     private String value;
     private ParameterType type;
@@ -15,7 +15,7 @@ public class ContainerItemComponentProperty {
     private boolean allowCreation;
     private String docLocation;
 
-    public ContainerItemComponentProperty() {
+    public ContainerItemComponentPropertyRepresentation() {
         name = "";
         value = "";
         type = ParameterType.STRING;

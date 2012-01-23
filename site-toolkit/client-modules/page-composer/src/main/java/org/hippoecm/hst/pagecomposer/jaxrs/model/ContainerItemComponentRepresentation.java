@@ -51,8 +51,7 @@ public class ContainerItemComponentRepresentation {
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
 
-    private List<ContainerItemComponentProperty> properties;
-    private Boolean success = false;
+    private List<ContainerItemComponentPropertyRepresentation> properties;
 
     /**
      * Constructs a component node wrapper
@@ -64,7 +63,7 @@ public class ContainerItemComponentRepresentation {
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
     public ContainerItemComponentRepresentation represents(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
-        properties = new ArrayList<ContainerItemComponentProperty>();
+        properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
         Map<String, String> hstParameters = null;
         Map<String, String> parameterDefaults = new HashMap<String, String>();
         //Get the parameter names and values from the component node.
@@ -105,7 +104,7 @@ public class ContainerItemComponentRepresentation {
                 properties = getProperties(parametersInfo, locale);
             }
             if (hstParameters != null) {
-                for (ContainerItemComponentProperty prop : properties) {
+                for (ContainerItemComponentPropertyRepresentation prop : properties) {
                     String value = hstParameters.get(prop.getName());
                     if (value != null && !value.isEmpty()) {
                         prop.setValue(value);
@@ -117,24 +116,15 @@ public class ContainerItemComponentRepresentation {
                 }
             }
         }
-        this.success = true;
         return this;
     }
 
-    public List<ContainerItemComponentProperty> getProperties() {
+    public List<ContainerItemComponentPropertyRepresentation> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<ContainerItemComponentProperty> properties) {
+    public void setProperties(List<ContainerItemComponentPropertyRepresentation> properties) {
         this.properties = properties;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
     }
 
     enum ParameterType {
@@ -146,8 +136,8 @@ public class ContainerItemComponentRepresentation {
         }
     }
     
-    static List<ContainerItemComponentProperty> getProperties(ParametersInfo parameterInfo, Locale locale) {
-        final List<ContainerItemComponentProperty> properties = new ArrayList<ContainerItemComponentProperty>();
+    static List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale) {
+        final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
 
         final Class<?> classType = parameterInfo.type();
         if (classType == null) {
@@ -166,7 +156,7 @@ public class ContainerItemComponentRepresentation {
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                final ContainerItemComponentProperty prop = new ContainerItemComponentProperty();
+                final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());

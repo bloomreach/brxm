@@ -260,7 +260,7 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/c
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPostStreamInterceptor.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPreStreamInterceptor.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ComponentRepresentation.java -text svneol=unset#text/plain
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentProperty.java -text
+client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentPropertyRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemComponentRepresentation.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerItemRepresentation.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/model/ContainerRepresentation.java -text

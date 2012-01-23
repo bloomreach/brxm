@@ -78,57 +78,57 @@ public class ParametersInfoProcessorTest {
     @Test
     public void additionalAnnotationBasedProcessing() {
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentProperty> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
+        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
         assertEquals(12, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        ContainerItemComponentProperty colorProperty = properties.get(0);
+        ContainerItemComponentPropertyRepresentation colorProperty = properties.get(0);
         assertEquals("colorfield", colorProperty.getType());
         assertEquals("blue", colorProperty.getDefaultValue());
 
-        ContainerItemComponentProperty docLocProperty = properties.get(1);
+        ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
         assertEquals("/content", docLocProperty.getDocLocation());
         assertEquals("combo", docLocProperty.getType());
         assertEquals("hst:testdocument", docLocProperty.getDocType());
 
-        ContainerItemComponentProperty imageProperty = properties.get(2);
+        ContainerItemComponentPropertyRepresentation imageProperty = properties.get(2);
         assertEquals("textfield", imageProperty.getType());
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
 
-        ContainerItemComponentProperty dateProperty = properties.get(3);
+        ContainerItemComponentPropertyRepresentation dateProperty = properties.get(3);
         assertEquals("datefield", dateProperty.getType());
 
-        ContainerItemComponentProperty booleanProperty = properties.get(4);
+        ContainerItemComponentPropertyRepresentation booleanProperty = properties.get(4);
         assertEquals("checkbox", booleanProperty.getType());
 
-        ContainerItemComponentProperty booleanClassProperty = properties.get(5);
+        ContainerItemComponentPropertyRepresentation booleanClassProperty = properties.get(5);
         assertEquals("checkbox", booleanClassProperty.getType());
 
-        ContainerItemComponentProperty intProperty = properties.get(6);
+        ContainerItemComponentPropertyRepresentation intProperty = properties.get(6);
         assertEquals("numberfield", intProperty.getType());
 
-        ContainerItemComponentProperty integerClassProperty = properties.get(7);
+        ContainerItemComponentPropertyRepresentation integerClassProperty = properties.get(7);
         assertEquals("numberfield", integerClassProperty.getType());
 
-        ContainerItemComponentProperty longProperty = properties.get(8);
+        ContainerItemComponentPropertyRepresentation longProperty = properties.get(8);
         assertEquals("numberfield", longProperty.getType());
 
-        ContainerItemComponentProperty longClassProperty = properties.get(9);
+        ContainerItemComponentPropertyRepresentation longClassProperty = properties.get(9);
         assertEquals("numberfield", longClassProperty.getType());
 
-        ContainerItemComponentProperty shortProperty = properties.get(10);
+        ContainerItemComponentPropertyRepresentation shortProperty = properties.get(10);
         assertEquals("numberfield", shortProperty.getType());
 
-        ContainerItemComponentProperty shortClassProperty = properties.get(11);
+        ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(11);
         assertEquals("numberfield", shortClassProperty.getType());
     }
 
-    private static class PropertyComparator implements Comparator<ContainerItemComponentProperty> {
+    private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {
 
         @Override
-        public int compare(final ContainerItemComponentProperty p1, final ContainerItemComponentProperty p2) {
+        public int compare(final ContainerItemComponentPropertyRepresentation p1, final ContainerItemComponentPropertyRepresentation p2) {
             return p1.getName().compareTo(p2.getName());
         }
 
