@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.provider.jcr;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -51,16 +49,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private boolean detached = false;
     private boolean isLoaded = false;
-    private final static List<Integer> SUPPORTED_PROPERTY_TYPES = new ArrayList<Integer>();
-    
-    {
-        SUPPORTED_PROPERTY_TYPES.add(PropertyType.STRING);
-        SUPPORTED_PROPERTY_TYPES.add(PropertyType.BOOLEAN);
-        SUPPORTED_PROPERTY_TYPES.add(PropertyType.DATE);
-        SUPPORTED_PROPERTY_TYPES.add(PropertyType.DOUBLE);
-        SUPPORTED_PROPERTY_TYPES.add(PropertyType.LONG);
-    }
-    
+   
     private PropertyMapImpl propertyMap = new PropertyMapImpl();
     
     public JCRValueProviderImpl(Node jcrNode) {
@@ -572,8 +561,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     // already loaded
                     continue;
                 }
-                if(SUPPORTED_PROPERTY_TYPES.contains(p.getType())) {
-                   loadProperty(p, p.getDefinition(), p.getName());
+                if(PropertyType.STRING == p.getType() ||
+                        PropertyType.BOOLEAN  == p.getType() || 
+                        PropertyType.DATE  == p.getType() ||
+                        PropertyType.DOUBLE  == p.getType() ||
+                        PropertyType.LONG == p.getType()) {
+                  loadProperty(p, p.getDefinition(), p.getName());
                 }
             }
         } catch (RepositoryException e) {
