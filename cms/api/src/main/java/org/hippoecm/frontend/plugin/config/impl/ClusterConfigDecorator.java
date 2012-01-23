@@ -49,8 +49,12 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             Object value = super.get(key);
             if (value != null) {
                 return value;
+            } else if (ClusterConfigDecorator.this.values.containsKey(key)) {
+                return ClusterConfigDecorator.this.values.get(key);
+            } else if (ClusterConfigDecorator.this.getClusterKeys().contains(key)) {
+                return ClusterConfigDecorator.this.get(key);
             }
-            return ClusterConfigDecorator.this.values.get(key);
+            return null;
         }
 
         @Override
@@ -157,7 +161,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
                     }
                     return count + keys.size();
                 }
-            };      
+            };
         }
 
         @Override
@@ -225,7 +229,13 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
         return object;
     }
 
-    public Set<String> getClusterKeys() {
-        return new TreeSet<String>(values.keySet());
+    private Set<String> getClusterKeys() {
+        TreeSet<String> properties = new TreeSet<String>(values.keySet());
+        for (Entry<String, Object> entry : super.entrySet()) {
+            if (!(entry.getValue() instanceof IPluginConfig)) {
+                properties.add(entry.getKey());
+            }
+        }
+        return properties;
     }
 }

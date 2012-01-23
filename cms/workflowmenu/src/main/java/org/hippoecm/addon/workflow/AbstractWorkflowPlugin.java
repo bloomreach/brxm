@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -151,7 +152,12 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                     if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
                                         plugin = new StdWorkflowPlugin("item", pluginModel);
                                     } else if(pluginRenderer.startsWith("/")) {
-                                        plugin = (Panel) plugins.startRenderer(new JcrPluginConfig(new JcrNodeModel(documentNode.getSession().getRootNode().getNode(pluginRenderer.substring(1)))));
+                                        JcrPluginConfig jcrPluginConfig = new JcrPluginConfig(new JcrNodeModel(
+                                                documentNode.getSession().getRootNode().getNode(
+                                                        pluginRenderer.substring(1))));
+                                        JavaPluginConfig filtered = new JavaPluginConfig(jcrPluginConfig);
+                                        filtered.put("wicket.model", "${cluster.id}.model}");
+                                        plugin = (Panel) plugins.startRenderer(filtered);
                                         if(plugin != null) {
                                             plugin.setDefaultModel(pluginModel);
                                         } else {

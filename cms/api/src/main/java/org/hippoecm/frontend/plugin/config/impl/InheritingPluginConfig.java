@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -27,9 +28,31 @@ public class InheritingPluginConfig extends AbstractPluginDecorator {
 
     private IPluginConfig fallback;
 
-    public InheritingPluginConfig(IPluginConfig upstream, IPluginConfig fallback) {
+    InheritingPluginConfig(IPluginConfig upstream) {
         super(upstream);
+    }
+
+    public InheritingPluginConfig(IPluginConfig origUpstream, IPluginConfig fallback) {
+        this(new JavaPluginConfig(origUpstream));
         this.fallback = fallback;
+        init();
+    }
+
+    InheritingPluginConfig(IPluginConfig upstream, InheritingPluginConfig parent) {
+        super(upstream);
+        fallback = parent.fallback;
+        init();
+    }
+
+    private void init() {
+        for (Map.Entry<String, Object> entry : fallback.entrySet()) {
+            if (containsKey(entry.getKey()) || (entry.getValue() instanceof IPluginConfig)) {
+                continue;
+            }
+            if (!upstream.containsKey(entry.getKey())) {
+                upstream.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     @Override
@@ -42,7 +65,7 @@ public class InheritingPluginConfig extends AbstractPluginDecorator {
                 return value;
             }
         } else if (object instanceof IPluginConfig) {
-            return new InheritingPluginConfig((IPluginConfig) object, fallback);
+            return new InheritingPluginConfig((IPluginConfig) object, this);
         } else if (object instanceof List<?>) {
             final List<?> list = (List<?>) object;
             return new AbstractList<Object>() {
