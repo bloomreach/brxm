@@ -71,7 +71,7 @@ public abstract class AbstractResource {
     private String annotatedClassesResourcePath;
     private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
-    private HstQueryManager hstQueryManager;
+    private HstQueryManagerFactory hstQueryManagerFactory;
     
     private boolean pageLinksExternal;
     
@@ -127,18 +127,20 @@ public abstract class AbstractResource {
     }
     
     public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
-        if (hstQueryManager == null) {
+        if (hstQueryManagerFactory == null) {
             ComponentManager compManager = HstServices.getComponentManager();
             if (compManager != null) {
-                HstQueryManagerFactory hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
-                hstQueryManager = hstQueryManagerFactory.createQueryManager(session, getObjectConverter(requestContext));
+                hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
+            }
+            if (hstQueryManagerFactory == null) {
+                throw new IllegalStateException("HstQueryManagerFactory component is not found from the component manager.");
             }
         }
-        return hstQueryManager;
+        return hstQueryManagerFactory.createQueryManager(session, getObjectConverter(requestContext));
     }
     
-    public void setHstQueryManager(HstQueryManager hstQueryManager) {
-    	this.hstQueryManager = hstQueryManager;
+    public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
+        this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
     
     public String getRestRelationsBaseUri() {
