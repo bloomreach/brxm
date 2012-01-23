@@ -206,6 +206,10 @@
     background-color: #fff;
 }
 
+.channel-manager .component-properties .default-value {
+	  opacity: 0.6;
+}
+
 #Iframe .ext-el-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 0.9;

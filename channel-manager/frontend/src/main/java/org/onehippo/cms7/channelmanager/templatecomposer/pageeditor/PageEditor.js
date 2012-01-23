@@ -21,6 +21,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     // height of the toolbar (in pixels)
     TOOLBAR_HEIGHT: 28,
     variantsUuid: null,
+    locale: null,
 
     constructor : function(config) {
         if (config.debug) {
@@ -33,6 +34,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
         this.variantsUuid = config.variantsUuid;
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
+        this.locale = config.locale;
 
         this.initUI(config);
 
@@ -345,6 +347,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             collapsible: false,
             constrainHeader: true,
             bodyStyle: 'background-color: #ffffff',
+            cls: "component-properties",
             renderTo: Ext.getCmp('Iframe').getEl(),
             constrain: true,
             hidden: true,
@@ -383,7 +386,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
         componentPropertiesPanel.setComponentId(record.get('id'));
         componentPropertiesPanel.selectVariant(variant);
-        componentPropertiesPanel.reload();
+        componentPropertiesPanel.load();
         if (this.propertiesWindow) {
             this.propertiesWindow.setTitle(record.get('name'));
             this.propertiesWindow.show();

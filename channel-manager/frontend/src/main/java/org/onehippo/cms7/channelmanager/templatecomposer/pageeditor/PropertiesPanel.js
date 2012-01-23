@@ -24,12 +24,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     variants: null,
     future: null,
     variantsUuid: null,
+    locale: null,
+    componentId: null,
     
     constructor: function(config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.variantsUuid = config.variantsUuid;
         this.mountId = config.mountId;
         this.resources = config.resources;
+        this.locale = config.locale;
         config = Ext.apply(config, { activeTab: 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
     },
@@ -54,7 +57,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             }, this);
         }.createDelegate(this));
         this.on('tabchange', function(panel, tab) {
-            this.fireEvent('variantChange', tab.componentId, tab.variant);
+            if (tab) {
+                this.fireEvent('variantChange', tab.componentId, tab.variant);
+            }
         }, this);
     },
     
@@ -63,7 +68,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         for (var i = 0; i < records.length; i++) {
             this.variants.push(records[i].get('id'));
         }
-        this.initTabs();
     },
     
     loadException: function(response) {
@@ -78,7 +82,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
                 variant: this.variants[i],
                 mountId: this.mountId,
                 composerRestMountUrl: this.composerRestMountUrl,
-                resources: this.resources
+                resources: this.resources,
+                locale: this.locale,
+                componentId: this.componentId
             });
             this.relayEvents(form, ['cancel']);
             this.add(form);
@@ -86,18 +92,17 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         this.setActiveTab(0);
     },
     
-    reload: function() {
+    load: function() {
+        this.removeAll();
+        this.initTabs();
         var self = this;
         this.future.when(function() {
-            self.items.each(function(item) { item.reload(); }, self);
+            self.items.each(function(item) { item.load(); }, self);
         });
     },
     
-    setComponentId: function(itemId) {
-        var self = this;
-        this.future.when(function() {
-            self.items.each(function(item) { item.setComponentId(itemId); }, self);
-        });
+    setComponentId: function(componentId) {
+        this.componentId = componentId;
     },
 
     selectVariant: function(variant) {
@@ -119,6 +124,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     composerRestMountUrl: null,
     resources: null,
     componentId: null,
+    locale: null,
     
     constructor: function(config) {
         this.variant = config.variant;
@@ -126,33 +132,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.resources = config.resources;
+        this.locale = config.locale;
+        this.componentId = config.componentId;
 
-        var fieldTpl = new Ext.Template(
-            '<div class="x-form-item {itemCls}" tabIndex="-1">',
-                '<label for="{id}" style="width: 95px;" class="x-form-item-label">{label}{labelSeparator}</label>',
-                '<div class="x-form-element" id="x-form-el-{id}" style="display: inline-block; padding-left: 5px;"></div>',
-                '<div id="hippo-properties-el-{id}" style="display:inline-block;"></div>',
-                '<div class="{clearCls}"></div>',
-            '</div>'
-        );
-        fieldTpl.disableFormats = true;
-
-        Ext.applyIf(config, {
-            forceLayout: true,
-            layoutConfig: {
-                fieldTpl: fieldTpl.compile()
-            }
-        });
         Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, config);
 
-        this.on('afterrender', function () {
-            var layout = this.getLayout();
-            var adjust = layout.adjustWidthAnchor;
-            this.getLayout().adjustWidthAnchor = function(value, c) {
-                var val = adjust.apply(layout, [value, c]);
-                return val - 10;
-            };
-        }, this);
     },
     
     initComponent:function() {
@@ -205,7 +189,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             method: 'POST',
             success: function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant);
-                Ext.getCmp('componentPropertiesPanel').reload();
+                Ext.getCmp('componentPropertiesPanel').load();
             }.bind(this)
         });
     },
@@ -288,7 +272,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     loadProperties:function(store, records, options) {
-        var that = this;
         var length = records.length;
         if (length == 0) {
             this.add({
@@ -303,10 +286,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             for (var i = 0; i < length; ++i) {
                 var property = records[i];
                 var value = property.get('value');
-                var isDefault = false;
+                var defaultValue = property.get('defaultValue');
+                var isDefaultValue = false;
                 if (!value || value.length === 0) {
-                    value = property.get('defaultValue');
-                    isDefault = true;
+                    value = defaultValue;
+                    isDefaultValue = true;
                 }
                 var propertyField;
                 if (property.get('type') == 'combo') {
@@ -322,7 +306,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         allowBlank: !property.get('required'),
                         name: property.get('name'),
                         value: value,
-                        disabled: isDefault,
+                        defaultValue: defaultValue,
                         store: comboStore,
                         forceSelection: true,
                         triggerAction: 'all',
@@ -355,38 +339,29 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         fieldLabel: property.get('label'),
                         xtype: property.get('type'),
                         value: value,
+                        defaultValue: defaultValue,
                         allowBlank: !property.get('required'),
                         name: property.get('name'),
-                        disabled: isDefault
-                    });
-                }
-                var origRender = propertyField.render;
-                propertyField.render = function() {
-                    origRender.apply(this, arguments);
-                    new Ext.form.Checkbox({
-                        xtype: 'checkbox',
-                        name: 'override',
-                        checked: !isDefault,
-                        propertyField: propertyField,
-                        property: property,
-                        renderTo: 'hippo-properties-el-' + this.getId(),
                         listeners: {
-                            check: function(checkbox, checked) {
-                                if (checked) {
-                                    this.propertyField.setDisabled(false);
+                            change: function() {
+                                var value = this.getValue();
+                                if (!value || value.length === 0 || value === this.defaultValue) {
+                                    this.addClass('default-value');
+                                    this.setValue(this.defaultValue);
                                 } else {
-                                    this.propertyField.setDisabled(true);
-                                    this.propertyField.setValue(this.property.get('defaultValue'));
+                                    this.removeClass('default-value');
                                 }
                             }
                         }
                     });
-                };
+                    if (isDefaultValue) {
+                        propertyField.addClass('default-value');
+                    }
+                }
             }
             this.buttons[0].show();
             this.buttons[1].show();
         }
-
         this.doLayout(false, true);
     },
 
@@ -407,19 +382,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.doLayout(false, true);
     },
 
-    clearPanel: function() {
-        this.removeAll();
-        this.buttons[0].hide();
-        this.buttons[1].hide();
-    },
-
-    reload: function(onloadCallback) {
-        this.removeAll();
-        if (this.componentPropertiesStore) {
-            this.componentPropertiesStore.destroy();
-        }
-
-        this.componentPropertiesStore = new Ext.data.JsonStore({
+    load: function() {
+        var componentPropertiesStore = new Ext.data.JsonStore({
             autoLoad: true,
             method: 'GET',
             root: 'properties',
@@ -427,15 +391,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             url: this.composerRestMountUrl +'/'+ this.componentId + './parameters/' + this.locale + '/' + this.variant + '?FORCE_CLIENT_HOST=true'
         });
 
-        this.componentPropertiesStore.on('load', this.loadProperties, this);
-        if (onloadCallback) {
-            this.componentPropertiesStore.on('load', onloadCallback, this);
-        }
-        this.componentPropertiesStore.on('exception', this.loadException, this);
-    },
-
-    setComponentId: function(componentId) {
-        this.componentId = componentId;
+        componentPropertiesStore.on('load', this.loadProperties, this);
+        componentPropertiesStore.on('exception', this.loadException, this);
     }
 
 });
