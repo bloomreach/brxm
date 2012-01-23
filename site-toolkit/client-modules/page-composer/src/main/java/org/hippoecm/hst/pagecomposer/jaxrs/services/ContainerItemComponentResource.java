@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @GET
     @Path("/parameters/{locale}/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ComponentWrapper getParameters(@Context HttpServletRequest servletRequest,
+    public ContainerItemComponentRepresentation getParameters(@Context HttpServletRequest servletRequest,
                                           @Context HttpServletResponse servletResponse, 
                                           @PathParam("locale") String localeString,
                                           @PathParam("prefix") String prefix) {
@@ -102,8 +102,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return null;
     }
     
-    ComponentWrapper doGetParameters(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
-        return new ComponentWrapper(node, locale, prefix);
+    ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
+        return new ContainerItemComponentRepresentation().represents(node, locale, prefix);
     }
 
     @POST
@@ -275,21 +275,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                     for (Method method : classType.getMethods()) {
                         if (method.isAnnotationPresent(Parameter.class)) {
                             Parameter annotation = method.getAnnotation(Parameter.class);
-                            result.put(annotation.name(), annotation.defaultValue());
-                        }
-                    }
-                    return result;
-                }
-                if (componentClass.isAnnotationPresent(org.hippoecm.hst.configuration.components.ParametersInfo.class)) {
-                    org.hippoecm.hst.configuration.components.ParametersInfo parametersInfo = (org.hippoecm.hst.configuration.components.ParametersInfo) componentClass.getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
-                    Class<?> classType = parametersInfo.type();
-                    if (classType == null) {
-                        return Collections.emptyMap();
-                    }
-                    Map<String, String> result = new HashMap<String, String>();
-                    for (Method method : parametersInfo.type().getMethods()) {
-                        if (method.isAnnotationPresent(org.hippoecm.hst.configuration.components.Parameter.class)) {
-                            org.hippoecm.hst.configuration.components.Parameter annotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
                             result.put(annotation.name(), annotation.defaultValue());
                         }
                     }

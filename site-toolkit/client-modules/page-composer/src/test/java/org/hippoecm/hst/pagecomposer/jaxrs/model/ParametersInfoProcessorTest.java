@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Hippo.
+ *  Copyright 2011-2012 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.utils.ParametersInfoProcessor;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -80,57 +78,57 @@ public class ParametersInfoProcessorTest {
     @Test
     public void additionalAnnotationBasedProcessing() {
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<Property> properties = ParametersInfoProcessor.getProperties(parameterInfo);
+        List<ContainerItemComponentProperty> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
         assertEquals(12, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
 
-        Property colorProperty = properties.get(0);
+        ContainerItemComponentProperty colorProperty = properties.get(0);
         assertEquals("colorfield", colorProperty.getType());
         assertEquals("blue", colorProperty.getDefaultValue());
 
-        Property docLocProperty = properties.get(1);
+        ContainerItemComponentProperty docLocProperty = properties.get(1);
         assertEquals("/content", docLocProperty.getDocLocation());
         assertEquals("combo", docLocProperty.getType());
         assertEquals("hst:testdocument", docLocProperty.getDocType());
 
-        Property imageProperty = properties.get(2);
+        ContainerItemComponentProperty imageProperty = properties.get(2);
         assertEquals("textfield", imageProperty.getType());
         assertEquals("/content/gallery/default.png", imageProperty.getDefaultValue());
 
-        Property dateProperty = properties.get(3);
+        ContainerItemComponentProperty dateProperty = properties.get(3);
         assertEquals("datefield", dateProperty.getType());
 
-        Property booleanProperty = properties.get(4);
+        ContainerItemComponentProperty booleanProperty = properties.get(4);
         assertEquals("checkbox", booleanProperty.getType());
 
-        Property booleanClassProperty = properties.get(5);
+        ContainerItemComponentProperty booleanClassProperty = properties.get(5);
         assertEquals("checkbox", booleanClassProperty.getType());
 
-        Property intProperty = properties.get(6);
+        ContainerItemComponentProperty intProperty = properties.get(6);
         assertEquals("numberfield", intProperty.getType());
 
-        Property integerClassProperty = properties.get(7);
+        ContainerItemComponentProperty integerClassProperty = properties.get(7);
         assertEquals("numberfield", integerClassProperty.getType());
 
-        Property longProperty = properties.get(8);
+        ContainerItemComponentProperty longProperty = properties.get(8);
         assertEquals("numberfield", longProperty.getType());
 
-        Property longClassProperty = properties.get(9);
+        ContainerItemComponentProperty longClassProperty = properties.get(9);
         assertEquals("numberfield", longClassProperty.getType());
 
-        Property shortProperty = properties.get(10);
+        ContainerItemComponentProperty shortProperty = properties.get(10);
         assertEquals("numberfield", shortProperty.getType());
 
-        Property shortClassProperty = properties.get(11);
+        ContainerItemComponentProperty shortClassProperty = properties.get(11);
         assertEquals("numberfield", shortClassProperty.getType());
     }
 
-    private static class PropertyComparator implements Comparator<Property> {
+    private static class PropertyComparator implements Comparator<ContainerItemComponentProperty> {
 
         @Override
-        public int compare(final Property p1, final Property p2) {
+        public int compare(final ContainerItemComponentProperty p1, final ContainerItemComponentProperty p2) {
             return p1.getName().compareTo(p2.getName());
         }
 

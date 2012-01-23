@@ -26,7 +26,7 @@ import javax.jcr.Value;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ComponentWrapper.Property;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentProperty;
 import org.hippoecm.repository.TestCase;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         build(session, testComponent);
         Node node = session.getNode("/test/component");
         
-        List<Property> result = null;
+        List<ContainerItemComponentProperty> result = null;
                 
         result = new ContainerItemComponentResource().doGetParameters(node, null, "").getProperties();
         assertEquals(2, result.size());
