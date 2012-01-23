@@ -33,7 +33,7 @@ public interface IObserver<T extends IObservable> extends EventListener, ICluste
 
     /**
      * The observable that the observer is interested in.  This observable may not
-     * change, w.r.t. the {@link IObservable#equals()} method, while the observer is
+     * change, w.r.t. the {@link IObservable#equals} method, while the observer is
      * registered.
      */
     T getObservable();
