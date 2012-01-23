@@ -52,11 +52,10 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    private final UserDataProvider userDataProvider = new UserDataProvider();
     private final AdminDataTable table;
 
-
-    public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+    public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
+                          final UserDataProvider userDataProvider) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 

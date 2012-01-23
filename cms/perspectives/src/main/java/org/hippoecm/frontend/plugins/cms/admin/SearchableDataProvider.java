@@ -23,23 +23,34 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides a searchable list of beans. Creation of the list itself is managed by subclasses to allow the usage
- * of static lists.
+ * Provides a searchable list of beans. Subclasses provide the query to search for all beans. The query to limit the
+ * list is used as a free text query. All Lucene-specific characters are stripped from the query, except the wildcards
+ * * and ?, the - operator to negate the term after it, and the 'or' keyword to OR terms instead of ANDing them.
+ *
+ * Whenever something changes below the JCR path and in the JCR types provided to the constructor, this observable
+ * will notify registered {@link org.hippoecm.frontend.model.event.IObserver}s.
  *
  * TODO: Remove primitive total count accounting when it's possible to get the size of the resultset without
  * going through the accessmanager.
  */
-public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> {
+public abstract class SearchableDataProvider<T extends Comparable<T>> extends SortableDataProvider<T> implements IObservable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SearchableDataProvider.class);
@@ -71,16 +82,26 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
 
     private static String sessionId = "none";
 
-    private String queryAll;
+    private final String queryAll;
+    private final String observePath;
+    private final String[] observeNodeTypes;
     private String query;
+    private transient List<T> list = new ArrayList<T>();
+    private volatile boolean dirty = true;
+    private IObservationContext<JcrNodeModel> context;
+    private JcrEventListener listener;
 
     /**
      * Creates a searchable provider.
      *
      * @param queryAll the JCR SQL query to search for all beans
+     * @param observePath the JCR path to observe for changes
+     * @param observeNodeTypes the node types to observe for changes
      */
-    public SearchableDataProvider(String queryAll) {
+    public SearchableDataProvider(String queryAll, String observePath, String... observeNodeTypes) {
         this.queryAll = queryAll;
+        this.observePath = observePath;
+        this.observeNodeTypes = observeNodeTypes;
     }
 
     /**
@@ -93,24 +114,14 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
     protected abstract T createBean(Node node) throws RepositoryException;
 
     /**
-     * @return the list of beans to manipulate or update.
+     * Marks the list of beans as dirty so it will be updated the next time it is used.
      */
-    protected abstract List<T> getList();
-
-    /**
-     * @return whether the list of beans should be updated or not.
-     */
-    protected abstract boolean isDirty();
-
-    /**
-     * Sets whether the list of beans should be updated or not
-     * @param dirty true if the list of beans should be updated, false otherwise.
-     */
-    protected abstract void setDirty(boolean dirty);
+    public void setDirty() {
+        this.dirty = true;
+    }
 
     public Iterator<T> iterator(int first, int count) {
         List<T> result = new ArrayList<T>();
-        List<T> list = getList();
         for (int i = first; i < (count + first); i++) {
             result.add(list.get(i));
         }
@@ -119,7 +130,7 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
 
     public int size() {
         populateList(query);
-        return getList().size();
+        return list.size();
     }
 
     /**
@@ -130,10 +141,9 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
     private synchronized void populateList(String query) {
         // synchronize on the runtime class, as there can be multiple implementations of this abstract class
         synchronized(getClass()) {
-            if (!isDirty() && sessionId.equals(Session.get().getId())) {
+            if (!dirty && sessionId.equals(Session.get().getId())) {
                 return;
             }
-            final List list = getList();
             list.clear();
 
             StringBuilder sqlQuery = new StringBuilder(queryAll);
@@ -158,7 +168,7 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
                 }
                 Collections.sort(list);
                 sessionId = Session.get().getId();
-                setDirty(false);
+                dirty = false;
             } catch (RepositoryException e) {
                 log.error("Error while executing query: " + sqlQuery, e);
             }
@@ -176,7 +186,7 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
     @SuppressWarnings("unused")
     public void setQuery(final String newQuery) {
         this.query = escapeJcrContainsQuery(newQuery);
-        setDirty(true);
+        setDirty();
     }
 
     /**
@@ -281,6 +291,58 @@ public abstract class SearchableDataProvider<T> extends SortableDataProvider<T> 
             }
         }
         return s;
+    }
+
+    // implement IObservable
+
+    @Override
+    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+        this.context = (IObservationContext<JcrNodeModel>) context;
+    }
+
+    @Override
+    public void startObservation() {
+        listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, observePath, true, null, observeNodeTypes);
+        listener.start();
+    }
+
+    @Override
+    public void stopObservation() {
+        if (listener != null) {
+            listener.stop();
+            listener = null;
+        }
+    }
+
+    // override Object
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof SearchableDataProvider)) {
+            return false;
+        }
+        SearchableDataProvider other = (SearchableDataProvider)object;
+        
+        return new EqualsBuilder()
+                .append(queryAll, other.queryAll)
+                .append(observePath, other.observePath)
+                .append(observeNodeTypes, other.observeNodeTypes)
+                .append(query, other.query)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(57, 433)
+                .append(queryAll)
+                .append(observePath)
+                .append(observeNodeTypes)
+                .append(query)
+                .toHashCode();
     }
 
 }

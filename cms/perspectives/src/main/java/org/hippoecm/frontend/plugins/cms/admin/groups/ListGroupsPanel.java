@@ -57,10 +57,10 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ListGroupsPanel.class);
 
-    private final GroupDataProvider groupDataProvider = new GroupDataProvider();
     private AdminDataTable table;
 
-    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
+                           final GroupDataProvider groupDataProvider) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 

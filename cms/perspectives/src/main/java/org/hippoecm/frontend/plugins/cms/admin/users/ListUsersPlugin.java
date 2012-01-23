@@ -15,19 +15,29 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.Iterator;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
-public class ListUsersPlugin extends AdminPanelPlugin {
+public class ListUsersPlugin extends AdminPanelPlugin implements IObserver<UserDataProvider> {
+
+    private final UserDataProvider userDataProvider;
 
     public ListUsersPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        userDataProvider = new UserDataProvider();
+
+        context.registerService(this, IObserver.class.getName());
     }
 
     @Override
@@ -47,6 +57,16 @@ public class ListUsersPlugin extends AdminPanelPlugin {
 
     @Override
     public PanelPluginBreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
-        return new ListUsersPanel(componentId, getPluginContext(), breadCrumbModel);
+        return new ListUsersPanel(componentId, getPluginContext(), breadCrumbModel, userDataProvider);
+    }
+
+    @Override
+    public UserDataProvider getObservable() {
+        return userDataProvider;
+    }
+
+    @Override
+    public void onEvent(final Iterator<? extends IEvent<UserDataProvider>> events) {
+        userDataProvider.setDirty();
     }
 }

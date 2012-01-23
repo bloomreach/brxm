@@ -15,25 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class GroupDataProvider extends SearchableDataProvider<Group> {
 
     private static final long serialVersionUID = 1L;
-    private static final String QUERY_GROUP_LIST = "SELECT * FROM hipposys:group where (hipposys:system <> 'true' or hipposys:system IS NULL)";
-
-    private static transient List<Group> groupList = new ArrayList<Group>();
-    private static volatile boolean dirty = true;
+    private static final String QUERY_GROUP_LIST = "SELECT * FROM " + HippoNodeType.NT_GROUP
+            + " where (hipposys:system <> 'true' or hipposys:system IS NULL)";
 
     public GroupDataProvider() {
-        super(QUERY_GROUP_LIST);
+        super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP);
     }
 
     @Override
@@ -44,25 +40,6 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
     @Override
     public IModel<Group> model(final Group group) {
         return new DetachableGroup(group);
-    }
-
-    @Override
-    protected List<Group> getList() {
-        return groupList;
-    }
-
-    @Override
-    protected boolean isDirty() {
-        return dirty;
-    }
-
-    @Override
-    protected void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    public static void setDirty() {
-        dirty = true;
     }
 
 }

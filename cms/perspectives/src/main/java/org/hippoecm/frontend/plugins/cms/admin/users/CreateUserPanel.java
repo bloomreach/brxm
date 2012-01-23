@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
-import org.hippoecm.frontend.plugins.cms.admin.validators.PasswordStrengthValidator;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -135,7 +134,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                         user.savePassword(password);
                         log.info("User '" + username + "' created by "
                                 + ((UserSession) Session.get()).getJcrSession().getUserID());
-                        UserDataProvider.setDirty();
                         Session.get().info(getString("user-created", userModel));
                         // one up
                         List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

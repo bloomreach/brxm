@@ -31,7 +31,6 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,6 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
                     group.save();
                     log.info("Group '" + groupname + "' saved by "
                             + ((UserSession) Session.get()).getJcrSession().getUserID());
-                    UserDataProvider.setDirty();
                     Session.get().info(getString("group-saved", model));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

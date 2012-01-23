@@ -15,25 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class UserDataProvider extends SearchableDataProvider<User> {
 
     private static final long serialVersionUID = 1L;
-    private static final String QUERY_USER_LIST = "SELECT * FROM hipposys:user where (hipposys:system <> 'true' or hipposys:system IS NULL)";
-
-    private static transient List<User> userList = new ArrayList<User>();
-    private static volatile boolean dirty = true;
+    private static final String QUERY_USER_LIST = "SELECT * FROM " + HippoNodeType.NT_USER
+            + " where (hipposys:system <> 'true' or hipposys:system IS NULL)";
 
     public UserDataProvider() {
-        super(QUERY_USER_LIST);
+        super(QUERY_USER_LIST, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER);
     }
 
     @Override
@@ -44,25 +40,6 @@ public class UserDataProvider extends SearchableDataProvider<User> {
     @Override
     protected User createBean(final Node node) throws RepositoryException {
         return new User(node);
-    }
-
-    @Override
-    protected List<User> getList() {
-        return userList;
-    }
-
-    @Override
-    protected boolean isDirty() {
-        return dirty;
-    }
-
-    @Override
-    protected void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    public static void setDirty() {
-        dirty = true;
     }
 
 }
