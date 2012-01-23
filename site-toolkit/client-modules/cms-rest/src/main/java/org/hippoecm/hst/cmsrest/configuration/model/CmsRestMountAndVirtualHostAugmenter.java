@@ -609,7 +609,7 @@ public class CmsRestMountAndVirtualHostAugmenter implements HstConfigurationAugm
         
         @Override
         public String toString() {
-            return "ComposerMount [virtualHost=" + virtualHost.getHostName() + ", parent=" + parent.getName() + ", alias=" + alias
+            return "ComposerMount [virtualHost=" + virtualHost.getHostName() + ", alias=" + alias
                     + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline
                     + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
                     + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
