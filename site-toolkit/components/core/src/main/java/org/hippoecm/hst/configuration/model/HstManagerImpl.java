@@ -243,6 +243,9 @@ public class HstManagerImpl implements HstManager {
     }
 
     protected void buildSites() throws RepositoryNotAvailableException {
+        log.info("Start building in memory hst configuration model");
+        long start = System.currentTimeMillis();
+        
         if (clearAll) { 
             configChangeEventMap = null;
             commonCatalog = null;
@@ -560,6 +563,7 @@ public class HstManagerImpl implements HstManager {
             for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
                 configurationAugmenter.augment(this);
             }
+            log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
         } catch (ServiceException e) {
             throw new RepositoryNotAvailableException(e);
         } finally {
@@ -780,6 +784,7 @@ public class HstManagerImpl implements HstManager {
     }
 
     private final void invalidateVirtualHosts() {
+        log.info("In memory hst configuration model is invalidated. It will be reloaded on the next request.");
         virtualHosts = null;
         if (channelManager != null) {
             channelManager.invalidate();
