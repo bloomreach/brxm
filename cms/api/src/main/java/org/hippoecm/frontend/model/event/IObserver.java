@@ -22,8 +22,8 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 /**
- * This interface defines the contract for a service that update its internal state in
- * response to changes in an observable object (IObservable).  Instances should be
+ * This interface defines the contract for a service that updates its internal state in
+ * response to changes in an observable object (IObservable). Instances should be
  * registered as a service ({@link IPluginContext#registerService(IClusterable, String)})
  * with name IObserver.class.getName().  The observer registry will notify the observer
  * of any events sent by the observable.
