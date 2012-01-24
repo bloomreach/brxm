@@ -106,24 +106,5 @@ public class ClusterConfigDecoratorTest {
         assertEquals(1, count);
     }
 
-    @Test
-    public void testDecoratedPluginConfigCanAccessParameter() {
-        JavaPluginConfig baseConfig = new JavaPluginConfig("plugin");
-        JavaClusterConfig baseCluster = new JavaClusterConfig();
-        baseCluster.addPlugin(baseConfig);
-
-        ClusterConfigDecorator decorated = new ClusterConfigDecorator(baseCluster, "cluster");
-        IPluginConfig decoratedPlugin = decorated.getPlugins().get(0);
-
-        assertTrue(decoratedPlugin.containsKey("property"));
-        assertEquals("cluster.value", decoratedPlugin.get("property"));
-
-        assertEquals(1, decoratedPlugin.entrySet().size());
-        int count = 0;
-        for (Map.Entry<String, Object> entry : decoratedPlugin.entrySet()) {
-            count++;
-        }
-        assertEquals(1, count);
-    }
 
 }
