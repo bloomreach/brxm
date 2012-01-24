@@ -372,12 +372,12 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      */
     @SuppressWarnings("unchecked")
     public void update(Object content, ContentNodeBinder customContentNodeBinder) throws ObjectBeanPersistenceException {
-        String path = null; 
         if (content instanceof HippoBean) {
+            String path = null;
             try {
                 HippoBean contentBean = (HippoBean) content;
+                path = contentBean.getPath();
                 Node contentNode = contentBean.getNode();
-                path = contentNode.getPath();
                 contentNode = getCanonicalNode(contentNode);
                 Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
@@ -412,7 +412,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                                 document = ewf.disposeEditableInstance();
                             }
                         } else {
-                            throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + contentBean.getPath() + ": " + wf);
+                            throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + path + ": " + wf);
                         } 
                     } else if (workflowCallbackHandler != null) {
                         if (wf != null) {
@@ -420,7 +420,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                         } 
                     }
                 } else {
-                    log.warn("Could not obtain workflow '{}' for '{}'. Make sure that user '{}' has enough workflow rights on the node.", new Object[]{documentNodeWorkflowCategory, contentNode.getPath(), contentNode.getSession().getUserID()});
+                    log.warn("Could not obtain workflow '{}' for '{}'. Make sure that user '{}' has enough workflow rights on the node.", new Object[]{documentNodeWorkflowCategory, path, contentNode.getSession().getUserID()});
                 }
             } catch (ObjectBeanPersistenceException e) {
                 throw e;
