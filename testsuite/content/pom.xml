@@ -21,12 +21,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>1.03.00-SNAPSHOT</version>
+    <version>1.03.00-alpha</version>
   </parent>
   
   <name>Hippo Test Suite Content</name>
   <description>Hippo Test Suite Content</description>
   <artifactId>hippo-testsuite-content</artifactId>
-  <version>1.03.00-SNAPSHOT</version>
+  <version>1.03.00-alpha</version>
 
 </project>
