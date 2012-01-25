@@ -15,15 +15,16 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.collections.map.LinkedMap;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -53,8 +54,8 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected HstComponentWindow parentWindow;
     
     protected List<HstComponentException> componentExceptions;
-    protected LinkedMap childWindowMap;
-    protected LinkedMap childWindowMapByReferenceName;
+    protected LinkedHashMap<String, HstComponentWindow> childWindowMap;
+    protected LinkedHashMap<String, HstComponentWindow> childWindowMapByReferenceName;
     
     protected Map<String, Object> attributes;
     
@@ -148,7 +149,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         if (this.childWindowMap == null) {
             return Collections.emptyList();
         } else {
-            return this.childWindowMap.asList();
+           return Collections.unmodifiableList(new ArrayList<String>(childWindowMap.keySet()));
         }
     }
     
@@ -196,7 +197,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public void addChildWindow(HstComponentWindow child) {
         if (this.childWindowMap == null) {
-            this.childWindowMap = new LinkedMap();
+            this.childWindowMap = new LinkedHashMap<String, HstComponentWindow>();
         }
         
         HstComponentWindow old = (HstComponentWindow) this.childWindowMap.put(child.getName(), child);
@@ -207,7 +208,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         }
         
         if (this.childWindowMapByReferenceName == null) {
-            this.childWindowMapByReferenceName = new LinkedMap();
+            this.childWindowMapByReferenceName = new LinkedHashMap<String, HstComponentWindow>();
         }
         
         this.childWindowMapByReferenceName.put(child.getReferenceName(), child);
@@ -241,6 +242,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
         if (attributes != null) {
             return (Enumeration<String>) IteratorUtils.asEnumeration(attributes.keySet().iterator());
