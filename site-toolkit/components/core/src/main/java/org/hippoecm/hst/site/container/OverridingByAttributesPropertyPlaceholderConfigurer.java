@@ -124,6 +124,7 @@ public class OverridingByAttributesPropertyPlaceholderConfigurer extends Propert
         }
 
         public String resolveStringValue(String strVal) throws BeansException {
+            @SuppressWarnings({ "deprecation", "rawtypes" })
             String value = parseStringValue(strVal, this.props, new HashSet());
             return (value.equals(nullValue) ? null : value);
         }
