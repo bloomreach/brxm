@@ -40,7 +40,6 @@ import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/documents/")
 public class DocumentsResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
@@ -56,10 +55,7 @@ public class DocumentsResource implements DocumentService {
         this.hstLinkCreator = hstLinkCreator;
     }
 
-    @GET
-    @Path("/{uuid}/channels/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<ChannelDocument> getChannels(@PathParam("uuid") String uuid) {
+    public List<ChannelDocument> getChannels(String uuid) {
         if (channelManager == null) {
             log.warn("Cannot look up channels for document '{}' because the channel manager is null", uuid);
             return Collections.emptyList();
@@ -136,10 +132,7 @@ public class DocumentsResource implements DocumentService {
         return channelDocuments;
     }
 
-    @GET
-    @Path("/{uuid}/url/{type}/")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type) {
+    public String getUrl(String uuid, String type) {
         if (hstLinkCreator == null) {
             log.warn("Cannot generate URL of type '{}' for document with UUID '{}' because hstLinkCreator is null", type, uuid);
             return "";
