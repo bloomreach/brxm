@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.site.container;
 
+import java.util.HashSet;
 import java.util.Properties;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.hippoecm.hst.core.util.PropertyParser;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
@@ -124,7 +124,7 @@ public class OverridingByAttributesPropertyPlaceholderConfigurer extends Propert
         }
 
         public String resolveStringValue(String strVal) throws BeansException {
-            String value = PropertyParser.PROPERTY_PLACE_HOLDER_HELPER.replacePlaceholders(strVal, this.props);
+            String value = parseStringValue(strVal, this.props, new HashSet());
             return (value.equals(nullValue) ? null : value);
         }
     }
