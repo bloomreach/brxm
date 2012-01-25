@@ -798,6 +798,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         return channelPath;
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ChannelInfo> T getChannelInfo() {
         return (T) channelInfo;
     }
