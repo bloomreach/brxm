@@ -76,7 +76,7 @@
   </modules>
 
   <properties>
-    <hippo.repository.version>2.22.02</hippo.repository.version>
+    <hippo.repository.version>2.23.00-alpha</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -104,7 +104,7 @@
     <cglib.version>2.1_3</cglib.version>
     <lucene.version>2.2.0</lucene.version>
     <wicket.version>1.4.19</wicket.version>
-    <wicket-extjs.version>0.15-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.15</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <cxf.version>2.4.0</cxf.version>
     <jackson.version>1.3.2</jackson.version>
