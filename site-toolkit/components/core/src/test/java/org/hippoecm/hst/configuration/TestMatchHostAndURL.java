@@ -232,13 +232,14 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                 assertEquals("The matching ignored prefix should equal the default", "_cmsinternal", mount.getMatchingIgnoredPrefix());
-                assertEquals("The resolved mount path should contain the matching ignored prefix", "", mount.getResolvedMountPath());
+                assertEquals("The resolved mount path should not contain the matching ignored prefix", "", mount.getResolvedMountPath());
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 assertEquals("News/2009", resolvedSiteMapItem.getRelativeContentPath());
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
+                // the _cmsinternal is just stripped from the URL, hence, we just get the Mount for /site/news/2009, which maps to a
+                // LIVE mount. This isPreview() should be false
                 assertFalse("We should have a LIVE match", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
