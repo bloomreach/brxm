@@ -30,16 +30,16 @@ public class PropertyParser {
 
     public final static String DEFAULT_PLACEHOLDER_PREFIX = "${";
     public final static String DEFAULT_PLACEHOLDER_SUFFIX = "}";
+    public final static PropertyPlaceholderHelper PROPERTY_PLACE_HOLDER_HELPER = new PropertyPlaceholderHelper(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, null, false);
     
     private final static Logger log = LoggerFactory.getLogger(PropertyParser.class);
     private Properties properties;
-    private PropertyPlaceholderHelper propertyPlaceholderHelper;
     
     public PropertyParser(Properties properties){
         this.properties = properties;
         // we want an expeption for unresolved properties, this use 'false'
-        this.propertyPlaceholderHelper = new PropertyPlaceholderHelper(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, null, false);
     }
+    
     public Object resolveProperty(String name, Object o) {
         if(o == null || properties == null) {
             return o;
@@ -49,7 +49,7 @@ public class PropertyParser {
             String s = (String)o;
             // replace possible expressions
             try {
-              s =  propertyPlaceholderHelper.replacePlaceholders((String)o, properties);
+              s =  PROPERTY_PLACE_HOLDER_HELPER.replacePlaceholders((String)o, properties);
             } catch (IllegalArgumentException e) {
               log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e); 
               return null;
@@ -64,7 +64,7 @@ public class PropertyParser {
             for(int i = 0 ; i < unparsed.length ; i++) {
                 String s = unparsed[i];
                 try {
-                    s =  propertyPlaceholderHelper.replacePlaceholders(unparsed[i], properties);
+                    s =  PROPERTY_PLACE_HOLDER_HELPER.replacePlaceholders(unparsed[i], properties);
                 } catch (IllegalArgumentException e ) {
                     log.debug("Unable to replace property expression for property '{}'. Return null : '{}'.",name, e);
                     s = null;
