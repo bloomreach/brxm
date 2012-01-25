@@ -138,6 +138,7 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
         this.applicationContext.close();
     }
     
+    @SuppressWarnings("unchecked")
     public <T> T getComponent(String name) {
         T bean = null;
         
@@ -188,6 +189,7 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
     {
         private JexlContext jexlContext;
         
+        @SuppressWarnings("unchecked")
         public FilteringByExpressionListableBeanFactory(BeanFactory parentBeanFactory)
         {
             super(parentBeanFactory);
