@@ -40,8 +40,8 @@ public class DynaBeanMethodInvoker implements Invoker, Serializable {
     public Object invoke(Object proxy, Method method, Object [] args) throws Throwable {
         String methodName = method.getName();
 
-        Class [] paramTypes = method.getParameterTypes();
-        Class returnType = method.getReturnType();
+        Class<?> [] paramTypes = method.getParameterTypes();
+        Class<?> returnType = method.getReturnType();
         
         if (methodName.startsWith("get")) {
             String propName = getCamelString(methodName.substring(3));

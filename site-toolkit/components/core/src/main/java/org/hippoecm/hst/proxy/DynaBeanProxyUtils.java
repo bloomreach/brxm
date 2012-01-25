@@ -29,7 +29,7 @@ public class DynaBeanProxyUtils
     {
     }
     
-    public static Object createDynaBeanProxy(final DynaBean dynaBean, Class ... proxyInterfaces) {
+    public static Object createDynaBeanProxy(final DynaBean dynaBean, Class<?> ... proxyInterfaces) {
         ProxyFactory factory = new ProxyFactory();
         Invoker invoker = new DynaBeanMethodInvoker(dynaBean);
         return factory.createInvokerProxy(invoker, proxyInterfaces);
