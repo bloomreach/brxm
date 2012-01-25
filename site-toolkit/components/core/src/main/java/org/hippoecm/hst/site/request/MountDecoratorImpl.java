@@ -181,6 +181,7 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.getTypes();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends ChannelInfo> T getChannelInfo() {
             return (T) delegatee.getChannelInfo();
