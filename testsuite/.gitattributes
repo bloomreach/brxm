@@ -1,5 +1,4 @@
 * text=auto !eol
-/BUILD -text
 /README.txt -text svneol=unset#text/plain
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
