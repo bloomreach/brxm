@@ -243,14 +243,10 @@ api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain
 api/src/site/site.xml -text
 client-modules/cms-rest/pom.xml -text
-client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/Implements.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/configuration/model/CmsRestMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text
-client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/services/ApiImplementationTest.java -text
-client-modules/cms-rest/src/test/resources/log4j.dtd -text
-client-modules/cms-rest/src/test/resources/log4j.xml -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/configuration/model/ComposerMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain

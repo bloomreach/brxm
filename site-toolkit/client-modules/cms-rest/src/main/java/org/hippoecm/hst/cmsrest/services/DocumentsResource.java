@@ -1,5 +1,5 @@
 /*
-*  Copyright 2011 Hippo.
+*  Copyright 2011-2012 Hippo.
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -20,20 +20,18 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.cmsrest.Implements;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -43,8 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/documents/")
-@Implements(DocumentService.class)
-public class DocumentsResource {
+public class DocumentsResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
@@ -62,7 +59,7 @@ public class DocumentsResource {
     @GET
     @Path("/{uuid}/channels/")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ChannelDocument> getChannels(@PathParam("uuid") String uuid, @Context HttpServletRequest servletRequest) {
+    public List<ChannelDocument> getChannels(@PathParam("uuid") String uuid) {
         if (channelManager == null) {
             log.warn("Cannot look up channels for document '{}' because the channel manager is null", uuid);
             return Collections.emptyList();
@@ -72,7 +69,7 @@ public class DocumentsResource {
             return Collections.emptyList();
         }
 
-        HstRequestContext requestContext = ResourceUtil.getRequestContext(servletRequest);
+        HstRequestContext requestContext = RequestContextProvider.get();
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
@@ -117,14 +114,14 @@ public class DocumentsResource {
                 } else {
                     // if there is no contextpath configured on the Mount belonging to the HstLink, we use the contextpath
                     // from the current HttpServletRequest
-                    document.setContextPath(servletRequest.getContextPath());
+                    document.setContextPath(requestContext.getServletRequest().getContextPath());
                 }
                 
                 // and set the contextpath through which the template composer is available
                 if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
                     document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
                 } else {
-                    document.setTemplateComposerContextPath(servletRequest.getContextPath());
+                    document.setTemplateComposerContextPath(requestContext.getServletRequest().getContextPath());
                 }
 
                 // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
@@ -142,13 +139,13 @@ public class DocumentsResource {
     @GET
     @Path("/{uuid}/url/{type}/")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type, @Context HttpServletRequest servletRequest) {
+    public String getUrl(@PathParam("uuid") String uuid, @PathParam("type") String type) {
         if (hstLinkCreator == null) {
             log.warn("Cannot generate URL of type '{}' for document with UUID '{}' because hstLinkCreator is null", type, uuid);
             return "";
         }
 
-        HstRequestContext requestContext = ResourceUtil.getRequestContext(servletRequest);
+        HstRequestContext requestContext = RequestContextProvider.get();
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
