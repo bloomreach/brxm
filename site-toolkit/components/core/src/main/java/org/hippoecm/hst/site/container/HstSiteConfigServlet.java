@@ -273,7 +273,7 @@ public class HstSiteConfigServlet extends HttpServlet {
             this.allRepositoriesAvailable = false;
             this.repositoryCheckingStatus.clear();
             
-            for (Iterator it = this.configuration.getKeys(); it.hasNext(); ) {
+            for (Iterator<?> it = this.configuration.getKeys(); it.hasNext(); ) {
                 String propName = (String) it.next();
                 
                 if (propName.endsWith(REPOSITORY_ADDRESS_PARAM_SUFFIX)) {
