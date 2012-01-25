@@ -61,6 +61,7 @@
     <forge.properties.version>2.07.03</forge.properties.version>
     <forge.content-blocks.version>1.08.00</forge.content-blocks.version>
     <forge.ecm-tagging.version>4.04.00</forge.ecm-tagging.version>
+    <forge.robotstxt.version>1.04.00</forge.robotstxt.version>
 
   </properties>
 
