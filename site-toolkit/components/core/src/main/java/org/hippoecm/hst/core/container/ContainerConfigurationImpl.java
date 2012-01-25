@@ -74,6 +74,7 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
         return configuration.getInt(key);
     }
 
+    @SuppressWarnings("rawtypes")
     public List getList(String key) {
         return configuration.getList(key);
     }
@@ -98,6 +99,7 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
         return configuration.getStringArray(key);
     }
 
+    @SuppressWarnings("rawtypes")
     public Iterator getKeys() {
         return configuration.getKeys();
     }
