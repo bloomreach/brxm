@@ -38,8 +38,7 @@ import org.springframework.util.MethodInvoker;
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.ApplicationEvent
  */
-@SuppressWarnings("unchecked")
-public class ApplicationEventMethodsInvoker implements ApplicationListener, ApplicationContextAware {
+public class ApplicationEventMethodsInvoker implements ApplicationListener<ApplicationEvent>, ApplicationContextAware {
     
     private static Logger log = LoggerFactory.getLogger(ApplicationEventMethodsInvoker.class);
 
