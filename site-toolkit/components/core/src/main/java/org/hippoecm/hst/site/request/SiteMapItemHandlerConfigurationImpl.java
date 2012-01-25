@@ -32,6 +32,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
      * 
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> getProperties(ResolvedSiteMapItem resolvedSiteMapItem, Class<T> mappingClass) {
         Map<String,T> properties = new HashMap<String, T>();
         PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
@@ -62,6 +63,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
      * 
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, ResolvedSiteMapItem resolvedSiteMapItem, Class<T> mappingClass) {
         Object val =  handlerConfig.getProperty(name);
         if(val == null){ 
@@ -87,6 +89,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
      * 
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> getRawProperties(Class<T> mappingClass) {
         Map<String,T> parameters = new HashMap<String, T>();
         for(Entry<String, Object> entry: handlerConfig.getProperties().entrySet()) {
@@ -107,6 +110,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
      * 
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public <T> T getRawProperty(String name, Class<T> mappingClass) {
         Object val =  handlerConfig.getProperty(name);
         if(mappingClass.isAssignableFrom(val.getClass())){
