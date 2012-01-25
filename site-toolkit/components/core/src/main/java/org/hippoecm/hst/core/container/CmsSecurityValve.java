@@ -58,6 +58,9 @@ public class CmsSecurityValve extends AbstractValve {
     // default max refresh interval for refresh on lazy session is 5 minutes
     protected long maxRefreshIntervalOnLazySession = 300000;
     
+    @SuppressWarnings("deprecation")
+    private final static String CMS_LOCATION = ContainerConstants.CMS_LOCATION;
+    
     public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
         this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
     }
@@ -146,22 +149,20 @@ public class CmsSecurityValve extends AbstractValve {
                     String cmsBaseUrl;
                     if (StringUtils.isEmpty(mount.getCmsLocation())) {
                         log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on the hst:virtualhostgroup to get rid of this warning");
-                        cmsBaseUrl = requestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
+                        cmsBaseUrl = requestContext.getContainerConfiguration().getString(CMS_LOCATION);
                     } else {
                         cmsBaseUrl = mount.getCmsLocation();
                     }
                     
-                    if (!cmsBaseUrl.endsWith("/")) {
-                        cmsBaseUrl += "/";
-                    }
-                    cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
-                   
-                    if (cmsAuthUrl != null) {
-                        //Everything seems to be fine, redirect to destination url and return
-                        servletResponse.sendRedirect(cmsAuthUrl);
-                    } else {
+                    if(cmsBaseUrl == null) {
                         log.error("No cmsAuthUrl specified");
-                    }
+                    } else {
+                        if (!cmsBaseUrl.endsWith("/")) {
+                            cmsBaseUrl += "/";
+                        }
+                        cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
+                        servletResponse.sendRedirect(cmsAuthUrl);
+                    }  
                 } catch (UnsupportedEncodingException e) {
                     log.error("Unable to encode the destination url with utf8 encoding" + e.getMessage(), e);
                 } catch (IOException e) {
