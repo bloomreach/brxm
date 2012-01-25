@@ -49,7 +49,7 @@ public class HstSiteMapItemHandlerFactoryImpl implements HstSiteMapItemHandlerFa
                     Thread.currentThread().setContextClassLoader(containerClassloader);
                 }
                 
-                Class handlerClass = containerClassloader.loadClass(siteMapItemHandlerClassName);
+                Class<?> handlerClass = containerClassloader.loadClass(siteMapItemHandlerClassName);
                 if(!HstSiteMapItemHandler.class.isAssignableFrom(handlerClass)) {
                    throw new HstSiteMapItemHandlerException("Cannot instantiate HstSiteMapItemHandler: The class '"+siteMapItemHandlerClassName+"' of '" + handlerId + "' is not a subtype of '"+HstSiteMapItemHandler.class.getName()+"'. "); 
                 }
