@@ -26,17 +26,6 @@ class ResourceUtil {
     }
 
     /**
-     * Returns the HST request context of the given servlet request.
-     *
-     * @param servletRequest the servlet request
-     *
-     * @return the HST request context
-     */
-    static HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
-        return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-    }
-
-    /**
      * Returns the node with the given UUID using the session of the given request context.
      *
      * @param requestContext the request context
