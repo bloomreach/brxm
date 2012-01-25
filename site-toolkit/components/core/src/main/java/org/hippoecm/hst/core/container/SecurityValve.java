@@ -303,12 +303,9 @@ public class SecurityValve extends AbstractValve {
             }
         }
         
-        if (subject == null) {
-            log.warn("Failed to find subjct.");
-        } else {
-            HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            ((HstMutableRequestContext) requestContext).setSubject(subject);
-        }
+        HstRequestContext requestContext = (HstRequestContext) request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        ((HstMutableRequestContext) requestContext).setSubject(subject);
+        
         
         return subject;
     }
