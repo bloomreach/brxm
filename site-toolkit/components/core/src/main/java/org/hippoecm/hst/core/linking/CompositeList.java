@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class CompositeList<E> implements List<E> {
-
-    private static final long serialVersionUID = 1L;
-
+    
     private List<E> delegatee;
     
     // combining multiple lists, where the order of the elements is accoring the order in which the lists are added
