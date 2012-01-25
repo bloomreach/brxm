@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.util;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.PropertyPlaceholderHelper;
@@ -30,50 +31,91 @@ public class PropertyParser {
 
     public final static String DEFAULT_PLACEHOLDER_PREFIX = "${";
     public final static String DEFAULT_PLACEHOLDER_SUFFIX = "}";
-    public final static PropertyPlaceholderHelper PROPERTY_PLACE_HOLDER_HELPER = new PropertyPlaceholderHelper(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, null, false);
+    public final static String DEFAULT_VALUE_SEPARATOR = null;
+    // we want an expeption for unresolved properties, this use 'false'
+    public final static boolean DEFAULT_IGNORE_UNRESOLVABLE_PLACEHOLDERS = false;
     
     private final static Logger log = LoggerFactory.getLogger(PropertyParser.class);
+    
+    private final static PropertyPlaceholderHelper DEFAULT_PROPERTY_PLACE_HOLDER_HELPER = 
+        new PropertyPlaceholderHelper(DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, DEFAULT_VALUE_SEPARATOR, DEFAULT_IGNORE_UNRESOLVABLE_PLACEHOLDERS);
+    
     private Properties properties;
     
-    public PropertyParser(Properties properties){
+    private String placeHolderPrefix;
+    private String placeHolderSuffix;
+    private String valueSeparator;
+    private boolean ignoreUnresolvablePlaceholders;
+    
+    private PropertyPlaceholderHelper propertyPlaceHolderHelper;
+    
+    public PropertyParser(Properties properties) {
+        this(properties, DEFAULT_PLACEHOLDER_PREFIX, DEFAULT_PLACEHOLDER_SUFFIX, DEFAULT_VALUE_SEPARATOR, DEFAULT_IGNORE_UNRESOLVABLE_PLACEHOLDERS);
+    }
+    
+    public PropertyParser(Properties properties, String placeHolderPrefix, String placeHolderSuffix, String valueSeparator, boolean ignoreUnresolvablePlaceholders) {
         this.properties = properties;
-        // we want an expeption for unresolved properties, this use 'false'
+        this.placeHolderPrefix = placeHolderPrefix;
+        this.placeHolderSuffix = placeHolderSuffix;
+        this.valueSeparator = valueSeparator;
+        this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
+        
+        if (StringUtils.equals(DEFAULT_PLACEHOLDER_PREFIX, this.placeHolderPrefix) &&
+                StringUtils.equals(DEFAULT_PLACEHOLDER_SUFFIX, this.placeHolderSuffix) &&
+                StringUtils.equals(DEFAULT_VALUE_SEPARATOR, this.valueSeparator) &&
+                DEFAULT_IGNORE_UNRESOLVABLE_PLACEHOLDERS == this.ignoreUnresolvablePlaceholders) {
+            propertyPlaceHolderHelper = DEFAULT_PROPERTY_PLACE_HOLDER_HELPER;
+        } else {
+            propertyPlaceHolderHelper = new PropertyPlaceholderHelper(this.placeHolderPrefix, this.placeHolderSuffix, this.valueSeparator, this.ignoreUnresolvablePlaceholders);
+        }
     }
     
     public Object resolveProperty(String name, Object o) {
-        if(o == null || properties == null) {
+        if (o == null || properties == null) {
             return o;
         }
         
-        if(o instanceof String) {
-            String s = (String)o;
+        if (o instanceof String) {
+
+            String s = (String) o;
+            
             // replace possible expressions
             try {
-              s =  PROPERTY_PLACE_HOLDER_HELPER.replacePlaceholders((String)o, properties);
+                s = propertyPlaceHolderHelper.replacePlaceholders((String) o, properties);
             } catch (IllegalArgumentException e) {
-              log.debug("Unable to replace property expression for property '{}'. Return null : '{}'" ,name, e); 
-              return null;
-              
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
+                }
+                return null;
             }
+            
             return s;
-        }
-        if(o instanceof String[]) {
+
+        } else if (o instanceof String[]) {
+
             // replace possible expressions in every String
-            String[] unparsed = (String[])o;
+            String[] unparsed = (String[]) o;
             String[] parsed = new String[unparsed.length];
-            for(int i = 0 ; i < unparsed.length ; i++) {
+            
+            for (int i = 0 ; i < unparsed.length ; i++) {
                 String s = unparsed[i];
+                
                 try {
-                    s =  PROPERTY_PLACE_HOLDER_HELPER.replacePlaceholders(unparsed[i], properties);
+                    s = propertyPlaceHolderHelper.replacePlaceholders(unparsed[i], properties);
                 } catch (IllegalArgumentException e ) {
-                    log.debug("Unable to replace property expression for property '{}'. Return null : '{}'.",name, e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
+                    }
                     s = null;
                 }
+                
                 parsed[i] = s;
             }
             
             return parsed;
+
         }
+        
         return o;
     }
     
