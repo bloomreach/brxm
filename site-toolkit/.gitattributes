@@ -563,7 +563,6 @@ components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuItemImpl
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManagerImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/DOMUtils.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/util/Path.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanProxyUtils.java svneol=native#text/plain
