@@ -247,11 +247,6 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // LIVE mount. This isPreview() should be false
                 assertFalse("We should have a LIVE mount", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 
-                MountDecorator mountDecorator = new MountDecoratorImpl();
-                Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)resolvedMount.getMount());
-                ((MutableResolvedMount)resolvedSiteMapItem.getResolvedMount()).setMount(decoratedMount);
-                
-                
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
