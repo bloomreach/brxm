@@ -121,6 +121,14 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             return parameterValue;
         }
         
+        /**
+         * This method can be overridden by subclasses of the {@link ParameterInfoInvocationHandler} to return 
+         * a prefixed value
+         * @param parameterName the <code>parameterName</code> that can be prefixed
+         * @param conf the <code>ComponentConfiguration</code>
+         * @param req the <code>HstRequest</code> 
+         * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
+         */
         protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
             return parameterName;
         }
