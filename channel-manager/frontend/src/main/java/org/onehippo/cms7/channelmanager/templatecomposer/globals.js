@@ -77,7 +77,7 @@
             INHERITED : 'inherited',
             URL : 'url',
             REF_NS : 'refNS',
-            VARIANT : 'variant'
+            VARIANT : 'hst_internal_variant'
         },
 
         CLASS : {

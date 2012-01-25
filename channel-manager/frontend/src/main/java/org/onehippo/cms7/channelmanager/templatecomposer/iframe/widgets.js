@@ -739,7 +739,7 @@
                 this.el.attr(HST.ATTR.VARIANT, variant);
                 var prefix = this.el.attr(HST.ATTR.REF_NS);
                 var data = {};
-                data[prefix + ':variant'] = variant;
+                data[prefix + ':' + HST.ATTR.VARIANT] = variant;
                 $.ajax({
                     url: this.el.attr(HST.ATTR.URL),
                     context: this,
