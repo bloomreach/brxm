@@ -247,7 +247,11 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     curNode = existingFolderNode;
                 }
 
-                curNode = NodeUtils.getNonVirtualCanonicalNode(session, curNode);
+                curNode = NodeUtils.getCanonicalNode(curNode);
+                
+                if (NodeUtils.isDereferenceable(curNode)) {
+                    curNode = NodeUtils.getDeref(curNode);
+                }
             }
 
             return curNode;
@@ -661,18 +665,29 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         return folderNode;
     }
 
+    /**
+     * Finds and returns a node for the existing folder by the <CODE>absPath</CODE>.
+     * Or it returns null when the folder node is not found by the <CODE>absPath</CODE>.
+     * <P>
+     * The <CODE>absPath</CODE> can be a virtual path or physical path.
+     * This method tries to find a canonical node from the <CODE>absPath</CODE>
+     * and a physical node by dereferencing if necessary.
+     * </P>
+     * <P>
+     * Therefore, please note that the node path of the returned node can be different from
+     * <CODE>absPath</CODE> by canonicalizing or dereferencing.
+     * </P>
+     * 
+     * @param absPath
+     * @return  A node for the existing folder or <code>null</code> when the folder node does not exist
+     * @throws RepositoryException
+     */
     private Node getExistingFolderNode(String absPath) throws RepositoryException {
-        if (!session.itemExists(absPath)) {
+        if (!session.nodeExists(absPath)) {
             return null;
         }
         
-        Item item = session.getItem(absPath);
-        
-        if (item == null || !item.isNode()) {
-            return null;
-        }
-        
-        Node node = (Node) item;
+        Node node = session.getNode(absPath);
         Node candidateNode = null;
         
         if (session.getRootNode().isSame(node)) {
@@ -681,7 +696,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             Node parentNode = node.getParent();
             for (NodeIterator nodeIt = parentNode.getNodes(node.getName()); nodeIt.hasNext(); ) {
                 Node siblingNode = nodeIt.nextNode();
-                if (!isNodeUnderDocumentHandle(siblingNode)) {
+                if (!isDocument(siblingNode)) {
                     candidateNode = siblingNode;
                     break;
                 }
@@ -692,27 +707,31 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
             return null;
         }
         
-        Node canonicalFolderNode = NodeUtils.getNonVirtualCanonicalNode(session, candidateNode);
+        Node canonicalFolderNode = NodeUtils.getCanonicalNode(candidateNode);
+        
+        if (NodeUtils.isDereferenceable(canonicalFolderNode)) {
+            canonicalFolderNode = NodeUtils.getDeref(canonicalFolderNode);
+        }
         
         if (canonicalFolderNode == null) {
             return null;
         }
         
-        if (isNodeUnderDocumentHandle(canonicalFolderNode)) {
+        if (isDocument(canonicalFolderNode)) {
             return null;
         }
         
         return canonicalFolderNode;
     }
     
-    private boolean isNodeUnderDocumentHandle(Node node) throws RepositoryException  {
-        if (NodeUtils.isAnyNodeType(node, "hippo:handle", "hippo:hardhandle")) {
+    private boolean isDocument(Node node) throws RepositoryException  {
+        if (NodeUtils.isNodeType(node, "hippo:handle", "hippo:hardhandle")) {
             return true;
-        } else if (NodeUtils.isAnyNodeType(node, "hippo:document", "hippo:harddocument")) {
+        } else if (NodeUtils.isNodeType(node, "hippo:document", "hippo:harddocument")) {
             if (!session.getRootNode().isSame(node)) {
                 Node parentNode = node.getParent();
                 
-                if (NodeUtils.isAnyNodeType(parentNode, "hippo:handle", "hippo:hardhandle")) {
+                if (NodeUtils.isNodeType(parentNode, "hippo:handle", "hippo:hardhandle")) {
                     return true;
                 }
             }

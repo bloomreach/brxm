@@ -20,7 +20,6 @@ import java.util.UUID;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
@@ -92,7 +91,24 @@ public class NodeUtils {
         
         return (canonicalNode != null ? canonicalNode : defaultNode);
     }
-    
+
+    /**
+     * Checks if the <CODE>node</CODE> is dereferenceable.
+     * When the <CODE>node</CODE> is type of either "hippo:facetselect" or "hippo:mirror",
+     * the node is regarded as dereferenceable and the dereferenced node can be retrieved
+     * by using {@link #getDeref(Node)} method.
+     * @param node
+     * @return
+     * @throws RepositoryException
+     */
+    public static boolean isDereferenceable(Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
+            return true;
+        }
+        
+        return false;
+    }
+
     /**
      * 
      * @param mirrorNode
@@ -101,7 +117,7 @@ public class NodeUtils {
     public static Node getDeref(Node mirrorNode) {
         String docBaseUUID = null;
         try {
-            if(!mirrorNode.isNodeType(HippoNodeType.NT_FACETSELECT) && !mirrorNode.isNodeType(HippoNodeType.NT_MIRROR)) {
+            if (!isDereferenceable(mirrorNode)) {
                 HstServices.getLogger(LOGGER_CATEGORY_NAME).info("Cannot deref a node that is not of (sub)type '{}' or '{}'. Return null", HippoNodeType.NT_FACETSELECT, HippoNodeType.NT_MIRROR);
                 return null;
             }
@@ -132,13 +148,19 @@ public class NodeUtils {
     }
     
     /**
-     * Checks if the node is type of either one from the nodeTypeNames.
+     * Checks if the node is type of any of the <CODE>nodeTypeNames</CODE>.
+     * <P>
+     * This method iterates <CODE>nodeTypeNames</CODE> to check if the <CODE>node</CODE>
+     * is type of any of <CODE>nodeTypeNames</CODE>.
+     * It returns true if <CODE>node.isNodeType(nodeTypeName) returns true
+     * by any of the <CODE>nodeTypeNames</CODE>
+     * </P>
      * @param node
      * @param nodeTypeNames
      * @return
      * @throws RepositoryException
      */
-    public static boolean isAnyNodeType(Node node, String ... nodeTypeNames) throws RepositoryException {
+    public static boolean isNodeType(Node node, String ... nodeTypeNames) throws RepositoryException {
         if (nodeTypeNames != null) {
             for (String nodeTypeName : nodeTypeNames) {
                 if (node.isNodeType(nodeTypeName)) {
@@ -151,29 +173,29 @@ public class NodeUtils {
     }
 
     /**
-     * Finds and returns a non-virtual canonical node
-     * @param session
+     * Checks if the node is typed by any of the <CODE>primaryNodeTypeNames</CODE>.
+     * <P>
+     * This method iterates <CODE>primaryNodeTypeNames</CODE> to check if the <CODE>node</CODE>
+     * is typed by any of <CODE>primaryNodeTypeNames</CODE>.
+     * It returns true if <CODE>node.getPrimaryNodeType().getName().equals(primaryNodeTypeName) returns true
+     * by any of the <CODE>primaryNodeTypeNames</CODE>
+     * </P>
      * @param node
+     * @param primaryNodeTypeNames
      * @return
      * @throws RepositoryException
      */
-    public static Node getNonVirtualCanonicalNode(Session session, Node node) throws RepositoryException {
-        Node nonVirtualCanonicalNode = null;
-        
-        if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
-            String docbaseUuid = node.getProperty("hippo:docbase").getString();
-            // check whether docbaseUuid is a valid uuid, otherwise a runtime IllegalArgumentException is thrown
-            try {
-                UUID.fromString(docbaseUuid);
-            } catch (IllegalArgumentException e){
-                throw new RepositoryException("hippo:docbase in mirror does not contain a valid uuid", e);
+    public static boolean isPrimaryNodeType(Node node, String ... primaryNodeTypeNames) throws RepositoryException {
+        if (primaryNodeTypeNames != null) {
+            String primaryNodeTypeName = node.getPrimaryNodeType().getName();
+            for (String nodeTypeName : primaryNodeTypeNames) {
+                if (primaryNodeTypeName.equals(nodeTypeName)) {
+                    return true;
+                }
             }
-            // this is always the canonical
-            nonVirtualCanonicalNode = session.getNodeByIdentifier(docbaseUuid);
-        } else {
-            nonVirtualCanonicalNode = getCanonicalNode(node);
         }
         
-        return nonVirtualCanonicalNode;
+        return false;
     }
+
 }
