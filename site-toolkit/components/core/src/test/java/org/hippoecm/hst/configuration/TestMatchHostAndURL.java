@@ -16,24 +16,29 @@
 package org.hippoecm.hst.configuration;
 
 
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
-import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
-import org.hippoecm.hst.util.HstRequestUtils;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.site.request.MountDecoratorImpl;
+import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.util.HstRequestUtils;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
@@ -230,17 +235,51 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             request.setRequestURI("/site/_cmsinternal/news/2009");
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
-                assertEquals("The matching ignored prefix should equal the default", "_cmsinternal", mount.getMatchingIgnoredPrefix());
-                assertEquals("The resolved mount path should not contain the matching ignored prefix", "", mount.getResolvedMountPath());
+                ResolvedMount resolvedMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                assertEquals("The matching ignored prefix should equal the default", "_cmsinternal", resolvedMount.getMatchingIgnoredPrefix());
+                assertEquals("The resolved mount path should not contain the matching ignored prefix", "", resolvedMount.getResolvedMountPath());
 
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
+                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(request, response, resolvedMount);
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                 assertEquals("News/2009", resolvedSiteMapItem.getRelativeContentPath());
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 // the _cmsinternal is just stripped from the URL, hence, we just get the Mount for /site/news/2009, which maps to a
                 // LIVE mount. This isPreview() should be false
-                assertFalse("We should have a LIVE match", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
+                assertFalse("We should have a LIVE mount", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
+                
+                MountDecorator mountDecorator = new MountDecoratorImpl();
+                Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)resolvedMount.getMount());
+                ((MutableResolvedMount)resolvedSiteMapItem.getResolvedMount()).setMount(decoratedMount);
+                
+                
+            } catch (RepositoryNotAvailableException e) {
+                fail(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+        @Test
+        public void testLiveMountToPreviewMountDecoration() {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+
+            request.setScheme("http");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
+            request.setContextPath("/site");
+            request.setRequestURI("/site/news/2009");
+            try {
+                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+                ResolvedMount resolvedMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
+                 // assert we now have a LIVE Mount
+                assertFalse("We should have a LIVE mount", resolvedMount.getMount().isPreview());
+                
+                 
+                MountDecorator mountDecorator = new MountDecoratorImpl();
+                Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)resolvedMount.getMount());
+                ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
+                // assert we now have a PREVIEW mount as ResolvedMount
+                assertTrue("We should have a PREVIEW mount", resolvedMount.getMount().isPreview());
+                
             } catch (RepositoryNotAvailableException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
