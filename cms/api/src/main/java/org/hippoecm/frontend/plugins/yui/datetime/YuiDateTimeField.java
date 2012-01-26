@@ -67,9 +67,12 @@ public class YuiDateTimeField extends DateTimeField {
     public YuiDateTimeField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model);
 
+        final StringResourceModel pickerFormat = new StringResourceModel("picker-format", this, null);
+        final String format = pickerFormat.getString();
         if (settings == null) {
-            final StringResourceModel pickerFormat = new StringResourceModel("picker-format", this, null);
-            settings = new YuiDatePickerSettings(pickerFormat.getString());
+            settings = new YuiDatePickerSettings(format);
+        } else {
+            settings.setDatePattern(format);
         }
 
         this.settings = settings;
