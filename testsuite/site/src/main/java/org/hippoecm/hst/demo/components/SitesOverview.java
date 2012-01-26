@@ -112,9 +112,9 @@ public class SitesOverview extends BaseHstComponent {
             }
             
         } catch (RepositoryException e) {
-            log.error(e.getMessage());
+            log.error(e.toString(),e);
         } catch (NumberFormatException e) {
-            log.error(e.getMessage());
+            log.error(e.toString(),e);
         } finally {
             if(writableSession != null) {
                 writableSession.logout();
