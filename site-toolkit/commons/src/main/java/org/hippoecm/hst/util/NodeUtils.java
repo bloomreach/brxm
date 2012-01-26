@@ -93,12 +93,12 @@ public class NodeUtils {
     }
 
     /**
-     * Checks if the <CODE>node</CODE> is dereferenceable.
-     * When the <CODE>node</CODE> is type of either "hippo:facetselect" or "hippo:mirror",
+     * Checks if the <code>node</code> is dereferenceable.
+     * When the <code>node</code> is type of either "hippo:facetselect" or "hippo:mirror" (or subtype of one of these),
      * the node is regarded as dereferenceable and the dereferenced node can be retrieved
      * by using {@link #getDeref(Node)} method.
      * @param node
-     * @return
+     * @return <code>true</code> when the node is dereferenceable
      * @throws RepositoryException
      */
     public static boolean isDereferenceable(Node node) throws RepositoryException {
@@ -112,7 +112,7 @@ public class NodeUtils {
     /**
      * 
      * @param mirrorNode
-     * @return the dereferenced node or <code>null</code> when no dereferenced node can be found
+     * @return the dereferenced node and <code>null</code> when the mirrorNode is not a dereferenceable type or when no dereferenced node can be found
      */
     public static Node getDeref(Node mirrorNode) {
         String docBaseUUID = null;
@@ -148,16 +148,15 @@ public class NodeUtils {
     }
     
     /**
-     * Checks if the node is type of any of the <CODE>nodeTypeNames</CODE>.
-     * <P>
-     * This method iterates <CODE>nodeTypeNames</CODE> to check if the <CODE>node</CODE>
-     * is type of any of <CODE>nodeTypeNames</CODE>.
-     * It returns true if <CODE>node.isNodeType(nodeTypeName) returns true
-     * by any of the <CODE>nodeTypeNames</CODE>
+     * Checks if the <code>node</code> is type of any of the <code>nodeTypeNames</code>.
+     * Returns <code>true</code> if this node is of the specified primary node
+     * type or mixin type, or a subtype thereof of any of the <code>nodeTypeNames</code>. Returns <code>false</code>
+     * otherwise. Also see {@link Node#isNodeType(String)}
      * </P>
      * @param node
      * @param nodeTypeNames
-     * @return
+     * @return <code>true</code> when <code>node</code> is of the specified primary node type or mixin type, 
+     * or a subtype thereof of any of the <code>nodeTypeNames</code>
      * @throws RepositoryException
      */
     public static boolean isNodeType(Node node, String ... nodeTypeNames) throws RepositoryException {
@@ -173,16 +172,15 @@ public class NodeUtils {
     }
 
     /**
-     * Checks if the node is typed by any of the <CODE>primaryNodeTypeNames</CODE>.
+     * Checks if the primary nodetype of <code>node</code> is equal to one of the supplied <code>primaryNodeTypeNames</code>.
      * <P>
-     * This method iterates <CODE>primaryNodeTypeNames</CODE> to check if the <CODE>node</CODE>
-     * is typed by any of <CODE>primaryNodeTypeNames</CODE>.
-     * It returns true if <CODE>node.getPrimaryNodeType().getName().equals(primaryNodeTypeName) returns true
-     * by any of the <CODE>primaryNodeTypeNames</CODE>
+     * It returns true if <code>node.getPrimaryNodeType().getName().equals(primaryNodeTypeName) returns true
+     * for any of the <code>primaryNodeTypeNames</code>
      * </P>
      * @param node
      * @param primaryNodeTypeNames
-     * @return
+     * @return <code>true</code> if <code>node.getPrimaryNodeType().getName().equals(primaryNodeTypeName)</code> returns true
+     * for any of the <code>primaryNodeTypeNames</code>
      * @throws RepositoryException
      */
     public static boolean isPrimaryNodeType(Node node, String ... primaryNodeTypeNames) throws RepositoryException {
