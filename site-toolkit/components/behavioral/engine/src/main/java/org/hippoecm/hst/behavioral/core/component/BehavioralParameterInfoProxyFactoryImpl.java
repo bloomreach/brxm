@@ -24,6 +24,7 @@ import org.hippoecm.hst.behavioral.util.BehavioralUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
+import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
@@ -38,10 +39,10 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 public class BehavioralParameterInfoProxyFactoryImpl extends HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
     
     @Override
-    protected InvocationHandler createHstParameterInfoInvocationHandler(
-            ComponentConfiguration componentConfig, HstRequest request) {
+    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final  HstRequest request, 
+            final  HstParameterValueConverter hstParameterValueConverter) {
         
-        InvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request) {
+        InvocationHandler parameterInfoInvocationHandler = new ParameterInfoInvocationHandler(componentConfig, request, hstParameterValueConverter) {
 
             @Override
             protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {

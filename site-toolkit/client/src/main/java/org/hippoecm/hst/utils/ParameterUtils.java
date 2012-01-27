@@ -15,23 +15,38 @@
  */
 package org.hippoecm.hst.utils;
 
-import java.beans.PropertyEditor;
-import java.lang.reflect.Method;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
+import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.hippoecm.hst.proxy.ProxyFactory;
 
 public class ParameterUtils {
 
     public static final String PARAMETERS_INFO_ATTRIBUTE = ParameterUtils.class.getName() + ".parametersInfo";
 
+    public static final HstParameterValueConverter DEFAULT_HST_PARAMETER_VALUE_CONVERTER = new HstParameterValueConverter(){
+        @Override
+        public Object convert(String parameterValue, Class<?> returnType) {
+            // ConvertUtils.convert cannot handle Calendar as returnType, however, we support it. 
+            // that's why we first convert to Date
+            if (returnType.equals(Calendar.class)) {
+                Date date = (Date) ConvertUtils.convert(parameterValue, Date.class);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                return cal;
+            }
+
+            return ConvertUtils.convert(parameterValue, returnType);
+        }
+    };
+    
+    
     /**
      * Returns a proxy ParametersInfo object for the component class which resolves parameter from
      * HstComponentConfiguration : resolved means that possible property placeholders like ${1} or ${year}, where the
@@ -59,108 +74,15 @@ public class ParameterUtils {
 
           // first, try the new ParametersInfo annotation
         ParametersInfo annotation = component.getClass().getAnnotation(ParametersInfo.class);
-        if (annotation != null) {
-            HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
-            parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request);
-            request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
-            return parametersInfo;            
-        } else {
-            // second, try the old ParametersInfo annotation
-            Class<?> parametersInfoType;
-            Invoker invoker;
-
-            org.hippoecm.hst.configuration.components.ParametersInfo oldAnnotation = component.getClass().getAnnotation(org.hippoecm.hst.configuration.components.ParametersInfo.class);
-            if (oldAnnotation == null) {
-                throw new IllegalArgumentException("The component does not have a ParametersInfo annotation.");
-            }
-
-            parametersInfoType = oldAnnotation.type();
-
-            if (!parametersInfoType.isInterface()) {
-                throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
-            }
-            invoker = new DeprecatedParameterInfoInvoker(componentConfig, request);
-            ProxyFactory factory = new ProxyFactory();
-            parametersInfo = (T) factory.createInvokerProxy(invoker, new Class[]{parametersInfoType});
-
-            request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
-            return parametersInfo;
+        if (annotation == null) {
+            return null; 
         }
-
+        
+        HstParameterInfoProxyFactory parameterInfoProxyFacotory = request.getRequestContext().getParameterInfoProxyFactory();
+        parametersInfo =  (T) parameterInfoProxyFacotory.createParameterInfoProxy(annotation, componentConfig, request, DEFAULT_HST_PARAMETER_VALUE_CONVERTER);
+        request.setAttribute(PARAMETERS_INFO_ATTRIBUTE, parametersInfo);
+        return parametersInfo;            
         
     }
     
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    private static class DeprecatedParameterInfoInvoker implements Invoker {
-
-        private final ComponentConfiguration componentConfig;
-        private final HstRequest request;
-
-        /**
-         * @deprecated
-         */
-        @Deprecated
-        DeprecatedParameterInfoInvoker(final ComponentConfiguration componentConfig, HstRequest request) {
-            this.componentConfig = componentConfig;
-            this.request = request;
-        }
-
-        @Override
-        public Object invoke(Object object, Method method, Object[] args) throws Throwable {
-            if (isSetter(method, args)) {
-                throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
-            }
-
-            if (!isGetter(method, args)) {
-                return null;
-            }
-
-            org.hippoecm.hst.configuration.components.Parameter parameterAnnotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
-            if (parameterAnnotation == null) {
-                throw new IllegalArgumentException("Component " + componentConfig.getCanonicalPath() + " used deprecated ParametersInfo annotation, but "
-                        + method.getDeclaringClass().getSimpleName() + "#" + method.getName() + " is not annotated with " + org.hippoecm.hst.configuration.components.Parameter.class.getName());
-            }
-
-            String parameterName = parameterAnnotation.name();
-            if (StringUtils.isBlank(parameterName)) {
-                throw new IllegalArgumentException("The parameter name is empty.");
-            }
-
-            String parameterValue = componentConfig.getParameter(parameterName, request.getRequestContext().getResolvedSiteMapItem());
-            if (parameterValue == null || "".equals(parameterValue)) {
-                // when the parameter value is null or an empty string we return the default value from the annotation
-                parameterValue = parameterAnnotation.defaultValue();
-            }
-            if (parameterValue == null) {
-                return null;
-            }
-
-            Class<? extends PropertyEditor> customEditorType = parameterAnnotation.customEditor();
-            Class<?> returnType = method.getReturnType();
-
-            if (customEditorType == null || customEditorType == org.hippoecm.hst.configuration.components.EmptyPropertyEditor.class) {
-                return ConvertUtils.convert(parameterValue, returnType);
-            } else {
-                PropertyEditor customEditor = customEditorType.newInstance();
-                customEditor.setAsText(parameterValue);
-                return customEditor.getValue();
-            }
-        }
-    }
-
-    private static final boolean isGetter(final Method method, final Object[] args) {
-        if (args == null || args.length == 0) {
-            final String methodName = method.getName();
-            return methodName.startsWith("get") || methodName.startsWith("is");
-        }
-        return false;
-    }
-
-    private static final boolean isSetter(final Method method, final Object[] args) {
-        return (args != null && args.length == 1) && method.getName().startsWith("set");
-    }
-
 }
