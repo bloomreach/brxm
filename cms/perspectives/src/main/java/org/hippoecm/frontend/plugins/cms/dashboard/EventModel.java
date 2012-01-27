@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.dashboard;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.MissingResourceException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -192,16 +193,20 @@ public class EventModel implements IComponentAssignedModel<String> {
         }
 
         public String getObject() {
-            if (nameModel != null) {
-                String name = nameModel.getObject();
-                name = StringEscapeUtils.escapeHtml(name);
-                StringResourceModel operationModel = new StringResourceModel(method, component, null, new Object[] {
-                        user, name });
-                return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
-            } else {
-                StringResourceModel operationModel = new StringResourceModel(method, component, null,
-                        new Object[] { user });
-                return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
+            try {
+                if (nameModel != null) {
+                    String name = nameModel.getObject();
+                    name = StringEscapeUtils.escapeHtml(name);
+                    StringResourceModel operationModel = new StringResourceModel(method, component, null,
+                                                                                 new Object[]{user, name});
+                    return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
+                } else {
+                    StringResourceModel operationModel = new StringResourceModel(method, component, null,
+                                                                                 new Object[]{user});
+                    return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
+                }
+            } catch (MissingResourceException mre) {
+                return "Warning: could not translate Workflow operation " + method;
             }
         }
 
@@ -210,7 +215,7 @@ public class EventModel implements IComponentAssignedModel<String> {
         }
 
         /**
-         * @see org.apache.wicket.model.AbstractReadOnlyModel#setObject()
+         * @see org.apache.wicket.model.AbstractReadOnlyModel#setObject
          */
         public void setObject(String object) {
             throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
