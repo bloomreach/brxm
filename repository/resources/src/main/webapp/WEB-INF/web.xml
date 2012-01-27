@@ -32,6 +32,13 @@
     <!-- param-value>hipporepository</param-value -->
     <description>The address of the repository</description>
   </context-param>
+  <context-param>
+    <param-name>repository-config</param-name>
+    <param-value>repository.xml</param-value>
+    <description>The location of the repository configuration file. Unless the location
+    starts with file://, the location is retreived from within the application package as
+    resource.</description>
+  </context-param>
 
   <servlet>
     <servlet-name>StatusServlet</servlet-name>
@@ -58,18 +65,6 @@
   <servlet>
     <servlet-name>RepositoryServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
-    <init-param>
-      <param-name>repository-directory</param-name>
-      <param-value>WEB-INF/storage</param-value>
-      <description>The (relative) location where to store files</description>
-    </init-param>
-    <init-param>
-      <param-name>repository-config</param-name>
-      <param-value>repository.xml</param-value>
-      <description>The location of the repository configuration file. Unless the location
-      starts with file://, the location is retreived from within the application package as
-      resource.</description>
-    </init-param>
     <load-on-startup>4</load-on-startup>
   </servlet>
 
