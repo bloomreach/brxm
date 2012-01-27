@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +72,7 @@ public class ContainerItemComponentRepresentation {
         STRING("textfield", new Class[]{String.class}, null), 
         NUMBER("numberfield", new Class[]{Long.class, long.class, Integer.class, int.class, Short.class, short.class}, null), 
         BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null), 
-        DATE("datefield", new Class[]{Date.class}, null), 
+        DATE("datefield", new Class[]{Date.class, Calendar.class}, null), 
         COLOR("colorfield", new Class[]{String.class}, Color.class), 
         DOCUMENT("combo", new Class[]{String.class}, DocumentLink.class), 
         UNKNOWN("textfield", null, null);
