@@ -19,21 +19,20 @@
 
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>components</artifactId>
+    <artifactId>behavioral</artifactId>
     <version>2.25.01-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Behavioral Targeting</name>
-  <description>Hippo Site Toolkit Behavioral Targeting</description>
-  <artifactId>behavioral</artifactId>
-  <packaging>pom</packaging>
-  
-  <modules>
-    <module>api</module>
-    <module>engine</module>
-    <module>repository</module>
-    <module>rest-api</module>
-    <module>rest-service</module>
-  </modules>
+  <name>Hippo Site Toolkit Behavioral Targeting REST API</name>
+  <description>Hippo Site Toolkit Behavioral Targeting REST API</description>
+  <artifactId>hst-behavioral-rest-api</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>

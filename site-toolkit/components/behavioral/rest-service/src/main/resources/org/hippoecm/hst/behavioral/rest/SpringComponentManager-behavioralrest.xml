@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2012 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean id="jaxrsCmsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
+  <bean id="jaxrsBehavioralRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/"/>
     <property name="providers">
       <list>
@@ -29,9 +29,8 @@
       <list>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.cmsrest.services.DocumentsResource">
-              <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-              <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
+            <bean class="org.hippoecm.hst.behavioral.rest.services.HttpSessionResource">
+              <property name="httpSessionRegistry" ref="org.hippoecm.hst.behavioral.HttpSessionRegistry"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -39,16 +38,16 @@
     </property>
   </bean>
 
-  <bean id="jaxrsCmsRestService" class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
-    <constructor-arg value="jaxrsCmsRestService"/>
+  <bean id="jaxrsBehavioralRestService" class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
+    <constructor-arg value="jaxrsBehavioralRestService"/>
     <property name="servletPath" value=""/>
-    <property name="jaxrsServerFactoryBean" ref="jaxrsCmsRestCxfServerFactoryBean"/>
+    <property name="jaxrsServerFactoryBean" ref="jaxrsBehavioralRestCxfServerFactoryBean"/>
   </bean>
 
   <!-- Pipelining -->
   
-  <bean id="jaxrsCmsRestServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
-    <constructor-arg ref="jaxrsCmsRestService"/>
+  <bean id="jaxrsBehavioralRestServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
+    <constructor-arg ref="jaxrsBehavioralRestService"/>
   </bean>
 
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -61,7 +60,7 @@
     <property name="targetMethod" value="put" />
     <property name="arguments">
       <list>
-        <value>CmsRestPipeline</value>
+        <value>BehavioralRestPipeline</value>
         <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
           <property name="initializationValves">
             <list>
@@ -72,7 +71,7 @@
           <property name="processingValves">
             <list>
               <ref bean="noCacheResponseHeadersValve" />
-              <ref bean="jaxrsCmsRestServiceValve" />
+              <ref bean="jaxrsBehavioralRestServiceValve" />
             </list>
           </property>
           <property name="cleanupValves">
@@ -85,19 +84,15 @@
     </property>
   </bean>
   
-  <!-- configure that call to the programmatic creation of the _cmsrest Mount for Host 127.0.0.1 -->
+  <!-- configure that call to the programmatic creation of the _bt mount for host 127.0.0.1 -->
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
         <bean class="org.hippoecm.hst.core.hosting.CustomMountAndVirtualHostAugmenter">
-           <property name="customMountName" value="_cmsrest"/>
+           <property name="customMountName" value="_bt"/>
            <property name="customHostName" value="127.0.0.1"/>
-           <property name="customMountNamedPipeline" value="CmsRestPipeline"/>
-           <!--
-             the type must be 'live' as the links that are created through the CMS rest mount need to be 'live' links.
-             The CMS will decorate these live links to preview.
-           -->
+           <property name="customMountNamedPipeline" value="BehavioralRestPipeline"/>
            <property name="customMountType" value="live"/>
         </bean>
     </property>
