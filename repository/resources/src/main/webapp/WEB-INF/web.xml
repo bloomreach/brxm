@@ -39,6 +39,11 @@
     starts with file://, the location is retreived from within the application package as
     resource.</description>
   </context-param>
+  <context-param>
+    <param-name>repository-directory</param-name>
+    <param-value>WEB-INF/storage</param-value>
+    <description>The (relative) location where to store files</description>
+  </context-param>
 
   <servlet>
     <servlet-name>StatusServlet</servlet-name>
