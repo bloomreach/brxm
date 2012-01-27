@@ -594,6 +594,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     "components. Cannot merge '{}' and '{}' because at least one of them is a Container component. Fix configuration.", childToMerge.getId(), this.getId());
             return;
         }
+        if(this.type == Type.CONTAINER_ITEM_COMPONENT || childToMerge.type == Type.CONTAINER_ITEM_COMPONENT) {
+            log.warn("Incorrect component configuration: *ContainerItem* Components are not allowed to be merged with other " +
+                    "components. Cannot merge '{}' and '{}' because at least one of them is a ContainerItemComponent. Fix configuration.", childToMerge.getId(), this.getId());
+            return;
+        }
         
         if (this.componentClassName == null) {
             this.componentClassName = childToMerge.componentClassName;
@@ -737,8 +742,22 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     
     protected void inheritParameters() {
         // before traversing child components add the parameters from the parent, and if already present, override them
-        if (this.parent != null && this.parent.getParameters() != null) {
-            this.parameters.putAll(this.parent.getParameters());
+        // this overriding however is *not* done for containeritemcomponents: They are self contained and do never get their
+        // parametervalues overridden by ancestors: They only get what they don't already have themselves
+        if (type == Type.CONTAINER_ITEM_COMPONENT) {
+            if (parent != null && parent.getParameters() != null) {
+                for(Entry<String, String> entry : parent.getParameters().entrySet()) {
+                    if(parameters.containsKey(entry.getKey())) {
+                        // we already have the parameter, skip
+                        continue;
+                    }
+                    parameters.put(entry.getKey(), entry.getValue());
+                }
+            }
+        } else {
+            if (parent != null && parent.getParameters() != null) {
+                parameters.putAll(parent.getParameters());
+            }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.inheritParameters();
