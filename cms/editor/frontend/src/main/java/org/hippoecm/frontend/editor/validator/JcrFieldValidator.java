@@ -15,19 +15,8 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.AbstractProvider;
-import org.hippoecm.frontend.model.ChildNodeProvider;
-import org.hippoecm.frontend.model.JcrItemModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PropertyValueProvider;
+import org.hippoecm.frontend.model.*;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -39,6 +28,9 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.RepositoryException;
+import java.util.*;
+
 public class JcrFieldValidator implements ITypeValidator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -47,34 +39,38 @@ public class JcrFieldValidator implements ITypeValidator {
 
     static final Logger log = LoggerFactory.getLogger(JcrFieldValidator.class);
 
-    static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
-
     public static final String REQUIRED_FIELD_NOT_PRESENT = "required-field-not-present";
-    public static final String STRING_VALUE_IS_EMPTY = "string-value-is-empty";
-    public static final String INVALID_CHARACTER = "invalid-character";
 
     private IFieldDescriptor field;
     private ITypeDescriptor fieldType;
     private ITypeValidator typeValidator;
     private HtmlValidator htmlValidator;
+    private AdvancedValidatorService validatorService;
 
     public JcrFieldValidator(IFieldDescriptor field, JcrTypeValidator container) throws StoreException {
         this.field = field;
+        this.validatorService = container.getValidatorService();
         this.fieldType = field.getTypeDescriptor();
         if (fieldType.isNode()) {
             if (fieldType.equals(container.getType())) {
                 typeValidator = container;
             } else {
-                typeValidator = new JcrTypeValidator(fieldType);
+                typeValidator = new JcrTypeValidator(fieldType, validatorService);
             }
         }
-        if (field.getValidators().contains("non-empty")) {
-            if (!"String".equals(fieldType.getType())) {
-                throw new StoreException("Invalid validation exception; cannot validate non-string field for emptyness");
+        Set<String> validators = field.getValidators();
+
+        if (!validators.isEmpty()) {
+            for (String fieldValidatorType : validators) {
+                if (validatorService != null && validatorService.containsValidator(fieldValidatorType)) {
+                    try {
+                        validatorService.getValidator(fieldValidatorType).preValidation(this);
+                    } catch (Exception e) {
+                        log.error("", e);
+                    }
+                }
             }
-            if ("Html".equals(fieldType.getName())) {
-                htmlValidator = new HtmlValidator();
-            }
+
         }
         if (field.getValidators().contains("html")) {
             if (!"String".equals(fieldType.getType())) {
@@ -90,13 +86,11 @@ public class JcrFieldValidator implements ITypeValidator {
         }
         Set<Violation> violations = new HashSet<Violation>();
         Set<String> validators = field.getValidators();
-        boolean escaped = validators.contains("escaped");
         boolean required = validators.contains("required");
-        boolean nonEmpty = validators.contains("non-empty");
-        if ((required || fieldType.isNode() || nonEmpty || escaped || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || !validatorService.isEmpty() || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
-                        || (!fieldType.isNode() && (htmlValidator != null || nonEmpty))) {
+                        || (!fieldType.isNode() && (htmlValidator != null || validators.contains("non-empty")))) {
                     log.debug("Wildcard properties are not validated");
                 }
                 return violations;
@@ -122,28 +116,45 @@ public class JcrFieldValidator implements ITypeValidator {
                             addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
-                } else if (htmlValidator != null || nonEmpty || escaped) {
+                } else if (htmlValidator != null) {
                     String value = (String) childModel.getObject();
                     if (htmlValidator != null) {
                         for (String key : htmlValidator.validateNonEmpty(value)) {
                             violations.add(newValueViolation(childModel, key));
                         }
-                    } else {
-                        if (nonEmpty) {
-                            if ("".equals(value)) {
-                                violations.add(newValueViolation(childModel, STRING_VALUE_IS_EMPTY));
-                            }
-                        }
-                        if (escaped) {
-                            if (INVALID_CHARS.matcher(value).matches()) {
-                                violations.add(newValueViolation(childModel, INVALID_CHARACTER));
-                            }
+                    }
+                }
+                if (!validators.isEmpty()) {
+                    for (String fieldValidatorType : validators) {
+                        if (validatorService != null && validatorService.containsValidator(fieldValidatorType)) {
+                            violations.addAll(validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel));
                         }
                     }
+
                 }
             }
         }
         return violations;
+    }
+
+    public void setHtmlValidator(HtmlValidator htmlValidator) {
+        this.htmlValidator = htmlValidator;
+    }
+
+    public HtmlValidator getHtmlValidator() {
+        return htmlValidator;
+    }
+
+    public IFieldDescriptor getField() {
+        return field;
+    }
+
+    public ITypeDescriptor getFieldType() {
+        return fieldType;
+    }
+
+    public ITypeValidator getTypeValidator() {
+        return typeValidator;
     }
 
     private void addTypeViolations(Set<Violation> violations, IModel childModel, Set<Violation> typeViolations)
@@ -175,7 +186,7 @@ public class JcrFieldValidator implements ITypeValidator {
         }
     }
 
-    private Violation newValueViolation(IModel childModel, String key) throws ValidationException {
+    public Violation newValueViolation(IModel childModel, String key) throws ValidationException {
         String name = field.getPath();
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) childModel;
         if ("*".equals(name)) {
@@ -192,7 +203,7 @@ public class JcrFieldValidator implements ITypeValidator {
         return newViolation(name, index, key, null);
     }
 
-    private Violation newViolation(String name, int index, String message, Object[] parameters) {
+    public Violation newViolation(String name, int index, String message, Object[] parameters) {
         ModelPathElement[] elements = new ModelPathElement[1];
         elements[0] = new ModelPathElement(field, name, index);
         Set<ModelPath> paths = new HashSet<ModelPath>();

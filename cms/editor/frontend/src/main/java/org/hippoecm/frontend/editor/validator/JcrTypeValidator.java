@@ -15,15 +15,15 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Validator for generic jcr node types.
@@ -36,9 +36,15 @@ public class JcrTypeValidator implements ITypeValidator {
 
     private Set<JcrFieldValidator> fieldValidators = new HashSet<JcrFieldValidator>();
     private ITypeDescriptor type;
+    private AdvancedValidatorService validatorService;
 
     public JcrTypeValidator(ITypeDescriptor type) throws StoreException {
+        this(type, null);
+    }
+
+    public JcrTypeValidator(ITypeDescriptor type, AdvancedValidatorService validatorService) throws StoreException {
         this.type = type;
+        this.validatorService = validatorService;
         for (IFieldDescriptor field : type.getFields().values()) {
             fieldValidators.add(new JcrFieldValidator(field, this));
         }
@@ -47,7 +53,11 @@ public class JcrTypeValidator implements ITypeValidator {
     public ITypeDescriptor getType() {
         return type;
     }
-    
+
+    public AdvancedValidatorService getValidatorService(){
+        return validatorService;
+    }
+
     public Set<Violation> validate(IModel model) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         for (JcrFieldValidator fieldValidator : fieldValidators) {

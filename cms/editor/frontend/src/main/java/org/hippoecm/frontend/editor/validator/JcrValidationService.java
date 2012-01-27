@@ -15,12 +15,6 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
@@ -30,23 +24,23 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
-import org.hippoecm.frontend.validation.IValidationListener;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.IValidationService;
-import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationResult;
-import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.*;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * A validation engine that registers itself as an {@link IValidationService}.  All supported
+ * A validation engine that registers itself as an {@link org.hippoecm.frontend.validation.IValidationService}.  All supported
  * validation rules are hardcoded.  Generic node types will be validated according to the
- * "required" and "non-empty" rules that apply to fields (see {@link JcrFieldValidator}).
- * The template type node type is validated by the {@link TemplateTypeValidator}.
+ * "required" and "non-empty" rules that apply to fields (see {@link org.hippoecm.frontend.editor.validator.JcrFieldValidator}).
+ * The template type node type is validated by the {@link org.hippoecm.frontend.editor.validator.TemplateTypeValidator}.
  * <p>
- * Validation can be triggered by invoking the {@link IValidationService#validate()} method.
+ * Validation can be triggered by invoking the {@link org.hippoecm.frontend.validation.IValidationService#validate()} method.
  * Results of the validation are returned and made available on the validator.model model
  * service.
  * <p>
@@ -57,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * <li><b>wicket.model</b>
  * The model that is used in validation.
  * <li><b>validator.model</b>
- * The model where the {@link IValidationResult} is made available.  Plugins that need to
+ * The model where the {@link org.hippoecm.frontend.validation.IValidationResult} is made available.  Plugins that need to
  * change their appearance or functionality based on the validation status can observe the
  * model that is registered here.
  * </ul>
@@ -118,7 +112,8 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 validator = new TemplateTypeValidator();
             } else {
                 ITypeDescriptor descriptor = locator.locate(nodeType);
-                validator = new JcrTypeValidator(descriptor);
+                AdvancedValidatorService validatorService = context.getService("advanced.validator.service", AdvancedValidatorService.class);
+                validator = new JcrTypeValidator(descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));
             List<IValidationListener> listeners = context.getServices(config.getString(IValidationService.VALIDATE_ID),

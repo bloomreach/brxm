@@ -36,10 +36,10 @@ final class ValidationFeedback extends Component implements IFeedbackLogger {
     }
 
     public void error(String messageKey, Object[] parameters) {
-        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters).getObject());
+        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
     }
 
     public void warn(String messageKey, Object[] parameters) {
-        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters).getObject());
+        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
     }
 }
