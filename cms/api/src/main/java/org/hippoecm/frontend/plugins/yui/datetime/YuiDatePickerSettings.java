@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.yui.datetime;
 
 import java.io.Serializable;
 
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+
 public class YuiDatePickerSettings implements Serializable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -30,11 +32,8 @@ public class YuiDatePickerSettings implements Serializable {
     private boolean close = true;
 
     public YuiDatePickerSettings() {
-        this(DEFAULT_DATE_PATTERN);
-    }
-
-    public YuiDatePickerSettings(String datePattern) {
-        this.datePattern = datePattern;
+        ClassResourceModel pickerFormat = new ClassResourceModel("picker-format", YuiDateTimeField.class);
+        this.datePattern = pickerFormat.getObject();
     }
 
     public String getDatePattern() {
