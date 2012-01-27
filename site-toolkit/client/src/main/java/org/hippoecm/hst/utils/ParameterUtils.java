@@ -18,9 +18,11 @@ package org.hippoecm.hst.utils;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
+import org.hippoecm.hst.core.component.HstParameterValueConversionException;
 import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -35,14 +37,17 @@ public class ParameterUtils {
         public Object convert(String parameterValue, Class<?> returnType) {
             // ConvertUtils.convert cannot handle Calendar as returnType, however, we support it. 
             // that's why we first convert to Date
-            if (returnType.equals(Calendar.class)) {
-                Date date = (Date) ConvertUtils.convert(parameterValue, Date.class);
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                return cal;
+            try {
+                if (returnType.equals(Calendar.class)) {
+                    Date date = (Date) ConvertUtils.convert(parameterValue, Date.class);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);
+                    return cal;
+                }
+                return ConvertUtils.convert(parameterValue, returnType);
+            } catch (ConversionException e) {
+                throw new HstParameterValueConversionException(e);
             }
-
-            return ConvertUtils.convert(parameterValue, returnType);
         }
     };
     

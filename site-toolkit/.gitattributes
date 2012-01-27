@@ -109,6 +109,7 @@ api/src/main/java/org/hippoecm/hst/core/component/HstComponent.java svneol=nativ
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentFatalException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactory.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/core/component/HstParameterValueConversionException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstParameterValueConverter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstRequest.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstResponse.java svneol=native#text/plain

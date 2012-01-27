@@ -24,6 +24,7 @@ public interface HstParameterValueConverter {
      * @param parameterValue
      * @param returnType
      * @return the {@link String} <code>parameterValue</code> converted to the <code>returnType</code> class
+     * @throws HstParameterValueConversionException when the conversion failed
      */
-    Object convert(String parameterValue, Class<?> returnType);
+    Object convert(String parameterValue, Class<?> returnType) throws HstParameterValueConversionException;
 }

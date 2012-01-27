@@ -24,8 +24,12 @@ import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.site.HstServices;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
+
+    private static final Logger log = HstServices.getLogger(HstParameterInfoProxyFactoryImpl.class.getName());
 
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
@@ -92,10 +96,11 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
 
             String parameterValue = getParameterValue(parameterName, componentConfig, request);
-            
+            String defaultValue = null;
             if (parameterValue == null || "".equals(parameterValue)) {
                 // when the parameter value is null or an empty string we return the default value from the annotation
-                parameterValue = parameterAnnotation.defaultValue();
+                defaultValue = parameterAnnotation.defaultValue();
+                parameterValue = defaultValue;
             }
             if (parameterValue == null) {
                 return null;
@@ -105,7 +110,18 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             Class<?> returnType = method.getReturnType();
 
             if (customEditorType == null || customEditorType == EmptyPropertyEditor.class) {
-                return converter.convert(parameterValue, returnType);
+                try {
+                    return converter.convert(parameterValue, returnType);
+                } catch (HstParameterValueConversionException e) {
+                    log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
+                    if(defaultValue == null) {
+                        log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ " and there is no default value configured");
+                        return null;
+                    } else {
+                        // if default value is incorrect, the runtime exception HstParameterValueConversionException is just thrown
+                        return converter.convert(defaultValue, returnType);
+                    }
+                }
             } else {
                 PropertyEditor customEditor = customEditorType.newInstance();
                 customEditor.setAsText(parameterValue);
