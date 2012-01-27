@@ -18,8 +18,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +55,75 @@ public class ContainerItemComponentRepresentation {
 
     private List<ContainerItemComponentPropertyRepresentation> properties;
 
+    /**
+     * For now, the supported UI xtypes (used for rendering the UI view) are 
+     * <ul>
+     *   <li>textfield</li>
+     *   <li>numberfield</li>
+     *   <li>checkbox</li>
+     *   <li>datefield</li>
+     *   <li>colorfield : see also {@link Color}</li>
+     *   <li>combo : see also {@link DocumentLink}</li>
+     * </ul>
+     * The ParameterType.UNKNOWN will result in xtype "textfield"
+     */
+    enum ParameterType {
+        STRING("textfield", new Class[]{String.class}, null), 
+        NUMBER("numberfield", new Class[]{Long.class, long.class, Integer.class, int.class, Short.class, short.class}, null), 
+        BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null), 
+        DATE("datefield", new Class[]{Date.class}, null), 
+        COLOR("colorfield", new Class[]{String.class}, Color.class), 
+        DOCUMENT("combo", new Class[]{String.class}, DocumentLink.class), 
+        UNKNOWN("textfield", null, null);
+        
+        final String xtype;
+        HashSet<Class<?>> supportedReturnTypes = null;
+        final Class<?> annotationType;
+        
+        ParameterType(String xtype, Class<?>[] supportedReturnTypes, Class<?> annotationType) {
+            this.xtype = xtype;
+            if(supportedReturnTypes != null) {
+                this.supportedReturnTypes = new HashSet<Class<?>>(Arrays.asList(supportedReturnTypes));
+            }
+            this.annotationType = annotationType;
+        }
+        
+        private boolean supportsReturnType(Class<?> returnType) {
+            if( supportedReturnTypes == null) {
+                return false;
+            }
+            return supportedReturnTypes.contains(returnType);
+        }
+        
+        static ParameterType getType(final Method method, Parameter propAnnotation) {
+            // first check the annotations combined with return type. If no match from annotations, check return type only
+            for (Annotation annotation : method.getAnnotations()) {
+                if (annotation == propAnnotation) {
+                    continue;
+                }
+                for(ParameterType type : ParameterType.values()) {
+                    if(annotation.annotationType() == type.annotationType) {
+                        if (type.supportsReturnType(method.getReturnType())) {
+                           return type;  
+                        } else {
+                            log.warn("return type '{}' of method '{}' is not supported for annotation '{}'.", new String[]{method.getReturnType().getName(), method.getName(), type.annotationType.getName()});
+                        }
+                    }
+                }
+            }
+            
+            for(ParameterType type : ParameterType.values()) {
+                if(type.supportsReturnType(method.getReturnType())) {
+                    return type;
+                }
+            }
+            return ParameterType.UNKNOWN;
+        }
+
+    }
+    
+  
+    
     /**
      * Constructs a component node wrapper
      *
@@ -126,15 +197,6 @@ public class ContainerItemComponentRepresentation {
     public void setProperties(List<ContainerItemComponentPropertyRepresentation> properties) {
         this.properties = properties;
     }
-
-    enum ParameterType {
-        STRING("textfield"), NUMBER("numberfield"), BOOLEAN("checkbox"), 
-        DATE("datefield"), COLOR("colorfield"), DOCUMENT("combo"), UNKNOWN("textfield");
-        final String xtype;
-        ParameterType(String xtype) {
-            this.xtype = xtype;
-        }
-    }
     
     static List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale) {
         final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
@@ -171,26 +233,23 @@ public class ContainerItemComponentRepresentation {
                     }
                 }
 
-                ParameterType type = null;
+                ParameterType type = ParameterType.getType(method, propAnnotation);
 
-                for (Annotation annotation : method.getAnnotations()) {
-                    if (annotation == propAnnotation) {
-                        continue;
-                    }
-                    if (annotation.annotationType() == DocumentLink.class) {
+                if (type.annotationType == DocumentLink.class) {
+                    // for DocumentLink we need some extra processing
+                    for (Annotation annotation : method.getAnnotations()) {
+                        if (annotation.annotationType() != type.annotationType) {
+                            continue;
+                        }
                         type = ContainerItemComponentRepresentation.ParameterType.DOCUMENT;
                         DocumentLink documentLink = (DocumentLink) annotation;
                         prop.setDocType(documentLink.docType());
                         prop.setDocLocation(documentLink.docLocation());
                         prop.setAllowCreation(documentLink.allowCreation());
-                    } else if (annotation.annotationType() == Color.class) {
-                        type = ContainerItemComponentRepresentation.ParameterType.COLOR;
+                        break;
                     }
                 }
-
-                if (type == null) {
-                    type = getReturnType(method);
-                }
+                    
                 prop.setType(type);
 
                 // Set the value to be default value before setting it with original value
@@ -201,21 +260,5 @@ public class ContainerItemComponentRepresentation {
         return properties;
     }
 
-    private static ParameterType getReturnType(final Method method) {
-        Class<?> returnType = method.getReturnType();
-        if (returnType == Date.class) {
-            return ParameterType.DATE;
-        } else if (returnType == Long.class || returnType == long.class 
-                || returnType == Integer.class || returnType == int.class 
-                || returnType == Short.class || returnType == short.class) {
-            return ParameterType.NUMBER;
-        } else if (returnType == Boolean.class || returnType == boolean.class) {
-            return ParameterType.BOOLEAN;
-        } else if (returnType == String.class) {
-            return ParameterType.STRING;
-        } else {
-            return ParameterType.UNKNOWN;
-        }
-    }
 
 }

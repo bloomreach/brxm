@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -26,8 +28,6 @@ import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
 
 public class ParametersInfoProcessorTest {
 
@@ -131,6 +131,46 @@ public class ParametersInfoProcessorTest {
         public int compare(final ContainerItemComponentPropertyRepresentation p1, final ContainerItemComponentPropertyRepresentation p2) {
             return p1.getName().compareTo(p2.getName());
         }
+
+    }
+    
+    /**
+     * Below, we have two broken combinations: 
+     * @Color annotation is not allowed to return a int
+     * @DocumentLink is not allowed to return a Date
+     */
+    static interface InvalidReturnTypeAnnotationCombinationInterface {
+        @Parameter(name="00-color", defaultValue = "blue")
+        @Color
+        int getColor();
+
+        @Parameter(name="01-documentLocation")
+        @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
+        Date getDocumentLocation();
+    }
+    @ParametersInfo(type=InvalidReturnTypeAnnotationCombinationInterface.class)
+    static class InvalidReturnTypeAnnotationCombination {
+    
+    }
+    
+    @Test
+    public void testInvalidReturnTypeAnnotationCombination() {
+        ParametersInfo parameterInfo = InvalidReturnTypeAnnotationCombination.class.getAnnotation(ParametersInfo.class);
+        // the getProperties below are expected to log some warnings
+        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
+        assertEquals(2, properties.size());
+
+        // sort properties alphabetically by name to ensure a deterministic order
+        Collections.sort(properties, new PropertyComparator());
+
+        // Since the @Color is not compatible with returnType int and @DocumentLink not with returnType Date, 
+        // we expext that ParameterType#getType(...) defaults back to getType 'numberfield' for 00-color
+        // and to datefield for 01-documentLocation
+        ContainerItemComponentPropertyRepresentation colorProperty = properties.get(0);
+        assertEquals("numberfield", colorProperty.getType());
+        
+        ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
+        assertEquals("datefield", docLocProperty.getType());
 
     }
 
