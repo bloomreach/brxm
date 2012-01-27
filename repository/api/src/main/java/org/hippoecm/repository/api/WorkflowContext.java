@@ -16,6 +16,7 @@
 package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 /**
  * A workflow context class is make available to a workflow implementation (see WorkflowImpl@getWorkflowContext) to obtain additional
@@ -75,9 +76,37 @@ public interface WorkflowContext {
 
     /**
      * 
-     * @return
+     * @return the invocation user identity
      */
     public String getUserIdentity();
+    
+    /**
+     * Obtains the current workflow invocation (user) session.
+     * Note that this doesn't have to be the first invocation session as workflows can be chained.
+     * <p>
+     *   <b>Do not use this session to make any changes as it might interfer with the workflow invocation state itself.</b>
+     * </p>
+     * @return the invocation user session
+     */
+    public Session getUserSession();
+
+    /**
+     * Obtain the internal workflow session which has 'root' privileges. This session is internally used by the
+     * workflow and used to persist workflow modifications.
+     * <p>
+     *  <b>Be very careful making changes through the internal workflow session: state consistency can easily broken that way.</b>
+     * </p>
+     * <p>
+     *  <b>Do not try to modify workflow managed Documents directly through the JCR API: that most certainly will lead to inconsistent state or even data corruption!</b>
+     * </p>
+     * <p>
+     *   <b>NEVER invoke session.save() yourself through the internal workflow session!</b><br/>
+     *   The workflow process hasn't been completed yet and doing intermediate saves easily can result in inconsistent (persisted) state.<br/>
+     *   The workflow process will do a session.save() (or revert) automatically at the end of the processing.
+     * </p> 
+     * @return the internal workflow session with higer(st) privileges: be aware of possible dangerous side-effects when used for modifications
+     */
+    public Session getInternalWorkflowSession();
 
     /**
      * 
