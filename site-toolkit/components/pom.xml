@@ -34,7 +34,6 @@
     <module>core</module>
     <module>caching</module>
     <module>jaxrs</module>
-    <module>behavioral</module>
   </modules>
   
 </project>
