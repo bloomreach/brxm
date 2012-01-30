@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="templatecomposer" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
-  <sv:property sv:name="variantsPath" sv:type="String">
-    <sv:value>/behavioral:configuration/behavioral:personas</sv:value>
-  </sv:property>
-</sv:node>
