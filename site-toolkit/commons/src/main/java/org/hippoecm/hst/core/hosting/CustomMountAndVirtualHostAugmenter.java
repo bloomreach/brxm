@@ -623,7 +623,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
         @Override
         public String toString() {
-            return "ComposerMount [virtualHost=" + virtualHost.getHostName() + ", alias=" + alias
+            return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", alias=" + alias
                     + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline
                     + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
                     + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
