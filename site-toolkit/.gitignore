@@ -56,14 +56,6 @@ components/behavioral/repository/.project
 components/behavioral/repository/.settings
 components/behavioral/repository/target
 components/behavioral/rest-api/target
-components/behavioral/rest-service/target/.plxarc
-components/behavioral/rest-service/target/classes
-components/behavioral/rest-service/target/generated-sources
-components/behavioral/rest-service/target/hst-behavioral-rest-service-2.25.01-SNAPSHOT-sources.jar
-components/behavioral/rest-service/target/hst-behavioral-rest-service-2.25.01-SNAPSHOT.jar
-components/behavioral/rest-service/target/maven-archiver
-components/behavioral/rest-service/target/maven-shared-archive-resources
-components/behavioral/rest-service/target/test-classes
 components/behavioral/target
 components/caching/.classpath
 components/caching/.project
