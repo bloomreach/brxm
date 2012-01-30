@@ -171,7 +171,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
     }
 
     static void reverse(String[] s) {
-        List l = Arrays.asList(s);
+        List<String> l = Arrays.asList(s);
         Collections.reverse(l);
     }
 
