@@ -87,7 +87,7 @@ public class JcrFieldValidator implements ITypeValidator {
         Set<Violation> violations = new HashSet<Violation>();
         Set<String> validators = field.getValidators();
         boolean required = validators.contains("required");
-        if ((required || fieldType.isNode() || !validatorService.isEmpty() || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || (validatorService!=null&& !validatorService.isEmpty()) || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
                         || (!fieldType.isNode() && (htmlValidator != null || validators.contains("non-empty")))) {
