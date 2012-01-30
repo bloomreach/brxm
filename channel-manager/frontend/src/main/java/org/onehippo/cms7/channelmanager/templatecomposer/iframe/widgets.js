@@ -783,9 +783,10 @@
             } else {
                 var id = this.element.getAttribute('id');
                 var variant = this.el.attr(HST.ATTR.VARIANT);
-                sendMessage({elementId: id, variant: variant}, 'onclick');
+                var inherited = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.INHERITED));
+                sendMessage({elementId: id, variant: variant, inherited: inherited}, 'onclick');
             }
-        },
+        },               
 
         onDragStart : function(event, ui) {
             $(this.element).addClass('hst-item-ondrag');

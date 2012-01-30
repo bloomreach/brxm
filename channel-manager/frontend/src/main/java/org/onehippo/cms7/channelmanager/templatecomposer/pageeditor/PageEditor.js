@@ -314,8 +314,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.enableUI(pageContext);
         }, this);
 
-        this.on('selectItem', function(record, variant) {
-            if (record.get('type') === HST.CONTAINERITEM) {
+        this.on('selectItem', function(record, variant, inherited) {
+            if (record.get('type') === HST.CONTAINERITEM && inherited !== true) {
                 this.showProperties(record, variant);
             }
         }, this);

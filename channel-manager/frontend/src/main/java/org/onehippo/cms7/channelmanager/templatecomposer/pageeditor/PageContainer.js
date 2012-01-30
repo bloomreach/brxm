@@ -436,7 +436,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     _onClick : function(data) {
         var id = data.elementId;
         var variant = data.variant;
-
+        var inherited = data.inherited;
         var record = this.pageContext.stores.pageModel.getById(id);
 
         if (!record) {
@@ -447,7 +447,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         if (this.selectedRecord !== record) {
             this.sendFrameMessage({id: record.data.id}, 'select');
             this.selectedRecord = record;
-            this.fireEvent('selectItem', record, variant);
+            this.fireEvent('selectItem', record, variant, inherited);
         }
     },
 
