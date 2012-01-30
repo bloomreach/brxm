@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2012 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.frontend.editor.validator.plugins;
 
 import org.apache.wicket.Session;
@@ -26,6 +41,7 @@ abstract public class AbstractValidatorPlugin extends Plugin implements IValidat
     private static Logger log = LoggerFactory.getLogger(AbstractValidatorPlugin.class);
 
     private final String name;
+    private final static String EMPTY = "";
 
     public AbstractValidatorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -42,7 +58,11 @@ abstract public class AbstractValidatorPlugin extends Plugin implements IValidat
     }
 
     protected String translateKey(String key) {
-        return getString(getCriteria(key));
+        String translated = getString(getCriteria(key));
+        if(translated==null){
+          return EMPTY;
+        }
+        return translated;
     }
 
     protected Map<String, String> getCriteria(String key) {
