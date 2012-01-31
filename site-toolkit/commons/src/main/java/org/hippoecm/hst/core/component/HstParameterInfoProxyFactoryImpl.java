@@ -29,7 +29,7 @@ import org.hippoecm.hst.site.HstServices;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
 
-    private static final Logger log = HstServices.getLogger(HstParameterInfoProxyFactoryImpl.class.getName());
+   // private static final Logger log = HstServices.getLogger(HstParameterInfoProxyFactoryImpl.class.getName());
 
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
@@ -113,9 +113,9 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                 try {
                     return converter.convert(parameterValue, returnType);
                 } catch (HstParameterValueConversionException e) {
-                    log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
+                  //  log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
                     if(defaultValue == null) {
-                        log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ " and there is no default value configured");
+                  //      log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ " and there is no default value configured");
                         return null;
                     } else {
                         // if default value is incorrect, the runtime exception HstParameterValueConversionException is just thrown
