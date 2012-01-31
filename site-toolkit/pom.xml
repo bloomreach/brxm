@@ -83,7 +83,7 @@
     <freemarker.version>2.3.16</freemarker.version>
     
     <spring.version>3.0.4.RELEASE</spring.version>
-    <aspectj.version>1.6.11</aspectj.version>
+    <aspectj.version>1.6.9</aspectj.version>
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
