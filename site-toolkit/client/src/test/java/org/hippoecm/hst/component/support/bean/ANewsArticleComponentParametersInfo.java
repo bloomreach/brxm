@@ -17,7 +17,8 @@ package org.hippoecm.hst.component.support.bean;
 
 import java.awt.Color;
 
-import org.hippoecm.hst.configuration.components.Parameter;
+import org.hippoecm.hst.core.parameters.Parameter;
+
 
 public interface ANewsArticleComponentParametersInfo {
     

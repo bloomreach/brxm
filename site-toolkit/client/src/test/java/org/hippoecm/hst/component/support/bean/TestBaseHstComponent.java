@@ -17,6 +17,7 @@ package org.hippoecm.hst.component.support.bean;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +33,7 @@ import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
@@ -65,6 +67,8 @@ public class TestBaseHstComponent {
         replay(componentConfig);
         
         requestContext = createNiceMock(HstRequestContext.class);
+        expect(requestContext.getParameterInfoProxyFactory()).andReturn(new HstParameterInfoProxyFactoryImpl()).anyTimes();
+        
         replay(requestContext);
     }
     
@@ -161,6 +165,7 @@ public class TestBaseHstComponent {
         MockHstRequest hstRequest = new MockHstRequest();
         // set dummy requestcontext
         hstRequest.setRequestContext(requestContext);
+        
         
         ANewsArticleComponentParametersInfo paramsInfo = component.getParametersInfo(hstRequest);
         assertNotNull(paramsInfo);

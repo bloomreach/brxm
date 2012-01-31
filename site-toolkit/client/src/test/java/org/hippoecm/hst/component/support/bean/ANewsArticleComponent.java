@@ -16,7 +16,7 @@
 package org.hippoecm.hst.component.support.bean;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.configuration.components.ParametersInfo;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 
 @ParametersInfo(type=ANewsArticleComponentParametersInfo.class)
 public class ANewsArticleComponent extends BaseHstComponent {
