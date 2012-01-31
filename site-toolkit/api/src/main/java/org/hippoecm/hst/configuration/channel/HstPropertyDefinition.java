@@ -36,6 +36,10 @@ public interface HstPropertyDefinition {
 
     List<Annotation> getAnnotations();
 
+    /**
+     * @param annotationClass the annotationClass to check
+     * @return Returns the annotation T if present on the {@link HstPropertyDefinition} and returns <code>null</code> if not present
+     */
     <T extends Annotation> T getAnnotation(Class<T> annotationClass);
 
 }
