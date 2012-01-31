@@ -91,7 +91,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 Thread.currentThread().setContextClassLoader(sessionClassloader);
             }
             
-            lazySession = (Session) factory.createInvokerProxy(sessionClassloader, invoker, new Class [] { LazySession.class, Serializable.class, HttpSessionBindingListener.class });
+            lazySession = (Session) factory.createInvokerProxy(sessionClassloader, invoker, new Class[] {
+                    LazySession.class, Serializable.class, HttpSessionBindingListener.class });
         } finally {
             if (sessionClassloader != currentClassloader) {
                 Thread.currentThread().setContextClassLoader(currentClassloader);
