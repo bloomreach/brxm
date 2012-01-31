@@ -31,11 +31,6 @@ public class ChannelInfoClassProcessor {
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
                 HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
                 properties.add(prop);
-            } else if (method.isAnnotationPresent(org.hippoecm.hst.configuration.components.Parameter.class)) {
-                // old style annotations
-                org.hippoecm.hst.configuration.components.Parameter oldPropAnnotation = method.getAnnotation(org.hippoecm.hst.configuration.components.Parameter.class);
-                HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(oldPropAnnotation, method.getReturnType(), method.getAnnotations());
-                properties.add(prop);
             }
         }
         return properties;

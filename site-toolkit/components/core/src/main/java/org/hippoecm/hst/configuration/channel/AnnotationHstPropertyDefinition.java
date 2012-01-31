@@ -32,11 +32,6 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
         init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
     }
 
-    public AnnotationHstPropertyDefinition(org.hippoecm.hst.configuration.components.Parameter propAnnotation, Class<?> returnType, Annotation[] annotations) {
-        super(propAnnotation.name());
-        init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
-    }
-
     private void init(Annotation propAnnotation,Class<?> returnType, Annotation[] annotations, boolean required, String defaultValue) {
         type = getHstType(returnType);
         this.required = required;

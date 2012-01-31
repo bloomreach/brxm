@@ -10,8 +10,6 @@ api/src/main/java/org/hippoecm/hst/configuration/components/EmptyPropertyEditor.
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentInfo.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfiguration.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/configuration/components/Parameter.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/ParametersInfo.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/MatchException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/Mount.java -text svneol=unset#text/plain
