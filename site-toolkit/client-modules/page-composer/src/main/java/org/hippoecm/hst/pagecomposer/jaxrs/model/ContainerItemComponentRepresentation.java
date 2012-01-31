@@ -212,7 +212,7 @@ public class ContainerItemComponentRepresentation {
             try {
                 resourceBundle = ResourceBundle.getBundle(parameterInfo.type().getName(), locale);
             } catch (MissingResourceException missingResourceException) {
-                log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{parameterInfo.type().getName(), locale});
+                log.debug("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{parameterInfo.type().getName(), locale});
             }
         }
 
