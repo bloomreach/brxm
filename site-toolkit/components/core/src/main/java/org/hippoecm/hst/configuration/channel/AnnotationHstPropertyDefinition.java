@@ -54,7 +54,6 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
     @SuppressWarnings("unchecked")
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         for (Annotation annotation : annotations) {
-            Class<? extends Annotation> type = annotation.annotationType();
             if (annotation.annotationType().equals(annotationClass)) {
                 return (T)annotation;
             }
@@ -62,7 +61,7 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
         return null;
     }
 
-    private static HstValueType getHstType(Class type) {
+    private static HstValueType getHstType(Class<?> type) {
         if (type == String.class) {
             return HstValueType.STRING;
         } else if (type == Boolean.class || type == boolean.class) {
