@@ -46,11 +46,9 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  */
 public class GenericHstComponent implements HstComponent {
     
-    private ServletContext servletContext;
     private ComponentConfiguration componentConfig;
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
-        this.servletContext = servletContext;
         this.componentConfig = componentConfig;
     }
     
