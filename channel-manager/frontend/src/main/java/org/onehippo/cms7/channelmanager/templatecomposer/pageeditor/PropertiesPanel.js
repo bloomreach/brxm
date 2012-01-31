@@ -89,12 +89,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             this.relayEvents(form, ['cancel']);
             this.add(form);
         }
-        this.setActiveTab(0);
     },
     
-    load: function() {
+    load: function(variant) {
         this.removeAll();
         this.initTabs();
+        this.selectVariant(variant);
         var self = this;
         this.future.when(function() {
             self.items.each(function(item) { item.load(); }, self);
@@ -189,7 +189,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             method: 'POST',
             success: function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant);
-                Ext.getCmp('componentPropertiesPanel').load();
+                Ext.getCmp('componentPropertiesPanel').load(this.variant);
             }.bind(this)
         });
     },
