@@ -92,15 +92,15 @@ public class CXFJaxrsService extends AbstractJaxrsService {
         }
         
         if (inFaultInterceptors != null && !inFaultInterceptors.isEmpty()) {
-            bus.getInInterceptors().addAll(inFaultInterceptors);
+            bus.getInFaultInterceptors().addAll(inFaultInterceptors);
         }
         
         if (outInterceptors != null && !outInterceptors.isEmpty()) {
-            bus.getInInterceptors().addAll(outInterceptors);
+            bus.getOutInterceptors().addAll(outInterceptors);
         }
         
         if (outFaultInterceptors != null && !outFaultInterceptors.isEmpty()) {
-            bus.getInInterceptors().addAll(outFaultInterceptors);
+            bus.getOutFaultInterceptors().addAll(outFaultInterceptors);
         }
         
         return bus;
