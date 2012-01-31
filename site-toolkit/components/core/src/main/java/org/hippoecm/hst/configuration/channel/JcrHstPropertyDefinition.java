@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.lang.annotation.Annotation;
+
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.hst.core.parameters.HstValueType;
 
@@ -27,8 +28,6 @@ public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinitio
 
     public JcrHstPropertyDefinition(Property prop, boolean isPrototype) throws RepositoryException {
         super(prop.getName());
-        PropertyDefinition pd = prop.getDefinition();
-
         type = getHstType(prop.getType());
         if (isPrototype) {
             Value value = prop.getValue();
@@ -53,6 +52,11 @@ public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinitio
             default:
                 throw new RepositoryException();
         }
+    }
+    
+    @Override
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        return null;
     }
 
 }

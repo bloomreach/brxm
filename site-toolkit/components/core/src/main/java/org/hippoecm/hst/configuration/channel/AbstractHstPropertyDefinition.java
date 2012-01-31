@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.hippoecm.hst.core.parameters.HstValueType;
 
-public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
+public abstract class AbstractHstPropertyDefinition implements HstPropertyDefinition {
     protected final String name;
 
     protected HstValueType type;
@@ -61,8 +61,4 @@ public class AbstractHstPropertyDefinition implements HstPropertyDefinition {
         return Collections.emptyList();
     }
 
-    @Override
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return null;
-    }
 }
