@@ -28,8 +28,8 @@ import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
-
-   // private static final Logger log = HstServices.getLogger(HstParameterInfoProxyFactoryImpl.class.getName());
+    
+    private static final String LOGGER_NAME = HstParameterInfoProxyFactoryImpl.class.getName();
 
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
@@ -57,11 +57,11 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * @param parameterValueConverter
      * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
      */
-    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
+    private InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
         return new ParameterInfoInvocationHandler(componentConfig, request, converter);
     }
 
-    protected static class ParameterInfoInvocationHandler implements InvocationHandler {
+    private static class ParameterInfoInvocationHandler implements InvocationHandler {
 
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
@@ -76,6 +76,9 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
         @Override
         public Object invoke(Object object, Method method, Object[] args) throws Throwable {
+            
+            final Logger log = HstServices.getLogger(LOGGER_NAME);
+            
             if (isSetter(method, args)) {
                 throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
             }
@@ -113,9 +116,9 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
                 try {
                     return converter.convert(parameterValue, returnType);
                 } catch (HstParameterValueConversionException e) {
-                  //  log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
+                    log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ ".. Try to return default value", e.toString());
                     if(defaultValue == null) {
-                  //      log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ " and there is no default value configured");
+                        log.warn("Could not convert '"+parameterValue+"' to returnType "+returnType.getName()+ " and there is no default value configured");
                         return null;
                     } else {
                         // if default value is incorrect, the runtime exception HstParameterValueConversionException is just thrown
@@ -129,7 +132,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             }
         }
 
-        public String getParameterValue (final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+        private String getParameterValue (final String parameterName, final ComponentConfiguration config, final HstRequest req) {
             String prefixedParameterName = getPrefixedParameterName(parameterName, config, req);
             String parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
             if ((parameterValue == null || parameterValue.isEmpty()) && !parameterName.equals(prefixedParameterName)) {
@@ -148,12 +151,12 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          * @param req the <code>HstRequest</code> 
          * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
          */
-        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
+        private String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
             return parameterName;
         }
     }
     
-    public static final boolean isGetter(final Method method, final Object[] args) {
+    private static final boolean isGetter(final Method method, final Object[] args) {
         if (args == null || args.length == 0) {
             final String methodName = method.getName();
             return methodName.startsWith("get") || methodName.startsWith("is");
@@ -161,7 +164,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         return false;
     }
 
-    public static final boolean isSetter(final Method method, final Object[] args) {
+    private static final boolean isSetter(final Method method, final Object[] args) {
         return (args != null && args.length == 1) && method.getName().startsWith("set");
     }
 
