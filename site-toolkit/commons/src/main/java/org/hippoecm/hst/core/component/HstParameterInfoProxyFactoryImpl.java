@@ -57,11 +57,14 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * @param parameterValueConverter
      * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
      */
-    private InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
+    protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
         return new ParameterInfoInvocationHandler(componentConfig, request, converter);
     }
 
-    private static class ParameterInfoInvocationHandler implements InvocationHandler {
+    /**
+     * This class has visibility 'protected' to enable reuse.
+     */
+    protected static class ParameterInfoInvocationHandler implements InvocationHandler {
 
         private final ComponentConfiguration componentConfig;
         private final HstRequest request;
@@ -151,7 +154,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          * @param req the <code>HstRequest</code> 
          * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
          */
-        private String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
+        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
             return parameterName;
         }
     }
