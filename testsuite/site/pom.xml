@@ -135,16 +135,6 @@
       <version>1.4.16</version>
     </dependency>
     
-    <dependency>
-      <artifactId>hst-behavioral-api</artifactId>
-      <groupId>org.onehippo.cms7.hst</groupId>
-    </dependency>
-    
-    <dependency>
-      <artifactId>hst-behavioral-engine</artifactId>
-      <groupId>org.onehippo.cms7.hst</groupId>
-    </dependency>
-
   </dependencies>
 
   <build>
