@@ -42,7 +42,23 @@
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
     <property name="sessionLiveCheckInterval" value="60000"/>
     <property name="loggerFactory" ref="org.hippoecm.hst.logging.LoggerFactory"/>
-    <property name="eventListenerItems">
+    <property name="eventListenerItems" ref="jcrObservationEventListenerItems" />
+  </bean>
+
+  <bean id="jcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+    <property name="targetMethod" value="union" />
+    <property name="arguments">
+      <list>
+        <ref bean="defaultJcrObservationEventListenerItems" />
+        <ref bean="customJcrObservationEventListenerItems" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- Default jcr observation event listener items. -->
+  <bean id="defaultJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
+    <property name="sourceList"> 
       <list>
 
         <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
@@ -160,8 +176,17 @@
             </bean>
           </property>
         </bean>
-        
+
       </list>
-    </property>
+    </property> 
   </bean>
+
+  <!-- Default empty list of custom jcr observation event listener items to be overriden. -->
+  <bean id="customJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
+    <property name="sourceList"> 
+      <list>
+      </list>
+    </property> 
+  </bean>
+
 </beans>
