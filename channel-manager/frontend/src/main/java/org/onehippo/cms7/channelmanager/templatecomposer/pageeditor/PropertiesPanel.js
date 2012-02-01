@@ -40,21 +40,26 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     initComponent: function() {
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
         this.future = new Hippo.Future(function(success, fail) {
-            var variantsStore = new Ext.data.JsonStore({
-                autoLoad: true,
-                method: 'GET',
-                root: 'data',
-                fields:['id', 'name', 'description'],
-                url: this.composerRestMountUrl +'/' + this.variantsUuid + './variants/?FORCE_CLIENT_HOST=true'
-            });
-            variantsStore.on('load', function (store, records, options) {
-                this.loadVariants(records);
+            if (this.variantsUuid) {
+                var variantsStore = new Ext.data.JsonStore({
+                    autoLoad: true,
+                    method: 'GET',
+                    root: 'data',
+                    fields:['id', 'name', 'description'],
+                    url: this.composerRestMountUrl +'/' + this.variantsUuid + './variants/?FORCE_CLIENT_HOST=true'
+                });
+                variantsStore.on('load', function (store, records, options) {
+                    this.loadVariants(records);
+                    success();
+                }, this);
+                variantsStore.on('exception', function(proxy, type, actions, options, response) {
+                    this.loadException(response);
+                    fail();
+                }, this);
+            } else {
+                this.variants = ['default'];
                 success();
-            }, this);
-            variantsStore.on('exception', function(proxy, type, actions, options, response) {
-                this.loadException(response);
-                fail();
-            }, this);
+            }
         }.createDelegate(this));
         this.on('tabchange', function(panel, tab) {
             if (tab) {
@@ -73,7 +78,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     loadException: function(response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only default variant will be available: ' + response.status + ':' + response.statusText); 
         this.variants = ['default'];
-        this.initTabs();
     },
 
     initTabs: function() {

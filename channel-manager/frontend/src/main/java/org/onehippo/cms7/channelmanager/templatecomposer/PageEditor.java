@@ -145,6 +145,8 @@ public class PageEditor extends ExtPanel {
             } catch (RepositoryException e) {
                 log.error("Failed to retrieve variants node " + variantsPath, e);
             }
+        } else {
+            log.info("Variants path not configured. Only default variant will be available.");
         }
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
