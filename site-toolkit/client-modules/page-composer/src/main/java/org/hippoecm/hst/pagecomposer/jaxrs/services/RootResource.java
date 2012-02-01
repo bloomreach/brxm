@@ -30,14 +30,10 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
     
-    private static Logger log = LoggerFactory.getLogger(RootResource.class);
-
     private String rootPath;
 
     public void setRootPath(final String rootPath) {
