@@ -53,10 +53,5 @@ public final class JcrHstPropertyDefinition extends AbstractHstPropertyDefinitio
                 throw new RepositoryException();
         }
     }
-    
-    @Override
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
-        return null;
-    }
 
 }

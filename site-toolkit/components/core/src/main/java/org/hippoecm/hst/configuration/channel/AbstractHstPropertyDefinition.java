@@ -61,4 +61,15 @@ public abstract class AbstractHstPropertyDefinition implements HstPropertyDefini
         return Collections.emptyList();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        for (Annotation annotation : getAnnotations()) {
+            if (annotation.annotationType().equals(annotationClass)) {
+                return (T)annotation;
+            }
+        }
+        return null;
+    }
+
 }
