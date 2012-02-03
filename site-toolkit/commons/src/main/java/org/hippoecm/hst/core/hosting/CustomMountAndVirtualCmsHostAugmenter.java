@@ -13,7 +13,7 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 */
-package org.hippoecm.hst.pagecomposer.configuration.model;
+package org.hippoecm.hst.core.hosting;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -51,217 +50,241 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAugmenter {
+public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAugmenter {
 
-    private static final Logger log = LoggerFactory.getLogger(ComposerMountAndVirtualHostAugmenter.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomMountAndVirtualCmsHostAugmenter.class);
 
-    private final static String DEFAULT_COMPOSER_MOUNT_NAME = "_rp";
-    private final static String DEFAULT_COMPOSER_MOUNT_NAMED_PIPELINE = "ComposerPipeline";
-    private final static String COMPOSER_MOUNT_TYPE = "composer";
-    private final static String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
+    private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
+
+    // as long as it is unique for the cms host
+    private static final String AUGMENTED_CMS_VIRTUAL_HOST_GROUP =
+            CustomMountAndVirtualCmsHostAugmenter.class.getName() + "-" + UUID.randomUUID();
 
     private String springConfiguredCmsLocation;
-    private String composerMountName = DEFAULT_COMPOSER_MOUNT_NAME;
-    private String composerMountNamedPipeline = DEFAULT_COMPOSER_MOUNT_NAMED_PIPELINE;
+    private String mountName;
+    private String mountType;
+    private String mountNamedPipeline;
     private String noopPipeline = DEFAULT_NOOP_NAMED_PIPELINE;
-  
+
     public void setSpringConfiguredCmsLocation(String springConfiguredCmsLocation) {
         // the deprecated way how a cmsLocation used to be set in spring configuration. It now should be configured on the hst:virtualhostgroup node
         this.springConfiguredCmsLocation = springConfiguredCmsLocation;
     }
 
-    public void setComposerMountName(String composerMountName) {
-        this.composerMountName = composerMountName;
+    public void setMountName(String mountName) {
+        this.mountName = mountName;
     }
 
-    public void setComposerMountNamedPipeline(String composerMountNamedPipeline) {
-        this.composerMountNamedPipeline = composerMountNamedPipeline;
+    public void setMountNamedPipeline(String mountNamedPipeline) {
+        this.mountNamedPipeline = mountNamedPipeline;
     }
-    
+
+    public void setMountType(final String mountType) {
+        this.mountType = mountType;
+    }
+
     public void setNoopPipeline(String noopPipeline) {
         this.noopPipeline = noopPipeline;
     }
 
-   
     /**
-     * Every virtual hostgroup that has a hst:cmslocation property defined we try to add the correct composerMount for.
+     * Every virtual hostgroup that has a hst:cmslocation property defined we try to add the correct mount for.
      * If there is no hst:cmslocation defined on the virtual hostgroup, then we check whether there is cmslocation define by
      * ContainerConfiguration#getString(ContainerConstants.CMS_LOCATION)  : This is a deprecated way to configure the cmslocation
      */
     @Override
     public void augment(HstManager manager) throws RepositoryNotAvailableException {
-            if(!(manager.getVirtualHosts() instanceof MutableVirtualHosts )) {
-                log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts. The VIEW / GOTO button in cms will not work", this.getClass().getName());
-                return;
-            }   
-            MutableVirtualHosts hosts = (MutableVirtualHosts) manager.getVirtualHosts();
-            
-            // first we try to find all the cmsLocations that need to be added.
-            // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured 
-            // on the hst:virtualhostgroup node, it is inherited in every virtualhost
-            Set<String> cmsLocations = new HashSet<String>();
-            for(Map<String, MutableVirtualHost> rootVirtualHosts : hosts.getRootVirtualHostsByGroup().values()) {
-                if(rootVirtualHosts.isEmpty()) {
-                    continue;
-                }
-                MutableVirtualHost host = rootVirtualHosts.values().iterator().next();
-                if(host.getCmsLocation() != null) {
-                    cmsLocations.add(host.getCmsLocation());
-                }
+        if (!validateState(manager)) {
+            return;
+        }
+        MutableVirtualHosts hosts = (MutableVirtualHosts) manager.getVirtualHosts();
+
+        // first we try to find all the cmsLocations that need to be added.
+        // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
+        // on the hst:virtualhostgroup node, it is inherited in every virtualhost
+        Set<String> cmsLocations = new HashSet<String>();
+        for (Map<String, MutableVirtualHost> rootVirtualHosts : hosts.getRootVirtualHostsByGroup().values()) {
+            if (rootVirtualHosts.isEmpty()) {
+                continue;
             }
-            
-            if(cmsLocations.isEmpty()) {
-                if(springConfiguredCmsLocation != null) {
-                    log.info("No cms locations configured on hst:hostgroup nodes. Use the cms location '{}' from Spring configuration", cmsLocations);
-                    cmsLocations.add(springConfiguredCmsLocation);
-                }
+            MutableVirtualHost host = rootVirtualHosts.values().iterator().next();
+            if (host.getCmsLocation() != null) {
+                cmsLocations.add(host.getCmsLocation());
             }
-            
-            
-            for(String cmsLocation : cmsLocations) {
-                try {
-                    URI uri = new URI(cmsLocation);
-                    String cmsComposerMountHostName = uri.getHost();
-                    
-                    // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
-                    String[] hostSegments = cmsComposerMountHostName.split("\\.");
-                    ArrayUtils.reverse(hostSegments);
-                    VirtualHost composerHost = null;
-                    // try to find the cmsRestHostName host. If not present, we add a complete new one to a unique new host group
-                    // It can map in multiple host groups to a 'partial' hostName, that does not contain a portMount with a rootMount.
-                    // Hence, we *only* count the composerHost if it also contains a portMount on port 0 or on the 
-                    // port of the cmsLocation AND a hst:root Mount at least in that p
-                    for(Map<String, MutableVirtualHost> rootVirtualHostMap :  hosts.getRootVirtualHostsByGroup().values()) {
-                        int i = 0;
-                        composerHost = null;
-                        while(i < hostSegments.length) {
-                            if (i == 0) {
-                                composerHost = rootVirtualHostMap.get(hostSegments[i]);
-                            } else {
-                                composerHost = composerHost.getChildHost(hostSegments[i]); 
-                            }
-                            if (composerHost == null) {
-                                // cmsRestHostName does not yet exist in this hostGroup
-                                break;
-                            }
-                            i++;
+        }
+
+        if (cmsLocations.isEmpty()) {
+            if (springConfiguredCmsLocation != null) {
+                log.info("No cms locations configured on hst:hostgroup nodes. Use the cms location '{}' from Spring configuration", cmsLocations);
+                cmsLocations.add(springConfiguredCmsLocation);
+            }
+        }
+
+        for (String cmsLocation : cmsLocations) {
+            try {
+                URI uri = new URI(cmsLocation);
+                String cmsCustomMountHostName = uri.getHost();
+
+                // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
+                String[] hostSegments = cmsCustomMountHostName.split("\\.");
+                reverse(hostSegments);
+                VirtualHost host = null;
+                // try to find the cmsRestHostName host. If not present, we add a complete new one to a unique new host group
+                // It can map in multiple host groups to a 'partial' hostName, that does not contain a portMount with a rootMount.
+                // Hence, we *only* count the host if it also contains a portMount on port 0 or on the
+                // port of the cmsLocation AND a hst:root Mount at least in that p
+                for (Map<String, MutableVirtualHost> rootVirtualHostMap : hosts.getRootVirtualHostsByGroup().values()) {
+                    int i = 0;
+                    host = null;
+                    while (i < hostSegments.length) {
+                        if (i == 0) {
+                            host = rootVirtualHostMap.get(hostSegments[i]);
+                        } else {
+                            host = host.getChildHost(hostSegments[i]);
                         }
-                        
-                        if(composerHost != null) {
-                            // We have found the correct composerHost. Now check whether also has portMount and that
-                            // portMount must contain a hstRoot
-                            PortMount portMount = null;
-                            int port = uri.getPort();
-                            if(port != 0) {
-                                portMount = composerHost.getPortMount(port);
-                            } 
-                            if(portMount == null) {
-                                // check default port 0
-                                portMount = composerHost.getPortMount(0);
-                            }
-                            
-                            if(portMount == null) {
-                                continue;
-                            }
-                            if(portMount.getRootMount() == null) {
-                                continue;
-                            }
-                            // we have a correct composerHost. Stop
+                        if (host == null) {
+                            // cmsRestHostName does not yet exist in this hostGroup
                             break;
                         }
+                        i++;
                     }
-                    
-                    if (composerHost == null) {
-                        // add the cmsRestHostName + mount
-                        VirtualHost newHost = new ComposerVirtualHost(hosts,hostSegments,cmsLocation, 0);
-                        // get the last one added 
-                        hosts.addVirtualHost((MutableVirtualHost)newHost);
-                        composerHost = newHost;
-                        while(!composerHost.getChildHosts().isEmpty()) {
-                            composerHost = composerHost.getChildHosts().get(0);
+
+                    if (host != null) {
+                        // We have found the correct host. Now check whether also has portMount and that
+                        // portMount must contain a hstRoot
+                        PortMount portMount = null;
+                        int port = uri.getPort();
+                        if (port != 0) {
+                            portMount = host.getPortMount(port);
                         }
-                    } 
-                    
-                    // now check whether to add a portMount
-                    // first check portMount of the cmsLocation. then a port agnostic PortMount with port 0
-                    PortMount portMount = null;
-                    int port = uri.getPort();
-                    if(port != 0) {
-                        portMount = composerHost.getPortMount(port);
-                    } 
-                    if(portMount == null) {
-                        // check default port 0
-                        portMount = composerHost.getPortMount(0);
-                    }
-                    
-                    if(portMount == null) {
-                        // add a port Mount with port equal to the configured port. If port is -1, we add the default 0 port
-                        if(port == -1) {
-                            portMount = new ComposerPortMount(composerHost, 0);
-                        } else {
-                            portMount = new ComposerPortMount(composerHost, port);
+                        if (portMount == null) {
+                            // check default port 0
+                            portMount = host.getPortMount(0);
                         }
-                        if(composerHost instanceof ComposerVirtualHost) {
-                            ((ComposerVirtualHost)composerHost).setPortMount((MutablePortMount)portMount);
-                        } else {
-                            ((MutableVirtualHost)composerHost).addPortMount((MutablePortMount)portMount);
-                        }
-                    }
-                    
-                    // now check the hst:root presence on the portMount. If not add a hst:root + composerMount 
-                    Mount rootMount = portMount.getRootMount();
-                    Mount composerMount = null;
-                    if (rootMount == null) {
-                        MutableMount rootMountPlusComposerMount = new ComposerMount(composerHost, noopPipeline);
-                        if (!(portMount instanceof MutablePortMount)) {
-                            log.error("Unable to add composer mount for '{}' because found portMount not of type MutablePortMount. The template composer " +
-                                    "will not work for hostGroup", cmsLocation);
+
+                        if (portMount == null) {
                             continue;
                         }
-                        ((MutablePortMount)portMount).setRootMount(rootMountPlusComposerMount);
-                    } else {
-                        composerMount = rootMount.getChildMount(composerMountName);
-                        if (composerMount == null) {
-                            if (!(rootMount instanceof MutableMount)) {
-                                log.error("Unable to add composer mount for '{}' because found rootMount not of type MutableMount. The template composer " +
-                                        "will not work for hostGroup ", cmsLocation);
-                                continue;
-                            }
-                            composerMount = new ComposerMount(composerMountName, composerMountNamedPipeline, rootMount, composerHost);
-                            ((MutableMount)rootMount).addMount((MutableMount)composerMount);
-                        } else {
-                            log.info("There is an explicit composer Mount '{}' for hostGroup . This mount can be removed from configuration" +
-                                    " as it will be auto-created by the HST",composerMountName);
-                            continue;  
+                        if (portMount.getRootMount() == null) {
+                            continue;
                         }
+                        // we have a correct host. Stop
+                        break;
                     }
-                    if(composerMount != null) {
-                        log.info("Succesfull automatically created composer mount for cmsLocation '{}'. Created Mount = {}", cmsLocation, composerMount);
-                    }
-                    
-                } catch (URISyntaxException e) {
-                    log.warn("'{}' is an invalid cmsLocation. The template composer " +
-                            "won't be available for hosts in the hostGroup.", cmsLocation);
-                    continue;
-                } catch (ServiceException e) {
-                    log.error("Unable to add composer mount. The template composer will not work for hostGroup", e);
-                } catch (IllegalArgumentException e) {
-                    log.warn("Unable to add composer mount. The template composer will not work for hostGroup");
                 }
+
+                if (host == null) {
+                    // add the hostName + mount
+                    VirtualHost newHost = new CustomVirtualHost(hosts, hostSegments, cmsLocation, 0);
+                    // get the last one added
+                    hosts.addVirtualHost((MutableVirtualHost) newHost);
+                    host = newHost;
+                    while (!host.getChildHosts().isEmpty()) {
+                        host = host.getChildHosts().get(0);
+                    }
+                }
+
+                // now check whether to add a portMount
+                // first check portMount of the cmsLocation. then a port agnostic PortMount with port 0
+                PortMount portMount = null;
+                int port = uri.getPort();
+                if (port != 0) {
+                    portMount = host.getPortMount(port);
+                }
+                if (portMount == null) {
+                    // check default port 0
+                    portMount = host.getPortMount(0);
+                }
+
+                if (portMount == null) {
+                    // add a port Mount with port equal to the configured port. If port is -1, we add the default 0 port
+                    if (port == -1) {
+                        portMount = new CustomPortMount(0);
+                    } else {
+                        portMount = new CustomPortMount(port);
+                    }
+                    if (host instanceof CustomVirtualHost) {
+                        ((CustomVirtualHost) host).setPortMount((MutablePortMount) portMount);
+                    } else {
+                        ((MutableVirtualHost) host).addPortMount((MutablePortMount) portMount);
+                    }
+                }
+
+                // now check the hst:root presence on the portMount. If not add a hst:root + custom mount
+                Mount rootMount = portMount.getRootMount();
+                Mount customMount = null;
+                if (rootMount == null) {
+                    MutableMount rootMountPlusCustomMount = new CustomMount(host, mountType, noopPipeline);
+                    if (!(portMount instanceof MutablePortMount)) {
+                        log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' because found portMount not of type MutablePortMount.", mountName, cmsLocation);
+                        continue;
+                    }
+                    ((MutablePortMount) portMount).setRootMount(rootMountPlusCustomMount);
+                } else {
+                    customMount = rootMount.getChildMount(mountName);
+                    if (customMount == null) {
+                        if (!(rootMount instanceof MutableMount)) {
+                            log.error("Unable to add custom mount '{}' to the host group with CMS location '{}' because found rootMount not of type MutableMount.", mountName, cmsLocation);
+                            continue;
+                        }
+                        customMount = new CustomMount(mountName, mountType, mountNamedPipeline, rootMount, host);
+                        ((MutableMount) rootMount).addMount((MutableMount) customMount);
+                    } else {
+                        log.info("There is an explicit custom Mount '{}' for CMS location '{}'. This mount can be removed from configuration" +
+                                " as it will be auto-created by the HST", mountName, cmsLocation);
+                        continue;
+                    }
+                }
+                if (customMount != null) {
+                    log.info("Successfully automatically created custom mount for cmsLocation '{}'. Created Mount = {}", cmsLocation, customMount);
+                }
+
+            } catch (URISyntaxException e) {
+                log.warn("'{}' is an invalid cmsLocation. The mount '{}' won't be available for hosts in that hostGroup.",
+                        cmsLocation, mountName);
+                continue;
+            } catch (ServiceException e) {
+                log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
+            } catch (IllegalArgumentException e) {
+                log.warn("Unable to add custom cms host mount '" + mountName + "'. Illegal argument: " + e.getMessage());
             }
-            
+        }
     }
-    
-    private class ComposerVirtualHost implements MutableVirtualHost {
+
+    private boolean validateState(final HstManager manager) throws RepositoryNotAvailableException {
+        if (!(manager.getVirtualHosts() instanceof MutableVirtualHosts)) {
+            log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts", this.getClass().getName());
+            return false;
+        }
+        if (mountName == null || mountName.isEmpty()) {
+            log.error("No mount name set for {}", this.getClass().getName());
+            return false;
+        }
+        if (mountType == null || mountType.isEmpty()) {
+            log.error("No mount type set for {}", this.getClass().getName());
+            return false;
+        }
+        if (mountNamedPipeline == null || mountNamedPipeline.isEmpty()) {
+            log.error("No mount named pipeline set for {}", this.getClass().getName());
+            return false;
+        }
+        return true;
+    }
+
+    static void reverse(String[] s) {
+        List<String> l = Arrays.asList(s);
+        Collections.reverse(l);
+    }
+
+    private class CustomVirtualHost implements MutableVirtualHost {
         private VirtualHosts virtualHosts;
         private Map<String,VirtualHost> childs = new HashMap<String, VirtualHost>();
         private String name;
         private String hostName;
         private MutablePortMount portMount;
         private String cmsLocation;
-        private final String hostGroupName;
 
-        private ComposerVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position) throws ServiceException {
+        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position) throws ServiceException {
             this.virtualHosts = virtualHosts;
             name = hostSegments[position];
             this.cmsLocation = cmsLocation;
@@ -278,9 +301,8 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
             if(position == hostSegments.length) {
                 // done with adding hosts 
             } else {
-                 childs.put(hostSegments[position], new ComposerVirtualHost(virtualHosts, hostSegments, cmsLocation,  position));
+                 childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation,  position));
             }
-            hostGroupName = ComposerMountAndVirtualHostAugmenter.class.getName() + "-" + UUID.randomUUID();
         }
         
         @Override
@@ -336,8 +358,7 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String getHostGroupName() {
-            // as long as it is unique for the cms host
-            return hostGroupName;
+            return AUGMENTED_CMS_VIRTUAL_HOST_GROUP;
         }
 
 
@@ -399,17 +420,17 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String toString() {
-            return "ComposerVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + hostGroupName + "]";
+            return "CustomVirtualHost [name=" + name + ", hostName=" + hostName + "]";
         }
 
     }
     
-    private class ComposerPortMount implements MutablePortMount {
+    private class CustomPortMount implements MutablePortMount {
 
         private int port;
         private Mount rootMount;
         
-        private ComposerPortMount(VirtualHost virtualHost, int port) throws ServiceException {
+        private CustomPortMount(int port) throws ServiceException {
             this.port = port;
         }
         
@@ -430,14 +451,14 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String toString() {
-            return "ComposerPortMount [port=" + port + "]";
+            return "CustomPortMount [port=" + port + "]";
         }
         
     }
 
     private final static String fakeNonExistingPath = "/fakePath/"+UUID.randomUUID().toString();
     
-    private class ComposerMount implements MutableMount {
+    private class CustomMount implements MutableMount {
 
         private VirtualHost virtualHost;
         private Mount parent;
@@ -452,12 +473,12 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
         private List<String> types;
         
         /**
-         * Creates a hst:root Mount + the child composerMount
+         * Creates a hst:root Mount + the child custom mount
          * @param virtualHost
          * @param namedPipeline 
-         * @throws ServiceException
+         * @throws org.hippoecm.hst.service.ServiceException
          */
-        private ComposerMount(VirtualHost virtualHost, String namedPipeline) throws ServiceException {
+        private CustomMount(VirtualHost virtualHost, String type, String namedPipeline) throws ServiceException {
             this.virtualHost = virtualHost;
             name = HstNodeTypes.MOUNT_HST_ROOTNAME;
             mountPath = "";
@@ -465,28 +486,27 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
             types = Arrays.asList(type);
             this.namedPipeline = namedPipeline;
             // the hst:root mount has a namedPipeline equal to null and can never be used
-            // TODO make _cmsrest and CmsRestPipeline configurable
-            Mount composerRootMount = new ComposerMount(composerMountName , composerMountNamedPipeline , this, virtualHost);
-            childs.put(composerRootMount.getName(), composerRootMount);
+            Mount customRootMount = new CustomMount(mountName, type, mountNamedPipeline, this, virtualHost);
+            childs.put(customRootMount.getName(), customRootMount);
             ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(this);
         }
-        
+
         /**
-         * Creates only the composerMount
+         * Creates only the custom mount
          * @param name
          * @param namedPipeline
          * @param parent
          * @param virtualHost
-         * @throws ServiceException
+         * @throws org.hippoecm.hst.service.ServiceException
          */
-        public ComposerMount(String name, String namedPipeline, Mount parent, VirtualHost virtualHost) throws ServiceException {
+        public CustomMount(String name, String type, String namedPipeline, Mount parent, VirtualHost virtualHost) throws ServiceException {
            this.name = name;
            this.namedPipeline = namedPipeline;
            this.parent = parent;
-           type = COMPOSER_MOUNT_TYPE;
+           this.type = type;
            types = Arrays.asList(type);
            this.virtualHost = virtualHost;
-            mountPath = parent.getMountPath() + "/" + name;
+           mountPath = parent.getMountPath() + "/" + name;
         }
 
         @Override
@@ -719,7 +739,7 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
 
         @Override
         public String toString() {
-            return "ComposerMount [virtualHost=" + virtualHost.getHostName() + ", parent=" + parent.getName() + ", alias=" + alias
+            return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", parent=" + parent.getName() + ", alias=" + alias
                     + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline
                     + ", childs=" + childs + ", mountPath=" + mountPath + ", types=" + types + ", getAlias()="
                     + getAlias() + ", isMapped()=" + isMapped() + ", isPortInUrl()=" + isPortInUrl() + ", isSite()="
@@ -736,8 +756,6 @@ public class ComposerMountAndVirtualHostAugmenter implements HstConfigurationAug
             }
             return null;
         }
-        
     }
 
-    
 }
