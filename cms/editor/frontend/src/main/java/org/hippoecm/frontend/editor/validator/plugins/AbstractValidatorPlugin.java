@@ -19,7 +19,7 @@ import org.apache.wicket.Session;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.IStringResourceProvider;
-import org.hippoecm.frontend.editor.validator.AdvancedValidatorService;
+import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,7 +46,7 @@ abstract public class AbstractValidatorPlugin extends Plugin implements IValidat
     public AbstractValidatorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
-        context.registerService(this, AdvancedValidatorService.VALIDATOR_SERVICE_ID);
+        context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
     }
 
     public String getName() {

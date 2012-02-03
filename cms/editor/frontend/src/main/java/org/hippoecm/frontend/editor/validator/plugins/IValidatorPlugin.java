@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -26,10 +27,11 @@ import java.util.Set;
 /**
  * @version $Id$
  */
-public interface IValidatorPlugin {
+public interface IValidatorPlugin extends IClusterable{
 
-    public void preValidation(JcrFieldValidator type) throws Exception;
+    public void preValidation(JcrFieldValidator type) throws ValidationException;
 
     public Set<Violation> validate(JcrFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException;
 
+    public String getName();
 }

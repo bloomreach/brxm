@@ -25,11 +25,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="advanced.validator.service.id" sv:type="String">
-      <sv:value>advanced.validator.service</sv:value>
+    <sv:property sv:name="field.validator.service.id" sv:type="String">
+      <sv:value>field.validator.service</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.validator.AdvancedValidatorService</sv:value>
+      <sv:value>org.hippoecm.frontend.editor.validator.ValidatorService</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="non-empty">
@@ -48,17 +48,6 @@
       <sv:value>org.hippoecm.frontend.editor.validator.plugins.EscapedValidatorPlugin</sv:value>
     </sv:property>
   </sv:node>
-  <!-- <sv:node sv:name="regex">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>nl.bibliotheek.dcr.advanced.validator.plugin.RegExValidatorPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="regex_pattern" sv:type="String">
-      <sv:value>^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$</sv:value>
-    </sv:property>
-  </sv:node>-->
   <sv:node sv:name="email">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

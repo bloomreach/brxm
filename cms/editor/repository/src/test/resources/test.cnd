@@ -56,6 +56,7 @@
 - test:nonempty (string)
 - test:mandatory (string)
 - test:escaped (string)
+- test:email (string)
 - test:multiple (string) multiple
 - test:autocreated (string) = 'auto' autocreated 
 - test:protected (string) protected

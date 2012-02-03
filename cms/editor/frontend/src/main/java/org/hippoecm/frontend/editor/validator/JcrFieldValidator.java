@@ -16,7 +16,11 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.*;
+import org.hippoecm.frontend.model.AbstractProvider;
+import org.hippoecm.frontend.model.ChildNodeProvider;
+import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -29,7 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class JcrFieldValidator implements ITypeValidator {
     @SuppressWarnings("unused")
@@ -45,7 +51,7 @@ public class JcrFieldValidator implements ITypeValidator {
     private ITypeDescriptor fieldType;
     private ITypeValidator typeValidator;
     private HtmlValidator htmlValidator;
-    private AdvancedValidatorService validatorService;
+    private ValidatorService validatorService;
 
     public JcrFieldValidator(IFieldDescriptor field, JcrTypeValidator container) throws StoreException {
         this.field = field;
@@ -87,7 +93,7 @@ public class JcrFieldValidator implements ITypeValidator {
         Set<Violation> violations = new HashSet<Violation>();
         Set<String> validators = field.getValidators();
         boolean required = validators.contains("required");
-        if ((required || fieldType.isNode() || (validatorService!=null&& !validatorService.isEmpty()) || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || (validatorService != null && !validatorService.isEmpty()) || htmlValidator != null) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
                         || (!fieldType.isNode() && (htmlValidator != null || validators.contains("non-empty")))) {
@@ -188,17 +194,20 @@ public class JcrFieldValidator implements ITypeValidator {
 
     public Violation newValueViolation(IModel childModel, String key) throws ValidationException {
         String name = field.getPath();
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) childModel;
-        if ("*".equals(name)) {
-            try {
-                name = valueModel.getJcrPropertymodel().getProperty().getName();
-            } catch (RepositoryException e) {
-                throw new ValidationException("Could not resolve path for invalid value", e);
+        int index = 0;
+        if (childModel instanceof JcrPropertyValueModel) {
+            JcrPropertyValueModel valueModel = (JcrPropertyValueModel) childModel;
+            if ("*".equals(name)) {
+                try {
+                    name = valueModel.getJcrPropertymodel().getProperty().getName();
+                } catch (RepositoryException e) {
+                    throw new ValidationException("Could not resolve path for invalid value", e);
+                }
             }
-        }
-        int index = valueModel.getIndex();
-        if (index == -1) {
-            index = 0;
+            index = valueModel.getIndex();
+            if (index == -1) {
+                index = 0;
+            }
         }
         return newViolation(name, index, key, null);
     }

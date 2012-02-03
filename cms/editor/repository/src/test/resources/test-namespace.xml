@@ -428,6 +428,20 @@
             <sv:value>escaped</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="email">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>test:email</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:validators" sv:type="String">
+            <sv:value>email</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="mandatory">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>

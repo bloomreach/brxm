@@ -20,7 +20,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -43,9 +42,9 @@ public class NonEmptyValidatorPlugin extends AbstractValidatorPlugin {
     }
 
     @Override
-    public void preValidation(JcrFieldValidator type) throws Exception {
+    public void preValidation(JcrFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
-            throw new StoreException("Invalid validation exception; cannot validate non-string field for emptyness");
+            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
             type.setHtmlValidator(new HtmlValidator());

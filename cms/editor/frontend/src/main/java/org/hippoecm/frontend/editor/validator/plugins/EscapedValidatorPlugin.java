@@ -43,7 +43,7 @@ public class EscapedValidatorPlugin extends AbstractValidatorPlugin {
     }
 
     @Override
-    public void preValidation(JcrFieldValidator type) throws Exception {
+    public void preValidation(JcrFieldValidator type) throws ValidationException {
        //do nothing
     }
 

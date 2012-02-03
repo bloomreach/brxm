@@ -24,7 +24,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
-import org.hippoecm.frontend.validation.*;
+import org.hippoecm.frontend.validation.IValidationListener;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationResult;
+import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +117,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 validator = new TemplateTypeValidator();
             } else {
                 ITypeDescriptor descriptor = locator.locate(nodeType);
-                AdvancedValidatorService validatorService = context.getService("advanced.validator.service", AdvancedValidatorService.class);
+                ValidatorService validatorService = context.getService("field.validator.service", ValidatorService.class);
                 validator = new JcrTypeValidator(descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));

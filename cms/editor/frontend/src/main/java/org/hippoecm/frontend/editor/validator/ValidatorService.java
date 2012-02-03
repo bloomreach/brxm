@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.editor.validator.plugins.AbstractValidatorPlugin;
 import org.hippoecm.frontend.editor.validator.plugins.IValidatorPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -31,30 +30,29 @@ import java.util.Map;
 /**
  * @version $Id$
  */
-public class AdvancedValidatorService extends Plugin {
+public class ValidatorService extends Plugin {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(AdvancedValidatorService.class);
+    private static Logger log = LoggerFactory.getLogger(ValidatorService.class);
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
 
     private Map<String, IValidatorPlugin> map = new HashMap<String, IValidatorPlugin>();
 
-    public AdvancedValidatorService(IPluginContext context, IPluginConfig config) {
+    public ValidatorService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerTracker(new ServiceTracker<AbstractValidatorPlugin>(AbstractValidatorPlugin.class) {
-            @Override
-            protected void onServiceAdded(AbstractValidatorPlugin service, String name) {
+        context.registerTracker(new ServiceTracker<IValidatorPlugin>(IValidatorPlugin.class) {
+
+            protected void onServiceAdded(IValidatorPlugin service, String name) {
                 map.put(service.getName(), service);
             }
 
-            @Override
-            protected void onRemoveService(AbstractValidatorPlugin service, String name) {
+            protected void onRemoveService(IValidatorPlugin service, String name) {
                 map.remove(service.getName());
             }
         }, VALIDATOR_SERVICE_ID);
 
-        context.registerService(this, config.getString("advanced.validator.service.id", "advanced.validator.service"));
+        context.registerService(this, config.getString("field.validator.service.id", "field.validator.service"));
     }
 
     public IValidatorPlugin getValidator(String name) {

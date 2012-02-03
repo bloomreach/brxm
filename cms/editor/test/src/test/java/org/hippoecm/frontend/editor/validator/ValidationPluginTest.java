@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.validator;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.validator.plugins.EscapedValidatorPlugin;
+import org.hippoecm.frontend.editor.validator.plugins.RegExValidatorPlugin;
 import org.hippoecm.frontend.i18n.ConfigTraversingPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -46,17 +47,25 @@ public class ValidationPluginTest extends PluginTest {
 
     final static String[] content = {
             "/test", "nt:unstructured",
+
             "/test/plugin", "frontend:plugin",
             "plugin.class", ValidationPlugin.class.getName(),
             "wicket.model", "service.model",
             "validator.id", "service.validator",
+
             "/config/test-app/validator", "frontend:plugincluster",
             "translator.id", "${cluster.id}.translator",
+
             "/config/test-app/validator/registry", "frontend:plugin",
-            "plugin.class", AdvancedValidatorService.class.getName(),
-            "advanced.validator.service.id", "advanced.validator.service",
+            "plugin.class", ValidatorService.class.getName(),
+            "field.validator.service.id", "field.validator.service",
+
             "/config/test-app/validator/escaped", "frontend:plugin",
             "plugin.class", EscapedValidatorPlugin.class.getName(),
+
+            "/config/test-app/validator/email", "frontend:plugin",
+            "plugin.class", RegExValidatorPlugin.class.getName(),
+            "regex_pattern", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
 
             "/config/test-app/validator/translation", "frontend:plugin",
             "jcr:mixinTypes", "hippostd:translated",
@@ -67,16 +76,13 @@ public class ValidationPluginTest extends PluginTest {
             "/config/test-app/validator/translation/hippostd:translations/escaped", "frontend:pluginconfig",
             "jcr:mixinTypes", "hippostd:translated",
 
-            /*"/config/test-app/validator/translation/hippostd:translations/escaped/hippo:translation", "hippo:translation",
-            "hippo:language", "en",
-            "hippo:message", "escaped exceptie",*/
-
     };
     IPluginConfig config;
     IPluginConfig validator;
     IPluginConfig registry;
     IPluginConfig escaped;
     IPluginConfig translation;
+    IPluginConfig regex;
 
     @Override
     @Before
@@ -93,6 +99,7 @@ public class ValidationPluginTest extends PluginTest {
         registry = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/registry"));
         escaped = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/escaped"));
         translation = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/translation"));
+        regex = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/email"));
     }
 
 
@@ -138,6 +145,40 @@ public class ValidationPluginTest extends PluginTest {
             validate(content);
             violations = getViolations();
             assertEquals(1, violations.size());
+        }
+    }
+
+    @Test
+    public void testEmailProperty() throws Exception {
+        start(config);
+        start(validator);
+        start(registry);
+        start(regex);
+        start(translation);
+
+        Node content = root.getNode("test").addNode("content", "test:validator");
+        content.setProperty("test:nonempty", "something");
+        content.setProperty("test:mandatory", "something");
+        content.setProperty("test:multiple", new String[]{"something"});
+        validate(content);
+
+        Set<Violation> violations = getViolations();
+        assertEquals(0, violations.size());
+
+        String[] wrongEmailArray = new String[]{"info@one$hippo.com", "info@onehippo", ""};
+        String[] rightEmailArray = new String[]{"info@onehippo.com", "info@onehippo.org", "123info@google.com"};
+
+        for (String wrong : wrongEmailArray) {
+            content.setProperty("test:email", wrong);
+            validate(content);
+            violations = getViolations();
+            assertEquals(1, violations.size());
+        }
+        for (String right : rightEmailArray) {
+            content.setProperty("test:email", right);
+            validate(content);
+            violations = getViolations();
+            assertEquals(0, violations.size());
         }
     }
 

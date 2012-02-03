@@ -36,13 +36,9 @@ public class JcrTypeValidator implements ITypeValidator {
 
     private Set<JcrFieldValidator> fieldValidators = new HashSet<JcrFieldValidator>();
     private ITypeDescriptor type;
-    private AdvancedValidatorService validatorService;
+    private ValidatorService validatorService;
 
-    public JcrTypeValidator(ITypeDescriptor type) throws StoreException {
-        this(type, null);
-    }
-
-    public JcrTypeValidator(ITypeDescriptor type, AdvancedValidatorService validatorService) throws StoreException {
+    public JcrTypeValidator(ITypeDescriptor type, ValidatorService validatorService) throws StoreException {
         this.type = type;
         this.validatorService = validatorService;
         for (IFieldDescriptor field : type.getFields().values()) {
@@ -54,7 +50,7 @@ public class JcrTypeValidator implements ITypeValidator {
         return type;
     }
 
-    public AdvancedValidatorService getValidatorService(){
+    public ValidatorService getValidatorService(){
         return validatorService;
     }
 
