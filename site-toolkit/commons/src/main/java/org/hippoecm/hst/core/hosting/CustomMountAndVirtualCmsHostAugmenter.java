@@ -44,15 +44,15 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAugmenter {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomMountAndVirtualCmsHostAugmenter.class);
+    private static final Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
 
     private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
 
