@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.core.parameters;
 
-import java.text.DateFormat;
-import java.text.ParseException;
+import java.util.Calendar;
 
+/**
+ * Value type of an HstPropertyDefinition. STRING, BOOLEAN, INTEGER and DOUBLE types map to their obvious java
+ * counterparts. DATE uses Calendar objects.
+ */
 public enum HstValueType {
 
     STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), DATE();
@@ -36,7 +39,7 @@ public enum HstValueType {
         return defaultValue;
     }
 
-    public Object from(String string)  {
+    public Object from(String string) {
         switch (this) {
             case STRING:
                 return string;
@@ -46,13 +49,12 @@ public enum HstValueType {
                 return Integer.parseInt(string);
             case DOUBLE:
                 return Double.parseDouble(string);
-            case DATE:
-            try {
-                return DateFormat.getDateInstance().parse(string);
-            } catch (ParseException e) {
-                throw new RuntimeException("Could not parse " + string + " to type Date", e);
+            case DATE: {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(Integer.parseInt(string));
+                return cal;
             }
         }
         throw new RuntimeException("Could not parse " + string + " to type " + this);
     }
-};
+}
