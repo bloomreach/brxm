@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.hippoecm.frontend.PluginTest;
-import org.hippoecm.frontend.editor.validator.plugins.EscapedValidatorPlugin;
-import org.hippoecm.frontend.editor.validator.plugins.RegExValidatorPlugin;
+import org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator;
+import org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator;
 import org.hippoecm.frontend.i18n.ConfigTraversingPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -61,10 +61,10 @@ public class ValidationPluginTest extends PluginTest {
             "field.validator.service.id", "field.validator.service",
 
             "/config/test-app/validator/escaped", "frontend:plugin",
-            "plugin.class", EscapedValidatorPlugin.class.getName(),
+            "plugin.class", EscapedCmsValidator.class.getName(),
 
             "/config/test-app/validator/email", "frontend:plugin",
-            "plugin.class", RegExValidatorPlugin.class.getName(),
+            "plugin.class", RegExCmsValidator.class.getName(),
             "regex_pattern", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
 
             "/config/test-app/validator/translation", "frontend:plugin",

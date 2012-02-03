@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.editor.validator.plugins.IValidatorPlugin;
+import org.hippoecm.frontend.editor.validator.plugins.ICmsValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -36,18 +36,18 @@ public class ValidatorService extends Plugin {
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
 
-    private Map<String, IValidatorPlugin> map = new HashMap<String, IValidatorPlugin>();
+    private Map<String, ICmsValidator> map = new HashMap<String, ICmsValidator>();
 
     public ValidatorService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        context.registerTracker(new ServiceTracker<IValidatorPlugin>(IValidatorPlugin.class) {
+        context.registerTracker(new ServiceTracker<ICmsValidator>(ICmsValidator.class) {
 
-            protected void onServiceAdded(IValidatorPlugin service, String name) {
+            protected void onServiceAdded(ICmsValidator service, String name) {
                 map.put(service.getName(), service);
             }
 
-            protected void onRemoveService(IValidatorPlugin service, String name) {
+            protected void onRemoveService(ICmsValidator service, String name) {
                 map.remove(service.getName());
             }
         }, VALIDATOR_SERVICE_ID);
@@ -55,7 +55,7 @@ public class ValidatorService extends Plugin {
         context.registerService(this, config.getString("field.validator.service.id", "field.validator.service"));
     }
 
-    public IValidatorPlugin getValidator(String name) {
+    public ICmsValidator getValidator(String name) {
         if (StringUtils.isNotEmpty(name) && map.containsKey(name)) {
             return map.get(name);
         }

@@ -36,14 +36,14 @@ import java.util.TreeMap;
 /**
  * @version $Id$
  */
-abstract public class AbstractValidatorPlugin extends Plugin implements IValidatorPlugin, IStringResourceProvider {
+abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator, IStringResourceProvider {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(AbstractValidatorPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(AbstractCmsValidator.class);
 
     private final String name;
     private final static String EMPTY = "";
 
-    public AbstractValidatorPlugin(IPluginContext context, IPluginConfig config) {
+    public AbstractCmsValidator(IPluginContext context, IPluginConfig config) {
         super(context, config);
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);

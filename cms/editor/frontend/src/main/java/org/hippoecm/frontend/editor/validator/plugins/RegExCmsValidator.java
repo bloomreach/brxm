@@ -32,15 +32,15 @@ import java.util.regex.Pattern;
 /**
  * @version $Id$
  */
-public class RegExValidatorPlugin extends AbstractValidatorPlugin {
+public class RegExCmsValidator extends AbstractCmsValidator {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(RegExValidatorPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(RegExCmsValidator.class);
 
     private final Pattern pattern;
 
     private final static String PATTERN_KEY = "regex_pattern";
 
-    public RegExValidatorPlugin(IPluginContext context, IPluginConfig config) throws Exception {
+    public RegExCmsValidator(IPluginContext context, IPluginConfig config) throws Exception {
         super(context, config);
         if (config.containsKey(PATTERN_KEY)) {
             pattern = Pattern.compile(config.getString(PATTERN_KEY));

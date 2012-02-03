@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -29,33 +27,31 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @version $Id$
  */
-public class NonEmptyValidatorPlugin extends AbstractValidatorPlugin {
+public class EscapedCmsValidator extends AbstractCmsValidator {
     @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(NonEmptyValidatorPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(EscapedCmsValidator.class);
 
-    public NonEmptyValidatorPlugin(IPluginContext context, IPluginConfig config) {
+    static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
+
+    public EscapedCmsValidator(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
     public void preValidation(JcrFieldValidator type) throws ValidationException {
-        if (!"String".equals(type.getFieldType().getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
-        }
-        if ("Html".equals(type.getFieldType().getName())) {
-            type.setHtmlValidator(new HtmlValidator());
-        }
+       //do nothing
     }
 
     @Override
     public Set<Violation> validate(JcrFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         String value = (String) childModel.getObject();
-        if (StringUtils.isBlank(value)) {
+        if (INVALID_CHARS.matcher(value).matches()) {
             violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
         }
         return violations;

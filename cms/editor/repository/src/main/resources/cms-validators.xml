@@ -37,7 +37,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.validator.plugins.NonEmptyValidatorPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.editor.validator.plugins.NonEmptyCmsValidator</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="escaped">
@@ -45,7 +45,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.validator.plugins.EscapedValidatorPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="email">
@@ -53,7 +53,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.validator.plugins.RegExValidatorPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator</sv:value>
     </sv:property>
     <sv:property sv:name="regex_pattern" sv:type="String">
       <sv:value>^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$</sv:value>

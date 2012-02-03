@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * @version $Id$
  */
-public interface IValidatorPlugin extends IClusterable{
+public interface ICmsValidator extends IClusterable{
 
     public void preValidation(JcrFieldValidator type) throws ValidationException;
 
