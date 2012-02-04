@@ -133,11 +133,18 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
     }
     
     public <T> T getComponent(String name) {
+        return getComponent(name, (String []) null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(String name, String ... contextNames) {
         T bean = null;
         
-        try {
-            bean = (T) applicationContext.getBean(name);
-        } catch (Exception ignore) {
+        if (contextNames == null || contextNames.length == 0) {
+            try {
+                bean = (T) applicationContext.getBean(name);
+            } catch (Exception ignore) {
+            }
         }
         
         if (bean == null && servletContext != null) {

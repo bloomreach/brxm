@@ -44,6 +44,10 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
         return this.componentManager.<T>getComponent(name);
     }
 
+    public <T> T getComponent(String name, String ... contextNames) {
+        return this.componentManager.<T>getComponent(name, contextNames);
+    }
+
     public ContainerConfiguration getContainerConfiguration() {
         return this.componentManager.getContainerConfiguration();
     }

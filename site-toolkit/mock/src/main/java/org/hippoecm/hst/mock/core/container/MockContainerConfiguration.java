@@ -31,6 +31,10 @@ public class MockContainerConfiguration implements ContainerConfiguration {
 
     private Map<Class<?>, Map<String, Object>> properties = new HashMap<Class<?>, Map<String, Object>>();
 
+    public boolean isEmpty() {
+        return properties.isEmpty();
+    }
+
     public boolean containsKey(String key) {
         for (Class<?> aClass : properties.keySet()) {
             if (properties.get(aClass).containsKey(key)) {

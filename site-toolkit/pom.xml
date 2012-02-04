@@ -111,6 +111,7 @@
     <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
+    <maven.plugins.jaxb-schemagen.version>1.2</maven.plugins.jaxb-schemagen.version>
   </properties>
 
   <!--

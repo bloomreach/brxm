@@ -55,7 +55,22 @@ public interface ComponentManager
      * @return component
      */
     <T> T getComponent(String name);
-    
+
+    /**
+     * Returns the registered component from a child context.
+     * If <CODE>addonModuleNames</CODE> consists of multiple items, then 
+     * each <CODE>addonModuleNames</CODE> item is regarded as child addon module name 
+     * in the descendant hierarchy, as ordered.
+     * Returns null if a component is not found by the specified name.
+     * 
+     * @param <T>
+     * @param name
+     * @param contextNames
+     * @return
+     * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
+     */
+    <T> T getComponent(String name, String ... addonModuleNames);
+
     /**
      * Stop the component manager.
      */

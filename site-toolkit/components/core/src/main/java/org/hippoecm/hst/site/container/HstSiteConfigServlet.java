@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.LoginException;
@@ -42,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -301,7 +303,7 @@ public class HstSiteConfigServlet extends HttpServlet {
     }
     
     protected synchronized void initializeComponentManager(ServletConfig config) {
-        ComponentManager componentManager = null;
+        SpringComponentManager componentManager = null;
         
         try {
             log.info(INIT_START_MSG);
@@ -314,6 +316,11 @@ public class HstSiteConfigServlet extends HttpServlet {
                 String [] configurations = componentManager.getConfigurationResources();
                 configurations = (String []) ArrayUtils.addAll(configurations, assemblyOverridesConfigurations);
                 componentManager.setConfigurationResources(configurations);
+            }
+            
+            List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+            if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+                componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
             }
             
             componentManager.initialize();

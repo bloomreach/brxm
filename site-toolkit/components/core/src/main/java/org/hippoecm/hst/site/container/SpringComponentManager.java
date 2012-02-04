@@ -15,42 +15,38 @@
  */
 package org.hippoecm.hst.site.container;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Properties;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationConverter;
-import org.apache.commons.jexl.JexlContext;
-import org.apache.commons.jexl.JexlHelper;
-import org.apache.commons.jexl.Script;
-import org.apache.commons.jexl.ScriptFactory;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
+import org.hippoecm.hst.core.container.ModuleNotFoundException;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * SpringComponentManager
  * 
  * @version $Id$
  */
-public class SpringComponentManager implements ComponentManager, BeanPostProcessor {
+public class SpringComponentManager implements ComponentManager {
     
-    static Logger log = LoggerFactory.getLogger(SpringComponentManager.class);
+    private static final String LOGGER_FQCN = SpringComponentManager.class.getName();
+    private static Logger log = LoggerFactory.getLogger(LOGGER_FQCN);
     
     public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = SpringComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
     
@@ -66,8 +62,11 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
             SpringComponentManager.class.getName().replace(".", "/") + "-*.xml"
             };
 
+    private List<ModuleDefinition> addonModuleDefinitions;
+    private Map<String, ModuleInstance> addonModuleInstancesMap;
+
     public SpringComponentManager() {
-        this(null);
+        this(new PropertiesConfiguration());
     }
     
     public SpringComponentManager(Configuration configuration) {
@@ -76,82 +75,158 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
     }
     
     public void initialize() {
-        String [] configurationResources = getConfigurationResources();
+        applicationContext = new DefaultComponentManagerApplicationContext(containerConfiguration);
         
-        this.applicationContext = new ClassPathXmlApplicationContext() {
-            // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,
-            // this allows for registering special BeanPostProcessors.
-            @Override
-            protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-                beanFactory.addBeanPostProcessor(SpringComponentManager.this);
-            }
-            
-            @Override
-            protected DefaultListableBeanFactory createBeanFactory() {
-                BeanFactory parentBeanFactory = getInternalParentBeanFactory();
-                return new FilteringByExpressionListableBeanFactory(parentBeanFactory);
-            }
-        };
-        
-        ArrayList<String> checkedConfigurationResources = new ArrayList<String>();
-        
-        for (String configurationResource : configurationResources) {
-            try {
-                this.applicationContext.getResources(configurationResource);
-                checkedConfigurationResources.add(configurationResource);
-            } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ignoring resources on {}. It does not exist.", configurationResource);
-                }
-            }
+        if (applicationContext instanceof ComponentManagerAware) {
+            ((ComponentManagerAware) applicationContext).setComponentManager(this);
         }
         
-        if (checkedConfigurationResources.isEmpty()) {
+        String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, getConfigurationResources());
+        
+        if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
             if (log.isWarnEnabled()) {
                 log.warn("There's no valid component configuration.");
             }
         } else {
-            this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(new String [0]));
+            applicationContext.setConfigLocations(checkedConfigurationResources);
+            applicationContext.refresh();
+        }
+        
+        if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
+            addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
-            if (configuration != null) {
-                Properties initProps = ConfigurationConverter.getProperties(configuration);
-                PropertyPlaceholderConfigurer ppc = new OverridingByAttributesPropertyPlaceholderConfigurer();
-                ppc.setIgnoreUnresolvablePlaceholders(configuration.getBoolean(IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
-                ppc.setSystemPropertiesMode(configuration.getInt(SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
-                ppc.setProperties(initProps);
-                this.applicationContext.addBeanFactoryPostProcessor(ppc);
+            for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
+                ModuleInstance addonModuleInstance = new ModuleInstanceImpl(addonModuleDefinition);
+                
+                if (addonModuleInstance instanceof ComponentManagerAware) {
+                    ((ComponentManagerAware) addonModuleInstance).setComponentManager(this);
+                }
+                
+                if (addonModuleInstance instanceof ApplicationContextAware) {
+                    ((ApplicationContextAware) addonModuleInstance).setApplicationContext(applicationContext);
+                }
+                
+                try {
+                    log.info("Initializing addon module, {}", addonModuleInstance.getFullName());
+                    addonModuleInstance.initialize();
+                    addonModuleInstancesMap.put(addonModuleInstance.getName(), addonModuleInstance);
+                } catch (Exception e) {
+                    log.warn("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
+                    
+                    try {
+                        addonModuleInstance.close();
+                    } catch (Exception ce) {
+                        log.warn("Failed to close invalid module instance, " + addonModuleInstance.getFullName() + ".", e);
+                    }
+                }
             }
-            
-            this.applicationContext.refresh();
         }
     }
 
     public void start() {
-        this.applicationContext.start();
+        applicationContext.start();
+        
+        List<ModuleInstance> failedModuleInstances = new ArrayList<ModuleInstance>();
+        
+        for (ModuleInstance addonModuleInstance : getAddonModuleInstances()) {
+            try {
+                log.info("Starting addon module, {}", addonModuleInstance.getFullName());
+                addonModuleInstance.start();
+            } catch (Exception e) {
+                log.warn("Failed to start module instance, " + addonModuleInstance.getFullName() + ", which will be just removed.", e);
+                failedModuleInstances.add(addonModuleInstance);
+            }
+        }
+        
+        for (ModuleInstance addonModuleInstance : failedModuleInstances) {
+            try {
+                addonModuleInstance.stop();
+            } catch (Exception e) {
+                log.warn("Failed to stop non-starting module instance, " + addonModuleInstance.getFullName() + ".", e);
+            }
+            
+            try {
+                addonModuleInstance.close();
+            } catch (Exception e) {
+                log.warn("Failed to close non-starting module instance, " + addonModuleInstance.getFullName() + ".", e);
+            }
+            
+            addonModuleInstancesMap.remove(addonModuleInstance);
+        }
     }
 
     public void stop() {
-        this.applicationContext.stop();
+        for (ModuleInstance addonModuleInstance : getAddonModuleInstances()) {
+            try {
+                log.info("Stopping addon module, {}", addonModuleInstance.getFullName());
+                addonModuleInstance.stop();
+            } catch (Exception e) {
+                log.warn("Failed to stop module instance, " + addonModuleInstance.getFullName() + ".", e);
+            }
+        }
+        
+        applicationContext.stop();
     }
     
     public void close() {
-        this.applicationContext.close();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(String name) {
-        T bean = null;
-        
-        try {
-            bean = (T) this.applicationContext.getBean(name);
-        } catch (Exception ignore) {
+        for (ModuleInstance addonModuleInstance : getAddonModuleInstances()) {
+            try {
+                log.info("Closing addon module, {}", addonModuleInstance.getFullName());
+                addonModuleInstance.close();
+            } catch (Exception e) {
+                log.warn("Failed to close module instance, " + addonModuleInstance.getFullName() + ".", e);
+            }
         }
         
-        return bean;
+        applicationContext.close();
     }
     
+    public <T> T getComponent(String name) {
+        return getComponent(name, (String []) null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(String name, String ... addonModuleNames) {
+        T bean = null;
+
+        if (addonModuleNames == null || addonModuleNames.length == 0) {
+            try {
+                bean = (T) applicationContext.getBean(name);
+            } catch (Exception ignore) {
+                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+            }
+        } else {
+            if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
+                throw new ModuleNotFoundException("No Addon Module is found.");
+            }
+            
+            ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
+
+            if (moduleInstance == null) {
+                throw new ModuleNotFoundException("Module is not found: '" + addonModuleNames[0] + "'");
+            }
+
+            for (int i = 1; i < addonModuleNames.length; i++) {
+                moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
+
+                if (moduleInstance == null) {
+                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
+                }
+            }
+
+            try {
+                bean = (T) moduleInstance.getComponent(name);
+            } catch (Exception ignore) {
+                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.", 
+                        name, ArrayUtils.toString(addonModuleNames));
+            }
+        }
+
+        return bean;
+    }
+
     public ContainerConfiguration getContainerConfiguration() {
-        return this.containerConfiguration;
+        return containerConfiguration;
     }
 
     public String[] getConfigurationResources() {
@@ -172,72 +247,26 @@ public class SpringComponentManager implements ComponentManager, BeanPostProcess
             System.arraycopy(configurationResources, 0, this.configurationResources, 0, configurationResources.length);
         }
     }
-
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof ComponentManagerAware) {
-            ((ComponentManagerAware) bean).setComponentManager(this);
-        }
-        
-        return bean;
-    }
-
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean; 
-    }
     
-    private class FilteringByExpressionListableBeanFactory extends DefaultListableBeanFactory
-    {
-        private JexlContext jexlContext;
-        
-        @SuppressWarnings("unchecked")
-        public FilteringByExpressionListableBeanFactory(BeanFactory parentBeanFactory)
-        {
-            super(parentBeanFactory);
-            jexlContext = JexlHelper.createContext();
-            jexlContext.getVars().put("config", containerConfiguration);
-        }
-
-        /**
-         * Override of the registerBeanDefinition method to optionally filter out a BeanDefinition and
-         * if requested dynamically register an bean alias
-         */
-        public void registerBeanDefinition(String beanName, BeanDefinition bd)
-                throws BeanDefinitionStoreException
-        {
-            boolean registrable = true;
-            String expression = (String) bd.getAttribute(BEAN_REGISTER_CONDITION);
-            
-            if (expression != null) {
-                try {
-                    Script jexlScript = ScriptFactory.createScript(expression);
-                    Object result = jexlScript.execute(jexlContext);
-                    
-                    if (result == null) {
-                        registrable = false;
-                    } else if (result instanceof Boolean) {
-                        registrable = BooleanUtils.toBoolean((Boolean) result);
-                    } else if (result instanceof String) {
-                        registrable = BooleanUtils.toBoolean((String) result);
-                    } else if (result instanceof Integer) {
-                        registrable = BooleanUtils.toBoolean(((Integer) result).intValue());
-                    }
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Expression execution error: " + expression, e);
-                    } else {
-                        log.warn("Expression execution error: {}. {}", expression, e);
-                    }
-                }
-            }
-            
-            if (registrable) {
-                super.registerBeanDefinition(beanName, bd);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Skipping the bean definition: " + bd);
-                }
-            }
+    public void setAddonModuleDefinitions(List<ModuleDefinition> addonModuleDefinitions) {
+        if (addonModuleDefinitions == null) {
+            this.addonModuleDefinitions = null;
+        } else {
+            this.addonModuleDefinitions = new ArrayList<ModuleDefinition>(addonModuleDefinitions);
         }
     }
     
+    private List<ModuleInstance> getAddonModuleInstances() {
+        if (addonModuleInstancesMap == null) {
+            return Collections.emptyList();
+        }
+        
+        List<ModuleInstance> addonModuleInstances = null;
+        
+        synchronized (addonModuleInstancesMap) {
+            addonModuleInstances = new ArrayList<ModuleInstance>(addonModuleInstancesMap.values());
+        }
+        
+        return addonModuleInstances;
+    }
 }

@@ -37,7 +37,11 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
     public ContainerConfigurationImpl(Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
+    public boolean isEmpty() {
+        return (configuration == null || configuration.isEmpty());
+    }
+
     public boolean containsKey(String key) {
         return configuration.containsKey(key);
     }

@@ -40,6 +40,11 @@ public interface ContainerConstants {
     String HST_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstRequestContext";
     
     /**
+     * Default Addon module descriptor paths, which can be comma separated multiple path values.
+     */
+    String DEFAULT_ADDON_MODULE_DESCRIPTOR_PATHS = "META-INF/hst-assembly/addon/module.xml";
+    
+    /**
      * The reference namespace for container managed resource url.
      */
     String CONTAINER_REFERENCE_NAMESPACE = "org.hippoecm.hst.container.reference.namespace";

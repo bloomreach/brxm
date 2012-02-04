@@ -1,6 +1,7 @@
 * text=auto !eol
 /Doxyfile -text
 api/pom.xml svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/addon/module/ModuleInstance.java -text
 api/src/main/java/org/hippoecm/hst/cache/CacheElement.java -text
 api/src/main/java/org/hippoecm/hst/cache/HstCache.java -text
 api/src/main/java/org/hippoecm/hst/configuration/HstNodeTypes.java svneol=native#text/plain
@@ -135,6 +136,7 @@ api/src/main/java/org/hippoecm/hst/core/container/HstContainerURL.java svneol=na
 api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodec.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
+api/src/main/java/org/hippoecm/hst/core/container/ModuleNotFoundException.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/PageErrors.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Pipeline.java svneol=native#text/plain
@@ -515,10 +517,17 @@ components/core/src/main/java/org/hippoecm/hst/core/util/DOMUtils.java svneol=na
 components/core/src/main/java/org/hippoecm/hst/core/util/PropertyParser.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanMethodInvoker.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/proxy/DynaBeanProxyUtils.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/ModuleDefinition.java -text
+components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/package-info.java -text
+components/core/src/main/java/org/hippoecm/hst/site/addon/module/runtime/ModuleInstanceImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationContextUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationEventMethodsInvoker.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/BlockingEhCacheFactoryBean.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ComponentManagerFacade.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/site/container/DefaultComponentManagerApplicationContext.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/FilteringByExpressionListableBeanFactory.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigServlet.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/site/container/ModuleDescriptorUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/OverridingByAttributesPropertyPlaceholderConfigurer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/PropertiesUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ResourceFactoryBean.java -text
@@ -585,8 +594,10 @@ components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescriptorUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManagerWithAddonModules.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestHstRequestContextImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestMountDecoratorImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestSiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
@@ -605,6 +616,16 @@ components/core/src/test/resources/META-INF/assembly/simple-beans-2.xml svneol=n
 components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-4.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-config.properties svneol=native#text/plain
+components/core/src/test/resources/META-INF/assembly/with-addon-modules-config.properties -text
+components/core/src/test/resources/META-INF/assembly/with-addon-modules.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/module.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/module2.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics/reports/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics/statistics/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics2/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics2/reports/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org.example.analytics2/statistics/base.xml -text
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestMatchHostAndURL.xml svneol=native#text/plain
