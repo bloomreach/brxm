@@ -47,7 +47,7 @@ public class ConfigurationTest extends TestCase {
 
     @After
     public void tearDown() throws Exception {
-        if (session.getRootNode().hasNode("hippo:configuration/hippo:initialize/testnode")) {
+        while (session.getRootNode().hasNode("hippo:configuration/hippo:initialize/testnode")) {
             session.getRootNode().getNode("hippo:configuration/hippo:initialize/testnode").remove();
             session.save();
         }
