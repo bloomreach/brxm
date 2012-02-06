@@ -52,12 +52,15 @@ public class ChannelGridPanel extends ExtPanel {
     private boolean canModifyChannels;
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private boolean blueprintsAvailable;
     
     @ExtProperty
+    @SuppressWarnings("unused")
     private String cmsUser;
     
     @ExtProperty
+    @SuppressWarnings("unused")
     private String composerRestMountUrl;
 
     public ChannelGridPanel(IPluginConfig config, ExtStoreFuture storeFuture, boolean blueprintsAvailable) {

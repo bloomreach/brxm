@@ -80,6 +80,7 @@ public class PageEditor extends ExtPanel {
     private String composerRestMountPath = "/_rp";
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String renderPathInfo = "";
 
     @ExtProperty
@@ -92,21 +93,26 @@ public class PageEditor extends ExtPanel {
     private String templateComposerContextPath = "/site";
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String renderHostParameterName = ContainerConstants.RENDERING_HOST;
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String cmsUser;
 
     @ExtProperty
     private Boolean previewMode = true;
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private Long initialHstConnectionTimeout = DEFAULT_INITIAL_CONNECTION_TIMEOUT;
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String locale;
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String variantsUuid;
     
     private IPluginContext context;
@@ -116,6 +122,7 @@ public class PageEditor extends ExtPanel {
     private List<Observer> observers = new ArrayList<Observer>();
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private String channelId;
 
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
