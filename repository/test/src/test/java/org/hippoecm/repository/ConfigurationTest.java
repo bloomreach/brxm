@@ -53,7 +53,7 @@ public class ConfigurationTest extends TestCase {
         }
         super.tearDown();
     }
-    private boolean updateDone;
+    private volatile boolean updateDone;
 
     private boolean saveAndWaitForUpdate(Node node) throws RepositoryException {
         ObservationManager observation = node.getSession().getWorkspace().getObservationManager();
