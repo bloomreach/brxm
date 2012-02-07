@@ -116,10 +116,10 @@ public class PageEditor extends ExtPanel {
     private String variantsUuid;
     
     private IPluginContext context;
-    private ExtStoreFuture channelStoreFuture;
+    private ExtStoreFuture<Object> channelStoreFuture;
     private ChannelPropertiesWindow channelPropertiesWindow;
     private boolean redraw = false;
-    private List<Observer> observers = new ArrayList<Observer>();
+    private List<Observer<JcrNodeModel>> observers = new ArrayList<Observer<JcrNodeModel>>();
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -238,7 +238,7 @@ public class PageEditor extends ExtPanel {
                         try {
                             javax.jcr.Node node = UserSession.get().getJcrSession().getNodeByIdentifier(uuid);
                             JcrNodeModel nodeModel = new JcrNodeModel(node);
-                            Observer observer = new Observer(nodeModel) {
+                            Observer<JcrNodeModel> observer = new Observer<JcrNodeModel>(nodeModel) {
 
                                 @Override
                                 public void onEvent(final Iterator events) {
@@ -344,7 +344,7 @@ public class PageEditor extends ExtPanel {
     }
 
     public void setChannelName(String name) {
-        setTitle(new Model(name));
+        setTitle(new Model<String>(name));
         redraw();
     }
 
