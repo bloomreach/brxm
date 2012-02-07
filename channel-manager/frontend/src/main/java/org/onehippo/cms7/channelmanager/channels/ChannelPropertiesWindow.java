@@ -332,8 +332,8 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
      */
     private abstract class AbstractPropertiesModel<T> implements IModel<T> {
 
-        protected final Map<String, Object> properties;
-        protected final String key;
+        final Map<String, Object> properties;
+        final String key;
 
         AbstractPropertiesModel(final Map<String, Object> properties, final String key) {
             this.properties = properties;
