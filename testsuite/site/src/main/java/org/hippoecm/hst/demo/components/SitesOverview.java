@@ -33,7 +33,9 @@ public class SitesOverview extends BaseHstComponent {
 
     public static final Logger log = LoggerFactory.getLogger(SitesOverview.class);
 
-
+    private static volatile int counter = 0;
+    
+    
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
  
@@ -53,61 +55,65 @@ public class SitesOverview extends BaseHstComponent {
         Session writableSession = null;
         try {
             writableSession = this.getPersistableSession(request);
-            //String rootByPath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
             
-
-            String numberStr = request.getParameter("number");
-            int numberToAdd = Integer.parseInt(numberStr);
-            int tryToAdd = 1;
-
-            String copyComponentsStr = request.getParameter("copycomponents");
-            boolean copyComponents = copyComponentsStr != null ? Boolean.parseBoolean(copyComponentsStr) : true;
-
-            while(numberToAdd > 0) {
-                //System.out.println("numberToAdd " + numberToAdd);
-                numberToAdd--;
-
-                // add a new host first: First check the first non-existing 'com' + integer host:
-                Node localHost = writableSession.getNode("/hst:hst/hst:hosts/dev-test-many/localhost");
-                while(localHost.hasNode("com" + tryToAdd)) {
-                    tryToAdd++;
-                }
-                
-                Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
-                Node mount = host.addNode("hst:root", "hst:mount");
-                mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
-                mount.setProperty("hst:alias", "mount"+tryToAdd);
-                
-                // add a new hst:site
-                
-                Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
-                site.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/demosite-test-many" + tryToAdd);
-                Node content = site.addNode("hst:content", "hippo:facetselect");
-                String[] availability = {"hippo:availability"};
-                content.setProperty("hippo:facets", availability);
-                String[] values = {"live"};
-                content.setProperty("hippo:values", values);
-                String[] modes = {"single"};
-                content.setProperty("hippo:modes", modes);
-                content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many/hst:content").getProperty("hippo:docbase").getString());
-
+            if(request.getParameter("touch") != null) {
+                Node hstHostsNode = writableSession.getNode("/hst:hst/hst:hosts");
+                hstHostsNode.setProperty("hst:pagenotfound", "error " + ++counter);
                 writableSession.save();
-
-                // now copy the hst:configurations
-
-                Node config = writableSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
-                String[] inherits = {"../democommon"};
-                config.setProperty("hst:inheritsfrom", inherits);
-
-                writableSession.save();
-
-
-                writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
-                writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
-
-                if (copyComponents) {
-                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
-                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
+            } else {
+                String numberStr = request.getParameter("number");
+                int numberToAdd = Integer.parseInt(numberStr);
+                int tryToAdd = 1;
+    
+                String copyComponentsStr = request.getParameter("copycomponents");
+                boolean copyComponents = copyComponentsStr != null ? Boolean.parseBoolean(copyComponentsStr) : true;
+    
+                while(numberToAdd > 0) {
+                    //System.out.println("numberToAdd " + numberToAdd);
+                    numberToAdd--;
+    
+                    // add a new host first: First check the first non-existing 'com' + integer host:
+                    Node localHost = writableSession.getNode("/hst:hst/hst:hosts/dev-test-many/localhost");
+                    while(localHost.hasNode("com" + tryToAdd)) {
+                        tryToAdd++;
+                    }
+                    
+                    Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
+                    Node mount = host.addNode("hst:root", "hst:mount");
+                    mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
+                    mount.setProperty("hst:alias", "mount"+tryToAdd);
+                    
+                    // add a new hst:site
+                    
+                    Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
+                    site.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/demosite-test-many" + tryToAdd);
+                    Node content = site.addNode("hst:content", "hippo:facetselect");
+                    String[] availability = {"hippo:availability"};
+                    content.setProperty("hippo:facets", availability);
+                    String[] values = {"live"};
+                    content.setProperty("hippo:values", values);
+                    String[] modes = {"single"};
+                    content.setProperty("hippo:modes", modes);
+                    content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many/hst:content").getProperty("hippo:docbase").getString());
+    
+                    writableSession.save();
+    
+                    // now copy the hst:configurations
+    
+                    Node config = writableSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
+                    String[] inherits = {"../democommon"};
+                    config.setProperty("hst:inheritsfrom", inherits);
+    
+                    writableSession.save();
+    
+    
+                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
+                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
+    
+                    if (copyComponents) {
+                        writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
+                        writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
+                    }
                 }
             }
             

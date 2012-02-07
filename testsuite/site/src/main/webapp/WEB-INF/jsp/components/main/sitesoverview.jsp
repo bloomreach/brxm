@@ -23,6 +23,11 @@
 <div class="yui-u">
   
   <form method="post" action="<hst:actionURL/>">
+     <input type="hidden" name="touch" value="true"/>
+     <input type="submit" value="Touch HST config to trigger reload" /> 
+  </form>
+  
+  <form method="post" action="<hst:actionURL/>">
      <input type="hidden" name="number" value="1"/>
      <input type="hidden" name="type" value="addnewsites"/>
      <input type="submit" value="add 1 New Site" /> 

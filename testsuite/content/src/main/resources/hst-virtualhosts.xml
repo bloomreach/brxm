@@ -389,6 +389,30 @@
       </sv:node>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="dev-internal">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:virtualhostgroup</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:cmslocation" sv:type="String">
+      <sv:value>http://localhost:8080/cms</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:defaultport" sv:type="Long">
+      <sv:value>8080</sv:value>
+    </sv:property>
+    <sv:node sv:name="127.0.0.1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+        <sv:node sv:name="hst:root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/demosite-test-many</sv:value>
+          </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
   <sv:node sv:name="dev-test-many">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:virtualhostgroup</sv:value>
