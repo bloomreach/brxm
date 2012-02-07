@@ -155,7 +155,6 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         HstPropertyDefinition propDef = getPropertyDefinition(key);
 
                         if (propDef == null) {
-                            log.warn("Ignoring property '{}': no definition found", key);
                             return;
                         }
 
@@ -244,15 +243,24 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         }
         // FIXME: move boilerplate to CMS engine
         UserSession session = (UserSession) Session.get();
+
+        @SuppressWarnings("deprecation")
         Credentials credentials = session.getCredentials();
+
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
 
+        final ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.warn("Cannot save channel '{}' because the channel manager cannot be loaded. Is the site running?", channel.getId());
+            return;
+        }
+        
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                 public Void run() throws ChannelException {
-                    ChannelUtil.getChannelManager().save(channel);
+                    channelManager.save(channel);
                     return null;
                 }
             }, null);
@@ -316,12 +324,18 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     }
 
     private HstPropertyDefinition getPropertyDefinition(String propertyName) {
-        for (HstPropertyDefinition definition : ChannelUtil.getChannelManager().getPropertyDefinitions(channel)) {
+        ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.info("Could not load the channel manager: the definition for property '{}' is unknown", propertyName);
+            return null;
+        }
+        
+        for (HstPropertyDefinition definition : channelManager.getPropertyDefinitions(channel)) {
             if (definition.getName().equals(propertyName)) {
                 return definition;
             }
         }
-        log.warn("Could not find definition for property '" + propertyName + "'");
+        log.warn("Could not find definition for property '{}'", propertyName);
         return null;
     }
 

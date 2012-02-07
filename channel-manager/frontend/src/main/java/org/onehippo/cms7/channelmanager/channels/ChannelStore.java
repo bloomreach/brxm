@@ -170,8 +170,14 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        log.warn("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the field name itself as the column header.",
-                fieldName, org.apache.wicket.Session.get().getLocale());
+        // no translation found; is the site down?
+        if (ChannelUtil.getChannelManager() == null) {
+            log.info("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
+                    fieldName, org.apache.wicket.Session.get().getLocale());
+        } else {
+            log.warn("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the field name itself as the column header.",
+                    fieldName, org.apache.wicket.Session.get().getLocale());
+        }
 
         return fieldName;
     }
@@ -199,7 +205,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.info("Cannot retrieve the channel manager, assuming that the current user cannot modify channels");
+            return false;
+        }
 
         Subject subject = createSubject();
         try {
@@ -276,7 +286,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private Subject createSubject() {
         UserSession session = (UserSession) Session.get();
+
+        @SuppressWarnings("deprecation")
         Credentials credentials = session.getCredentials();
+
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
@@ -293,7 +306,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
                     return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl), cause);
                 default:
-                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), ce.getParameters()), cause);
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), (Object[])ce.getParameters()), cause);
             }
         }
         log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
@@ -304,15 +317,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private Map<String, Channel> getChannels() {
         if (channels == null) {
             // reload channels
-            ComponentManager componentManager = HstServices.getComponentManager();
-            if (componentManager == null) {
-                log.warn("Cannot retrieve channels: HST component manager could not be loaded. Is the site running?");
-                return Collections.emptyMap();
-            }
-
-            ChannelManager channelManager = componentManager.getComponent(ChannelManager.class.getName());
+            ChannelManager channelManager = ChannelUtil.getChannelManager();
             if (channelManager == null) {
-                log.error("Cannot retrieve channels: component '{}' not found", ChannelManager.class.getName());
+                log.info("Cannot load the channel manager. No channels will be shown.");
                 return Collections.emptyMap();
             }
             try {

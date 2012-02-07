@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,11 @@ import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
@@ -37,7 +39,9 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final String FIELD_DESCRIPTION = "description";
     private static final String FIELD_HAS_CONTENT_PROTOTYPE = "hasContentPrototype";
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
+
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
     private Long total;
 
@@ -48,7 +52,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected long getTotal() {
         if (this.total == null) {
-            this.total = Long.valueOf(getBlueprints().size());
+            this.total = (long) getBlueprints().size();
         }
         return this.total;
     }
@@ -71,7 +75,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
         List<Blueprint> blueprints = getBlueprints();
-        this.total = Long.valueOf(blueprints.size());
+        this.total = (long) blueprints.size();
         for (Blueprint blueprint : blueprints) {
             JSONObject object = new JSONObject();
             object.put("id", blueprint.getId());
@@ -90,15 +94,18 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     }
 
     private List<Blueprint> getBlueprints() {
-        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        if (channelManager != null) {
-            try {
-                return channelManager.getBlueprints();
-            } catch (ChannelException e) {
-                throw new RuntimeException("Unable to get blueprints from ChannelManager.", e);
-            }
-        } else {
-            throw new RuntimeException("Unable to get the Channel Manager instance.");
+        ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.info("Cannot load the channel manager: no blueprints will be shown.", ChannelManager.class.getName());
+            return Collections.emptyList();
         }
+        
+        try {
+            return channelManager.getBlueprints();
+        } catch (ChannelException e) {
+            log.warn("Error retrieving blueprints, no blueprints will be shown", e);
+        }
+
+        return Collections.emptyList();
     }
 }
