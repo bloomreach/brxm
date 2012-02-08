@@ -85,34 +85,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             ]
         });
-
-        if (config.debug) {
-            Ext.data.DataProxy.addListener('exception', function(proxy, type, action, options, res, e) {
-                if (!res.success && res.message) {
-                    console.error(res.message);
-                }
-                else {
-                    if (e) {
-                        if(typeof console.error == 'function') {
-                           console.error(e);
-                        }
-                    } else if(res.status) {
-                        var json = Ext.util.JSON.decode(res.responseText);
-                        var msg = '<br/><b>StatusText:</b> ' + res.statusText + '<br/><b>StatusCode:</b> ' + res.status +
-                                '<br/><b>Detailed message:</b> ' + json.message;
-                        console.error(json.message);
-                    } else {
-                        console.group("Exception");
-                        console.dir(arguments);
-                        console.groupEnd();
-                    }
-                }
-            }, this);
-
-            Ext.data.DataProxy.addListener('write', function(proxy, action, result, res, rs) {
-                console.log('Data Proxy Action: ' + action + '<br/>Message: ' + res.message);
-            }, this);
-        }
     },
 
     enableUI: function(pageContext) {
