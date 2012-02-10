@@ -60,6 +60,8 @@ public class UserTransactionImpl implements UserTransaction {
         this.tm = tm;
         if (session instanceof XASession) {
             XARes = ((XASession) session).getXAResource();
+        } else if(session instanceof XAResource) {
+            XARes = (XAResource) session;
         } else {
             throw new IllegalArgumentException("Session not of type XASession");
         }

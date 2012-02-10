@@ -42,6 +42,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.jcr.Workspace;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -62,6 +63,7 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,7 +223,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 if (arguments.containsKey(propPath)) {
                     newValue = arguments.get(propPath);
                 } else {
-                    HierarchyResolver hr = ((HippoWorkspace) rootSession.getWorkspace()).getHierarchyResolver();
+                    Workspace workspace = rootSession.getWorkspace();
+                    HierarchyResolver hr;
+                    if (workspace instanceof HippoWorkspace) {
+                        hr = ((HippoWorkspace) rootSession.getWorkspace()).getHierarchyResolver();
+                    } else {
+                        hr = ManagerServiceFactory.getManagerService(rootSession).getHierarchyResolver();
+                    }
                     Property parentProperty = hr.getProperty(target, relpath);
                     if (parentProperty == null) {
                         continue;
@@ -606,26 +614,20 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            if(child instanceof HippoNode) {
-                Node canonical = ((HippoNode)child).getCanonicalNode();
-                if(canonical == null || !canonical.isSame(child)) {
-                    continue;
-                }
+            if(child instanceof HippoNode && !((HippoNode)child).isSame(((HippoNode)child).getCanonicalNode())) {
+                continue;
             }
             String childPath;
             if(renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/"+ child.getName()))
                 childPath = path + "/_node";
             else
                 childPath = path + "/" + child.getName();
-
+System.err.println(child.getPath()+" "+childPath);;
             copy(child, target, renames, childPath);
         }
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            // FIXME: workaround for HREPTWO-1585
-            if(prop.getName().equals("hippo:paths"))
-                continue;
             if (prop.getDefinition().isMultiple()) {
                 boolean isProtected = true;
                 for (int i = 0; i < nodeTypes.length; i++) {

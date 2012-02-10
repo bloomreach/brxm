@@ -270,7 +270,22 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
                                 }
 
                                 public Node getNode() throws RepositoryException {
-                                    throw new UnsupportedOperationException("Not supported yet.");
+                                    if(row instanceof Node) {
+                                        return (Node)row;
+                                    } else if(row instanceof Item[]) {
+                                        Item[] items = (Item[]) row;
+                                        if(items.length > 0) {
+                                            if(items[0] instanceof Node) {
+                                                return (Node)items[0];
+                                            } else {
+                                                return items[0].getParent();
+                                            }
+                                        } else
+                                            throw new UnsupportedOperationException();
+                                    } else if(row instanceof Row) {
+                                        return ((Row)row).getNode();
+                                    } else
+                                        throw new UnsupportedOperationException();
                                 }
 
                                 public Node getNode(String selectorName) throws RepositoryException {
@@ -371,7 +386,7 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
                 }
 
                 public String[] getSelectorNames() throws RepositoryException {
-                    throw new UnsupportedOperationException("Not supported yet.");
+                    return new String[0];
                 }
             };
 

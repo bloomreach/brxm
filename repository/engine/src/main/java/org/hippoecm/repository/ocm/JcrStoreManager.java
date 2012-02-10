@@ -31,6 +31,9 @@ import org.datanucleus.store.NucleusConnection;
 import org.datanucleus.store.NucleusConnectionImpl;
 import org.datanucleus.store.connection.ConnectionFactory;
 import org.datanucleus.store.connection.ManagedConnection;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +58,18 @@ public class JcrStoreManager extends AbstractStoreManager {
     // FIXME
     public void setSession(Session session) {
         this.session = session;
-        columnResolver = new ColumnResolverImpl();
+        try {
+            if (session instanceof HippoSession) {
+                columnResolver = new ColumnResolverImpl(((HippoWorkspace)session.getWorkspace()).getHierarchyResolver());
+            } else {
+                columnResolver = new ColumnResolverImpl(ManagerServiceFactory.getManagerService(session).getHierarchyResolver());
+            }
+        } catch(RepositoryException ex) {
+            log.error("unable to obtain hierarchymanager", ex);
+        }
         typeResolver = null;
     }
+
     // FIXME
     public void setTypes(Node types) {
         typeResolver = new TypeResolverImpl(types);

@@ -36,7 +36,7 @@ public class RepositoryUrl {
     private String host;
     private int port;
 
-    RepositoryUrl(String str) throws MalformedURLException {
+    public RepositoryUrl(String str) throws MalformedURLException {
         if(str == null || str.trim().equals("")) {
             str = RMI_PREFIX + "://" + RMI_HOST + ":" + RMI_PORT + "/" + RMI_NAME;
         }

@@ -27,7 +27,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import javax.jdo.JDODataStoreException;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -199,21 +202,39 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {
             Node queryNode = configuration.getNode(category);
-            HippoQuery query = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(queryNode);
             QueryResult result;
-            if(query.getArgumentCount() > 0) {
-                Map<String,String> arguments = new TreeMap<String,String>();
-                String[] queryArguments = query.getArguments();
-                for(int i=0; i<queryArguments.length; i++) {
-                    arguments.put(queryArguments[i], identifier);
+            Query query = session.getWorkspace().getQueryManager().getQuery(queryNode);
+            if (query instanceof HippoQuery) {
+                HippoQuery hippoQuery = (HippoQuery)session.getWorkspace().getQueryManager().getQuery(queryNode);
+                if (hippoQuery.getArgumentCount() > 0) {
+                    Map<String, String> arguments = new TreeMap<String, String>();
+                    String[] queryArguments = hippoQuery.getArguments();
+                    for (int i = 0; i < queryArguments.length; i++) {
+                        arguments.put(queryArguments[i], identifier);
+                    }
+                    result = hippoQuery.execute(arguments);
+                } else {
+                    result = hippoQuery.execute();
                 }
-                result = query.execute(arguments);
             } else {
+                String[] bindVariableNames = query.getBindVariableNames();
+                for (int i = 0; bindVariableNames != null && i < bindVariableNames.length; i++) {
+                    query.bindValue(bindVariableNames[i], session.getValueFactory().createValue(identifier));
+                }
                 result = query.execute();
             }
-            NodeIterator iter = result.getNodes();
+            RowIterator iter = result.getRows();
+            String selectorName = (result.getSelectorNames().length > 1 ? result.getSelectorNames()[result.getSelectorNames().length - 1] : null);
             if (iter.hasNext()) {
-                Node resultNode = iter.nextNode();
+                Node resultNode = null;
+                while (iter.hasNext()) {
+                    Row resultRow = iter.nextRow();
+                    Node node = (selectorName != null ? resultRow.getNode(selectorName) : resultRow.getNode());
+                    if (node != null) {
+                        if (resultNode == null || node.getPath().length() > resultNode.getPath().length())
+                            resultNode = node;
+                    }
+                }
                 String uuid = resultNode.getUUID();
                 if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                     reset();

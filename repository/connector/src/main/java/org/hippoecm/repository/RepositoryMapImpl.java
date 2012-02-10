@@ -42,6 +42,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
+import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,8 +148,12 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
             if (item == null) {
                 if (session != null) {
                     if (path.startsWith("/")) {
-                        return ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getItem(session.getRootNode(),
-                                                                                                     path.substring(1)) != null;
+                        HierarchyResolver resolver;
+                        if(session.getWorkspace() instanceof HippoWorkspace)
+                            resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
+                        else
+                            resolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
+                        return resolver.getItem(session.getRootNode(), path.substring(1)) != null;
                     } else {
                         return false;
                     }
@@ -308,7 +313,12 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                 Item found = null;
                 String relPath = (String)key;
                 while (found == null) {
-                    found = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getItem(node, relPath, false, last);
+                    HierarchyResolver resolver;
+                    if(session.getWorkspace() instanceof HippoWorkspace)
+                        resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
+                    else
+                        resolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
+                    found = resolver.getItem(node, relPath, false, last);
                     if (found == null) {
                         node = last.node;
                         relPath = last.relPath;

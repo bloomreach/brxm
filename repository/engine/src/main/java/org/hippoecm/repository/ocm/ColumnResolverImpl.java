@@ -15,24 +15,34 @@
  */
 package org.hippoecm.repository.ocm;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
+import javax.jcr.version.VersionException;
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.ocm.JcrOID;
 
 public class ColumnResolverImpl implements ColumnResolver {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id: ";
     
-    public ColumnResolverImpl() {
+    private HierarchyResolver resolver;
+    
+    public ColumnResolverImpl(HierarchyResolver resolver) {
+        this.resolver = resolver;
     }
 
     public PropertyDefinition resolvePropertyDefinition(Node node, String column, int propertyType) throws RepositoryException {
@@ -75,7 +85,7 @@ public class ColumnResolverImpl implements ColumnResolver {
         if (node == null) {
             return null;
         }
-        return ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getProperty(node, column);
+        return resolver.getProperty(node, column);
     }
 
     @Override
@@ -83,7 +93,7 @@ public class ColumnResolverImpl implements ColumnResolver {
         if (node == null) {
             return null;
         }
-        return ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, column);
+        return resolver.getNode(node, column);
     }
 
     @Override
@@ -102,7 +112,8 @@ public class ColumnResolverImpl implements ColumnResolver {
             DerivedDataEngine.removal(current);
             current.remove();
         }
-        Node child = ((HippoSession)source.getSession()).copy(source, target.getPath() + "/" + name);
+        Node child = target.addNode(name, source.getPrimaryNodeType().getName());
+        SessionDecorator.copy(source, child);
         Document document = (Document)cloned;
         document.setIdentity(child.getIdentifier());
         return child;
@@ -111,7 +122,7 @@ public class ColumnResolverImpl implements ColumnResolver {
     @Override
     public NodeLocation resolveNodeLocation(Node node, String column) throws RepositoryException {
         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-        Node child = (Node)((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, column, false, last);
+        Node child = (Node) resolver.getItem(node, column, false, last);
         return new ColumnResolver.NodeLocation(last.node, child, last.relPath);
     }
 }

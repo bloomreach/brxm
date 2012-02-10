@@ -238,6 +238,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                 for(int i=0; i<privileges.length; i++) {
                                     try {
                                         session.checkPermission(documentNode.getPath(), privileges[i].getString());
+                                    } catch(IllegalArgumentException ex) {
+                                        // this happens when not using a hippo repository but only a plain jackrabbit repository.  The
+                                        // priviledges matched are strings that are not recognized and (badly) an illegal argument is
+                                        // thrown instead of some other indication.
+                                        continue;
                                     } catch(AccessControlException ex) {
                                         log.debug("item matches but no permission on "+documentNode.getPath()+" for role "+privileges[i].getString());
                                         hasPermission = false;

@@ -117,7 +117,8 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>c5fcf887-e0f2-4d07-813f-30606b3415e8</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
             <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
@@ -277,7 +278,8 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-collection</sv:value>
           <sv:value>new-document</sv:value>
@@ -290,7 +292,8 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String"></sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-collection</sv:value>
           <sv:value>new-document</sv:value>

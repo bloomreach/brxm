@@ -35,7 +35,6 @@ import java.util.concurrent.Executors;
 
 import java.util.concurrent.TimeUnit;
 import java.util.jar.Attributes;
-import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -763,7 +762,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
 
     }
-
+   
     public static void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
         try {
             String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
@@ -792,7 +791,9 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
             if (log.isDebugEnabled()) {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                if(!ex.getMessage().startsWith("Node with the same UUID exists:") || log.isDebugEnabled()) {
+                    log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                }
             }
         } catch (ConstraintViolationException ex) {
             if (log.isDebugEnabled()) {
@@ -810,7 +811,9 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
             if (log.isDebugEnabled()) {
                 log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                if(!ex.getMessage().startsWith("Node with the same UUID exists:") || log.isDebugEnabled()) {
+                    log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                }
             }
         } catch (LockException ex) {
             if (log.isDebugEnabled()) {

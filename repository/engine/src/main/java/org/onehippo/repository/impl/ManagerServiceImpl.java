@@ -1,4 +1,4 @@
-package org.onehippo.repository;
+package org.onehippo.repository.impl;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
@@ -10,14 +10,15 @@ import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.impl.DocumentManagerImpl;
 import org.hippoecm.repository.impl.WorkflowManagerImpl;
+import org.onehippo.repository.ManagerService;
 
-public class FacilityServiceImpl implements ManagerService {
+public class ManagerServiceImpl implements ManagerService {
     Session session, rootSession;
     DocumentManagerImpl documentManager = null;
     WorkflowManagerImpl workflowManager = null;
     HierarchyResolver hierarchyResolver = null;
 
-    public FacilityServiceImpl(Session session) {
+    public ManagerServiceImpl(Session session) {
         this.session = session;
     }
 
