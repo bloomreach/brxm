@@ -15,16 +15,12 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import org.hippoecm.editor.repository.EditmodelWorkflow;
@@ -34,10 +30,14 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class EditmodelWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
@@ -98,16 +98,72 @@ public class EditmodelWorkflowTest extends TestCase {
     }
 
     @Test
-    public void commitType() throws RepositoryException, WorkflowException, RemoteException {
+    public void mixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
-        Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
-        NodeIterator nodes = typeNode.getNode("hipposysedit:nodetype").getNodes("hipposysedit:nodetype");
+
+        Node typeNode = root.getNode("hippo:namespaces/test/mixinTest");
+
         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflow = workflowManager.getWorkflow("test", typeNode);
         assertTrue(workflow instanceof EditmodelWorkflow);
 
         ((EditmodelWorkflow) workflow).edit();
         session.refresh(false);
+
+        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        assertEquals(2, nodes.getSize());
+
+        Node draft = null;
+        while (nodes.hasNext()) {
+            Node node = nodes.nextNode();
+            if (node.isNodeType("nt:unstructured")) {
+                draft = node;
+            }
+        }
+        assertNotNull(draft);
+        NodeType[] mixins = draft.getMixinNodeTypes();
+        assertEquals(1, mixins.length);
+        assertEquals("test:mixin", mixins[0].getName());
+    }
+
+    @Test
+    public void superMixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
+        Node root = session.getRootNode();
+
+        Node typeNode = root.getNode("hippo:namespaces/test/superMixinTest");
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
+        assertTrue(workflow instanceof EditmodelWorkflow);
+
+        ((EditmodelWorkflow) workflow).edit();
+        session.refresh(false);
+
+        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        assertEquals(2, nodes.getSize());
+
+        Node draft = null;
+        while (nodes.hasNext()) {
+            Node node = nodes.nextNode();
+            if (node.isNodeType("nt:unstructured")) {
+                draft = node;
+            }
+        }
+        assertNotNull(draft);
+        assertTrue(draft.isNodeType("test:mixin"));
+    }
+
+    @Test
+    public void commitType() throws RepositoryException, WorkflowException, RemoteException {
+        Node root = session.getRootNode();
+        Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
+        assertTrue(workflow instanceof EditmodelWorkflow);
+
+        ((EditmodelWorkflow) workflow).edit();
+        session.refresh(false);
+        NodeIterator nodes;
 
         nodes = typeNode.getNode("hipposysedit:nodetype").getNodes("hipposysedit:nodetype");
         assertEquals(2, nodes.getSize());

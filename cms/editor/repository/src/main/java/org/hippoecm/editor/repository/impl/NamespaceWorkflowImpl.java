@@ -17,7 +17,6 @@ package org.hippoecm.editor.repository.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -32,9 +31,7 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.standardworkflow.Change;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 
 public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWorkflow, InternalWorkflow {
     private static final long serialVersionUID = 1L;
@@ -95,12 +92,5 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
         // ignore return type, as workflow chaining implies that the folder workflow
         // isn't executed until current method completes  
         folderWorkflow.add("new-type", "document", replacements);
-    }
-
-    public void updateModel(String cnd, Map<String, List<Change>> updates) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException {
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal",
-                getWorkflowContext().getDocument("root", "root"));
-        repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.editor.repository.impl.TemplateConverter", updates);
     }
 }

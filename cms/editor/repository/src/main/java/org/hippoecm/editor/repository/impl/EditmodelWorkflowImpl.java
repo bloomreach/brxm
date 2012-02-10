@@ -18,6 +18,8 @@ package org.hippoecm.editor.repository.impl;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +36,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
@@ -118,6 +121,24 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             }
         }
 
+        List<String> getSupertypes() throws RepositoryException {
+            Node reference;
+            if (draft != null) {
+                reference = draft;
+            } else {
+                reference = current;
+            }
+
+            List<String> superStrings = new LinkedList<String>();
+            if (reference.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                Value[] supers = reference.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                for (int i = 0; i < supers.length; i++) {
+                    superStrings.add(supers[i].getString());
+                }
+            }
+            return superStrings;
+        }
+        
         void commit() throws RepositoryException {
             if (draft != null) {
                 if (current == null) {
@@ -142,6 +163,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 }
                 draft.addMixin(HippoNodeType.NT_REMODEL);
                 draft.setProperty(HippoNodeType.HIPPO_URI, uri);
+                current = draft;
+                draft = null;
             }
         }
 
@@ -152,6 +175,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                             + ", current version was not found for type " + subject.getPath());
                 }
                 draft.remove();
+                draft = null;
             }
         }
     }
@@ -229,7 +253,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             }
         }
 
-        void commit() throws RepositoryException {
+        void commit(NodeTypeState nts) throws RepositoryException {
             if (draft != null) {
                 if (current != null) {
                     current.remove();
@@ -249,9 +273,12 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 NodeType newType = subject.getSession().getWorkspace().getNodeTypeManager().getNodeType(newTypeName);
                 Node clone = prototypes.addNode(HippoNodeType.HIPPO_PROTOTYPE, newTypeName);
 
-                for (NodeType mixin : draft.getMixinNodeTypes()) {
-                    if (!newType.isNodeType(mixin.getName())) {
-                        clone.addMixin(mixin.getName());
+                if (newType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    clone.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                }
+                for (String mixinName : nts.getSupertypes()) {
+                    if (!newType.isNodeType(mixinName)) {
+                        clone.addMixin(mixinName);
                     }
                 }
                 for (PropertyIterator props = draft.getProperties(); props.hasNext();) {
@@ -266,10 +293,14 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 }
                 for (NodeIterator nodes = draft.getNodes(); nodes.hasNext();) {
                     Node child = nodes.nextNode();
-                    if (child.getDefinition().isAutoCreated()) {
+                    NodeDefinition definition = child.getDefinition();
+                    if (definition.isAutoCreated()) {
                         continue;
                     }
-                    subject.getSession().move(child.getPath(), clone.getPath() + "/" + child.getName());
+                    NodeType declaringType = definition.getDeclaringNodeType();
+                    if (clone.isNodeType(declaringType.getName())) {
+                        subject.getSession().move(child.getPath(), clone.getPath() + "/" + child.getName());
+                    }
                 }
 
                 if (newType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -472,7 +503,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         }
         state.commit();
         PrototypeState prototypeState = new PrototypeState();
-        prototypeState.commit();
+        prototypeState.commit(state);
 
         subject.getSession().save();
     }

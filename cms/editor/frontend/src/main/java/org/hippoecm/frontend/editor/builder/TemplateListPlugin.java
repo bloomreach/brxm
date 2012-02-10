@@ -89,9 +89,6 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         if (containingType.getName().equals(type)) {
                             continue;
                         }
-                        if (descriptor.isMixin()) {
-                            continue;
-                        }
                         if (descriptor.isType(HippoNodeType.NT_DOCUMENT)) {
                             continue;
                         }
@@ -159,10 +156,16 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     String prefix = containingType.getName();
                     if (prefix.indexOf(':') > 0) {
                         prefix = prefix.substring(0, prefix.indexOf(':'));
-                        try {
-                            containingType.addField(new JavaFieldDescriptor(prefix, type));
-                        } catch (TypeException e) {
-                            TemplateListPlugin.this.error(e.getLocalizedMessage());
+                        if (!type.isMixin()) {
+                            try {
+                                containingType.addField(new JavaFieldDescriptor(prefix, type));
+                            } catch (TypeException e) {
+                                TemplateListPlugin.this.error(e.getLocalizedMessage());
+                            }
+                        } else {
+                            List<String> superTypes = containingType.getSuperTypes();
+                            superTypes.add(type.getName());
+                            containingType.setSuperTypes(superTypes);
                         }
                     } else {
                         log.warn("adding a field to a primitive type is not supported");
@@ -245,7 +248,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (!descriptor.isNode()) {
+                    if (!descriptor.isNode() && !descriptor.isMixin()) {
                         return true;
                     }
                     return false;
@@ -256,7 +259,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (descriptor.isNode() && !hasPrefix(descriptor, prefix)) {
+                    if (descriptor.isNode() && !hasPrefix(descriptor, prefix) && !descriptor.isMixin()) {
                         return true;
                     }
                     return false;
@@ -267,10 +270,18 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (descriptor.isNode() && hasPrefix(descriptor, prefix)) {
+                    if (descriptor.isNode() && hasPrefix(descriptor, prefix) && !descriptor.isMixin()) {
                         return true;
                     }
                     return false;
+                }
+            });
+            categories.add(new Category(engine, editableTypes, "mixins") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                boolean isTypeInCategory(ITypeDescriptor descriptor) {
+                    return descriptor.isMixin();
                 }
             });
             active = categories.get(0);

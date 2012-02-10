@@ -36,8 +36,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
@@ -49,6 +51,7 @@ import org.hippoecm.editor.type.JcrDraftStore;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -63,6 +66,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.AbstractPluginDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -71,6 +75,7 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -433,7 +438,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         public void setSuperTypes(List<String> superTypes) {
+            List<String> currentTypes = typeDescriptor.getSuperTypes();
             typeDescriptor.setSuperTypes(superTypes);
+            for (String superType : superTypes) {
+                if (!currentTypes.contains(superType)) {
+                    processMixinAdded(superType);
+                }
+            }
+            updatePrototype();
         }
 
         public boolean isValidationCascaded() {
@@ -506,6 +518,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 names.add(plugin.getName());
             }
 
+            boolean doUpdate = false;
             List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
             for (IPluginConfig plugin : plugins) {
                 if (!names.contains(plugin.getName())) {
@@ -516,9 +529,28 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         } catch (TypeException e) {
                             log.error("Failed to remove field from type", e);
                         }
-                        updatePrototype();
+                        doUpdate = true;
+                    } else {
+                        String mixin = plugin.getString("mixin");
+                        if (mixin != null) {
+                            try {
+                                NodeType nt = getJcrNodeType(typeDescriptor.getType());
+                                if (!nt.isNodeType(mixin)) {
+                                    List<String> superTypes = typeDescriptor.getSuperTypes();
+                                    superTypes.remove(mixin);
+                                    typeDescriptor.setSuperTypes(superTypes);
+                                }
+                            } catch (RepositoryException e) {
+                                log.error("Unable to check whether removed mixin " + mixin + " is part of the JCR primary node type", e);
+                            }
+                            doUpdate = true;
+                        }
                     }
+                    
                 }
+            }
+            if (doUpdate) {
+                updatePrototype();
             }
 
             clusterConfig.setPlugins(configs);
@@ -804,6 +836,32 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             Node prototype = (Node) prototypeModel.getObject();
             if (prototype != null && typeDescriptor != null) {
+                Set<String> currentTypes = new HashSet<String>();
+                if (prototype.hasProperty(JcrConstants.JCR_MIXINTYPES)) {
+                    final Value[] currentNodeTypes = prototype.getProperty(JcrConstants.JCR_MIXINTYPES).getValues();
+                    for (Value nt : currentNodeTypes) {
+                        currentTypes.add(nt.getString());
+                    }
+                }
+                final List<String> superTypes = typeDescriptor.getSuperTypes();
+                for (String superType : superTypes) {
+                    final NodeType nodeType = getJcrNodeType(superType);
+                    if (!nodeType.isMixin()) {
+                        continue;
+                    }
+                    if (!currentTypes.contains(superType)) {
+                        prototype.addMixin(superType);
+                    }
+                }
+                for (String currentType : currentTypes) {
+                    if (HippoNodeType.NT_HARDDOCUMENT.equals(currentType)) {
+                        continue;
+                    }
+                    if (!superTypes.contains(currentType)) {
+                        prototype.removeMixin(currentType);
+                    }
+                }
+
                 Map<String, String> oldFields = paths;
                 paths = new HashMap<String, String>();
                 for (Map.Entry<String, IFieldDescriptor> entry : typeDescriptor.getFields().entrySet()) {
@@ -821,6 +879,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
         } catch (BuilderException ex) {
             log.error("Incomplete model", ex);
         }
+    }
+
+    private NodeType getJcrNodeType(final String superType) throws RepositoryException {
+        return UserSession.get().getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(superType);
     }
 
     private void updateItem(Node prototype, String oldPath, IFieldDescriptor newField) throws RepositoryException {
@@ -895,6 +957,23 @@ public class TemplateBuilder implements IDetachable, IObservable {
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("field", fieldDescriptor.getName());
             pluginConfig.put("caption", fieldType.getName());
+
+            getPlugins().add(pluginConfig);
+
+            pluginModel.setObject(pluginName);
+        }
+    }
+
+    protected void processMixinAdded(String mixinTypeName) {
+        if (clusterConfig != null) {
+            String mixinName = mixinTypeName;
+            mixinName = mixinName.substring(mixinName.indexOf(':') + 1);
+            String pluginName = TypeHelper.getFieldName("mix:" + mixinName, null);
+
+            JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
+            pluginConfig.put("plugin.class", MixinLoaderPlugin.class.getName());
+            pluginConfig.put("wicket.id", getSelectedExtensionPoint());
+            pluginConfig.put("mixin", mixinTypeName);
 
             getPlugins().add(pluginConfig);
 

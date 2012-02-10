@@ -47,7 +47,7 @@ public class TemplateParameterEditor extends Panel {
                 final String property = item.getModelObject();
                 item.add(new Label("label", property));
 
-                IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), property);
+                IModel<String> valueModel = new PropertyModel<String>(TemplateParameterEditor.this.getDefaultModel(), "[" + property + "]");
                 if (editable) {
                     item.add(new TextFieldWidget("value", valueModel));
                 } else {

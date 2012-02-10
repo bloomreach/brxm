@@ -23,6 +23,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
+import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin;
+import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPluginEditorPlugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
@@ -84,6 +86,8 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
             Class<?> clazz = Class.forName(pluginClass);
             if (AbstractFieldPlugin.class.isAssignableFrom(clazz)) {
                 return FieldPluginEditorPlugin.class.getName();
+            } else if (MixinLoaderPlugin.class.isAssignableFrom(clazz)) {
+                return MixinLoaderPluginEditorPlugin.class.getName();
             } else if (ListViewPlugin.class.isAssignableFrom(clazz)) {
                 return ListViewPluginEditorPlugin.class.getName();
             } else if (RenderPlugin.class.isAssignableFrom(clazz)) {

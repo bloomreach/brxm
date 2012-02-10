@@ -15,38 +15,27 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.editor.cnd.RemodelHelper;
-import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
-import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.Change;
-import org.hippoecm.repository.standardworkflow.ChangeType;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TemplateEditorWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
@@ -194,149 +183,6 @@ public class TemplateEditorWorkflowTest extends TestCase {
             //assertFalse(node.hasProperty("hippotest3:second"));
             node.setProperty("hippotest3:second", "bla");
         }
-    }
-
-    @Ignore
-    public void testTemplateEditorUpdate() throws RepositoryException, WorkflowException, RemoteException {
-        {
-            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces"));
-            assertNotNull(workflow);
-            assertTrue(workflow instanceof TemplateEditorWorkflow);
-
-            ((TemplateEditorWorkflow) workflow).createNamespace("hippotest4", "http://www.hippoecm.org/test/1.0");
-            session.refresh(false);
-
-            workflow = workflowManager.getWorkflow("test", session.getRootNode().getNode("hippo:namespaces").getNode(
-                    "hippotest4"));
-            assertNotNull(workflow);
-            assertTrue(workflow instanceof NamespaceWorkflow);
-            ((NamespaceWorkflow) workflow).updateModel(cnd1, new HashMap());
-        }
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        {
-            Node node = session.getRootNode().getNode("test").addNode("testing", "hippotest4:test");
-            node.setProperty("hippotest4:first", "foobar");
-            session.save();
-
-            node = session.getRootNode().getNode("test").getNode("testing");
-            assertEquals("hippotest4:test", node.getPrimaryNodeType().getName());
-        }
-
-        {
-            Map<String, List<Change>> updates = new HashMap<String, List<Change>>();
-            List<Change> changes = new LinkedList<Change>();
-            changes.add(new Change(ChangeType.RENAMED, "hippotest4:first", "hippotest4:seconds"));
-            updates.put("hippotest4:test", changes);
-
-            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow workflow = workflowManager.getWorkflow("internal", session.getRootNode().getNode(
-                    "hippo:namespaces").getNode("hippotest4"));
-            ((NamespaceWorkflow) workflow).updateModel(cnd2, updates);
-        }
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        {
-            Node node = session.getRootNode().getNode("test").getNode("testing");
-            assertEquals("hippotest4:test", node.getPrimaryNodeType().getName());
-            assertFalse(node.hasProperty("hippotest4:first"));
-            assertTrue(node.hasProperty("hippotest4:second"));
-        }
-    }
-
-    @Test
-    public void mixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
-        Node root = session.getRootNode();
-
-        Node typeNode = root.getNode("hippo:namespaces/test/mixinTest");
-
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
-        assertTrue(workflow instanceof EditmodelWorkflow);
-
-        ((EditmodelWorkflow) workflow).edit();
-        session.refresh(false);
-
-        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
-        assertEquals(2, nodes.getSize());
-
-        Node draft = null;
-        while (nodes.hasNext()) {
-            Node node = nodes.nextNode();
-            if (node.isNodeType("nt:unstructured")) {
-                draft = node;
-            }
-        }
-        assertNotNull(draft);
-        NodeType[] mixins = draft.getMixinNodeTypes();
-        assertEquals(1, mixins.length);
-        assertEquals("test:mixin", mixins[0].getName());
-    }
-
-    @Test
-    public void superMixinsAreCopiedToDraft() throws RepositoryException, WorkflowException, RemoteException {
-        Node root = session.getRootNode();
-
-        Node typeNode = root.getNode("hippo:namespaces/test/superMixinTest");
-
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Workflow workflow = workflowManager.getWorkflow("test", typeNode);
-        assertTrue(workflow instanceof EditmodelWorkflow);
-
-        ((EditmodelWorkflow) workflow).edit();
-        session.refresh(false);
-
-        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
-        assertEquals(2, nodes.getSize());
-
-        Node draft = null;
-        while (nodes.hasNext()) {
-            Node node = nodes.nextNode();
-            if (node.isNodeType("nt:unstructured")) {
-                draft = node;
-            }
-        }
-        assertNotNull(draft);
-        assertTrue(draft.isNodeType("test:mixin"));
-    }
-
-    String cndmandatory =
-        "<rep='internal'>\n" +
-        "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
-        "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
-        "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
-        "<test='http://www.hippoecm.org/editor/test/nt/0.2'>\n" +
-        "\n" +
-        "[test:mandatorybase]\n" +
-        "- test:base (string) mandatory\n" + 
-        "[test:mandatory] > test:mandatorybase\n" +
-        "- test:mandatory (string) mandatory\n" +
-        "- test:withdefaults (string) mandatory < 'aap', 'noot'\n" +
-        "- test:autocreated (string) = 'mies' mandatory autocreated\n";
-
-    @Test
-    public void superMandatoryPropertiesAreCreated() throws RepositoryException, WorkflowException, RemoteException,
-            StoreException {
-        Node root = session.getRootNode();
-
-        Node nsNode = root.getNode("hippo:namespaces/test");
-
-        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-        Workflow workflow = workflowManager.getWorkflow("test", nsNode);
-        assertTrue(workflow instanceof NamespaceWorkflow);
-
-        ((NamespaceWorkflow) workflow).updateModel(cndmandatory, RemodelHelper.makeCargo(session, "test"));
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        
     }
 
 }

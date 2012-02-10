@@ -17,14 +17,11 @@ package org.hippoecm.editor.repository;
 
 import java.rmi.RemoteException;
 
-import java.util.List;
-import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.standardworkflow.Change;
 
 public interface NamespaceWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
@@ -38,6 +35,4 @@ public interface NamespaceWorkflow extends Workflow {
      * Add a new compound type descriptor node.
      */
     void addCompoundType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    void updateModel(String cnd, Map<String,List<Change>> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
