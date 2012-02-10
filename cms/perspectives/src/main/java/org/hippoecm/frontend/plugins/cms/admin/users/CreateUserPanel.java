@@ -37,12 +37,13 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.audit.AuditLogger;
+import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,8 +133,10 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                     try {
                         user.create();
                         user.savePassword(password);
-                        log.info("User '" + username + "' created by "
-                                + ((UserSession) Session.get()).getJcrSession().getUserID());
+                        HippoEvent event = new HippoEvent().user(getSession()).action("create-user")
+                                .category(HippoEvent.CATEGORY_USER_MANAGEMENT)
+                                .message("created user " + username);
+                        AuditLogger.getLogger().info(event.toString());
                         Session.get().info(getString("user-created", userModel));
                         // one up
                         List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

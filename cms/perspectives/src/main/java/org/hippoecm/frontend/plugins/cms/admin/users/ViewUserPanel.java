@@ -32,6 +32,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.audit.AuditLogger;
+import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -39,7 +41,6 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,8 +174,10 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 dg.getGroup().removeMembership(username);
             }
             user.delete();
-            log.info("User '" + username + "' deleted by "
-                    + ((UserSession) Session.get()).getJcrSession().getUserID());
+            HippoEvent event = new HippoEvent().user(getSession()).action("delete-user")
+                    .category(HippoEvent.CATEGORY_USER_MANAGEMENT)
+                    .message("deleted user " + username);
+            AuditLogger.getLogger().info(event.toString());
             Session.get().info(getString("user-removed", model));
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();

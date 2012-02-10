@@ -34,6 +34,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.audit.AuditLogger;
+import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
@@ -72,6 +74,10 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                         info(getString("user-membership-already-member", new DetachableGroup(selectedGroup)));
                     } else {
                         selectedGroup.addMembership(user.getUsername());
+                       HippoEvent event = new HippoEvent().user(getSession()).action("add-user-to-group")
+                                .category(HippoEvent.CATEGORY_GROUP_MANAGEMENT)
+                                .message("added user " + user.getUsername() + " to group " + selectedGroup.getGroupname());
+                        AuditLogger.getLogger().info(event.toString());
                         info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
                         localList.removeAll();
                     }
@@ -147,6 +153,10 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         model.getGroup().removeMembership(user.getUsername());
+                        HippoEvent event = new HippoEvent().user(getSession()).action("remove-user-from-group")
+                                .category(HippoEvent.CATEGORY_GROUP_MANAGEMENT)
+                                .message("removed user " + user.getUsername() + " from group " + model.getGroup().getGroupname());
+                        AuditLogger.getLogger().info(event.toString());
                         info(getString("user-membership-removed", model));
                         localList.removeAll();
                     } catch (RepositoryException e) {

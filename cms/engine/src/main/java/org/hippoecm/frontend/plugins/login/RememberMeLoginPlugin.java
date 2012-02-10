@@ -34,17 +34,17 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.hippoecm.audit.AuditLogger;
+import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +192,16 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         }
                     }
                 }
+                HippoEvent event = new HippoEvent().user(getSession()).action("login")
+                        .category(HippoEvent.CATEGORY_SECURITY)
+                        .message(username + " logged in");
+                AuditLogger.getLogger().info(event.toString());
+            }else{
+                HippoEvent event = new HippoEvent().user(getSession()).action("login")
+                        .category(HippoEvent.CATEGORY_SECURITY)
+                        .result("failure")
+                        .message(username + " failed to login");
+                AuditLogger.getLogger().info(event.toString());
             }
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success);

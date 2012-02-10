@@ -31,13 +31,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.audit.HippoEvent;
+import org.hippoecm.audit.AuditLogger;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,8 +117,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         String groupname = group.getGroupname();
         try {
             group.delete();
-            log.info("Group '" + groupname + "' deleted by "
-                    + ((UserSession) Session.get()).getJcrSession().getUserID());
+            HippoEvent event = new HippoEvent().user(getSession()).action("delete-group")
+                    .category(HippoEvent.CATEGORY_GROUP_MANAGEMENT)
+                    .message("deleted group " + groupname);
+            AuditLogger.getLogger().info(event.toString());
             Session.get().info(getString("group-removed", model));
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();

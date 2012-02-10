@@ -35,6 +35,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.audit.AuditLogger;
+import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
@@ -89,6 +91,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                                 info(getString("group-member-already-member", model));
                             } else {
                                 group.addMembership(user.getUsername());
+                                HippoEvent event = new HippoEvent().user(getSession()).action("add-user-to-group")
+                                        .category(HippoEvent.CATEGORY_GROUP_MANAGEMENT)
+                                        .message("added user " + user.getUsername() + " to group " + group.getGroupname());
+                                AuditLogger.getLogger().info(event.toString());
                                 info(getString("group-member-added", model));
                                 localList.removeAll();
                             }
@@ -133,6 +139,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         group.removeMembership(username);
+                        HippoEvent event = new HippoEvent().user(getSession()).action("remove-user-from-group")
+                                .category(HippoEvent.CATEGORY_GROUP_MANAGEMENT)
+                                .message("removed user " + username + " from group " + group.getGroupname());
+                        AuditLogger.getLogger().info(event.toString());
                         info(getString("group-member-removed", null));
                         localList.removeAll();
                     } catch (RepositoryException e) {

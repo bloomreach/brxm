@@ -34,6 +34,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.audit.HippoEvent;
+import org.hippoecm.audit.AuditLogger;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
@@ -71,7 +73,10 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                 try {
                     domain.addGroupToRole(selectedRole, selectedGroup.getGroupname());
                     info(getString("permissions-group-added", model));
-                    log.info("Grant " + selectedRole + " role to group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
+                    HippoEvent event = new HippoEvent().user(getSession()).action("grant-role")
+                            .category(HippoEvent.CATEGORY_PERMISSIONS_MANAGEMENT)
+                            .message("grant " + selectedRole + " role to group " + selectedGroup.getGroupname() + " for domain " + domain.getName());
+                    AuditLogger.getLogger().info(event.toString());
                     this.removeAll();
                     target.addComponent(SetPermissionsPanel.this);
                 } catch (RepositoryException e) {
@@ -129,6 +134,11 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         domain.removeGroupFromRole(role, group);
+                        HippoEvent event = new HippoEvent().user(getSession()).action("revoke-role")
+                                .category(HippoEvent.CATEGORY_PERMISSIONS_MANAGEMENT)
+                                .message("revoke " + selectedRole + " role from group " + group + " for domain " + domain.getName());
+                        AuditLogger.getLogger().info(event.toString());
+
                         info(getString("permissions-group-removed", model));
                         log.info("Revoke " + selectedRole + " role from group " + group + " for domain " + domain.getName());
                         this.removeAll();
