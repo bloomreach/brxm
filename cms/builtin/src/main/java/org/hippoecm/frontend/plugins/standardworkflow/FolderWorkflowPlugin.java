@@ -25,9 +25,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
-import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
@@ -57,7 +57,7 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
+import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -505,7 +505,8 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
             if (prototypes.size() > 1) {
                 final List<String> prototypesList = new LinkedList<String>(prototypes);
                 final DropDownChoice folderChoice;
-                add(folderChoice = new DropDownChoice("prototype", prototypeModel, prototypesList, new TypeChoiceRenderer(this)) {
+                SortedTypeChoiceRenderer typeChoiceRenderer = new SortedTypeChoiceRenderer(this, prototypesList);
+                add(folderChoice = new DropDownChoice("prototype", prototypeModel, typeChoiceRenderer, typeChoiceRenderer) {
                     protected boolean wantOnSelectionChangedNotifications() {
                         return false;
                     }
