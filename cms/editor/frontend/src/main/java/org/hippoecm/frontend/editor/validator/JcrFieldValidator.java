@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -25,6 +31,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -32,12 +39,7 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-public class JcrFieldValidator implements ITypeValidator {
+public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,7 +52,6 @@ public class JcrFieldValidator implements ITypeValidator {
     private IFieldDescriptor field;
     private ITypeDescriptor fieldType;
     private ITypeValidator typeValidator;
-    private HtmlValidator htmlValidator;
     private ValidatorService validatorService;
 
     public JcrFieldValidator(IFieldDescriptor field, JcrTypeValidator container) throws StoreException {
@@ -64,28 +65,23 @@ public class JcrFieldValidator implements ITypeValidator {
                 typeValidator = new JcrTypeValidator(fieldType, validatorService);
             }
         }
-        Set<String> validators = field.getValidators();
 
-        if (!validators.isEmpty()) {
-            for (String fieldValidatorType : validators) {
-                if (validatorService != null && validatorService.containsValidator(fieldValidatorType)) {
-                    try {
-                        validatorService.getValidator(fieldValidatorType).preValidation(this);
-                    } catch (Exception e) {
-                        log.error("", e);
+        if (validatorService != null) {
+            Set<String> validators = field.getValidators();
+            if (!validators.isEmpty()) {
+                for (String fieldValidatorType : validators) {
+                    if (validatorService.containsValidator(fieldValidatorType)) {
+                        try {
+                            validatorService.getValidator(fieldValidatorType).preValidation(this);
+                        } catch (ValidationException e) {
+                            log.error("Configuration is inconsistent", e);
+                        }
                     }
                 }
             }
-
-        }
-        if (field.getValidators().contains("html")) {
-            if (!"String".equals(fieldType.getType())) {
-                throw new StoreException("Invalid validation exception; cannot HTML validate non-string field");
-            }
-            htmlValidator = new HtmlValidator();
         }
     }
-
+    
     public Set<Violation> validate(IModel model) throws ValidationException {
         if (!(model instanceof JcrNodeModel)) {
             throw new ValidationException("Invalid model type; only JcrNodeModel is supported");
@@ -93,10 +89,9 @@ public class JcrFieldValidator implements ITypeValidator {
         Set<Violation> violations = new HashSet<Violation>();
         Set<String> validators = field.getValidators();
         boolean required = validators.contains("required");
-        if ((required || fieldType.isNode() || (validatorService != null && !validatorService.isEmpty()) || htmlValidator != null) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || validators.size() > 0) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
-                if ((fieldType.isNode() && (required || field.getTypeDescriptor().isValidationCascaded()))
-                        || (!fieldType.isNode() && (htmlValidator != null || validators.contains("non-empty")))) {
+                if (log.isDebugEnabled() && validators.size() > 0) {
                     log.debug("Wildcard properties are not validated");
                 }
                 return violations;
@@ -122,45 +117,20 @@ public class JcrFieldValidator implements ITypeValidator {
                             addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
-                } else if (htmlValidator != null) {
-                    String value = (String) childModel.getObject();
-                    if (htmlValidator != null) {
-                        for (String key : htmlValidator.validateNonEmpty(value)) {
-                            violations.add(newValueViolation(childModel, key));
-                        }
-                    }
-                }
-                if (!validators.isEmpty()) {
+                } else if (validatorService != null) {
                     for (String fieldValidatorType : validators) {
-                        if (validatorService != null && validatorService.containsValidator(fieldValidatorType)) {
+                        if (validatorService.containsValidator(fieldValidatorType)) {
                             violations.addAll(validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel));
                         }
                     }
-
                 }
             }
         }
         return violations;
     }
 
-    public void setHtmlValidator(HtmlValidator htmlValidator) {
-        this.htmlValidator = htmlValidator;
-    }
-
-    public HtmlValidator getHtmlValidator() {
-        return htmlValidator;
-    }
-
-    public IFieldDescriptor getField() {
-        return field;
-    }
-
     public ITypeDescriptor getFieldType() {
         return fieldType;
-    }
-
-    public ITypeValidator getTypeValidator() {
-        return typeValidator;
     }
 
     private void addTypeViolations(Set<Violation> violations, IModel childModel, Set<Violation> typeViolations)

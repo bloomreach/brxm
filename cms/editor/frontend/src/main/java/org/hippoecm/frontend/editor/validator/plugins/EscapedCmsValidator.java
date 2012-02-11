@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * @version $Id$
@@ -43,12 +43,12 @@ public class EscapedCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public void preValidation(JcrFieldValidator type) throws ValidationException {
+    public void preValidation(IFieldValidator type) throws ValidationException {
        //do nothing
     }
 
     @Override
-    public Set<Violation> validate(JcrFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException {
+    public Set<Violation> validate(IFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         String value = (String) childModel.getObject();
         if (INVALID_CHARS.matcher(value).matches()) {

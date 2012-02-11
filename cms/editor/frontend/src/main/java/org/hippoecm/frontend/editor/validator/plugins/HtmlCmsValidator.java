@@ -18,7 +18,6 @@ package org.hippoecm.frontend.editor.validator.plugins;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -31,19 +30,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validator that validates that a String value is non-empty.
+ * Validator for html values.  Verifies that the value is not empty.
+ * Use this validator when a customized "Html" type is used.
  * <p>
- * When the type of the value is the builtin "Html" type, an {@link HtmlValidator} is used to verify this.
- * Such a field therefore does not require the html validator to be declared separately.
+ * The builtin "Html" type is checked by the
+ * {@link NonEmptyCmsValidator} and does not require special treatment.
  */
-public class NonEmptyCmsValidator extends AbstractCmsValidator {
-    @SuppressWarnings({"UnusedDeclaration"})
-    private static Logger log = LoggerFactory.getLogger(NonEmptyCmsValidator.class);
+public class HtmlCmsValidator extends AbstractCmsValidator {
+
+    static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
 
     private HtmlValidator htmlValidator;
 
-    public NonEmptyCmsValidator(IPluginContext context, IPluginConfig config) {
+    public HtmlCmsValidator(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        htmlValidator = new HtmlValidator();
     }
 
     @Override
@@ -52,25 +53,19 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
             throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
-            htmlValidator = new HtmlValidator();
+            log.warn("Explicit html validation is not necessary for fields of type 'Html'.  This is covered by the 'non-empty' validator.");
         }
+
     }
 
     @Override
     public Set<Violation> validate(IFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         String value = (String) childModel.getObject();
-        if (htmlValidator != null) {
-            for (String key : htmlValidator.validateNonEmpty(value)) {
-                violations.add(fieldValidator.newValueViolation(childModel, key));
-            }
-        } else {
-            if (StringUtils.isBlank(value)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
-            }
+        for (String key : htmlValidator.validateNonEmpty(value)) {
+            violations.add(fieldValidator.newValueViolation(childModel, key));
         }
         return violations;
     }
-
 
 }

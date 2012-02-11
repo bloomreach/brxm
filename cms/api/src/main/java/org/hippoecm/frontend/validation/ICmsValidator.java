@@ -13,25 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.validator.plugins;
-
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.Violation;
+package org.hippoecm.frontend.validation;
 
 import java.util.Set;
 
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+
 /**
- * @version $Id$
+ * Validator service interface.  Is used by the CMS editor validator to check user-defined conditions on the values
+ * provided by the editor.
  */
-public interface ICmsValidator extends IClusterable{
+public interface ICmsValidator extends IClusterable {
 
-    public void preValidation(JcrFieldValidator type) throws ValidationException;
+    void preValidation(IFieldValidator type) throws ValidationException;
 
-    public Set<Violation> validate(JcrFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException;
+    Set<Violation> validate(IFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException;
 
-    public String getName();
+    String getName();
 }

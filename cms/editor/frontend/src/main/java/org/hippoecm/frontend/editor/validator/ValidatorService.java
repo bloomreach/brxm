@@ -15,17 +15,17 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.editor.validator.plugins.ICmsValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.validation.ICmsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @version $Id$

@@ -54,7 +54,7 @@ public class NewDocumentTypeAction extends Action {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NewDocumentTypeAction.class);
-    
+
     private ILayoutProvider layoutProvider;
 
     public String name;

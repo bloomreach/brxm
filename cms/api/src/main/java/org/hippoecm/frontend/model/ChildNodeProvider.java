@@ -143,8 +143,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
                                         : "");
                         parent.orderBefore(srcPath, destPath);
                     } catch (RepositoryException ex) {
-                        ex.printStackTrace();
-                        log.error(ex.getMessage());
+                        log.error("Unable to reorder children", ex);
                     }
                 } else {
                     log.warn("No predecessor found for " + model);

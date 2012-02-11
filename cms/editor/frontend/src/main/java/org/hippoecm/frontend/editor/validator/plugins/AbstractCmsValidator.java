@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -24,14 +29,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITranslateService;
+import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @version $Id$
