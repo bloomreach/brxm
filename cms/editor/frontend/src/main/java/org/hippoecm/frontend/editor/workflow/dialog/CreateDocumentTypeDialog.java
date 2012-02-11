@@ -15,27 +15,15 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import java.util.Collection;
-
 import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Check;
-import org.apache.wicket.markup.html.form.CheckGroup;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.editor.NamespaceValidator;
-import org.hippoecm.editor.template.JcrTemplateStore;
-import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class CreateDocumentTypeDialog extends CreateTypeDialog {
@@ -52,25 +40,6 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
         TypeDetailStep(NewDocumentTypeAction action) {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
             add(nameComponent = new TextFieldWidget("name", new PropertyModel<String>(action, "name")));
-
-            CheckGroup<String> cg = new CheckGroup<String>("checkgroup", new PropertyModel<Collection<String>>(action,
-                    "mixins"));
-            add(cg);
-
-            JcrTemplateStore templateStore = new JcrTemplateStore(new JcrTypeLocator());
-
-            cg.add(new DataView<String>("mixins", new ListDataProvider<String>(templateStore.getMetadataEditors())) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void populateItem(Item<String> item) {
-                    String mixin = item.getModelObject();
-                    item.add(new Check<String>("check", item.getModel()));
-                    IModel<String> typeName = new TypeTranslator(new JcrNodeTypeModel(mixin)).getTypeName();
-                    item.add(new Label("mixin", typeName));
-                }
-
-            });
         }
 
         @Override
