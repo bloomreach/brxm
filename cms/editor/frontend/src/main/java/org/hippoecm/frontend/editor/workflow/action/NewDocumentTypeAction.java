@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.editor.workflow.action;
 
-import java.util.LinkedList;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.jcr.ItemExistsException;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
@@ -35,10 +36,16 @@ import org.hippoecm.frontend.editor.workflow.TemplateFactory;
 import org.hippoecm.frontend.editor.workflow.dialog.CreateDocumentTypeDialog;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.BuiltinTypeStore;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NewDocumentTypeAction extends Action {
     @SuppressWarnings("unused")
@@ -46,20 +53,35 @@ public class NewDocumentTypeAction extends Action {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(NewDocumentTypeAction.class);
+    
     private ILayoutProvider layoutProvider;
 
     public String name;
     public String layout;
-    public List<String> mixins = new LinkedList<String>();
+    public List<String> documentTypes;
+    public String superType;
 
-    public NewDocumentTypeAction(NamespaceWorkflowPlugin plugin, String id, StringResourceModel name,
-            ILayoutProvider layouts) {
+    public NewDocumentTypeAction(NamespaceWorkflowPlugin plugin, String id, StringResourceModel name, ILayoutProvider layouts) {
         super(plugin, id, name);
         this.layoutProvider = layouts;
     }
 
     @Override
     protected Dialog createRequestDialog() {
+        WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getDefaultModel().getObject();
+        WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+        try {
+            NamespaceWorkflow namespaceWorkflow = (NamespaceWorkflow) manager.getWorkflow(descriptor);
+            documentTypes = (List<String>) namespaceWorkflow.hints().get("documentTypes");
+        } catch (RepositoryException e) {
+            log.error("Could not determine list of document types", e);
+        } catch (RemoteException e) {
+            log.error("Could not determine list of document types", e);
+        } catch (WorkflowException e) {
+            log.error("Could not determine list of document types", e);
+        }
+
         return new CreateDocumentTypeDialog(this, layoutProvider);
     }
 
@@ -73,7 +95,11 @@ public class NewDocumentTypeAction extends Action {
 
         NamespaceWorkflow workflow = (NamespaceWorkflow) wf;
         try {
-            workflow.addDocumentType(name);
+            if (superType == null) {
+                workflow.addDocumentType(name);
+            } else {
+                workflow.addDocumentType(name, superType);
+            }
         } catch (ItemExistsException ex) {
             return "Type " + name + " already exists";
         }
@@ -83,7 +109,7 @@ public class NewDocumentTypeAction extends Action {
         JcrTypeStore typeStore = new JcrTypeStore();
         JcrDraftStore draftStore = new JcrDraftStore(typeStore, prefix);
         BuiltinTypeStore builtinStore = new BuiltinTypeStore();
-        ITypeLocator typeLocator = new TypeLocator(new IStore[] {draftStore, typeStore, builtinStore});
+        ITypeLocator typeLocator = new TypeLocator(new IStore[]{draftStore, typeStore, builtinStore});
         typeStore.setTypeLocator(typeLocator);
         builtinStore.setTypeLocator(typeLocator);
 
@@ -103,5 +129,5 @@ public class NewDocumentTypeAction extends Action {
     protected ResourceReference getIcon() {
         return new ResourceReference(StdWorkflow.class, "doctype-new-16.png");
     }
-    
+
 }

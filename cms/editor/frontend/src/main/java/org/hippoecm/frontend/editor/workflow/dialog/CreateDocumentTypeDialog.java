@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
+import java.util.List;
+
 import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -37,8 +40,9 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
 
         TextFieldWidget nameComponent;
 
-        TypeDetailStep(NewDocumentTypeAction action) {
+        TypeDetailStep(NewDocumentTypeAction action, final List<String> candidatesSuperTypes) {
             super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
+            add(new DropDownChoice("super-type-list",new PropertyModel<String>(action, "superType"),candidatesSuperTypes));
             add(nameComponent = new TextFieldWidget("name", new PropertyModel<String>(action, "name")));
         }
 
@@ -65,7 +69,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
                 return !isLastStep(getActiveStep());
             }
         };
-        wizardModel.add(new TypeDetailStep(action));
+        wizardModel.add(new TypeDetailStep(action, action.documentTypes));
         wizardModel.add(new SelectLayoutStep(new PropertyModel<String>(action, "layout"), layouts));
         init(wizardModel);
     }

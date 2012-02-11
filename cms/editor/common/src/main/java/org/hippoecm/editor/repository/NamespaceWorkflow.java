@@ -27,12 +27,18 @@ public interface NamespaceWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
     /**
-     * Add a new document type descriptor node.
+     * Add a new document type descriptor node with 'basedocument' as the super type
      */
     void addDocumentType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Add a new document type descriptor node with super type.
+     */
+    void addDocumentType(String name, String superType) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Add a new compound type descriptor node.
      */
     void addCompoundType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
 }
