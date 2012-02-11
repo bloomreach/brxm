@@ -125,7 +125,6 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
         // "test-type"
         FormTester formTest = tester.newFormTester("dialog:content:form");
         formTest.setValue("view:name:widget", "testtype");
-        formTest.selectMultiple("view:checkgroup", new int[] { 0 });
 
         // "next"
         tester.executeAjaxEvent("dialog:content:form:buttons:next", "onclick");
