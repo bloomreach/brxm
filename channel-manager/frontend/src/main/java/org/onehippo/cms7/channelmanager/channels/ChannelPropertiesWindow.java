@@ -27,9 +27,11 @@ import java.util.ResourceBundle;
 import javax.jcr.Credentials;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -86,6 +88,8 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     private static final String WICKET_ID_KEY = "key";
     private static final String WICKET_ID_PROPERTIES = "properties";
     private static final String WICKET_ID_VALUE = "value";
+    private static final String WICKET_ID_HELP = "help";
+    private static final String HELP_SUFFIX = ".help";
     private static final long serialVersionUID = 1L;
 
     private Channel channel;
@@ -196,6 +200,12 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
 
                         // default: render a text field
                         item.add(new TextFieldWidget(WICKET_ID_VALUE, new StringModel(channel.getProperties(), key)));
+
+                        // add help text
+                        IModel<String> helpModel = new ChannelResourceModel(channel, key + HELP_SUFFIX);
+                        Label helpLabel = new Label(WICKET_ID_HELP, helpModel);
+                        helpLabel.setVisible(StringUtils.isNotBlank(helpModel.getObject()));
+                        item.add(helpLabel);
                     }
                 });
             }
