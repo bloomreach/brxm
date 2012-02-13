@@ -37,6 +37,7 @@
   </scm>
 
   <properties>
+    <hippo.commons.version>1-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>2.23.01-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.23.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.23.01-SNAPSHOT</hippo.addon-faceteddate.version>
@@ -95,6 +96,17 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-commons-api</artifactId>
+        <version>${hippo.commons.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-commons-guava</artifactId>
+        <version>${hippo.commons.version}</version>
+      </dependency>
 
       <!-- All Hippo Repository artifacts -->
       <dependency>
@@ -810,6 +822,10 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-commons-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
     <dependency>
@@ -843,6 +859,11 @@
             <configuration>
               <container>
                 <dependencies>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-commons-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-api</artifactId>
