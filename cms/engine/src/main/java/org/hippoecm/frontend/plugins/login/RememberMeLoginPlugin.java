@@ -39,13 +39,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.hippoecm.audit.AuditLogger;
-import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.event.HippoEventBus;
+import org.onehippo.event.audit.HippoAuditEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,16 +192,20 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         }
                     }
                 }
-                HippoEvent event = new HippoEvent().user(getSession()).action("login")
-                        .category(HippoEvent.CATEGORY_SECURITY)
+                HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
+                        .user(userSession.getJcrSession().getUserID())
+                        .action("login")
+                        .category(HippoAuditEvent.CATEGORY_SECURITY)
                         .message(username + " logged in");
-                AuditLogger.getLogger().info(event.toString());
+                HippoEventBus.post(event);
             }else{
-                HippoEvent event = new HippoEvent().user(getSession()).action("login")
-                        .category(HippoEvent.CATEGORY_SECURITY)
+                HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
+                        .user(userSession.getJcrSession().getUserID())
+                        .action("login")
+                        .category(HippoAuditEvent.CATEGORY_SECURITY)
                         .result("failure")
                         .message(username + " failed to login");
-                AuditLogger.getLogger().info(event.toString());
+                HippoEventBus.post(event);
             }
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success);

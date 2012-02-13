@@ -37,13 +37,14 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
-import org.hippoecm.audit.AuditLogger;
-import org.hippoecm.audit.HippoEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
+import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.event.HippoEventBus;
+import org.onehippo.event.audit.HippoAuditEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,12 +55,11 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(CreateUserPanel.class);
 
     private final Form form;
-    
+
     private String password;
     private String passwordCheck;
-    
-    private final IPasswordValidationService passwordValidationService;
 
+    private final IPasswordValidationService passwordValidationService;
 
 
     private DetachableUser userModel = new DetachableUser();
@@ -67,8 +67,9 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
     public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
-        this.passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
+
+        this.passwordValidationService = context.getService(IPasswordValidationService.class.getName(),
+                                                            IPasswordValidationService.class);
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(userModel));
@@ -93,11 +94,14 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         fc.setRequired(false);
         form.add(fc);
 
-        final PasswordTextField passwordField = new PasswordTextField("password", new PropertyModel<String>(this, "password"));
+        final PasswordTextField passwordField = new PasswordTextField("password",
+                                                                      new PropertyModel<String>(this, "password"));
         passwordField.setResetPassword(false);
         form.add(passwordField);
 
-        final PasswordTextField passwordCheckField = new PasswordTextField("password-check", new PropertyModel<String>(this, "passwordCheck"));
+        final PasswordTextField passwordCheckField = new PasswordTextField("password-check",
+                                                                           new PropertyModel<String>(this,
+                                                                                                     "passwordCheck"));
         passwordCheckField.setRequired(false);
         passwordCheckField.setResetPassword(false);
         form.add(passwordCheckField);
@@ -109,52 +113,56 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                
+
                 User user = userModel.getUser();
                 String username = user.getUsername();
-                
+
                 boolean passwordValidated = true;
                 if (passwordValidationService != null) {
                     try {
-                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(password, user);
+                        List<PasswordValidationStatus> statuses = passwordValidationService.checkPassword(password,
+                                                                                                          user);
                         for (PasswordValidationStatus status : statuses) {
                             if (!status.accepted()) {
                                 error(status.getMessage());
                                 passwordValidated = false;
                             }
                         }
-                    }
-                    catch (RepositoryException e) {
+                    } catch (RepositoryException e) {
                         log.error("Failed to validate password using password validation service", e);
                     }
                 }
-                
-                if (passwordValidated) {                    
+
+                if (passwordValidated) {
                     try {
                         user.create();
                         user.savePassword(password);
-                        HippoEvent event = new HippoEvent().user(getSession()).action("create-user")
-                                .category(HippoEvent.CATEGORY_USER_MANAGEMENT)
+                        UserSession userSession = UserSession.get();
+                        HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
+                                .user(userSession.getJcrSession().getUserID())
+                                .action("create-user")
+                                .category(HippoAuditEvent.CATEGORY_USER_MANAGEMENT)
                                 .message("created user " + username);
-                        AuditLogger.getLogger().info(event.toString());
+                        HippoEventBus.post(event);
                         Session.get().info(getString("user-created", userModel));
                         // one up
                         List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                        breadCrumbModel.setActive(l.get(l.size() -2));
+                        breadCrumbModel.setActive(l.get(l.size() - 2));
                     } catch (RepositoryException e) {
                         Session.get().warn(getString("user-create-failed", userModel));
                         log.error("Unable to create user '" + username + "' : ", e);
                     }
-                    
+
                 }
             }
+
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
                 target.addComponent(CreateUserPanel.this);
             }
         });
-        
+
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("cancel-button") {
             private static final long serialVersionUID = 1L;
@@ -163,12 +171,12 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 // one up
                 List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                breadCrumbModel.setActive(l.get(l.size() -2));
+                breadCrumbModel.setActive(l.get(l.size() - 2));
             }
         }.setDefaultFormProcessing(false));
     }
 
-    
+
     public IModel<String> getTitle(Component component) {
         return new StringResourceModel("user-create", component, null);
     }
