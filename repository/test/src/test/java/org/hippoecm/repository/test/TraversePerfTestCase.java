@@ -30,7 +30,6 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.testutils.history.HistoryWriter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -138,7 +137,7 @@ public class TraversePerfTestCase extends TestCase {
             session.logout();
             session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             long duration = test(session, 100);
-            HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
+            System.out.println("traversal "+Double.toString(duration / 100.0) + "ms");
         } finally {
             if (session != null) {
                 session.logout();
@@ -154,7 +153,7 @@ public class TraversePerfTestCase extends TestCase {
         build(session, content);
         session.save();
         long duration = test(session, 100);
-        HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
+        System.out.println("traversal " + Double.toString(duration / 100.0) + "ms");
     }
 
     @Ignore
@@ -174,7 +173,7 @@ public class TraversePerfTestCase extends TestCase {
             session.logout();
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             long duration = test(session, 100);
-            HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
+            System.out.println("traversal " + Double.toString(duration / 100.0) + "ms");
         } finally {
             if (session != null) {
                 session.logout();
@@ -206,7 +205,7 @@ public class TraversePerfTestCase extends TestCase {
             session.logout();
             session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             long duration = test(session, 100);
-            HistoryWriter.write("traversal", Double.toString(duration / 100.0), "ms");
+            System.out.println("traversal " + Double.toString(duration / 100.0) + "ms");
         } finally {
             if (session != null) {
                 session.logout();

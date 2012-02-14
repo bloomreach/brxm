@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.testutils.history.HistoryWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +55,7 @@ public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest
             node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
             count = node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
             tAfter = System.currentTimeMillis();
-            HistoryWriter.write("FacetedNavigationPerfTest" + numberOfNodesInTests[i], Long.toString(tAfter - tBefore), "ms");
+            System.out.println("FacetedNavigationPerfTest" + numberOfNodesInTests[i] +" "+Long.toString(tAfter - tBefore)+"ms");
         }
         commonEnd();
     }
@@ -71,7 +70,7 @@ public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest
         facetedNavigationNodeTraversal(node, 1, node.getDepth() + 10);
         tAfter = System.currentTimeMillis();
 
-        HistoryWriter.write("FullFacetedNavigationTraversal" + 500, Long.toString(tAfter - tBefore), "ms");
+        System.out.println("FullFacetedNavigationTraversal" + 500 + " "+ Long.toString(tAfter - tBefore) + "ms");
         commonEnd();
     }
 

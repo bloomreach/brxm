@@ -5,7 +5,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.testutils.history.HistoryWriter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,20 +91,20 @@ public class MirrorPerfTestCase extends TestCase {
         traverse(testSession.getRootNode().getNode("test/root"));
         tAfter = System.currentTimeMillis();
         long duration = tAfter - tBefore;
-        HistoryWriter.write("traversal", Double.toString(duration), "ms");
+        System.out.println("traversal "+Double.toString(duration) + "ms");
     }
 
     @Test
     public void testTraverseMirror() throws Exception {
         long duration = testTraverse();        
-        HistoryWriter.write("traversal", Double.toString(duration), "ms");
+        System.out.println("traversal " + Double.toString(duration) + "ms");
     }
 
 
     @Test
     public void testTraverseConcurrentMirror() throws Exception {
         long duration = testConcurrent();        
-        HistoryWriter.write("traversal", Double.toString(duration), "ms");
+        System.out.println("traversal " + Double.toString(duration) + "ms");
     }
 
     private long testTraverse() throws RepositoryException {

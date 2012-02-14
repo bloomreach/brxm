@@ -109,16 +109,6 @@
               </goals>
               </execution>
             </executions>
-            <configuration>
-              <mainClass>org.hippoecm.testutils.history.ReportGenerator</mainClass>
-              <arguments>
-                <argument>- -history</argument>
-                <argument>${history.points}</argument>
-                <argument>- -report</argument>
-                <argument>${history.report}</argument>
-              </arguments>
-              <cleanupDeamonThreads>false</cleanupDeamonThreads>
-            </configuration>
           </plugin>
         </plugins>
       </build>

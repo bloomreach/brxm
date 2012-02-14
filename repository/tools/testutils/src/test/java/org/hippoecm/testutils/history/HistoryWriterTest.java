@@ -18,7 +18,7 @@ package org.hippoecm.testutils.history;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(HistoryWriter.class)
+
 @Suite.SuiteClasses({
   org.hippoecm.testutils.history.HistoryWriterTestCase.class
 })

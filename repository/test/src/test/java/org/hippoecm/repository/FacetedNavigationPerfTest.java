@@ -15,11 +15,9 @@
  */
 package org.hippoecm.repository;
 
-import org.hippoecm.testutils.history.HistoryWriter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(HistoryWriter.class)
 @Suite.SuiteClasses({
   org.hippoecm.repository.FacetedNavigationPerfTestCase.class
 })

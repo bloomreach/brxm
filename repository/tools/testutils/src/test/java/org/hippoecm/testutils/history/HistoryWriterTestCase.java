@@ -29,7 +29,7 @@ public class HistoryWriterTestCase {
             long start = System.currentTimeMillis();
             somethingExpensive(379);
             long end = System.currentTimeMillis();
-            HistoryWriter.write("Duration", String.valueOf(end - start), "Milliseconds");
+            System.out.println("Duration " + String.valueOf(end - start)+ " Milliseconds");
         }
     }
 
@@ -41,7 +41,7 @@ public class HistoryWriterTestCase {
             somethingExpensive(379);
         }
         long end = System.currentTimeMillis();
-        HistoryWriter.write("Duration", String.valueOf( (end - start)/100.0 ), "Milliseconds");
+        System.out.println("Duration " + String.valueOf( (end - start)/100.0 ) + " Milliseconds");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class HistoryWriterTestCase {
         long start = System.currentTimeMillis();
         somethingExpensive(501);
         long end = System.currentTimeMillis();
-        HistoryWriter.write("Duration", String.valueOf(end - start), "Milliseconds");
+        System.out.println("Duration " + String.valueOf(end - start) + " Milliseconds");
     }
 
     private void somethingExpensive(int price) {
