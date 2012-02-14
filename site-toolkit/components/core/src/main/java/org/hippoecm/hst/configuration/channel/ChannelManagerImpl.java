@@ -88,6 +88,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
      * The codec which is used for the channel ID
      */
     private StringCodec channelIdCodec = new StringCodecFactory.UriEncoding();
+    
+    private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(new ArrayList<ChannelManagerEventListener>());
 
     public ChannelManagerImpl() {
     }
@@ -107,6 +109,26 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     public void setContentRoot(final String contentRoot) {
         this.contentRoot = contentRoot.trim();
+    }
+
+    public void addChannelManagerEventListeners(ChannelManagerEventListener ... listeners) {
+        if (listeners == null) {
+            return;
+        }
+        
+        for (ChannelManagerEventListener listener : listeners) {
+            channelManagerEventListeners.add(listener);
+        }
+    }
+
+    public void removeChannelManagerEventListeners(ChannelManagerEventListener ... listeners) {
+        if (listeners == null) {
+            return;
+        }
+        
+        for (ChannelManagerEventListener listener : listeners) {
+            channelManagerEventListeners.remove(listener);
+        }
     }
 
     private void loadBlueprints(final Node configNode) throws RepositoryException {
@@ -368,6 +390,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
             String channelId = createUniqueChannelId(channel.getName(), session);
             createChannel(configNode, bps, session, channelId, channel);
 
+            ChannelManagerEvent event = new ChannelManagerEventImpl(bps, channelId, channel, configNode);
+            for (ChannelManagerEventListener listener : channelManagerEventListeners) {
+                try {
+                    listener.channelCreated(event);
+                } catch (Exception listenerEx) {
+                    log.error("Channel created event listener, " + listener + ", failed to handle the event", listenerEx);
+                }
+            }
+
             channels = null;
 
             session.save();
@@ -428,6 +459,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
             session = getSession(true);
             Node configNode = session.getNode(rootPath);
             updateChannel(configNode, channel);
+
+            ChannelManagerEvent event = new ChannelManagerEventImpl(null, null, channel, configNode);
+            for (ChannelManagerEventListener listener : channelManagerEventListeners) {
+                try {
+                    listener.channelUpdated(event);
+                } catch (Exception listenerEx) {
+                    log.error("Channel updated event listener, " + listener + ", failed to handle the event", listenerEx);
+                }
+            }
 
             channels = null;
 
@@ -883,4 +923,40 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 ChannelException.Type.CANNOT_CREATE_CONTENT, contentRoot);
     }
 
+    private static class ChannelManagerEventImpl implements ChannelManagerEvent {
+        
+        private Blueprint blueprint;
+        private String channelId;
+        private Channel channel;
+        private Node configRootNode;
+        
+        private ChannelManagerEventImpl(Blueprint blueprint, String channelId, Channel channel, Node configRootNode) {
+            this.blueprint = blueprint;
+            this.channelId = channelId;
+            this.channel = channel;
+            this.configRootNode = configRootNode;
+        }
+
+        public Blueprint getBlueprint() {
+            return blueprint;
+        }
+        
+        public String getChannelId() {
+            if (channelId != null) {
+                return channelId;
+            } else if (channel != null) {
+                return channel.getId();
+            }
+
+            return null;
+        }
+
+        public Channel getChannel() {
+            return channel;
+        }
+
+        public Node getConfigRootNode() {
+            return configRootNode;
+        }
+    }
 }

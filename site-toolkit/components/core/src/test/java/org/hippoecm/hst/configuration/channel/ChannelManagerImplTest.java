@@ -15,6 +15,19 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertNull;
+
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
@@ -45,19 +58,6 @@ import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Test;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertNull;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
 
@@ -343,6 +343,97 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals("noot", channelInfo.getGetme());
     }
 
+    @Test
+    public void testChannelManagerEventListeners() throws RepositoryException, ChannelException, PrivilegedActionException {
+        Node configNode = getSession().getRootNode().getNode("hst:hst");
+        Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+
+        Node bp = bpFolder.addNode("cmit-test-bp2", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
+        bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
+        Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
+        channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
+        Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        defaultChannelInfo.setProperty("getme", "noot");
+        getSession().save();
+
+        final ChannelManagerImpl manager = createManager();
+
+        Channel channel = manager.getBlueprint("cmit-test-bp2").createChannel();
+        channel.setName("cmit-channel2");
+        channel.setUrl("http://cmit-myhost2");
+        channel.setContentRoot("/");
+        Map<String, Object> properties = channel.getProperties();
+        assertTrue(properties.containsKey("getme"));
+        assertEquals("noot", properties.get("getme"));
+        
+        MyChannelManagerEventListener listener1 = new MyChannelManagerEventListener();
+        MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
+        MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
+        
+        manager.addChannelManagerEventListeners(listener1, listener2, listener3);
+
+        Subject subject = createSubject();
+        final Channel channelToPersist = channel;
+        
+        String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
+            @Override
+            public String run() throws ChannelException {
+                return manager.persist("cmit-test-bp2", channelToPersist);
+            }
+        }, null);
+        
+        assertEquals(1, listener1.getCreatedCount());
+        assertEquals(1, listener2.getCreatedCount());
+        assertEquals(1, listener3.getCreatedCount());
+        assertEquals(0, listener1.getUpdatedCount());
+        assertEquals(0, listener2.getUpdatedCount());
+        assertEquals(0, listener3.getUpdatedCount());
+        
+        channel = manager.getChannels().get(channelId);
+        channel.setName("cmit-channel2");
+        channel.setUrl("http://cmit-myhost2");
+        channel.setContentRoot("/");
+        final Channel channelToSave = channel;
+        
+        HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Object>() {
+            @Override
+            public Object run() throws ChannelException {
+                manager.save(channelToSave);
+                return null;
+            }
+        }, null);
+
+        assertEquals(1, listener1.getCreatedCount());
+        assertEquals(1, listener2.getCreatedCount());
+        assertEquals(1, listener3.getCreatedCount());
+        assertEquals(1, listener1.getUpdatedCount());
+        assertEquals(1, listener2.getUpdatedCount());
+        assertEquals(1, listener3.getUpdatedCount());
+
+        manager.removeChannelManagerEventListeners(listener1, listener2, listener3);
+        
+        channel = manager.getChannels().get(channelId);
+        channel.setName("cmit-channel2");
+        channel.setUrl("http://cmit-myhost2");
+        channel.setContentRoot("/");
+        final Channel channelToSave2 = channel;
+        
+        HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Object>() {
+            @Override
+            public Object run() throws ChannelException {
+                manager.save(channelToSave2);
+                return null;
+            }
+        }, null);
+
+        assertEquals(1, listener1.getCreatedCount());
+        assertEquals(1, listener2.getCreatedCount());
+        assertEquals(1, listener3.getCreatedCount());
+        assertEquals(1, listener1.getUpdatedCount());
+        assertEquals(1, listener2.getUpdatedCount());
+        assertEquals(1, listener3.getUpdatedCount());
+    }
+
     private Subject createSubject() {
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -417,5 +508,37 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(mount.isPortInUrl()).andReturn(false);
     }
 
+    private static class MyChannelManagerEventListener implements ChannelManagerEventListener {
 
+        private int createdCount;
+        private int updatedCount;
+        
+        public void channelCreated(ChannelManagerEvent event) {
+            Blueprint blueprint = event.getBlueprint();
+            Channel channel = event.getChannel();
+            Node configRootNode = event.getConfigRootNode();
+            assertNotNull(blueprint);
+            assertNotNull(channel);
+            assertNotNull(configRootNode);
+            ++createdCount;
+        }
+
+        public void channelUpdated(ChannelManagerEvent event) {
+            Blueprint blueprint = event.getBlueprint();
+            Channel channel = event.getChannel();
+            Node configRootNode = event.getConfigRootNode();
+            assertNull(blueprint);
+            assertNotNull(channel);
+            assertNotNull(configRootNode);
+            ++updatedCount;
+        }
+        
+        public int getCreatedCount() {
+            return createdCount;
+        }
+        
+        public int getUpdatedCount() {
+            return updatedCount;
+        }
+    }
 }

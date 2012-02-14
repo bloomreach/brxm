@@ -94,11 +94,7 @@ public class ApplicationEventMethodsInvoker implements ApplicationListener<Appli
 
                     invoker.invoke();
                 } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.error("Failed to invoke application event callback invoker. " + e, e);
-                    } else {
-                        log.error("Failed to invoke application event callback invoker. " + e);
-                    }
+                    log.error("Failed to invoke application event callback invoker. " + e, e);
                 }
             }
         }
