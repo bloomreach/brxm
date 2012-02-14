@@ -2166,6 +2166,7 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/docum
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_es.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_fi.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_fr.png -text svneol=unset#image/png
+translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_gb.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_gr.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_hu.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/document/flag-document-16_id.png -text svneol=unset#image/png
@@ -2217,6 +2218,7 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_es.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_fi.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_fr.png -text svneol=unset#image/png
+translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_gb.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_gr.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_hu.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/flags/flag-16_id.png -text svneol=unset#image/png
@@ -2269,6 +2271,7 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folde
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_es.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_fi.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_fr.png -text svneol=unset#image/png
+translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_gb.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_gr.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_hu.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_closed/folder-closed-16_id.png -text svneol=unset#image/png
@@ -2321,6 +2324,7 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folde
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_es.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_fi.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_fr.png -text svneol=unset#image/png
+translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_gb.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_gr.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_hu.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/folder_open/folder-open-16_id.png -text svneol=unset#image/png
@@ -2372,6 +2376,7 @@ translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_es.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_fi.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_fr.png -text svneol=unset#image/png
+translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_gb.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_gr.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_hu.png -text svneol=unset#image/png
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/icons/plus/flag-plus-16_id.png -text svneol=unset#image/png

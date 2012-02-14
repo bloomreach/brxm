@@ -28,7 +28,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="country" sv:type="String">
-      <sv:value>uk</sv:value>
+      <sv:value>gb</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
