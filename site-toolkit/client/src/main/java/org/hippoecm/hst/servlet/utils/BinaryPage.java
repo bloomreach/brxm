@@ -23,6 +23,7 @@ import java.io.Serializable;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * A {@link Serializable} representation of a resource from the repository as a html page.
@@ -41,7 +42,7 @@ public class BinaryPage implements Serializable {
     private long nextValidityCheckTimeStamp = -1L;
     private long creationTime;
     private long length;
-    private byte[] data = {};
+    private byte[] data = ArrayUtils.EMPTY_BYTE_ARRAY;
 
     /** 
      * Create a new binary page. This will just create the page holder. The fields have to

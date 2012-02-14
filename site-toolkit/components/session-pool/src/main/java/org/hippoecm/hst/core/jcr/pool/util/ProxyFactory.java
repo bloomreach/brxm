@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.apache.commons.proxy.Invoker;
@@ -35,8 +36,6 @@ import org.apache.commons.proxy.ObjectProvider;
 public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory 
 {
     
-    public static final Object[] EMPTY_ARGUMENTS = new Object[0];
-
     @Override
     public Object createDelegatorProxy(ClassLoader classLoader, ObjectProvider delegateProvider,
                                        Class[] proxyClasses)
@@ -174,7 +173,7 @@ public class ProxyFactory extends org.apache.commons.proxy.ProxyFactory
         public ReflectionInvocation(Object target, Method method, Object[] arguments)
         {
             this.method = method;
-            this.arguments = (arguments == null ? EMPTY_ARGUMENTS : arguments);
+            this.arguments = (arguments == null ? ArrayUtils.EMPTY_OBJECT_ARRAY : arguments);
             this.target = target;
         }
 

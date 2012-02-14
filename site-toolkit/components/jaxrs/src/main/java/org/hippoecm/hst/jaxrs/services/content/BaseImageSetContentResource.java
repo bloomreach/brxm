@@ -41,6 +41,7 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.hippoecm.hst.cache.HstCache;
@@ -62,7 +63,7 @@ import org.slf4j.LoggerFactory;
 public class BaseImageSetContentResource extends AbstractContentResource {
     
     private static Logger log = LoggerFactory.getLogger(BaseImageSetContentResource.class);
-    
+
     private HstCache binariesCache;
     
     public HstCache getBinariesCache() {
@@ -147,7 +148,7 @@ public class BaseImageSetContentResource extends AbstractContentResource {
             final String mimeType = childImageBean.getMimeType();
             
             if (!childImageBean.getNode().hasProperty("jcr:data")) {
-                return Response.ok(new byte[0], MediaType.valueOf(mimeType)).build();
+                return Response.ok(ArrayUtils.EMPTY_BYTE_ARRAY, MediaType.valueOf(mimeType)).build();
             }
             
             final Binary binary = childImageBean.getNode().getProperty("jcr:data").getBinary();

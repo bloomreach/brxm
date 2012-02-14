@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -93,7 +94,7 @@ public class BaseHstComponent extends GenericHstComponent {
         "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
         "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
         "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class'";
-    
+
     protected boolean beansInitialized;
     protected ObjectConverter objectConverter;
     protected HstQueryManagerFactory hstQueryManagerFactory;
@@ -202,7 +203,7 @@ public class BaseHstComponent extends GenericHstComponent {
         if (paramValues != null && paramValues.length > 0) {
             return paramValues;
         }
-        return new String[0];
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
     
 

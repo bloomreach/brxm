@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public class JcrHippoRepository implements Repository {
     
     private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
-    
+
     protected String repositoryURI;
     protected HippoRepository hippoRepository;
     protected boolean vmRepositoryUsed;
@@ -81,7 +82,7 @@ public class JcrHippoRepository implements Repository {
     }
 
     public String[] getDescriptorKeys() {
-        String [] descriptorKeys = {};
+        String [] descriptorKeys = ArrayUtils.EMPTY_STRING_ARRAY;
         
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();

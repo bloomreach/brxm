@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.component.HstRequest;
 
 /**
@@ -33,7 +34,6 @@ public class FormMap {
     // first messages
     private Map<String, String> message = null;
     private String predecessorUUID = null;
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     // flag indicating form is sealed: sealed form data will not be displayed after subsequent reloads
     private boolean sealed;
 
@@ -48,7 +48,7 @@ public class FormMap {
 
     public FormMap(HstRequest request, String[] fieldNames) {
         for (String name : fieldNames) {
-            String[] values = request.getParameterValues(name) == null ? EMPTY_STRING_ARRAY : request.getParameterValues(name);
+            String[] values = request.getParameterValues(name) == null ? ArrayUtils.EMPTY_STRING_ARRAY : request.getParameterValues(name);
             FormField field = new FormField(name);
             for (String value : values) {
                 field.addValue(value);

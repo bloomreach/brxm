@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -46,7 +47,6 @@ public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
-    
     private ObjectConverter objectConverter;
     private MountDecorator mountDecorator;
     private List<Class<? extends HippoBean>> annotatedClasses;
@@ -109,7 +109,7 @@ public class AbstractConfigResource {
     }
 
     protected Response ok(String msg) {
-        return ok(msg, new String[0]);
+        return ok(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     protected Response ok(String msg, Object data) {
@@ -120,7 +120,7 @@ public class AbstractConfigResource {
     }
 
     protected Response error(String msg) {
-        return error(msg, new String[0]);
+        return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     protected Response error(String msg, Object data) {

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -358,7 +359,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     
     public void setRenderParameter(String key, String value) {
         if (value == null) {
-            setRenderParameter(key, new String[0]);
+            setRenderParameter(key, ArrayUtils.EMPTY_STRING_ARRAY);
         } else {
             setRenderParameter(key, new String [] { value });
         }

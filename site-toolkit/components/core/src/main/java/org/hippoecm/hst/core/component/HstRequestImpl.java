@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
@@ -54,7 +55,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
     
     private static volatile String [] CONTAINER_ATTR_NAME_PREFIXES = null;
-    
+
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
     protected Map<String, Map<String, String []>> namespaceParametersMap = new HashMap<String, Map<String, String []>>();
@@ -368,7 +369,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                         containerAttrNamePrefixes.addAll(this.requestContext.getContainerConfiguration().getList(CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
                     }
                     
-                    CONTAINER_ATTR_NAME_PREFIXES = (String []) containerAttrNamePrefixes.toArray(new String[0]);
+                    CONTAINER_ATTR_NAME_PREFIXES = (String []) containerAttrNamePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                 }
             }
         }

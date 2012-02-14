@@ -25,6 +25,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.naming.InitialContext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class JcrHippoRepository implements Repository {
     
     private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
-    
+
     protected String repositoryURI;
     
     protected HippoRepository hippoRepository;       // repository created via HippoRepositoryFactory
@@ -160,7 +161,7 @@ public class JcrHippoRepository implements Repository {
             }
         }
         
-        return new String[0];
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     public Session login() throws LoginException, RepositoryException {

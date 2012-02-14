@@ -27,6 +27,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -37,7 +38,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private static final long serialVersionUID = 1L;
     
     private static final Logger log = LoggerFactory.getLogger(JCRValueProviderImpl.class);
-    
+    private static final Calendar[] EMPTY_CALENDAR_ARRAY = new Calendar[0];
+
     // transient node because ValueProvider implements Serializable
     private transient Node jcrNode;
 
@@ -235,14 +237,14 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new String[0];
+            return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         
         loadProperty(propertyName,PropertyType.STRING, true);
         
         String[] val =  this.propertyMap.getStringArrays().get(propertyName);
         if(val == null) {
-            return new String[0];
+            return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         return val;
     }
@@ -271,13 +273,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Double[0];
+            return ArrayUtils.EMPTY_DOUBLE_OBJECT_ARRAY;
         }
         
         loadProperty(propertyName,PropertyType.DOUBLE, true);
         Double[] val = this.propertyMap.getDoubleArrays().get(propertyName);
         if(val == null) {
-            return new Double[0];
+            return ArrayUtils.EMPTY_DOUBLE_OBJECT_ARRAY;
         }
         return val;
     }
@@ -307,13 +309,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Long[0];
+            return ArrayUtils.EMPTY_LONG_OBJECT_ARRAY;
         }
         
         loadProperty(propertyName,PropertyType.LONG, true);
         Long[] val = this.propertyMap.getLongArrays().get(propertyName);
         if(val == null) {
-            return new Long[0];
+            return ArrayUtils.EMPTY_LONG_OBJECT_ARRAY;
         }
         return val;
     }
@@ -340,13 +342,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return (Calendar[])o.clone();
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Calendar[0];
+            return EMPTY_CALENDAR_ARRAY;
         }
         
         loadProperty(propertyName,PropertyType.DATE, true);
         Calendar[] val = this.propertyMap.getCalendarArrays().get(propertyName);
         if(val == null) {
-            return new Calendar[0];
+            return EMPTY_CALENDAR_ARRAY;
         }
         return val;
     }
@@ -375,12 +377,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Boolean[0];
+            return ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY;
         }
         loadProperty(propertyName,PropertyType.BOOLEAN, true);
         Boolean[] val  = this.propertyMap.getBooleanArrays().get(propertyName);
         if(val == null) {
-           return new Boolean[0];
+           return ArrayUtils.EMPTY_BOOLEAN_OBJECT_ARRAY;
         } 
         return val;
     }

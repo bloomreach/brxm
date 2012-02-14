@@ -23,6 +23,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -41,7 +42,7 @@ import org.springframework.web.context.support.ServletContextAwareProcessor;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
-    
+
     Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
     
     public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = ClientComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
@@ -98,7 +99,7 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
                 logger.warn("There's no valid component configuration.");
             }
         } else {
-            this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(new String [0]));
+            this.applicationContext.setConfigLocations(checkedConfigurationResources.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
             
             if (configuration != null) {
                 Properties initProps = ConfigurationConverter.getProperties(configuration);

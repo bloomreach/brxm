@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.component.HstURL;
 
 /**
@@ -176,7 +177,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
             
             List<String> valueList = parametersMap.get(key);
         
-            String[] valueArray = valueList.toArray(new String[0]);
+            String[] valueArray = valueList.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
             
             url.setParameter(key, valueArray);
         }

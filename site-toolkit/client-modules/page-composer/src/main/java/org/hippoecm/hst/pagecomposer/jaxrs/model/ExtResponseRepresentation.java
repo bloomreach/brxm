@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import org.apache.commons.lang.ArrayUtils;
+
 /**
  * This model represents that response that Ext expects to wrap the actual data.
  *
@@ -27,7 +29,7 @@ public class ExtResponseRepresentation {
     private Object data;
 
     public ExtResponseRepresentation() {
-        this(new String[0]);
+        this(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     public ExtResponseRepresentation(Object data) {
