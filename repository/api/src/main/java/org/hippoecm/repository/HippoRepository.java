@@ -33,7 +33,7 @@ import org.hippoecm.repository.api.ValueMap;
 
 /**
  * Instances of this class represent a connection to the Repository. This interface is mainly provided to add some
- * convienience methods, additional functionality and provide a basis for starting transactional access to the
+ * convenience methods, additional functionality and provide a basis for starting transactional access to the
  * repository. The primary usage is to use create an authenticated session which can be used to retrieve
  * and store data. For this usage, some convenience login() methods are accessible though this interface, but these
  * are essentially the same as implemented in the JSR-170 based JCR repository, as would be returned by the method
@@ -134,7 +134,7 @@ public interface HippoRepository {
      * DO NOT USE THIS CALL IS NOT YET PART OF THE API AS IT IS CURRENTLY UNDER EVALUATION
      * returns true whenever the session has grown to such an extend that it is advisable to persist or flush changes.
      * @param session the session for which to compute the resource consumption
-     * @param the states for which the threshold should be inspected, or null for any state
+     * @param interests the states for which the threshold should be inspected, or null for any state
      * @return true when it is advisable to flush the state of the session, either by calling
      * session.save() or session.refresh(false)
      */

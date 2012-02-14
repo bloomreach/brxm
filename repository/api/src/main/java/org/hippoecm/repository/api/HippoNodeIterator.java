@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2010-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,15 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.NodeIterator;
 
+/**
+ * Extends a #javax.jcr.NodeIterator interface, with an additional method.  Not all NodeIterator objects returned by
+ * a repository are HippoNodeIterator objects, and when an object is a HippoNodeIterator the additional information
+ * provided by these methods may still not be available.
+ */
 public interface HippoNodeIterator extends NodeIterator {
+    /**
+     * @exclude
+     */
     static final String SVN_ID = "$Id$";
 
     /**

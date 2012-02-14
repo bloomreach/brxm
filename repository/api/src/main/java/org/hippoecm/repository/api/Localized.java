@@ -24,7 +24,7 @@ import javax.jcr.RepositoryException;
 
 /**
  * The Localized object is a more generic form of the Locale object, but serves a similar purpose.
- * Where the Locale object can only hande language, country and region and only if specified in
+ * Where the Locale object can only handle language, country and region and only if specified in
  * that exact order, the Localized object can also indicate a locale on other factors.
  * Such as on live or preview site, or when a translation is based only upon country regardless
  * of language.

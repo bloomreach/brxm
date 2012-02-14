@@ -23,8 +23,8 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 /**
- * DO NOT USE THIS CLASS!
- * This class is NOT part of the API.
+ * DO NOT USE THIS CLASS!  This class is NOT part of the API.
+ * @exclude
  */
 public class VMHippoRepository {
     @SuppressWarnings("unused")
@@ -40,7 +40,12 @@ public class VMHippoRepository {
         repositories = Collections.synchronizedMap(map);
     }
 
-    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API. */
+    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API.
+     * @param location the location where an earlier repository was registered using the #register
+     * method
+     * @return repository earlier registered
+     * @throws RepositoryException in case no active repository was available at th elocation
+     */
     public static HippoRepository create(String location) throws RepositoryException {
         HippoRepository hippoRepository = null;
         if (location != null && location.startsWith("vm://")) {
@@ -61,7 +66,11 @@ public class VMHippoRepository {
         }
     }
 
-    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API. */
+    /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API.
+     * @exclude
+     * @param location location of the repository
+     * @param repository the location to register at the location
+     */
     public static void register(String location, HippoRepository repository) {
         repositories.put(location, repository);
     }

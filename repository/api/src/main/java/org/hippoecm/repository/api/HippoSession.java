@@ -179,6 +179,8 @@ public interface HippoSession extends Session {
      * user modules to clean up state.
      * The session is only available if isLive() returns true, which is not
      * guaranteed (though is guaranteed in case of a normal logout procedure.
+     * @param callback an object implementing the CloseCallback interface
+     * that will be informed when a session is closed.
      */
     public void registerSessionCloseCallback(CloseCallback callback);
     
