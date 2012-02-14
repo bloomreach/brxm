@@ -61,6 +61,7 @@ site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/
 site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
+site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
@@ -116,6 +117,7 @@ site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage
 site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerApplication.java -text
 site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.java -text
 site/src/main/resources/META-INF/client-assembly/base.xml svneol=native#text/plain
+site/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
 site/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
 site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
