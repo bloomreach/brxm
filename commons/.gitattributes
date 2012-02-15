@@ -1,9 +1,5 @@
 * text=auto !eol
-api/pom.xml -text
-api/src/main/java/org/onehippo/event/HippoEventBus.java -text
-api/src/main/java/org/onehippo/event/HippoEventException.java -text
-api/src/main/java/org/onehippo/event/audit/HippoAuditEvent.java -text
-guava/pom.xml -text
-guava/src/main/java/org/onehippo/event/impl/HippoEventBusBinder.java -text
-guava/src/test/java/org/onehippo/event/impl/GuavaHippoEventBusTest.java -text
 /pom.xml -text
+src/main/java/org/onehippo/cms7/event/HippoEvent.java -text
+src/main/java/org/onehippo/cms7/event/HippoSecurityEventConstants.java -text
+src/test/java/org/onehippo/cms7/event/HippoEventTest.java -text

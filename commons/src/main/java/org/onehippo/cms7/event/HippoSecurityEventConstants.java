@@ -13,11 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.event;
+package org.onehippo.cms7.event;
 
-public class HippoEventException extends RuntimeException {
+public final class HippoSecurityEventConstants {
 
-    public HippoEventException(String message, Throwable cause) {
-        super(message, cause);
+    private HippoSecurityEventConstants() {
     }
+
+    public static final String CATEGORY_SECURITY = "security";
+
 }
