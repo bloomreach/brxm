@@ -40,11 +40,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons-api</artifactId>
+      <artifactId>hippo-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons-guava</artifactId>
+      <artifactId>hippo-services</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>

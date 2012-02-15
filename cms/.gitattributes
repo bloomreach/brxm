@@ -1358,6 +1358,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlu
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_fr.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPerspective_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/HippoSecurityEventConstants.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text

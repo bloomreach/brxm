@@ -39,12 +39,14 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
 import org.hippoecm.frontend.plugins.cms.admin.validators.UsernameValidator;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.event.HippoEventBus;
-import org.onehippo.event.audit.HippoAuditEvent;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,13 +139,16 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                     try {
                         user.create();
                         user.savePassword(password);
-                        UserSession userSession = UserSession.get();
-                        HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
-                                .user(userSession.getJcrSession().getUserID())
-                                .action("create-user")
-                                .category(HippoAuditEvent.CATEGORY_USER_MANAGEMENT)
-                                .message("created user " + username);
-                        HippoEventBus.post(event);
+                        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                        if (eventBus != null) {
+                            UserSession userSession = UserSession.get();
+                            HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                                    .user(userSession.getJcrSession().getUserID())
+                                    .action("create-user")
+                                    .category(HippoSecurityEventConstants.CATEGORY_USER_MANAGEMENT)
+                                    .message("created user " + username);
+                            eventBus.post(event);
+                        }
                         Session.get().info(getString("user-created", userModel));
                         // one up
                         List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

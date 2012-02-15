@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.google.common.eventbus.Subscribe;
 
-import org.onehippo.event.audit.HippoAuditEvent;
+import org.onehippo.cms7.event.HippoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,29 +31,16 @@ public class AuditLogger {
     private static final String AUDIT_LOGGER = "org.onehippo.audit";
     private static final Logger log = LoggerFactory.getLogger(AUDIT_LOGGER);
 
-    private static final String APPLICATION = "application";
-    private static final String RESULT = "result";
-    private static final String USER = "user";
-    private static final String ACTION = "action";
-    private static final String CATEGORY = "category";
-    private static final String MESSAGE = "message";
-
     public static Logger getLogger() {
         return log;
     }
 
     @Subscribe
-    public void logHippoAuditEvent(HippoAuditEvent event) {
+    public void logHippoEvent(HippoEvent event) {
         Map<String, Object> values = new HashMap<String, Object>();
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(USER, event.user());
-        jsonObject.put(APPLICATION, event.application());
-        jsonObject.put(ACTION, event.action());
-        jsonObject.put(CATEGORY, event.category());
-        jsonObject.put(MESSAGE, event.message());
-        jsonObject.put(RESULT, event.result());
-        jsonObject.putAll(values);
+        jsonObject.putAll(event.getValues());
 
         AuditLogger.getLogger().info(jsonObject.toString());
     }

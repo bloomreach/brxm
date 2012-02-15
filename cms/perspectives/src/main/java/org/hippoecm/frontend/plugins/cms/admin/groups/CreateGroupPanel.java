@@ -35,9 +35,11 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.event.HippoEventBus;
-import org.onehippo.event.audit.HippoAuditEvent;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,13 +79,16 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                 String groupname = group.getGroupname();
                 try {
                     group.create();
-                    UserSession userSession = UserSession.get();
-                    HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
-                            .user(userSession.getJcrSession().getUserID())
-                            .action("create-group")
-                            .category(HippoAuditEvent.CATEGORY_GROUP_MANAGEMENT)
-                            .message("added group " + groupname);
-                    HippoEventBus.post(event);
+                    HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                    if (eventBus != null) {
+                        UserSession userSession = UserSession.get();
+                        HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                                .user(userSession.getJcrSession().getUserID())
+                                .action("create-group")
+                                .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                                .message("added group " + groupname);
+                        eventBus.post(event);
+                    }
                     Session.get().info(getString("group-created", groupModel));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

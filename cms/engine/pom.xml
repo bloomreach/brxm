@@ -112,8 +112,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons-guava</artifactId>
-      <scope>compile</scope>
+      <artifactId>hippo-services-eventbus</artifactId>
     </dependency>
 
   </dependencies>

@@ -65,7 +65,8 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.onehippo.event.HippoEventBus;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,9 @@ public class Main extends WebApplication {
     protected void init() {
         super.init();
 
-        HippoEventBus.register(new AuditLogger());
+        GuavaHippoEventBus hippoEventBus = new GuavaHippoEventBus();
+        HippoServiceRegistry.registerService(hippoEventBus);
+        hippoEventBus.register(new AuditLogger());
 
         getPageSettings().setVersionPagesByDefault(false);
         getPageSettings().setAutomaticMultiWindowSupport(false);

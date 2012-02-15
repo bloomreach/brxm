@@ -35,12 +35,14 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.event.HippoEventBus;
-import org.onehippo.event.audit.HippoAuditEvent;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,13 +77,16 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                         info(getString("user-membership-already-member", new DetachableGroup(selectedGroup)));
                     } else {
                         selectedGroup.addMembership(user.getUsername());
-                        final UserSession userSession = UserSession.get();
-                        HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
-                                .user(userSession.getJcrSession().getUserID())
-                                .action("add-user-to-group")
-                                .category(HippoAuditEvent.CATEGORY_GROUP_MANAGEMENT)
-                                .message("added user " + user.getUsername() + " to group " + selectedGroup.getGroupname());
-                        HippoEventBus.post(event);
+                        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                        if (eventBus != null) {
+                            final UserSession userSession = UserSession.get();
+                            HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                                    .user(userSession.getJcrSession().getUserID())
+                                    .action("add-user-to-group")
+                                    .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                                    .message("added user " + user.getUsername() + " to group " + selectedGroup.getGroupname());
+                            eventBus.post(event);
+                        }
                         info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
                         localList.removeAll();
                     }
@@ -157,13 +162,17 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                 public void onClick(AjaxRequestTarget target) {
                     try {
                         model.getGroup().removeMembership(user.getUsername());
-                        final UserSession userSession = UserSession.get();
-                        HippoAuditEvent event = new HippoAuditEvent(userSession.getApplicationName())
-                                .user(userSession.getJcrSession().getUserID())
-                                .action("remove-user-from-group")
-                                .category(HippoAuditEvent.CATEGORY_GROUP_MANAGEMENT)
-                                .message("removed user " + user.getUsername() + " from group " + model.getGroup().getGroupname());
-                        HippoEventBus.post(event);
+                        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                        if (eventBus != null) {
+                            final UserSession userSession = UserSession.get();
+                            HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                                    .user(userSession.getJcrSession().getUserID())
+                                    .action("remove-user-from-group")
+                                    .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                                    .message(
+                                            "removed user " + user.getUsername() + " from group " + model.getGroup().getGroupname());
+                            eventBus.post(event);
+                        }
                         info(getString("user-membership-removed", model));
                         localList.removeAll();
                     } catch (RepositoryException e) {
