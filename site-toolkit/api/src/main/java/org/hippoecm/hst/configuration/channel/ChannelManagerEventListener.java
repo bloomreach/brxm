@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
+
 /**
  * Allows implementers to register callback methods that will be executed
  * when a <CODE>ChannelManager</CODE> event occurs.
@@ -32,13 +35,21 @@ public interface ChannelManagerEventListener {
 
     /**
      * Called immediately after a channel has been created through {@link ChannelManager#persist(String, Channel)}.
-     * @param event
+     * <b>Note</b> that when for every ChannelManagerEventListener the {@link ChannelManagerEventListener#channelCreated(ChannelManagerEvent)} callback 
+     * have been done, the JCR {@link Session} that belongs to {@link ChannelManagerEvent#getConfigRootNode()} is 
+     * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 
+     * {@link ChannelManagerEvent#getConfigRootNode()} are being persisted. 
+     * @param event the {@link ChannelManagerEvent}
      */
     void channelCreated(ChannelManagerEvent event);
 
     /**
      * Called immediately after a channel has been updated through {@link ChannelManager#save(Channel)}.
-     * @param event
+     * <b>Note</b> that when for every ChannelManagerEventListener the {@link ChannelManagerEventListener#channelUpdated(ChannelManagerEvent)} callback 
+     * method has been done, the JCR {@link Session} that belongs to {@link ChannelManagerEvent#getConfigRootNode()} is 
+     * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 
+     * {@link ChannelManagerEvent#getConfigRootNode()} are being persisted.
+     * @param event the {@link ChannelManagerEvent}
      */
     void channelUpdated(ChannelManagerEvent event);
 
