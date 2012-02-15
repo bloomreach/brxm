@@ -16,6 +16,7 @@
 package org.hippoecm.hst.addon.module;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ModuleInstance {
 
@@ -32,6 +33,8 @@ public interface ModuleInstance {
     public void close();
 
     public <T> T getComponent(String name);
+    
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType);
 
     public ModuleInstance getModuleInstance(String name);
 

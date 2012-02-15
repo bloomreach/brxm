@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.container;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -137,6 +138,30 @@ public class TestSpringComponentManager {
         assertNull(componentManager.getComponent("greeting3"));
         assertNotNull(componentManager.getComponent("greeting4"));
         assertNotNull(componentManager.getComponent("greeting5"));
+        
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testGetComponentsOfType() {
+        Configuration configuration = new PropertiesConfiguration();
+        configuration.setProperty("existing.key", "some value");
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        String [] configurationResources = new String [] { SIMPLE_BEANS_4 };
+        componentManager.setConfigurationResources(configurationResources);
+        
+        componentManager.initialize();
+        componentManager.start();
+        
+        Map<String, StringBuilder> exampleStringBuildersMap = componentManager.getComponentsOfType(StringBuilder.class);
+        assertNotNull(exampleStringBuildersMap);
+        assertFalse(exampleStringBuildersMap.isEmpty());
+        assertEquals(2, exampleStringBuildersMap.size());
+        assertNotNull(exampleStringBuildersMap.get("exampleStringBuilder1"));
+        assertNotNull(exampleStringBuildersMap.get("exampleStringBuilder2"));
+        assertEquals("Hello, World! (1)", exampleStringBuildersMap.get("exampleStringBuilder1").toString());
+        assertEquals("Hello, World! (2)", exampleStringBuildersMap.get("exampleStringBuilder2").toString());
         
         componentManager.stop();
         componentManager.close();

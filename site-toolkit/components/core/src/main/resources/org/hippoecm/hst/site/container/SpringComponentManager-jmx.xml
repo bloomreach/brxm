@@ -58,8 +58,9 @@
     <property name="arguments"><list><ref bean="javax.jcr.Credentials.hstconfigreader"/></list></property>
   </bean>
   
-  <bean id="hstSessionPoolsMBeanExporter" class="org.springframework.jmx.export.MBeanExporter">
+  <bean id="hstSessionPoolsMBeanExporter" class="org.hippoecm.hst.site.container.UnregisterableMBeanExporter">
     <property name="server" ref="hstMBeanServer" />
+    <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING" />
     <property name="beans">
       <map>
         <entry key="org.onehippo.hst:type=SessionPool,name=default" value-ref="_defaultSessionPool" />

@@ -17,10 +17,13 @@ package org.hippoecm.hst.component.support;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.lang.ArrayUtils;
@@ -162,6 +165,34 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
         return bean;
     }
     
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType) {
+        return getComponentsOfType(requiredType, (String []) null);
+    }
+
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String ... contextNames) {
+        Map<String, T> beansMap = Collections.emptyMap();
+        
+        if (contextNames == null || contextNames.length == 0) {
+            try {
+                beansMap = applicationContext.getBeansOfType(requiredType);
+            } catch (Exception ignore) {
+            }
+        }
+        
+        if (MapUtils.isEmpty(beansMap) && servletContext != null) {
+            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+            
+            if (rootWebAppContext != null) {
+                try {
+                    beansMap = rootWebAppContext.getBeansOfType(requiredType);
+                } catch (Exception ignore) {
+                }
+            }
+        }
+        
+        return beansMap;
+    }
+
     public String[] getConfigurationResources() {
         return this.configurationResources;
     }

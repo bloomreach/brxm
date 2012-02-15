@@ -157,6 +157,18 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         return bean;
     }
 
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType) {
+        Map<String, T> beansMap = Collections.emptyMap();
+
+        try {
+            beansMap = applicationContext.getBeansOfType(requiredType);
+        } catch (Exception ignore) {
+            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+        }
+        
+        return beansMap;
+    }
+
     public List<ModuleInstance> getModuleInstances() {
         if (childModuleInstances == null) {
             return Collections.emptyList();

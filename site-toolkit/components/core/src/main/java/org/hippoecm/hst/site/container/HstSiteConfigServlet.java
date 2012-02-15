@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.configuration.AbstractFileConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -304,7 +305,29 @@ public class HstSiteConfigServlet extends HttpServlet {
     
     protected synchronized void initializeComponentManager(ServletConfig config) {
         SpringComponentManager componentManager = null;
-        
+
+        ComponentManager oldComponentManager = HstServices.getComponentManager();
+
+        if (oldComponentManager != null) {
+            log.info("HstSiteConfigServlet will re-initialize the Component manager...");
+            
+            // we need to unregister MBeans first from the old component manager
+            // because old component manager will be destroyed after the new component manager is initialized
+            // and old component manager will trigger unregistering the newly registered MBeans when destroying.
+            try {
+                Map<String, UnregisterableMBeanExporter> unregisterableMBeanExportersMap = oldComponentManager.getComponentsOfType(UnregisterableMBeanExporter.class);
+                
+                if (!MapUtils.isEmpty(unregisterableMBeanExportersMap)) {
+                    for (Map.Entry<String, UnregisterableMBeanExporter> entry : unregisterableMBeanExportersMap.entrySet()) {
+                        log.info("Unregistering MBeans from the exporter, '{}'.", entry.getKey());
+                        entry.getValue().unregisterBeans();
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Failed to unregister MBeans from the old component manager.", e);
+            }
+        }
+
         try {
             log.info(INIT_START_MSG);
             
@@ -327,7 +350,6 @@ public class HstSiteConfigServlet extends HttpServlet {
             componentManager.start();
             log.info("HstSiteConfigServlet has successfuly started the Component Manager....");
             
-            ComponentManager oldComponentManager = HstServices.getComponentManager();
             HstServices.setComponentManager(componentManager);
             
             if (oldComponentManager != null) {

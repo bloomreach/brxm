@@ -535,6 +535,7 @@ components/core/src/main/java/org/hippoecm/hst/site/container/PropertiesUtils.ja
 components/core/src/main/java/org/hippoecm/hst/site/container/ResourceFactoryBean.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringMetadataReaderClasspathResourceScanner.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/UnregisterableMBeanExporter.java -text
 components/core/src/main/java/org/hippoecm/hst/site/request/BasicHstSiteMapMatcher.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/ComponentConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/DefaultContextCredentialsProvider.java svneol=native#text/plain

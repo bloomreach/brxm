@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.Map;
+
 /**
  * ComponentManager interface.
  * This is responsible for initializing, starting, stopping and closing container components.
@@ -47,7 +49,7 @@ public interface ComponentManager
     void start();
     
     /**
-     * Returns the registered container component.
+     * Returns the registered container component by name.
      * Returns null if a component is not found by the specified name.
      * 
      * @param <T> component type
@@ -55,6 +57,16 @@ public interface ComponentManager
      * @return component
      */
     <T> T getComponent(String name);
+
+    /**
+     * Returns the registered container components that match the given object type (including subclasses).
+     * Returns empty map if a component is not found by the specified required type.
+     * 
+     * @param <T> component type
+     * @param requiredType the required type of the component
+     * @return component map
+     */
+    <T> Map<String, T> getComponentsOfType(Class<T> requiredType);
 
     /**
      * Returns the registered component from a child context.
@@ -70,6 +82,23 @@ public interface ComponentManager
      * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
      */
     <T> T getComponent(String name, String ... addonModuleNames);
+
+    /**
+     * Returns the registered container component that match the given object type (including subclasses) from a child context.
+     * Returns empty map if a component is not found from a child context
+     * by the specified required type.
+     * If <CODE>addonModuleNames</CODE> consists of multiple items, then 
+     * each <CODE>addonModuleNames</CODE> item is regarded as child addon module name 
+     * in the descendant hierarchy, as ordered.
+     * Returns empty map if a component is not found by the specified type.
+     * 
+     * @param <T>
+     * @param requiredType
+     * @param contextNames
+     * @return component map
+     * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
+     */
+    <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String ... addonModuleNames);
 
     /**
      * Stop the component manager.

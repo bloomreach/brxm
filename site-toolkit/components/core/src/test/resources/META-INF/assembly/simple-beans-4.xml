@@ -51,5 +51,13 @@
           value="config.containsKey('existing.key')" />
     <constructor-arg value="Hello, World! (5)"/>
   </bean>
-  
+
+  <bean id="exampleStringBuilder1" class="java.lang.StringBuilder">
+    <constructor-arg value="Hello, World! (1)" />
+  </bean>
+
+  <bean id="exampleStringBuilder2" class="java.lang.StringBuilder">
+    <constructor-arg value="Hello, World! (2)" />
+  </bean>
+
 </beans>

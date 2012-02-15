@@ -225,6 +225,49 @@ public class SpringComponentManager implements ComponentManager {
         return bean;
     }
 
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType) {
+        return getComponentsOfType(requiredType, (String []) null);
+    }
+
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String ... addonModuleNames) {
+        Map<String, T> beansMap = Collections.emptyMap();
+
+        if (addonModuleNames == null || addonModuleNames.length == 0) {
+            try {
+                beansMap = applicationContext.getBeansOfType(requiredType);
+            } catch (Exception ignore) {
+                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The required typed bean doesn't exist: '{}'", requiredType);
+            }
+        } else {
+            if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
+                throw new ModuleNotFoundException("No Addon Module is found.");
+            }
+            
+            ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
+
+            if (moduleInstance == null) {
+                throw new ModuleNotFoundException("Module is not found: '" + addonModuleNames[0] + "'");
+            }
+
+            for (int i = 1; i < addonModuleNames.length; i++) {
+                moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
+
+                if (moduleInstance == null) {
+                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
+                }
+            }
+
+            try {
+                beansMap = moduleInstance.getComponentsOfType(requiredType);
+            } catch (Exception ignore) {
+                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The required typed bean doesn't exist: '{}' in the addon module context, '{}'.", 
+                        requiredType, ArrayUtils.toString(addonModuleNames));
+            }
+        }
+
+        return beansMap;
+    }
+
     public ContainerConfiguration getContainerConfiguration() {
         return containerConfiguration;
     }
