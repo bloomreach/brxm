@@ -68,6 +68,13 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
         this.workspace = workspace;
     }
 
+    public static Workspace unwrap(Workspace workspace) {
+        while (workspace instanceof WorkspaceDecorator) {;
+            workspace = ((WorkspaceDecorator)workspace).workspace;
+        }
+        return workspace;
+    }
+
     /** {@inheritDoc} */
     public Session getSession() {
         return session;

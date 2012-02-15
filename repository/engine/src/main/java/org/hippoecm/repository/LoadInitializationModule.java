@@ -84,6 +84,7 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
+import org.hippoecm.repository.util.Utilities;
 import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,13 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
 
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
-        ObservationManager obMgr = session.getWorkspace().getObservationManager();
+        // We really need an undecorated workspace so that we can register a Asynchronous event listener
+        // This in its turn guarantees that the search index has received the event prior to this module.
+        Workspace workspace = session.getWorkspace();
+        System.err.println("BERRY#1 "+workspace);
+        workspace = org.hippoecm.repository.decorating.WorkspaceDecorator.unwrap(workspace);
+        System.err.println("BERRY#2 "+workspace);
+        ObservationManager obMgr = workspace.getObservationManager();
         obMgr.addEventListener(this, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
                 + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
                 true, null, null, true);
@@ -150,6 +157,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         log.debug("received initialization change event.");
         executor.submit(new Runnable() {
             public void run() {
+                log.debug("executing initialization change event.");
                 refresh(session);
             }
         });
@@ -428,7 +436,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                         if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
                             root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
                         }
-                        log.info("Initializin content set/add property " + root);
+                        log.info("Initializing content set/add property " + root);
                         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                         HierarchyResolver hierarchyResolver;
                         if (session.getWorkspace() instanceof HippoWorkspace) {
