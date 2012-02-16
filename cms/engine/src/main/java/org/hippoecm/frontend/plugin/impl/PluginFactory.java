@@ -94,8 +94,8 @@ public class PluginFactory implements IClusterable {
             }
         }
         if (plugin == null && message != null) {
-            message += "\nFailed to instantiate plugin '" + className + "' for id '"
-                    + config.getString(RenderService.WICKET_ID) + "'.";
+            message += "\nFailed to instantiate plugin class '" + className + "' for wicket id '"
+                    + config.getString(RenderService.WICKET_ID) + "' in plugin '" + config.getName() + "' (" + config + ")";
 
             // reset context, i.e. unregister everything that was registered so far
             context.reset();

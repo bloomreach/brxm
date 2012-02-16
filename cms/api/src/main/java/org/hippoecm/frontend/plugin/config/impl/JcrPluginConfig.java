@@ -485,6 +485,11 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return 521 * nodeModel.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "JcrPluginConfig:" + nodeModel.getItemModel().getPath().toString();
+    }
+
     protected JcrPluginConfig wrapConfig(Node node) {
         JcrNodeModel nodeModel = new JcrNodeModel(node);
         if (!childConfigs.containsKey(nodeModel)) {

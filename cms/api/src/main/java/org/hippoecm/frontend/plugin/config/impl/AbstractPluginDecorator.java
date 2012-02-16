@@ -121,6 +121,11 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
     }
 
     @Override
+    public String toString() {
+        return upstream.toString();
+    }
+
+    @Override
     public Set<Map.Entry<String, Object>> entrySet() {
         final Set<Map.Entry<String, Object>> orig = upstream.entrySet();
         return new AbstractSet<Map.Entry<String, Object>>() {
