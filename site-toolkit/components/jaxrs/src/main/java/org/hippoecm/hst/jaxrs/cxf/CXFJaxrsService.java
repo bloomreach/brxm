@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.message.Message;
@@ -35,6 +36,8 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.AbstractJaxrsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Id$
@@ -42,11 +45,12 @@ import org.hippoecm.hst.jaxrs.AbstractJaxrsService;
  */
 public class CXFJaxrsService extends AbstractJaxrsService {
 
-	private static final String SERVLET_CONTROLLER_ATTRIBUTE_NAME_PREFIX = CXFJaxrsService.class.getName() +".ServletController.";
-	private static final String CXF_BUS_ATTRIBUTE_NAME_PREFIX = CXFJaxrsService.class.getName() +".CXFBus.";
-	private String servletControllerAttributeName;
-	private String cxfBusAttributeName;
+    private static Logger log = LoggerFactory.getLogger(CXFJaxrsService.class);
+    
     private JAXRSServerFactoryBean jaxrsServerFactoryBean;
+    private Bus defaultBus;
+    private Server server;
+    private ServletController controller;
     
     private List<Interceptor<? extends Message>> inInterceptors;
     private List<Interceptor<? extends Message>> inFaultInterceptors;
@@ -59,8 +63,6 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     
     public CXFJaxrsService(String serviceName, Map<String, String> jaxrsConfigParameters) {
     	super(serviceName, jaxrsConfigParameters);
-    	this.servletControllerAttributeName = SERVLET_CONTROLLER_ATTRIBUTE_NAME_PREFIX + serviceName;
-    	this.cxfBusAttributeName = CXF_BUS_ATTRIBUTE_NAME_PREFIX + serviceName;
     }
     
 	public synchronized void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
@@ -107,20 +109,17 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     }
 
     protected synchronized ServletController getController(ServletContext servletContext) {
-		ServletController controller = (ServletController)servletContext.getAttribute(servletControllerAttributeName);
 		if (controller == null) {
-			Bus bus = createBus();
-			ServletTransportFactory df = new ServletTransportFactory(bus);
+		    defaultBus = createBus();
+			ServletTransportFactory df = new ServletTransportFactory(defaultBus);
 			jaxrsServerFactoryBean.setDestinationFactory(df);
-			jaxrsServerFactoryBean.create();
-			controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, bus);
+			server = jaxrsServerFactoryBean.create();
+			controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, defaultBus);
             // guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
             controller.setDisableAddressUpdates(true);
-			servletContext.setAttribute(servletControllerAttributeName, controller);
-			servletContext.setAttribute(cxfBusAttributeName, bus);
 		}
 		else {
-			BusFactory.setThreadDefaultBus((Bus)servletContext.getAttribute(cxfBusAttributeName));
+			BusFactory.setThreadDefaultBus(defaultBus);
 		}
 		return controller;
 	}
@@ -141,6 +140,25 @@ public class CXFJaxrsService extends AbstractJaxrsService {
 		}
 	}
 	
+	@Override
+    public void destroy() {
+	    if (server != null) {
+	        try {
+	            server.destroy();
+	        } catch (Exception e) {
+	            log.warn("Failed to destroy CXF JAXRS Server", e);
+	        }
+	    }
+
+	    if (defaultBus != null) {
+            try {
+                BusFactory.clearDefaultBusForAnyThread(defaultBus);
+            } catch (Exception e) {
+                log.warn("Failed to clear default bus for any thread", e);
+            }
+        }
+    }
+
     @Override
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
         String requestURI = request.getRequestURI();

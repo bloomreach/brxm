@@ -46,5 +46,9 @@ public interface JAXRSService {
      */
     String REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY = "org.hippoecm.hst.jaxrs.request.contentSiteBaseBean";
 	
+    void initialize() throws ContainerException;
+
 	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
+
+    void destroy();
 }

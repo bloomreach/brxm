@@ -118,8 +118,13 @@ public abstract class AbstractJaxrsService implements JAXRSService {
         return objectConverter;
     }
     
+    public void initialize() throws ContainerException {
+    }
     
 	public abstract void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
+
+    public void destroy() {
+    }
 
     protected ServletConfig getJaxrsServletConfig(ServletContext servletContext) {
     	return new ServletConfigImpl(serviceName, servletContext, jaxrsConfigParameters);
