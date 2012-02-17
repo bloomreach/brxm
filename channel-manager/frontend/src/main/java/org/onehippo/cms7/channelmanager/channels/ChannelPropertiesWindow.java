@@ -30,6 +30,7 @@ import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -163,50 +164,14 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                     @Override
                     protected void populateItem(final ListItem<String> item) {
                         final String key = item.getModelObject();
-                        HstPropertyDefinition propDef = getPropertyDefinition(key);
+                        final HstPropertyDefinition propDef = getPropertyDefinition(key);
 
                         item.add(new Label(WICKET_ID_KEY, new ChannelResourceModel(channel, key)));
-
-                        HstValueType propType = propDef.getValueType();
-
-                        // render an image set field?
-                        ImageSetPath imageSetPath = propDef.getAnnotation(ImageSetPath.class);
-                        if (imageSetPath != null && propType.equals(HstValueType.STRING)) {
-                            IModel<String> delegate = new StringModel(channel.getProperties(), key);
-                            IModel<String> model = new UuidFromPathModel(delegate);
-                            item.add(new ImageSetPathWidget(context, WICKET_ID_VALUE, imageSetPath, model));
-                            return;
-                        }
-
-                        // render a JCR path field?
-                        JcrPath jcrPath = propDef.getAnnotation(JcrPath.class);
-                        if (jcrPath != null && propType.equals(HstValueType.STRING)) {
-                            IModel<String> delegate = new StringModel(channel.getProperties(), key);
-                            IModel<String> model = new UuidFromPathModel(delegate);
-                            item.add(new JcrPathWidget(context, WICKET_ID_VALUE, jcrPath, model));
-                            return;
-                        }
-
-                        // render a drop-down list?
-                        DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
-                        if (dropDownList != null) {
-                            IModel<String> model = new StringModel(channel.getProperties(), key);
-                            item.add(new DropDownListWidget(WICKET_ID_VALUE, dropDownList, model, new ChannelChoiceRenderer(key)));
-                            return;
-                        }
-
-                        // render a boolean field?
-                        if (propType.equals(HstValueType.BOOLEAN)) {
-                            item.add(new BooleanFieldWidget(WICKET_ID_VALUE, new BooleanModel(channel.getProperties(), key)));
-                            return;
-                        }
-
-                        // default: render a text field
-                        item.add(new TextFieldWidget(WICKET_ID_VALUE, new StringModel(channel.getProperties(), key)));
+                        item.add(getWidget(context, propDef, key));
 
                         // add help text
-                        IModel<String> helpModel = new ChannelResourceModel(channel, key + HELP_SUFFIX);
-                        Label helpLabel = new Label(WICKET_ID_HELP, helpModel);
+                        final IModel<String> helpModel = new ChannelResourceModel(channel, key + HELP_SUFFIX);
+                        final Label helpLabel = new Label(WICKET_ID_HELP, helpModel);
                         helpLabel.setVisible(StringUtils.isNotBlank(helpModel.getObject()));
                         item.add(helpLabel);
                     }
@@ -244,6 +209,41 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                 target.prependJavascript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
             }
         });
+    }
+    
+    private Component getWidget(IPluginContext context, HstPropertyDefinition propDef, String key) {
+        final HstValueType propType = propDef.getValueType();
+
+        // render an image set field?
+        ImageSetPath imageSetPath = propDef.getAnnotation(ImageSetPath.class);
+        if (imageSetPath != null && propType.equals(HstValueType.STRING)) {
+            IModel<String> delegate = new StringModel(channel.getProperties(), key);
+            IModel<String> model = new UuidFromPathModel(delegate);
+            return new ImageSetPathWidget(context, WICKET_ID_VALUE, imageSetPath, model);
+        }
+
+        // render a JCR path field?
+        JcrPath jcrPath = propDef.getAnnotation(JcrPath.class);
+        if (jcrPath != null && propType.equals(HstValueType.STRING)) {
+            IModel<String> delegate = new StringModel(channel.getProperties(), key);
+            IModel<String> model = new UuidFromPathModel(delegate);
+            return new JcrPathWidget(context, WICKET_ID_VALUE, jcrPath, model);
+        }
+
+        // render a drop-down list?
+        DropDownList dropDownList = propDef.getAnnotation(DropDownList.class);
+        if (dropDownList != null) {
+            IModel<String> model = new StringModel(channel.getProperties(), key);
+            return new DropDownListWidget(WICKET_ID_VALUE, dropDownList, model, new ChannelChoiceRenderer(key));
+        }
+
+        // render a boolean field?
+        if (propType.equals(HstValueType.BOOLEAN)) {
+            return new BooleanFieldWidget(WICKET_ID_VALUE, new BooleanModel(channel.getProperties(), key));
+        }
+
+        // default: render a text field
+        return new TextFieldWidget(WICKET_ID_VALUE, new StringModel(channel.getProperties(), key));
     }
 
     public String getChannelPropertiesContainerClass() {

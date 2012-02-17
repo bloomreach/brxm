@@ -38,7 +38,7 @@ Hippo.ChannelManager.ChannelPropertiesWindow = Ext.extend(Ext.Window, {
             id: 'channel-properties-window',
             cls: 'channel-properties-window',
             title: self.resources['channel-properties-title'],
-            width: 310,
+            width: 334,
             height: 500,
             closable: true,
             collapsible: false,
