@@ -17,6 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,6 +30,9 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,17 +83,16 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     }
 
     public void logEvent(String who, String className, String methodName) {
-        log(who, className, methodName);
+        postMessage(who, className, methodName);
         addLogNode(who, className, methodName);
     }
 
-    public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject,
-            String documentPath) {
+    public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath) {
         String returnType = getReturnType(returnObject);
         String returnValue = getReturnValue(returnObject);
         String[] arguments = replaceObjectsWithStrings(args);
 
-        log(who, className, methodName, documentPath, returnType, returnValue, arguments);
+        postEvent(who, className, methodName, documentPath, returnType, returnValue, arguments);
         addLogNode(who, className, methodName, documentPath, returnType, returnValue, arguments);
     }
 
@@ -100,7 +103,7 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 Document document = (Document) returnObject;
                 sb.append("document[uuid=");
                 sb.append(document.getIdentity());
-                if(document.getIdentity() != null) {
+                if (document.getIdentity() != null) {
                     sb.append(",path='");
                     try {
                         sb.append(rootSession.getNodeByIdentifier(document.getIdentity()).getPath());
@@ -144,43 +147,29 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
         return arguments;
     }
 
-    private void log(String who, String className, String methodName) {
-        log(who, className, methodName, null, null, null, null);
+    private void postMessage(String who, String className, String methodName) {
+        postEvent(who, className, methodName, null, null, null, null);
     }
 
-    private void log(String who, String className, String methodName, String documentPath, String returnType,
-            String returnValue, String[] arguments) {
-        StringBuffer logMessage = new StringBuffer();
-        logMessage.append("user=[").append(who).append("]");
-        logMessage.append(" method=[").append(className).append('.').append(methodName).append("]");
-        if (returnType != null) {
-            logMessage.append(" returnType=[").append(returnType).append("]");
-            logMessage.append(" returnVale=[").append(returnValue).append("]");
-        }
-        if (documentPath != null) {
-            logMessage.append(" documentPath=[").append(documentPath).append("]");
-        }
-        if (arguments != null) {
-            logMessage.append(" arguments=[");
-            boolean firstArgument = true;
-            for(String argument : arguments) {
-                if(firstArgument)
-                    firstArgument = false;
-                else
-                    logMessage.append(", ");
-                logMessage.append(argument);
+    private void postEvent(String who, String className, String methodName, String documentPath, String returnType, String returnValue, String[] arguments) {
+        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            HippoEvent event = new HippoEvent("repository");
+            event.user(who).action(className + "." + methodName).result(returnValue);
+            event.set("className", className).set("methodName", methodName);
+            event.set("returnType", returnType).set("returnValue", returnValue).set("documentPath", documentPath);
+            if (arguments != null) {
+                event.set("arguments", Arrays.asList(arguments));
             }
-            logMessage.append("]");
+            eventBus.post(event);
         }
-        log.info(logMessage.toString());
     }
 
     private void addLogNode(String who, String className, String methodName) {
         addLogNode(who, className, methodName, null, null, null, null);
     }
 
-    private void addLogNode(String who, String className, String methodName, String documentPath, String returnType,
-            String returnValue, String[] arguments) {
+    private void addLogNode(String who, String className, String methodName, String documentPath, String returnType, String returnValue, String[] arguments) {
         if (!enabled) {
             return;
         }
@@ -254,4 +243,5 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
             }
         }
     }
+
 }

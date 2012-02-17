@@ -98,6 +98,19 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-commons</artifactId>
+      <scope>provided</scope>
+      <version>1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <scope>provided</scope>
+      <version>1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${project.version}</version>
     </dependency>

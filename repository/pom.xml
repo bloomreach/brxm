@@ -66,6 +66,9 @@
   </modules>
 
   <properties>
+    <hippo.commons.version>1-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>1-SNAPSHOT</hippo.services.version>
+
     <!-- Test dependencies  -->
     <atomikos.version>3.1.4</atomikos.version>
     <junit.version>4.4</junit.version>
@@ -222,6 +225,22 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-commons</artifactId>
+        <version>${hippo.commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-eventbus</artifactId>
+        <version>${hippo.services.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>javax.jcr</groupId>
         <artifactId>jcr</artifactId>

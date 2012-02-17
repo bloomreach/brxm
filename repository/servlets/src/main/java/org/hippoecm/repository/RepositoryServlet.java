@@ -57,7 +57,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,6 +149,11 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+
+        GuavaHippoEventBus hippoEventBus = new GuavaHippoEventBus();
+        HippoServiceRegistry.registerService(hippoEventBus, HippoEventBus.class);
+        hippoEventBus.register(new AuditLogger());
+
         parseInitParameters(config);
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
 

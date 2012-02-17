@@ -34,6 +34,10 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-eventbus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -46,6 +50,18 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>${json-lib.version}</version>
+      <classifier>jdk15</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
