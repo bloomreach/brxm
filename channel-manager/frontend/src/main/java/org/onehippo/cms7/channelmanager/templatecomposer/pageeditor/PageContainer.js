@@ -348,6 +348,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this._lock();
 
         this.frm = frm;
+        this.selectedRecord = null;
 
         // disable old page context
         if (this.pageContext != null) {
