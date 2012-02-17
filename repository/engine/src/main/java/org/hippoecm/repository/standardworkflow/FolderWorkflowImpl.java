@@ -622,7 +622,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 childPath = path + "/_node";
             else
                 childPath = path + "/" + child.getName();
-System.err.println(child.getPath()+" "+childPath);;
             copy(child, target, renames, childPath);
         }
 

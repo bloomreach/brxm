@@ -57,7 +57,6 @@ public class ClientManagerService implements ManagerService {
         try {
             if (workflowManager == null) {
                 try {
-                    System.err.println("session name "+session.getAttribute("sessionName"));
                     workflowManager = new ClientWorkflowManager(session, remote.getWorkflowManager((String)session.getAttribute("sessionName")));
                 } catch (RemoteException ex) {
                     throw new RepositoryException("connection failure", ex);

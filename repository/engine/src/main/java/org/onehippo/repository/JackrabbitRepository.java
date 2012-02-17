@@ -62,8 +62,6 @@ public class JackrabbitRepository extends RepositoryImpl {
     }
 
     public Session getSession(String sessionName) {
-        for(Session session : sessions.values())
-            System.err.println("GET SESSION "+sessionName+" "+session.toString());
         for(Session session : sessions.values()) {
             if(session.toString().equals(sessionName))
                 return session;
