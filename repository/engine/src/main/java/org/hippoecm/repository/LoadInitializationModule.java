@@ -119,9 +119,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         // We really need an undecorated workspace so that we can register a Asynchronous event listener
         // This in its turn guarantees that the search index has received the event prior to this module.
         Workspace workspace = session.getWorkspace();
-        System.err.println("BERRY#1 "+workspace);
         workspace = org.hippoecm.repository.decorating.WorkspaceDecorator.unwrap(workspace);
-        System.err.println("BERRY#2 "+workspace);
         ObservationManager obMgr = workspace.getObservationManager();
         obMgr.addEventListener(this, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
                 + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
