@@ -53,9 +53,6 @@ public class MixinLoaderPlugin extends RenderPlugin {
         controllers = new HashMap<String, IClusterControl>();
 
         mode = config.getString(ITemplateEngine.MODE, "view");
-        /*if ("compare".equals(mode)) {
-            mode = "view";
-        }*/
 
         addExtensionPoint("mixins");
 
