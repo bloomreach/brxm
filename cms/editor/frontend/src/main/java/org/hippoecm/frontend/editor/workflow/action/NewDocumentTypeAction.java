@@ -60,7 +60,7 @@ public class NewDocumentTypeAction extends Action {
     public String name;
     public String layout;
     public List<String> documentTypes;
-    public String superType;
+    public String superType = "basedocument";
 
     public NewDocumentTypeAction(NamespaceWorkflowPlugin plugin, String id, StringResourceModel name, ILayoutProvider layouts) {
         super(plugin, id, name);
