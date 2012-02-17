@@ -54,7 +54,6 @@ import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
-import org.hippoecm.frontend.audit.AuditLogger;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.JcrObservationManager;
@@ -65,9 +64,6 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,10 +90,6 @@ public class Main extends WebApplication {
     @Override
     protected void init() {
         super.init();
-
-        GuavaHippoEventBus hippoEventBus = new GuavaHippoEventBus();
-        HippoServiceRegistry.registerService(hippoEventBus, HippoEventBus.class);
-        hippoEventBus.register(new AuditLogger());
 
         getPageSettings().setVersionPagesByDefault(false);
         getPageSettings().setAutomaticMultiWindowSupport(false);
