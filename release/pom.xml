@@ -220,6 +220,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-types</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-jquery</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -285,12 +290,22 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-plugins</artifactId>
+        <artifactId>hippo-cms-console-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-reporting</artifactId>
+        <artifactId>hippo-cms-console-repository</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-reporting-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-reporting-repository</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -358,11 +373,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-translate</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-upgrade</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -378,18 +388,23 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-xinha-integration</artifactId>
+        <artifactId>hippo-cms-richtext-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-xinha-resources</artifactId>
+        <artifactId>hippo-cms-richtext-repository</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-richtext-resources</artifactId>
         <version>${hippo.cms.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-xinha-test</artifactId>
+        <artifactId>hippo-cms-richtext-test</artifactId>
         <version>${hippo.cms.version}</version>
         <type>war</type>
       </dependency>
