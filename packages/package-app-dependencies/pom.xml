@@ -35,12 +35,17 @@
       <version>${hippo.repository.version}</version>
       <type>pom</type>
     </dependency>
-
-    <!-- virtual provider for translations -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-repository</artifactId>
+      <artifactId>hippo-cms-shared-dependencies</artifactId>
       <version>${hippo.cms.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-repository-dependencies</artifactId>
+      <version>${hippo.cms.version}</version>
+      <type>pom</type>
     </dependency>
 
     <!-- Brokenlinks -->

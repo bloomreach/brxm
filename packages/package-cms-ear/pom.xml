@@ -32,13 +32,19 @@
     <!-- Xinha html editor (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-xinha-resources</artifactId>
+      <artifactId>hippo-cms-richtext-resources</artifactId>
       <version>${hippo.cms.version}</version>
       <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-xinha-integration</artifactId>
+      <artifactId>hippo-cms-richtext-frontend</artifactId>
+      <version>${hippo.cms.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-repository</artifactId>
       <version>${hippo.cms.version}</version>
       <type>jar</type>
     </dependency>
@@ -267,7 +273,7 @@
             </webModule>
             <webModule>
               <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-xinha-resources</artifactId>
+              <artifactId>hippo-cms-richtext-resources</artifactId>
               <contextRoot>/xinha</contextRoot>
             </webModule>
             <webModule>
