@@ -46,6 +46,8 @@ console/frontend/tmlog.lck
 console/frontend/version
 console/frontend/wdbp-error-log.txt
 console/frontend/workspaces
+console/repository/target
+console/target
 dependencies/.project
 dependencies/.settings
 dependencies/hippo-cms-dependencies.iml
@@ -212,7 +214,9 @@ perspectives/target
 reporting/.classpath
 reporting/.project
 reporting/.settings
+reporting/frontend/target
 reporting/hippo-cms-reporting.iml
+reporting/repository/target
 reporting/target
 repository-dependencies/target
 resources/.classpath
@@ -228,6 +232,7 @@ richtext/frontend/repository
 richtext/frontend/target
 richtext/frontend/version
 richtext/frontend/workspaces
+richtext/repository/target
 richtext/resources/*.tmp
 richtext/resources/.classpath
 richtext/resources/.project
@@ -245,6 +250,7 @@ richtext/resources/tmlog.lck
 richtext/resources/version
 richtext/resources/wdbp-error-log.txt
 richtext/resources/workspaces
+richtext/target
 richtext/test/.classpath
 richtext/test/.project
 richtext/test/.settings
@@ -404,6 +410,7 @@ translation/test/tm.out.1
 translation/test/tm.out.lck
 translation/test/tmlog.lck
 translation/test/wdbp-error-log.txt
+types/target
 upgrade/.classpath
 upgrade/.project
 upgrade/.settings
