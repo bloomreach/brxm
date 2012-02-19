@@ -160,7 +160,6 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
-          <include>**/*.cnd</include>
           <include>**/*.xml</include>
         </includes>
       </resource>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2011 Hippo.
+  Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,58 +23,14 @@
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Reporting</name>
-  <description>Hippo CMS reporting</description>
-  <groupId>org.onehippo.cms7</groupId>
+  <name>CMS Reporting Dashboard</name>
+  <description>Hippo CMS Reporting Dashboard</description>
   <artifactId>hippo-cms-reporting</artifactId>
-  <packaging>jar</packaging>
+  <groupId>org.onehippo.cms7</groupId>
+  <packaging>pom</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.js</include>
-          <include>**/*.gif</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.cnd</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-   </plugins>
-  </build>
-
+  <modules>
+    <module>frontend</module>
+    <module>repository</module>
+  </modules>
 </project>

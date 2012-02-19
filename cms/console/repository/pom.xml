@@ -19,31 +19,28 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms-gallery</artifactId>
+    <artifactId>hippo-cms-console</artifactId>
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Gallery Repository</name>
-  <description>Hippo CMS Gallery configuration and workflow implementation</description>
+  <name>CMS Console configuration</name>
+  <description>Hippo CMS console configuration</description>
   <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms-gallery-repository</artifactId>
+  <artifactId>hippo-cms-console-repository</artifactId>
   <packaging>jar</packaging>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-common</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -61,9 +58,6 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b org.hippoecm.repository.gallery.upgrade.GalleryUpgrader19a</Hippo-Modules>
-            </manifestEntries>
           </archive>
         </configuration>
       </plugin>

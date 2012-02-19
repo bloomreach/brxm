@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2008 Hippo.
+  Copyright 2007-2011 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,24 +19,20 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms-gallery</artifactId>
+    <artifactId>hippo-cms-reporting</artifactId>
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Gallery Repository</name>
-  <description>Hippo CMS Gallery configuration and workflow implementation</description>
+  <name>CMS Reporting Frontend</name>
+  <description>Hippo CMS reporting Frontend</description>
   <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms-gallery-repository</artifactId>
+  <artifactId>hippo-cms-reporting-frontend</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-common</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -44,6 +40,20 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.js</include>
+          <include>**/*.gif</include>
+          <include>**/*.png</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -53,21 +63,7 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b org.hippoecm.repository.gallery.upgrade.GalleryUpgrader19a</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
+   </plugins>
   </build>
 
 </project>

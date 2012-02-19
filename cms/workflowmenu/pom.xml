@@ -23,7 +23,7 @@
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Workflow</name>
+  <name>CMS Workflow Menu</name>
   <description>Hippo CMS Workflow GUI framework</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-workflowmenu</artifactId>

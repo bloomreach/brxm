@@ -19,14 +19,14 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms-translation</artifactId>
+    <artifactId>hippo-cms-richtext</artifactId>
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Translation Repository</name>
-  <description>Hippo CMS Translation configuration, workflow and virtual provider</description>
+  <name>CMS Rich Text Frontend</name>
+  <description>Hippo CMS Rich Text Frontend</description>
   <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms-translation-repository</artifactId>
+  <artifactId>hippo-cms-richtext-frontend</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -40,20 +40,26 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-provider</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-api</artifactId>
-      <version>${jackrabbit.version}</version>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-common</artifactId>
+      <artifactId>hippo-cms-api</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-workflowmenu</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
@@ -65,28 +71,53 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- test -->
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20090211</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-repository</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.js</include>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.gif</include>
+          <include>**/*.png</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.translation.impl.TranslationVirtualProvider</Hippo-Modules>
-            </manifestEntries>
-          </archive>
+          <forkMode>always</forkMode>
+          <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
     </plugins>

@@ -45,34 +45,38 @@
   </repositories>
 
   <modules>
-    <module>engine</module>
+    <module>sso</module>
+
     <module>api</module>
-    <module>plugins</module>
+    <module>types</module>
+    <module>engine</module>
     <module>test</module>
-    <module>workflowmenu</module>
+
+    <module>console</module>
+
     <module>builtin</module>
-    <module>versioning</module>
+    <module>config</module>
+    <module>editor</module>
+    <module>jquery</module>
+    <module>gallery</module>
     <module>gotolink</module>
-    <module>search</module>
     <module>perspectives</module>
     <module>reporting</module>
-    <module>xinha-integration</module>
-    <module>xinha-test</module>
-    <module>xinha-resources</module>
-    <module>editor</module>
-    <module>translation</module>
-    <module>translate</module>
-    <module>gallery</module>
-    <module>config</module>
+    <module>richtext</module>
+    <module>search</module>
     <module>skin</module>
     <module>surf</module>
-    <module>upgrade</module>
+    <module>translation</module>
+    <module>versioning</module>
+    <module>workflowmenu</module>
+
     <module>resources</module>
+    <module>shared-dependencies</module>
     <module>dependencies</module>
     <module>repository-dependencies</module>
+
+    <module>upgrade</module>
     <module>tools</module>
-    <module>sso</module>
-    <module>jquery</module>
   </modules>
 
   <properties>

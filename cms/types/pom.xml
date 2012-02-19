@@ -23,50 +23,19 @@
     <version>2.23.01-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Goto</name>
-  <description>Hippo CMS gotolink plugin</description>
-  <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms-gotolink</artifactId>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
-    </dependency>
-  </dependencies>
+  <name>CMS Node Types</name>
+  <description>Hippo CMS Node Types</description>
+  <artifactId>hippo-cms-types</artifactId>
 
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
         <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
+        <directory>${basedir}/src/main/resources</directory>
         <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
+          <include>**/*.cnd</include>
+          <include>**/*.xml</include>
         </includes>
       </resource>
     </resources>

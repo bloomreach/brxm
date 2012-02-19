@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2010 Hippo.
-
+  Copyright 2007-2008 Hippo.
+ 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
+ 
        http://www.apache.org/licenses/LICENSE-2.0
-
+ 
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>hippo-cms</artifactId>
-    <groupId>org.onehippo.cms7</groupId>
-    <version>2.23.01-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>CMS Perspectives</name>
-  <description>Hippo CMS Browse perspective</description>
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms-console</artifactId>
+    <version>2.23.01-SNAPSHOT</version>
+  </parent>
+
+  <name>CMS Plugins</name>
+  <description>Hippo CMS plugins - console and login / logout</description>
   <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-cms-perspectives</artifactId>
+  <artifactId>hippo-cms-console-frontend</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
+    <!-- FIXME: this dependency MUST ABSOLUTELY be removed before next GA release -->
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons</artifactId>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-core</artifactId>
+      <version>2.2.5-h3</version>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
@@ -45,37 +44,26 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>${project.version}</version>
+      <artifactId>hippo-repository-connector</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-common</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>${joda-time.version}</version>
+      <artifactId>hippo-repository-utilities</artifactId>
     </dependency>
 
     <!-- test -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-
 
   <build>
     <defaultGoal>package</defaultGoal>
@@ -85,11 +73,11 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.properties</include>
-          <include>**/*.js</include>
         </includes>
       </resource>
     </resources>
@@ -119,15 +107,20 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <excludes>
-            <exclude>**/EditorManagerTest.java</exclude>
-            <exclude>**/BrowseServiceTest.java</exclude>
-            <exclude>**/EventLabelTest.java</exclude>
-            <exclude>**/BrowseLinkTargetTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
-   </plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

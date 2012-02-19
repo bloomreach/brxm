@@ -29,42 +29,67 @@
   <packaging>pom</packaging>
 
   <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-xinha-integration</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-config</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- Builtin workflow plugins -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-builtin</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- Versioning addon -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-versioning</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- Reusable frontend components -->
+    <!-- api -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- workflow -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-workflowmenu</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-builtin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-versioning</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-translation-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-surf-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- editor -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- perspectives -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-perspectives</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-reporting-frontend</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- jQuery plugins -->
@@ -72,139 +97,26 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-jquery</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
     </dependency>
 
-    <!-- Template editor -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-common</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- Reporting addon -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-reporting</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-reporting</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- CMS 7 addons-->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-perspectives</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- image gallery addon -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-common</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-repository</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
+    <!-- image gallery -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-frontend</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
     </dependency>
 
-    <!-- translation addon -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-common</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-repository</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-frontend</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translate</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <!-- search addon -->
+    <!-- search -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-search</artifactId>
       <version>${project.version}</version>
-      <type>jar</type>
     </dependency>
 
+    <!-- console -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-workflowmenu</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-upgrade</artifactId>
-      <version>${project.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-plugins</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- Surf addon -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-surf-frontend</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-surf-repository</artifactId>
+      <artifactId>hippo-cms-console-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
 
