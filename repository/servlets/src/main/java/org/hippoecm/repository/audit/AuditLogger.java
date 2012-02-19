@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.audit;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
@@ -36,8 +33,6 @@ public class AuditLogger {
 
     @Subscribe
     public void logHippoEvent(HippoEvent event) {
-        Map<String, Object> values = new HashMap<String, Object>();
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.putAll(event.getValues());
 
