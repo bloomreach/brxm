@@ -402,9 +402,6 @@
           <sv:value>wicket.id</sv:value>
           <sv:value>validator.id</sv:value>
         </sv:property>
-        <sv:property sv:name="type" sv:type="String">
-          <sv:value>demosite:textpage</sv:value>
-        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -960,9 +957,6 @@
           <sv:value>wicket.id</sv:value>
           <sv:value>validator.id</sv:value>
         </sv:property>
-        <sv:property sv:name="type" sv:type="String">
-          <sv:value>demosite:textpage</sv:value>
-        </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -1313,9 +1307,6 @@
         <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
           <sv:value>wicket.id</sv:value>
           <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="type" sv:type="String">
-          <sv:value>demosite:textpage</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2090,9 +2081,6 @@
         <sv:property sv:name="frontend:services" sv:type="String" sv:multiple="true">
           <sv:value>wicket.id</sv:value>
           <sv:value>validator.id</sv:value>
-        </sv:property>
-        <sv:property sv:name="type" sv:type="String">
-          <sv:value>demosite:productdocument</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
