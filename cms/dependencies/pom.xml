@@ -91,6 +91,11 @@
       <artifactId>hippo-cms-reporting-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-gotolink</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- jQuery plugins -->
     <dependency>
