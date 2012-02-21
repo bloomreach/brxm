@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12-SNAPSHOT</version>
+    <version>12</version>
   </parent>
 
   <name>Repository</name>
@@ -66,8 +66,8 @@
   </modules>
 
   <properties>
-    <hippo.commons.version>1-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>1-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>1-alpha</hippo.commons.version>
+    <hippo.services.version>1-alpha</hippo.services.version>
 
     <!-- Test dependencies  -->
     <atomikos.version>3.1.4</atomikos.version>
