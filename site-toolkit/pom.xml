@@ -87,8 +87,8 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.23.02-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.23.01-alpha</hippo.cms.version>
+    <hippo.repository.version>2.23.01-alpha</hippo.repository.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
     <hippo.addon-hst-configuration-editor.version>1.10.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
