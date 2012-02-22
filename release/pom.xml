@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>7.8.0-SNAPSHOT</version>
+  <version>-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -39,8 +39,8 @@
   <properties>
     <hippo.commons.version>2-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>2-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.23.02-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.23.01-alpha</hippo.repository.version>
+    <hippo.cms.version>2.23.01-alpha</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.23.02-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.10.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
@@ -48,7 +48,7 @@
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>2.25.01-alpha</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.08-alpha</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
