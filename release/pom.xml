@@ -48,7 +48,7 @@
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.25.01-alpha</hippo.hst.version>
+    <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.08-alpha</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
