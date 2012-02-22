@@ -17,10 +17,18 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * Base type for channel info interfaces.
  */
 public interface ChannelInfo {
 
     Map<String, Object> getProperties();
+
+    @Parameter(name = "type", required = true)
+    String getType();
+
+    @Parameter(name = "region", required = true)
+    String getRegion();
 }

@@ -110,19 +110,19 @@ public class ChannelPropertyMapper {
 
     }
 
-    static Map<HstPropertyDefinition, Object> loadProperties(Node mountNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
+    static Map<HstPropertyDefinition, Object> loadProperties(Node channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
         Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition pd : propertyDefinitions) {
                 Object value = null;
-                if (mountNode.hasProperty(pd.getName())) {
-                    Property property = mountNode.getProperty(pd.getName());
+                if (channelInfoNode.hasProperty(pd.getName())) {
+                    Property property = channelInfoNode.getProperty(pd.getName());
                     value = getHstValueFromJcr(pd, property);
                 }
                 properties.put(pd, value);
             }
         } else {
-            for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
+            for (PropertyIterator propertyIterator = channelInfoNode.getProperties(); propertyIterator.hasNext(); ) {
                 Property prop = propertyIterator.nextProperty();
                 if (prop.getDefinition().isProtected()) {
                     continue;

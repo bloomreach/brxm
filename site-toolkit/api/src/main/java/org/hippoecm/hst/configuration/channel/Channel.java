@@ -32,7 +32,6 @@ public class Channel implements Serializable {
     private String mountPath;
 
     private String url; //Probably not needed for all channels ?
-    private String type; //Channel type - preview/live.
 
     private String hstMountPoint;
     private String hstConfigPath;
@@ -67,7 +66,6 @@ public class Channel implements Serializable {
         this.contextPath = orig.contextPath;
         this.cmsPreviewPrefix = orig.cmsPreviewPrefix;
         this.url = orig.url;
-        this.type = orig.type;
 
         this.hstMountPoint = orig.hstMountPoint;
         this.hstConfigPath = orig.hstConfigPath;
@@ -138,18 +136,6 @@ public class Channel implements Serializable {
      */
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    /**
-     * FIXME: does this need to be exposed?
-     * @return
-     */
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public boolean isComposerModeEnabled() {
@@ -243,7 +229,6 @@ public class Channel implements Serializable {
         b.append("id=").append(id);
         b.append(",name=").append(name);
         b.append(",url=").append(url);
-        b.append(",type=").append(type);
         b.append(",hstConfigPath=").append(hstConfigPath);
         b.append(",contentRoot=").append(contentRoot);
         b.append(",locale=").append(locale);
