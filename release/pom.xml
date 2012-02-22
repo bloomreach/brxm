@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>-SNAPSHOT</version>
+  <version>7.8.0-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -43,7 +43,7 @@
     <hippo.cms.version>2.23.01-alpha</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.23.02-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.10.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>1.10.01-alpha</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.23.02-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
