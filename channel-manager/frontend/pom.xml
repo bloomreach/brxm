@@ -206,8 +206,10 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/RootPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BlueprintListPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ChannelFormPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/channel-manager-all.js</output>
             </aggregation>

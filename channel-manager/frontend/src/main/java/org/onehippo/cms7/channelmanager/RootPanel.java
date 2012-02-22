@@ -24,7 +24,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
-import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
@@ -97,10 +97,9 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final ChannelGridPanel channelPanel = new ChannelGridPanel(channelListConfig, this.channelStoreFuture,
-                !blueprintStore.isEmpty());
-        channelPanel.setRegion(BorderLayout.Region.CENTER);
-        channelManagerCard.add(channelPanel);
+        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, this.channelStoreFuture, !blueprintStore.isEmpty());
+        channelOverview.setRegion(BorderLayout.Region.CENTER);
+        channelManagerCard.add(channelOverview);
 
         final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
 

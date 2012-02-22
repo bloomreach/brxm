@@ -32,6 +32,11 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPane
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.properties -text
@@ -49,6 +54,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.jav
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website-preview.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/collapsed.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/expanded.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/future.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
@@ -62,6 +70,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-close-gray-small.pn
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-close-red-small.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-i-hover.png -text svneol=unset#image/png
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-i.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-view.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/list-view.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/loading.gif -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.html -text

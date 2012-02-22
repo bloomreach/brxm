@@ -27,34 +27,8 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         this.columns = config.columns;
         this.resources = config.resources;
         this.selectedChannelId = null;
-        this.canModifyChannels = config.canModifyChannels;
-        this.blueprintsAvailable = config.blueprintsAvailable;
 
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-
-        var toolbar = null;
-
-        if (this.canModifyChannels && this.blueprintsAvailable) {
-            toolbar = new Ext.Toolbar({
-                layout: 'hbox',
-                layoutConfig: {
-                    pack: 'left'
-                },
-                height: 28,
-                cls: 'channel-manager-toolbar',
-                items: []
-            });
-            toolbar.add({
-                text: config.resources['action.add.channel'],
-                handler: function() {
-                    this.fireEvent('add-channel');
-                },
-                allowDepress: false,
-                width: 120,
-                scope: this,
-                iconCls: 'add-channel'
-            });
-        }
 
         var columns = [];
         for (var i = 0; i < config.columns.length; i++) {
@@ -93,7 +67,6 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                 sortDescText: config.resources['menu.sort.descending']
             }),
 
-            tbar: toolbar,
             disableSelection: true,
             trackMouseOver: false,
 
@@ -108,11 +81,11 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                             break;
                         case 'show-preview':
                             this.synchronousAjaxRequest(
-                                    this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
-                                    {
-                                        'CMS-User': this.cmsUser,
-                                        'FORCE_CLIENT_HOST': 'true'
-                                    }
+                                this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
+                                {
+                                    'CMS-User': this.cmsUser,
+                                    'FORCE_CLIENT_HOST': 'true'
+                                }
                             );
                             break;
                         case 'show-live':

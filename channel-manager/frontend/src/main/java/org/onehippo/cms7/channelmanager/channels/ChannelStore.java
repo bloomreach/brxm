@@ -73,6 +73,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         cmsPreviewPrefix,
         contextPath,
         type,
+        region,
         url
     }
     public static final List<String> ALL_FIELD_NAMES;

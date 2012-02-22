@@ -74,9 +74,11 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         });
         this.formPanel = Ext.getCmp('channel-form-panel');
         this.gridPanel = Ext.getCmp('channel-grid-panel');
+        this.channelIconPanel = Ext.getCmp('channelIconPanel');
+        this.channelOverviewPanel = Ext.getCmp('channelOverview');
 
         // register channel creation events
-        this.gridPanel.on('add-channel', function() {
+        this.channelOverviewPanel.on('add-channel', function() {
             this.win.show();
         }, this);
         this.formPanel.on('channel-created', function() {
@@ -84,7 +86,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             this.channelStore.reload();
         }, this);
 
-        this.gridPanel.on('channel-selected', function(channelId, record) {
+        var channelSelectedHandler = function(channelId, record) {
             this.selectedChannelId = channelId;
             // don't activate template composer when it is already active
             if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
@@ -94,7 +96,10 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
             Ext.getCmp('rootPanel').showTemplateComposer();
             // TODO fix, I have no clue why the template composer card is not getting activated properly
             document.getElementById('Hippo.ChannelManager.TemplateComposer.Instance').className = 'x-panel';
-        }, this);
+        };
+
+        this.gridPanel.on('channel-selected', channelSelectedHandler, this);
+        this.channelIconPanel.on('channel-selected', channelSelectedHandler, this);
 
         Hippo.ChannelManager.TemplateComposer.Instance.on('mountChanged', function(data) {
             var channelRecord = this.gridPanel.getChannelByMountId(data.mountId);

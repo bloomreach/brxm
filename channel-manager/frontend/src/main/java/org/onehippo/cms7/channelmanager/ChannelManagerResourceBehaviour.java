@@ -6,6 +6,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
+import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
@@ -32,8 +34,10 @@ public class ChannelManagerResourceBehaviour extends AbstractBehavior {
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BLUEPRINT_LIST_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, CHANNEL_FORM_PANEL));
+            component.add(JavascriptPackageResource.getHeaderContribution(ChannelOverview.class, ChannelOverview.CHANNEL_OVERVIEW_PANEL_JS));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesWindow.class, ChannelPropertiesWindow.CHANNEL_PROPERTIES_WINDOW_JS));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
+            component.add(JavascriptPackageResource.getHeaderContribution(ChannelIconPanel.class, ChannelIconPanel.CHANNEL_ICON_PANEL_JS));
         } else {
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ALL));
         }

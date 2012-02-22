@@ -47,13 +47,6 @@ public class ChannelGridPanel extends ExtPanel {
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
     private ChannelStore store;
     private List<String> visibleFields;
-
-    @ExtProperty
-    private boolean canModifyChannels;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private boolean blueprintsAvailable;
     
     @ExtProperty
     @SuppressWarnings("unused")
@@ -63,18 +56,12 @@ public class ChannelGridPanel extends ExtPanel {
     @SuppressWarnings("unused")
     private String composerRestMountUrl;
 
-    public ChannelGridPanel(IPluginConfig config, ExtStoreFuture storeFuture, boolean blueprintsAvailable) {
+    public ChannelGridPanel(IPluginConfig config, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
-
-        canModifyChannels = store.canModifyChannels();
-        log.info("Current user is allowed to modify channels: {}", canModifyChannels);
 
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.composerRestMountUrl = config.getString("templateComposerContextPath", "/site") +
                 config.getString("composerRestMountPath", "/_rp");
-
-        this.blueprintsAvailable = blueprintsAvailable;
-        log.info("Blueprints for new channels are available: {}", blueprintsAvailable);
 
         visibleFields = parseChannelFields(config);
         visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
