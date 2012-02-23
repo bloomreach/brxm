@@ -542,6 +542,7 @@ if (!YAHOO.hippo.EditorManager) {
                 xinhaConfig.killWordOnPaste = this.config.killWordOnPaste;
                 xinhaConfig.showLoading = this.config.showLoading;
                 xinhaConfig.statusBar = this.config.statusBar;
+                xinhaConfig.only7BitPrintablesInURLs = this.config.only7BitPrintablesInURLs;
 
                 //Set formatting options
                 if (!Lang.isUndefined(this.config.formatBlock)) {

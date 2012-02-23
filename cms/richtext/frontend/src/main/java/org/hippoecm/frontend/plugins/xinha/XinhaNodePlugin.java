@@ -26,6 +26,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -301,6 +302,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         protected void respond(AjaxRequestTarget target) {
             Request request = RequestCycle.get().getRequest();
             String link = request.getParameter("link");
+            link = WicketURLDecoder.PATH_INSTANCE.decode(link);
             if (link != null) {
                 IBrowseService browser = getPluginContext().getService(
                         getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);

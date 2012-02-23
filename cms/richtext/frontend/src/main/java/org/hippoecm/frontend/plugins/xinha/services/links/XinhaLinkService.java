@@ -44,10 +44,11 @@ public class XinhaLinkService implements IDetachable {
     }
 
     public InternalXinhaLink create(Map<String, String> p) {
-        String relPath = p.get(XinhaLink.HREF);
-        if (factory.getLinks().contains(relPath)) {
+        String path = p.get(XinhaLink.HREF); 
+        String decodedPath = RichTextUtil.decode(path); 
+        if (factory.getLinks().contains(decodedPath)) {
             try {
-                RichTextLink rtl = factory.loadLink(RichTextUtil.decode(relPath));
+                RichTextLink rtl = factory.loadLink(decodedPath);
                 return new InternalLink(p, rtl.getTargetId());
             } catch (RichTextException e) {
                 log.error("Could not load link", e);

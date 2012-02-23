@@ -52,7 +52,11 @@ public class RichTextModel implements IModel<String> {
             }
             valueModel.setObject(cleanedValue);
         } catch (Exception e) {
-            log.info("Value not set because html cleaning failed.");
+            if(log.isDebugEnabled()) {
+                log.error("Value not set because html cleaning failed", e);   
+            } else {
+                log.info("Value not set because html cleaning failed.");
+            }
         }
     }
 
