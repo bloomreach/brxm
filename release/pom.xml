@@ -39,18 +39,18 @@
   <properties>
     <hippo.commons.version>2-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>2-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.23.01-alpha</hippo.repository.version>
-    <hippo.cms.version>2.23.01-alpha</hippo.cms.version>
+    <hippo.repository.version>2.23.01-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.23.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.23.02-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.10.01-alpha</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-hst-configuration-editor.version>1.10.01-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.23.02-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
 
-    <forge.dashboard-document-wizard.version>1.03.08-alpha</forge.dashboard-document-wizard.version>
+    <forge.dashboard-document-wizard.version>1.03.08-SNAPSHOT</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
     <forge.easy-forms-cms.version>2.09.03</forge.easy-forms-cms.version>
     <forge.easy-forms-hst.version>2.08.02</forge.easy-forms-hst.version>
