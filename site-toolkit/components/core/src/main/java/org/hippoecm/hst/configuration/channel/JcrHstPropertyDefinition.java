@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.lang.annotation.Annotation;
-
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
