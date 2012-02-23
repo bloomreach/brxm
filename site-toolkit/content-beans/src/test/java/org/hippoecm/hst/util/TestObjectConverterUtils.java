@@ -20,6 +20,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.URL;
 import java.util.Collection;
@@ -65,8 +66,12 @@ public class TestObjectConverterUtils {
         String locationPattern = "classpath*:" + getClass().getPackage().getName().replace('.', '/') + "/**/*.class";
         
         Set<String> expectedAannotatedClassNames = new HashSet<String>();
+        expectedAannotatedClassNames.add(DocumentInterface.class.getName());
+        expectedAannotatedClassNames.add(AbstractBean.class.getName());
         expectedAannotatedClassNames.add(TextBean.class.getName());
         expectedAannotatedClassNames.add(CommentBean.class.getName());
+        expectedAannotatedClassNames.add(PackageBean.class.getName());
+        expectedAannotatedClassNames.add(PrivateBean.class.getName());
         ClasspathResourceScanner resourceScanner = createNiceMock(ClasspathResourceScanner.class);
         expect(resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPattern)).andReturn(expectedAannotatedClassNames).anyTimes();
         replay(resourceScanner);
@@ -74,18 +79,42 @@ public class TestObjectConverterUtils {
         Collection<Class<? extends HippoBean>> annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(resourceScanner, locationPattern);
         ObjectConverter objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         
+        assertNull(objectConverter.getAnnotatedClassFor("test:documentinterface"));
+        assertNull(objectConverter.getAnnotatedClassFor("test:abstractdocument"));
         assertEquals(TextBean.class, objectConverter.getAnnotatedClassFor("test:textdocument"));
         assertEquals(CommentBean.class, objectConverter.getAnnotatedClassFor("test:comment"));
+        assertNull(objectConverter.getAnnotatedClassFor("test:packagedocument"));
+        assertNull(objectConverter.getAnnotatedClassFor("test:privatedocument"));
         
+        assertNull("test:documentinterface", objectConverter.getPrimaryNodeTypeNameFor(DocumentInterface.class));
+        assertNull("test:abstractdocument", objectConverter.getPrimaryNodeTypeNameFor(AbstractBean.class));
         assertEquals("test:textdocument", objectConverter.getPrimaryNodeTypeNameFor(TextBean.class));
         assertEquals("test:comment", objectConverter.getPrimaryNodeTypeNameFor(CommentBean.class));
+        assertNull("test:packagedocument", objectConverter.getPrimaryNodeTypeNameFor(PackageBean.class));
+        assertNull("test:privatedocument", objectConverter.getPrimaryNodeTypeNameFor(PrivateBean.class));
     }
-    
+
+    @Node(jcrType="test:documentinterface")
+    public interface DocumentInterface extends HippoBean {
+    }
+
+    @Node(jcrType="test:abstractdocument")
+    public static abstract class AbstractBean extends HippoDocument {
+    }
+
     @Node(jcrType="test:textdocument")
-    public static class TextBean extends HippoDocument {
+    public static class TextBean extends AbstractBean {
     }
-    
+
     @Node(jcrType="test:comment")
-    public static class CommentBean extends HippoDocument {
+    public static class CommentBean extends AbstractBean {
+    }
+
+    @Node(jcrType="test:packagedocument")
+    static class PackageBean extends AbstractBean {
+    }
+
+    @Node(jcrType="test:privatedocument")
+    private static class PrivateBean extends AbstractBean {
     }
 }

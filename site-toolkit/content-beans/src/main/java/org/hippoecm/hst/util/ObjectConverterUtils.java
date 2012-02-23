@@ -18,6 +18,7 @@ package org.hippoecm.hst.util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -261,15 +262,21 @@ public class ObjectConverterUtils {
                 try {
                     clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
                 } catch (ClassNotFoundException e) {
-                    log.warn("Skipped class registration into the mapper. Cannot load class: {}.", className);
+                    log.warn("ObjectConverterUtils skipped annotated class registration. The class cannot be loaded: {}.", className);
+                    continue;
+                }
+                
+                int mod = clazz.getModifiers();
+                
+                if (Modifier.isAbstract(mod) || Modifier.isInterface(mod) || !Modifier.isPublic(mod)) {
+                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be a non-abstract public class: {}.", className);
+                    continue;
                 }
                 
                 if (HippoBean.class.isAssignableFrom(clazz)) {
                     annotatedClasses.add((Class<? extends HippoBean>) clazz);
                 } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipped class registration into the mapper. Type is not HippoBean: {}.", className);
-                    }
+                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be type of {}: {}.", HippoBean.class, className);
                 }
             }
         }
