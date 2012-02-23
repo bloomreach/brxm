@@ -52,7 +52,6 @@ public class ChannelInfoClassTest {
 
     @Test
     public void proxyProvidesCorrectValues() {
-        List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(TestInfo.class);
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("test-name", "aap");
 
