@@ -37,6 +37,7 @@ import org.hippoecm.frontend.translation.components.document.DocumentTranslation
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
  * Provider of {@link HippoLocale}s, based on plugin configuration.  Icons should
@@ -93,6 +94,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         // debugging pleasure - enable setting breakpoints on the client
         if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
             Home page = context.getService(Home.class.getName(), Home.class);
+            page.add(new ExtResourcesBehaviour());
 
             page.add(TranslationResources.getTranslationsHeaderContributor());
             page.add(JavascriptPackageResource
