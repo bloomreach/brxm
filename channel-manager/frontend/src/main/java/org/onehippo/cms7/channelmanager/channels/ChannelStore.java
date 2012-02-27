@@ -161,11 +161,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
                 if (StringUtils.isNotBlank(fieldValue)) {
                     if (ChannelField.type.toString().equals(field.getName())) {
-                        CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-type.png"));
+                        CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, "type-"+fieldValue+".png"));
                         object.put(field.getName() + "_img", typeImgUrl.toString());
                     }
                     if (ChannelField.region.toString().equals(field.getName())) {
-                        CharSequence regionImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-region.png"));
+                        CharSequence regionImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, "region-"+fieldValue+".png"));
                         object.put(field.getName() + "_img", regionImgUrl.toString());
                     }
                 }

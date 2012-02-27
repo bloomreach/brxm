@@ -79,11 +79,11 @@
 }
 
 .channel-manager .x-btn-small .icon-view {
-    background-image: url("icon-view.png");
+    background-image: url("channels/icon-view.png");
 }
 
 .channel-manager .x-btn-small .list-view {
-    background-image: url("list-view.png");
+    background-image: url("channels/list-view.png");
 }
 
 .channel-manager .x-btn-small .edit-channel {
@@ -271,14 +271,14 @@
     border-top: 1px solid rgba(0, 0, 0, .15);
 }
 
-.channel-manager .channel-data-view li strong {
+.channel-manager .channel-data-view .channel span {
     color: #000;
     /* display: block; */
     padding-left: 4px;
 }
 
-.channel-manager .channel-data-view li span {
-    color: #999;
+.channel-manager .channel-data-view .channel img {
+    margin-bottom: 5px;
 }
 
 .channel-manager .x-slider-horz .x-slider-thumb {
@@ -291,11 +291,27 @@
 }
 
 .channel-manager .collapse-group.expanded {
-    background: url(expanded.png) no-repeat;
+    background: url(channels/triangle-expanded.png) no-repeat;
     padding-bottom: 2px;
 }
 
 .channel-manager .collapse-group.collapsed {
-    background: url(collapsed.png) no-repeat;
+    background: url(channels/triangle-collapsed.png) no-repeat;
     padding-bottom: 2px;
 }
+
+.channel-manager .regionIcon {
+    display: inline;
+    vertical-align:middle;
+}
+
+#typeOverviewPanel {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+
+#regionOverviewPanel {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+

@@ -31,13 +31,25 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             this.store.each(function(record) {
                 var type = record.get('type');
                 if (type) {
-                    this.types[type] = type;
+                    if (this.resources[type]) {
+                        this.types[this.resources[type]] = type;
+                    } else {
+                        this.types[type] = type;
+                    }
                 }
                 var region = record.get('region');
                 if (region) {
-                    this.regions[region] = region;
+                    if (this.resources[region]) {
+                        this.regions[this.resources[region]] = region;
+                    } else {
+                        this.regions[region] = region;
+                    }
                 }
             }, this);
+
+            // the associative arrays are storing 'label' => 'key'
+            this.regions = this.sortObject(this.regions);
+            this.types = this.sortObject(this.types);
 
             var typeOverviewPanel = Ext.getCmp('typeOverviewPanel');
             typeOverviewPanel.add(this.createDataViews('type', this.types));
@@ -80,10 +92,12 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             layoutOnCardChange: true,
             items : [{
                 id: 'typeOverviewPanel',
+                border: false,
                 xtype: 'panel',
                 autoScroll: true
             }, {
                 id: 'regionOverviewPanel',
+                border: false,
                 xtype: 'panel',
                 autoScroll: true
             }]
@@ -91,6 +105,22 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
 
         Hippo.ChannelManager.ChannelIconPanel.superclass.constructor.call(this, config);
     },
+
+    sortObject : function (object){
+        var sortedKeys = [];
+        var sortedObj = {};
+
+        for (var i in object) {
+            sortedKeys.push(i);
+        }
+        sortedKeys.sort();
+
+        for (var i=0; i<sortedKeys.length; i++) {
+            sortedObj[sortedKeys[i]] = object[sortedKeys[i]];
+        }
+        return sortedObj;
+    },
+
 
     filterDataByType : function(property, value) {
         return function(records, startIndex) {
@@ -105,7 +135,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
         };
     },
 
-    createDataView : function(property, values) {
+    createDataView : function(property, value) {
         var self = this;
         var dataView = new Ext.DataView({
             store: this.store,
@@ -114,13 +144,13 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     '<tpl for=".">',
                     '<li class="channel" channelId="{id}">',
                     '<img width="64" height="64" src="{type_img}" />',
-                    '<br /><img src="{region_img}" style="dispaly: inline" /><strong>{name}</strong>',
+                    '<br /><img src="{region_img}" class="regionIcon" /><span class="channel-name">{name}</span>',
                     '</li>',
                     '</tpl>',
                     '</ul>'
             ),
             cls : 'channel-data-view',
-            collectData : this.filterDataByType(property, values),
+            collectData : this.filterDataByType(property, value),
             itemSelector: 'li.channel',
             overClass   : 'channel-hover',
             autoScroll  : true
@@ -140,14 +170,10 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             if (typeof values[value] == 'function') {
                 continue;
             }
-            var dataView = this.createDataView(property, value);
+            var dataView = this.createDataView(property, values[value]);
             (function(views, dataView) {
-                var collapseExpandGroupName = value;
-                if (self.resources[value]) {
-                    collapseExpandGroupName = self.resources[value];
-                }
                 var panel = new Ext.Panel({
-                    html: '<span class="collapse-group expanded">'+collapseExpandGroupName+'</span>',
+                    html: '<span class="collapse-group expanded">'+value+'</span>',
                     listeners: {
                         afterrender : function(panel) {
                             var spanElement = Ext.get(Ext.select('.collapse-group', true, panel.el.dom));
