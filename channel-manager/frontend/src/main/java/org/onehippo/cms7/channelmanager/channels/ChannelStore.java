@@ -35,6 +35,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.PackageResource;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -161,11 +162,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
                 if (StringUtils.isNotBlank(fieldValue)) {
                     if (ChannelField.type.toString().equals(field.getName())) {
-                        CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, "type-"+fieldValue+".png"));
+                        ResourceReference iconResource = getIconResourceReference("type-"+fieldValue+".png", "type-website.png");
+                        CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
                         object.put(field.getName() + "_img", typeImgUrl.toString());
                     }
                     if (ChannelField.region.toString().equals(field.getName())) {
-                        CharSequence regionImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, "region-"+fieldValue+".png"));
+                        ResourceReference iconResource = getIconResourceReference("region-"+fieldValue+".png", "");
+                        CharSequence regionImgUrl = requestCycle.urlFor(iconResource);
                         object.put(field.getName() + "_img", regionImgUrl.toString());
                     }
                 }
@@ -176,6 +179,17 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         return data;
+    }
+
+    private ResourceReference getIconResourceReference(final String resource, final String fallback) {
+        ResourceReference iconResource = new ResourceReference(getClass(), resource);
+        iconResource.bind(RequestCycle.get().getApplication());
+        if (iconResource.getResource() == null ||
+                (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
+            iconResource = new ResourceReference(getClass(), fallback);
+            iconResource.bind(RequestCycle.get().getApplication());
+        }
+        return iconResource;
     }
 
     String getLocalizedFieldName(String fieldName) {

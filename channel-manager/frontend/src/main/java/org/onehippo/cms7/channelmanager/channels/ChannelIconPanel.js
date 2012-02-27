@@ -143,7 +143,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     '<ul class="channel-group">',
                     '<tpl for=".">',
                     '<li class="channel" channelId="{id}">',
-                    '<img width="64" height="64" src="{type_img}" />',
+                    '<img src="{type_img}" />',
                     '<br /><img src="{region_img}" class="regionIcon" /><span class="channel-name">{name}</span>',
                     '</li>',
                     '</tpl>',
