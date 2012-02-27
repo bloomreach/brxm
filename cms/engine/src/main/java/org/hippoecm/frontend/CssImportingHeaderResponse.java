@@ -20,21 +20,34 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.DecoratingHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.lang.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * <p>
  * A header response that doesn't immediately render stylesheet references but
  * collects them until close and just before closing creates a <code>&lt;style&gt;</code> tag in the head
  * with <code>@import</code> statements for the individual css references.
- * 
+ * </p>
+ * <p>
  * This is a work-around for the limitation in Internet Explorer that doesn't allow more than 31 stylesheet
  * objects per document.
+ * </p>
+ * <p>
+ * Note: Internet Explorer does not support inline definition of a stylesheet's media type. Since we're only 
+ * interested in media="screen", we've put the media attribute on the style element and skip every stylesheet that 
+ * explicitly defines a different media type.
+ * </p>
  */
 public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
+    
+    static final Logger log = LoggerFactory.getLogger(CssImportingHeaderResponse.class);
     
     private List<Stylesheet> stylesheets = new ArrayList<Stylesheet>();
     
@@ -79,19 +92,21 @@ public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
     }
 
     private void renderStylesheet(Stylesheet stylesheet) {
-        getResponse().println("<style type=\"text/css\" id=\"wicketimportstyle" + stylesheet.getId() + "\">");
+        getResponse().println("<style type=\"text/css\" id=\"wicketimportstyle" + stylesheet.getId() + "\" media=\"screen\">");
         for (Import imp : stylesheet.getImports()) {
             renderImport(imp);
         }
         getResponse().println("</style>");
     }
-    
+
     private void renderImport(Import imp) {
-        getResponse().write("@import url('" + RequestCycle.get().urlFor(imp.getResourceReference()) + "')");
-        if (imp.getMedia() != null) {
-            getResponse().write(" " + imp.getMedia());
+        CharSequence cssUrl = RequestCycle.get().urlFor(imp.getResourceReference());
+        getResponse().write("@import url('" + cssUrl + "');");
+
+        String media = imp.getMedia();
+        if(media != null && !media.equals("screen") && Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+            log.warn("CssImportingHeaderResponse only accepts stylesheets of @media='screen', css file {} will be skipped.", cssUrl);
         }
-        getResponse().println(";");
     }
     
     private static class Stylesheet {
