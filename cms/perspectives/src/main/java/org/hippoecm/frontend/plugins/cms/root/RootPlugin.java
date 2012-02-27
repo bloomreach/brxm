@@ -39,6 +39,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 public class RootPlugin extends TabsPlugin {
     @SuppressWarnings("unused")
@@ -82,6 +83,7 @@ public class RootPlugin extends TabsPlugin {
             }
         }
         add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
+        add(new ExtResourcesBehaviour());
         add(new ExtHippoThemeBehavior());
 
         addExtensionPoint("top");
