@@ -35,6 +35,14 @@
             </bean>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.cmsrest.services.ChannelsResource">
+              <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+              <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
+            </bean>
+          </constructor-arg>
+        </bean>
       </list>
     </property>
   </bean>

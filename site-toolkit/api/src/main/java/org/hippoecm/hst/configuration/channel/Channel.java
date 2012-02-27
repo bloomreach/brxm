@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import static org.hippoecm.hst.configuration.channel.ChannelConsts.ERROR_MESSAGE_CHANNEL_ID_HAS_BEEN_ALREADY_SET;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +25,7 @@ public class Channel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final String id;
+    private String id;
 
     private String name;
     private String hostname;
@@ -41,6 +43,12 @@ public class Channel implements Serializable {
     private String channelInfoClassName;
     private String mountId;
     private String locale;
+
+    /**
+     * {@link Channel} default constructor it is required for REST de/serialization 
+     */
+    public Channel() {
+    }
 
     /**
      * Constructor of a Channel.  Should normally only be invoked by the Channel manager implementation
@@ -82,6 +90,17 @@ public class Channel implements Serializable {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Set the unique ID of this channel
+     */
+    public void setId(String id) throws IllegalStateException {
+    	if ( (this.id != null) && (this.id != "") ) {
+    		throw new IllegalStateException(ERROR_MESSAGE_CHANNEL_ID_HAS_BEEN_ALREADY_SET);
+    	}
+
+        this.id = id;
     }
 
     public String getContentRoot() {
