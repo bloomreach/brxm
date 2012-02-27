@@ -31,6 +31,10 @@ import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Application;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Resource;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -44,6 +48,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerPerspective;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -139,6 +144,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
 
+        RequestCycle rc = RequestCycle.get();
         for (Channel channel : getChannels().values()) {
             Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
@@ -148,6 +154,18 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     Object value = channelProperties.get(field.getName());
                     fieldValue = value == null ? StringUtils.EMPTY : value.toString();
                 }
+
+                if (StringUtils.isNotBlank(fieldValue)) {
+                    if (ChannelField.type.toString().equals(field.getName())) {
+                        CharSequence typeImgUrl = rc.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-type.png"));
+                        object.put(field.getName() + "_img", typeImgUrl.toString());
+                    }
+                    if (ChannelField.region.toString().equals(field.getName())) {
+                        CharSequence regionImgUrl = rc.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-region.png"));
+                        object.put(field.getName() + "_img", regionImgUrl.toString());
+                    }
+                }
+                
                 object.put(field.getName(), fieldValue);
             }
             data.put(object);

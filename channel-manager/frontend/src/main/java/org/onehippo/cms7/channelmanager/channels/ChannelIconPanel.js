@@ -26,6 +26,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
         this.currentComponents = [];
         this.types = [];
         this.regions = [];
+
         this.store.on('load', function() {
             this.store.each(function(record) {
                 var type = record.get('type');
@@ -45,13 +46,13 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             var regionOverviewPanel = Ext.getCmp('regionOverviewPanel');
             regionOverviewPanel.add(this.createDataViews('region', this.regions));
             regionOverviewPanel.doLayout();
-        }, this);
+        }, this, { single: true } );
 
         var self = this;
         var toolbar = new Ext.Toolbar({
             items : [
                 {
-                    text: 'type',
+                    text: config.resources['type'],
                     enableToggle: true,
                     pressed: true,
                     toggleGroup: 'channelPropertyGrouping',
@@ -60,11 +61,10 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     }
                 },
                 {
-                    text: 'region',
+                    text: config.resources['region'],
                     enableToggle: true,
                     toggleGroup: 'channelPropertyGrouping',
                     handler: function() {
-                        console.log('region switch handler');
                         self.layout.setActiveItem(1);
                     }
                 }
@@ -99,7 +99,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                 if (records[i].data[property] != value) {
                     continue;
                 }
-                r[r.length] = this.prepareData(records[i].data, startIndex + i, records[i]);
+                r[r.length] = this.prepareData(records[i].json, startIndex + i, records[i]);
             }
             return r;
         };
@@ -113,8 +113,8 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     '<ul class="channel-group">',
                     '<tpl for=".">',
                     '<li class="channel" channelId="{id}">',
-                    '<img width="64" height="64" src="'+self.websitePreviewImg+'" />',
-                    '<br /><!-- <img src="" style="dispaly: inline"/> --><strong>{name}</strong>', // TODO replace dummy language image
+                    '<img width="64" height="64" src="{type_img}" />',
+                    '<br /><img src="{region_img}" style="dispaly: inline" /><strong>{name}</strong>',
                     '</li>',
                     '</tpl>',
                     '</ul>'
@@ -142,8 +142,12 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             }
             var dataView = this.createDataView(property, value);
             (function(views, dataView) {
+                var collapseExpandGroupName = value;
+                if (self.resources[value]) {
+                    collapseExpandGroupName = self.resources[value];
+                }
                 var panel = new Ext.Panel({
-                    html: '<span class="collapse-group expanded">'+value+'</span>',  // TODO i18n
+                    html: '<span class="collapse-group expanded">'+collapseExpandGroupName+'</span>',
                     listeners: {
                         afterrender : function(panel) {
                             var spanElement = Ext.get(Ext.select('.collapse-group', true, panel.el.dom));

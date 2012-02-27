@@ -18,8 +18,6 @@ public class ChannelIconPanel extends ExtPanel {
 
     public static final String CHANNEL_ICON_PANEL_JS = "ChannelIconPanel.js";
 
-    private static final String WEBSITE_PREVIEW_IMG = "website-preview.png";
-    
     private ChannelStore store;
 
     @ExtProperty
@@ -27,7 +25,6 @@ public class ChannelIconPanel extends ExtPanel {
     private String composerRestMountUrl;
 
     public ChannelIconPanel(IPluginConfig channelListConfig, ExtStoreFuture storeFuture) {
-        // TODO probably icon panel needs own plugin configuration
         this.store = (ChannelStore) storeFuture.getStore();
     }
 
@@ -35,10 +32,6 @@ public class ChannelIconPanel extends ExtPanel {
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("store", new JSONIdentifier(this.store.getJsObjectId()));
-        RequestCycle rc = RequestCycle.get();
-        properties.put("websitePreviewImg", Arrays.asList(
-            rc.urlFor(new ResourceReference(ChannelIconPanel.class, WEBSITE_PREVIEW_IMG)).toString()));
-         
     }
     
 }

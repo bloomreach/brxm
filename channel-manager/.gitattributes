@@ -34,6 +34,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPane
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.properties -text
@@ -54,7 +55,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.jav
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website-preview.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/collapsed.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/expanded.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/future.js -text
