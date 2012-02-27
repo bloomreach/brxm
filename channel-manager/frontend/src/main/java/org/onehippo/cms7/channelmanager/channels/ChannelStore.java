@@ -31,9 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,7 +40,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
@@ -100,19 +98,25 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
-    private transient Map<String, Channel> channels;
+    private transient List<Channel> channels;
 
     private final String storeId;
     private final String sortFieldName;
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
+    private final ChannelService channelService;
 
-    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, ChannelService channelService) {
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
+        this.channelService = channelService;
+    }
+
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
+        this(storeId, fields, sortFieldName, sortOrder, localeResolver, null);
     }
 
     @Override
@@ -144,8 +148,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
 
-        RequestCycle rc = RequestCycle.get();
-        for (Channel channel : getChannels().values()) {
+        RequestCycle requestCycle = RequestCycle.get();
+        for (Channel channel : getChannels()) {
             Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
             for (ExtField field : getFields()) {
@@ -157,11 +161,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
                 if (StringUtils.isNotBlank(fieldValue)) {
                     if (ChannelField.type.toString().equals(field.getName())) {
-                        CharSequence typeImgUrl = rc.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-type.png"));
+                        CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-type.png"));
                         object.put(field.getName() + "_img", typeImgUrl.toString());
                     }
                     if (ChannelField.region.toString().equals(field.getName())) {
-                        CharSequence regionImgUrl = rc.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-region.png"));
+                        CharSequence regionImgUrl = requestCycle.urlFor(new ResourceReference(ChannelManagerPerspective.class, fieldValue+"-region.png"));
                         object.put(field.getName() + "_img", regionImgUrl.toString());
                     }
                 }
@@ -180,9 +184,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             return getResourceValue("field." + fieldName);
         }
 
-        // custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
-        Map<String, Channel> channelMap = getChannels();
-        for (Channel channel : channelMap.values()) {
+        // Custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
+        for (Channel channel : getChannels()) {
             String header = ChannelResourceModel.getChannelResourceValue(channel, fieldName);
             if (header != null) {
                 return header;
@@ -333,21 +336,27 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
     }
 
-    private Map<String, Channel> getChannels() {
+    private List<Channel> getChannels() {
         if (channels == null) {
-            // reload channels
-            ChannelManager channelManager = ChannelUtil.getChannelManager();
-            if (channelManager == null) {
-                log.info("Cannot load the channel manager. No channels will be shown.");
-                return Collections.emptyMap();
-            }
-            try {
-                channels = channelManager.getChannels();
-            } catch (ChannelException e) {
-                log.error("Failed to retrieve channels", e);
-                return Collections.emptyMap();
-            }
+            // Re/Load channels
+			if (channelService == null) {
+				ChannelManager channelManager = ChannelUtil.getChannelManager();
+				if (channelManager == null) {
+					log.info("Cannot load the channel manager. No channels will be shown.");
+					return Collections.emptyList();
+				}
+				try {
+					channels = new ArrayList<Channel>(channelManager.getChannels().values());
+				} catch (ChannelException e) {
+					log.error("Failed to retrieve channels", e);
+					return Collections.emptyList();
+				}
+			} else {
+				channels = channelService.getChannels();
+			}
+        	channels = channelService.getChannels();
         }
+
         return channels;
     }
 

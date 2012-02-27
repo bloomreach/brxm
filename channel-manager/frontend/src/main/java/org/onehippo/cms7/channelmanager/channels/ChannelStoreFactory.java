@@ -24,10 +24,10 @@ import java.util.Set;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.hst.rest.ChannelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
-
 
 public final class ChannelStoreFactory {
 
@@ -41,7 +41,7 @@ public final class ChannelStoreFactory {
         // prevent instantiation
     }
 
-    public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
+    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, ChannelService channelService) {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
@@ -50,15 +50,24 @@ public final class ChannelStoreFactory {
             fieldList.add(new ExtField(storeFieldName));
         }
 
-        // get the Hippo locale provider to resolve locales of new channels
+        // Retrieve the Hippo locale provider to resolve locales of new channels
         String localeProviderServiceId = config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName());
         ILocaleProvider localeProvider = context.getService(localeProviderServiceId, ILocaleProvider.class);
         if (localeProvider == null) {
-            throw new IllegalStateException("Cannot find locale provider service with ID '" + localeProviderServiceId + "'");
+            throw new IllegalStateException(String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
         }
 
-        return new ChannelStore("channel-store", fieldList, parseSortColumn(config, storeFieldNames),
-                parseSortOrder(config), new LocaleResolver(localeProvider));
+		return new ChannelStore("channel-store",
+                                fieldList,
+                                parseSortColumn(config, storeFieldNames),
+                                parseSortOrder(config),
+                                new LocaleResolver(localeProvider),
+                                channelService);
+
+    }
+
+    public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
+    	return createStore(context, config, null);
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {

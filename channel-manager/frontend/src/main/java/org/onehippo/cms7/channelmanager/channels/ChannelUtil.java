@@ -30,7 +30,7 @@ final class ChannelUtil {
             return null;
         }
 
-        return HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        return componentManager.getComponent(ChannelManager.class.getName());
     }
 
     /**

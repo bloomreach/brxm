@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.service;
 
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -35,15 +37,13 @@ import org.slf4j.LoggerFactory;
  *
  * The following configuration properties are available:
  * <ul>
- * <li>'rest.proxy.service.id': the ID of the REST proxy service to use. If omitted, the default REST proxy service is
+ * <li>'rest.proxy.service.id': Referenced by CONFIG_REST_PROXY_SERVICE_ID constant, The ID of the REST proxy service to use. If omitted, the default REST proxy service is
  *     used.</li>
  * <li>'service.id': the ID to register this service under.</li>
  * <li>'type': the type of mounts to use for link creation. If omitted or empty, the type 'live' is used.</li>
  * </ul>
  */
 public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlService {
-
-    public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
 
     private static final String DEFAULT_TYPE = "live";
     private static final Logger log = LoggerFactory.getLogger(ChannelDocumentUrlService.class);

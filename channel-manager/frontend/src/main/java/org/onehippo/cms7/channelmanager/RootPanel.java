@@ -15,12 +15,16 @@
  */
 package org.onehippo.cms7.channelmanager;
 
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.hst.rest.ChannelService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
@@ -84,7 +88,16 @@ public class RootPanel extends ExtPanel {
 
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
-        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig);
+        // Retrieve the Channel Service
+        ChannelService channelService = null;
+        IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
+
+        if (restProxyService != null) {
+			channelService = restProxyService.createRestProxy(ChannelService.class);
+		}
+
+        // COMMENT - MNour: Here we can inject the Channels REST service
+        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, channelService);
         this.channelStoreFuture = new ExtStoreFuture<Object>(channelStore);
         add(this.channelStore);
         add(this.channelStoreFuture);

@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.plugins.channelactions;
 
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,13 +50,12 @@ import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "serial" })
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelActionsPlugin.class);
     private static final Comparator<ChannelDocument> DEFAULT_CHANNEL_DOCUMENT_COMPARATOR = new ChannelDocumentNameComparator();
 
-    public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
     public static final String CONFIG_CHANNEL_MANAGER_SERVICE_ID = "channel.manager.service.id";
 
     private final IRestProxyService restProxyService;
@@ -83,7 +84,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) ChannelActionsPlugin.this.getDefaultModel();
+        @SuppressWarnings("rawtypes")
+		WorkflowDescriptorModel model = (WorkflowDescriptorModel) ChannelActionsPlugin.this.getDefaultModel();
         if (model != null) {
             try {
                 Node node = model.getNode();

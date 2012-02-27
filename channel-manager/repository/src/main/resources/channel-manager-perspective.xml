@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node sv:name="channel-manager-perspective" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="insert" h:location="browserLoader">
+
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugin</sv:value>
   </sv:property>
@@ -16,7 +17,9 @@
   <sv:property sv:name="wicket.id" sv:type="String">
     <sv:value>service.tab</sv:value>
   </sv:property>
-
+  <sv:property sv:name="rest.proxy.service.id" sv:type="String">
+    <sv:value>hst.rest.proxy.service</sv:value>
+  </sv:property>
   <sv:node sv:name="channel-list">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
@@ -33,13 +36,11 @@
       <sv:value>ascending</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="templatecomposer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
   </sv:node>
-  
   <sv:node sv:name="layout.wireframe">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
@@ -57,5 +58,4 @@
       <sv:value>center</sv:value>
     </sv:property>
   </sv:node>
-
 </sv:node>
