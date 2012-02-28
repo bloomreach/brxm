@@ -24,6 +24,7 @@ import java.util.Set;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public final class ChannelStoreFactory {
         // prevent instantiation
     }
 
-    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, ChannelService channelService) {
+    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, ChannelService channelService, BlueprintService blueprintService) {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
@@ -62,12 +63,13 @@ public final class ChannelStoreFactory {
                                 parseSortColumn(config, storeFieldNames),
                                 parseSortOrder(config),
                                 new LocaleResolver(localeProvider),
-                                channelService);
+                                channelService,
+                                blueprintService);
 
     }
 
     public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
-    	return createStore(context, config, null);
+    	return createStore(context, config, null, null);
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {

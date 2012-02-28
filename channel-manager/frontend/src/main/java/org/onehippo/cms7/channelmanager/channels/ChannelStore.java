@@ -41,6 +41,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
@@ -82,8 +83,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         region,
         url
     }
+
     public static final List<String> ALL_FIELD_NAMES;
     public static final List<String> INTERNAL_FIELDS;
+
     static {
         List<String> names = new ArrayList<String>();
         for (ChannelField field : ChannelField.values()) {
@@ -101,6 +104,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
+
+    private static final String WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK = "No RESTful {} service configured. Using channel manager as fallback!";
+
     private transient List<Channel> channels;
 
     private final String storeId;
@@ -108,18 +114,34 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
     private final ChannelService channelService;
+    private final BlueprintService blueprintService;
 
-    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, ChannelService channelService) {
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, 
+            LocaleResolver localeResolver, ChannelService channelService, BlueprintService blueprintService) {
+
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
         this.channelService = channelService;
+        this.blueprintService = blueprintService;
+
+        if (this.channelService == null) {
+        	if (log.isWarnEnabled()) {
+        		log.warn(WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK, "channel");
+        	}
+        }
+
+        if (this.blueprintService == null) {
+            if (log.isWarnEnabled()) {
+                log.warn(WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK, "blueprint");
+            }
+        }
     }
 
     public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
-        this(storeId, fields, sortFieldName, sortOrder, localeResolver, null);
+        this(storeId, fields, sortFieldName, sortOrder, localeResolver, null, null);
     }
 
     @Override
@@ -274,18 +296,22 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
         final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
-        // create new channel
+        // Create new channel
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
         try {
-            newChannel = channelManager.getBlueprint(blueprintId).createChannel();
+            if (blueprintService == null) {
+                newChannel = channelManager.getBlueprint(blueprintId).getPrototypeChannel();
+            } else {
+                newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
+            }
         } catch (ChannelException e) {
             log.warn("Could not create new channel with blueprint '{}': {}", blueprintId, e.getMessage());
             log.debug("Cause:", e);
             throw new ActionFailedException(getResourceValue("error.blueprint.cannot.create.channel", blueprintId), e);
         }
 
-        // set channel parameters
+        // Set channel parameters
         final String channelName = record.getString("name");
         newChannel.setName(channelName);
         newChannel.setUrl(record.getString("url"));

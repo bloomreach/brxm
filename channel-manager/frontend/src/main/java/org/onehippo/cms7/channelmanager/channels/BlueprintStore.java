@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.rest.BlueprintService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,10 +44,18 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BlueprintStore.class);
 
+    private transient List<Blueprint> blueprints;
     private Long total;
+    private final BlueprintService blueprintService;
+
+    public BlueprintStore(BlueprintService blueprintService) {
+        super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
+        this.blueprintService = blueprintService;
+    }
 
     public BlueprintStore() {
         super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
+        this.blueprintService = null;
     }
 
     @Override
@@ -85,7 +94,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             boolean hasPrototype = blueprint.hasContentPrototype();
             object.put(FIELD_HAS_CONTENT_PROTOTYPE, hasPrototype);
 
-            Channel channel = blueprint.createChannel();
+            Channel channel = blueprint.getPrototypeChannel();
             object.put(FIELD_CONTENT_ROOT, channel.getContentRoot());
 
             data.put(object);
@@ -94,18 +103,27 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     }
 
     private List<Blueprint> getBlueprints() {
-        ChannelManager channelManager = ChannelUtil.getChannelManager();
-        if (channelManager == null) {
-            log.info("Cannot load the channel manager: no blueprints will be shown.", ChannelManager.class.getName());
-            return Collections.emptyList();
-        }
-        
-        try {
-            return channelManager.getBlueprints();
-        } catch (ChannelException e) {
-            log.warn("Error retrieving blueprints, no blueprints will be shown", e);
-        }
+    	if (blueprints == null) {
+    		if (blueprintService == null) {
+		        ChannelManager channelManager = ChannelUtil.getChannelManager();
+		        if (channelManager == null) {
+		            log.info("Cannot load the channel manager: no blueprints will be shown.", ChannelManager.class.getName());
+		            return Collections.emptyList();
+		        }
 
-        return Collections.emptyList();
+		        try {
+		            return channelManager.getBlueprints();
+		        } catch (ChannelException e) {
+		            log.warn("Error retrieving blueprints, no blueprints will be shown", e);
+		        }
+		
+		        return Collections.emptyList();
+    		} else {
+    			blueprints = blueprintService.getBlueprints();
+    		}
+    	}
+
+    	return blueprints;
     }
+
 }
