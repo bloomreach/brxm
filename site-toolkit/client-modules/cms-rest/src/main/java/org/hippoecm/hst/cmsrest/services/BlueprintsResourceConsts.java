@@ -17,13 +17,12 @@
 package org.hippoecm.hst.cmsrest.services;
 
 /**
- * Constants class used by {@link ChannelsResource}
- *
+ * Constants class used by {@link BlueprintsResource}
  */
-public class ChannelsResourceConsts {
+public class BlueprintsResourceConsts {
 
-	public static final String MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing channels resource request";
-	public static final String MESSAGE_CHANNELS_RETRIEVAL_ERROR = "Error while retrieving channels";
-	public static final String PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing channels resource request for channel '{}'";
+	public static final String MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing blueprints resource request";
+	public static final String MESSAGE_BLUEPRINTS_RETRIEVAL_ERROR = "Error while retrieving blueprints";
+	public static final String PARAM_MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing blueprints resource request for blueprint '{}'";
 
 }

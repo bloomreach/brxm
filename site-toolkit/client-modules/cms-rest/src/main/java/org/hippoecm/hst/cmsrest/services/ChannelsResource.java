@@ -17,9 +17,7 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNELS_RETRIEVAL_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_MANAGER_IS_NULL;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_HST_LINK_CREATOR_IS_NULL;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 
 import java.util.ArrayList;
@@ -28,8 +26,6 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.rest.ChannelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,21 +33,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation of {@link ChannelService} for CMS to interact with {@link Channel} resources
  */
-public class ChannelsResource implements ChannelService {
+public class ChannelsResource extends BaseResource implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
-    private ChannelManager channelManager;
-    private HstLinkCreator hstLinkCreator;
-
-    public void setChannelManager(final ChannelManager channelManager) {
-        this.channelManager = channelManager;
-    }
-
-    public void setHstLinkCreator(final HstLinkCreator hstLinkCreator) {
-        this.hstLinkCreator = hstLinkCreator;
-    }
-
+	/* (non-Javadoc)
+	 * @see org.hippoecm.hst.rest.ChannelService#getChannels()
+	 */
 	@Override
 	public List<Channel> getChannels() {
 		try {
@@ -78,8 +66,11 @@ public class ChannelsResource implements ChannelService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.hippoecm.hst.rest.ChannelService#getChannel(java.lang.String)
+	 */
 	@Override
-	public Channel getChannel(String uuid) {
+	public Channel getChannel(String id) {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
 			// COMMENT - MNour: We should use a proper validation framework!
@@ -89,49 +80,13 @@ public class ChannelsResource implements ChannelService {
 			// COMMENT - MNour: This is only test data
 			return new Channel("this-is-a-test-channel");
 		} catch (ResourceRequestValidationException rrve) {
-			log.warn(PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, uuid);
+			log.warn(PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, id);
 			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			//                  For now return empty list
 			// throw rrve;
 			// COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
 			return null;
 		}
-	}
-
-	/**
-	 * Validate some constraints before going further with Resource request processing
-	 * 
-	 * @throws ResourceRequestValidationException When any/all constraint(s) is/are violated
-	 */
-	protected void validate() throws  ResourceRequestValidationException {
-        if (channelManager == null) {
-        	log.warn(MESSAGE_CHANNEL_MANAGER_IS_NULL);
-            throw new ResourceRequestValidationException(MESSAGE_CHANNEL_MANAGER_IS_NULL);
-        }
-
-        if (hstLinkCreator == null) {
-            log.warn(MESSAGE_HST_LINK_CREATOR_IS_NULL);
-            throw new ResourceRequestValidationException(MESSAGE_HST_LINK_CREATOR_IS_NULL);
-        }
-	}
-	
-	
-//	protected <KEY_TYPE, VALUE_TYPE> List<VALUE_TYPE> values(Map<KEY_TYPE, VALUE_TYPE> map) {
-//		if ((map != null) && (!map.isEmpty())) {
-//			List<VALUE_TYPE> values = new ArrayList<VALUE_TYPE>(map.size());
-//			for (VALUE_TYPE value : map.values()
-//			return values;
-//		}
-//		return Collections.emptyList();
-//	}
-
-	@SuppressWarnings("serial")
-	private class ResourceRequestValidationException extends Exception {
-
-		public ResourceRequestValidationException(String message) {
-			super(message);
-		}
-
 	}
 
 }

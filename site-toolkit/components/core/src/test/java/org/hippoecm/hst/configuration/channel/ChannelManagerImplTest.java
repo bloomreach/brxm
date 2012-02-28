@@ -190,7 +190,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
-        final Channel channel = blueprint.createChannel();
+        final Channel channel = blueprint.getPrototypeChannel();
         channel.setName("CMIT Test Channel: with special and/or specific characters");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/unittestcontent/documents");
@@ -288,7 +288,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
-        final Channel channel = blueprint.createChannel();
+        final Channel channel = blueprint.getPrototypeChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost/newmount");
 
@@ -325,7 +325,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         final ChannelManagerImpl manager = createManager();
 
-        final Channel channel = manager.getBlueprint("cmit-test-bp").createChannel();
+        final Channel channel = manager.getBlueprint("cmit-test-bp").getPrototypeChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/");
@@ -358,7 +358,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         final ChannelManagerImpl manager = createManager();
 
-        Channel channel = manager.getBlueprint("cmit-test-bp2").createChannel();
+        Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");

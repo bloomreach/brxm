@@ -32,13 +32,24 @@ import org.hippoecm.hst.configuration.channel.Channel;
 @Path("/channels/")
 public interface ChannelService {
 
+    /**
+     * List all managed channels, identified by their channel IDs
+     * 
+     * @return {@link List} of {@link Channel} of all available channels, empty list otherwise
+     */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Channel> getChannels();
 
+    /**
+     * Returns a channel identified by an Id
+     * 
+     * @param id - The <code>id</code> of a {@link Channel}
+     * @return A {@link Channel} object instance identified by <code>id</code> if available, <code>null</code> otherwise
+     */
 	@GET
-	@Path("/{uuid}/")
+	@Path("/{id}/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Channel getChannel(@PathParam("uuid") String uuid);
+	public Channel getChannel(@PathParam("id") String id);
 
 }

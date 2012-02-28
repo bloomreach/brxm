@@ -77,7 +77,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private String hostGroup = null;
     private String sites = DEFAULT_HST_SITES;
 
-    private Map<String, BlueprintService> blueprints;
+    private Map<String, Blueprint> blueprints;
     private Map<String, Channel> channels;
     private Credentials credentials;
     private Repository repository;
@@ -136,8 +136,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
             Node blueprintsNode = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
             NodeIterator blueprintIterator = blueprintsNode.getNodes();
             while (blueprintIterator.hasNext()) {
-                Node blueprint = blueprintIterator.nextNode();
-                blueprints.put(blueprint.getName(), new BlueprintService(blueprint));
+                Node blueprintNode = blueprintIterator.nextNode();
+                blueprints.put(blueprintNode.getName(), BlueprintNandler.buildBlueprint(blueprintNode));
             }
         }
     }
@@ -260,7 +260,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             session = getSession(false);
             Node configNode = session.getNode(rootPath);
  
-            blueprints = new HashMap<String, BlueprintService>();
+            blueprints = new HashMap<String, Blueprint>();
             loadBlueprints(configNode);
 
             channels = new HashMap<String, Channel>();
@@ -377,20 +377,21 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public synchronized String persist(final String blueprintId, Channel channel) throws ChannelException {
-       
+
         if (!blueprints.containsKey(blueprintId)) {
-            throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
+            throw new ChannelException(String.format("Blueprint id %s is not valid", blueprintId));
         }
-        BlueprintService bps = blueprints.get(blueprintId);
+
+        Blueprint blueprint = blueprints.get(blueprintId);
 
         Session session = null;
         try {
             session = getSession(true);
             Node configNode = session.getNode(rootPath);
             String channelId = createUniqueChannelId(channel.getName(), session);
-            createChannel(configNode, bps, session, channelId, channel);
+            createChannel(configNode, blueprint, session, channelId, channel);
 
-            ChannelManagerEvent event = new ChannelManagerEventImpl(bps, channelId, channel, configNode);
+            ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channelId, channel, configNode);
             for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                 try {
                     listener.channelCreated(event);
@@ -565,7 +566,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     // private - internal - methods
 
-    private void createChannel(Node configRoot, BlueprintService bps, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
+    private void createChannel(Node configRoot, Blueprint blueprint, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
         // Create virtual host
         final URI channelUri = getChannelUri(channel);
         final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
@@ -574,7 +575,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         copyOrCreateChannelNode(configRoot, channelId, channel);
 
         // Create or reuse HST configuration
-        final Node blueprintNode = bps.getNode(session);
+        final Node blueprintNode = BlueprintNandler.getNode(session, blueprint);
         final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
         channel.setHstConfigPath(hstConfigPath);
 
@@ -584,12 +585,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
         // first to avoid a partial save). Otherwise, we can directly use the existing content path in the channel.
         Session jcrSession = configRoot.getSession();
         Node contentRoot = jcrSession.getRootNode();
-        if (!bps.hasContentPrototype()) {
+        if (!blueprint.hasContentPrototype()) {
             String channelContentRoot = channel.getContentRoot();
             if (StringUtils.isNotEmpty(channelContentRoot) && jcrSession.nodeExists(channelContentRoot)) {
                 contentRoot = jcrSession.getNode(channelContentRoot);
             } else {
-                throw new ChannelException("Blueprint '" + bps.getId() + "' does not have a content prototype, and channel '"
+                throw new ChannelException("Blueprint '" + blueprint.getId() + "' does not have a content prototype, and channel '"
                     + channelId + "' refers to a non-existing content root: '" + channelContentRoot + "'");
             }
         }
@@ -615,8 +616,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         // Create content if the blueprint contains a content prototype. The path of the created content node has to
         // be set on the HST site nodes.
-        if (bps.hasContentPrototype()) {
-            final Node contentRootNode = createContent(bps, session, channelId, channel);
+        if (blueprint.hasContentPrototype()) {
+            final Node contentRootNode = createContent(blueprint, session, channelId, channel);
 
             final Node liveContentMirror = liveSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
             final Node previewContentMirror = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
@@ -748,20 +749,20 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return siteNode;
     }
 
-    private Node createContent(final BlueprintService bps, final Session session, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
-        String blueprintContentPath = bps.getContentRoot();
+    private Node createContent(final Blueprint blueprint, final Session session, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
+        String blueprintContentPath = blueprint.getContentRoot();
         if (blueprintContentPath == null) {
             blueprintContentPath = contentRoot;
         }
 
-        log.debug("Creating new subsite content from blueprint '{}' under '{}'", bps.getId(), blueprintContentPath);
+        log.debug("Creating new subsite content from blueprint '{}' under '{}'", blueprint.getId(), blueprintContentPath);
 
         FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(blueprintContentPath));
         if (fw == null) {
             throw cannotCreateContent(blueprintContentPath, null);
         }
         try {
-            String contentRootPath = fw.add("new-subsite", bps.getId(), channelId);
+            String contentRootPath = fw.add("new-subsite", blueprint.getId(), channelId);
             session.refresh(true);
 
 

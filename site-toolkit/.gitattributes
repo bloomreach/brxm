@@ -573,7 +573,7 @@ components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintServiceTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtilsTest.java -text

@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -23,13 +26,10 @@ import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 /**
- * Tests {@link BlueprintService}.
+ * Tests {@link BlueprintNandler}.
  */
-public class BlueprintServiceTest extends AbstractHstTestCase {
+public class BlueprintHandlerTest extends AbstractHstTestCase {
 
     @Before
     public void setUp() throws Exception {
@@ -55,12 +55,12 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        BlueprintService bs = new BlueprintService(blueprintNode);
+        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
 
-        assertEquals("test", bs.getId());
-        assertEquals("Test Blueprint", bs.getName());
-        assertEquals("Description of Test Blueprint", bs.getDescription());
-        assertEquals("/test/hst:blueprints/test", bs.getNode(getSession()).getPath());
+        assertEquals("test", blueprint.getId());
+        assertEquals("Test Blueprint", blueprint.getName());
+        assertEquals("Description of Test Blueprint", blueprint.getDescription());
+        assertEquals("/test/hst:blueprints/test", blueprint.getPath());
     }
 
     /**
@@ -79,12 +79,12 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        BlueprintService bs = new BlueprintService(blueprintNode);
+        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
 
-        Channel c = bs.createChannel();
-        assertEquals("/hst:hst/hst:sites/blueprint-site", c.getHstMountPoint());
-        assertNull(c.getHstConfigPath());
-        assertNull(c.getContentRoot());
+        Channel channel = blueprint.getPrototypeChannel();
+        assertEquals("/hst:hst/hst:sites/blueprint-site", channel.getHstMountPoint());
+        assertNull(channel.getHstConfigPath());
+        assertNull(channel.getContentRoot());
     }
 
     /**
@@ -114,12 +114,12 @@ public class BlueprintServiceTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        BlueprintService bs = new BlueprintService(blueprintNode);
+        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
 
-        Channel c = bs.createChannel();
-        assertNull(c.getHstMountPoint());
-        assertEquals("/hst:hst/hst:configurations/blueprint-configuration", c.getHstConfigPath());
-        assertEquals("/test/content", c.getContentRoot());
+        Channel channel = blueprint.getPrototypeChannel();
+        assertNull(channel.getHstMountPoint());
+        assertEquals("/hst:hst/hst:configurations/blueprint-configuration", channel.getHstConfigPath());
+        assertEquals("/test/content", channel.getContentRoot());
     }
 
 }
