@@ -922,6 +922,11 @@
                   </dependency>
                   <dependency>
                     <groupId>org.onehippo.cms7.hst</groupId>
+                    <artifactId>hst-rest-api</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>org.onehippo.cms7.hst</groupId>
                     <artifactId>hst-commons</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
