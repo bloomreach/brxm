@@ -137,17 +137,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             if (subject.hasProperty("hippostd:foldertype")) {
                 try {
                     foldertypeRefs = subject.getProperty("hippostd:foldertype").getValues();
-                    if (foldertypeRefs.length > 0) {
-                        for (int i = 0; i < foldertypeRefs.length; i++) {
-                            String foldertype = foldertypeRefs[i].getString();
-                            if (templates.hasNode(foldertype)) {
-                                foldertypes.add(templates.getNode(foldertype));
-                            } else {
-                                log.warn("Unknown folder type " + foldertype);
-                            }
+                    for (int i = 0; i < foldertypeRefs.length; i++) {
+                        String foldertype = foldertypeRefs[i].getString();
+                        if (templates.hasNode(foldertype)) {
+                            foldertypes.add(templates.getNode(foldertype));
+                        } else {
+                            log.warn("Unknown folder type " + foldertype);
                         }
-                    } else {
-                        foldertypeRefs = null;
                     }
                 } catch (PathNotFoundException ex) {
                     foldertypeRefs = null;
