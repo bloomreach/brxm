@@ -47,7 +47,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.ChannelManagerPerspective;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -60,6 +59,9 @@ import org.wicketstuff.js.ext.util.ExtClass;
  */
 @ExtClass("Hippo.ChannelManager.ChannelStore")
 public class ChannelStore extends ExtGroupingStore<Object> {
+
+    public static final String DEFAULT_TYPE = "website";
+    public static final String DEFAULT_REGION = "us_EN";
 
     // the names are used to access
     // the getters of Channel via reflection
@@ -162,34 +164,40 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
                 if (StringUtils.isNotBlank(fieldValue)) {
                     if (ChannelField.type.toString().equals(field.getName())) {
-                        ResourceReference iconResource = getIconResourceReference("type-"+fieldValue+".png", "type-website.png");
-                        CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
-                        object.put(field.getName() + "_img", typeImgUrl.toString());
+                        String typeImgUrl = getIconResourceReferenceUrl("type-" + fieldValue + ".png", "type-"+DEFAULT_TYPE+".png");
+                        object.put(field.getName() + "_img", typeImgUrl);
                     }
                     if (ChannelField.region.toString().equals(field.getName())) {
-                        ResourceReference iconResource = getIconResourceReference("region-"+fieldValue+".png", "");
-                        CharSequence regionImgUrl = requestCycle.urlFor(iconResource);
-                        object.put(field.getName() + "_img", regionImgUrl.toString());
+                        String regionImgUrl = getIconResourceReferenceUrl("region-" + fieldValue + ".png", "region-"+DEFAULT_REGION+".png");
+                        object.put(field.getName() + "_img", regionImgUrl);
                     }
                 }
-                
+
                 object.put(field.getName(), fieldValue);
             }
+            
+            if (StringUtils.isEmpty(object.getString(ChannelField.type.toString()))) {
+                object.put(ChannelField.type.toString(), DEFAULT_TYPE);
+                object.put(ChannelField.type.toString()+"_img", getIconResourceReferenceUrl("type-"+DEFAULT_TYPE+".png", "type-"+DEFAULT_TYPE+".png"));
+            }
+            
             data.put(object);
         }
 
         return data;
     }
 
-    private ResourceReference getIconResourceReference(final String resource, final String fallback) {
+    private String getIconResourceReferenceUrl(final String resource, final String fallback) {
+        RequestCycle requestCycle = RequestCycle.get();
         ResourceReference iconResource = new ResourceReference(getClass(), resource);
-        iconResource.bind(RequestCycle.get().getApplication());
+        iconResource.bind(requestCycle.getApplication());
         if (iconResource.getResource() == null ||
                 (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
             iconResource = new ResourceReference(getClass(), fallback);
-            iconResource.bind(RequestCycle.get().getApplication());
+            iconResource.bind(requestCycle.getApplication());
         }
-        return iconResource;
+        CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
+        return typeImgUrl.toString();
     }
 
     String getLocalizedFieldName(String fieldName) {
