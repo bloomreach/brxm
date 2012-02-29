@@ -236,7 +236,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        // no translation found; is the site down?
+        // No translation found, is the site down?
         if (ChannelUtil.getChannelManager() == null) {
             log.info("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
                     fieldName, org.apache.wicket.Session.get().getLocale());
@@ -386,23 +386,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private List<Channel> getChannels() {
         if (channels == null) {
-            // Re/Load channels
-			if (channelService == null) {
-				ChannelManager channelManager = ChannelUtil.getChannelManager();
-				if (channelManager == null) {
-					log.info("Cannot load the channel manager. No channels will be shown.");
-					return Collections.emptyList();
-				}
-				try {
-					channels = new ArrayList<Channel>(channelManager.getChannels().values());
-				} catch (ChannelException e) {
-					log.error("Failed to retrieve channels", e);
-					return Collections.emptyList();
-				}
-			} else {
-				channels = channelService.getChannels();
-			}
-        	channels = channelService.getChannels();
+            channels = channelService.getChannels();
         }
 
         return channels;

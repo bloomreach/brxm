@@ -104,23 +104,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     private List<Blueprint> getBlueprints() {
     	if (blueprints == null) {
-    		if (blueprintService == null) {
-		        ChannelManager channelManager = ChannelUtil.getChannelManager();
-		        if (channelManager == null) {
-		            log.info("Cannot load the channel manager: no blueprints will be shown.", ChannelManager.class.getName());
-		            return Collections.emptyList();
-		        }
-
-		        try {
-		            return channelManager.getBlueprints();
-		        } catch (ChannelException e) {
-		            log.warn("Error retrieving blueprints, no blueprints will be shown", e);
-		        }
-		
-		        return Collections.emptyList();
-    		} else {
-    			blueprints = blueprintService.getBlueprints();
-    		}
+    	    blueprints = blueprintService.getBlueprints();
     	}
 
     	return blueprints;
