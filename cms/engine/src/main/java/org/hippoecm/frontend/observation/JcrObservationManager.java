@@ -315,17 +315,16 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
+
     private void cleanup() {
-        Reference<? extends EventListener> ref;
         synchronized (listeners) {
             // cleanup weak-ref-table
             listeners.size();
 
             // cleanup gc'ed listeners
-            while ((ref = listenerQueue.poll()) != null) {
-                if (ref.get() != null) {
-                    ((JcrListener) ref.get()).dispose();
-                }
+            JcrListener jcrListener;
+            while ((jcrListener = (JcrListener) listenerQueue.poll()) != null) {
+                jcrListener.dispose();
             }
         }
     }
