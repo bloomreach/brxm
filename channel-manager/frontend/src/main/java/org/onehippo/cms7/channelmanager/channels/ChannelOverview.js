@@ -44,27 +44,28 @@ Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
                 scope: this,
                 iconCls: 'add-channel'
             });
-            toolbar.add('->');
-            toolbar.add({
-                handler: function() {
-                    this.selectCard(0);
-                },
-                toggleGroup: 'channelViewGrouping',
-                enableToggle: true,
-                scope: this,
-                iconCls: 'icon-view'
-            });
-            toolbar.add({
-                handler: function() {
-                    this.selectCard(1);
-                },
-                toggleGroup: 'channelViewGrouping',
-                enableToggle: true,
-                pressed: true,
-                scope: this,
-                iconCls: 'list-view'
-            });
         };
+
+        toolbar.add('->');
+        toolbar.add({
+            handler: function() {
+                this.selectCard(0);
+            },
+            toggleGroup: 'channelViewGrouping',
+            enableToggle: true,
+            scope: this,
+            iconCls: 'icon-view'
+        });
+        toolbar.add({
+            handler: function() {
+                this.selectCard(1);
+            },
+            toggleGroup: 'channelViewGrouping',
+            enableToggle: true,
+            pressed: true,
+            scope: this,
+            iconCls: 'list-view'
+        });
 
         Ext.apply(config, {
             id: 'channelOverview',
