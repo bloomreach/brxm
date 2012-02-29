@@ -35,6 +35,9 @@
     <sv:property sv:name="sort.order" sv:type="String">
       <sv:value>ascending</sv:value>
     </sv:property>
+    <sv:property sv:name="channelIconPath" sv:type="String">
+      <sv:value>/content/gallery/channels/${name}.png/${name}.png/hippogallery:original</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="templatecomposer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

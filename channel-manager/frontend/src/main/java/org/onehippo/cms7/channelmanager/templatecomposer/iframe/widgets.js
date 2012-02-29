@@ -322,7 +322,7 @@
                 if (typeof item !== 'undefined') {
                     item.sync.call(item);
                 } else if(!quiet) {
-                    console.warn('ContainerItem with id=' + id + ' is not found in active map.');
+                    console.warn('ContainerItem with id=' + this.id + ' is not found in active map.');
                 }
             });
         },

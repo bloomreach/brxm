@@ -29,7 +29,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
 
         this.store.on('load', function() {
             this.store.each(function(record) {
-                var type = record.get('type');
+                var type = record.json['channelType'];
                 if (type) {
                     if (this.resources[type]) {
                         this.types[this.resources[type]] = type;
@@ -37,7 +37,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                         this.types[type] = type;
                     }
                 }
-                var region = record.get('region');
+                var region = record.json['channelRegion'];
                 if (region) {
                     if (this.resources[region]) {
                         this.regions[this.resources[region]] = region;
@@ -52,11 +52,11 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             this.types = this.sortObject(this.types);
 
             var typeOverviewPanel = Ext.getCmp('typeOverviewPanel');
-            typeOverviewPanel.add(this.createDataViews('type', this.types));
+            typeOverviewPanel.add(this.createDataViews('channelType', this.types));
             typeOverviewPanel.doLayout();
 
             var regionOverviewPanel = Ext.getCmp('regionOverviewPanel');
-            regionOverviewPanel.add(this.createDataViews('region', this.regions));
+            regionOverviewPanel.add(this.createDataViews('channelRegion', this.regions));
             regionOverviewPanel.doLayout();
         }, this, { single: true } );
 
@@ -126,7 +126,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
         return function(records, startIndex) {
             var r = [], i = 0, len = records.length;
             for(; i < len; i++){
-                if (records[i].data[property] != value) {
+                if (records[i].json[property] != value) {
                     continue;
                 }
                 r[r.length] = this.prepareData(records[i].json, startIndex + i, records[i]);
@@ -143,8 +143,8 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     '<ul class="channel-group">',
                     '<tpl for=".">',
                     '<li class="channel" channelId="{id}">',
-                    '<img src="{type_img}" />',
-                    '<br /><img src="{region_img}" class="regionIcon" /><span class="channel-name">{name}</span>',
+                    '<img src="{channelTypeImg}" />',
+                    '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
                     '</li>',
                     '</tpl>',
                     '</ul>'

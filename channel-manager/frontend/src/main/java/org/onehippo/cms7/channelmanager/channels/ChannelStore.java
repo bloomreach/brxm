@@ -28,14 +28,14 @@ import java.util.Map;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.PackageResource;
+import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -62,7 +62,7 @@ import org.wicketstuff.js.ext.util.ExtClass;
 public class ChannelStore extends ExtGroupingStore<Object> {
 
     public static final String DEFAULT_TYPE = "website";
-    public static final String DEFAULT_REGION = "us_EN";
+    public static final String DEFAULT_CHANNEL_ICON_PATH = "/content/gallery/channels/${name}.png/${name}.png/hippogallery:original";
 
     // the names are used to access
     // the getters of Channel via reflection
@@ -79,8 +79,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         mountPath,
         cmsPreviewPrefix,
         contextPath,
-        type,
-        region,
         url
     }
 
@@ -115,6 +113,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final LocaleResolver localeResolver;
     private final ChannelService channelService;
     private final BlueprintService blueprintService;
+    private String channelIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
     public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, 
             LocaleResolver localeResolver, ChannelService channelService, BlueprintService blueprintService) {
@@ -142,7 +141,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
         this(storeId, fields, sortFieldName, sortOrder, localeResolver, null, null);
-    }
+    }        
 
     @Override
     protected JSONObject getProperties() throws JSONException {
@@ -172,35 +171,21 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     @Override
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
-
-        RequestCycle requestCycle = RequestCycle.get();
+                
         for (Channel channel : getChannels()) {
             Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
+
+            populateTypeAndRegion(channel, object);
+            
             for (ExtField field : getFields()) {
                 String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
                 if (fieldValue == null) {
                     Object value = channelProperties.get(field.getName());
                     fieldValue = value == null ? StringUtils.EMPTY : value.toString();
                 }
-
-                if (StringUtils.isNotBlank(fieldValue)) {
-                    if (ChannelField.type.toString().equals(field.getName())) {
-                        String typeImgUrl = getIconResourceReferenceUrl("type-" + fieldValue + ".png", "type-"+DEFAULT_TYPE+".png");
-                        object.put(field.getName() + "_img", typeImgUrl);
-                    }
-                    if (ChannelField.region.toString().equals(field.getName())) {
-                        String regionImgUrl = getIconResourceReferenceUrl("region-" + fieldValue + ".png", "region-"+DEFAULT_REGION+".png");
-                        object.put(field.getName() + "_img", regionImgUrl);
-                    }
-                }
-
+             
                 object.put(field.getName(), fieldValue);
-            }
-            
-            if (StringUtils.isEmpty(object.getString(ChannelField.type.toString()))) {
-                object.put(ChannelField.type.toString(), DEFAULT_TYPE);
-                object.put(ChannelField.type.toString()+"_img", getIconResourceReferenceUrl("type-"+DEFAULT_TYPE+".png", "type-"+DEFAULT_TYPE+".png"));
             }
             
             data.put(object);
@@ -209,15 +194,67 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return data;
     }
 
-    private String getIconResourceReferenceUrl(final String resource, final String fallback) {
+    private void populateTypeAndRegion(final Channel channel, final JSONObject object) throws JSONException {
+        String type = channel.getType();
+        if (StringUtils.isEmpty(type)) {
+            type = DEFAULT_TYPE;
+        }
+        object.put("channelType", type);
+
+        String channelIconUrl = getChannelIconUrl(type);
+        if (StringUtils.isEmpty(channelIconUrl)) {
+            channelIconUrl = getIconResourceReferenceUrl(type+".png");
+        }
+        object.put("channelTypeImg", channelIconUrl);
+
+        if (StringUtils.isNotEmpty(channel.getRegion())) {
+            object.put("channelRegion", channel.getRegion());
+            String regionIconUrl = getChannelIconUrl(channel.getRegion());
+            if (StringUtils.isEmpty(regionIconUrl)) {
+                regionIconUrl = getIconResourceReferenceUrl(channel.getRegion()+".png");
+            }
+            if (StringUtils.isNotEmpty(regionIconUrl)) {
+                object.put("channelRegionImg", regionIconUrl);
+            }
+        }
+    }
+
+    private String getChannelIconUrl(final String name) {
+        if (StringUtils.isNotEmpty(name)) {
+            String channelIconPath = this.channelIconPath.replace("${name}", name);
+            Session session = ((UserSession) RequestCycle.get().getSession()).getJcrSession();
+            try {
+                if (session.nodeExists(channelIconPath)) {
+                    String url = encodeUrl("binaries" + channelIconPath);
+                    return RequestCycle.get().getResponse().encodeURL(url).toString();
+                }
+            } catch (RepositoryException repositoryException) {
+                log.error("Error getting the channel icon resource url.", repositoryException);
+            }
+        }
+        return null;
+    }
+
+    private final String encodeUrl(String path) {
+        String[] elements = StringUtils.split(path, '/');
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = WicketURLEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
+        }
+        return StringUtils.join(elements, '/');
+    }
+
+    public String getChannelIconPath() {
+        return channelIconPath;
+    }
+
+    public void setChannelIconPath(final String channelIconPath) {
+        this.channelIconPath = channelIconPath;
+    }
+
+    private String getIconResourceReferenceUrl(final String resource) {
         RequestCycle requestCycle = RequestCycle.get();
         ResourceReference iconResource = new ResourceReference(getClass(), resource);
         iconResource.bind(requestCycle.getApplication());
-        if (iconResource.getResource() == null ||
-                (iconResource.getResource() instanceof PackageResource && ((PackageResource)iconResource.getResource()).getResourceStream(false) == null)) {
-            iconResource = new ResourceReference(getClass(), fallback);
-            iconResource.bind(requestCycle.getApplication());
-        }
         CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
         return typeImgUrl.toString();
     }
@@ -355,7 +392,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     private Subject createSubject() {
-        UserSession session = (UserSession) Session.get();
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
 
         @SuppressWarnings("deprecation")
         Credentials credentials = session.getCredentials();
@@ -396,7 +433,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (StringUtils.isEmpty(absPath)) {
             return null;
         }
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         try {
             if (!session.nodeExists(absPath)) {
                 return null;
