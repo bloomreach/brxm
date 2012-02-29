@@ -31,7 +31,12 @@
   <packaging>war</packaging>
 
   <dependencies>
-  
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-rest-api</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-frontend</artifactId>
