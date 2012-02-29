@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 Hippo
+ * Copyright 2011-2012 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                             break;
                         case 'show-preview':
                             this.synchronousAjaxRequest(
-                                this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/' + record.get('hostname'),
+                                this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname'),
                                 {
                                     'CMS-User': this.cmsUser,
                                     'FORCE_CLIENT_HOST': 'true'
