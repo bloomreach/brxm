@@ -84,10 +84,12 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
-import org.hippoecm.repository.util.Utilities;
 import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 public class LoadInitializationModule implements DaemonModule, EventListener {
     @SuppressWarnings("unused")
@@ -111,8 +113,19 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         "OR " + HippoNodeType.HIPPO_CONTENTPROPADD + " IS NOT NULL) " +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
+    private static XmlPullParserFactory factory;
+
     private Session session;
     private ExecutorService executor;
+
+    static {
+        try {
+            factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+        } catch (XmlPullParserException e) {
+            log.error("Could not get xpp factory instance: " + e.getMessage());
+        }
+    }
 
     public void initialize(Session session) throws RepositoryException {
         this.session = session;
@@ -363,6 +376,41 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                             if (root.startsWith(initPath)) {
                                 log.error("Refusing to extract content to " + root);
                             } else {
+                                Property reloadProperty = null;
+                                if (node.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP)) {
+                                    reloadProperty = node.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP);
+                                }
+                                if (reloadProperty != null && reloadProperty.getBoolean()) {
+                                    if (!contentStream.markSupported()) {
+                                        contentStream = new BufferedInputStream(contentStream);
+                                    }
+                                    // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
+                                    boolean removeSupported = true;
+                                    String contextNodeName = null;
+                                    // 8 kb should be more than enough to read the root node
+                                    contentStream.mark(8192);
+                                    XmlPullParser xpp = factory.newPullParser();
+                                    xpp.setInput(contentStream, null);
+                                    while(xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
+                                        if (xpp.getEventType() == XmlPullParser.START_TAG) {
+                                            String mergeDirective = xpp.getAttributeValue("http://www.onehippo.org/jcr/xmlimport", "merge");
+                                            if (mergeDirective != null && (mergeDirective.equals("combine") || mergeDirective.equals("overlay"))) {
+                                                removeSupported = false;
+                                            }
+                                            contextNodeName = xpp.getAttributeValue("http://www.jcp.org/jcr/sv/1.0", "name");
+                                            break;
+                                        }
+                                        xpp.next();
+                                    }
+                                    contentStream.reset();
+                                    if (removeSupported) {
+                                        String path = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                                        removeNodecontent(session, path, false);
+                                    } else {
+                                        log.warn("Cannot remove node for reloading content: content resource is a delta xml with combine or overlay directive");
+                                    }
+                                }
+                                reloadProperty.remove();
                                 log.info("Initializing content from: " + contentName + " to " + root);
                                 initializeNodecontent(session, root, contentStream, contentName);
                             }
@@ -541,6 +589,8 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                     log.error("configuration as specified by " + node.getPath() + " failed", ex);
                 } catch (PathNotFoundException ex) {
                     log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                } catch (XmlPullParserException ex) {
+                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
                 } finally {
                     session.refresh(false);
                 }
@@ -615,7 +665,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                 moved.setProperty(HippoNodeType.HIPPO_EXTENSIONBUILD, buildNumber);
                             }
                         }
-                        for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD }) {
+                        for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD, HippoNodeType.HIPPO_RELOADONSTARTUP }) {
                             if(n.hasProperty(propertyName)) {
                                 if(n.getProperty(propertyName).getDefinition().isMultiple()) {
                                     moved.setProperty(propertyName, n.getProperty(propertyName).getValues());
@@ -753,10 +803,14 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
 
         String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
         try {
-            if (relpath.length() > 0 && session.getRootNode().hasNode(relpath)) {
-                session.getRootNode().getNode(relpath).remove();
-                if (save) {
-                    session.save();
+            if (relpath.length() > 0) {
+                if (session.getRootNode().hasNode(relpath)) {
+                    session.getRootNode().getNode(relpath).remove();
+                    if (save) {
+                        session.save();
+                    }
+                } else {
+                    log.warn("Cannot remove node /" + relpath + ": no such node");
                 }
             }
         } catch (RepositoryException ex) {
