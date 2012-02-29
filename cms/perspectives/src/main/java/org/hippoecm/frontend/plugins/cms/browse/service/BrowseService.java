@@ -195,6 +195,15 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
         Match closestMatch = null;
         String closestName = null;
+        // Get the match for the active section
+        IBrowserSection activeSection = sections.getSection(sections.getActiveSection());
+        if (activeSection != null) {
+            Match match = activeSection.contains(document);
+            if (match != null) {
+                closestMatch = match;
+                closestName = sections.getActiveSection();
+            }
+        }		
         for (String name : sections.getSections()) {
             IBrowserSection section = sections.getSection(name);
             Match match = section.contains(document);
