@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests {@link BlueprintNandler}.
+ * Tests {@link BlueprintHandler}.
  */
 public class BlueprintHandlerTest extends AbstractHstTestCase {
 
@@ -55,7 +55,7 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
+        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
 
         assertEquals("test", blueprint.getId());
         assertEquals("Test Blueprint", blueprint.getName());
@@ -79,7 +79,7 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
+        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
 
         Channel channel = blueprint.getPrototypeChannel();
         assertEquals("/hst:hst/hst:sites/blueprint-site", channel.getHstMountPoint());
@@ -114,7 +114,7 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
         getSession().save();
 
         Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
-        Blueprint blueprint = BlueprintNandler.buildBlueprint(blueprintNode);
+        Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
 
         Channel channel = blueprint.getPrototypeChannel();
         assertNull(channel.getHstMountPoint());

@@ -26,9 +26,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BlueprintNandler {
+public class BlueprintHandler {
 
-    final static Logger log = LoggerFactory.getLogger(BlueprintNandler.class);
+    final static Logger log = LoggerFactory.getLogger(BlueprintHandler.class);
 
     public static final String SUBSITE_TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates/new-subsite/hippostd:templates/";
 

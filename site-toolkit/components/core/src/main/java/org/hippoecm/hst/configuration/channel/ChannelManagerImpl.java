@@ -137,7 +137,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             NodeIterator blueprintIterator = blueprintsNode.getNodes();
             while (blueprintIterator.hasNext()) {
                 Node blueprintNode = blueprintIterator.nextNode();
-                blueprints.put(blueprintNode.getName(), BlueprintNandler.buildBlueprint(blueprintNode));
+                blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode));
             }
         }
     }
@@ -575,7 +575,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         copyOrCreateChannelNode(configRoot, channelId, channel);
 
         // Create or reuse HST configuration
-        final Node blueprintNode = BlueprintNandler.getNode(session, blueprint);
+        final Node blueprintNode = BlueprintHandler.getNode(session, blueprint);
         final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
         channel.setHstConfigPath(hstConfigPath);
 
