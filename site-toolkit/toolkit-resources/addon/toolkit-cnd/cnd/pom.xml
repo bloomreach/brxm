@@ -47,7 +47,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.hst.upgrade.Upgrader2_24_A</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.hst.upgrade.Upgrader2_24_A,org.hippoecm.hst.upgrade.Upgrader2_24_B</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

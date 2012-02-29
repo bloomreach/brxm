@@ -945,6 +945,7 @@ toolkit-resources/addon/repository/src/site/site.xml -text
 toolkit-resources/addon/src/site/site.xml -text
 toolkit-resources/addon/toolkit-cnd/cnd/pom.xml svneol=native#text/plain
 toolkit-resources/addon/toolkit-cnd/cnd/src/main/java/org/hippoecm/hst/upgrade/Upgrader2_20_A.java -text svneol=unset#text/plain
+toolkit-resources/addon/toolkit-cnd/cnd/src/main/java/org/hippoecm/hst/upgrade/Upgrader2_24_B.java -text
 toolkit-resources/addon/toolkit-cnd/cnd/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 toolkit-resources/addon/toolkit-cnd/cnd/src/main/resources/hst-types.cnd -text
 toolkit-resources/addon/toolkit-cnd/cnd/src/site/site.xml -text
