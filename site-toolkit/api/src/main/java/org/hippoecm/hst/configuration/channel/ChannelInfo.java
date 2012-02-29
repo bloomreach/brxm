@@ -26,9 +26,4 @@ public interface ChannelInfo {
 
     Map<String, Object> getProperties();
 
-    @Parameter(name = "type", required = true)
-    String getType();
-
-    @Parameter(name = "region", required = true)
-    String getRegion();
 }

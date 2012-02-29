@@ -149,6 +149,9 @@ public interface HstNodeTypes {
     static final String MOUNT_PROPERTY_CHANNELPATH =  "hst:channelpath";
 
     static final String CHANNEL_PROPERTY_NAME = "hst:name";
+    static final String CHANNEL_PROPERTY_TYPE = "hst:type";
+    static final String CHANNEL_PROPERTY_REGION = "hst:region";
+
     static final String CHANNEL_PROPERTY_CHANNELINFO_CLASS = "hst:channelinfoclass";
 
     static final String BLUEPRINT_PROPERTY_NAME = "hst:name";

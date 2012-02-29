@@ -28,6 +28,8 @@ public class Channel implements Serializable {
     private String id;
 
     private String name;
+    private String type;
+    private String region;
     private String hostname;
     private String contextPath;
     private String cmsPreviewPrefix;
@@ -74,6 +76,8 @@ public class Channel implements Serializable {
         this.contextPath = orig.contextPath;
         this.cmsPreviewPrefix = orig.cmsPreviewPrefix;
         this.url = orig.url;
+        this.type = orig.type;
+        this.region = orig.region;
 
         this.hstMountPoint = orig.hstMountPoint;
         this.hstConfigPath = orig.hstConfigPath;
@@ -157,6 +161,22 @@ public class Channel implements Serializable {
         this.url = url;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    public String getType() {
+        return this.type;
+    }
+    
+    public void setRegion(String region) {
+        this.region = region;
+    }
+    
+    public String getRegion() {
+        return this.region;
+    }
+    
     public boolean isComposerModeEnabled() {
         return composerModeEnabled;
     }
@@ -247,6 +267,8 @@ public class Channel implements Serializable {
         b.append("Channel{");
         b.append("id=").append(id);
         b.append(",name=").append(name);
+        b.append(",type=").append(type);
+        b.append(",region=").append(region);
         b.append(",url=").append(url);
         b.append(",hstConfigPath=").append(hstConfigPath);
         b.append(",contentRoot=").append(contentRoot);

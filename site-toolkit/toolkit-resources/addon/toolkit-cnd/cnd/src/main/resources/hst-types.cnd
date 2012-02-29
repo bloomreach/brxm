@@ -183,6 +183,8 @@
 [hst:channel] > nt:base, mix:referenceable, mix:versionable
 - hst:name (string)
 - hst:channelinfoclass (string)
+- hst:type (string)
+- hst:region (string)
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 
