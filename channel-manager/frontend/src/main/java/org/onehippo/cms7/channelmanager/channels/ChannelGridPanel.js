@@ -81,7 +81,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
                             break;
                         case 'show-preview':
                             this.synchronousAjaxRequest(
-                                this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname'),
+                                this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?FORCE_CLIENT_HOST=true',
                                 {
                                     'CMS-User': this.cmsUser,
                                     'FORCE_CLIENT_HOST': 'true'
