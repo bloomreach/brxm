@@ -409,8 +409,8 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                     } else {
                                         log.warn("Cannot remove node for reloading content: content resource is a delta xml with combine or overlay directive");
                                     }
+                                    reloadProperty.remove();
                                 }
-                                reloadProperty.remove();
                                 log.info("Initializing content from: " + contentName + " to " + root);
                                 initializeNodecontent(session, root, contentStream, contentName);
                             }
