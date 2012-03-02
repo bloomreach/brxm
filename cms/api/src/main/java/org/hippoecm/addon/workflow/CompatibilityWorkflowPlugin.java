@@ -16,6 +16,7 @@
 package org.hippoecm.addon.workflow;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.convert.converters.DateConverter;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.apache.wicket.validation.validator.DateValidator;
@@ -400,7 +403,10 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 dateModel.setObject(minimum.getTime());
                 add(new Label("question", question));
                 YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
-                ydtf.add(DateValidator.minimum(minimum.getTime()));
+                 IConverter converter = this.getConverter(Date.class);
+                String format = ((SimpleDateFormat) ((DateConverter) converter).getDateFormat(this
+                        .getLocale())).toPattern();
+                ydtf.add(PublicationDateValidator.format(format));
                 add(ydtf);
                 setFocusOnCancel();
             }
