@@ -387,22 +387,24 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                     // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
                                     boolean removeSupported = true;
                                     String contextNodeName = null;
-                                    // 8 kb should be more than enough to read the root node
-                                    contentStream.mark(8192);
-                                    XmlPullParser xpp = factory.newPullParser();
-                                    xpp.setInput(contentStream, null);
-                                    while(xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
-                                        if (xpp.getEventType() == XmlPullParser.START_TAG) {
-                                            String mergeDirective = xpp.getAttributeValue("http://www.onehippo.org/jcr/xmlimport", "merge");
-                                            if (mergeDirective != null && (mergeDirective.equals("combine") || mergeDirective.equals("overlay"))) {
-                                                removeSupported = false;
+                                    if (factory != null) {
+                                        // 8 kb should be more than enough to read the root node
+                                        contentStream.mark(8192);
+                                        XmlPullParser xpp = factory.newPullParser();
+                                        xpp.setInput(contentStream, null);
+                                        while(xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
+                                            if (xpp.getEventType() == XmlPullParser.START_TAG) {
+                                                String mergeDirective = xpp.getAttributeValue("http://www.onehippo.org/jcr/xmlimport", "merge");
+                                                if (mergeDirective != null && (mergeDirective.equals("combine") || mergeDirective.equals("overlay"))) {
+                                                    removeSupported = false;
+                                                }
+                                                contextNodeName = xpp.getAttributeValue("http://www.jcp.org/jcr/sv/1.0", "name");
+                                                break;
                                             }
-                                            contextNodeName = xpp.getAttributeValue("http://www.jcp.org/jcr/sv/1.0", "name");
-                                            break;
+                                            xpp.next();
                                         }
-                                        xpp.next();
+                                        contentStream.reset();
                                     }
-                                    contentStream.reset();
                                     if (removeSupported) {
                                         String path = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                                         removeNodecontent(session, path, false);
