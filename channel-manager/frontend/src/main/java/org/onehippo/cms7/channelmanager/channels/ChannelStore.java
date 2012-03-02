@@ -37,10 +37,12 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.security.HstSubject;
@@ -103,44 +105,38 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
 
-    private static final String WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK = "No RESTful {} service configured. Using channel manager as fallback!";
+    private static final String WARNING_MESSAGE_NO_REST_SERVICE_FOUND = "No RESTful {} service configured!";
+    private static final String WARNING_MESSAGE_NO_CHANNEL_FOUND = "No channel found with id '%s'!";
+    private static final String PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE = "Could not get {} REST service!";
 
-    private transient List<Channel> channels;
+    private transient Map<String, Channel> channels;
 
     private final String storeId;
     private final String sortFieldName;
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
-    private final ChannelService channelService;
-    private final BlueprintService blueprintService;
+    private final IRestProxyService restProxyService;
     private String channelIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
     public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, 
-            LocaleResolver localeResolver, ChannelService channelService, BlueprintService blueprintService) {
+            LocaleResolver localeResolver, IRestProxyService restProxyService) {
 
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
-        this.channelService = channelService;
-        this.blueprintService = blueprintService;
+        this.restProxyService = restProxyService;
 
-        if (this.channelService == null) {
+        if (this.restProxyService == null) {
         	if (log.isWarnEnabled()) {
-        		log.warn(WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK, "channel");
+        		log.warn(WARNING_MESSAGE_NO_REST_SERVICE_FOUND, "proxy");
         	}
-        }
-
-        if (this.blueprintService == null) {
-            if (log.isWarnEnabled()) {
-                log.warn(WARNING_MESSAGE_USING_CHANNEL_MANAGER_AS_FALLBACK, "blueprint");
-            }
         }
     }
 
     public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver) {
-        this(storeId, fields, sortFieldName, sortOrder, localeResolver, null, null);
+        this(storeId, fields, sortFieldName, sortOrder, localeResolver, null);
     }        
 
     @Override
@@ -329,6 +325,47 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
+    public List<Channel> getChannels() {
+        if (channels == null) {
+            loadChannels();
+        }
+
+        return Collections.unmodifiableList(new ArrayList<Channel>(channels.values()));
+    }
+
+    public Channel getChannel(String id) throws ChannelNotFoundException {
+        if (channels == null) {
+            loadChannels();
+        }
+
+        Channel channel = channels.get(id);
+        if (channel ==null) {
+            if (log.isWarnEnabled()) {
+                log.warn(String.format(WARNING_MESSAGE_NO_CHANNEL_FOUND, id));
+            }
+
+            throw new ChannelNotFoundException(String.format(WARNING_MESSAGE_NO_CHANNEL_FOUND, id));
+        }
+        
+        return channel;
+    }
+
+    protected void loadChannels() {
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+
+        if (channelService == null) {
+            if (log.isErrorEnabled()) {
+                log.error(PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE, "channelservice");
+            }
+        }
+
+        List<Channel> channelsList = channelService.getChannels();
+        channels = new HashMap<String, Channel>(channelsList.size());
+        for (Channel channel : channelsList) {
+            channels.put(channel.getId(), channel);
+        }
+    }
+
     @Override
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
         final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
@@ -336,17 +373,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
-        try {
-            if (blueprintService == null) {
-                newChannel = channelManager.getBlueprint(blueprintId).getPrototypeChannel();
-            } else {
-                newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
+        BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
+
+        if (blueprintService == null) {
+            if (log.isErrorEnabled()) {
+                log.error(PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE, "blueprint");
             }
-        } catch (ChannelException e) {
-            log.warn("Could not create new channel with blueprint '{}': {}", blueprintId, e.getMessage());
-            log.debug("Cause:", e);
-            throw new ActionFailedException(getResourceValue("error.blueprint.cannot.create.channel", blueprintId), e);
         }
+
+        newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
 
         // Set channel parameters
         final String channelName = record.getString("name");
@@ -368,7 +403,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        // save channel (FIXME: move boilerplate to CMS engine)
+        // Save channel (FIXME: move boilerplate to CMS engine)
         Subject subject = createSubject();
         try {
             String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
@@ -419,14 +454,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
         log.debug("Stacktrace:", cause);
         return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
-    }
-
-    private List<Channel> getChannels() {
-        if (channels == null) {
-            channels = channelService.getChannels();
-        }
-
-        return channels;
     }
 
     private Locale getLocale(String absPath) {

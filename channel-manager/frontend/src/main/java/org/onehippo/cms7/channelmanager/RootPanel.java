@@ -100,7 +100,7 @@ public class RootPanel extends ExtPanel {
 		}
 
         // COMMENT - MNour: Here we can inject the Channels REST service
-        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, channelService, blueprintService);
+        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, restProxyService);
         this.channelStoreFuture = new ExtStoreFuture<Object>(channelStore);
         add(this.channelStore);
         add(this.channelStoreFuture);

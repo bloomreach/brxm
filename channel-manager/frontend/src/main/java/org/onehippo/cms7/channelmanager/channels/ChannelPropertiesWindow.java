@@ -49,6 +49,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
@@ -57,7 +58,6 @@ import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.security.HstSubject;
-import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
@@ -95,6 +95,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
 
     private Channel channel;
     private String channelPropertiesContainerClass = "hide-channel-properties";
+    private final ChannelStore channelStore;
 
     private class ChannelChoiceRenderer implements IChoiceRenderer<String> {
 
@@ -124,6 +125,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     public ChannelPropertiesWindow(final IPluginContext context, final ChannelStore channelStore) {
         super();
 
+        this.channelStore = channelStore;
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
         container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
         container.add(new ListView<FieldGroup>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroup>>() {
@@ -269,7 +271,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             log.warn("Cannot save channel '{}' because the channel manager cannot be loaded. Is the site running?", channel.getId());
             return;
         }
-        
+
         try {
             HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
                 public Void run() throws ChannelException {
@@ -324,15 +326,10 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     }
 
     private Channel getChannel(String channelId) {
-        ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        if (channelManager != null) {
-            try {
-                return channelManager.getChannels().get(channelId);
-            } catch (ChannelException e) {
-                throw new RuntimeException("Unable to get the channels from Channel Manager", e);
-            }
-        } else {
-            throw new RuntimeException("Unable to get the channels from Channel Manager");
+        try {
+            return channelStore.getChannel(channelId);
+        } catch (ChannelNotFoundException cnfe) {
+            throw new RuntimeException(String.format("Unable to get channel with id '%s'from Channel Manager", channelId), cnfe);
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
@@ -42,7 +43,7 @@ public final class ChannelStoreFactory {
         // prevent instantiation
     }
 
-    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, ChannelService channelService, BlueprintService blueprintService) {
+    public static ChannelStore createStore(IPluginContext context, IPluginConfig config, IRestProxyService restProxyService) {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
@@ -57,13 +58,13 @@ public final class ChannelStoreFactory {
         if (localeProvider == null) {
             throw new IllegalStateException(String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
         }
+
         ChannelStore channelStore = new ChannelStore("channel-store",
                 fieldList,
                 parseSortColumn(config, storeFieldNames),
                 parseSortOrder(config),
                 new LocaleResolver(localeProvider),
-                channelService,
-                blueprintService);
+                restProxyService);
 
         if (config.containsKey("channelIconPath")) {
             channelStore.setChannelIconPath(config.getString("channelIconPath"));
@@ -73,7 +74,7 @@ public final class ChannelStoreFactory {
     }
 
     public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
-    	return createStore(context, config, null, null);
+    	return createStore(context, config, null);
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {
