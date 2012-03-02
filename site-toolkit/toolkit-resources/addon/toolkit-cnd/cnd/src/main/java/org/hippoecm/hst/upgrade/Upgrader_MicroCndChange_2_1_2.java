@@ -21,14 +21,14 @@ import org.hippoecm.repository.ext.UpdaterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Upgrader2_24_B implements UpdaterModule {
+public class Upgrader_MicroCndChange_2_1_2 implements UpdaterModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: Upgrader2_24_A.java 31706 2011-12-07 12:34:06Z aschrijvers $";
 
-    private static Logger log = LoggerFactory.getLogger(Upgrader2_24_B.class);
+    private static Logger log = LoggerFactory.getLogger(Upgrader_MicroCndChange_2_1_2.class);
 
     public void register(final UpdaterContext context) {
-        context.registerName("upgrader-hst2_24B");
+        context.registerName("upgrader-microchange_2_1_2");
         context.registerStartTag("hst-2_1_1");
         context.registerEndTag("hst-2_1_2");
         context.registerVisitor(new NamespaceVisitor(context, "hst", getClass().getClassLoader().getResourceAsStream("hst-types.cnd")));
