@@ -26,13 +26,13 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 /**
  * Dialog for easy creating confirmation dialogs;
  */
-public class ConfirmDeleteDialog extends AbstractDialog {
+public class ConfirmDeleteDialog<T> extends AbstractDialog {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    protected IModel model;
+    protected IModel<T> model;
     protected Component component;
 
     public ConfirmDeleteDialog() {
@@ -40,7 +40,7 @@ public class ConfirmDeleteDialog extends AbstractDialog {
         setFocusOnCancel();
     }
 
-    public ConfirmDeleteDialog(final IModel model, final Component component) {
+    public ConfirmDeleteDialog(final IModel<T> model, final Component component) {
         super();
         this.model = model;
         this.component = component;

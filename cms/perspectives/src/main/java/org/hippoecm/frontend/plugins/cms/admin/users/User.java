@@ -15,6 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
+import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.PasswordHelper;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -25,25 +47,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.PasswordHelper;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * This class is an object representation of a Hippo User, to be used in the admin interface only.
+ */
 public class User implements Comparable<User>, IClusterable {
 
     @SuppressWarnings("unused")
@@ -62,13 +68,15 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
     public static final String PROP_PASSWORDLASTMODIFIED = HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
 
-    private final static String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
+    private static final String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
-    private final static String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND hipposys:members='{}'";
-    private final static String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE hipposys:members='{}'";
+    private static final String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType="
+            + "'hipposys:group' AND hipposys:members='{}'";
+    private static final String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE "
+            + "hipposys:members='{}'";
 
-    private final static long ONEDAYMS = 1000 * 3600 * 24;
-    
+    private static final long ONEDAYMS = 1000 * 3600 * 24;
+
     private boolean external = false;
     private boolean active = true;
     private String path;
@@ -78,7 +86,7 @@ public class User implements Comparable<User>, IClusterable {
     private String email;
     private String provider;
     private Calendar passwordLastModified;
-    private long passwordMaxAge = -1l;
+    private long passwordMaxAge = -1L;
 
     private Map<String, String> properties = new TreeMap<String, String>();
     private transient List<DetachableGroup> externalMemberships;
@@ -86,11 +94,24 @@ public class User implements Comparable<User>, IClusterable {
     private transient Node node;
 
     //-------------- static helpers -------------------//
+
+    /**
+     * Returns the QueryManager.
+     *
+     * @return the QueryManager
+     * @throws RepositoryException
+     */
     public static QueryManager getQueryManager() throws RepositoryException {
         return ((UserSession) Session.get()).getQueryManager();
     }
 
-    public static boolean userExists(String username) {
+    /**
+     * Checks if the user with username exists.
+     *
+     * @param username the name of the user to check
+     * @return true if the user exists, false otherwise
+     */
+    public static boolean userExists(final String username) {
         String queryString = QUERY_USER_EXISTS.replace("{}", username);
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
@@ -105,12 +126,13 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     /**
-     * Generate password hash from string
-     * @param password
+     * Generate password hash from string.
+     *
+     * @param password the password
      * @return the hash
      * @throws RepositoryException, the wrapper encoding errors
      */
-    public static String createPasswordHash(String password) throws RepositoryException {
+    public static String createPasswordHash(final String password) throws RepositoryException {
         try {
             return PasswordHelper.getHash(password.toCharArray());
         } catch (NoSuchAlgorithmException e) {
@@ -133,7 +155,7 @@ public class User implements Comparable<User>, IClusterable {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -141,7 +163,7 @@ public class User implements Comparable<User>, IClusterable {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -149,6 +171,11 @@ public class User implements Comparable<User>, IClusterable {
         return properties;
     }
 
+    /**
+     * Returns the properties list.
+     *
+     * @return the properties list
+     */
     public List<Entry<String, String>> getPropertiesList() {
         List<Entry<String, String>> l = new ArrayList<Entry<String, String>>();
         for (Entry<String, String> e : properties.entrySet()) {
@@ -157,6 +184,11 @@ public class User implements Comparable<User>, IClusterable {
         return l;
     }
 
+    /**
+     * Returns the user's display name.
+     *
+     * @return the display name
+     */
     public String getDisplayName() {
         StringBuilder sb = new StringBuilder();
         if (firstName != null) {
@@ -176,7 +208,7 @@ public class User implements Comparable<User>, IClusterable {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
@@ -184,7 +216,7 @@ public class User implements Comparable<User>, IClusterable {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 
@@ -196,18 +228,29 @@ public class User implements Comparable<User>, IClusterable {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
-    
+
     public Calendar getPasswordLastModified() {
         return passwordLastModified;
     }
 
     //----------------------- constructors ---------//
+
+    /**
+     * Constructs an empty User.
+     */
     public User() {
     }
-    
+
+    /**
+     * Constructs a User object based on the username. Effectively fetches the user from the repository and wraps it
+     * in this object.
+     *
+     * @param username the name of the user to fetch
+     * @throws RepositoryException thrown when the user with supplied username does not exist in the repository
+     */
     public User(final String username) throws RepositoryException {
         String queryString = QUERY_USER_EXISTS.replace("{}", username);
         try {
@@ -221,10 +264,17 @@ public class User implements Comparable<User>, IClusterable {
         }
     }
 
+    /**
+     * Constructs a User object based on the node. Effectively fetches the user from the repository and wraps it
+     * in this object.
+     *
+     * @param node the node of the user to fetch
+     * @throws RepositoryException thrown when the user with supplied node does not exist in the repository
+     */
     public User(final Node node) throws RepositoryException {
         init(node);
     }
-    
+
     private void init(final Node node) throws RepositoryException {
         this.node = node;
         this.path = node.getPath().substring(1);
@@ -260,14 +310,22 @@ public class User implements Comparable<User>, IClusterable {
                 properties.put(name, p.getString());
             }
         }
-        
-        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+
+        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH)
+                .getNode(HippoNodeType.SECURITY_PATH);
         if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
-            passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
+            passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)
+                    .getDouble() * ONEDAYMS);
         }
     }
 
     //--------------- group membership helpers ------------------//
+
+    /**
+     * Returns the User's local memberships.
+     *
+     * @return the User's local memberships
+     */
     public List<DetachableGroup> getLocalMemberships() {
         String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", username);
         List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
@@ -291,6 +349,11 @@ public class User implements Comparable<User>, IClusterable {
         return localMemberships;
     }
 
+    /**
+     * Returns the User's external memberships.
+     *
+     * @return the User's external memberships
+     */
     public List<DetachableGroup> getExternalMemberships() {
         if (externalMemberships != null) {
             return externalMemberships;
@@ -318,8 +381,10 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     //-------------------- persistence helpers ----------//
+
     /**
-     * Create a new user
+     * Create a new user.
+     *
      * @throws RepositoryException
      */
     public void create() throws RepositoryException {
@@ -344,21 +409,24 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     /**
-     * Wrapper needed for spi layer which doesn't know if a property exists or not
+     * Wrapper needed for spi layer which doesn't know if a property exists or not.
+     *
      * @param node
      * @param name
      * @param value
      * @throws RepositoryException
      */
-    private void setOrRemoveStringProperty(Node node, String name, String value) throws RepositoryException {
+    private void setOrRemoveStringProperty(final Node node, final String name, final String value)
+            throws RepositoryException {
         if (value == null && !node.hasProperty(name)) {
             return;
         }
         node.setProperty(name, value);
     }
-    
+
     /**
-     * save the current user
+     * save the current user.
+     *
      * @throws RepositoryException
      */
     public void save() throws RepositoryException {
@@ -374,49 +442,77 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     /**
-     * Delete the current user
+     * Deletes the current user, including its group memberships.
+     *
      * @throws RepositoryException
      */
     public void delete() throws RepositoryException {
+
+        removeAllGroupMemberships();
+
+        // Delete the user from the repository
         Node parent = node.getParent();
         node.remove();
         parent.getSession().save();
+
+        // Let the outside world know that this user got deleted
+        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            final UserSession userSession = UserSession.get();
+            HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                    .user(userSession.getJcrSession().getUserID()).action("delete-user")
+                    .category(HippoSecurityEventConstants.CATEGORY_USER_MANAGEMENT)
+                    .message("deleted user " + username);
+            eventBus.post(event);
+        }
+    }
+
+    public void removeAllGroupMemberships() throws RepositoryException {
+        for (DetachableGroup dg : this.getLocalMemberships()) {
+            dg.getGroup().removeMembership(username);
+        }
     }
 
     /**
-     * Save the current user's password with a hashing function
-     * @param password
+     * Save the current user's password with a hashing function.
+     *
+     * @param password the password
      * @throws RepositoryException
      */
-    public void savePassword(String password) throws RepositoryException {
+    public void savePassword(final String password) throws RepositoryException {
         // remember old password
         if (node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String oldPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
             Value[] newValues = null;
             if (node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
                 Value[] oldValues = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
-                newValues = new Value[oldValues.length+1];
+                newValues = new Value[oldValues.length + 1];
                 System.arraycopy(oldValues, 0, newValues, 1, oldValues.length);
-            }
-            else {
+            } else {
                 newValues = new Value[1];
             }
             newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
             node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
         }
-        
+
         // set password last changed date
         Calendar now = Calendar.getInstance();
         node.setProperty(HippoNodeType.HIPPO_PASSWORDLASTMODIFIED, now);
         passwordLastModified = now;
-        
+
         // set new password
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
-        
+
         node.getSession().save();
     }
-    
-    public boolean checkPassword(char[] password) {
+
+    /**
+     * Checks the password against the hash.
+     *
+     * @param password the password
+     * @return true if the password is correct, false otherwise
+     */
+    public boolean checkPassword(final char[] password) {
         try {
             return PasswordHelper.checkHash(password, node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString());
         } catch (NoSuchAlgorithmException e) {
@@ -428,8 +524,17 @@ public class User implements Comparable<User>, IClusterable {
         }
         return false;
     }
-    
-    public boolean isPreviousPassword(char[] password, int numberOfPreviousPasswords) throws RepositoryException {
+
+    /**
+     * Checks if the password is the same as one of the previous passwords.
+     *
+     * @param password                  the password to check
+     * @param numberOfPreviousPasswords the number of previous passwords to compare to
+     * @return true if the password is the same as one of the previous passwords, false otherwise
+     * @throws RepositoryException
+     */
+    public boolean isPreviousPassword(final char[] password, final int numberOfPreviousPasswords)
+            throws RepositoryException {
         // is current password?
         if (node != null && node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String currentPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
@@ -437,8 +542,7 @@ public class User implements Comparable<User>, IClusterable {
                 if (PasswordHelper.checkHash(password, currentPassword)) {
                     return true;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.error("Error while checking if password was previously used", e);
             }
         }
@@ -450,32 +554,42 @@ public class User implements Comparable<User>, IClusterable {
                     if (PasswordHelper.checkHash(password, previousPasswords[i].getString())) {
                         return true;
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     log.error("Error while checking if password was previously used", e);
                 }
             }
         }
         return false;
     }
-    
+
+    /**
+     * Checks if the User's password is expired.
+     *
+     * @return true if the password is expired, false otherwise
+     */
     public boolean isPasswordExpired() {
         long passwordExpirationTime = getPasswordExpirationTime();
         return passwordExpirationTime > 0 && passwordExpirationTime < System.currentTimeMillis();
     }
-    
+
+    /**
+     * Returns the time before the password expires, in miliseconds.
+     *
+     * @return the time before the password expires, in miliseconds
+     */
     public long getPasswordExpirationTime() {
         if (passwordLastModified != null && passwordMaxAge > 0) {
             return passwordLastModified.getTimeInMillis() + passwordMaxAge;
         }
-        return -1l;
+        return -1L;
     }
 
     //--------------------- default object -------------------//
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         }
@@ -485,13 +599,14 @@ public class User implements Comparable<User>, IClusterable {
         User other = (User) obj;
         return other.getPath().equals(getPath());
     }
-    
+
     public int hashCode() {
         return (null == path ? 0 : path.hashCode());
     }
-    
-    public int compareTo(User o) {
-        
+
+    public int compareTo(final User o) {
+
+/*
         String thisName = getUsername();
         String otherName = o.getUsername();
         // 
@@ -507,22 +622,25 @@ public class User implements Comparable<User>, IClusterable {
             int k = i;
             int lim = n + i;
             while (k < lim) {
-            char c1 = v1[k];
-            char c2 = v2[k];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            k++;
+                char c1 = v1[k];
+                char c2 = v2[k];
+                if (c1 != c2) {
+                    return c1 - c2;
+                }
+                k++;
             }
         } else {
             while (n-- != 0) {
-            char c1 = v1[i++];
-            char c2 = v2[j++];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
+                char c1 = v1[i++];
+                char c2 = v2[j++];
+                if (c1 != c2) {
+                    return c1 - c2;
+                }
             }
         }
         return len1 - len2;
+*/
+        //TODO: Verify if the above code is indeed String#compareTo()
+        return getUsername().compareTo(o.getUsername());
     }
 }

@@ -16,16 +16,17 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-  <h2><wicket:message key="user-view-options-title"/></h2>
+  <h2><wicket:message key="user-overview-title"/></h2>
+  <h3><wicket:message key="user-view-actions-title"/></h3>
   <ul class="hippo-controlpanel-options">
     <li><a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a></li>
     <li><wicket:message key="user-click-and-edit"/></li>
-    <li><wicket:message key="user-search"/>
-      <form wicket:id="search-form">
-        <input type="text" size="35" wicket:id="search-query" wicket:message="title:user-search-help"/><input type="submit" wicket:message="value:user-search-action" wicket:id="search-button"/>
-      </form>
-    </li>
   </ul>
+  <h3><wicket:message key="user-overview-list-title"/></h3>
+  <form wicket:id="search-form">
+    <input type="text" size="35" wicket:id="search-query" wicket:message="title:user-search-help"/><input type="submit" wicket:message="value:user-search-action" wicket:id="search-button"/>
+  </form>
+  <br/>
   <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
 </wicket:extend>
 </html>

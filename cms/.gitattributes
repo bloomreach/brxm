@@ -1564,6 +1564,9 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/Pa
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_fr.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelContainer.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelListPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/DefaultFocusBehavior.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
