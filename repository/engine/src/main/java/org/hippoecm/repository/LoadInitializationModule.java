@@ -381,13 +381,13 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                     reloadProperty = node.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP);
                                 }
                                 if (reloadProperty != null && reloadProperty.getBoolean()) {
-                                    if (!contentStream.markSupported()) {
-                                        contentStream = new BufferedInputStream(contentStream);
-                                    }
-                                    // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
-                                    boolean removeSupported = true;
-                                    String contextNodeName = null;
                                     if (factory != null) {
+                                        if (!contentStream.markSupported()) {
+                                            contentStream = new BufferedInputStream(contentStream);
+                                        }
+                                        // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
+                                        boolean removeSupported = true;
+                                        String contextNodeName = null;
                                         // 8 kb should be more than enough to read the root node
                                         contentStream.mark(8192);
                                         XmlPullParser xpp = factory.newPullParser();
@@ -404,12 +404,12 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                             xpp.next();
                                         }
                                         contentStream.reset();
-                                    }
-                                    if (removeSupported) {
-                                        String path = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                                        removeNodecontent(session, path, false);
-                                    } else {
-                                        log.warn("Cannot remove node for reloading content: content resource is a delta xml with combine or overlay directive");
+                                        if (removeSupported && contextNodeName != null) {
+                                            String path = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                                            removeNodecontent(session, path, false);
+                                        } else {
+                                            log.warn("Cannot remove node for reloading content: content resource is a delta xml with combine or overlay directive");
+                                        }
                                     }
                                     reloadProperty.remove();
                                 }
