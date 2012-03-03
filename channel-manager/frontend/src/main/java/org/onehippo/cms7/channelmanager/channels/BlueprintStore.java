@@ -21,10 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,16 +45,11 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     private transient List<Blueprint> blueprints;
     private Long total;
-    private final BlueprintService blueprintService;
+    private final IRestProxyService restProxyService;
 
-    public BlueprintStore(BlueprintService blueprintService) {
+    public BlueprintStore(IRestProxyService restProxyService) {
         super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
-        this.blueprintService = blueprintService;
-    }
-
-    public BlueprintStore() {
-        super(Arrays.asList(new ExtField(FIELD_NAME), new ExtField(FIELD_DESCRIPTION), new ExtField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtField(FIELD_CONTENT_ROOT)));
-        this.blueprintService = null;
+        this.restProxyService = restProxyService;
     }
 
     @Override
@@ -104,8 +98,13 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     private List<Blueprint> getBlueprints() {
     	if (blueprints == null) {
-    	    blueprints = blueprintService.getBlueprints();
-    	}
+            if (restProxyService != null) {
+                BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
+                blueprints = blueprintService.getBlueprints();   
+            } else {
+                blueprints = Collections.emptyList();
+            }
+        }
 
     	return blueprints;
     }

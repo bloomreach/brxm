@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
-
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
@@ -24,8 +22,6 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.hst.rest.BlueprintService;
-import org.hippoecm.hst.rest.ChannelService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
@@ -40,6 +36,8 @@ import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 @ExtClass("Hippo.ChannelManager.RootPanel")
 public class RootPanel extends ExtPanel {
@@ -90,14 +88,7 @@ public class RootPanel extends ExtPanel {
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
         // Retrieve the Channel Service
-        ChannelService channelService = null;
-        BlueprintService blueprintService = null;
         IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
-
-        if (restProxyService != null) {
-			channelService = restProxyService.createRestProxy(ChannelService.class);
-			blueprintService = restProxyService.createRestProxy(BlueprintService.class);
-		}
 
         // COMMENT - MNour: Here we can inject the Channels REST service
         this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, restProxyService);
@@ -105,7 +96,7 @@ public class RootPanel extends ExtPanel {
         add(this.channelStore);
         add(this.channelStoreFuture);
 
-        this.blueprintStore = new BlueprintStore(blueprintService);
+        this.blueprintStore = new BlueprintStore(restProxyService);
 
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
