@@ -56,7 +56,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons</artifactId>
+      <artifactId>hippo-cms7-commons</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
