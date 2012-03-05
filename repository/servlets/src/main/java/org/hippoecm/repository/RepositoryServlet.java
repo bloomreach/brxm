@@ -107,6 +107,8 @@ public class RepositoryServlet extends HttpServlet {
     String bindingAddress;
     String storageLocation;
     String repositoryConfig;
+    private AuditLogger listener;
+    private GuavaHippoEventBus hippoEventBus;
 
     public RepositoryServlet() {
         storageLocation = null;
@@ -154,9 +156,10 @@ public class RepositoryServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        GuavaHippoEventBus hippoEventBus = new GuavaHippoEventBus();
+        hippoEventBus = new GuavaHippoEventBus();
         HippoServiceRegistry.registerService(hippoEventBus, HippoEventBus.class);
-        hippoEventBus.register(new AuditLogger());
+        listener = new AuditLogger();
+        hippoEventBus.register(listener);
 
         parseInitParameters(config);
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
@@ -239,6 +242,11 @@ public class RepositoryServlet extends HttpServlet {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
             }
         }
+
+        hippoEventBus.unregister(listener);
+        listener = null;
+        HippoServiceRegistry.unregisterService(hippoEventBus, HippoEventBus.class);
+        hippoEventBus = null;
 
         // force the distributed GC to fire, otherwise in tomcat with embedded
         // rmi registry the process won't end
