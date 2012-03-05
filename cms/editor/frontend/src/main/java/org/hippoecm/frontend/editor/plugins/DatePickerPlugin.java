@@ -29,20 +29,26 @@ import org.slf4j.LoggerFactory;
 
 public class DatePickerPlugin extends RenderPlugin<Date> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id:$";
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(org.hippoecm.frontend.editor.plugins.DatePickerPlugin.class);
 
+    public static final String DATESTYLE = "LS";
+    public static final String EDIT = "edit";
+    public static final String MODE = "mode";
+    public static final String VIEW = "view";
+    public static final String VALUE = "value";
+
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         IModel<Date> valueModel = getModel();
-        if ("edit".equals(config.getString("mode", "view"))) {
-            add(new DateFieldWidget("value", valueModel, context, config));
+        if (EDIT.equals(config.getString(MODE, VIEW))) {
+            add(new DateFieldWidget(VALUE, valueModel, context, config));
         } else {
-            add(new DateLabel("value", valueModel, new StyleDateConverter("L-", true)));
+            add(new DateLabel(VALUE, valueModel, new StyleDateConverter(DATESTYLE, true)));
         }
         setOutputMarkupId(true);
     }
