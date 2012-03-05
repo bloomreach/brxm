@@ -27,8 +27,8 @@
   <description>Hippo CMS7 Commons</description>
   <packaging>jar</packaging>
 
-  <artifactId>hippo-commons</artifactId>
-  <version>2-SNAPSHOT</version>
+  <artifactId>hippo-cms7-commons</artifactId>
+  <version>1.01.00-SNAPSHOT</version>
 
   <dependencies>
     <dependency>

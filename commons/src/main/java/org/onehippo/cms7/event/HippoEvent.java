@@ -17,9 +17,7 @@ package org.onehippo.cms7.event;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Event for Hippo.  Can be used in a fluent style to build.
@@ -40,18 +38,6 @@ public class HippoEvent<E extends HippoEvent<E>> {
     private static final String MESSAGE = "message";
     private static final String RESULT = "result";
     private static final String USER = "user";
-
-    private static final Set<String> BUILTIN_KEYS;
-
-    static {
-        BUILTIN_KEYS = new HashSet<String>(6);
-        BUILTIN_KEYS.add(ACTION);
-        BUILTIN_KEYS.add(APPLICATION);
-        BUILTIN_KEYS.add(CATEGORY);
-        BUILTIN_KEYS.add(MESSAGE);
-        BUILTIN_KEYS.add(RESULT);
-        BUILTIN_KEYS.add(USER);
-    }
 
     private final Map<String, Object> attributes = new HashMap<String, Object>();
     private boolean sealed;
@@ -120,9 +106,6 @@ public class HippoEvent<E extends HippoEvent<E>> {
     public E set(String key, Object value) {
         if (isSealed()) {
             throw new IllegalStateException("Event cannot be modified after it has been sealed.");
-        }
-        if (BUILTIN_KEYS.contains(key)) {
-            throw new UnsupportedOperationException(key + " is a builtin property.");
         }
         return put(key, value);
     }
