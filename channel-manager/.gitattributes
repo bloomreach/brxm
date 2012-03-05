@@ -1,6 +1,5 @@
 * text=auto !eol
 frontend/pom.xml eol=lf
-frontend/src/main/java/org/hippoecm/hst/configuration/channel/ChannelNotFoundException.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelFormPanel.js -text
