@@ -403,10 +403,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                 dateModel.setObject(minimum.getTime());
                 add(new Label("question", question));
                 YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
-                 IConverter converter = this.getConverter(Date.class);
-                String format = ((SimpleDateFormat) ((DateConverter) converter).getDateFormat(this
-                        .getLocale())).toPattern();
-                ydtf.add(PublicationDateValidator.format(format));
+                ydtf.add(new PublicationDateValidator());
                 add(ydtf);
                 setFocusOnCancel();
             }

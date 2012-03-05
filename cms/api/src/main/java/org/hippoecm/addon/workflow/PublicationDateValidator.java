@@ -1,11 +1,14 @@
 package org.hippoecm.addon.workflow;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
+import org.hippoecm.frontend.session.UserSession;
 
 /**
  * $Id$
@@ -15,18 +18,15 @@ public class PublicationDateValidator extends AbstractValidator<Date> {
     public static final String EMPTY_PUBLICATION_DATE = "publication.date.empty";
     public static final String PUBLICATION_DATE_IN_THE_PAST = "publication.date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
+    public static final int SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD = 59;
+    public static final int YEAR_CORRECTION = 1900;
 
     private String resourceKey;
-    private String format;
 
 
-    private PublicationDateValidator(String format) {
-        this.format = format;
+    public PublicationDateValidator() {
     }
 
-    public static PublicationDateValidator format(String format) {
-        return new PublicationDateValidator(format);
-    }
 
     public boolean validateOnNullValue() {
         return true;
@@ -38,7 +38,13 @@ public class PublicationDateValidator extends AbstractValidator<Date> {
         if (date == null) {
             resourceKey = EMPTY_PUBLICATION_DATE;
             error(dateIValidatable);
-        } else if (date.before(new Date())) {
+            return;
+        }
+        Calendar now = Calendar.getInstance();
+        Calendar publicationDate = Calendar.getInstance();
+        publicationDate.set(date.getYear() + YEAR_CORRECTION, date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+        publicationDate.add(Calendar.SECOND, SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD);
+        if (publicationDate.before(now)) {
             resourceKey = PUBLICATION_DATE_IN_THE_PAST;
             error(dateIValidatable);
         }
@@ -51,12 +57,12 @@ public class PublicationDateValidator extends AbstractValidator<Date> {
         if (date == null) {
             return map;
         }
-        if (format == null) {
-            map.put(INPUTDATE_LABEL, date);
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            map.put(INPUTDATE_LABEL, sdf.format(date));
-        }
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        Locale locale = session.getLocale();
+
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
+        map.put(INPUTDATE_LABEL, df.format(date));
+
         return map;
     }
 
