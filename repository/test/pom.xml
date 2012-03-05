@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-commons</artifactId>
+      <artifactId>hippo-cms7-commons</artifactId>
       <version>${hippo.commons.version}</version>
     </dependency>
     <dependency>

@@ -66,7 +66,7 @@
   </modules>
 
   <properties>
-    <hippo.commons.version>2-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>1.01.00-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>2-SNAPSHOT</hippo.services.version>
 
     <!-- Test dependencies  -->
@@ -227,7 +227,7 @@
     <dependencies>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-commons</artifactId>
+        <artifactId>hippo-cms7-commons</artifactId>
         <version>${hippo.commons.version}</version>
         <scope>provided</scope>
       </dependency>
