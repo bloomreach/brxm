@@ -27,8 +27,8 @@ import org.hippoecm.frontend.session.UserSession;
 
 public class FutureDateValidator extends AbstractValidator<Date> {
 
-    public static final String EMPTY_PUBLICATION_DATE = "publication.date.empty";
-    public static final String PUBLICATION_DATE_IN_THE_PAST = "publication.date.in.past";
+    public static final String EMPTY_DATE = "date.empty";
+    public static final String DATE_IN_THE_PAST = "date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
     public static final int SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD = 59;
     public static final int YEAR_CORRECTION = 1900;
@@ -48,7 +48,7 @@ public class FutureDateValidator extends AbstractValidator<Date> {
     protected void onValidate(final IValidatable<Date> dateIValidatable) {
         Date date = dateIValidatable.getValue();
         if (date == null) {
-            resourceKey = EMPTY_PUBLICATION_DATE;
+            resourceKey = EMPTY_DATE;
             error(dateIValidatable);
             return;
         }
@@ -57,7 +57,7 @@ public class FutureDateValidator extends AbstractValidator<Date> {
         publicationDate.set(date.getYear() + YEAR_CORRECTION, date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
         publicationDate.add(Calendar.SECOND, SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD);
         if (publicationDate.before(now)) {
-            resourceKey = PUBLICATION_DATE_IN_THE_PAST;
+            resourceKey = DATE_IN_THE_PAST;
             error(dateIValidatable);
         }
     }
