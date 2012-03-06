@@ -135,7 +135,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
         };
     },
 
-    createDataView : function(property, value) {
+    createDataView : function(property, value, even) {
         var self = this;
         var dataView = new Ext.DataView({
             store: this.store,
@@ -149,7 +149,7 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                     '</tpl>',
                     '</ul>'
             ),
-            cls : 'channel-data-view',
+            cls : 'channel-data-view ' + (even ? 'even' : 'odd'),
             collectData : this.filterDataByType(property, value),
             itemSelector: 'li.channel',
             overClass   : 'channel-hover',
@@ -166,14 +166,17 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
     createDataViews : function(property, values) {
         var views = [];
         var self = this;
+        var index = 0;
         for (var value in values) {
             if (typeof values[value] == 'function') {
                 continue;
             }
-            var dataView = this.createDataView(property, values[value]);
+            var even = (++index % 2) == 0;
+            var dataView = this.createDataView(property, values[value], even);
             (function(views, dataView) {
                 var panel = new Ext.Panel({
                     html: '<span class="collapse-group expanded">'+value+'</span>',
+                    cls: 'collapse-panel ' + (even ? 'even' : 'odd'),
                     listeners: {
                         afterrender : function(panel) {
                             var spanElement = Ext.get(Ext.select('.collapse-group', true, panel.el.dom));

@@ -53,6 +53,7 @@ Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
             },
             toggleGroup: 'channelViewGrouping',
             enableToggle: true,
+            pressed: true,
             scope: this,
             iconCls: 'icon-view'
         });
@@ -62,7 +63,6 @@ Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
             },
             toggleGroup: 'channelViewGrouping',
             enableToggle: true,
-            pressed: true,
             scope: this,
             iconCls: 'list-view'
         });

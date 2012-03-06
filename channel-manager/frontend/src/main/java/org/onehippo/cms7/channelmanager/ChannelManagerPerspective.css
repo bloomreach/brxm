@@ -78,14 +78,6 @@
   background-image: url("add-channel.png");
 }
 
-.channel-manager .x-btn-small .icon-view {
-    background-image: url("channels/icon-view.png");
-}
-
-.channel-manager .x-btn-small .list-view {
-    background-image: url("channels/list-view.png");
-}
-
 .channel-manager .x-btn-small .edit-channel {
   background-image: url("templatecomposer/button-edit.png");
 }
@@ -231,10 +223,28 @@
     filter: alpha(opacity=90);
 }
 
+.channel-manager .collapse-panel .x-panel-body {
+    background-color: none;
+}
+
+.channel-manager .collapse-panel.odd {
+    background-color: #fff;
+}
+
+.channel-manager .collapse-panel.even {
+    background: #f6f6f6;
+}
 
 .channel-manager .channel-data-view {
-    background-color: #fff;
     text-shadow: #fff 0 1px 0;
+}
+
+.channel-manager .channel-data-view.even {
+    background-color: #f6f6f6
+}
+
+.channel-manager .channel-data-view.odd {
+    background-color: #fff;
 }
 
 .channel-manager .channel-data-view ul {
@@ -315,3 +325,63 @@
     padding-left: 5px;
 }
 
+.channel-manager .channel-name {
+    font-size: 11px;
+}
+
+/* channel icon panel overview switch buttons */
+
+.channel-manager .x-btn-small .icon-view {
+    background-image: url("channels/icon-view.png");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .icon-view {
+    background-image: url("channels/icon-view-active.png");
+}
+
+.channel-manager .x-btn-small .list-view {
+    background-image: url("channels/list-view.png");
+}
+
+.channel-manager .x-btn-pressed .x-btn-small .list-view {
+    background-image: url("channels/list-view-active.png");
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-tl,
+.channel-manager-toolbar .x-toolbar-right .x-btn-tc,
+.channel-manager-toolbar .x-toolbar-right .x-btn-tr,
+.channel-manager-toolbar .x-toolbar-right .x-btn-ml,
+.channel-manager-toolbar .x-toolbar-right .x-btn-mr,
+.channel-manager-toolbar .x-toolbar-right .x-btn-bl,
+.channel-manager-toolbar .x-toolbar-right .x-btn-bc,
+.channel-manager-toolbar .x-toolbar-right .x-btn-br {
+    display: none;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc {
+    background: none;
+    border: none;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
+    margin-left: 0px;
+    margin-right: 0px;
+    width: 26px;
+    height: 22px;
+}
+
+.channel-manager-toolbar .x-toolbar-right .x-btn-mc .list-view {
+    margin-left: 0px;
+    margin-right: 0px;
+    width: 24px;
+    height: 22px;
+}
+
+#channelIconPanel .x-toolbar {
+    padding-left: 5px;
+}
+
+#channelOverview .x-toolbar .x-toolbar-right {
+    padding-bottom: 1px;
+    padding-right: 5px;
+}

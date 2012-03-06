@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
-import org.hippoecm.hst.rest.BlueprintService;
-import org.hippoecm.hst.rest.ChannelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtField;
@@ -66,9 +64,12 @@ public final class ChannelStoreFactory {
                 new LocaleResolver(localeProvider),
                 restProxyService);
 
-        if (config.containsKey("channelIconPath")) {
-            channelStore.setChannelIconPath(config.getString("channelIconPath"));
+        if (config.containsKey("channelRegionIconPath")) {
+            channelStore.setChannelRegionIconPath(config.getString("channelRegionIconPath"));
         }
+        if (config.containsKey("channelTypeIconPath")) {
+            channelStore.setChannelTypeIconPath(config.getString("channelTypeIconPath"));
+        }            
 
         return channelStore;
     }

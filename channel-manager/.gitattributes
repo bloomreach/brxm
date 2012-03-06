@@ -59,8 +59,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/cn_ZH.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/de_DE.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/es_ES.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/fr_FR.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/icon-view-active.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/icon-view.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ipad-magazine.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/list-view-active.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/list-view.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/mobile.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/nl_NL.png -text
