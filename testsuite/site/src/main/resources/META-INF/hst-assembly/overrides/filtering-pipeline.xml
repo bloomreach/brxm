@@ -37,7 +37,7 @@
         </property>
       </bean>
     </property>
-    <property name="targetMethod" value="addProcessingValve"/>
+    <property name="targetMethod" value="addInitializationValve"/>
     <property name="arguments">
         <ref bean="filteringValve" />
     </property>
