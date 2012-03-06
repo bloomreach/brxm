@@ -26,23 +26,22 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 /**
  * Dialog for easy creating confirmation dialogs;
  */
-public class ConfirmDeleteDialog<T> extends AbstractDialog {
+public class ConfirmDeleteDialog<T> extends AbstractDialog<T> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    protected IModel<T> model;
-    protected Component component;
+    private Component component;
 
+    @SuppressWarnings({ "unused" })
     public ConfirmDeleteDialog() {
         add(new Label("label", new ResourceModel(getTextKey())));
         setFocusOnCancel();
     }
 
     public ConfirmDeleteDialog(final IModel<T> model, final Component component) {
-        super();
-        this.model = model;
+        super(model);
         this.component = component;
         add(new Label("label", new StringResourceModel(getTextKey(), component, model)));
         setFocusOnCancel();
@@ -52,7 +51,7 @@ public class ConfirmDeleteDialog<T> extends AbstractDialog {
         if (component == null) {
             return new ResourceModel(getTitleKey());
         } else {
-            return new StringResourceModel(getTitleKey(), component, model);
+            return new StringResourceModel(getTitleKey(), component, getModel());
         }
     }
 

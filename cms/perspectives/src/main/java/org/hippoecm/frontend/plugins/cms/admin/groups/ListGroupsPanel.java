@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
@@ -38,14 +34,20 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.RepositoryException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This panel displays a pageable, searchable list of groups.
@@ -55,14 +57,30 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(ListGroupsPanel.class);
 
-    private AdminDataTable table;
+    private static final int NUMBER_OF_ITEMS_PER_PAGE = 20;
 
+    private AdminDataTable table;
+    private IPluginContext context;
+
+    /**
+     * Constructs a new ListGroupsPanel.
+     *
+     * @param id                the id
+     * @param context           the context
+     * @param breadCrumbModel   the breadCrumbModel
+     * @param groupDataProvider the groupDataProvider
+     */
     public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                            final GroupDataProvider groupDataProvider) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+
+        this.context = context;
+
+        groupDataProvider.setDirty();
 
         add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
             @Override
@@ -77,17 +95,15 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {
-                
+
                 AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "groupname")) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        activate(new IBreadCrumbPanelFactory()
-                        {
-                            public BreadCrumbPanel create(String componentId,
-                                    IBreadCrumbModel breadCrumbModel)
-                            {
+                    public void onClick(final AjaxRequestTarget target) {
+                        activate(new IBreadCrumbPanelFactory() {
+                            public BreadCrumbPanel create(final String componentId,
+                                                          final IBreadCrumbModel breadCrumbModel) {
                                 return new ViewGroupPanel(componentId, context, breadCrumbModel, model);
                             }
                         });
@@ -98,35 +114,14 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         });
 
         columns.add(new PropertyColumn(new ResourceModel("group-description"), "description"));
-        columns.add(new AbstractColumn(new ResourceModel("group-members")) {
-            private static final long serialVersionUID = 1L;
 
-            public void populateItem(Item cellItem, String componentId, IModel model) {
-                Group group = (Group) model.getObject();
-                StringBuilder sb = new StringBuilder();
-                boolean first = true;
-                try {
-                    for (String user : group.getMembers()) {
-                        if (first) {
-                            sb.append(user);
-                            first = false;
-                        } else {
-                            sb.append(',').append(user);
-                        }
-                    }
-                } catch (RepositoryException e) {
-                    sb.append("Failed to retrieve members.");
-                    log.error("Failed to retrieve members of group", e);
-                }
-                cellItem.add(new Label(componentId, sb.toString()));
-            }
-        });
+        columns.add(new GroupDeleteLinkColumn(new ResourceModel("group-view-actions-title")));
 
         final Form form = new Form("search-form");
         form.setOutputMarkupId(true);
         add(form);
 
-        TextField search = new TextField("search-query", new PropertyModel(groupDataProvider, "query"));
+        TextField<String> search = new TextField<String>("search-query", new PropertyModel<String>(groupDataProvider, "query"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
@@ -136,17 +131,89 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 target.addComponent(table);
             }
         });
 
-        table = new AdminDataTable("table", columns, groupDataProvider, 20);
+        table = new AdminDataTable("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
     }
 
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-groups-title");
+    }
+
+    private class GroupDeleteLinkColumn extends AbstractColumn<Group> {
+        private static final long serialVersionUID = 1L;
+
+        private GroupDeleteLinkColumn(final IModel<String> displayModel) {
+            super(displayModel);
+        }
+
+        @Override
+        public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId,
+                                 final IModel<Group> model) {
+
+            AjaxLinkLabel action = new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), model);
+            item.add(action);
+        }
+
+
+    }
+
+    private class DeleteGroupActionLink extends AjaxLinkLabel {
+        private static final long serialVersionUID = 1L;
+        private final IModel<Group> groupModel;
+
+        private DeleteGroupActionLink(String id, IModel model, IModel<Group> groupModel) {
+            super(id, model);
+            this.groupModel = groupModel;
+        }
+
+        @Override
+        public void onClick(final AjaxRequestTarget target) {
+            context.getService(IDialogService.class.getName(), IDialogService.class).show(
+                    new ConfirmDeleteDialog<Group>(groupModel, this) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected void onOk() {
+                            deleteGroup(getModel());
+                        }
+
+                        @Override
+                        protected String getTitleKey() {
+                            return "group-delete-title";
+                        }
+
+                        @Override
+                        protected String getTextKey() {
+                            return "group-delete-text";
+                        }
+                    });
+        }
+
+        private void deleteGroup(final IModel<Group> model) {
+            Group group = model.getObject();
+            String groupname = group.getGroupname();
+            try {
+                group.delete();
+                Session.get().info(getString("group-removed", model));
+
+                List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
+                getBreadCrumbModel().setActive(l.get(l.size() - 2));
+                activate(new IBreadCrumbPanelFactory() {
+                    public BreadCrumbPanel create(final String componentId,
+                                                  final IBreadCrumbModel breadCrumbModel) {
+                        return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                    }
+                });
+            } catch (RepositoryException e) {
+                Session.get().warn(getString("group-remove-failed", model));
+                log.error("Unable to delete group '" + groupname + "' : ", e);
+            }
+        }
     }
 
 }

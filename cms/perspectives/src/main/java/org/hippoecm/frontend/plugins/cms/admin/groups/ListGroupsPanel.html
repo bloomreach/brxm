@@ -16,16 +16,17 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <h2><wicket:message key="group-title"/></h2>
+    <h2><wicket:message key="group-overview-title"/></h2>
+    <h3><wicket:message key="group-view-actions-title"/></h3>
     <ul class="hippo-controlpanel-options">
       <li><a href="#" wicket:id="create-group"><wicket:message key="group-create"/></a></li>
       <li><wicket:message key="group-view-instructions"/></li>
-      <li><wicket:message key="group-search"/>
-        <form wicket:id="search-form">
-          <input type="text" size="35" wicket:id="search-query" wicket:message="title:group-search-help"/><input type="submit" wicket:message="value:group-search-action" wicket:id="search-button"/>
-        </form>
-      </li>
     </ul>
+    <h3><wicket:message key="group-overview-list-title"/></h3>
+    <form wicket:id="search-form">
+      <input type="text" size="35" wicket:id="search-query" wicket:message="title:group-search-help"/><input type="submit" wicket:message="value:group-search-action" wicket:id="search-button"/>
+    </form>
+    <br/>
     <table class="hippo-controlpanel-table-default hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
   </wicket:extend>
 </html>

@@ -16,9 +16,17 @@
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -26,14 +34,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Group implements Comparable<Group>, IClusterable {
 
@@ -66,7 +69,7 @@ public class Group implements Comparable<Group>, IClusterable {
     public static boolean exists(String groupname) {
         String queryString = QUERY_GROUP_EXISTS.replace("{}", groupname);
         try {
-            Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(queryString, Query.SQL);
             if (query.execute().getNodes().hasNext()) {
                 return true;
             }
@@ -81,7 +84,7 @@ public class Group implements Comparable<Group>, IClusterable {
         List<Group> groups = new ArrayList<Group>();
         NodeIterator iter;
         try {
-            Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
+            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -106,7 +109,7 @@ public class Group implements Comparable<Group>, IClusterable {
         List<Group> groups = new ArrayList<Group>();
         NodeIterator iter;
         try {
-            Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
+            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -130,12 +133,14 @@ public class Group implements Comparable<Group>, IClusterable {
     /**
      * FIXME: should move to roles class or something the like
      * when the admin perspective gets support for it
+     *
+     * @return A list of all roles defined in the system
      */
     public static List<String> getAllRoles() {
         List<String> roles = new ArrayList<String>();
         NodeIterator iter;
         try {
-            Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
+            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
             iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
@@ -163,7 +168,8 @@ public class Group implements Comparable<Group>, IClusterable {
         return groupname;
     }
 
-    public void setGroupname(String groupname) {
+    @SuppressWarnings({ "unused" })
+    public void setGroupname(final String groupname) {
         this.groupname = groupname;
     }
 
@@ -265,13 +271,25 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     /**
-     * Delete the current group
+     * Delete the current group.
+     *
      * @throws RepositoryException
      */
     public void delete() throws RepositoryException {
         Node parent = node.getParent();
         node.remove();
         parent.getSession().save();
+
+        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            final UserSession userSession = UserSession.get();
+            HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                    .user(userSession.getJcrSession().getUserID())
+                    .action("delete-group")
+                    .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                    .message("deleted group " + groupname);
+            eventBus.post(event);
+        }   
     }
 
     public void removeMembership(String user) throws RepositoryException {
@@ -308,37 +326,6 @@ public class Group implements Comparable<Group>, IClusterable {
     }
     
     public int compareTo(Group o) {
-        String thisName = getGroupname();
-        String otherName = o.getGroupname();
-        // 
-        int len1 = thisName.length();
-        int len2 = otherName.length();
-        int n = Math.min(len1, len2);
-        char v1[] = thisName.toCharArray();
-        char v2[] = otherName.toCharArray();
-        int i = 0;
-        int j = 0;
-
-        if (i == j) {
-            int k = i;
-            int lim = n + i;
-            while (k < lim) {
-            char c1 = v1[k];
-            char c2 = v2[k];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            k++;
-            }
-        } else {
-            while (n-- != 0) {
-            char c1 = v1[i++];
-            char c2 = v2[j++];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            }
-        }
-        return len1 - len2;
+        return groupname.compareTo(o.getGroupname());
     }
 }
