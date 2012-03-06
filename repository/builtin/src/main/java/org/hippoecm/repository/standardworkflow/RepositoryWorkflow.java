@@ -68,7 +68,7 @@ public interface RepositoryWorkflow extends Workflow {
      * @param argument the checks that need to be performed
      * @throws WorkflowException in case the repository currently cannot handle a consistency check
      * @throws MappingException in case the passed argument cannot fully be parsed
-     * @throws RepositoryExceptionin case of generic errors.
+     * @throws RepositoryException in case of generic errors.
      * @throws RemoteException in case of a communication problem with the repository
      */
     public void consistency(String argument)

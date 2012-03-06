@@ -35,6 +35,7 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerWorkfl
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/RepositoryWorkflow.java svneol=native#text/plain
+builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflow.java -text
 builtin/src/site/apt/index.apt -text
 builtin/src/site/site.xml svneol=native#text/plain
 checker-app/pom.xml svneol=native#text/plain

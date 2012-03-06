@@ -37,6 +37,7 @@ application/workspaces
 builtin/.classpath
 builtin/.project
 builtin/.settings
+builtin/hippo-repository-builtin.iml
 builtin/target
 checker-app/.classpath
 checker-app/.project
@@ -82,9 +83,13 @@ engine/.classpath
 engine/.pom.xml.swp
 engine/.project
 engine/.settings
+engine/derby.log
+engine/hippo-repository-engine.iml
 engine/jpox.log
 engine/local.properties
+engine/log4j.log
 engine/nbproject
+engine/repository
 engine/src/main/java/org/hippoecm/repository/ocm/.ConnectionFactoryImpl.java.swp
 engine/src/main/java/org/hippoecm/repository/standardworkflow/.VersionWorkflowImpl.java.swp
 engine/src/test/java/org/hippoecm/repository/.ConfigurationTest.java.swp
@@ -94,7 +99,9 @@ engine/tm.out
 engine/tm.out.1
 engine/tm.out.lck
 engine/tmlog.lck
+engine/version
 engine/wdbp-error-log.txt
+engine/workspaces
 export/.classpath
 export/.project
 export/.settings
