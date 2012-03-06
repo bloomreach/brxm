@@ -102,12 +102,14 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         if (childCompConfigMap != null && !childCompConfigMap.isEmpty()) {
             Set<String> filter = requestContext.getComponentFilterTags();
             boolean matchTag = false;
-            for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
-                HstComponentConfiguration childCompConfig = entry.getValue();
-                String tag = childCompConfig.getComponentFilterTag();
-                if (tag != null && filter.contains(tag)) {
-                    matchTag = true;
-                    break;
+            if (!filter.isEmpty()) {
+                for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
+                    HstComponentConfiguration childCompConfig = entry.getValue();
+                    String tag = childCompConfig.getComponentFilterTag();
+                    if (tag != null && filter.contains(tag)) {
+                        matchTag = true;
+                        break;
+                    }
                 }
             }
             for (Map.Entry<String, HstComponentConfiguration> entry : childCompConfigMap.entrySet()) {
