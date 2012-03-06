@@ -15,17 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableGroup extends LoadableDetachableModel {
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+public final class DetachableGroup extends LoadableDetachableModel<Group> {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -46,9 +45,6 @@ public final class DetachableGroup extends LoadableDetachableModel {
         this(group.getPath());
     }
 
-    /**
-     * @param id
-     */
     public DetachableGroup(final String path) {
         if (path == null || path.length() == 0) {
             throw new IllegalArgumentException();
@@ -81,12 +77,10 @@ public final class DetachableGroup extends LoadableDetachableModel {
             return false;
         } else if (obj instanceof DetachableGroup) {
             DetachableGroup other = (DetachableGroup) obj;
-            if (path == null || other.path == null) {
-                return false;
-            }
-            return path.equals(other.path);
+            return (path != null) && (other.path != null) && path.equals(other.path);
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -109,14 +103,10 @@ public final class DetachableGroup extends LoadableDetachableModel {
     /**
      * Remove after upgrade to wicket 1.4, which has generics.
      * This is just an alias for (Group) getObject().
-     * @return
+     * @return the Group that this Model wraps
      */
     public Group getGroup() {
-        return (Group) getObject();
+        return getObject();
     }
-    
-//    public void setPath(final String path) {
-//        this.path = path.startsWith("/") ? path.substring(1) : path;;
-//    }
-    
+
 }

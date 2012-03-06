@@ -15,13 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
@@ -35,41 +29,38 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
-import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 public class ViewUserPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(ViewUserPanel.class);
 
-    private final IModel model;
+    private final IModel<User> model;
 
+    /**
+     * @param id the ID for the Panel
+     * @param context the PluginContext
+     * @param breadCrumbModel the Model for the page breadcrumb
+     * @param userModel the Model for the user to view
+     */
     public ViewUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
-            final IModel model) {
+                         final IModel<User> userModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
-        
-        this.model = model;
-        final User user = (User) model.getObject();
+        this.model = userModel;
+        final User user = userModel.getObject();
 
+        add(new Label("view-user-panel-title", new StringResourceModel("user-view-title", this, userModel)));
         // common user properties
-        add(new Label("username", new PropertyModel(model, "username")));
-        add(new Label("firstName", new PropertyModel(model, "firstName")));
-        add(new Label("lastName", new PropertyModel(model, "lastName")));
-        add(new Label("email", new PropertyModel(model, "email")));
-        add(new Label("provider", new PropertyModel(model, "provider")));
+        add(new Label("username", new PropertyModel(userModel, "username")));
+        add(new Label("firstName", new PropertyModel(userModel, "firstName")));
+        add(new Label("lastName", new PropertyModel(userModel, "lastName")));
+        add(new Label("email", new PropertyModel(userModel, "email")));
+        add(new Label("provider", new PropertyModel(userModel, "provider")));
         if (user.isActive()) {
             add(new Label("active", new ResourceModel("user-active-true")));
         } else {
@@ -81,16 +72,6 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             add(new Label("expired", new ResourceModel("user-password-expired-false")));
         }
 
-        // local memberships
-        add(new Label("local-memberships-label", new ResourceModel("user-local-memberships")));
-        add(new MembershipsListView("local-memberships", "local-membership", new PropertyModel(user, "localMemberships")));
-
-        // external memberships
-        Label external = new Label("external-memberships-label", new ResourceModel("user-external-memberships"));
-        external.setVisible((user.getExternalMemberships().size() > 0));
-        add(external);
-        add(new MembershipsListView("external-memberships", "external-membership", new PropertyModel(user, "externalMemberships")));
-
         // properties
         add(new Label("properties-label", new ResourceModel("user-properties")) {
             private static final long serialVersionUID = 1L;
@@ -100,13 +81,13 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 return (user.getPropertiesList().size() > 0);
             }
         });
-        add(new ListView("properties", user.getPropertiesList()) {
+        add(new ListView<Map.Entry<String, String>>("properties", user.getPropertiesList()) {
             private static final long serialVersionUID = 1L;
 
-            protected void populateItem(ListItem item) {
-                Map.Entry<String, String> entry = (Map.Entry<String, String>) item.getModelObject();
-                item.add(new Label("key", (String) entry.getKey()));
-                item.add(new Label("value", (String) entry.getValue()));
+            protected void populateItem(final ListItem<Map.Entry<String, String>> item) {
+                Map.Entry<String, String> entry = item.getModelObject();
+                item.add(new Label("key", entry.getKey()));
+                item.add(new Label("value", entry.getValue()));
             }
         });
 
@@ -114,105 +95,34 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-user", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new EditUserPanel(componentId, breadCrumbModel, model);
+                return new EditUserPanel(componentId, breadCrumbModel, userModel);
             }
         };
         edit.setVisible(!user.isExternal());
         add(edit);
-        
+
         PanelPluginBreadCrumbLink password = new PanelPluginBreadCrumbLink("set-user-password", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new SetPasswordPanel(componentId, breadCrumbModel, model, context);
+                return new SetPasswordPanel(componentId, breadCrumbModel, userModel, context);
             }
         };
         password.setVisible(!user.isExternal());
         add(password);
-        
-        PanelPluginBreadCrumbLink memberships = new PanelPluginBreadCrumbLink("set-user-memberships", breadCrumbModel) {
-            @Override
-            protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new SetMembershipsPanel(componentId, breadCrumbModel, model);
-            }
-        };
-        add(memberships);
-        
+
         add(new AjaxLinkLabel("delete-user", new ResourceModel("user-delete")) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        new ConfirmDeleteDialog(model, this) {
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            protected void onOk() {
-                                deleteUser(model);
-                            }
-
-                            @Override
-                            protected String getTitleKey() {
-                                return "user-delete-title";
-                            }
-
-                            @Override
-                            protected String getTextKey() {
-                                return "user-delete-text";
-                            }
-                        });
+                        new DeleteUserDialog(userModel, this, context, ViewUserPanel.this));
             }
         });
+        add(new SetMembershipsPanel("set-member-ship-panel", context, breadCrumbModel, userModel));
     }
 
-    private void deleteUser(IModel model) {
-        User user = (User) model.getObject();
-        if (user == null) {
-            log.info("No user model found when trying to delete user. Probably the Ok button was double clicked.");
-            return;
-        }
-        String username = user.getUsername();
-        try {
-            for (DetachableGroup dg : user.getLocalMemberships()) {
-                dg.getGroup().removeMembership(username);
-            }
-            user.delete();
-            HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-            if (eventBus != null) {
-                final UserSession userSession = UserSession.get();
-                HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                        .user(userSession.getJcrSession().getUserID()).action("delete-user")
-                        .category(HippoSecurityEventConstants.CATEGORY_USER_MANAGEMENT)
-                        .message("deleted user " + username);
-                eventBus.post(event);
-            }
-            // one up
-            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() -2));
-        } catch (RepositoryException e) {
-            Session.get().warn(getString("user-remove-failed", model));
-            log.error("Unable to delete user '" + username + "' : ", e);
-        }
-    }
-
-    /** list view to be nested in the form. */
-    private static final class MembershipsListView extends ListView {
-        private static final long serialVersionUID = 1L;
-        private String labelId;
-
-        public MembershipsListView(final String id, final String labelId, IModel listModel) {
-            super(id, listModel);
-            this.labelId = labelId;
-            setReuseItems(false);
-        }
-
-        protected void populateItem(ListItem item) {
-            DetachableGroup dg = (DetachableGroup) item.getModelObject();
-            item.add(new Label(labelId, dg.getGroup().getGroupname()));
-        }
-    }
-
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new StringResourceModel("user-view-title", component, model);
     }
 

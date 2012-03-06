@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -41,18 +40,14 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
-import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupPanel;
+import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabelContainer;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabelListPanel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.ConfirmDeleteDialog;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +58,10 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(ListUsersPanel.class);
 
     private static final int NUMBER_OF_ITEMS_PER_PAGE = 20;
 
     private final AdminDataTable table;
-    private final IPluginContext context;
 
     /**
      * Constructs a new ListUsersPanel.
@@ -81,8 +74,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                           final UserDataProvider userDataProvider) {
         super(id, breadCrumbModel);
-
-        this.context = context;
 
         setOutputMarkupId(true);
 
@@ -97,10 +88,11 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        columns.add(new AbstractColumn(new ResourceModel("user-username"), "username") {
+        columns.add(new AbstractColumn<User>(new ResourceModel("user-username"), "username") {
             private static final long serialVersionUID = 1L;
 
-            public void populateItem(final Item item, final String componentId, final IModel model) {
+            public void populateItem(final Item<ICellPopulator<User>> item,
+                                     final String componentId, final IModel<User> model) {
 
                 AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "username")) {
                     private static final long serialVersionUID = 1L;
@@ -165,24 +157,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         context.getService(IDialogService.class.getName(), IDialogService.class)
-                                .show(new ConfirmDeleteDialog<User>(model, this) {
-                                    private static final long serialVersionUID = 1L;
-
-                                    @Override
-                                    protected void onOk() {
-                                        deleteUser(model);
-                                    }
-
-                                    @Override
-                                    protected String getTitleKey() {
-                                        return "user-delete-title";
-                                    }
-
-                                    @Override
-                                    protected String getTextKey() {
-                                        return "user-delete-text";
-                                    }
-                                });
+                                .show(new DeleteUserDialog(model, this, context, ListUsersPanel.this));
                     }
                 };
                 item.add(action);
@@ -218,62 +193,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
 
     public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-users-title");
-    }
-
-    private static class ViewGroupActionLink extends AjaxLinkLabelContainer {
-        final IModel<Group> groupModel;
-        final IPluginContext context;
-        final BreadCrumbPanel breadCrumbPanel;
-
-        private static final long serialVersionUID = 1L;
-
-        private ViewGroupActionLink(final String id, final IModel labelTextModel, final IModel<Group> groupModel,
-                                    final IPluginContext context, final BreadCrumbPanel breadCrumbPanel) {
-            super(id, labelTextModel);
-
-            this.groupModel = groupModel;
-            this.context = context;
-            this.breadCrumbPanel = breadCrumbPanel;
-        }
-
-        @Override
-        public void onClick(AjaxRequestTarget target) {
-            breadCrumbPanel.activate(new IBreadCrumbPanelFactory() {
-                public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
-                    return new ViewGroupPanel(componentId, context, breadCrumbModel, groupModel);
-                }
-            });
-        }
-    }
-
-    /**
-     * Deletes the user contained in the model.
-     *
-     * @param model the IModel containing the User to delete
-     */
-    private void deleteUser(final IModel<User> model) {
-        User user = model.getObject();
-        if (user == null) {
-            log.info("No user model found when trying to delete user. Probably the Ok button was double clicked.");
-            return;
-        }
-        String username = user.getUsername();
-        try {
-            user.delete();
-            Session.get().info(getString("user-removed", model));
-            // one up
-            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() - 2));
-            activate(new IBreadCrumbPanelFactory() {
-                public BreadCrumbPanel create(final String componentId,
-                                              final IBreadCrumbModel breadCrumbModel) {
-                    return new ListUsersPanel(componentId, context, breadCrumbModel, new UserDataProvider());
-                }
-            });
-        } catch (RepositoryException e) {
-            Session.get().warn(getString("user-remove-failed", model));
-            log.error("Unable to delete user '" + username + "' : ", e);
-        }
     }
 
 }

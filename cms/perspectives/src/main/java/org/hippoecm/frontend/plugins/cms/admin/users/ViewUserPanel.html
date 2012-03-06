@@ -15,68 +15,83 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <h2><wicket:message key="user-view-options-title" /></h2>
-      <ul class="hippo-controlpanel-options">
-        <li wicket:id="edit-user"><a href="#"><wicket:message key="user-edit"/></a></li>
-        <li wicket:id="set-user-password"><a href="#"><wicket:message key="user-set-password"/></a></li>
-        <li wicket:id="set-user-memberships"><a href="#"><wicket:message key="user-set-memberships"/></a></li>
+<wicket:extend>
+    <h2><label wicket:id="view-user-panel-title"></label></h2>
+    <h3>
+        <wicket:message key="user-view-actions-title"/>
+    </h3>
+    <ul class="hippo-controlpanel-options">
+        <li wicket:id="edit-user"><a href="#">
+            <wicket:message key="user-edit"/>
+        </a></li>
+        <li wicket:id="set-user-password"><a href="#">
+            <wicket:message key="user-set-password"/>
+        </a></li>
         <li class="delete" wicket:id="delete-user"/>
-      </ul>
+    </ul>
     <div class="hippo-controlpanel-form">
-   <div class="icons-128 user-128">
-   <table>
-      <tr>
-        <td><wicket:message key="user-username"/></td>
-        <td><label wicket:id="username"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-firstname"/></td>
-        <td><label wicket:id="firstName"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-lastname"/></td>
-        <td><label wicket:id="lastName"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-email"/></td>
-        <td><label wicket:id="email"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-active"/></td>
-        <td><label wicket:id="active"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-password-expired"/></td>
-        <td><label wicket:id="expired"/></td>
-      </tr>
-      <tr>
-        <td><wicket:message key="user-provider"/></td>
-        <td><label wicket:id="provider"/> </td>
-      </tr>
-    </table>
+        <div class="icons-128 user-128">
+            <h3>
+                <wicket:message key="user-properties"/>
+            </h3>
+            <table>
+                <tr>
+                    <td>
+                        <wicket:message key="user-username"/>
+                    </td>
+                    <td><label wicket:id="username"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-firstname"/>
+                    </td>
+                    <td><label wicket:id="firstName"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-lastname"/>
+                    </td>
+                    <td><label wicket:id="lastName"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-email"/>
+                    </td>
+                    <td><label wicket:id="email"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-active"/>
+                    </td>
+                    <td><label wicket:id="active"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-password-expired"/>
+                    </td>
+                    <td><label wicket:id="expired"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <wicket:message key="user-provider"/>
+                    </td>
+                    <td><label wicket:id="provider"/></td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <h3>
+            <wicket:message key="user-memberships"/>
+        </h3>
+        <label wicket:id="properties-label"/>
+        <table class="hippo-controlpanel-table-default hippo-list-details">
+            <tr wicket:id="properties">
+                <td><label wicket:id="key"/>:</td>
+                <td><label wicket:id="value"/></td>
+            </tr>
+        </table>
+        <span wicket:id="set-member-ship-panel"></span>
     </div>
-    <h3 wicket:id="local-memberships-label"/>
-      <table class="hippo-controlpanel-table-default hippo-list-details">
-        <tr wicket:id="local-memberships">
-          <td><label wicket:id="local-membership"/></td>
-          <td><li class="delete-16-disabled icon-16" /></td>
-        </tr>
-      </table>
-    <h3 wicket:id="external-memberships-label"/>
-      <table class="hippo-controlpanel-table-default hippo-list-details">
-        <tr wicket:id="external-memberships">
-          <td><label wicket:id="external-membership"/></td>
-          <td><li class="delete-16 icon-16" /></td>
-        </tr>
-      </table>
-    <label wicket:id="properties-label"/>
-      <table class="hippo-controlpanel-table-default hippo-list-details">
-      <tr wicket:id="properties">
-        <td><label wicket:id="key"/>: </td>
-        <td><label wicket:id="value"/></td>
-      </tr>
-    </table>
-   </div>
-  </wicket:extend>
+
+</wicket:extend>
 </html>

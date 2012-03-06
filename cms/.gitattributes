@@ -1488,6 +1488,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/HippoSecurity
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-32.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective-48.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/admin-perspective.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/ViewGroupActionLink.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/groups/groups-32.png -text svneol=unset#image/png
@@ -1556,6 +1557,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-24.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/DeleteUserDialog.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png

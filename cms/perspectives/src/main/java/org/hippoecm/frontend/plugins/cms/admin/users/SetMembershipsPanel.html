@@ -15,33 +15,64 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <h2><wicket:message key="user-membership-groups-title"/></h2>
+<wicket:extend>
     <form wicket:id="form">
-      <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
-        <wicket:message key="user-membership-make-member-of"/>
-        <select wicket:id="local-groups">
-          <option>group1</option>
-        </select>
-        <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
-      </div>
-      <h3 wicket:id="local-memberships-label"/>
-      <table class="hippo-controlpanel-table-nested hippo-list-details">
-        <tr wicket:id="local-memberships">
-          <td><label wicket:id="local-membership"/></td>
-          <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
-        </tr>
-      </table>
-      <h3 wicket:id="external-memberships-label"/>
-      <table class="hippo-controlpanel-table-default hippo-list-details">
-        <tr wicket:id="external-memberships">
-          <td><label wicket:id="external-membership"/></td>
-          <td><li class="delete-inline-16-disabled icon-16"/></td>
-        </tr>
-      </table>
-      <div class="hippo-controlpanel-actions">
-        <input type="submit" wicket:message="value:user-back-action" wicket:id="back-button"/>
-      </div>
+        <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
+            <wicket:message key="user-membership-make-member-of"/>
+            <select wicket:id="local-groups">
+                <option>group1</option>
+            </select>
+            <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
+        </div>
+        <h3 wicket:id="local-memberships-label"/>
+        <table class="hippo-controlpanel-table-default hippo-list-details">
+            <tr>
+                <th>
+                    <wicket:message key="table-header-groups"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-actions"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-roles"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-security-domain"/>
+                </th>
+            </tr>
+            <tr wicket:id="local-memberships">
+                <td><a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a></td>
+                <td><span wicket:id="remove"/></td>
+                <td><label wicket:id="role"/></td>
+                <td><label wicket:id="securityDomain"/></td>
+            </tr>
+        </table>
+        <h3 wicket:id="external-memberships-label"/>
+        <table class="hippo-controlpanel-table-default hippo-list-details">
+            <tr wicket:id="external-memberships">
+                <th>
+                    <wicket:message key="table-header-groups"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-actions"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-roles"/>
+                </th>
+                <th>
+                    <wicket:message key="table-header-security-domain"/>
+                </th>
+                <td><label wicket:id="external-membership"/></td>
+                <td>
+                    <li class="delete-inline-16-disabled icon-16"/>
+                </td>
+                <td><label wicket:id="role"/></td>
+                <td><label wicket:id="securityDomain"/></td>
+            </tr>
+        </table>
+        <div class="hippo-controlpanel-actions">
+            <input type="submit" wicket:message="value:user-back-action" wicket:id="back-button"/>
+        </div>
     </form>
-  </wicket:extend>
+</wicket:extend>
 </html>

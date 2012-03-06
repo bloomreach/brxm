@@ -17,15 +17,11 @@ package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -455,16 +451,6 @@ public class User implements Comparable<User>, IClusterable {
         node.remove();
         parent.getSession().save();
 
-        // Let the outside world know that this user got deleted
-        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-        if (eventBus != null) {
-            final UserSession userSession = UserSession.get();
-            HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                    .user(userSession.getJcrSession().getUserID()).action("delete-user")
-                    .category(HippoSecurityEventConstants.CATEGORY_USER_MANAGEMENT)
-                    .message("deleted user " + username);
-            eventBus.post(event);
-        }
     }
 
     public void removeAllGroupMemberships() throws RepositoryException {
@@ -605,42 +591,6 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     public int compareTo(final User o) {
-
-/*
-        String thisName = getUsername();
-        String otherName = o.getUsername();
-        // 
-        int len1 = thisName.length();
-        int len2 = otherName.length();
-        int n = Math.min(len1, len2);
-        char v1[] = thisName.toCharArray();
-        char v2[] = otherName.toCharArray();
-        int i = 0;
-        int j = 0;
-
-        if (i == j) {
-            int k = i;
-            int lim = n + i;
-            while (k < lim) {
-                char c1 = v1[k];
-                char c2 = v2[k];
-                if (c1 != c2) {
-                    return c1 - c2;
-                }
-                k++;
-            }
-        } else {
-            while (n-- != 0) {
-                char c1 = v1[i++];
-                char c2 = v2[j++];
-                if (c1 != c2) {
-                    return c1 - c2;
-                }
-            }
-        }
-        return len1 - len2;
-*/
-        //TODO: Verify if the above code is indeed String#compareTo()
         return getUsername().compareTo(o.getUsername());
     }
 }
