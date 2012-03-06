@@ -17,8 +17,6 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -58,9 +56,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -604,54 +600,6 @@ public class RepositoryServlet extends HttpServlet {
 
                     }else {
                         writer.println("No nodes have a reference to '" +n.getPath() + "'");
-                    }
-                }
-            }
-            if ((queryString = req.getParameter("execute")) != null) {
-                writer.println("  <h3>Executing workflow</h3>");
-                String[] args = queryString.split(",");
-                if (args.length < 2) {
-                    writer.println("Insufficient arguments. ");
-                } else {
-                    Workflow workflow = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager().getWorkflow(args[0], node);
-                    Method workflowMethod = null;
-                    if (workflow == null) {
-                        writer.println("No workflow defined. ");
-                    } else {
-                        for (Method method : workflow.getClass().getMethods()) {
-                            if (method.getName().equals(args[1])) {
-                                if (workflowMethod != null) {
-                                    writer.println("Multiple methods, trying to use first");
-                                    break;
-                                } else {
-                                    workflowMethod = method;
-                                }
-                            }
-                        }
-                        Class[] parameters = workflowMethod.getParameterTypes();
-                        try {
-                            if (parameters.length == 1 && parameters[0].isAssignableFrom(String.class) && args.length > 3) {
-                                String arg = args[2];
-                                for (int i = 3; i < args.length; i++) {
-                                    arg += "," + args[i];
-                                }
-                                workflowMethod.invoke(workflow, new Object[] {arg});
-                            } else {
-                                Object[] arg = new Object[args.length - 2];
-                                for (int i = 2; i < args.length; i++) {
-                                    arg[i - 2] = args[i];
-                                }
-                                workflowMethod.invoke(workflow, arg);
-                            }
-                        } catch (IllegalAccessException ex) {
-                            writer.print("<blockquote><pre>");
-                            ex.getCause().printStackTrace(writer);
-                            writer.print("</pre></blockquote>");
-                        } catch (InvocationTargetException ex) {
-                            writer.print("<blockquote><pre>");
-                            ex.getCause().printStackTrace(writer);
-                            writer.print("</pre></blockquote>");
-                        }
                     }
                 }
             }
