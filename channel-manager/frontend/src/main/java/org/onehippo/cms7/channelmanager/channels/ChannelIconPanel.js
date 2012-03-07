@@ -23,7 +23,6 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
         this.resources = config.resources;
         this.store = config.store;
 
-        this.currentComponents = [];
         this.types = [];
         this.regions = [];
 

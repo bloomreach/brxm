@@ -227,11 +227,11 @@
     background-color: none;
 }
 
-.channel-manager .collapse-panel.odd {
+.channel-manager .collapse-panel.odd .x-panel-body {
     background-color: #fff;
 }
 
-.channel-manager .collapse-panel.even {
+.channel-manager .collapse-panel.even .x-panel-body {
     background: #f6f6f6;
 }
 
