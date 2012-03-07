@@ -45,6 +45,16 @@ public interface ChannelService {
 	public List<Channel> getChannels();
 
     /**
+     * Get a {@link Channel} given it id
+     * 
+     * @return {@link Channel} which has the given id
+     */
+    @GET
+    @Path("/{id}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Channel getChannel(@PathParam("id") String id);
+
+    /**
      * Save channel properties.  If the URL path of the new channel is not empty, all
      * path-steps except the last one should already map to an existing mount.
      * <p>

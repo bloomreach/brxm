@@ -79,7 +79,7 @@ public class DocumentsResource implements DocumentService {
             }
 
             try {
-                final Channel channel = channelManager.getChannel(channelPath);
+                final Channel channel = channelManager.getChannelByJcrPath(channelPath);
                 if (channel == null) {
                     log.warn("Skipping link for mount '{}' since its channel path '{}' does not point to a channel",
                             linkMount.getName(), channelPath);

@@ -70,6 +70,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
+    private static final String ERROR_MESSAGE_BAD_CHANNEL_ID = "Expected a channel id, but got '%s' instead";
+    private static final String ERROR_MESSAGE_BAD_CHANNEL_JCR_PATH = "Expected a valid channel JCR path which should start with '%s', but got '%s' instead";
+    private static final String WARNING_MESSAGE_COULD_NOT_RETRIEVE_CHANNEL = "Could not retieve channel of id '%s'";
+
     private String rootPath = DEFAULT_HST_ROOT_PATH;
     private String hostGroup = null;
     private String sites = DEFAULT_HST_SITES;
@@ -365,13 +369,23 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return jcrSession;
     }
 
-    public synchronized Channel getChannel(String jcrPath) throws ChannelException {
+    public synchronized Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
         load();
-        if (jcrPath == null || !jcrPath.startsWith(channelsRoot)) {
-            throw new ChannelException("Expected a JCR path starting with '" + channelsRoot + "', but got '" + jcrPath + "' instead");
+        if (StringUtils.isBlank(jcrPath) || !jcrPath.startsWith(channelsRoot)) {
+            throw new ChannelException(String.format(ERROR_MESSAGE_BAD_CHANNEL_JCR_PATH, channelsRoot, jcrPath));
         }
+
         final String channelId = jcrPath.substring(channelsRoot.length());
         return channels.get(channelId);
+    }
+
+    
+    public synchronized Channel getChannelById(String id) throws ChannelException {
+        load();
+        if (StringUtils.isBlank(id)) {
+            throw new ChannelException(String.format(ERROR_MESSAGE_BAD_CHANNEL_ID, id));
+        }
+        return channels.get(id);
     }
 
     // PUBLIC interface; all synchronised to guarantee consistent state
@@ -543,6 +557,18 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } catch (ChannelException ex) {
             log.warn("Could not load properties", ex);
         }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<HstPropertyDefinition> getPropertyDefinitions(String channelId) {
+        try {
+            return getPropertyDefinitions(getChannelById(channelId));
+        } catch (ChannelException ex) {
+            log.warn(String.format(WARNING_MESSAGE_COULD_NOT_RETRIEVE_CHANNEL, channelId), ex);
+        }
+
         return Collections.emptyList();
     }
 
@@ -972,4 +998,5 @@ public class ChannelManagerImpl implements MutableChannelManager {
             return configRootNode;
         }
     }
+
 }

@@ -20,6 +20,8 @@ import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_C
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_SAVING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,8 +97,24 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public List<HstPropertyDefinition> getChannelPropertyDefinitions(String id) {
-        // TODO MNour: To be implemented! This is a mockup!
-        return new ArrayList<HstPropertyDefinition>();
+        return channelManager.getPropertyDefinitions(id);
+    }
+
+    @Override
+    public Channel getChannel(String id) {
+        try {
+            return channelManager.getChannelById(id);
+        } catch (ChannelException ce) {
+            if (log.isDebugEnabled()) {
+                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL, id), ce);
+            } else {
+                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL, id, ce);
+            }
+        }
+
+        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        //                  HST, CMS and services!
+        return null;
     }
 
 }

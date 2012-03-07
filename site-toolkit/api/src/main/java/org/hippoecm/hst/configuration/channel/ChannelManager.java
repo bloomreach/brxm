@@ -34,7 +34,16 @@ public interface ChannelManager {
     /**
      * Returns the channel configured at the given JCR path.
      */
-    Channel getChannel(String channelPath) throws ChannelException;
+    Channel getChannelByJcrPath(String channelPath) throws ChannelException;
+
+    /**
+     * Get a {@link Channel} given its id
+     * 
+     * @param id - {@link Channel} id
+     * @return {@link Channel} which has this id
+     * @throws ChannelException - When an error happens while retrieving the {@link Channel}
+     */
+    Channel getChannelById(String id) throws ChannelException;
 
     /**
      * Persists a channel. Will create the mounts, sites and configuration when the channel is new.
@@ -112,7 +121,21 @@ public interface ChannelManager {
      */
     ResourceBundle getResourceBundle(Channel channel, Locale locale);
 
+    /**
+     * Get {@link Channel} property definitions given a {@link Channel} object instance
+     * 
+     * @param channel - {@link Channel} for which property definitions are going to be retrieved
+     * @return {@link List} of {@link HstPropertyDefinition}
+     */
     List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
+
+    /**
+     * Get {@link Channel} property definitions given a {@link Channel} id
+     * 
+     * @param channelId - {@link Channel} id for which property definitions are going to be retrieved
+     * @return {@link List} of {@link HstPropertyDefinition}
+     */
+    List<HstPropertyDefinition> getPropertyDefinitions(String channelId);
 
     /**
      * Can the current user (set in HstSubject) create or modify channels.

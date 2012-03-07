@@ -18,7 +18,6 @@ package org.hippoecm.hst.cmsrest.services;
 
 /**
  * Constants class used by {@link ChannelsResource}
- *
  */
 public class ChannelsResourceConsts {
 
@@ -27,5 +26,7 @@ public class ChannelsResourceConsts {
 	public static final String MESSAGE_CHANNEL_SAVING_ERROR = "Error while saving a channel - Channel: %s - %s : %s : %s";
 	public static final String PARAM_MESSAGE_ERROR_WHILE_CREATING_CHANNEL = "Error while creating channel: {}";
 	public static final String PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing channels resource request for channel '{}'";
+	public static final String WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL = "Failed to retrieve a channel with id '%s'";
+	public static final String PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL = "Failed to retrieve a channel with id '{}' - {}";
 
 }
