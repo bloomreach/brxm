@@ -17,10 +17,8 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import static org.hippoecm.hst.cmsrest.services.BaseResourceConsts.MESSAGE_CHANNEL_MANAGER_IS_NULL;
-import static org.hippoecm.hst.cmsrest.services.BaseResourceConsts.MESSAGE_HST_LINK_CREATOR_IS_NULL;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,6 @@ public abstract class BaseResource {
     private static final Logger log = LoggerFactory.getLogger(BaseResource.class);
 
 	protected ChannelManager channelManager;
-    protected HstLinkCreator hstLinkCreator;
 
     /**
      * {@link ChannelManager} setter method
@@ -41,15 +38,6 @@ public abstract class BaseResource {
      */
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
-    }
-
-    /**
-     * {@link HstLinkCreator
-     * 
-     * @param hstLinkCreator
-     */
-    public void setHstLinkCreator(final HstLinkCreator hstLinkCreator) {
-        this.hstLinkCreator = hstLinkCreator;
     }
 
 	/**
@@ -61,11 +49,6 @@ public abstract class BaseResource {
         if (channelManager == null) {
         	log.warn(MESSAGE_CHANNEL_MANAGER_IS_NULL);
             throw new ResourceRequestValidationException(MESSAGE_CHANNEL_MANAGER_IS_NULL);
-        }
-
-        if (hstLinkCreator == null) {
-            log.warn(MESSAGE_HST_LINK_CREATOR_IS_NULL);
-            throw new ResourceRequestValidationException(MESSAGE_HST_LINK_CREATOR_IS_NULL);
         }
 	}
 

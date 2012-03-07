@@ -22,6 +22,5 @@ package org.hippoecm.hst.cmsrest.services;
 public final class BaseResourceConsts {
 
 	public static final String MESSAGE_CHANNEL_MANAGER_IS_NULL = "Cannot look up channels because the channel manager is null";
-	public static final String MESSAGE_HST_LINK_CREATOR_IS_NULL = "Cannot look up channels because hstLinkCreator is null";
 
 }

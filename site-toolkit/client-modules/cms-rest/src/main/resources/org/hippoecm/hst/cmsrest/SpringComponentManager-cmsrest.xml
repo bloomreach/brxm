@@ -39,8 +39,6 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.cmsrest.services.ChannelsResource">
               <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-              <!-- COMMENT - MNour: This is not needed for now but I keep for a purpose in mind which will share later -->
-              <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -48,9 +46,12 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.cmsrest.services.BlueprintsResource">
               <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
-              <!-- COMMENT - MNour: This is not needed for now but I keep for a purpose in mind which will share later -->
-              <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
             </bean>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.cmsrest.services.SitesResource" />
           </constructor-arg>
         </bean>
       </list>
