@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2008-2012 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -34,17 +34,13 @@
                     <wicket:message key="table-header-actions"/>
                 </th>
                 <th>
-                    <wicket:message key="table-header-roles"/>
-                </th>
-                <th>
                     <wicket:message key="table-header-security-domain"/>
                 </th>
             </tr>
             <tr wicket:id="local-memberships">
                 <td><a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a></td>
                 <td><span wicket:id="remove"/></td>
-                <td><label wicket:id="role"/></td>
-                <td><label wicket:id="securityDomain"/></td>
+                <td><label wicket:id="securityDomains"/></td>
             </tr>
         </table>
         <h3 wicket:id="external-memberships-label"/>

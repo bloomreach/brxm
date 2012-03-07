@@ -1541,6 +1541,9 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/vali
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationServiceImpl_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/PasswordValidationStatus.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/RegexpPasswordValidator.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/DomainLinkListPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/DomainLinkListPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/ViewDomainActionLink.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-32.png -text svneol=unset#image/png
@@ -1558,6 +1561,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-32.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system-properties-48.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/DeleteUserDialog.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png
@@ -1567,8 +1572,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/Pa
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/PasswordStrengthValidator_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelContainer.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelListPanel.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/DefaultFocusBehavior.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
