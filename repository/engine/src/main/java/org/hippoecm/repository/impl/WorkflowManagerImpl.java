@@ -108,7 +108,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 final Node worlflowNode = getWorkflowNode("internal", logFolder, session);
                 Workflow workflow = getRealWorkflow(logFolder, worlflowNode);
                 if (workflow instanceof WorkflowEventLoggerWorkflow) {
-                    eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) getRealWorkflow(logFolder, worlflowNode);
+                    eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
                 }
             }
             if (eventLoggerWorkflow == null) {
@@ -407,9 +407,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
         if (workflowNode != null) {
             try {
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
-                Workflow workflow = getRealWorkflow(item, workflowNode);
+                final Workflow workflow = getRealWorkflow(item, workflowNode);
                 if (workflow != null) {
-                    boolean objectPersist = !InternalWorkflow.class.isAssignableFrom(workflow.getClass());
+                    boolean objectPersist = !InternalWorkflow.class.isInstance(workflow);
                     String path = item.getPath();
                     String uuid = item.getIdentifier();
                     Class[] interfaces = workflow.getClass().getInterfaces();
@@ -422,10 +422,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     interfaces = (Class[])vector.toArray(new Class[vector.size()]);
                     InvocationHandler handler = new WorkflowInvocationHandler(category, workflow, uuid, path, types, objectPersist);
                     Class proxyClass = Proxy.getProxyClass(workflow.getClass().getClassLoader(), interfaces);
-                    workflow = (Workflow)proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
+                    return (Workflow)proxyClass.getConstructor(new Class[] {InvocationHandler.class}).
                             newInstance(new Object[]{handler});
 
-                    return workflow;
                     /* note that the returned workflow object is no longer exported at this time, the
                     * remoting layer will take care of this now, because it has knowledge of the
                     * registry to use (the port number).
