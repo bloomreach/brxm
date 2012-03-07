@@ -688,7 +688,9 @@ public class ValueMappingStrategy extends AbstractMappingStrategy {
                 if (!property.getParent().isCheckedOut()) {
                     checkoutNode(property.getParent());
                 }
-                property.setValue(value.getIdentity());
+                if (value != null) {
+                    property.setValue(value.getIdentity());
+                }
             }
         } catch (ValueFormatException ex) {
             if (log.isDebugEnabled()) {
