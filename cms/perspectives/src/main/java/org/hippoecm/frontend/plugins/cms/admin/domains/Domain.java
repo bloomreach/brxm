@@ -163,6 +163,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
     }
 
     //--------------------- default object -------------------//
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -180,39 +181,8 @@ public class Domain implements Comparable<Domain>, IClusterable {
     public int hashCode() {
         return (null == path ? 0 : path.hashCode());
     }
-    
-    public int compareTo(Domain o) {
-        String thisName = getName();
-        String otherName = o.getName();
-        // 
-        int len1 = thisName.length();
-        int len2 = otherName.length();
-        int n = Math.min(len1, len2);
-        char v1[] = thisName.toCharArray();
-        char v2[] = otherName.toCharArray();
-        int i = 0;
-        int j = 0;
 
-        if (i == j) {
-            int k = i;
-            int lim = n + i;
-            while (k < lim) {
-            char c1 = v1[k];
-            char c2 = v2[k];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            k++;
-            }
-        } else {
-            while (n-- != 0) {
-            char c1 = v1[i++];
-            char c2 = v2[j++];
-            if (c1 != c2) {
-                return c1 - c2;
-            }
-            }
-        }
-        return len1 - len2;
+    public int compareTo(Domain o) {
+        return getName().compareTo(o.getName());
     }
 }
