@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -24,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -41,28 +46,24 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import java.util.List;
-
 public class ViewGroupPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ViewGroupPanel.class);
 
-    private final IModel model;
+    private final Group group;
 
     public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
-            final IModel<Group> model) {
+                          final Group group) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
-        this.model = model;
-        final Group group = model.getObject();
+
+        this.group = group;
 
         // common group properties
-        add(new Label("groupname", new PropertyModel(model, "groupname")));
-        add(new Label("description", new PropertyModel(model, "description")));
+        add(new Label("groupname", new PropertyModel(group, "groupname")));
+        add(new Label("description", new PropertyModel(group, "description")));
 
         // local memberships
         add(new Label("group-members-label", new ResourceModel("group-members-label")));
@@ -71,16 +72,16 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         // actions
         PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-group", breadCrumbModel) {
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new EditGroupPanel(componentId, breadCrumbModel, model);
+                return new EditGroupPanel(componentId, breadCrumbModel, new Model<Group>(group));
             }
         };
         edit.setVisible(!group.isExternal());
         add(edit);
-        
+
         PanelPluginBreadCrumbLink members = new PanelPluginBreadCrumbLink("set-group-members", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new SetMembersPanel(componentId, breadCrumbModel, model);
+                return new SetMembersPanel(componentId, breadCrumbModel, new Model<Group>(group));
             }
         };
         members.setVisible(!group.isExternal());
@@ -92,12 +93,12 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        new DeleteDialog<Group>(model, this) {
+                        new DeleteDialog<Group>(group, this) {
                             private static final long serialVersionUID = 1L;
 
                             @Override
                             protected void onOk() {
-                                deleteGroup(model);
+                                deleteGroup(group);
                             }
 
                             @Override
@@ -113,9 +114,8 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             }
         });
     }
-    
-    private void deleteGroup(IModel model) {
-        Group group = (Group) model.getObject();
+
+    private void deleteGroup(final Group group) {
         String groupname = group.getGroupname();
         try {
             group.delete();
@@ -129,17 +129,19 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         .message("deleted group " + groupname);
                 eventBus.post(event);
             }
-            Session.get().info(getString("group-removed", model));
+            Session.get().info(getString("group-removed", new Model<Group>(group)));
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() -2));
+            getBreadCrumbModel().setActive(l.get(l.size() - 2));
         } catch (RepositoryException e) {
-            Session.get().warn(getString("group-remove-failed", model));
+            Session.get().warn(getString("group-remove-failed", new Model<Group>(group)));
             log.error("Unable to delete group '" + groupname + "' : ", e);
         }
     }
-    
-    /** list view to be nested in the form. */
+
+    /**
+     * list view to be nested in the form.
+     */
     private static final class GroupMembersListView extends ListView<String> {
         private static final long serialVersionUID = 1L;
         private String labelId;
@@ -157,7 +159,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     }
 
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("group-view-title", component, model);
+        return new StringResourceModel("group-view-title", component, new Model<Group>(group));
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,24 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.PasswordHelper;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +24,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
+import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.PasswordHelper;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is an object representation of a Hippo User, to be used in the admin interface only.
@@ -241,8 +243,8 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     /**
-     * Constructs a User object based on the username. Effectively fetches the user from the repository and wraps it
-     * in this object.
+     * Constructs a User object based on the username. Effectively fetches the user from the repository and wraps it in
+     * this object.
      *
      * @param username the name of the user to fetch
      * @throws RepositoryException thrown when the user with supplied username does not exist in the repository
@@ -261,8 +263,8 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     /**
-     * Constructs a User object based on the node. Effectively fetches the user from the repository and wraps it
-     * in this object.
+     * Constructs a User object based on the node. Effectively fetches the user from the repository and wraps it in this
+     * object.
      *
      * @param node the node of the user to fetch
      * @throws RepositoryException thrown when the user with supplied node does not exist in the repository
@@ -343,6 +345,14 @@ public class User implements Comparable<User>, IClusterable {
             log.error("Error while querying local memberships of user '{}'", e);
         }
         return localMemberships;
+    }
+
+    public List<Group> getLocalMemberShips() {
+        List<Group> groups = new ArrayList<Group>();
+        for (DetachableGroup group : getLocalMemberships()) {
+            groups.add(group.getObject());
+        }
+        return groups;
     }
 
     /**

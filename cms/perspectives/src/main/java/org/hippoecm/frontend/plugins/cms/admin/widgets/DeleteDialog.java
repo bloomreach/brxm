@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.widgets;
 
+import java.io.Serializable;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
@@ -26,7 +29,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 /**
  * Dialog for easy creating confirmation dialogs;
  */
-public class DeleteDialog<T> extends AbstractDialog<T> {
+public class DeleteDialog<T extends Serializable> extends AbstractDialog<T> {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -34,7 +37,7 @@ public class DeleteDialog<T> extends AbstractDialog<T> {
 
     private Component component;
 
-    @SuppressWarnings({ "unused" })
+    @SuppressWarnings({"unused"})
     public DeleteDialog() {
         add(new Label("label", new ResourceModel(getTextKey())));
         setFocusOnCancel();
@@ -45,6 +48,10 @@ public class DeleteDialog<T> extends AbstractDialog<T> {
         this.component = component;
         add(new Label("label", new StringResourceModel(getTextKey(), component, model)));
         setFocusOnCancel();
+    }
+
+    public DeleteDialog(final T object, final Component component) {
+        this(new Model<T>(object), component);
     }
 
     public IModel getTitle() {

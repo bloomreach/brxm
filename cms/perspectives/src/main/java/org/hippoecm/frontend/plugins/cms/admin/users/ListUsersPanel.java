@@ -42,6 +42,7 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
@@ -114,14 +115,15 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
                 cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<String>(model, "email")));
             }
         });
-        columns.add(new AbstractColumn(new ResourceModel("user-group")) {
+        columns.add(new AbstractColumn<User>(new ResourceModel("user-group")) {
             @Override
-            public void populateItem(final Item cellItem, final String componentId, final IModel model) {
-                User user = (User) model.getObject();
-
+            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                     final IModel<User> model) {
+                User user = model.getObject();
+                List<Group> groups = user.getLocalMemberShips();
                 GroupsLinkListPanel groupsLinkListPanel = new GroupsLinkListPanel(
                         componentId,
-                        user.getLocalMemberships(),
+                        groups,
                         context,
                         ListUsersPanel.this
                 );

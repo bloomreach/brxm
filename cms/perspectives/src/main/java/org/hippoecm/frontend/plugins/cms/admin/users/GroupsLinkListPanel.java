@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
+import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
 
 /**
@@ -31,19 +31,19 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
  */
 public class GroupsLinkListPanel extends Panel {
 
-    public GroupsLinkListPanel(final String id, final List<DetachableGroup> groupsModel,
+    public GroupsLinkListPanel(final String id, final List<Group> groups,
                                final IPluginContext pluginContext,
                                final BreadCrumbPanel breadCrumbPanel) {
         super(id);
 
-        ListView<DetachableGroup> groupListView = new ListView<DetachableGroup>("item", groupsModel) {
+        ListView<Group> groupListView = new ListView<Group>("item", groups) {
             @Override
-            protected void populateItem(final ListItem<DetachableGroup> groupListItem) {
-                DetachableGroup groupModel = groupListItem.getModelObject();
+            protected void populateItem(final ListItem<Group> groupListItem) {
+                Group group = groupListItem.getModelObject();
                 ViewGroupActionLink action = new ViewGroupActionLink(
                         "link",
-                        new PropertyModel<String>(groupModel, "groupname"),
-                        groupModel,
+                        new PropertyModel<String>(group, "groupname"),
+                        group,
                         pluginContext,
                         breadCrumbPanel
                 );

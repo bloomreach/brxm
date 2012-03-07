@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -124,7 +125,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
 
         // local memberships
         Label localLabel = new Label("local-memberships-label", new ResourceModel("user-local-memberships"));
-        localList = new MembershipsListEditView("local-memberships",user);
+        localList = new MembershipsListEditView("local-memberships", user);
         form.add(localLabel);
         form.add(localList);
 
@@ -153,28 +154,32 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
     /**
      * list view to be nested in the form.
      */
-    private final class MembershipsListEditView extends ListView<DetachableGroup> {
+    private final class MembershipsListEditView extends ListView<Group> {
+
         private static final long serialVersionUID = 1L;
 
+        private User user;
+
         public MembershipsListEditView(final String id, final User user) {
-            super(id, new PropertyModel<List<DetachableGroup>>(user, "localMemberships"));
+            super(id);
+            ArrayList<Group> groups = new ArrayList<Group>(user.getLocalMemberShips());
+            setModel(new Model<ArrayList<Group>>(groups));
             this.user = user;
             setReuseItems(false);
             setOutputMarkupId(true);
             DomainDataProvider.setDirty();
         }
 
-        private User user;
-
-        protected void populateItem(final ListItem<DetachableGroup> item) {
+        @Override
+        protected void populateItem(final ListItem<Group> item) {
             item.setOutputMarkupId(true);
-            final DetachableGroup groupModel = item.getModelObject();
+            final Group group = item.getModelObject();
 
             AdminBreadCrumbPanel viewUserPanel = this.findParent(ViewUserPanel.class);
 
             ViewGroupActionLink groupLink = new ViewGroupActionLink(
-                    "link", new PropertyModel<String>(groupModel, "groupname"),
-                    groupModel, context, viewUserPanel
+                    "link", new PropertyModel<String>(group, "groupname"),
+                    group, context, viewUserPanel
             );
 
             item.add(groupLink);
@@ -192,7 +197,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                 List<String> roles = new ArrayList<String>();
                 for (Domain.AuthRole authRole : authRoles.values()) {
                     Set<String> groupNamesList = authRole.getGroupnames();
-                    boolean groupIncludedInAuthRole = groupNamesList.contains(groupModel.getGroup().getGroupname());
+                    boolean groupIncludedInAuthRole = groupNamesList.contains(group.getGroupname());
                     if (groupIncludedInAuthRole) {
                         roles.add(authRole.getRole());
                     }
@@ -214,7 +219,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     try {
-                        groupModel.getGroup().removeMembership(user.getUsername());
+                        group.removeMembership(user.getUsername());
                         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
                         if (eventBus != null) {
                             final UserSession userSession = UserSession.get();
@@ -224,13 +229,13 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
                                     .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
                                     .message(
                                             "removed user " + user.getUsername()
-                                                    + " from group " + groupModel.getGroup().getGroupname());
+                                                    + " from group " + group.getGroupname());
                             eventBus.post(event);
                         }
-                        info(getString("user-membership-removed", groupModel));
+                        info(getString("user-membership-removed", new Model<Group>(group)));
                         localList.removeAll();
                     } catch (RepositoryException e) {
-                        error(getString("user-membership-remove-failed", groupModel));
+                        error(getString("user-membership-remove-failed", new Model<Group>(group)));
                         log.error("Failed to remove memberships", e);
                     }
                     target.addComponent(SetMembershipsPanel.this);

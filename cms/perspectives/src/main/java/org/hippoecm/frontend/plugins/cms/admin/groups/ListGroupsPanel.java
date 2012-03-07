@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,15 +44,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This panel displays a pageable, searchable list of groups.
@@ -106,7 +107,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                         activate(new IBreadCrumbPanelFactory() {
                             public BreadCrumbPanel create(final String componentId,
                                                           final IBreadCrumbModel breadCrumbModel) {
-                                return new ViewGroupPanel(componentId, context, breadCrumbModel, model);
+                                return new ViewGroupPanel(componentId, context, breadCrumbModel, model.getObject());
                             }
                         });
                     }

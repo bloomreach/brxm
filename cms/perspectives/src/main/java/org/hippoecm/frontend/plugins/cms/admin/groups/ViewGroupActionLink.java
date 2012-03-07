@@ -25,17 +25,17 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class ViewGroupActionLink extends AjaxFallbackLink<String> {
-    private final IModel<Group> groupModel;
+    private final Group group;
     private final IPluginContext context;
     private final BreadCrumbPanel breadCrumbPanel;
 
     private static final long serialVersionUID = 1L;
 
-    public ViewGroupActionLink(final String id, final IModel<String> labelTextModel, final IModel<Group> groupModel,
+    public ViewGroupActionLink(final String id, final IModel<String> labelTextModel, final Group group,
                                final IPluginContext context, final BreadCrumbPanel breadCrumbPanel) {
         super(id, labelTextModel);
 
-        this.groupModel = groupModel;
+        this.group = group;
         this.context = context;
         this.breadCrumbPanel = breadCrumbPanel;
 
@@ -48,7 +48,7 @@ public class ViewGroupActionLink extends AjaxFallbackLink<String> {
     public void onClick(AjaxRequestTarget target) {
         breadCrumbPanel.activate(new IBreadCrumbPanelFactory() {
             public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
-                return new ViewGroupPanel(componentId, context, breadCrumbModel, groupModel);
+                return new ViewGroupPanel(componentId, context, breadCrumbModel, group);
             }
         });
     }
