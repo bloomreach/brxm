@@ -44,6 +44,9 @@
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
             <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
         </sv:property>
+        <sv:property sv:name="hippofacnav:skipresultsetfacetsavailable" sv:type="Boolean">
+          <sv:value>true</sv:value>
+        </sv:property>
     </sv:node>
     <sv:node sv:name="index page">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -76,6 +79,9 @@
         </sv:property>
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
             <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippofacnav:skipresultsetfacetsavailable" sv:type="Boolean">
+          <sv:value>true</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="faceted navigation">
@@ -134,6 +140,10 @@
         </sv:property>
         <sv:property sv:name="hippofacnav:filters" sv:type="String">
             <sv:value>jcr:primaryType=demosite:productdocument</sv:value>
+        </sv:property>
+        
+        <sv:property sv:name="hippofacnav:skipresultsetfacetsavailable" sv:type="Boolean">
+          <sv:value>true</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>
