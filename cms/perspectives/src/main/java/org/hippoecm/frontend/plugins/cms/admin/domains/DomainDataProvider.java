@@ -32,7 +32,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainDataProvider extends SortableDataProvider {
+public class DomainDataProvider extends SortableDataProvider<Domain> {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -46,10 +46,11 @@ public class DomainDataProvider extends SortableDataProvider {
     private static volatile boolean dirty = true;
 
     private static String sessionId = "none";
-    
+
     public DomainDataProvider() {
     }
 
+    @Override
     public Iterator<Domain> iterator(int first, int count) {
         populateDomainList();
         List<Domain> domains = new ArrayList<Domain>();
@@ -59,10 +60,12 @@ public class DomainDataProvider extends SortableDataProvider {
         return domains.iterator();
     }
 
-    public IModel model(Object object) {
-        return new DetachableDomain((Domain) object);
+    @Override
+    public IModel<Domain> model(Domain domain) {
+        return new DetachableDomain(domain);
     }
 
+    @Override
     public int size() {
         populateDomainList();
         return domainList.size();
@@ -86,6 +89,7 @@ public class DomainDataProvider extends SortableDataProvider {
             domainList.clear();
             NodeIterator iter;
             try {
+                @SuppressWarnings("deprecation")
                 Query listQuery = ((UserSession) Session.get()).getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
                 iter = listQuery.execute().getNodes();
                 while (iter.hasNext()) {
@@ -103,7 +107,7 @@ public class DomainDataProvider extends SortableDataProvider {
                 dirty = false;
             } catch (RepositoryException e) {
                 log.error("Error while trying to query domain nodes.", e);
-            }   
+            }
         }
     }
 }

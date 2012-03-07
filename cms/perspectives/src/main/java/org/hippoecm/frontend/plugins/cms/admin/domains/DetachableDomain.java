@@ -25,7 +25,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableDomain extends LoadableDetachableModel {
+public final class DetachableDomain extends LoadableDetachableModel<Domain> {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -39,14 +39,14 @@ public final class DetachableDomain extends LoadableDetachableModel {
     }
 
     /**
-     * @param c
+     * @param domain the Domain to wrap
      */
     public DetachableDomain(final Domain domain) {
         this(domain.getPath());
     }
 
     /**
-     * @param id
+     * @param path the path to the Domain
      */
     public DetachableDomain(final String path) {
         if (path == null || path.length() == 0) {
@@ -65,7 +65,7 @@ public final class DetachableDomain extends LoadableDetachableModel {
 
     /**
      * used for dataview with ReuseIfModelsEqualStrategy item reuse strategy
-     * 
+     *
      * @see org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy
      * @see java.lang.Object#equals(java.lang.Object)
      */
