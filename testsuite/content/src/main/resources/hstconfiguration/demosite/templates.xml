@@ -45,6 +45,11 @@
             &lt;div class="bannersHome"&gt;
             &lt;@hst.include ref="banners-ul"/&gt; &lt;/div&gt; 
             
+            &lt;div style="border-width: 4px; border-style: solid; border-color: red; "&gt;
+            &lt;p&gt; Apart from this text, this container should be EMPTY as the banners should be skipped 
+            by ExampleComponentWindowCreationFilter due to parameter ExampleComponentWindowCreationFilter.skip = true&lt;/p&gt;
+            &lt;@hst.include ref="container-with-skipped-banners"/&gt; &lt;/div&gt; 
+            
             &lt;hr/&gt;
             &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
             var="imageset" hippobean=image

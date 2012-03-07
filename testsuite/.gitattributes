@@ -85,6 +85,8 @@ site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=
 site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowCreationFilter.java -text svneol=unset#text/plain
+site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/ProductRepresentation.java -text
@@ -118,6 +120,7 @@ site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesView
 site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.java -text
 site/src/main/resources/META-INF/client-assembly/base.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
+site/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
 site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
