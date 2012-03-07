@@ -161,13 +161,21 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
     @Override
     public Map<String, IFieldDescriptor> getDeclaredFields() {
         load();
-        return Collections.unmodifiableMap(declaredFields);
+        if (declaredFields != null) {
+            return Collections.unmodifiableMap(declaredFields);
+        } else {
+            return null;
+        }
     }
     
     @Override
     public Map<String, IFieldDescriptor> getFields() {
         load();
-        return Collections.unmodifiableMap(fields);
+        if (fields != null) {
+            return Collections.unmodifiableMap(fields);
+        } else {
+            return null;
+        }
     }
 
     @Override
