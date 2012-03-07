@@ -140,12 +140,12 @@ public final class CredentialCipher {
 
             byte[] decrypted = cipher.doFinal(bytes);
             ByteArrayInputStream baos = new ByteArrayInputStream(decrypted);
-            ObjectInputStream oos = new ObjectInputStream(baos);
-            String encryptedKey = (String) oos.readObject();
+            ObjectInputStream ois = new ObjectInputStream(baos);
+            String encryptedKey = (String) ois.readObject();
             if (!key.equals(encryptedKey)) {
                 throw new SignatureException("Provided key does not match encrypted key");
             }
-            return (Credentials) oos.readObject();
+            return (Credentials) ois.readObject();
         } catch (NoSuchPaddingException e) {
             throw new RuntimeException("Could not decrypt credentials", e);
         } catch (NoSuchAlgorithmException e) {
