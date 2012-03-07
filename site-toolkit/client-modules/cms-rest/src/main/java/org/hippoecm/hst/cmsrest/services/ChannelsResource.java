@@ -19,7 +19,7 @@ package org.hippoecm.hst.cmsrest.services;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNELS_RETRIEVAL_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_SAVING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
             if (log.isWarnEnabled()) {  
-                log.warn(PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
+                log.warn(PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
             }
             // COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
             //                  For now return empty list
@@ -95,8 +95,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public List<HstPropertyDefinition> getChannelPropertyDefinitions(String id) {
-        // TODO MNour: To be implemented
-        return null;
+        // TODO MNour: To be implemented! This is a mockup!
+        return new ArrayList<HstPropertyDefinition>();
     }
 
 }

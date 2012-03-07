@@ -26,6 +26,6 @@ public class ChannelsResourceConsts {
 	public static final String MESSAGE_CHANNELS_RETRIEVAL_ERROR = "Error while retrieving channels - %s : %s : %s";
 	public static final String MESSAGE_CHANNEL_SAVING_ERROR = "Error while saving a channel - Channel: %s - %s : %s : %s";
 	public static final String PARAM_MESSAGE_ERROR_WHILE_CREATING_CHANNEL = "Error while creating channel: {}";
-	public static final String PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing channels resource request for channel '{}'";
+	public static final String PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR = "Error while processing channels resource request for channel '{}'";
 
 }

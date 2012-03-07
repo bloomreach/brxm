@@ -35,9 +35,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
@@ -49,6 +52,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.parameters.Parameter;
@@ -57,6 +61,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
@@ -77,32 +82,41 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        propagateJcrSession(getCredentials());
+    }
+
+    @Override
     @After
     public void tearDown() throws Exception {
         HstServices.setComponentManager(null);
 
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:hosts/dev-localhost").getNodes("cmit-*"); ni.hasNext(); ) {
+        Session session = getSession();
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:hosts/dev-localhost").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:sites").getNodes("channel-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:sites").getNodes("channel-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:sites").getNodes("cmit-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:sites").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("channel-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:configurations").getNodes("channel-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:configurations").getNodes("cmit-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:configurations").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:channels").getNodes("cmit-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:channels").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        for (NodeIterator ni = getSession().getNode("/hst:hst/hst:blueprints").getNodes("cmit-*"); ni.hasNext(); ) {
+        for (NodeIterator ni = session.getNode("/hst:hst/hst:blueprints").getNodes("cmit-*"); ni.hasNext(); ) {
             ni.nextNode().remove();
         }
-        getSession().save();
+        session.save();
+        dePropagateSession();
 
         super.tearDown();
     }
@@ -446,7 +460,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         final ChannelManagerImpl manager = new ChannelManagerImpl();
         manager.setRepository(getRepository());
         // FIXME: use readonly credentials
-        manager.setCredentials(new SimpleCredentials("admin", "admin".toCharArray()));
+        manager.setCredentials(getCredentials());
         
         ComponentManager cm = createMock(ComponentManager.class);
         setComponentManager(cm);
@@ -488,6 +502,35 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         verify(testHost, testMount);
 
         return manager;
+    }
+
+    private void propagateJcrSession(Credentials credentials) throws LoginException, RepositoryException {
+        Session session;
+
+        if (credentials == null) {
+            session = getRepository().login();
+        } else {
+            session = getRepository().login(credentials);
+        }
+
+        CmsJcrSessionThreadLocal.setJcrSession(session);
+    }
+
+    private void propagateJcrSession() throws LoginException, RepositoryException {
+        propagateJcrSession(null);
+    }
+
+    private void dePropagateSession() {
+        CmsJcrSessionThreadLocal.clearJcrSession();
+    }
+
+    private Credentials getCredentials() {
+        return new SimpleCredentials("admin", "admin".toCharArray());
+    }
+
+    @Override
+    public Session getSession() {
+        return CmsJcrSessionThreadLocal.getJcrSession();
     }
 
     private static void expectMountLoad(final VirtualHost host, final MutableMount mount, VirtualHosts vhosts) {
