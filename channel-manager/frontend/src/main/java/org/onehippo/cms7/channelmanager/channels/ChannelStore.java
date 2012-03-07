@@ -45,6 +45,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
+import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.security.HstSubject;
@@ -386,6 +387,27 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
         
         return channel;
+    }
+
+    public List<HstPropertyDefinition> getChannelPropertyDefinitions(Channel channel) {
+        // COMMENT - MNour: This is just a mockup!
+        return new ArrayList<HstPropertyDefinition>();
+    }
+
+    public void saveChannel(Channel channel) {
+        // This code can be in a utility but I am leaving it like that not to be forgotten
+        // cause this is ugly and needs to be handled in a middleware way of thing
+        UserSession session = (UserSession) org.apache.wicket.Session.get();
+
+        @SuppressWarnings("deprecation")
+        Credentials credentials = session.getCredentials();
+        Subject subject = new Subject();
+
+        subject.getPrivateCredentials().add(credentials);
+        subject.setReadOnly();
+
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, subject);
+        channelService.save(channel);
     }
 
     protected void loadChannels() {

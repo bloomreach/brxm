@@ -256,34 +256,8 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         if (channel == null) {
             return;
         }
-        // FIXME: move boilerplate to CMS engine
-        UserSession session = (UserSession) Session.get();
 
-        @SuppressWarnings("deprecation")
-        Credentials credentials = session.getCredentials();
-
-        Subject subject = new Subject();
-        subject.getPrivateCredentials().add(credentials);
-        subject.setReadOnly();
-
-        final ChannelManager channelManager = ChannelUtil.getChannelManager();
-        if (channelManager == null) {
-            log.warn("Cannot save channel '{}' because the channel manager cannot be loaded. Is the site running?", channel.getId());
-            return;
-        }
-
-        try {
-            HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Void>() {
-                public Void run() throws ChannelException {
-                    channelManager.save(channel);
-                    return null;
-                }
-            }, null);
-        } catch (PrivilegedActionException e) {
-            log.error("Could not save channel", e.getException());
-        } finally {
-            HstSubject.clearSubject();
-        }
+        channelStore.saveChannel(channel);
     }
 
     @Override
@@ -339,12 +313,13 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             log.info("Could not load the channel manager: the definition for property '{}' is unknown", propertyName);
             return null;
         }
-        
+
         for (HstPropertyDefinition definition : channelManager.getPropertyDefinitions(channel)) {
             if (definition.getName().equals(propertyName)) {
                 return definition;
             }
         }
+
         log.warn("Could not find definition for property '{}'", propertyName);
         return null;
     }
