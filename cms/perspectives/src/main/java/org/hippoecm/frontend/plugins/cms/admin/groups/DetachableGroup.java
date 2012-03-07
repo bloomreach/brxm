@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 public final class DetachableGroup extends LoadableDetachableModel<Group> {
 
@@ -65,22 +65,27 @@ public final class DetachableGroup extends LoadableDetachableModel<Group> {
 
     /**
      * used for dataview with ReuseIfModelsEqualStrategy item reuse strategy
-     * 
+     *
      * @see org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (obj instanceof DetachableGroup) {
-            DetachableGroup other = (DetachableGroup) obj;
-            return (path != null) && (other.path != null) && path.equals(other.path);
-        } else {
+        if (obj == null) {
             return false;
         }
+
+        boolean objIsDetachableGroup = obj instanceof DetachableGroup;
+        if (!objIsDetachableGroup) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        DetachableGroup other = (DetachableGroup) obj;
+        return (path != null) && (other.path != null) && path.equals(other.path);
     }
 
     /**
@@ -101,8 +106,8 @@ public final class DetachableGroup extends LoadableDetachableModel<Group> {
     }
 
     /**
-     * Remove after upgrade to wicket 1.4, which has generics.
-     * This is just an alias for (Group) getObject().
+     * Remove after upgrade to wicket 1.4, which has generics. This is just an alias for (Group) getObject().
+     *
      * @return the Group that this Model wraps
      */
     public Group getGroup() {
