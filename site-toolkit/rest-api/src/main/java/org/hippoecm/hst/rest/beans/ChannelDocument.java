@@ -15,18 +15,12 @@
  */
 package org.hippoecm.hst.rest.beans;
 
-import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Information about a document in a certain channel.
  */
-@XmlRootElement(name = "channeldocument")
-public class ChannelDocument implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
-    
+public class ChannelDocument {
+
     private static final int HASH_SEED = 17;
     private static final int ODD_PRIME = 37;
 

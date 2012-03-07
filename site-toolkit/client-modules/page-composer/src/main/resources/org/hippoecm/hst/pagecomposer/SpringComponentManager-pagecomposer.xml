@@ -118,7 +118,7 @@
     </property>
   </bean>
 
-  <!-- configure that call to the programmatic creation of the _cmsrest Mount for Host 127.0.0.1 -->
+  <!-- configure that call to the programmatic creation of the _rp Mount for Host 127.0.0.1 -->
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>

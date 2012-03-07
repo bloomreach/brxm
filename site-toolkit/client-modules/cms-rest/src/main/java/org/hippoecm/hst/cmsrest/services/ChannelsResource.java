@@ -17,6 +17,7 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNELS_RETRIEVAL_ERROR;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_SAVING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.ChannelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +59,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 			return Collections.emptyList();
 		} catch (ChannelException ce) {
 			if (log.isErrorEnabled()) {
-				log.error(MESSAGE_CHANNELS_RETRIEVAL_ERROR);
+				log.error(String.format(MESSAGE_CHANNELS_RETRIEVAL_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
 			}
 			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			//                  For now return empty list
@@ -66,27 +68,35 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.hippoecm.hst.rest.ChannelService#getChannel(java.lang.String)
-	 */
-	@Override
-	public Channel getChannel(String id) {
-		try {
-			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// COMMENT - MNour: We should use a proper validation framework!
-			validate();
-			// COMMENT - MNour: Channel manager retrieves channels based on path! We need to retrieve them based on UUID(s)/Id(s).
-			// return channelManager.getChannel(channelPath);
-			// COMMENT - MNour: This is only test data
-			return new Channel("this-is-a-test-channel");
-		} catch (ResourceRequestValidationException rrve) {
-			log.warn(PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, id);
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
-			// throw rrve;
-			// COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
-			return null;
-		}
-	}
+    @Override
+    public void save(Channel channel) {
+        try {
+            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
+            // COMMENT - MNour: We should use a proper validation framework!
+            validate();
+            // COMMENT - MNour: This is only test data
+            channelManager.save(channel);
+        } catch (ResourceRequestValidationException rrve) {
+            if (log.isWarnEnabled()) {  
+                log.warn(PARAM_MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
+            }
+            // COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+            //                  For now return empty list
+            // throw rrve;
+            // COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
+        } catch (ChannelException ce) {
+            if (log.isErrorEnabled()) {
+                if (log.isErrorEnabled()) {
+                    log.error(String.format(MESSAGE_CHANNEL_SAVING_ERROR, channel, ce.getClass().getName(), ce.getMessage(), ce));
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<HstPropertyDefinition> getChannelPropertyDefinitions(String id) {
+        // TODO MNour: To be implemented
+        return null;
+    }
 
 }

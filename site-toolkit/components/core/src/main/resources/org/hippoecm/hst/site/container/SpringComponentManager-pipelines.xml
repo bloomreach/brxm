@@ -65,11 +65,15 @@
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
     <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
   </bean>
-  
+
+  <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestSecurityValve"/>
+
+  <bean id="cmsRestCredentialsToJcrSessionPropagatorValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestCredentialsToJcrSessionPropagatorValve">
+    <property name="repository" ref="javax.jcr.Repository.cms"/>
+  </bean>
+
   <bean id="cmsHostContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostContextValve"/>
-  
-  
-  
+
   <!-- Generic no-cache response headers setting valve -->
   <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
     <property name="settableHeaders">

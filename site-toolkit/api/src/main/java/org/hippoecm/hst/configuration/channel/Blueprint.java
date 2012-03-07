@@ -15,14 +15,12 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.io.Serializable;
 
 /**
  * A Blueprint is provided by the developers to create and manage channels by the {@link ChannelManager},
  * and is defined by the node type <code>hst:blueprint</code>. Please see the <code>hst.cnd</code> for the node type definition
  */
-@SuppressWarnings("serial")
-public class Blueprint implements Serializable {
+public class Blueprint {
 
 	private boolean hasContentPrototype;
 	private String id;

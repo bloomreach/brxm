@@ -18,13 +18,16 @@ package org.hippoecm.hst.rest;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Channel} resources
@@ -42,14 +45,23 @@ public interface ChannelService {
 	public List<Channel> getChannels();
 
     /**
-     * Returns a channel identified by an Id
-     * 
-     * @param id - The <code>id</code> of a {@link Channel}
-     * @return A {@link Channel} object instance identified by <code>id</code> if available, <code>null</code> otherwise
+     * Save channel properties.  If the URL path of the new channel is not empty, all
+     * path-steps except the last one should already map to an existing mount.
+     * <p>
+     * When invoking this method, an HstSubject context must be provided with the credentials necessary
+     * to persist the channel.
+     * </p>
+     *
+     * @param channel the channel to persist
      */
-	@GET
-	@Path("/{id}/")
+	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	public Channel getChannel(@PathParam("id") String id);
+	@Consumes(MediaType.APPLICATION_JSON)
+    public void save(Channel channel);
+
+	@GET
+	@Path("/{id}#propdefs")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<HstPropertyDefinition> getChannelPropertyDefinitions(@PathParam("id") String id);
 
 }

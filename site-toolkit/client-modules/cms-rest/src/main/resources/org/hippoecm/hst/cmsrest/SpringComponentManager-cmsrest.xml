@@ -85,6 +85,11 @@
             <list>
               <ref bean="initializationValve" />
               <ref bean="cmsHostContextValve"/>
+              <!--  Both cmsRestSecurityValve and cmsRestCredentialsToJcrSessionPropagatorValve
+                    must be applied in this order -->
+
+              <ref bean="cmsRestSecurityValve"/>
+              <ref bean="cmsRestCredentialsToJcrSessionPropagatorValve"/>
             </list>
           </property>
           <property name="processingValves">
@@ -102,7 +107,7 @@
       </list>
     </property>
   </bean>
-  
+
   <!-- configure that call to the programmatic creation of the _cmsrest Mount for Host 127.0.0.1 -->
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>

@@ -26,11 +26,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -40,7 +38,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
-import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -49,8 +46,8 @@ import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
-import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -323,34 +320,49 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    protected Session getSession(boolean writable) throws RepositoryException {
-        Credentials credentials = this.credentials;
-        if (writable) {
-            Subject subject = HstSubject.getSubject(null);
-            if (subject != null) {
-                Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
-                if (!repoCredsSet.isEmpty()) {
-                    credentials = repoCredsSet.iterator().next();
-                } else {
-                    throw new LoginException("Repository credentials for the subject is not found.");
-                }
-            } else {
-                throw new LoginException("No subject available to obtain writable session");
-            }
+//    protected Session getSession(boolean writable) throws RepositoryException {
+//        Credentials credentials = this.credentials;
+//        if (writable) {
+//            Subject subject = HstSubject.getSubject(null);
+//            if (subject != null) {
+//                Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
+//                if (!repoCredsSet.isEmpty()) {
+//                    credentials = repoCredsSet.iterator().next();
+//                } else {
+//                    throw new LoginException("Repository credentials for the subject is not found.");
+//                }
+//            } else {
+//                throw new LoginException("No subject available to obtain writable session");
+//            }
+//        }
+//
+//        javax.jcr.Session session;
+//
+//        if (credentials == null) {
+//            session = this.repository.login();
+//        } else {
+//            session = this.repository.login(credentials);
+//        }
+//
+//        // session can come from a pooled event based pool so always refresh before building configuration:
+//        session.refresh(false);
+//
+//        return session;
+//    }
+
+    protected Session getSession(/* To be removed */ boolean writable) throws RepositoryException {
+        // COMMENT - MNour: This is (really * 10^6) a bad hack. We (realy * 10^6) need to rethink about handling resources
+        //                  and relevant security issues in a more concise way!
+        Session jcrSession = CmsJcrSessionThreadLocal.getJcrSession();
+
+        // COMMENT - MNour: This is really a dirty hack
+        // If there is no propagated JCR session
+        if (jcrSession == null) {
+            // Create a read-only one
+            jcrSession = repository.login();
         }
 
-        javax.jcr.Session session;
-
-        if (credentials == null) {
-            session = this.repository.login();
-        } else {
-            session = this.repository.login(credentials);
-        }
-
-        // session can come from a pooled event based pool so always refresh before building configuration:
-        session.refresh(false);
-
-        return session;
+        return jcrSession;
     }
 
     public synchronized Channel getChannel(String jcrPath) throws ChannelException {
