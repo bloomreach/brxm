@@ -6,13 +6,13 @@ conf/context.xml -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
-content/src/main/resources/content/documents/demosite/wikipedia.xml -text
 content/src/main/resources/default-ecm-content.xml -text
 content/src/main/resources/democontent/demosite-common.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-facetproducts.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-gallery.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-news.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-products.xml -text
+content/src/main/resources/democontent/demosite-wikipedia.xml -text
 content/src/main/resources/democontent_fr/demo-common-fr.xml -text svneol=unset#text/plain
 content/src/main/resources/demosite-namespace.xml svneol=native#text/plain
 content/src/main/resources/demosite-types.cnd -text
@@ -26,7 +26,6 @@ content/src/main/resources/hst-configurations.xml -text svneol=unset#text/plain
 content/src/main/resources/hst-sites.xml -text
 content/src/main/resources/hst-subsite-template.xml -text
 content/src/main/resources/hst-virtualhosts.xml svneol=native#text/plain
-content/src/main/resources/hst/configurations/democommon/components/bodywikipediaarchive.xml -text
 content/src/main/resources/hstconfiguration/catalog_common.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/democommon/components.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/democommon/pages.xml svneol=native#text/plain
@@ -45,7 +44,6 @@ content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text s
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
-content/src/main/resources/namespaces/demosite/wikidocument.xml -text
 content/src/main/resources/security/group-sitegroup.xml -text svneol=unset#text/plain
 content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
