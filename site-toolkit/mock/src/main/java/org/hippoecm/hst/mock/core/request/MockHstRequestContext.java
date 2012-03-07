@@ -38,6 +38,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -82,6 +83,7 @@ public class MockHstRequestContext implements HstRequestContext {
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
     private Set<String> componentFilterTags;   
+    private List<HstComponentWindowCreationFilter> filters;
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
 
@@ -382,6 +384,15 @@ public class MockHstRequestContext implements HstRequestContext {
         return Collections.unmodifiableSet(componentFilterTags);
     }
     
+
+    @Override
+    public List<HstComponentWindowCreationFilter> getComponentWindowCreationFilters() {
+        if (filters == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(filters);
+    }
+    
     @Override
     public boolean isFullyQualifiedURLs() {
         return fullyQualifiedURLs;
@@ -391,5 +402,6 @@ public class MockHstRequestContext implements HstRequestContext {
     public String getRenderHost() {
         return renderHost;
     }
+
 
 }

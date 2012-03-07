@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -105,8 +106,15 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
     /**
      * set the conditions that will trigger a component to be added to the component window hierarchy.
+     * @param conditions the {@link Set} of {@link String} conditions
      */
     void setComponentFilterTags(Set<String> conditions);
+    
+    /**
+     * Adds the {@link HstComponentWindowCreationFilter} to the {@link HstRequestContext}  
+     * @param filter the {@link HstComponentWindowCreationFilter} to be added to the {@link HstRequestContext#getComponentWindowCreationFilters()}
+     */
+    void addComponentWindowCreationFilters(HstComponentWindowCreationFilter filter);
     
     /**
      * @param fullyQualifiedURLs sets whether created URLs will be fully qualified

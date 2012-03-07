@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.request;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,10 @@ import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentFactory;
+import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
+import org.hippoecm.hst.core.container.HstComponentWindowFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -327,9 +332,14 @@ public interface HstRequestContext {
     
     /**
      * <p>
-     * The tags that will be used to render container items.
+     * <b>Expert:</b> The tags that will be used to render container items. These tags can be used by a {@link HstComponentFactory} 
+     * implementation to decide to load some specific {@link HstComponentWindow}s only.
      * </p>
      * <p>
+     * This method is in general not useful for frontend developers and is more targetted for the HST Core
+     * </p>
+     * <p>
+     * HST Core {@link HstComponentFactory} implementations behave as follows: 
      * When tags are available, and there is a container item in a container that matches the tag,
      * those container items will be rendered at the exclusion of the other items.
      * If no tags are provided, or none matches any of the tags on the container items,
@@ -340,6 +350,18 @@ public interface HstRequestContext {
      */
     Set<String> getComponentFilterTags();
 
+    /** 
+     * <p>
+     * <b>Expert:</b> This is used by the HST {@link HstComponentWindowFactory} implementations to optionally skip 
+     * some {@link HstComponentWindow}(s) tree(s). 
+     * </p>
+     * <p>
+     * This method is in general not useful for frontend developers and is more targetted for the HST Core
+     * </p>
+     * @return the (immutable) {@link List} of {@link HstComponentWindowCreationFilter}s and if none present, return a empty List
+     */
+    List<HstComponentWindowCreationFilter> getComponentWindowCreationFilters();
+    
     /**
      * @return <code>true</code> when all URLs must be fully qualified, ie, including scheme, domain and portnumber (if present)
      */

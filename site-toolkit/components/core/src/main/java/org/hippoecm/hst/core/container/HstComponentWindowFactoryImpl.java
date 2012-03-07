@@ -122,6 +122,12 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 } else if (tag != null) {
                     continue;
                 }
+                
+                // check whether the child window should be skipped
+                if(skipCompWindow(requestContext, childCompConfig)) {
+                    continue;
+                }
+                
                 HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
                 window.addChildWindow(childCompWindow);
             }
@@ -130,4 +136,18 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         return window;
     }
 
+    /**
+     * @param requestContext
+     * @param compConfig
+     * @return <code>true</code> when the component window for compConfig should be skipped
+     */
+    private boolean skipCompWindow (HstRequestContext requestContext, HstComponentConfiguration compConfig) {
+        for (HstComponentWindowCreationFilter creationfilter : requestContext.getComponentWindowCreationFilters()) {
+            if (creationfilter.skipComponentWindow(requestContext, compConfig)) {
+                // we have found a filter that indicates that the childCompWindow should be skipped. Skip it now
+                return true;
+            }
+        }
+        return false;
+    }
 }
