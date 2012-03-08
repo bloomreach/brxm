@@ -162,7 +162,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
 
         public MembershipsListEditView(final String id, final User user) {
             super(id);
-            ArrayList<Group> groups = new ArrayList<Group>(user.getLocalMemberShips());
+            ArrayList<Group> groups = new ArrayList<Group>(user.getLocalMembershipsAsListOfGroups());
             setModel(new Model<ArrayList<Group>>(groups));
             this.user = user;
             setReuseItems(false);

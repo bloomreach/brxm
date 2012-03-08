@@ -120,7 +120,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
             public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
                                      final IModel<User> model) {
                 User user = model.getObject();
-                List<Group> groups = user.getLocalMemberShips();
+                List<Group> groups = user.getLocalMembershipsAsListOfGroups();
                 GroupsLinkListPanel groupsLinkListPanel = new GroupsLinkListPanel(
                         componentId,
                         groups,

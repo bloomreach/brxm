@@ -347,7 +347,7 @@ public class User implements Comparable<User>, IClusterable {
         return localMemberships;
     }
 
-    public List<Group> getLocalMemberShips() {
+    public List<Group> getLocalMembershipsAsListOfGroups() {
         List<Group> groups = new ArrayList<Group>();
         for (DetachableGroup group : getLocalMemberships()) {
             groups.add(group.getObject());
