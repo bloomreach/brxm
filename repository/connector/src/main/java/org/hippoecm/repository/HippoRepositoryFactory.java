@@ -192,7 +192,7 @@ public class HippoRepositoryFactory {
             if (ex.getCause() instanceof RepositoryException) {
                 throw (RepositoryException) ex.getCause();
             } else if (ex.getCause() instanceof IllegalArgumentException) {
-                throw new RepositoryException("Invalid data: " + ex.getCause());
+                throw new RepositoryException("Invalid data: " + ex.getCause(), ex);
             } else {
                 throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             }
