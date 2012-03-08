@@ -34,8 +34,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
@@ -99,19 +101,8 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                                      final String componentId,
                                      final IModel<Group> model) {
 
-                AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "groupname")) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        activate(new IBreadCrumbPanelFactory() {
-                            public BreadCrumbPanel create(final String componentId,
-                                                          final IBreadCrumbModel breadCrumbModel) {
-                                return new ViewGroupPanel(componentId, context, breadCrumbModel, model.getObject());
-                            }
-                        });
-                    }
-                };
+                AjaxGroupViewActionLinkLabel action =
+                        new AjaxGroupViewActionLinkLabel(componentId, model.getObject());
                 item.add(action);
             }
         });
@@ -143,6 +134,20 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
+    private class AjaxGroupViewActionLinkLabel extends Panel {
+
+        private AjaxGroupViewActionLinkLabel(final String id, Group group) {
+            super(id);
+            
+            ViewGroupActionLink link = new ViewGroupActionLink(
+                    "link", new Model<String>(group.getGroupname()), group,
+                    context, ListGroupsPanel.this
+            );
+            
+            add(link);
+        }
+    }
+    
     public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-groups-title");
     }
