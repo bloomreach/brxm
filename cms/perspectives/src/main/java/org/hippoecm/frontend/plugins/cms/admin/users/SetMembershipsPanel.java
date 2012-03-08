@@ -17,10 +17,8 @@ package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
@@ -50,6 +48,7 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.DomainLinkListPanel;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
@@ -185,29 +184,19 @@ public class SetMembershipsPanel extends Panel {
 
             item.add(groupLink);
 
-            // It's fine to create a new object here, because it caches anyway. See the setDirty() in the
-            // constructor of this class
-            final DomainDataProvider domainDataProvider = new DomainDataProvider();
-            Iterator<Domain> domainIterator = domainDataProvider.iterator(0, domainDataProvider.size());
-
+            
+            List<PermissionBean> groupPermissions = group.getPermissions();
             Map<Domain, List<String>> domainsWithRoles = new HashMap<Domain, List<String>>();
-
-            while (domainIterator.hasNext()) {
-                Domain domain = domainIterator.next();
-                Map<String, Domain.AuthRole> authRoles = domain.getAuthRoles();
-                List<String> roles = new ArrayList<String>();
-                for (Domain.AuthRole authRole : authRoles.values()) {
-                    Set<String> groupNamesList = authRole.getGroupnames();
-                    boolean groupIncludedInAuthRole = groupNamesList.contains(group.getGroupname());
-                    if (groupIncludedInAuthRole) {
-                        roles.add(authRole.getRole());
-                    }
+            for (PermissionBean permission : groupPermissions) {
+                Domain domain = permission.getDomain().getObject();
+                List<String> roles = domainsWithRoles.get(domain);
+                if (roles == null) {
+                    roles = new ArrayList<String>();
                 }
-                if (!roles.isEmpty()) {
-                    domainsWithRoles.put(domain, roles);
-                }
+                roles.add(permission.getAuthRole().getRole());
+                domainsWithRoles.put(domain, roles);
             }
-
+            
             DomainLinkListPanel domainLinkList = new DomainLinkListPanel(
                     "securityDomains", domainsWithRoles,
                     findParent(ViewUserPanel.class)
