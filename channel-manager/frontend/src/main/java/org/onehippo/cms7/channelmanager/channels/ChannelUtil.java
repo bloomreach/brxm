@@ -34,21 +34,6 @@ final class ChannelUtil {
     }
 
     /**
-     * @param channel the channel to get the ChannelInfo class for
-     * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a
-     * custom ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
-     */
-    static Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) {
-        ChannelManager channelManager = getChannelManager();
-        try {
-            return channelManager == null ? null : getChannelManager().getChannelInfoClass(channel);
-        } catch (ChannelException e) {
-            log.debug("No ChannelInfo class found for channel '" + channel.getId() + "', returning null", e);
-        }
-        return null;
-    }
-
-    /**
      * @param channel the channel to return the resource bundle for
      * @return the resource bundle for the given channel, or <code>null</code> if the channel does not have a resource
      * bundle or the channel manager could not be loaded (e.g. because the site is down).
