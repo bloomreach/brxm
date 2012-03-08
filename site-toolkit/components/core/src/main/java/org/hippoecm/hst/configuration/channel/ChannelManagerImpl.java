@@ -258,7 +258,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public synchronized void load(VirtualHosts virtualHosts) throws RepositoryNotAvailableException {
         Session session = null;
         try {
-            session = getSession(false);
+            session = getSession();
             Node configNode = session.getNode(rootPath);
  
             blueprints = new HashMap<String, Blueprint>();
@@ -324,37 +324,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-//    protected Session getSession(boolean writable) throws RepositoryException {
-//        Credentials credentials = this.credentials;
-//        if (writable) {
-//            Subject subject = HstSubject.getSubject(null);
-//            if (subject != null) {
-//                Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
-//                if (!repoCredsSet.isEmpty()) {
-//                    credentials = repoCredsSet.iterator().next();
-//                } else {
-//                    throw new LoginException("Repository credentials for the subject is not found.");
-//                }
-//            } else {
-//                throw new LoginException("No subject available to obtain writable session");
-//            }
-//        }
-//
-//        javax.jcr.Session session;
-//
-//        if (credentials == null) {
-//            session = this.repository.login();
-//        } else {
-//            session = this.repository.login(credentials);
-//        }
-//
-//        // session can come from a pooled event based pool so always refresh before building configuration:
-//        session.refresh(false);
-//
-//        return session;
-//    }
-
-    protected Session getSession(/* To be removed */ boolean writable) throws RepositoryException {
+    protected Session getSession() throws RepositoryException {
         // COMMENT - MNour: This is (really * 10^6) a bad hack. We (realy * 10^6) need to rethink about handling resources
         //                  and relevant security issues in a more concise way!
         Session jcrSession = CmsJcrSessionThreadLocal.getJcrSession();
@@ -412,7 +382,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         Session session = null;
         try {
-            session = getSession(true);
+            session = getSession();
             Node configNode = session.getNode(rootPath);
             String channelId = createUniqueChannelId(channel.getName(), session);
             createChannel(configNode, blueprint, session, channelId, channel);
@@ -483,7 +453,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
         Session session = null;
         try {
-            session = getSession(true);
+            session = getSession();
             Node configNode = session.getNode(rootPath);
             updateChannel(configNode, channel);
 
@@ -584,8 +554,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
     @Override
     public synchronized boolean canUserModifyChannels() {
         Session session = null;
+
         try {
-            session = getSession(true);
+            session = getSession();
             return session.hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
@@ -594,6 +565,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 session.logout();
             }
         }
+
         return false;
     }
 

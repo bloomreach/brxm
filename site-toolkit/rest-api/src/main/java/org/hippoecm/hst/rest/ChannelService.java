@@ -69,9 +69,25 @@ public interface ChannelService {
 	@Consumes(MediaType.APPLICATION_JSON)
     public void save(Channel channel);
 
+	/**
+	 * Retrieve {@link Channel} property definitions
+	 * 
+	 * @param id - {@link Channel} id
+	 * @return {@link List} of {@link HstPropertyDefinition} for that {@link Channel}
+	 */
 	@GET
 	@Path("/{id}#propdefs")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<HstPropertyDefinition> getChannelPropertyDefinitions(@PathParam("id") String id);
+
+	/**
+	 * Check whether use can modify {@link Channel}(s) or not
+	 * 
+	 * @return <code>true</code> if use can modify {@link Channel}, <code>false</code> otherwise
+	 */
+	@GET
+	@Path("/#canUserModifyChannels")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean canUserModifyChannels();
 
 }

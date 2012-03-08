@@ -70,6 +70,9 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 		}
 	}
 
+	/* (non-Javadoc)
+     * @see org.hippoecm.hst.rest.ChannelService#save(Channel channel)
+     */
     @Override
     public void save(Channel channel) {
         try {
@@ -95,11 +98,17 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.rest.ChannelService#getChannelPropertyDefinitions(String id)
+     */
     @Override
     public List<HstPropertyDefinition> getChannelPropertyDefinitions(String id) {
         return channelManager.getPropertyDefinitions(id);
     }
 
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.rest.ChannelService#getChannel(String id)
+     */
     @Override
     public Channel getChannel(String id) {
         try {
@@ -115,6 +124,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
         //                  HST, CMS and services!
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.rest.ChannelService#canUserModifyChannels()
+     */
+    @Override
+    public boolean canUserModifyChannels() {
+        return channelManager.canUserModifyChannels();
     }
 
 }

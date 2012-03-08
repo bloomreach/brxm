@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 public interface SiteService {
 
     @GET
-    @Path("#areAlive")
+    @Path("/#areAlive")
     @Produces(MediaType.TEXT_PLAIN)
     public boolean isAlive();
 
