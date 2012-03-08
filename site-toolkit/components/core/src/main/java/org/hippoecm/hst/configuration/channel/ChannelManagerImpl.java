@@ -971,4 +971,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.configuration.channel.ChannelManager.getChannelInfoClass(String id)
+     */
+    @Override
+    public Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException {
+        return getChannelInfoClass(getChannelById(id));
+    }
+
 }

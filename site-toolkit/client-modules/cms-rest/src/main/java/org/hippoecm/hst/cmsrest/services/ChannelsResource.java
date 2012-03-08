@@ -21,7 +21,9 @@ import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_C
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +31,13 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.rest.ChannelService;
+import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +139,59 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public boolean canUserModifyChannels() {
         return channelManager.canUserModifyChannels();
+    }
+
+    /* (non-Javadoc)
+     * @see org.hippoecm.hst.rest.ChannelService#getChannelInfoClassInfo(String id)
+     */
+    @Override
+    public ChannelInfoClassInfo getChannelInfoClassInfo(String id) {
+        ChannelInfoClassInfo channelInfoClassInfo = null;
+
+        try {
+            Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
+
+            if (channelInfoClass != null) {
+                channelInfoClassInfo = buildChannelInfoClassInfo(channelInfoClass);
+            }
+
+            return channelInfoClassInfo;
+        } catch (ChannelException ce) {
+            if (log.isDebugEnabled()) {
+                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS, id), ce);
+            } else {
+                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS, id, ce);
+            }
+        }
+
+        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        //                  HST, CMS and services!        
+        return null;
+    }
+
+    protected ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
+        ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
+
+        channelInfoClassInfo.setClassName(channelInfoClass.getName());
+        channelInfoClassInfo.setFieldsGroup(buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
+        return channelInfoClassInfo;
+    }
+
+    protected List<FieldGroupInfo> buildFieldGroupListInfo(FieldGroupList fieldsGroup) {
+        List<FieldGroupInfo> fieldsGroupList = new ArrayList<FieldGroupInfo>();
+        for (FieldGroup fieldGroup : fieldsGroup.value()) {
+            fieldsGroupList.add(buildFieldGroupInfo(fieldGroup));
+        }
+
+        return fieldsGroupList; 
+    }
+
+    protected FieldGroupInfo buildFieldGroupInfo(FieldGroup fieldGroup) {
+        FieldGroupInfo fieldGroupInfo = new FieldGroupInfo();
+
+        fieldGroupInfo.setValue(fieldGroup.value());
+        fieldGroupInfo.setTitleKey(fieldGroup.titleKey());
+        return fieldGroupInfo;
     }
 
 }

@@ -100,10 +100,18 @@ public interface ChannelManager {
      * The channel info class for this channel.  Since this class comes from a separate
      * context, it cannot be deserialized.
      *
-     * @param channel
-     * @return
+     * @param channel - {@link Channel} for which {@link ChannelInfo} is going to be retrieved
+     * @return The {@link ChannelInfo} {@link Class} type of {@link Channel}
      */
     Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException;
+
+    /**
+     * The channel info class for this channel identified by id.
+     *
+     * @param id - {@link Channel} id
+     * @return The {@link ChannelInfo} {@link Class} type of {@link Channel} identified by id
+     */
+    Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException;
 
     /**
      * The channel info for this channel.  It is an instance of the {@link #getChannelInfoClass} class.

@@ -27,7 +27,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Channel} resources
@@ -89,5 +91,16 @@ public interface ChannelService {
 	@Path("/#canUserModifyChannels")
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean canUserModifyChannels();
+
+	/**
+	 * Retrieve {@link ChannelInfo} class information for the {@link Channel} identified by id
+	 * 
+	 * @param id - {@link Channel} id
+	 * @return {@link ChannelInfoClassInfo} of the {@link Channel} with that id, or null if none
+	 */
+	@GET
+	@Path("/{id}#infoClassInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ChannelInfoClassInfo getChannelInfoClassInfo(@PathParam("id") String id);
 
 }
