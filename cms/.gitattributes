@@ -1544,6 +1544,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/vali
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/password/validation/RegexpPasswordValidator.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/DomainLinkListPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/DomainLinkListPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/PermissionBean.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/ViewDomainActionLink.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/permissions/permissions-16.png -text svneol=unset#image/png

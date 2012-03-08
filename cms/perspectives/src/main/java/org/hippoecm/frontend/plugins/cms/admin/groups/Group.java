@@ -16,9 +16,27 @@
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.query.InvalidQueryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
+import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
+import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -28,21 +46,11 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class Group implements Comparable<Group>, IClusterable {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
@@ -52,19 +60,19 @@ public class Group implements Comparable<Group>, IClusterable {
     private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
     private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
 
-        
+
     private String path;
     private String groupname;
-    
+
     private String description;
     private boolean external = false;
 
     private transient Node node;
-    
+
     public static QueryManager getQueryManager() throws RepositoryException {
         return ((UserSession) Session.get()).getQueryManager();
     }
-    
+
 
     public static boolean exists(String groupname) {
         String queryString = QUERY_GROUP_EXISTS.replace("{}", groupname);
@@ -103,7 +111,7 @@ public class Group implements Comparable<Group>, IClusterable {
         Collections.sort(groups);
         return groups;
     }
-    
+
 
     public static List<Group> getAllGroups() {
         List<Group> groups = new ArrayList<Group>();
@@ -128,11 +136,10 @@ public class Group implements Comparable<Group>, IClusterable {
         Collections.sort(groups);
         return groups;
     }
-    
+
 
     /**
-     * FIXME: should move to roles class or something the like
-     * when the admin perspective gets support for it
+     * FIXME: should move to roles class or something the like when the admin perspective gets support for it
      *
      * @return A list of all roles defined in the system
      */
@@ -159,7 +166,7 @@ public class Group implements Comparable<Group>, IClusterable {
         Collections.sort(roles);
         return roles;
     }
-    
+
     public boolean isExternal() {
         return external;
     }
@@ -168,7 +175,7 @@ public class Group implements Comparable<Group>, IClusterable {
         return groupname;
     }
 
-    @SuppressWarnings({ "unused" })
+    @SuppressWarnings({"unused"})
     public void setGroupname(final String groupname) {
         this.groupname = groupname;
     }
@@ -189,21 +196,44 @@ public class Group implements Comparable<Group>, IClusterable {
     //----------------------- constructors ---------//
     public Group() {
     }
-    
+
     public Group(final Node node) throws RepositoryException {
         this.path = node.getPath().substring(1);
         this.groupname = NodeNameCodec.decode(node.getName());
         this.node = node;
-        
+
         if (node.isNodeType(HippoNodeType.NT_EXTERNALGROUP)) {
             external = true;
         }
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
             setDescription(node.getProperty(PROP_DESCRIPTION).getString());
-        } else if (node.hasProperty("description")){
+        } else if (node.hasProperty("description")) {
             setDescription(node.getProperty("description").getString());
-            
+
+        }
+    }
+
+    public static Group forName(final String groupName) {
+        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
+        Query query;
+        try {
+            query = getQueryManager().createQuery(queryString, Query.SQL);
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Cannot get the Query Manager", e);
+        }
+
+        try {
+            QueryResult queryResult = query.execute();
+            NodeIterator iterator = queryResult.getNodes();
+            if (!iterator.hasNext()) {
+                throw new IllegalArgumentException("Group with name {} doesn't exist".replace("{}", groupName));
+            }
+            return new Group(iterator.nextNode());
+        } catch (InvalidQueryException e) {
+            throw new IllegalArgumentException("Illegal query, probably the group name has invalid characters.", e);
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Cannot execute query due to a repository error", e);
         }
     }
 
@@ -219,9 +249,32 @@ public class Group implements Comparable<Group>, IClusterable {
         return members;
     }
 
+    public List<DetachableUser> getMembersAsDetachableUsers() {
+        List<String> usernames;
+        try {
+            usernames = getMembers();
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Cannot get members for this group", e);
+        }
+
+        List<DetachableUser> users = new ArrayList<DetachableUser>();
+        for (String username : usernames) {
+            if (!User.userExists(username)) {
+                continue;
+            }
+            User user = new User(username);
+            DetachableUser detachableUser = new DetachableUser(user);
+            users.add(detachableUser);
+        }
+
+        return users;
+    }
+
     //-------------------- persistence helpers ----------//
+
     /**
      * Wrapper needed for spi layer which doesn't know if a property exists or not
+     *
      * @param node
      * @param name
      * @param value
@@ -233,9 +286,10 @@ public class Group implements Comparable<Group>, IClusterable {
         }
         node.setProperty(name, value);
     }
-    
+
     /**
      * Create a new group
+     *
      * @throws RepositoryException
      */
     public void create() throws RepositoryException {
@@ -259,6 +313,7 @@ public class Group implements Comparable<Group>, IClusterable {
 
     /**
      * save the current group
+     *
      * @throws RepositoryException
      */
     public void save() throws RepositoryException {
@@ -289,7 +344,7 @@ public class Group implements Comparable<Group>, IClusterable {
                     .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
                     .message("deleted group " + groupname);
             eventBus.post(event);
-        }   
+        }
     }
 
     public void removeMembership(String user) throws RepositoryException {
@@ -306,7 +361,36 @@ public class Group implements Comparable<Group>, IClusterable {
         node.getSession().save();
     }
 
+    /**
+     * Get the roles for this group on the passed Domain.
+     *
+     * @param domain the {@link Domain} to get the roles for
+     * @return the roles
+     */
+    public List<Domain.AuthRole> getLinkedAuthenticatedRoles(final Domain domain) {
+        Map<String, Domain.AuthRole> authRoles = domain.getAuthRoles();
+        List<Domain.AuthRole> roles = new ArrayList<Domain.AuthRole>();
+        for (Map.Entry<String, Domain.AuthRole> entry : authRoles.entrySet()) {
+            Domain.AuthRole authenticationRole = entry.getValue();
+            final boolean groupHasRole = authenticationRole.getGroupnames().contains(getGroupname());
+            if (groupHasRole) {
+                roles.add(authenticationRole);
+            }
+        }
+        return roles;
+    }
+
+    /**
+     * Returns all domain - authrole combinations for this group
+     *
+     * @return a {@link List} of {@link PermissionBean}s
+     */
+    public List<PermissionBean> getPermissions() {
+        return PermissionBean.forGroup(this);
+    }
+
     //--------------------- default object -------------------//
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -324,7 +408,7 @@ public class Group implements Comparable<Group>, IClusterable {
     public int hashCode() {
         return (null == path ? 0 : path.hashCode());
     }
-    
+
     public int compareTo(Group o) {
         return groupname.compareTo(o.getGroupname());
     }

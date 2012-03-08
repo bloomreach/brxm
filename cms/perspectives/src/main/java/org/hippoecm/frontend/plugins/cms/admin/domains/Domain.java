@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,11 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 
@@ -37,7 +39,8 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private final static String PROP_DESCRIPTION = "hipposys:description";
+    private static final String PROP_DESCRIPTION = "hipposys:description";
+    private static final String DOMAINS_BASE_LOCATION = "/jcr:root/hippo:configuration/hippo:domains";
 
     private final String path;
     private final String name;
@@ -47,7 +50,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     private SortedMap<String, AuthRole> authRoles = new TreeMap<String, AuthRole>();
 
-    public class AuthRole implements Serializable {
+    public static class AuthRole implements Serializable {
         private static final long serialVersionUID = 1L;
 
         private final String role;
@@ -56,20 +59,26 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
         private transient Node authRoleNode;
 
-        public AuthRole(final Node node) throws RepositoryException {
+        public AuthRole(final Node node) {
+            assert node != null;
+
             this.authRoleNode = node;
-            this.role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
-            if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {
-                Value[] vals = node.getProperty(HippoNodeType.HIPPO_USERS).getValues();
-                for (Value val : vals) {
-                    usernames.add(val.getString());
+            try {
+                this.role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
+                if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {
+                    Value[] vals = node.getProperty(HippoNodeType.HIPPO_USERS).getValues();
+                    for (Value val : vals) {
+                        usernames.add(val.getString());
+                    }
                 }
-            }
-            if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {
-                Value[] vals = node.getProperty(HippoNodeType.HIPPO_GROUPS).getValues();
-                for (Value val : vals) {
-                    groupnames.add(val.getString());
+                if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {
+                    Value[] vals = node.getProperty(HippoNodeType.HIPPO_GROUPS).getValues();
+                    for (Value val : vals) {
+                        groupnames.add(val.getString());
+                    }
                 }
+            } catch (RepositoryException e) {
+                throw new IllegalStateException("Cannot create Authrole based on node.", e);
             }
         }
 
@@ -137,7 +146,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
             }
         }
     }
-
+    
     //-------------------- persistence helpers ----------//
     public AuthRole createAuthRole(String role) throws RepositoryException {
         Node roleNode = node.addNode(HippoNodeType.NT_AUTHROLE, HippoNodeType.NT_AUTHROLE);
@@ -159,6 +168,21 @@ public class Domain implements Comparable<Domain>, IClusterable {
     public void removeGroupFromRole(String role, String group) throws RepositoryException {
         if (getAuthRoles().containsKey(role)) {
             getAuthRoles().get(role).removeGroup(group);
+        }
+    }
+    
+    public static Domain forName(String domainName) {
+        String pathToDomain = DOMAINS_BASE_LOCATION + "/" + domainName;
+        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        try {
+            if (!session.nodeExists(pathToDomain)) {
+                throw new IllegalArgumentException("Domain with name {} does not exist.".replace("{}", domainName));
+            }
+            Node node = session.getNode(pathToDomain);
+            return new Domain(node);
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Repository error occurred when trying to obtain domain with name {}".
+                    replace("{}", domainName));
         }
     }
 

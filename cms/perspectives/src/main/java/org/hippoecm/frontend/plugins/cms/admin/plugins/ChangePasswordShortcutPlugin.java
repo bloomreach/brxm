@@ -90,12 +90,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         
         username = ((UserSession) Session.get()).getJcrSession().getUserID();
         
-        try {
-            user = new User(username);
-        } catch (RepositoryException e) {
-            log.error("Unable to create user {}", username, e);
-        }
-        
+        user = new User(username);
+
         AjaxLink link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
@@ -142,7 +138,6 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
     /**
      * Check if the user can change the password
-     * @param user
      * @return
      */
     private boolean canChangePassword() {
