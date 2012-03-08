@@ -43,14 +43,11 @@ import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.SiteService;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.json.JSONArray;
@@ -136,9 +133,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.restProxyService = restProxyService;
 
         if (this.restProxyService == null) {
-        	if (log.isWarnEnabled()) {
-        		log.warn(WARNING_MESSAGE_NO_REST_SERVICE_FOUND, "proxy");
-        	}
+            if (log.isWarnEnabled()) {
+                log.warn(WARNING_MESSAGE_NO_REST_SERVICE_FOUND, "proxy");
+            }
         }
     }
 
@@ -312,8 +309,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // No translation found, is the site down?
-        SiteService siteService = restProxyService.createRestProxy(SiteService.class);
-        if (!siteService.isAlive()) {
+        if (ChannelUtil.getChannelManager() == null) {
             log.info("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
                     fieldName, org.apache.wicket.Session.get().getLocale());
         } else {
@@ -347,8 +343,25 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
-        return channelService.canUserModifyChannels();
+        final ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.info("Cannot retrieve the channel manager, assuming that the current user cannot modify channels");
+            return false;
+        }
+
+        Subject subject = createSubject();
+        try {
+            return HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Boolean>() {
+                public Boolean run() throws ChannelException {
+                    return channelManager.canUserModifyChannels();
+                }
+            }, null);
+        } catch (PrivilegedActionException e) {
+            log.error("Could not determine privileges", e.getException());
+            return false;
+        } finally {
+            HstSubject.clearSubject();
+        }
     }
 
     public List<Channel> getChannels() {
@@ -377,29 +390,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public List<HstPropertyDefinition> getChannelPropertyDefinitions(Channel channel) {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
-        channelService.getChannelPropertyDefinitions(channel.getId());
+        // COMMENT - MNour: This is just a mockup!
         return new ArrayList<HstPropertyDefinition>();
     }
 
     public void saveChannel(Channel channel) {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
-        channelService.save(channel);
-    }
-
-    /**
-     * @param channel the channel to get the ChannelInfo class for
-     * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a
-     * custom ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
-     */
-    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
-        return channelService.getChannelInfoClassInfo(channel.getId());
-    }
-
-    protected Subject getSubject() {
         // This code can be in a utility but I am leaving it like that not to be forgotten
-        // cause this is ugly and needs to be handled in a middleware oriented way of thing
+        // cause this is ugly and needs to be handled in a middleware way of thing
         UserSession session = (UserSession) org.apache.wicket.Session.get();
 
         @SuppressWarnings("deprecation")
@@ -408,7 +405,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
-        return subject;
+
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, subject);
+        channelService.save(channel);
     }
 
     protected void loadChannels() {

@@ -17,6 +17,7 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.DropDownList;
@@ -46,8 +49,6 @@ import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
-import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
@@ -73,6 +74,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     private static final String EVENT_SAVE_CHANNEL = "savechannel";
     private static final String EVENT_SELECT_CHANNEL = "selectchannel";
     private static final String EVENT_SELECT_CHANNEL_PARAM_ID = "id";
+    private static final FieldGroup[] ZERO_FIELD_GROUPS = new FieldGroup[0];
     private static final String WICKET_ID_FIELDGROUPS = "fieldgroups";
     private static final String WICKET_ID_FIELDGROUPTITLE = "fieldgrouptitle";
     private static final String WICKET_ID_KEY = "key";
@@ -117,17 +119,17 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         this.channelStore = channelStore;
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
         container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
-        container.add(new ListView<FieldGroupInfo>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroupInfo>>() {
+        container.add(new ListView<FieldGroup>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroup>>() {
             @Override
-            protected List<FieldGroupInfo> load() {
-                return getFieldGroups();
+            protected List<FieldGroup> load() {
+                return Arrays.asList(getFieldGroups());
             }
         }) {
             @Override
-            protected void populateItem(final ListItem<FieldGroupInfo> item) {
-                final FieldGroupInfo fieldGroup = item.getModelObject();
+            protected void populateItem(final ListItem<FieldGroup> item) {
+                final FieldGroup fieldGroup = item.getModelObject();
 
-                item.add(new Label(WICKET_ID_FIELDGROUPTITLE, new ChannelResourceModel(channel, fieldGroup.getTitleKey())) {
+                item.add(new Label(WICKET_ID_FIELDGROUPTITLE, new ChannelResourceModel(channel, fieldGroup.titleKey())) {
                     @Override
                     public boolean isVisible() {
                         return getModelObject() != null;
@@ -140,7 +142,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         if (channel == null) {
                             return Collections.emptyList();
                         } else {
-                            String[] strings = fieldGroup.getValue();
+                            String[] strings = fieldGroup.value();
                             List<String> keys = new ArrayList<String>(strings.length);
                             for (String key : strings) {
                                 if (getPropertyDefinition(key) != null) {
@@ -259,29 +261,33 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         return super.newExtEventBehavior(event);
     }
 
-    private List<FieldGroupInfo> getFieldGroups() {
+    private FieldGroup[] getFieldGroups() {
         if (channel == null) {
-            return Collections.emptyList();
+            return ZERO_FIELD_GROUPS;
         }
 
-        ChannelInfoClassInfo channelInfoClassInfo = channelStore.getChannelInfoClassInfo(channel);
-        if (channelInfoClassInfo == null) {
-            return Collections.emptyList();
+        Class<? extends ChannelInfo> channelInfoClass = ChannelUtil.getChannelInfoClass(channel);
+        if (channelInfoClass == null) {
+            return ZERO_FIELD_GROUPS;
         }
 
-        List<FieldGroupInfo> fieldGroupList = channelInfoClassInfo.getFieldsGroup();
+        FieldGroupList fieldGroupList = channelInfoClass.getAnnotation(FieldGroupList.class);
 
-        if (fieldGroupList == null) {
-            log.warn("Channel info class '{}' contains a '{}' annotation with a null value: no channel properties will be shown",
-                    channelInfoClassInfo.getClassName(), FieldGroupList.class.getName());
-            return Collections.emptyList();
-        } else if (fieldGroupList.size() == 0) {
-            log.warn("Channel info class '{}' does not contain any '{}' annotations: no channel properties will be shown",
-                    channelInfoClassInfo.getClassName(), FieldGroup.class.getName());
-            return Collections.emptyList();
+        if (fieldGroupList != null) {
+            FieldGroup[] result = fieldGroupList.value();
+            if (result == null) {
+                log.warn("Channel info class '{}' contains a '{}' annotation with a null value: no channel properties will be shown",
+                        channelInfoClass.getName(), FieldGroupList.class.getName());
+                return ZERO_FIELD_GROUPS;
+            } else if (result.length == 0) {
+                log.warn("Channel info class '{}' does not contain any '{}' annotations: no channel properties will be shown",
+                        channelInfoClass.getName(), FieldGroup.class.getName());
+                return ZERO_FIELD_GROUPS;
+            }
+            return result;
         }
 
-        return fieldGroupList;
+        return ZERO_FIELD_GROUPS;
     }
 
     private Channel getChannel(String channelId) {
@@ -293,7 +299,13 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     }
 
     private HstPropertyDefinition getPropertyDefinition(String propertyName) {
-        for (HstPropertyDefinition definition : channelStore.getChannelPropertyDefinitions(channel)) {
+        ChannelManager channelManager = ChannelUtil.getChannelManager();
+        if (channelManager == null) {
+            log.info("Could not load the channel manager: the definition for property '{}' is unknown", propertyName);
+            return null;
+        }
+
+        for (HstPropertyDefinition definition : channelManager.getPropertyDefinitions(channel)) {
             if (definition.getName().equals(propertyName)) {
                 return definition;
             }
