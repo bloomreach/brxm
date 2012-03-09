@@ -663,7 +663,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
         for (HstComponentConfigurationService toMerge : childToMerge.orderedListConfigs) {
-            if (this.childConfByName.get(toMerge.name) != null) {
+            HstComponentConfigurationService existingChild = this.childConfByName.get(toMerge.name);
+            if (existingChild != null) {
+                // check whether the child of its own has a referencecomponent: This referencecomponent then needs
+                // to be first populated before merging
+                existingChild.populateComponentReferences(rootComponentConfigurations, populated);
                 this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations, populated);
             } else {
                 //  String newId = this.id + "-" + toMerge.id;
