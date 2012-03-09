@@ -811,8 +811,6 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                     if (save) {
                         session.save();
                     }
-                } else {
-                    log.warn("Cannot remove node /" + relpath + ": no such node");
                 }
             }
         } catch (RepositoryException ex) {
