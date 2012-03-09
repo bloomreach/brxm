@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,9 @@ public class LogoutLink extends MarkupContainer {
         super(id);
 
         UserSession session = (UserSession) getSession();
-        username = session.getJcrSession().getUserID();
-
+        String userID = session.getJcrSession().getUserID();
+        username = new User(userID).getDisplayName();
+        
         add(new Label("username", new PropertyModel(this, "username")));
 
         add(new AjaxLink("logout-link") {

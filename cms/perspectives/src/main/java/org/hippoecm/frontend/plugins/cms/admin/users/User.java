@@ -191,15 +191,15 @@ public class User implements Comparable<User>, IClusterable {
         StringBuilder sb = new StringBuilder();
         if (firstName != null) {
             sb.append(firstName);
+            sb.append(" ");
         }
-        sb.append(" ");
         if (lastName != null) {
             sb.append(lastName);
         }
-        if (sb.length() == 1) {
+        if (sb.length() == 0) {
             return username;
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public String getFirstName() {
