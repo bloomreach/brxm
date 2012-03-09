@@ -190,12 +190,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             Domain.AuthRole authRole = permissionBean.getAuthRole();
             String roleName = authRole.getRole();
 
-            String securityDomainName = domain.getName();
-            
             ViewDomainActionLink action = new ViewDomainActionLink(
-                    "securityDomain", 
-                    ViewGroupPanel.this, 
-                    permissionBean.getDomain(), 
+                    "securityDomain",
+                    ViewGroupPanel.this,
+                    permissionBean.getDomain(),
                     new PropertyModel<String>(domain, "name")
             );
             item.add(action);
@@ -291,9 +289,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             item.add(new ViewUserLinkLabel("username", detachableUser, ViewGroupPanel.this, context));
             item.add(
                     new DeleteGroupMembershipActionLinkLabel(
-                    "remove", new ResourceModel("group-member-remove-action"),
-                    user
-            ));
+                            "remove", new ResourceModel("group-member-remove-action"),
+                            user
+                    ));
         }
 
         private class DeleteGroupMembershipActionLinkLabel extends AjaxLinkLabel {
