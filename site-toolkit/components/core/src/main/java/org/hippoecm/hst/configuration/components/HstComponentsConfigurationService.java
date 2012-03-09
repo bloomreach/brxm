@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 public class HstComponentsConfigurationService implements HstComponentsConfiguration {
 
-    private static final long serialVersionUID = 1L;
-
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
 
     /*
