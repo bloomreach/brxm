@@ -28,31 +28,32 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 
-public class AdminDataTable extends DataTable {
+public class AdminDataTable<T> extends DataTable<T> {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
-    public AdminDataTable(String id, final List<IColumn> columns,
-            ISortableDataProvider dataProvider, int rowsPerPage) {
-        this(id, (IColumn[]) columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
+    public AdminDataTable(String id, final List<IColumn<T>> columns,
+                          ISortableDataProvider<T> dataProvider, int rowsPerPage) {
+        this(id, columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
     }
 
-    public AdminDataTable(String id, final IColumn[] columns, ISortableDataProvider dataProvider,
-            int rowsPerPage) {
+    public AdminDataTable(String id, final IColumn<T>[] columns, ISortableDataProvider<T> dataProvider,
+                          int rowsPerPage) {
         super(id, columns, dataProvider, rowsPerPage);
         setOutputMarkupId(true);
         setVersioned(false);
         addTopToolbar(new AjaxNavigationToolbar(this));
-        //addBottomToolbar(new AjaxNavigationToolbar(this));
+        addBottomToolbar(new AjaxNavigationToolbar(this));
         addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider));
         addBottomToolbar(new NoRecordsToolbar(this));
     }
 
-    protected Item newRowItem(String id, int index, IModel model) {
-        return new OddEvenItem(id, index, model);
+    @Override
+    protected Item<T> newRowItem(String id, int index, IModel<T> model) {
+        return new OddEvenItem<T>(id, index, model);
     }
 
 }
