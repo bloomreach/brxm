@@ -22,25 +22,30 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -57,38 +62,37 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
     private final IModel model;
     private final ListView localList;
 
-    private final AdminDataTable table;
-
     public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
-            final IModel model) {
+                           final IModel model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
+
         this.model = model;
         final Group group = (Group) model.getObject();
 
         // members
-        Label localLabel = new Label("group-members-label", new ResourceModel("group-members"));
+        Label localLabel = new Label("group-members-label", new StringResourceModel("group-members-label", this, model));
         localList = new MembershipsListEditView("group-members", "group-member", group);
         add(localLabel);
         add(localList);
 
         // All local groups
-        List<IColumn> columns = new ArrayList<IColumn>();
-        columns.add(new PropertyColumn(new ResourceModel("user-username"), "username"));
-        columns.add(new PropertyColumn(new ResourceModel("user-firstname"), "firstName"));
-        columns.add(new PropertyColumn(new ResourceModel("user-lastname"), "lastName"));
-        
-        columns.add(new AbstractColumn(new Model(""), "add") {
+        List<IColumn<User>> allUserColumns = new ArrayList<IColumn<User>>();
+        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-username"), "username"));
+        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-firstname"), "firstName"));
+        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-lastname"), "lastName"));
+
+        allUserColumns.add(new AbstractColumn<User>(new ResourceModel("group-member-actions"), "add") {
             private static final long serialVersionUID = 1L;
 
-            public void populateItem(final Item item, final String componentId, final IModel model) {
-                final User user = (User) model.getObject();
+            public void populateItem(final Item<ICellPopulator<User>> item, final String componentId,
+                                     final IModel<User> model) {
+                final User user = model.getObject();
                 AjaxLinkLabel action = new AjaxLinkLabel(componentId, new ResourceModel("group-member-add-action")) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
+                    public void onClick(final AjaxRequestTarget target) {
                         try {
                             if (group.getMembers().contains(user.getUsername())) {
                                 info(getString("group-member-already-member", model));
@@ -101,8 +105,8 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                                             .user(userSession.getJcrSession().getUserID())
                                             .action("add-user-to-group")
                                             .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
-                                            .message(
-                                                    "added user " + user.getUsername() + " to group " + group.getGroupname());
+                                            .message("added user " + user.getUsername() + " to group " +
+                                                    group.getGroupname());
                                     eventBus.post(event);
                                 }
                                 info(getString("group-member-added", model));
@@ -119,28 +123,53 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        table = new AdminDataTable("table", columns, new UserDataProvider(), 20);
+        final AdminDataTable table = new AdminDataTable<User>("table", allUserColumns, new UserDataProvider(), 20);
         table.setOutputMarkupId(true);
         add(table);
+
+        final Form form = new Form("search-form");
+        form.setOutputMarkupId(true);
+        add(form);
+
+        UserDataProvider userDataProvider = new UserDataProvider();
+
+        final TextField<String> search = new TextField<String>("search-query",
+                new PropertyModel<String>(userDataProvider, "query"));
+        search.add(StringValidator.minimumLength(1));
+        search.setRequired(false);
+        search.add(new DefaultFocusBehavior());
+        form.add(search);
+
+        form.add(new AjaxButton("search-button", form) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+                target.addComponent(table);
+            }
+        });
     }
 
-    /** list view to be nested in the form. */
-    private final class MembershipsListEditView extends ListView {
+    /**
+     * list view to be nested in the form.
+     */
+    private final class MembershipsListEditView extends ListView<String> {
         private static final long serialVersionUID = 1L;
         private String labelId;
         private Group group;
 
         public MembershipsListEditView(final String id, final String labelId, final Group group) {
-            super(id, new PropertyModel(group, "members"));
+            super(id, new PropertyModel<List<String>>(group, "members"));
             this.labelId = labelId;
             this.group = group;
             setReuseItems(false);
             setOutputMarkupId(true);
         }
 
-        protected void populateItem(ListItem item) {
+        @Override
+        protected void populateItem(ListItem<String> item) {
             item.setOutputMarkupId(true);
-            final String username = (String) item.getModelObject();
+            final String username = item.getModelObject();
             item.add(new Label(labelId, username));
             item.add(new AjaxLinkLabel("remove", new ResourceModel("group-member-remove-action")) {
                 private static final long serialVersionUID = 1L;

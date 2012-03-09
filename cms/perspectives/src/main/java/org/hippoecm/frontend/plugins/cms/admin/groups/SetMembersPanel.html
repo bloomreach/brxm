@@ -15,15 +15,30 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-      <h2 wicket:id="group-members-label" />
-    <table class="hippo-controlpanel-table-nested hippo-list-details">
-        <tr wicket:id="group-members">
-          <td><label wicket:id="group-member"/></td>
-          <td><span class="delete-inline-16 icon-16" wicket:id="remove"/></td>
+<wicket:extend>
+    <h2><label wicket:id="group-members-label"/></h2>
+    <h3><wicket:message key="group-current-users-label"/></h3>
+    <table class="hippo-controlpanel-table-default hippo-list-details">
+        <thead>
+        <tr>
+            <th><wicket:message key="user-username"/></th>
+            <th><wicket:message key="group-member-actions"/></th>
         </tr>
-      </table>
-      <h3><wicket:message key="group-users-label"/></h3>
-      <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
-  </wicket:extend>
+        </thead>
+        <tbody>
+        <tr wicket:id="group-members" >
+            <td><label wicket:id="group-member"/></td>
+            <td><span wicket:id="remove"/></td>
+        </tr>
+        </tbody>
+    </table>
+    <br/>
+    <br/>
+    <h3><wicket:message key="group-add-users-label"/></h3>
+    <form wicket:id="search-form">
+        <input type="text" size="35" wicket:id="search-query" wicket:message="title:user-search-help"/><input type="submit" wicket:message="value:user-search-action" wicket:id="search-button"/>
+    </form>
+    <br/>
+    <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
+</wicket:extend>
 </html>
