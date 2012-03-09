@@ -1565,6 +1565,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/system/system
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/DeleteUserDialog.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/GroupsLinkListPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/ViewUserLinkLabel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-128.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-16.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/users/user-32.png -text svneol=unset#image/png

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2008-2012 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,30 +15,80 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <h2><wicket:message key="group-title"/></h2>
+<wicket:extend>
+    <h2><label wicket:id="view-group-panel-title"></label></h2>
+    <h3>
+        <wicket:message key="group-view-actions-title"/>
+    </h3>
     <ul class="hippo-controlpanel-options">
-		<li><a wicket:id="edit-group"><wicket:message key="group-edit"/></a></li>
-        <li><a wicket:id="set-group-members"><wicket:message key="group-set-members"/></a></li>
-        <li class="delete" wicket:id="delete-group" />
+        <li><a wicket:id="edit-group">
+            <wicket:message key="group-edit"/>
+        </a></li>
+        <li><a wicket:id="set-group-members">
+            <wicket:message key="group-set-members"/>
+        </a></li>
+        <li class="delete" wicket:id="delete-group"/>
     </ul>
     <div class="icons-128 groups-128">
-    <table class="hippo-controlpanel-form">
-      <tr>
-        <td><wicket:message key="group-name"/></td>
-        <td><label wicket:id="groupname"/> </td>
-      </tr>
-      <tr>
-        <td><wicket:message key="group-description"/></td>
-        <td><label wicket:id="description"/> </td>
-      </tr>
-    </table>
+        <h3>
+            <wicket:message key="group-properties"/>
+        </h3>
+        <table class="hippo-controlpanel-form">
+            <tr>
+                <td>
+                    <wicket:message key="group-groupname"/>
+                </td>
+                <td><label wicket:id="groupname"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <wicket:message key="group-description"/>
+                </td>
+                <td><label wicket:id="description"/></td>
+            </tr>
+        </table>
     </div>
-    <h3 class="hippo-controlpanel-section-title" wicket:id="group-members-label" />
+    <br/>
+    <br/>
+    <h3 class="hippo-controlpanel-section-title">
+        <wicket:message key="group-permissions"/>
+    </h3>
+    <br/>
     <table class="hippo-list-details hippo-controlpanel-table-default">
-      <tr wicket:id="members">
-        <td wicket:id="member"/>
-      </tr>
+        <tr>
+            <th>
+                <wicket:message key="permissions-role-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-domain-header"/>
+            </th>
+            <th>
+                <wicket:message key="table-header-actions"/>
+            </th>
+        </tr>
+        <tr wicket:id="permissions">
+            <td><label wicket:id="role"/></td>
+            <td><a href="#" wicket:id="securityDomain"><span wicket:id="label">[[label]]</span></a><!--<label wicket:id="securityDomain"/>--></td>
+            <td><span wicket:id="remove"/></td>
+        </tr>
     </table>
-  </wicket:extend>
+    <br/>
+    <br/>
+    <h3><label wicket:id="group-members-label"/></h3>
+    <br/>
+    <table class="hippo-list-details hippo-controlpanel-table-default">
+        <tr>
+            <th>
+                <wicket:message key="user-username"/>
+            </th>
+            <th>
+                <wicket:message key="table-header-actions"/>
+            </th>
+        </tr>
+        <tr wicket:id="groupmembers">
+            <td><span wicket:id="username"/></td>
+            <td><span wicket:id="remove"/></td>
+        </tr>
+    </table>
+</wicket:extend>
 </html>

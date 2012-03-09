@@ -23,8 +23,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.basic.SmartLinkLabel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -91,19 +89,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
             public void populateItem(final Item<ICellPopulator<User>> item,
                                      final String componentId, final IModel<User> model) {
 
-                AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "username")) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        activate(new IBreadCrumbPanelFactory() {
-                            public BreadCrumbPanel create(final String componentId,
-                                                          final IBreadCrumbModel breadCrumbModel) {
-                                return new ViewUserPanel(componentId, context, breadCrumbModel, model);
-                            }
-                        });
-                    }
-                };
+                ViewUserLinkLabel action = new ViewUserLinkLabel(componentId, model, ListUsersPanel.this, context);
                 item.add(action);
             }
         });

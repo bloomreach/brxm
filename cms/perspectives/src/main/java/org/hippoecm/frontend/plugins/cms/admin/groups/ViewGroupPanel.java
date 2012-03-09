@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -36,6 +37,12 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
+import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewDomainActionLink;
+import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.plugins.cms.admin.users.ViewUserLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
@@ -46,6 +53,9 @@ import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Panel showing information regarding the groups.
+ */
 public class ViewGroupPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -61,13 +71,18 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
         this.group = group;
 
+        add(new Label("view-group-panel-title",
+                new StringResourceModel("group-view-title", this, new Model<Group>(group))));
+
         // common group properties
         add(new Label("groupname", new PropertyModel(group, "groupname")));
         add(new Label("description", new PropertyModel(group, "description")));
 
-        // local memberships
-        add(new Label("group-members-label", new ResourceModel("group-members-label")));
-        add(new GroupMembersListView("members", "member", new PropertyModel<List<String>>(group, "members")));
+        PermissionsListView permissionsListView =
+                new PermissionsListView(group, "permissions",
+                        new Model<ArrayList<PermissionBean>>(new ArrayList<PermissionBean>(group.getPermissions())),
+                        context);
+        add(permissionsListView);
 
         // actions
         PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-group", breadCrumbModel) {
@@ -113,22 +128,21 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         });
             }
         });
+
+        Label groupMembersLabel = new Label("group-members-label",
+                new StringResourceModel("group-members-label", this, new Model<Group>(group)));
+        add(groupMembersLabel);
+        ArrayList<DetachableUser> membersOfGroup = new ArrayList<DetachableUser>(group.getMembersAsDetachableUsers());
+        final Model<ArrayList<DetachableUser>> listModel = new Model<ArrayList<DetachableUser>>(membersOfGroup);
+        final GroupMembersListView groupMembersListView =
+                new GroupMembersListView(group, "groupmembers", listModel, context);
+        add(groupMembersListView);
     }
 
     private void deleteGroup(final Group group) {
         String groupname = group.getGroupname();
         try {
             group.delete();
-            HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-            if (eventBus != null) {
-                final UserSession userSession = UserSession.get();
-                HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                        .user(userSession.getJcrSession().getUserID())
-                        .action("delete-group")
-                        .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
-                        .message("deleted group " + groupname);
-                eventBus.post(event);
-            }
             Session.get().info(getString("group-removed", new Model<Group>(group)));
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
@@ -139,27 +153,214 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         }
     }
 
-    /**
-     * list view to be nested in the form.
-     */
-    private static final class GroupMembersListView extends ListView<String> {
-        private static final long serialVersionUID = 1L;
-        private String labelId;
-
-        public GroupMembersListView(final String id, final String labelId, IModel<List<String>> listModel) {
-            super(id, listModel);
-            this.labelId = labelId;
-            setReuseItems(false);
-        }
-
-        protected void populateItem(ListItem item) {
-            String user = (String) item.getModelObject();
-            item.add(new Label(labelId, user));
-        }
-    }
-
     public IModel<String> getTitle(Component component) {
         return new StringResourceModel("group-view-title", component, new Model<Group>(group));
     }
 
+    /**
+     * List view for showing the permissions of the group.
+     */
+    private final class PermissionsListView extends ListView<PermissionBean> {
+        private static final long serialVersionUID = 1L;
+        private Group group;
+
+        private final IPluginContext context;
+
+        /**
+         * The listview for the permissions linked to the group.
+         *
+         * @param group     The group
+         * @param id        The id of the listview.
+         * @param listModel The list which must be rendered by the listview
+         * @param context   The current context
+         */
+        public PermissionsListView(final Group group, final String id,
+                                   final IModel<ArrayList<PermissionBean>> listModel,
+                                   final IPluginContext context) {
+            super(id, listModel);
+            this.group = group;
+            this.context = context;
+            setReuseItems(false);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<PermissionBean> item) {
+            final PermissionBean permissionBean = item.getModelObject();
+            Domain domain = permissionBean.getDomain().getObject();
+            Domain.AuthRole authRole = permissionBean.getAuthRole();
+            String roleName = authRole.getRole();
+
+            String securityDomainName = domain.getName();
+            
+            ViewDomainActionLink action = new ViewDomainActionLink(
+                    "securityDomain", 
+                    ViewGroupPanel.this, 
+                    permissionBean.getDomain(), 
+                    new PropertyModel<String>(domain, "name")
+            );
+            item.add(action);
+            item.add(new Label("role", new Model<String>(roleName)));
+            item.add(new AjaxLinkLabel("remove", new ResourceModel("group-delete-role-domain-combination")) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onClick(final AjaxRequestTarget target) {
+                    context.getService(IDialogService.class.getName(), IDialogService.class).show(
+                            new DeleteDialog<PermissionBean>(permissionBean, this) {
+                                private static final long serialVersionUID = 1L;
+
+                                @Override
+                                protected void onOk() {
+                                    deleteRoleDomainCombination(permissionBean);
+                                    PermissionsListView listView = PermissionsListView.this;
+                                    listView.setModelObject(new ArrayList<PermissionBean>(group.getPermissions()));
+                                }
+
+                                @Override
+                                protected String getTitleKey() {
+                                    return "group-delete-role-domain-title";
+                                }
+
+                                @Override
+                                protected String getTextKey() {
+                                    return "group-delete-role-domain-text";
+                                }
+                            });
+                    target.addComponent(ViewGroupPanel.this);
+                }
+            });
+        }
+    }
+
+    /**
+     * Delete the link between the group and itś domain and the role.
+     *
+     * @param permissionBean the permission to remove
+     */
+    private void deleteRoleDomainCombination(PermissionBean permissionBean) {
+        Domain domain = permissionBean.getDomain().getObject();
+        Domain.AuthRole authRole = permissionBean.getAuthRole();
+        Group groupToChange = permissionBean.getGroup().getObject();
+
+        try {
+            domain.removeGroupFromRole(authRole.getRole(), groupToChange.getGroupname());
+            HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+            if (eventBus != null) {
+                final UserSession userSession = UserSession.get();
+                HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                        .user(userSession.getJcrSession().getUserID())
+                        .action("remove-group-from-role")
+                        .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                        .message(
+                                "removed group " + groupToChange.getGroupname()
+                                        + " from role " + authRole.getRole());
+                eventBus.post(event);
+            }
+            Session.get().info(getString("group-role-domain-combination-removed", new Model<Group>(groupToChange)));
+            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
+            getBreadCrumbModel().setActive(l.get(l.size() - 1));
+        } catch (RepositoryException e) {
+            Session.get().error(getString("group-delete-role-domain-combination-failed", new Model<Group>(groupToChange)));
+            log.error("Failed to remove role domain combination", e);
+        }
+    }
+
+    /**
+     * List view for the group members.
+     */
+    private final class GroupMembersListView extends ListView<DetachableUser> {
+        private static final long serialVersionUID = 1L;
+        private Group group;
+
+        private final IPluginContext context;
+        private IModel<ArrayList<DetachableUser>> listModel;
+
+        public GroupMembersListView(final Group group, final String id,
+                                    final IModel<ArrayList<DetachableUser>> listModel,
+                                    final IPluginContext context) {
+            super(id, listModel);
+            this.group = group;
+            this.context = context;
+            this.listModel = listModel;
+            setReuseItems(false);
+        }
+
+        protected void populateItem(final ListItem<DetachableUser> item) {
+            final DetachableUser detachableUser = item.getModelObject();
+            final User user = detachableUser.getUser();
+            item.add(new ViewUserLinkLabel("username", detachableUser, ViewGroupPanel.this, context));
+            item.add(
+                    new DeleteGroupMembershipActionLinkLabel(
+                    "remove", new ResourceModel("group-member-remove-action"),
+                    user
+            ));
+        }
+
+        private class DeleteGroupMembershipActionLinkLabel extends AjaxLinkLabel {
+
+            private final User user;
+
+            private DeleteGroupMembershipActionLinkLabel(final String id, final IModel model, final User user) {
+                super(id, model);
+                this.user = user;
+            }
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(final AjaxRequestTarget target) {
+                context.getService(IDialogService.class.getName(), IDialogService.class).show(
+                        new DeleteDialog<User>(new Model<User>(user), this) {
+                            private static final long serialVersionUID = 1L;
+
+                            @Override
+                            protected void onOk() {
+                                final String userName = user.getUsername();
+                                deleteGroupMemberShip(group, userName);
+                                List<DetachableUser> updatedGroupMembers = group.getMembersAsDetachableUsers();
+                                listModel.setObject(new ArrayList<DetachableUser>(updatedGroupMembers));
+                            }
+
+                            @Override
+                            protected String getTitleKey() {
+                                return "group-delete-member-title";
+                            }
+
+                            @Override
+                            protected String getTextKey() {
+                                return "group-delete-member-text";
+                            }
+                        });
+                target.addComponent(ViewGroupPanel.this);
+            }
+        }
+    }
+
+    /**
+     * Delete a member from the list of group members.
+     *
+     * @param groupToChange The group where the user is a member of.
+     * @param userName      The userName of the user which is a member of the Group.
+     */
+    private void deleteGroupMemberShip(final Group groupToChange, final String userName) {
+        try {
+            groupToChange.removeMembership(userName);
+            HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+            if (eventBus != null) {
+                final UserSession userSession = UserSession.get();
+                HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                        .user(userSession.getJcrSession().getUserID())
+                        .action("remove-user-from-group")
+                        .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                        .message("removed user " + userName + " from group " + groupToChange.getGroupname());
+                eventBus.post(event);
+            }
+            Session.get().info(getString("group-member-removed", null));
+            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
+            getBreadCrumbModel().setActive(l.get(l.size() - 1));
+        } catch (RepositoryException e) {
+            Session.get().error(getString("group-member-remove-failed", null));
+            log.error("Failed to remove memberships", e);
+        }
+    }
 }
