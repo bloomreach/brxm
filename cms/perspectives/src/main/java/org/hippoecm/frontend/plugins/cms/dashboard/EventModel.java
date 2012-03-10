@@ -67,7 +67,7 @@ public class EventModel implements IComponentAssignedModel<String> {
             //df.setTimeZone(tz);
 
             Calendar nodeCal = Calendar.getInstance();
-            nodeCal.setTime(new Date(Long.parseLong(node.getName())));
+            nodeCal.setTime(new Date(node.getProperty("hippolog:timestamp").getLong()));
             String timestamp = "";
             try {
                 timestamp = relativeTime(nodeCal);
