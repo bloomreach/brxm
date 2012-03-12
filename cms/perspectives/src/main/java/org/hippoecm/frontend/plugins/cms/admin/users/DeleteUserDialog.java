@@ -83,7 +83,7 @@ public class DeleteUserDialog extends DeleteDialog<User> {
         String username = user.getUsername();
         try {
             user.delete();
-            Session.get().info(getString("user-removed", model));
+            Session.get().info(breadCrumbPanel.getString("user-removed", model));
 
             // Let the outside world know that this user got deleted
             HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
