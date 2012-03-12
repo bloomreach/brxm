@@ -102,10 +102,6 @@ engine/tmlog.lck
 engine/version
 engine/wdbp-error-log.txt
 engine/workspaces
-export/.classpath
-export/.project
-export/.settings
-export/target
 jca/*.tmp
 jca/.classpath
 jca/.project

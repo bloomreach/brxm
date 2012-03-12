@@ -62,7 +62,6 @@
     <module>jca</module>
     <module>servlets</module>
     <module>application</module>
-    <module>export</module>
   </modules>
 
   <properties>
