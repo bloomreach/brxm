@@ -227,12 +227,15 @@ public class HstManagerImpl implements HstManager {
     }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
-
+ 
         VirtualHosts currentHosts = virtualHosts;
         if (currentHosts == null) {
             synchronized(this) {
                 if (virtualHosts == null) {
-                    buildSites();
+                    buildSites(); 
+                    if(virtualHosts == null) {
+                        throw new IllegalStateException("The HST configuration model could not be loaded. Cannot process request");
+                    }
                     this.channelManager.load(virtualHosts);
                 }
                 currentHosts = virtualHosts;
@@ -278,11 +281,22 @@ public class HstManagerImpl implements HstManager {
                     int pathLengthHstHostNode = (rootPath + "/hst:hosts").length();
                     if(configChangeEventMap != null) {
                         Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE);
-                      
+                        
                         for(HstEvent event : events) {
                             if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
                                 if(event.jcrEventType == Event.NODE_REMOVED) {
-                                    HstNode node = virtualHostsNode.getNode(event.path.substring(pathLengthHstHostNode +1));
+                                    String path = event.path.substring(pathLengthHstHostNode);
+                                    if(path.length() == 0) {
+                                        // the root has been removed / moved
+                                        // we can do no better than set virtualHosts to 'null', remove 
+                                        // the events for the HOST_NODE, and try again the next request
+                                        virtualHosts = null;
+                                        events.clear();
+                                        virtualHostsNode = null;
+                                        log.warn("The node '{}' has been removed. Cannot reload model.", rootPath + "/hst:hosts");
+                                        return;
+                                    } 
+                                    HstNode node = virtualHostsNode.getNode(path.substring(1));
                                     if(node != null) {
                                         node.getParent().removeNode(node.getValueProvider().getName());
                                     }
@@ -541,7 +555,9 @@ public class HstManagerImpl implements HstManager {
                         }
                     }
                 }
-            }
+            } 
+        } catch (PathNotFoundException e) {
+            throw new IllegalStateException("Exception during loading configuration nodes. The HST model cannot be loaded. ",e);
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
         } finally {
