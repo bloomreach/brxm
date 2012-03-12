@@ -18,10 +18,12 @@ package org.hippoecm.hst.configuration.components;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -93,6 +95,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
+    
+    // the set of parameter prefixes
+    private Set<String> parameterNamePrefixSet = new HashSet<String>(); 
+    
     private Map<String, String> localParameters = new LinkedHashMap<String, String>();
     
     private String canonicalStoredLocation;
@@ -215,6 +221,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         if(!StringUtils.isEmpty(parameterNamePrefixes[i])) {
                             parameterNameBuilder.insert(0, HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER);
                             parameterNameBuilder.insert(0, parameterNamePrefixes[i]);
+                            if (!parameterNamePrefixSet.contains(parameterNamePrefixes[i])) {
+                                parameterNamePrefixSet.add(parameterNamePrefixes[i]);
+                            }
                         }
                         this.parameters.put(StringPool.get(parameterNameBuilder.toString()), StringPool.get(parameterValues[i]));
                         this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
@@ -327,7 +336,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return Collections.unmodifiableMap(this.parameters);
     }
     
-
+    @Override
+    public Set<String> getParameterPrefixes() {
+        return Collections.unmodifiableSet(parameterNamePrefixSet);
+    }
+ 
 	public String getLocalParameter(String name) {
 		return this.localParameters.get(name);
 	}
@@ -446,6 +459,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
+        copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         ArrayList<String> copyToList = (ArrayList<String>) child.usedChildReferenceNames.clone();
@@ -538,21 +552,26 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     this.standalone = referencedComp.standalone;
                 }
                 
-                // inherited flag not needed to take from the referencedComp
+                // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 
-                if (this.parameters == null) {
-                    this.parameters = new LinkedHashMap<String, String>(referencedComp.parameters);
-                } else if (referencedComp.parameters != null) {
+                if (!referencedComp.parameters.isEmpty()) {
                     // as we already have parameters, add only the once we do not yet have
                     for (Entry<String, String> entry : referencedComp.parameters.entrySet()) {
-                        if (this.parameters.containsKey(entry.getKey())) {
-                            // skip: we already have this parameter set ourselves
-                        } else {
-                            this.parameters.put(entry.getKey(), entry.getValue());
+                        if (!parameters.containsKey(entry.getKey())) {
+                            parameters.put(entry.getKey(), entry.getValue());
                         }
                     }
                 }
-
+                
+                if (!referencedComp.parameterNamePrefixSet.isEmpty()) {
+                    // as we already have parameters, add only the once we do not yet have
+                    for (String prefix : referencedComp.parameterNamePrefixSet) {
+                        if (!parameterNamePrefixSet.contains(prefix)) {
+                            parameterNamePrefixSet.add(prefix); 
+                        }
+                    }
+                }
+                
                 ArrayList<String> copyToList = (ArrayList<String>) referencedComp.usedChildReferenceNames.clone();
                 this.usedChildReferenceNames.addAll(copyToList);
 
@@ -650,18 +669,24 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         
         // inherited flag not needed to merge
         
-        if (this.parameters == null) {
-            this.parameters = new LinkedHashMap<String, String>(childToMerge.parameters);
-        } else if (childToMerge.parameters != null) {
+        if (!childToMerge.parameters.isEmpty()) {
             // as we already have parameters, add only the once we do not yet have
             for (Entry<String, String> entry : childToMerge.parameters.entrySet()) {
-                if (this.parameters.containsKey(entry.getKey())) {
-                    // skip: we already have this parameter set ourselves
-                } else {
-                    this.parameters.put(entry.getKey(), entry.getValue());
+                if (!parameters.containsKey(entry.getKey())) {
+                    parameters.put(entry.getKey(), entry.getValue());
                 }
             }
         }
+        
+        if (!childToMerge.parameterNamePrefixSet.isEmpty()) {
+            // as we already have parameters, add only the once we do not yet have
+            for (String prefix : childToMerge.parameterNamePrefixSet) {
+                if (!parameterNamePrefixSet.contains(prefix)) {
+                    parameterNamePrefixSet.add(prefix);
+                }
+            }
+        }
+        
         for (HstComponentConfigurationService toMerge : childToMerge.orderedListConfigs) {
             HstComponentConfigurationService existingChild = this.childConfByName.get(toMerge.name);
             if (existingChild != null) {
@@ -755,12 +780,22 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         // we already have the parameter, skip
                         continue;
                     }
-                    parameters.put(entry.getKey(), entry.getValue());
+                    String parameterName = entry.getKey();
+                    parameters.put(parameterName, entry.getValue());
+                    // if the parameter has a prefix that is not yet in parameterNamePrefixSet, add it as well
+                    if(parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER) > -1) {
+                        String prefix = parameterName.substring(0, parameterName.indexOf(PARAMETER_PREFIX_NAME_DELIMITER));
+                        if (!parameterNamePrefixSet.contains(prefix)) {
+                            parameterNamePrefixSet.add(prefix);
+                        }
+                    }
                 }
             }
         } else {
             if (parent != null && parent.getParameters() != null) {
                 parameters.putAll(parent.getParameters());
+                // also add the parameter name prefixes from parents
+                parameterNamePrefixSet.addAll(parent.getParameterPrefixes());
             }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {
@@ -781,7 +816,5 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
         }
     }
-
-
 
 }

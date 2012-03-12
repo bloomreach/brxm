@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -174,6 +175,13 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return the map of all configured parameters, and an empty map if no parameters present
      */
     Map<String, String> getParameters();
+    
+    /**
+     * Parameters can have prefixes (variant). If there are prefixes in used, this method returns the (possibly unmodifiable)
+     * {@link Set} of prefixes / variants in use 
+     * @return the {@link Set} of available prefixes for all available parameters and if no prefixes in use, returns an Empty {@link Set}
+     */
+    Set<String> getParameterPrefixes(); 
     
     /**
      * see {@link #getParameter(String)}, but now only parameters directly present on the HstConfigurationItem are returned. Thus, 
