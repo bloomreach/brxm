@@ -25,6 +25,8 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -113,7 +115,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
                             @Override
                             protected void onOk() {
-                                deleteGroup(group);
+                                deleteGroup(group, context);
                             }
 
                             @Override
@@ -139,7 +141,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(groupMembersListView);
     }
 
-    private void deleteGroup(final Group group) {
+    private void deleteGroup(final Group group, final IPluginContext context) {
         String groupname = group.getGroupname();
         try {
             group.delete();
@@ -147,6 +149,13 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
             getBreadCrumbModel().setActive(l.get(l.size() - 2));
+
+            activate(new IBreadCrumbPanelFactory() {
+                public BreadCrumbPanel create(final String componentId,
+                                              final IBreadCrumbModel breadCrumbModel) {
+                    return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                }
+            });
         } catch (RepositoryException e) {
             Session.get().warn(getString("group-remove-failed", new Model<Group>(group)));
             log.error("Unable to delete group '" + groupname + "' : ", e);
