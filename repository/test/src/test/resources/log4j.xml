@@ -87,11 +87,11 @@
     <appender-ref ref="root"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.standardworkflow.EventLogCleanupModule">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
 
