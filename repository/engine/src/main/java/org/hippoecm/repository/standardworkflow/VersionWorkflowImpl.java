@@ -15,22 +15,37 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.InternalWorkflow;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
-import javax.jcr.*;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.*;
+
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
 
@@ -171,7 +186,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                     }
                 }
                 if (!isProtected) {
-                    target.setProperty(prop.getName(), prop.getValues());
+                    target.setProperty(prop.getName(), prop.getValues(), prop.getType());
                 }
             } else {
                 boolean isProtected = true;

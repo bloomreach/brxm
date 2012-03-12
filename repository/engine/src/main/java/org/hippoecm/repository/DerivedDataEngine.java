@@ -546,7 +546,7 @@ public class DerivedDataEngine {
                         if(!modified.isCheckedOut()) {
                             modified.checkout(); // FIXME: is this node always versionalble?
                         }
-                        modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
+                        modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
                     } catch(ItemNotFoundException ex) {
                         logger.info("write error on modified node "+modified.getPath(), ex);
                     }

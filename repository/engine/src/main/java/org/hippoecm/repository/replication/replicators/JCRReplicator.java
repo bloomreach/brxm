@@ -379,7 +379,7 @@ public class JCRReplicator extends AbstractReplicator {
         PropertyState propState = helper.getPropertyState(id, propName);
        Value[] values = helper.getPropertyValues(propState, (SessionImpl)session); // FIXME: wrong session passed
         if (propState.isMultiValued()) {
-            remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values);
+            remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values, propState.getType());
         } else {
             remoteNode.setProperty(context.getNamePathResolver().getJCRName(propName), values[0]);
         }

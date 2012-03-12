@@ -669,10 +669,11 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                         }
                         for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD, HippoNodeType.HIPPO_RELOADONSTARTUP }) {
                             if(n.hasProperty(propertyName)) {
-                                if(n.getProperty(propertyName).getDefinition().isMultiple()) {
-                                    moved.setProperty(propertyName, n.getProperty(propertyName).getValues());
+                                final Property property = n.getProperty(propertyName);
+                                if(property.getDefinition().isMultiple()) {
+                                    moved.setProperty(propertyName, property.getValues(), property.getType());
                                 } else {
-                                    moved.setProperty(propertyName, n.getProperty(propertyName).getValue());
+                                    moved.setProperty(propertyName, property.getValue());
                                 }
                             }
                         }
