@@ -143,6 +143,7 @@ engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImp
 engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
+engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/updater/UpdaterPath.java svneol=native#text/plain
 engine/src/main/resources/hippo.cnd -text
 engine/src/main/resources/hippofacnav.cnd -text
@@ -293,6 +294,7 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuid
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRangesTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpTest.java -text
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text

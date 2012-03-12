@@ -30,6 +30,8 @@ import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.HierarchyManagerImpl;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.cluster.ClusterNode;
+import org.apache.jackrabbit.core.config.ClusterConfig;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
@@ -67,6 +69,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
+        ClusterConfig clusterConfig = getRepositoryConfig().getClusterConfig();
+        if (clusterConfig != null && clusterConfig.getId() != null) {
+            System.setProperty(ClusterNode.SYSTEM_PROPERTY_NODE_ID, clusterConfig.getId());
+        }
     }
 
     @Override

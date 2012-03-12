@@ -61,6 +61,7 @@ checker/wdbp-error-log.txt
 config/.classpath
 config/.project
 config/.settings
+config/hippo-repository-config.iml
 config/target
 connector/*.tmp
 connector/.classpath
@@ -172,8 +173,11 @@ test/*.tmp
 test/.classpath
 test/.project
 test/.settings
+test/derby.log
+test/hippo-repository-test.iml
 test/jpox.log
 test/local.properties
+test/log4j.log
 test/nbproject
 test/repository
 test/src/test/java/org/hippoecm/repository/decorating/.MirrorTest.java.swp

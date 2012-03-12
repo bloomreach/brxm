@@ -86,6 +86,14 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.standardworkflow.EventLogCleanupModule">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
 
   <!-- surpress classcast waringing in dispose() method over SPI -->
   <category additivity="false" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager">
