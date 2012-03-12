@@ -47,6 +47,7 @@
     <hippo.addon-channel-manager.version>2.23.02-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
+    <hippo.addon-automatic-export.version>2.02.00-SNAPSHOT</hippo.addon-automatic-export.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
 
@@ -507,6 +508,17 @@
         <artifactId>hippo-addon-brokenlinks-common</artifactId>
         <version>${hippo.addon-brokenlinks.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-automatic-export-repository</artifactId>
+        <version>${hippo.addon-automatic-export.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-automatic-export-frontend</artifactId>
+        <version>${hippo.addon-automatic-export.version}</version>
+      </dependency>
+
 
       <!-- All Hippo Packages artifacts -->
       <dependency>
