@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.mock.core.request;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -391,6 +392,17 @@ public class MockHstRequestContext implements HstRequestContext {
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(filters);
+    }
+    
+    /**
+     * Adds the {@link HstComponentWindowCreationFilter} to the {@link HstRequestContext}  
+     * @param filter the {@link HstComponentWindowCreationFilter} to be added to the {@link HstRequestContext#getComponentWindowCreationFilters()}
+     */
+    public void addComponentWindowCreationFilters(HstComponentWindowCreationFilter filter) {
+        if (filters == null) {
+            filters = new ArrayList<HstComponentWindowCreationFilter>();
+        }
+        filters.add(filter);
     }
     
     @Override

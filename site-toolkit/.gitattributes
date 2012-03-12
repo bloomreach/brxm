@@ -583,6 +583,7 @@ components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text sv
 components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowCreationFilter.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerURLProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipeline.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text
