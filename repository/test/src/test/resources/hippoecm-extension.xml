@@ -88,19 +88,4 @@
       <sv:value>1004.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- export test namespace -->
-  <sv:node sv:name="et">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/et/nt/1.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>export-test.cnd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>1005.0</sv:value>
-    </sv:property>
-  </sv:node>
 </sv:node>

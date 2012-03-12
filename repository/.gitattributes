@@ -284,9 +284,6 @@ test/src/test/java/org/hippoecm/repository/decorating/FacetedReferenceTest.java 
 test/src/test/java/org/hippoecm/repository/decorating/MirrorCombiFacetSelectTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/decorating/MirrorTest.java -text
 test/src/test/java/org/hippoecm/repository/decorating/SingledViewFacetSelectTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/repository/export/EventPreProcessorTest.java -text
-test/src/test/java/org/hippoecm/repository/export/EventTest.java -text
-test/src/test/java/org/hippoecm/repository/export/ExportTest.java -text
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractDateFacetNavigationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/AbstractRangesFacetNavigationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationConcurrencyTest.java -text svneol=unset#text/plain
@@ -301,18 +298,6 @@ test/src/test/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerW
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
-test/src/test/resources/export-test.cnd -text
-test/src/test/resources/export/content/nested-content.xml -text
-test/src/test/resources/export/extensions/deep/foo.xml -text
-test/src/test/resources/export/extensions/deep/foo/foo/foo.xml -text
-test/src/test/resources/export/extensions/deep/hippoecm-extension.xml -text
-test/src/test/resources/export/extensions/namespace/hippoecm-extension.xml -text
-test/src/test/resources/export/extensions/nodetype/hippoecm-extension.xml -text
-test/src/test/resources/export/extensions/nodetype/namespaces/et.cnd -text
-test/src/test/resources/export/extensions/nodetypes/hippoecm-extension.xml -text
-test/src/test/resources/export/extensions/nodetypes/namespaces/et.cnd -text
-test/src/test/resources/export/extensions/simple/hippoecm-extension.xml -text
-test/src/test/resources/export/extensions/simple/simple.xml -text
 test/src/test/resources/org/hippoecm/repository/HREPTWO4837Test.xml svneol=native#text/plain
 test/src/test/resources/org/hippoecm/repository/test/jackrabbit.xml -text
 test/src/test/resources/repository-test.cnd -text
