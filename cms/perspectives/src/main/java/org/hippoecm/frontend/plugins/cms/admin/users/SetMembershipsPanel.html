@@ -17,15 +17,8 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
     <form wicket:id="form">
-        <div class="hippo-controlpanel-actions hippo-controlpanel-actions-top">
-            <wicket:message key="user-membership-make-member-of"/>
-            <select wicket:id="local-groups">
-                <option>group1</option>
-            </select>
-            <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
-        </div>
         <wicket:enclosure child="local-memberships-label">
-            <h3 wicket:id="local-memberships-label"/>
+            <span wicket:id="local-memberships-label"/>
             <table class="hippo-controlpanel-table-default hippo-list-details">
                 <tr>
                     <th>
@@ -46,7 +39,7 @@
             </table>
         </wicket:enclosure>
         <wicket:enclosure child="external-memberships-label">
-            <h3 wicket:id="external-memberships-label"/>
+            <span wicket:id="external-memberships-label"/>
             <table class="hippo-controlpanel-table-default hippo-list-details">
                 <tr wicket:id="external-memberships">
                     <th>
@@ -70,6 +63,13 @@
                 </tr>
             </table>
         </wicket:enclosure>
+        <div class="hippo-controlpanel-options">
+            <wicket:message key="user-membership-make-member-of"/>
+            <select wicket:id="local-groups">
+                <option>group1</option>
+            </select>
+            <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
+        </div>
         <div class="hippo-controlpanel-actions">
             <input type="submit" wicket:message="value:user-back-action" wicket:id="back-button"/>
         </div>
