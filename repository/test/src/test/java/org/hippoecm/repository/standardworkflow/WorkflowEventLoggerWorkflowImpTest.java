@@ -67,7 +67,7 @@ public class WorkflowEventLoggerWorkflowImpTest extends TestCase {
         eventLogger.logEvent("userName", "className", "methodName");
         Node logFolder = session.getNode("/hippo:log/test");
         Node currentNode = logFolder;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             NodeIterator nodes = currentNode.getNodes();
             assertTrue(nodes.hasNext());
             currentNode = nodes.nextNode();
