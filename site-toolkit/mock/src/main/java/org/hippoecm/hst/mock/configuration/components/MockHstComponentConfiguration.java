@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.mock.configuration.components;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -97,6 +99,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
 
     public String getParameter(String name) {
         return parameters.get(name);
+    }
+    
+    @Override
+    public Set<String> getParameterPrefixes() {
+        return Collections.emptySet();
     }
 
     public void setParameter(String name, String value) {
@@ -247,5 +254,4 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
         this.iconPath = iconPath;
     }
 
-    
 }
