@@ -255,6 +255,8 @@ public class User implements Comparable<User>, IClusterable {
             NodeIterator iter = query.execute().getNodes();
             if (iter.hasNext()) {
                 init(iter.nextNode());
+            } else {
+                throw new IllegalArgumentException("User {} does not exist".replace("{}", username));
             }
         } catch (RepositoryException e) {
             log.error("Unable to get node for user '{}' while constructing user", username, e);
@@ -479,7 +481,7 @@ public class User implements Comparable<User>, IClusterable {
         // remember old password
         if (node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String oldPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
-            Value[] newValues = null;
+            Value[] newValues;
             if (node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
                 Value[] oldValues = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
                 newValues = new Value[oldValues.length + 1];
