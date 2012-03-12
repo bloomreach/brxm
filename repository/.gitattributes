@@ -53,6 +53,7 @@ config/src/main/resources/domain-hippomodules.xml -text
 config/src/main/resources/domain-hipporequests.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow.xml -text svneol=unset#text/plain
 config/src/main/resources/embedded-workflows.xml -text
+config/src/main/resources/eventlogcleanup-module.xml -text
 config/src/main/resources/group-author.xml -text svneol=unset#text/plain
 config/src/main/resources/group-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/group-everybody.xml -text svneol=unset#text/plain
@@ -140,6 +141,7 @@ engine/src/main/java/org/hippoecm/repository/security/role/RepositoryRole.java s
 engine/src/main/java/org/hippoecm/repository/security/role/Role.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
+engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLogCleanupModule.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
@@ -294,6 +296,7 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuid
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRangesTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/standardworkflow/EventLogCleanupModuleTest.java -text
 test/src/test/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpTest.java -text
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
