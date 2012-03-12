@@ -33,8 +33,8 @@ import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.slf4j.LoggerFactory;
 
 /**
- * A HstRepositoryNode is a node that during initialization fetches everything it needs, after which, it detaches its backing
- * content provider. A HstRepositoryNode is suitable for (event) caching.
+ * A {@link HstNodeImpl} is a node that during initialization fetches everything it needs, after which, it detaches its backing
+ * content provider. A {@link HstNodeImpl} is suitable for (event) caching.
  */
 
 public class HstNodeImpl implements HstNode {
@@ -284,5 +284,20 @@ public class HstNodeImpl implements HstNode {
         provider.detach();
         stale = false;
     }
+    
+    @Override
+    public String toString() {
+        // the path of the HstNode's can be different than the backing JcrValueProvider due to inheritance: Multiple HstNode's 
+        // can reuse the same JcrValueProvider instance
+        HstNode cr = this;
+        StringBuilder pathBuilder = new StringBuilder("/").append(cr.getValueProvider().getName());
+        while(cr.getParent() != null ) {
+            cr = cr.getParent();
+            pathBuilder.insert(0, cr.getValueProvider().getName()).insert(0, "/");
+        }
+        return this.getClass().getSimpleName() + "[path= "+pathBuilder.toString()+" + nodeTypeName=" + nodeTypeName + ", " + " + JcrValueProvider Path =" + getValueProvider().getPath() + ", " +
+        		"stale=" + stale + ", inherited=" + inherited + "]";
+    }
+
     
 }
