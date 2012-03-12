@@ -67,7 +67,9 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
             if (!path.equals(""))
                 node = node.getNode(path);
             Workflow workflow = workflowManager.getWorkflow(category, node);
-            factory.export(workflow);
+            if (workflow != null) {
+                factory.export(workflow);
+            }
             return workflow;
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
@@ -77,7 +79,9 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
     public Workflow getWorkflow(String category, Document document) throws RepositoryException, RemoteException {
         try {
             Workflow workflow = workflowManager.getWorkflow(category, document);
-            factory.export(workflow);
+            if (workflow != null) {
+                factory.export(workflow);
+            }
             return workflow;
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
@@ -88,7 +92,9 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
         try {
             ServerWorkflowDescriptor serverDescriptor = (ServerWorkflowDescriptor) descriptor;
             Workflow workflow = workflowManager.getWorkflow(serverDescriptor.descriptor);
-            factory.export(workflow);
+            if (workflow != null) {
+                factory.export(workflow);
+            }
             return workflow;
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
