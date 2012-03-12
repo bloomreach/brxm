@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
