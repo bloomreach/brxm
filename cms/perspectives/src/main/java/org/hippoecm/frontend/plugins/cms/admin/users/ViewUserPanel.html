@@ -83,15 +83,16 @@
         <h3>
             <wicket:message key="user-memberships"/>
         </h3>
-        <label wicket:id="properties-label"/>
-        <table class="hippo-controlpanel-table-default hippo-list-details">
-            <tr wicket:id="properties">
-                <td><label wicket:id="key"/>:</td>
-                <td><label wicket:id="value"/></td>
-            </tr>
-        </table>
+        <wicket:enclosure child="properties-label">
+            <label wicket:id="properties-label"/>
+            <table class="hippo-controlpanel-table-default hippo-list-details">
+                <tr wicket:id="properties">
+                    <td><label wicket:id="key"/>:</td>
+                    <td><label wicket:id="value"/></td>
+                </tr>
+            </table>
+        </wicket:enclosure>
         <span wicket:id="set-member-ship-panel"></span>
     </div>
-
 </wicket:extend>
 </html>
