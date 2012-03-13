@@ -83,6 +83,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
+    private static final String SLASH = "/";
 
     private String defaultDropLocation = "/content";
 
@@ -110,11 +111,13 @@ public class FolderShortcutPlugin extends RenderPlugin {
         if (!defaultDropLocation.equals("")) {
             try {
                 Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-                while (defaultDropLocation.startsWith("/")) {
+                while (defaultDropLocation.startsWith(SLASH)) {
                     defaultDropLocation = defaultDropLocation.substring(1);
                 }
                 if (!jcrSession.getRootNode().hasNode(defaultDropLocation)) {
                     defaultDropLocation = null;
+                } else {
+                    link.setVisible(jcrSession.hasPermission(SLASH + defaultDropLocation, Session.ACTION_ADD_NODE));
                 }
             } catch (PathNotFoundException ex) {
                 log.warn("No default drop location present");
@@ -143,13 +146,13 @@ public class FolderShortcutPlugin extends RenderPlugin {
     // FIXME: pure duplication of logic in FolderWorkflowPlugin
     @SuppressWarnings("unchecked")
     public static void select(JcrNodeModel nodeModel, IServiceReference<IBrowseService> browseServiceRef,
-            IServiceReference<IEditorManager> editServiceRef) {
+                              IServiceReference<IEditorManager> editServiceRef) {
         IBrowseService browser = (browseServiceRef != null ? browseServiceRef.getService() : null);
         IEditorManager editorMgr = (editServiceRef != null ? editServiceRef.getService() : null);
         try {
             if (nodeModel.getNode() != null
                     && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
-                            HippoNodeType.NT_HANDLE))) {
+                    HippoNodeType.NT_HANDLE))) {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
@@ -266,7 +269,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             try {
                 if (folder == null) {
                     folder = jcrSession.getRootNode().getNode(
-                            defaultFolder.startsWith("/") ? defaultFolder.substring(1) : defaultFolder);
+                            defaultFolder.startsWith(SLASH) ? defaultFolder.substring(1) : defaultFolder);
                 }
 
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
@@ -326,7 +329,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     return getNodeNameCodec();
                 }
             }));
-            
+
             List<String> emptyList = new LinkedList<String>();
             emptyList.add("");
 
