@@ -242,6 +242,8 @@ public class Traverse {
             Checker.log.info("Read " + count + " bundles...");
         }
 
+        Set<UUID> abandoned = new TreeSet<UUID>();
+
         Set<UUID> roots = new TreeSet<UUID>();
         {
             Set<UUID> cyclic = new TreeSet<UUID>();
@@ -266,7 +268,7 @@ public class Traverse {
                                 iter.remove();
                             }
                         }
-                        UUID parent = (childParentRelation.containsKey(current) && childParentRelation.containsKey(current) ? childParentRelation.getFirst(current) : null);
+                        UUID parent = (childParentRelation.containsKey(current) ? childParentRelation.getFirst(current) : null);
                         if (parent != null && !parent.equals(DatabaseDelegate.nullUUID)) {
                             if (!all.contains(parent)) {
                                 orphaned.add(current);
@@ -274,6 +276,17 @@ public class Traverse {
                                 path.clear();
                                 current = null;
                                 continue;
+                            } else {
+                                boolean found = false;
+                                for (UUID child : parentChildRelation.get(parent)) {
+                                    if (child.equals(current)) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) {
+                                    abandoned.add(current);
+                                }
                             }
                         }
                         if (parent == null || parent.equals(DatabaseDelegate.nullUUID)) {
@@ -363,7 +376,7 @@ public class Traverse {
                     Checker.log.info("FOUND "+cyclic.size() + " CYCLIC PATHS");
                 }
                 if (orphaned.size() > 0) {
-                    Checker.log.warn("FOUND " + orphaned.size() + " ORPHANED PATHS");
+                    Checker.log.warn("FOUND " + orphaned.size() + " ORPHANED NODES");
                     clean = false;
                     Checker.log.warn("Orphaned reference:");
                     for (UUID orphan : orphaned) {
@@ -380,7 +393,18 @@ public class Traverse {
                         }
                     }
                 } else {
-                    Checker.log.info("FOUND " + orphaned.size() + " ORPHANED PATHS");
+                    Checker.log.info("FOUND " + orphaned.size() + " ORPHANED NODES");
+                }
+                if (abandoned.size() > 0) {
+                    Checker.log.warn("FOUND " + abandoned.size() + " ABANDONED NODES");
+                    clean = false;
+                    Checker.log.warn("Abandoned reference:");
+                    for (UUID abandon : abandoned) {
+                        Checker.log.warn("  abandoned node " + abandon + " by parent " + childParentRelation.getFirst(abandon));
+                        repair.removeNode(Repair.RepairStatus.RECHECK, abandon);
+                    }
+                } else {
+                    Checker.log.info("FOUND " + abandoned.size() + " ABANDONED NODES");
                 }
                 if (missing.size() > 0) {
                     Checker.log.warn("FOUND " + missing.size() + " MISSING CHILD NODES");
