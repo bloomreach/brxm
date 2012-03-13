@@ -23,7 +23,7 @@ public class MinimalLengthPasswordValidator extends AbstractPasswordValidator im
     private static final long serialVersionUID = 1L;
 
     private final int minimallength;
-    
+
     public MinimalLengthPasswordValidator(IPluginConfig config) {
         super(false);
         minimallength = config.getAsInteger("minimallength", 4);
@@ -33,10 +33,10 @@ public class MinimalLengthPasswordValidator extends AbstractPasswordValidator im
     protected boolean isValid(String password, User user) {
         return password.length() >= minimallength;
     }
-    
+
     @Override
     protected Object[] getDescriptionParameters() {
-        return new Object[] { new Integer(minimallength) };
+        return new Object[]{minimallength};
     }
 
 }

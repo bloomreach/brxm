@@ -25,7 +25,7 @@ public class IsNoPreviousPasswordValidator extends AbstractPasswordValidator {
     private static final long serialVersionUID = 1L;
 
     private int numberOfPreviousPasswords;
-    
+
     public IsNoPreviousPasswordValidator(IPluginConfig config) {
         super(false);
         numberOfPreviousPasswords = config.getAsInteger("numberofpreviouspasswords", 5);
@@ -37,7 +37,7 @@ public class IsNoPreviousPasswordValidator extends AbstractPasswordValidator {
     }
 
     protected Object[] getDescriptionParameters() {
-        return new Object[] { new Integer(numberOfPreviousPasswords) };
+        return new Object[]{numberOfPreviousPasswords};
     }
 
 }

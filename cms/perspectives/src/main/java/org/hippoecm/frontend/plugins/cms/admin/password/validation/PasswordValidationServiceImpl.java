@@ -34,16 +34,16 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PasswordValidationServiceImpl.class);
-    
+
     private List<IPasswordValidator> validators;
 
     public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         loadConfiguration();
         context.registerService(this, IPasswordValidationService.class.getName());
     }
-    
+
     private void loadConfiguration() {
         // get the child pluginconfig nodes that define the validators
         Set<IPluginConfig> configs = getPluginConfig().getPluginConfigSet();
@@ -52,23 +52,32 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         for (IPluginConfig config : configs) {
             String validatorClassName = config.getString("validator.class");
             try {
-                Class<IPasswordValidator> validatorClass = (Class<IPasswordValidator>) Class.forName(validatorClassName);
+                Class candidateClass = Class.forName(validatorClassName);
+
+                if (!IPasswordValidator.class.isAssignableFrom(candidateClass)) {
+                    // throw an Exception if the cast below will fail..
+                    throw new IllegalArgumentException(
+                            "Class {} does not implement IPasswordValidator".replace("{}", candidateClass.getName()));
+                }
+
+                @SuppressWarnings({"unchecked"}) // If clause above already make 100% this cast will succeed
+                        Class<IPasswordValidator> validatorClass = (Class<IPasswordValidator>) candidateClass;
+
                 Constructor<IPasswordValidator> validatorConstructor = validatorClass.getConstructor(IPluginConfig.class);
                 IPasswordValidator validator = validatorConstructor.newInstance(config);
                 if (validator.isOptional()) {
                     optionalValidators.add(validator);
-                }
-                else {
+                } else {
                     validators.add(validator);
                 }
             } catch (Exception e) {
                 log.error("Failed to create password validator: " + e.toString());
             }
         }
-        
+
         // get the required password strength
         int requiredStrength = getPluginConfig().getInt("password.strength", 0);
-        
+
         // add the optional password validator
         validators.add(new OptionalPasswordValidator(optionalValidators, requiredStrength));
 
@@ -83,18 +92,18 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         }
         return result;
     }
-    
+
     public List<IPasswordValidator> getPasswordValidators() {
         return validators;
     }
-    
+
     private static class OptionalPasswordValidator implements IPasswordValidator {
-        
+
         private static final long serialVersionUID = 1L;
-        
+
         private final List<IPasswordValidator> optionalValidators;
         private final int requiredStrength;
-        
+
         private OptionalPasswordValidator(List<IPasswordValidator> optionalValidators, int requiredStrength) {
             this.optionalValidators = optionalValidators;
             this.requiredStrength = requiredStrength;
@@ -127,7 +136,8 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         @Override
         public String getDescription() {
             StringBuilder description = new StringBuilder();
-            description.append(new ClassResourceModel("message", PasswordValidationServiceImpl.class, new Object[] { new Integer(requiredStrength) }).getObject());
+            description.append(new ClassResourceModel("message", PasswordValidationServiceImpl.class,
+                    new Object[]{requiredStrength}).getObject());
             int counter = 1;
             for (IPasswordValidator validator : optionalValidators) {
                 description.append("\n").append(counter).append(") ").append(validator.getDescription());
@@ -138,7 +148,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
             }
             return description.append(".").toString();
         }
-        
+
     }
-    
+
 }
