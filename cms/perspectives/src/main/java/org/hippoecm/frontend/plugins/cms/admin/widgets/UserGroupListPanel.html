@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2012 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,24 +15,17 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:extend>
-    <h2>
-        <wicket:message key="permissions-view-title"/>
-    </h2>
-    <h3>
-        <wicket:message key="permissions-actions-title"/>
-    </h3>
-    <ul class="hippo-controlpanel-options">
-        <li>
-            <wicket:message key="permissions-create"/>
-        </li>
-        <li>
-            <wicket:message key="permissions-click-and-edit"/>
-        </li>
-    </ul>
-    <h3>
-        <wicket:message key="permissions-current-permissions"/>
-    </h3>
-    <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="table">[table]</table>
-</wicket:extend>
+<wicket:panel>
+    <span wicket:id="usersLabel">
+        <wicket:message key="permissions-users-label"/>
+    </span>
+    <span wicket:id="users"><span wicket:id="link"/></span>
+
+    <span wicket:id="groupsLabel">
+        <wicket:message key="permissions-groups-label"/>
+    </span>
+    <span wicket:id="groupItem">
+        <a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a><br/>
+    </span>
+</wicket:panel>
 </html>

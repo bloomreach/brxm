@@ -75,17 +75,7 @@ public class Group implements Comparable<Group>, IClusterable {
 
 
     public static boolean exists(String groupname) {
-        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupname);
-        try {
-            @SuppressWarnings({"deprecation"}) Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            if (query.execute().getNodes().hasNext()) {
-                return true;
-            }
-        } catch (RepositoryException e) {
-            log.error("Unable to check if group '{}' exists, returning true", groupname, e);
-            return true;
-        }
-        return false;
+        return getGroup(groupname) != null;
     }
 
     public static List<Group> getLocalGroups() {
@@ -139,10 +129,31 @@ public class Group implements Comparable<Group>, IClusterable {
 
 
     /**
-     * FIXME: should move to roles class or something the like when the admin perspective gets support for it
+     * Gets the Group with the specified name. If no Group with the specified name exists, null is returned.
      *
-     * @return A list of all roles defined in the system
+     * @param groupName the name of the Group to return
+     * @return the Group with name groupName
      */
+    public static Group getGroup(String groupName) {
+        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
+        try {
+            @SuppressWarnings("deprecation") Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            QueryResult queryResult = query.execute();
+            if (queryResult.getNodes().hasNext()) {
+                return new Group((Node) queryResult.getNodes().next());
+            }
+        } catch (RepositoryException e) {
+            log.error("Unable to check if group '{}' exists, returning true", groupName, e);
+            return null;
+        }
+        return null;
+    }
+
+    /*
+    * FIXME: should move to roles class or something the like when the admin perspective gets support for it
+    *
+    * @return A list of all roles defined in the system
+    */
     public static List<String> getAllRoles() {
         List<String> roles = new ArrayList<String>();
         NodeIterator iter;
@@ -218,6 +229,7 @@ public class Group implements Comparable<Group>, IClusterable {
         String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
         Query query;
         try {
+            //noinspection deprecation
             query = getQueryManager().createQuery(queryString, Query.SQL);
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get the Query Manager", e);

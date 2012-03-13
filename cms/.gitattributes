@@ -1577,6 +1577,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/validators/Pa
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/AjaxLinkLabelContainer.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/ConfirmDeleteDialog_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/DefaultFocusBehavior.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/widgets/UserGroupListPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserPerspective_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/BrowserSectionAccordion.html svneol=native#text/plain
