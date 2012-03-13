@@ -23,12 +23,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
+import org.imgscalr.Scalr;
 
 /**
  * Generic image manipulation utility methods.
@@ -36,6 +39,47 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 public class ImageUtils {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    /**
+     * The available strategies for scaling images.
+     */
+    public static enum ScalingStrategy {
+        /**
+         * Automatically determine the best strategy to get the nicest looking image in the least amount of time.
+         */
+        AUTO(Scalr.Method.AUTOMATIC),
+        /**
+         * Scale as fast as possible. For smaller images (800px in size) this can result in noticeable aliasing but
+         * it can be a few order of magnitudes faster than using the {@link #QUALITY} method.
+         */
+        SPEED(Scalr.Method.SPEED),
+        /**
+         * Scale faster than when using {@link #QUALITY} but get better results than when using {@link #SPEED}.
+         */
+        SPEED_AND_QUALITY(Scalr.Method.BALANCED),
+        /**
+         * Create a nice scaled version of an image at the cost of more processing time. This strategy is most important
+         * for smaller pictures (800px or smaller) and less important for larger pictures, as the difference between
+         * this strategy and the {@link #SPEED} strategy become less and less noticeable as the
+         * source-image size increases.
+         */
+        QUALITY(Scalr.Method.QUALITY),
+        /**
+         * Do everything possible to make the scaled image exceptionally good, regardless of the processing time needed.
+         * Use this strategy when even @{link #QUALITY} results in bad-looking images.
+         */
+        BEST_QUALITY(Scalr.Method.ULTRA_QUALITY);
+
+        private Scalr.Method scalrMethod;
+
+        ScalingStrategy(Scalr.Method scalrMethod) {
+            this.scalrMethod = scalrMethod;
+        }
+        
+        private Scalr.Method getScalrMethod() {
+            return scalrMethod;
+        }
+    }
 
     /**
      * Prevent instantiation
@@ -105,7 +149,7 @@ public class ImageUtils {
      *
      * @return an output stream with the data of the given image.
      *
-     * @@throws IOException when creating the binary output stream failed.
+     * @throws IOException when creating the binary output stream failed.
      */
     public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -115,7 +159,20 @@ public class ImageUtils {
             try {
                 ios = ImageIO.createImageOutputStream(out);
                 writer.setOutput(ios);
-                writer.write(image);
+
+                // write compressed images with high quality
+                final ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                if (writeParam.canWriteCompressed()) {
+                    String[] compressionTypes = writeParam.getCompressionTypes();
+                    if (compressionTypes != null && compressionTypes.length > 0) {
+                        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                        writeParam.setCompressionType(compressionTypes[0]);
+                        writeParam.setCompressionQuality(1f);
+                    }
+                }
+
+                final IIOImage iioImage = new IIOImage(image, null, null);
+                writer.write(null, iioImage, writeParam);
                 ios.flush();
             } finally {
                 if (ios != null) {
@@ -125,6 +182,29 @@ public class ImageUtils {
         }
 
         return out;
+    }
+
+    /**
+     * Returns a scaled instance of the provided {@link BufferedImage}.
+     *
+     * @param img
+     *            the original image to be scaled
+     * @param targetWidth
+     *            the desired width of the scaled instance, in pixels
+     * @param targetHeight
+     *            the desired height of the scaled instance, in pixels
+     * @param strategy
+     *            the strategy to use for scaling the image
+     *
+     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
+     * the target width or target height is 0 or less.
+     */
+    public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, ScalingStrategy strategy) {
+        if (targetWidth <= 0 || targetHeight <= 0) {
+            return null;
+        }
+
+        return Scalr.resize(img, strategy.getScalrMethod(), Scalr.Mode.FIT_EXACT, targetWidth, targetHeight);
     }
 
     /**
@@ -149,7 +229,11 @@ public class ImageUtils {
      *
      * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
      * the target width or target height is 0 or less.
+     * 
+     * @deprecated Use {@link ImageUtils#scaleImage(java.awt.image.BufferedImage, int, int, org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy)} instead
+     * for faster scaling and/or better image quality)}
      */
+    @Deprecated
     public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, Object hint,
                                            boolean highQuality) {
         return scaleImage(img, 0, 0, img.getWidth(), img.getHeight(), targetWidth, targetHeight, hint, highQuality);

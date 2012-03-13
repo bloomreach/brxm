@@ -15,18 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.gallery.imageutil;
 
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-import org.apache.wicket.util.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +55,28 @@ public class ScaleImageOperation extends AbstractImageOperation {
     private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(ScaleImageOperation.class);
+    private static final Object scalingLock = new Object();
 
     private final int width;
     private final int height;
     private final boolean upscaling;
+    private final ImageUtils.ScalingStrategy strategy;
     private InputStream scaledData;
     private int scaledWidth;
     private int scaledHeight;
+
+    /**
+     * Creates a image scaling operation, defined by the bounding box of a certain width and height.
+     * The strategy will be set to {@link org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy#QUALITY},
+     * and the maximum memory usage to zero (i.e. undefined).
+     *
+     * @param width the width of the bounding box in pixels
+     * @param height the height of the bounding box in pixels
+     * @param upscaling whether to enlarge images that are smaller than the bounding box
+     */
+    public ScaleImageOperation(int width, int height, boolean upscaling) {
+        this(width, height, upscaling, ImageUtils.ScalingStrategy.QUALITY);
+    }
 
     /**
      * Creates a image scaling operation, defined by the bounding box of a certain width and height.
@@ -64,11 +84,14 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param width the width of the bounding box in pixels
      * @param height the height of the bounding box in pixels
      * @param upscaling whether to enlarge images that are smaller than the bounding box
+     * @param strategy the strategy to use for scaling the image (e.g. optimize for speed, quality, a trade-off between
+     *                 these two, etc.)
      */
-    public ScaleImageOperation(int width, int height, boolean upscaling) {
+    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy) {
         this.width = width;
         this.height = height;
         this.upscaling = upscaling;
+        this.strategy = strategy;
     }
 
     /**
@@ -90,51 +113,88 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param writer writer for the image data
      */
     public void execute(InputStream data, ImageReader reader, ImageWriter writer) throws IOException {
-        MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(data);
-        reader.setInput(mciis);
-
+        // save the image data in a temporary file so we can reuse the original data as-is if needed without
+        // putting all the data into memory
+        final File tmpFile = writeToTmpFile(data);
+        boolean deleteTmpFile = true;
+        log.debug("Stored uploaded image in temporary file {}", tmpFile);
+        
+        InputStream dataInputStream = null;
+        ImageInputStream imageInputStream = null;
+        
         try {
+            dataInputStream = new FileInputStream(tmpFile);
+            imageInputStream = new MemoryCacheImageInputStream(dataInputStream);
+            reader.setInput(imageInputStream);
+
             final int originalWidth = reader.getWidth(0);
             final int originalHeight = reader.getHeight(0);
             final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
-            final int targetWidth = (int)Math.max(originalWidth * resizeRatio, 1);
-            final int targetHeight = (int)Math.max(originalHeight * resizeRatio, 1);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Resizing from " + originalWidth + "x" + originalHeight + " to " + targetWidth + "x"
-                        + targetHeight);
-            }
-
-            BufferedImage originalImage = reader.read(0);
-            BufferedImage scaledImage = null;
-            if (resizeRatio < 1.0d) {
-                // scale down
-                scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight,
-                        RenderingHints.VALUE_INTERPOLATION_BICUBIC, true);
-                scaledWidth = targetWidth;
-                scaledHeight = targetHeight;
-            } else if (upscaling) {
-                // scale up
-                scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight,
-                        RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
-                scaledWidth = targetWidth;
-                scaledHeight = targetHeight;
-            } else {
-                // do not scale this image up, but keep the original size
-                scaledImage = originalImage;
+            if (resizeRatio == 1.0d || (resizeRatio >= 1.0d && !upscaling)) {
+                // return the original image data as-is by reading the temporary file, which is deleted when the
+                // stream is closed
+                log.debug("Using the original image of {}x{} as-is", originalWidth, originalHeight);
+                deleteTmpFile = false;
+                scaledData = new FileInputStream(tmpFile) {
+                    @Override
+                    public void close() throws IOException {
+                        super.close();
+                        System.out.println("Deleting temporary file " + tmpFile);
+                        tmpFile.delete();
+                    }
+                };
                 scaledWidth = originalWidth;
                 scaledHeight = originalHeight;
-            }
+            } else {
+                // scale the image
+                int targetWidth = (int)Math.max(originalWidth * resizeRatio, 1);
+                int targetHeight = (int)Math.max(originalHeight * resizeRatio, 1);
 
-            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, scaledImage);
-            scaledData = new ByteArrayInputStream(bytes.toByteArray());
+                if (log.isDebugEnabled()) {
+                    log.debug("Resizing image of {}x{} to {}x{}", new Object[]{originalWidth, originalHeight, targetWidth, targetHeight});
+                }
+
+                BufferedImage scaledImage;
+
+                synchronized(scalingLock) {
+                    BufferedImage originalImage = reader.read(0);
+                    scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight, strategy);
+                }                
+
+                scaledWidth = scaledImage.getWidth();
+                scaledHeight = scaledImage.getHeight();
+
+                ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage);
+                scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
+            }
         } finally {
-            mciis.close();
+            if (imageInputStream != null) {
+                imageInputStream.close();
+            }
+            IOUtils.closeQuietly(dataInputStream);
+            if (deleteTmpFile) {
+                log.debug("Deleting temporary file {}", tmpFile);
+                tmpFile.delete();
+            }
         }
+    }
+    
+    private File writeToTmpFile(InputStream data) throws IOException {
+        File tmpFile = File.createTempFile("hippo-image", ".tmp");
+        tmpFile.deleteOnExit();
+        OutputStream tmpStream = null;
+        try {
+            tmpStream = new BufferedOutputStream(new FileOutputStream(tmpFile));
+            IOUtils.copy(data, tmpStream);
+        } finally {
+            IOUtils.closeQuietly(tmpStream);
+        }
+        return tmpFile;
     }
 
     protected double calculateResizeRatio(double originalWidth, double originalHeight, int targetWidth,
-            int targetHeight) {
+                                          int targetHeight) {
         double widthRatio = 1;
         double heightRatio = 1;
 
@@ -149,7 +209,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
         // If the image has to be scaled up, and we should take the smallest positive ratio.
         return Math.min(widthRatio, heightRatio);
     }
-
+    
     /**
      * @return the scaled image data
      */

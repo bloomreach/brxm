@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Gallery processor that puts a scaled version of an image in each resource node. How to scale the image
- * in each resource node is specified by an associated {@ScalingParameters} object. Also stores the file name
+ * in each resource node is specified by an associated {@link ScalingParameters} object. Also stores the file name
  * of the image in the main node, and the width and height of each scaled image in the resource nodes.
  */
 public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
@@ -96,8 +96,11 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             final ScalingParameters p = scalingParametersMap.get(nodeName);
             if (p != null) {
                 try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(p.getWidth(), p.getHeight(), p.getUpscaling());
+                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(p.getWidth(), p.getHeight(),
+                            p.getUpscaling(), p.getStrategy());
+
                     scaleOperation.execute(data, mimeType);
+
                     stored = scaleOperation.getScaledData();
                     width = scaleOperation.getScaledWidth();
                     height = scaleOperation.getScaledHeight();
@@ -131,6 +134,6 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
     public boolean isUpscalingEnabled(Node resource) throws GalleryException, RepositoryException {
         String nodeName = resource.getName();
         ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
-        return scaleOperation != null ? scaleOperation.getUpscaling() : true;
+        return scaleOperation == null || scaleOperation.getUpscaling();
     }
 }

@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.gallery.processor;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.jcr.Binary;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hippoecm.editor.type.PlainJcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
@@ -57,6 +59,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
 
     public void makeImage(Node node, InputStream stream, String mimeType, String fileName) throws GalleryException,
             RepositoryException {
+        long time = System.currentTimeMillis();
 
         Node primaryChild = getPrimaryChild(node);
         if (primaryChild.isNodeType(HippoNodeType.NT_RESOURCE)) {
@@ -86,7 +89,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
                 if (!node.hasNode(childName)) {
                     log.debug("Adding resource {}", childName);
                     Node child = node.addNode(childName, field.getTypeDescriptor().getType());
-                    InputStream primaryData = primaryChild.getProperty("jcr:data").getStream();
+                    InputStream primaryData = primaryChild.getProperty("jcr:data").getBinary().getStream();
                     initGalleryResource(child, primaryData, primaryMimeType, fileName, lastModified);
                 }
             }
@@ -94,8 +97,11 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
 
         // finally, create the primary resource node
         log.debug("Initializing primary resource");
-        InputStream primaryData = primaryChild.getProperty("jcr:data").getStream();
+        InputStream primaryData = primaryChild.getProperty("jcr:data").getBinary().getStream();
         initGalleryResource(primaryChild, primaryData, primaryMimeType, fileName, lastModified);
+        
+        time = System.currentTimeMillis() - time;
+        log.debug("Processing image '{}' took {} ms.", fileName, time);
     }
 
     protected Node getPrimaryChild(Node node) throws RepositoryException, GalleryException {

@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.gallery.processor;
 
 import java.io.Serializable;
 
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
+
 /**
  * Parameters for a scaling operation: the width and height of the bounding box, and whether to do
  * upscaling or not.
@@ -30,6 +32,7 @@ public class ScalingParameters implements Serializable {
     private final int width;
     private final int height;
     private final boolean upscaling;
+    private final ImageUtils.ScalingStrategy strategy;
 
     /**
      * Creates a set of scaling parameters: the width and height of the bounding box, and whether to
@@ -40,9 +43,23 @@ public class ScalingParameters implements Serializable {
      * @param upscaling whether to do upscaling of images that are smaller than the bounding box
      */
     public ScalingParameters(int width, int height, boolean upscaling) {
+        this(width, height, upscaling, ImageUtils.ScalingStrategy.QUALITY);
+    }
+
+    /**
+     * Creates a set of scaling parameters: the width and height of the bounding box, and whether to
+     * do upscaling. A width or height of 0 or less means 'unspecified'.
+     *
+     * @param width the width of the bounding box
+     * @param height the height of the bounding box
+     * @param upscaling whether to do upscaling of images that are smaller than the bounding box
+     * @param strategy the scaling strategy to use
+     */
+    public ScalingParameters(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy) {
         this.width = width;
         this.height = height;
         this.upscaling = upscaling;
+        this.strategy = strategy;
     }
 
     /**
@@ -66,6 +83,13 @@ public class ScalingParameters implements Serializable {
         return upscaling;
     }
 
+    /**
+     * @return the scaling strategy to use
+     */
+    public ImageUtils.ScalingStrategy getStrategy() {
+        return strategy;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -77,7 +101,7 @@ public class ScalingParameters implements Serializable {
 
         final ScalingParameters other = (ScalingParameters) o;
 
-        return width == other.width && height == other.height && upscaling == other.upscaling;
+        return width == other.width && height == other.height && upscaling == other.upscaling && strategy == other.strategy;
     }
 
     @Override
@@ -87,7 +111,7 @@ public class ScalingParameters implements Serializable {
 
     @Override
     public String toString() {
-        return width + "x" + height + ", upscaling=" + upscaling;
+        return width + "x" + height + ",upscaling=" + upscaling + ",strategy=" + strategy.name();
     }
 
 }

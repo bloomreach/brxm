@@ -21,7 +21,7 @@ import java.io.InputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 
-import org.apache.wicket.util.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 
 public abstract class AbstractImageOperation {
