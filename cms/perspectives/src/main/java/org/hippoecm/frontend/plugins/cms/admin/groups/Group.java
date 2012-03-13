@@ -218,10 +218,9 @@ public class Group implements Comparable<Group>, IClusterable {
         }
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
-            setDescription(node.getProperty(PROP_DESCRIPTION).getString());
+            description = node.getProperty(PROP_DESCRIPTION).getString();
         } else if (node.hasProperty("description")) {
-            setDescription(node.getProperty("description").getString());
-
+            description = node.getProperty("description").getString();
         }
     }
 

@@ -133,7 +133,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
         this.node = node;
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
-            setDescription(node.getProperty(PROP_DESCRIPTION).getString());
+            description = node.getProperty(PROP_DESCRIPTION).getString();
         }
 
         // loop over all authroles
@@ -146,7 +146,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
             }
         }
     }
-    
+
     //-------------------- persistence helpers ----------//
     public AuthRole createAuthRole(String role) throws RepositoryException {
         Node roleNode = node.addNode(HippoNodeType.NT_AUTHROLE, HippoNodeType.NT_AUTHROLE);
@@ -170,7 +170,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
             getAuthRoles().get(role).removeGroup(group);
         }
     }
-    
+
     public static Domain forName(String domainName) {
         String pathToDomain = DOMAINS_BASE_LOCATION + "/" + domainName;
         Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
