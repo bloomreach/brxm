@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008 Hippo
+  * Copyright 2008-2012 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -16,22 +16,10 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-    <h2>
-        <wicket:message key="permissions-set"/>
-    </h2>
-    <form wicket:id="form">
-        <wicket:message key="permissions-grant-group"/>
-        <select wicket:id="groups-select">
-            <option>group1</option>
-        </select>
-        <wicket:message key="permissions-the-role"/>
-        <select wicket:id="roles-select">
-            <option>role1</option>
-        </select>
-        <wicket:message key="permissions-in-domain"/>
-        <input type="button" wicket:message="value:permissions-assign" wicket:id="submit"/>
-    </form>
-    <h3><span wicket:id="current-permissions-label"/></h3>
+    <h2><label wicket:id="permissions-set-title">[[Set permissions for domain {domain name}]]</label></h2>
+    <h3>
+        <wicket:message key="permissions-description-domain"/>
+    </h3>
     <wicket:message key="permissions-description"/>
     <table class="hippo-controlpanel-table-default hippo-list-details">
         <thead>
@@ -48,13 +36,13 @@
         <tr wicket:id="role-row">
             <td><label wicket:id="role"/></td>
             <td>
-                <table class="hippo-controlpanel-table-nested">
+                <table>
                     <tr wicket:id="groups">
                         <td width="50%">
                             <span wicket:id="group-label"/>
                         </td>
                         <td>
-                            <span class="icon-16 delete-inline-16" wicket:id="group-remove"/>
+                            <span wicket:id="group-remove"/>
                         </td>
                     </tr>
                 </table>
@@ -62,5 +50,17 @@
         </tr>
         </tbody>
     </table>
+    <form wicket:id="form">
+        <wicket:message key="permissions-grant-group"/>
+        <select wicket:id="groups-select">
+            <option>group1</option>
+        </select>
+        <wicket:message key="permissions-the-role"/>
+        <select wicket:id="roles-select">
+            <option>role1</option>
+        </select>
+        <wicket:message key="permissions-in-domain"/>
+        <input type="button" wicket:message="value:permissions-assign" wicket:id="submit"/>
+    </form>
 </wicket:extend>
 </html>

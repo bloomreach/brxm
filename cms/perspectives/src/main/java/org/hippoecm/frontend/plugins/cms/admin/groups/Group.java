@@ -134,7 +134,7 @@ public class Group implements Comparable<Group>, IClusterable {
      * @param groupName the name of the Group to return
      * @return the Group with name groupName
      */
-    public static Group getGroup(String groupName) {
+    private static Group getGroup(String groupName) {
         String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
         try {
             @SuppressWarnings("deprecation") Query query = getQueryManager().createQuery(queryString, Query.SQL);
