@@ -23,13 +23,16 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.VersioningConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
@@ -60,6 +63,8 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
+            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
+            NodeTypeRegistry ntReg = new NodeTypeRegistry(nsReg, fs);
             Traverse traverse = new Traverse();
             {
                 VersioningConfig wspConfig = repConfig.getVersioningConfig();
@@ -68,8 +73,7 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null,
-                        null,
+                        nsReg, ntReg,
                         repConfig.getDataStore()));
                 Repair repair = new Repair();
                 {
@@ -84,14 +88,15 @@ public class Checker {
                 }
             }
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
+                log.info("Checking workspace with name: '" + wspConfig.getName() +"'");
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
                 persistMgr = pmConfig.newInstance(PersistenceManager.class);
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null,
-                        null,
+                        nsReg, ntReg,
                         repConfig.getDataStore()));
+                log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
@@ -134,8 +139,10 @@ public class Checker {
             Iterable<UUID> corrupted = traverse.checkIndices(iterable);
             }*/
         } catch (RepositoryException ex) {
+            log.error("An exception occurred while trying to check the repository. ", ex);
             return false;
         } catch (Exception ex) {
+            log.error("An exception occurred while trying to check the repository. ", ex);
             return false;
         } finally {
             if (persistMgr != null) {
@@ -172,6 +179,7 @@ public class Checker {
         if (arguments.length == 0) {
             return true;
         }
+        log.info("Checking repository with arguments: {}", Arrays.toString(arguments));
         SanityCheckerMode mode = null;
         for (SanityCheckerMode candidateMode : SanityCheckerMode.values()) {
             if (candidateMode.getName().equals(arguments[0])) {
@@ -183,6 +191,7 @@ public class Checker {
         }
         Set<String> checkerUUIDs = null;
         Set<Name> checkerNames = null;
+        log.info("Running checker with mode: {}", mode);
         switch (mode) {
             case TRUE:
                 return check(true);
@@ -222,15 +231,18 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
+            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
+            NodeTypeRegistry ntReg = new NodeTypeRegistry(nsReg, fs);
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
+                log.info("Checking workspace with name: '" + wspConfig.getName() +"'");
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
                 persistMgr = pmConfig.newInstance(PersistenceManager.class);
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null,
-                        null,
+                        nsReg, ntReg,
                         repConfig.getDataStore()));
+                log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
@@ -310,7 +322,7 @@ public class Checker {
                                         Name nameValue = value.getName();
                                         sb.append("{").append(nameValue.getNamespaceURI()).append("}").append(nameValue.getLocalName());
                                     } catch (RepositoryException ex) {
-                                        ex.printStackTrace();
+                                        log.error("An exception occurred while trying to print the values. ", ex);
                                     }
                                 }
                                 System.err.println(node.getNode() + " " + sb.toString());

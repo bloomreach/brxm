@@ -147,8 +147,9 @@ public class Traverse {
         boolean clean = true;
         Set<UUID> missingSources = new TreeSet<UUID>();
         Set<UUID> missingTargets = new TreeSet<UUID>();
+        Bag<UUID, UUID> missingReferences = createSourceTargetBag();
         Bag<UUID, UUID> existingReferences = createSourceTargetCopyBag(sourceTargetRelation);
-        Bag<UUID, UUID> missingReferences = createSourceTargetCopyBag(sourceTargetRelation);
+        int count = 0;
         for (NodeReference item : references) {
             if (!all.contains(item.getSource())) {
                 missingSources.add(item.getSource());
@@ -159,15 +160,22 @@ public class Traverse {
             } else {
                 existingReferences.remove(item.getSource(), item.getTarget());
             }
+            count++;
+            if (count % 1000 == 0) {
+                Checker.log.info("Checked " + count + " references...");
+            }
         }
-        if (missingSources.size() > 0) {
+        if (count % 1000 != 0) {
+            Checker.log.info("Checked " + count + " references...");
+        }
+        if (missingReferences.size() > 0) {
             clean = false;
-            Checker.log.warn("MISSING REFERENCE " + missingSources.size());
+            Checker.log.warn("MISSING REFERENCES " + missingReferences.size());
             for(Map.Entry<UUID,UUID> reference : missingReferences) {
                 Checker.log.warn("  bad reference from "+reference.getKey()+" to "+reference.getValue());
             }
         } else {
-            Checker.log.info("MISSING REFERENCE " + missingSources.size());
+            Checker.log.info("MISSING REFERENCES " + missingSources.size());
         }
         if (missingSources.size() > 0) {
             clean = false;
@@ -202,8 +210,16 @@ public class Traverse {
 
     boolean checkVersionBundles(Iterable<NodeDescription> allIterable, Repair repair) {
         Checker.log.info("Reading version bundle information");
+        int count = 0;
         for (NodeDescription item : allIterable) {
             version.add(item.getNode()); // all.add(item.getNode());
+            count++;
+            if (count % 1000 == 0) {
+                Checker.log.info("Read " + count + " version bundles...");
+            }
+        }
+        if (count % 1000 != 0) {
+            Checker.log.info("Read " + count + " version bundles...");
         }
         return true;
     }
@@ -211,11 +227,19 @@ public class Traverse {
     boolean checkBundles(Iterable<NodeDescription> allIterable, Repair repair) {
         boolean clean = true;
         Checker.log.info("Reading bundle information");
+        int count = 0;
         for (NodeDescription item : allIterable) {
             all.add(item.getNode());
             childParentRelation.put(item.getNode(), item.getParent());
             parentChildRelation.addAll(item.getNode(), item.getChildren());
             sourceTargetRelation.addAll(item.getNode(), item.getReferences());
+            count++;
+            if (count % 1000 == 0) {
+                Checker.log.info("Read " + count + " bundles...");
+            }
+        }
+        if (count % 1000 != 0) {
+            Checker.log.info("Read " + count + " bundles...");
         }
 
         Set<UUID> roots = new TreeSet<UUID>();

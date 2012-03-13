@@ -72,17 +72,29 @@ public class Access {
     
     public String getBundleSelectAllSQL() {
         String sql = pm.bundleSelectAllIdsSQL;
-        sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
-        sql = sql.replace("NODE_ID", "*");
-        if("derby".equals(pm.getDatabaseType())) {
-            sql += " offset ? rows fetch next "+getBundleBatchSize()+" rows only";
-        } else if("mysql".equals(pm.getDatabaseType())) {
-            sql += " LIMIT ?, " + getBundleBatchSize();
+        if (getStorageModelBinaryKeys()) {
+            sql = sql.replace("NODE_ID", "*");
+            sql = sql + " ORDER BY NODE_ID";
+        } else {
+            sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
+            sql = sql + " ORDER BY NODE_ID_HI, NODE_ID_LO";
         }
-        // for MySQL we would like have to add on the createStatement: ResultSet.TYPE_FORWARD_ONLY and ResultSet.CONCUR_READ_ONLY
         return sql;
     }
-
+    
+    public String getBundleSelectAllFromSQL() {
+        String sql = pm.bundleSelectAllIdsFromSQL;
+        if (getStorageModelBinaryKeys()) {
+            // only replace first to skip the order clause
+            sql = sql.replaceFirst("NODE_ID", "*");
+        } else {
+            // only replace first to skip the order clause
+            sql = sql.replaceFirst("NODE_ID_HI, NODE_ID_LO", "*");
+        }
+        return sql;
+    }
+    
+    
     public int getBundleBatchSize() {
          if("derby".equals(pm.getDatabaseType())) {
             return 16;

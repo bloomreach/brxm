@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
 import org.apache.jackrabbit.core.id.NodeId;
-import org.apache.jackrabbit.core.persistence.pool.Access;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.value.InternalValue;

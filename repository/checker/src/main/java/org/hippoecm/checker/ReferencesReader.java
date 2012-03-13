@@ -35,7 +35,6 @@ class ReferencesReader extends DatabaseDelegate<NodeReference> implements Visita
 
     ReferencesReader(PersistenceManager persistMgr) {
         super(persistMgr);
-        this.wspName = wspName;
     }
 
     public void accept(Visitor<NodeReference> visitor) {
