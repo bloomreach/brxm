@@ -52,6 +52,7 @@ public class MockHstComponentWindow implements HstComponentWindow {
     private HstResponseState responseState;
     private HstComponentInfo componentInfo;
     private Map<String, Object> attributes;
+    boolean visible = true;
 
     public void addComponentExcpetion(HstComponentException e) {
         componentExceptions.add(e);
@@ -252,5 +253,15 @@ public class MockHstComponentWindow implements HstComponentWindow {
         
         Set<String> emptySet = Collections.emptySet();
         return new IteratorEnumeration<String>(emptySet.iterator());
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

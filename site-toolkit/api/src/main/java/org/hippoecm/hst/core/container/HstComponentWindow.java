@@ -22,6 +22,7 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseState;
 
 /**
@@ -210,5 +211,17 @@ public interface HstComponentWindow {
      * @return the fully classified className of the class implementing {@link PageErrorHandler}
      */
     String getPageErrorHandlerClassName();
+
+    /**
+     * When this method returns <code>true<code>, the {@link HstComponentWindow} is still part of the hierarchy of {@link HstComponentWindow}s, but
+     * the doBeforeRender of the {@link HstComponentWindow#getComponent()} and dispatched from the {@link HstResponse} will be skipped. 
+     * @return <code>true</code> when this {@link HstComponentWindow} should be visible, <code>false</code> otherwise
+     */
+    boolean isVisible();
     
+    /**
+     * @param visible sets whether this {@link HstComponentWindow} is visible or not
+     */
+    void setVisible(boolean visible);
+
 }

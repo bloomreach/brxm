@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstComponentFactory;
 import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
+import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstComponentWindowFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -352,15 +352,12 @@ public interface HstRequestContext {
 
     /** 
      * <p>
-     * <b>Expert:</b> This is used by the HST {@link HstComponentWindowFactory} implementations to optionally skip 
-     * some {@link HstComponentWindow}(s) tree(s). 
+     * <b>Expert:</b> Option to add filters to the {@link HstRequestContext}. Note that this only affects outcome if it is done 
+     * before the actual doBeforeRender / doAction etc or rendering is invoked by the HST
      * </p>
-     * <p>
-     * This method is in general not useful for frontend developers and is more targetted for the HST Core
-     * </p>
-     * @return the (immutable) {@link List} of {@link HstComponentWindowCreationFilter}s and if none present, return a empty List
+     * @return the (immutable) {@link List} of {@link HstComponentWindowFilter}s and if none present, return a empty List
      */
-    List<HstComponentWindowCreationFilter> getComponentWindowCreationFilters();
+    List<HstComponentWindowFilter> getComponentWindowFilters();
     
     /**
      * @return <code>true</code> when all URLs must be fully qualified, ie, including scheme, domain and portnumber (if present)

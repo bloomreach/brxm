@@ -328,8 +328,9 @@ public class AggregationValve extends AbstractValve {
             HstComponentWindow window = sortedComponentWindows[i];
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
-            
+            if (window.isVisible()) {
+                getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
+            }
             if (window.getResponseState().getRedirectLocation() != null) {
                 break;
             }
@@ -387,6 +388,9 @@ public class AggregationValve extends AbstractValve {
 
         for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
             HstComponentWindow window = sortedComponentWindows[i];
+            if (!window.isVisible()) {
+                continue;
+            }
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);

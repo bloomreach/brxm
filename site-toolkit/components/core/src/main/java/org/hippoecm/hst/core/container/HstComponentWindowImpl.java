@@ -58,6 +58,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected LinkedHashMap<String, HstComponentWindow> childWindowMapByReferenceName;
     
     protected Map<String, Object> attributes;
+    protected boolean visible = true;
     
     protected HstResponseState responseState;
     
@@ -253,6 +254,16 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     protected void setResponseState(HstResponseState responseState) {
         this.responseState = responseState;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+       this.visible = visible;
     }
 
 }

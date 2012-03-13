@@ -39,7 +39,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
+import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -84,7 +84,7 @@ public class MockHstRequestContext implements HstRequestContext {
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
     private Set<String> componentFilterTags;   
-    private List<HstComponentWindowCreationFilter> filters;
+    private List<HstComponentWindowFilter> filters;
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
 
@@ -387,7 +387,7 @@ public class MockHstRequestContext implements HstRequestContext {
     
 
     @Override
-    public List<HstComponentWindowCreationFilter> getComponentWindowCreationFilters() {
+    public List<HstComponentWindowFilter> getComponentWindowFilters() {
         if (filters == null) {
             return Collections.emptyList();
         }
@@ -395,12 +395,12 @@ public class MockHstRequestContext implements HstRequestContext {
     }
     
     /**
-     * Adds the {@link HstComponentWindowCreationFilter} to the {@link HstRequestContext}  
-     * @param filter the {@link HstComponentWindowCreationFilter} to be added to the {@link HstRequestContext#getComponentWindowCreationFilters()}
+     * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}  
+     * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
      */
-    public void addComponentWindowCreationFilters(HstComponentWindowCreationFilter filter) {
+    public void addComponentWindowCreationFilters(HstComponentWindowFilter filter) {
         if (filters == null) {
-            filters = new ArrayList<HstComponentWindowCreationFilter>();
+            filters = new ArrayList<HstComponentWindowFilter>();
         }
         filters.add(filter);
     }

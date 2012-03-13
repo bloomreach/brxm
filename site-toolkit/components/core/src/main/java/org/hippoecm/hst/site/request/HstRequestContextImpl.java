@@ -41,7 +41,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
+import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -92,7 +92,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected List<Locale> locales;
     protected String pathSuffix;
     protected Set<String> componentFilterTags;
-    private List<HstComponentWindowCreationFilter> filters;
+    private List<HstComponentWindowFilter> filters;
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
     
@@ -544,7 +544,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public List<HstComponentWindowCreationFilter> getComponentWindowCreationFilters() {
+    public List<HstComponentWindowFilter> getComponentWindowFilters() {
         if (filters == null) {
             return Collections.emptyList();
         }
@@ -552,9 +552,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public void addComponentWindowCreationFilters(HstComponentWindowCreationFilter filter) {
+    public void addComponentWindowCreationFilters(HstComponentWindowFilter filter) {
         if (filters == null) {
-            filters = new ArrayList<HstComponentWindowCreationFilter>();
+            filters = new ArrayList<HstComponentWindowFilter>();
         }
         filters.add(filter);
     }

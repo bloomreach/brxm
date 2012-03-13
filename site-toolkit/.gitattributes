@@ -132,8 +132,8 @@ api/src/main/java/org/hippoecm/hst/core/container/HstComponentFactory.java svneo
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentInvoker.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentRegistry.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentWindow.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/container/HstComponentWindowCreationFilter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstComponentWindowFactory.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/container/HstComponentWindowFilter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstContainerConfig.java -text
 api/src/main/java/org/hippoecm/hst/core/container/HstContainerURL.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java svneol=native#text/plain
@@ -583,7 +583,7 @@ components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text sv
 components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
-components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowCreationFilter.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowFilter.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerURLProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipeline.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericResponseHeadersValve.java -text

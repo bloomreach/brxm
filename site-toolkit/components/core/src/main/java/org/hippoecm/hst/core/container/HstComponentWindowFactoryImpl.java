@@ -57,7 +57,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         } else {
             parentReferenceNamespace = parentWindow.getReferenceNamespace();
         }
-
+        
         if (parentReferenceNamespace == null || "".equals(parentReferenceNamespace)) {
             referenceNamespaceBuilder.append(referenceName);
         } else {
@@ -123,31 +123,25 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                     continue;
                 }
                 
-                // check whether the child window should be skipped
-                if(skipCompWindow(requestContext, childCompConfig)) {
-                    continue;
+                HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
+                
+                // now available filters of HstComponentWindow's can be done. It can only be done after all descendant windows have been created
+                // because otherwise a filter could not for example remove descendant windows
+                for (HstComponentWindowFilter creationfilter : requestContext.getComponentWindowFilters()) {
+                    childCompWindow = creationfilter.doFilter(requestContext, childCompConfig, childCompWindow);
+                    if (childCompWindow == null) {
+                        // comp window is completely skipped/disabled
+                        break;
+                    }
                 }
                 
-                HstComponentWindow childCompWindow = create(requestContainerConfig, requestContext, childCompConfig, compFactory, window);
-                window.addChildWindow(childCompWindow);
+                if (childCompWindow != null) {
+                    window.addChildWindow(childCompWindow);
+                }
             }
         }
 
         return window;
     }
 
-    /**
-     * @param requestContext
-     * @param compConfig
-     * @return <code>true</code> when the component window for compConfig should be skipped
-     */
-    private boolean skipCompWindow (HstRequestContext requestContext, HstComponentConfiguration compConfig) {
-        for (HstComponentWindowCreationFilter creationfilter : requestContext.getComponentWindowCreationFilters()) {
-            if (creationfilter.skipComponentWindow(requestContext, compConfig)) {
-                // we have found a filter that indicates that the childCompWindow should be skipped. Skip it now
-                return true;
-            }
-        }
-        return false;
-    }
 }

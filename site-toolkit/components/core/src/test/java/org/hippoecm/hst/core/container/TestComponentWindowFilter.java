@@ -19,8 +19,10 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.TreeMap;
 
@@ -32,7 +34,7 @@ import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfigurat
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Test;
 
-public class TestComponentWindowCreationFilter {
+public class TestComponentWindowFilter {
 
     @Test
     public void testNoFilter() {
@@ -64,19 +66,19 @@ public class TestComponentWindowCreationFilter {
     }
     
     @Test
-    public void testSimpleWindowCreationFilter() {
+    public void testDisableWindowFilter() {
         HstComponentWindowFactoryImpl factory = new HstComponentWindowFactoryImpl();
 
         // set up request context
         MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.addComponentWindowCreationFilters(new HstComponentWindowCreationFilter() {
+        requestContext.addComponentWindowCreationFilters(new HstComponentWindowFilter() {
             @Override
-            public boolean skipComponentWindow(HstRequestContext requestContext, HstComponentConfiguration compConfig)
-                    throws HstComponentException {
+            public HstComponentWindow doFilter(HstRequestContext requestContext, HstComponentConfiguration compConfig,
+                    HstComponentWindow window) throws HstComponentException {
                 if(compConfig.getName().equals("comp1")) {
-                    return true;
+                    return null;
                 }
-                return false;
+                return window;
             }
         });
         
@@ -100,8 +102,47 @@ public class TestComponentWindowCreationFilter {
         // since comp1 is filtered, it should be null
         assertNull(window.getChildWindow("comp1"));
         assertNotNull(window.getChildWindow("comp2"));
+    }
+    
+    @Test
+    public void testHideWindowFilter() {
+        HstComponentWindowFactoryImpl factory = new HstComponentWindowFactoryImpl();
+
+        // set up request context
+        MockHstRequestContext requestContext = new MockHstRequestContext();
+        requestContext.addComponentWindowCreationFilters(new HstComponentWindowFilter() {
+            @Override
+            public HstComponentWindow doFilter(HstRequestContext requestContext, HstComponentConfiguration compConfig,
+                    HstComponentWindow window) throws HstComponentException {
+                if(compConfig.getName().equals("comp1")) {
+                    window.setVisible(false);
+                }
+                return window;
+            }
+        });
         
-        
+        // mock environment
+        HstContainerConfig mockHstContainerConfig = createNiceMock(HstContainerConfig.class);
+        HstComponentConfiguration compConfig = createNiceMock(HstComponentConfiguration.class);
+        expect(compConfig.getReferenceName()).andReturn("refName");
+        HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
+        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
+
+        // container items with matching, non-matching and no HstComponentWindowCreationFilter
+        TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
+        expect(compConfig.getChildren()).andReturn(children);
+
+        // instantiate the window
+        replay(mockHstContainerConfig, compConfig, compFactory);
+        HstComponentWindow window = factory.create(mockHstContainerConfig, requestContext, compConfig, compFactory);
+
+        // verify results
+        verify(mockHstContainerConfig, compConfig, compFactory);
+
+        assertNotNull(window.getChildWindow("comp1"));
+        assertNotNull(window.getChildWindow("comp2"));
+        assertFalse(window.getChildWindow("comp1").isVisible());
+        assertTrue(window.getChildWindow("comp2").isVisible());
     }
 
     
