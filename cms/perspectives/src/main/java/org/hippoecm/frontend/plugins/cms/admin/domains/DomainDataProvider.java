@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.domains;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
     private static String sessionId = "none";
 
     public DomainDataProvider() {
+        setSort("name", true);
     }
 
     @Override
@@ -57,7 +59,16 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
         for (int i = first; i < (count + first); i++) {
             domains.add(domainList.get(i));
         }
-        return domains.iterator();
+
+        Collections.sort(domains, new Comparator<Domain>() {
+            public int compare(Domain domain1, Domain domain2) {
+                int direction = getSort().isAscending() ? 1 : -1;
+
+                return direction * (domain1.compareTo(domain2));
+            }
+        });
+
+        return domains.subList(first, Math.min(first + count, domains.size())).iterator();
     }
 
     @Override

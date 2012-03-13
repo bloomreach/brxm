@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -30,6 +36,7 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
 
     public GroupDataProvider() {
         super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP);
+        setSort("groupname", true);
     }
 
     @Override
@@ -42,4 +49,18 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
         return new DetachableGroup(group);
     }
 
+    @Override
+    public Iterator<Group> iterator(int first, int count) {
+        List<Group> groupList = new ArrayList<Group>(getList());
+
+        Collections.sort(groupList, new Comparator<Group>() {
+            public int compare(Group group1, Group group2) {
+                int direction = getSort().isAscending() ? 1 : -1;
+
+                return direction * (group1.compareTo(group2));
+            }
+        });
+
+        return groupList.subList(first, Math.min(first + count, groupList.size())).iterator();
+    }
 }

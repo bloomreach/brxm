@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         List<String> roles = Group.getAllRoles();
         List<IColumn<Domain>> columns = new ArrayList<IColumn<Domain>>();
 
-        columns.add(new AbstractColumn<Domain>(new ResourceModel("permissions-column-header")) {
+        columns.add(new AbstractColumn<Domain>(new ResourceModel("permissions-column-header"), "name") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
@@ -100,7 +100,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
                         }
 
                         for (String groupName : authRole.getGroupnames()) {
-                            Group group = Group.getGroup(groupName);
+                            Group group = Group.forName(groupName);
                             groupList.add(group);
                         }
                     }

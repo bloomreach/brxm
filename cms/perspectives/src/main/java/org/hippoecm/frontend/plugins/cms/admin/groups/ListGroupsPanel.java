@@ -92,9 +92,9 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        List<IColumn> columns = new ArrayList<IColumn>();
+        List<IColumn<Group>> columns = new ArrayList<IColumn<Group>>();
 
-        columns.add(new AbstractColumn<Group>(new ResourceModel("group-name")) {
+        columns.add(new AbstractColumn<Group>(new ResourceModel("group-name"), "groupname") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<Group>> item,
@@ -107,7 +107,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        columns.add(new PropertyColumn(new ResourceModel("group-description"), "description"));
+        columns.add(new PropertyColumn<Group>(new ResourceModel("group-description"), "description"));
 
         columns.add(new GroupDeleteLinkColumn(new ResourceModel("group-view-actions-title")));
 
@@ -130,7 +130,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        table = new AdminDataTable("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
+        table = new AdminDataTable<Group>("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
     }
 
@@ -138,16 +138,16 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
         private AjaxGroupViewActionLinkLabel(final String id, Group group) {
             super(id);
-            
+
             ViewGroupActionLink link = new ViewGroupActionLink(
                     "link", new Model<String>(group.getGroupname()), group,
                     context, ListGroupsPanel.this
             );
-            
+
             add(link);
         }
     }
-    
+
     public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-groups-title");
     }

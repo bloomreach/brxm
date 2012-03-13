@@ -15,12 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
 import org.hippoecm.repository.api.HippoNodeType;
+
 
 public class UserDataProvider extends SearchableDataProvider<User> {
 
@@ -30,6 +38,7 @@ public class UserDataProvider extends SearchableDataProvider<User> {
 
     public UserDataProvider() {
         super(QUERY_USER_LIST, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER);
+        setSort("username", true);
     }
 
     @Override
@@ -42,4 +51,26 @@ public class UserDataProvider extends SearchableDataProvider<User> {
         return new User(node);
     }
 
+    @Override
+    public Iterator<User> iterator(int first, int count) {
+        List<User> userList = new ArrayList<User>(getList());
+
+        final Comparator<String> nullSafeComparator = new NullComparator(false);
+
+        Collections.sort(userList, new Comparator<User>() {
+            public int compare(User user1, User user2) {
+                int direction = getSort().isAscending() ? 1 : -1;
+
+                if ("frontend:firstname".equals(getSort().getProperty())) {
+                    return direction * (nullSafeComparator.compare(user1.getFirstName(), user2.getFirstName()));
+                } else if ("frontend:lastname".equals(getSort().getProperty())) {
+                    return direction * (nullSafeComparator.compare(user1.getLastName(), user2.getLastName()));
+                } else {
+                    return direction * (nullSafeComparator.compare(user1.getUsername(), user2.getUsername()));
+                }
+            }
+        });
+
+        return userList.subList(first, Math.min(first + count, userList.size())).iterator();
+    }
 }

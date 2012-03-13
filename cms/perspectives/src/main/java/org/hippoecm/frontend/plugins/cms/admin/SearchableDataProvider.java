@@ -41,14 +41,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides a searchable list of beans. Subclasses provide the query to search for all beans. The query to limit the
- * list is used as a free text query. All Lucene-specific characters are stripped from the query, except the wildcards
- * * and ?, the - operator to negate the term after it, and the 'or' keyword to OR terms instead of ANDing them.
- *
- * Whenever something changes below the JCR path and in the JCR types provided to the constructor, this observable
- * will notify registered {@link org.hippoecm.frontend.model.event.IObserver}s.
- *
- * TODO: Remove primitive total count accounting when it's possible to get the size of the resultset without
- * going through the accessmanager.
+ * list is used as a free text query. All Lucene-specific characters are stripped from the query, except the wildcards *
+ * and ?, the - operator to negate the term after it, and the 'or' keyword to OR terms instead of ANDing them.
+ * <p/>
+ * Whenever something changes below the JCR path and in the JCR types provided to the constructor, this observable will
+ * notify registered {@link org.hippoecm.frontend.model.event.IObserver}s.
+ * <p/>
+ * TODO: Remove primitive total count accounting when it's possible to get the size of the resultset without going
+ * through the accessmanager.
  */
 public abstract class SearchableDataProvider<T extends Comparable<T>> extends SortableDataProvider<T> implements IObservable {
 
@@ -57,27 +57,27 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
 
     private static final String[][] JCR_CONTAINS_QUERY_REPLACEMENTS = {
             // replace single quotes by double ones to avoid the search query breaking out of the SQL query itself
-            { "'", "''" },
+            {"'", "''"},
             // escape Lucene special characters: + && || ! ( ) { } [ ] ^ " ~ : \
             // we keep the - for negating, and * and ? for wildcards
-            { "\\", "\\\\" },
-            { "+", "\\+" },
-            { "&&", "\\&&" },
-            { "||", "\\||" },
-            { "!", "\\!" },
-            { "(", "\\(" },
-            { ")", "\\)" },
-            { "{", "\\{" },
-            { "}", "\\}" },
-            { "[", "\\[" },
-            { "]", "\\]" },
-            { "^", "\\^" },
-            { "\"", "\\\"" },
-            { ":", "\\:" },
+            {"\\", "\\\\"},
+            {"+", "\\+"},
+            {"&&", "\\&&"},
+            {"||", "\\||"},
+            {"!", "\\!"},
+            {"(", "\\("},
+            {")", "\\)"},
+            {"{", "\\{"},
+            {"}", "\\}"},
+            {"[", "\\["},
+            {"]", "\\]"},
+            {"^", "\\^"},
+            {"\"", "\\\""},
+            {":", "\\:"},
             // escaping ~ does not work, so we remove it entirely
-            { "~", " " },
+            {"~", " "},
             // for usability, replace 'or' by 'OR' so users do not have to explicitly type capitals
-            { " or ", " OR "}
+            {" or ", " OR "}
     };
 
     private static String sessionId = "none";
@@ -94,8 +94,8 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Creates a searchable provider.
      *
-     * @param queryAll the JCR SQL query to search for all beans
-     * @param observePath the JCR path to observe for changes
+     * @param queryAll         the JCR SQL query to search for all beans
+     * @param observePath      the JCR path to observe for changes
      * @param observeNodeTypes the node types to observe for changes
      */
     public SearchableDataProvider(String queryAll, String observePath, String... observeNodeTypes) {
@@ -133,6 +133,10 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         return list.size();
     }
 
+    protected List<T> getList() {
+        return list;
+    }
+
     /**
      * Populate list, refresh when a new session id is found or when dirty
      *
@@ -140,7 +144,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
      */
     private synchronized void populateList(String query) {
         // synchronize on the runtime class, as there can be multiple implementations of this abstract class
-        synchronized(getClass()) {
+        synchronized (getClass()) {
             if (!dirty && sessionId.equals(Session.get().getId())) {
                 return;
             }
@@ -154,7 +158,9 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             }
             log.debug("Executing query: {}", sqlQuery);
             try {
-                Query listQuery = ((UserSession) Session.get()).getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
+                UserSession session = (UserSession) Session.get();
+                @SuppressWarnings("deprecation") Query listQuery =
+                        session.getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
                 NodeIterator iter = listQuery.execute().getNodes();
                 while (iter.hasNext()) {
                     Node node = iter.nextNode();
@@ -178,7 +184,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Set the search query. Only beans that match the query will be included. A '*' in the query acts as a wildcard.
      * When the query is null or empty, all beans will be included.
-     *
+     * <p/>
      * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
      *
      * @param newQuery the query to search for users with
@@ -190,9 +196,9 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     }
 
     /**
-     * Returns the query used by this provider to limit the provided beans. The query can be null or empty,
-     * in which case there are no limitations and all beans will be included.
-     *
+     * Returns the query used by this provider to limit the provided beans. The query can be null or empty, in which
+     * case there are no limitations and all beans will be included.
+     * <p/>
      * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
      *
      * @return the search query to use
@@ -203,16 +209,12 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     }
 
     /**
-     * Escapes special/illegal characters and constructs in a query for the JCR 'CONTAINS' query:
-     * <ul>
-     *     <li>The string is trimmed</li>
-     *     <li>Illegal XPath characters are escaped</li>
-     *     <li>Single quotes are replaced by double quotes</li>
-     *     <li>Parentheses are escaped with \ to avoid Lucene parsing errors</li>
-     *     <li>' or ' is replaced by ' OR ' so they are recognized as custom OR constructs</li>
-     *     <li>'and' and 'or' at the start and end of the query is removed to avoid Lucene parsing errors</li>
-     *     <li>a single '*' is replaced by an empty string</li>
-     * </ul>
+     * Escapes special/illegal characters and constructs in a query for the JCR 'CONTAINS' query: <ul> <li>The string is
+     * trimmed</li> <li>Illegal XPath characters are escaped</li> <li>Single quotes are replaced by double quotes</li>
+     * <li>Parentheses are escaped with \ to avoid Lucene parsing errors</li> <li>' or ' is replaced by ' OR ' so they
+     * are recognized as custom OR constructs</li> <li>'and' and 'or' at the start and end of the query is removed to
+     * avoid Lucene parsing errors</li> <li>a single '*' is replaced by an empty string</li> </ul>
+     *
      * @param input the free text query to escape
      * @return the escaped query, which can safely be used in a JCR 'CONTAINS' query
      */
@@ -235,10 +237,10 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             result = removeStartIgnoreCase(result, "or ");
             result = removeEndIgnoreCase(result, " and");
             result = removeEndIgnoreCase(result, " or");
-            
+
             // replace multiple -'s by a single -
             result = result.replaceAll("--+", "-");
-            
+
             // remove - without anything after it
             result = StringUtils.replace(result, "- ", " ");
             result = removeEndIgnoreCase(result, "-");
@@ -325,8 +327,8 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         if (!(object instanceof SearchableDataProvider)) {
             return false;
         }
-        SearchableDataProvider other = (SearchableDataProvider)object;
-        
+        SearchableDataProvider other = (SearchableDataProvider) object;
+
         return new EqualsBuilder()
                 .append(queryAll, other.queryAll)
                 .append(observePath, other.observePath)
