@@ -140,7 +140,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
                     @Override
                     public void close() throws IOException {
                         super.close();
-                        System.out.println("Deleting temporary file " + tmpFile);
+                        log.debug("Deleting temporary file {}", tmpFile);
                         tmpFile.delete();
                     }
                 };
