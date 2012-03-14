@@ -298,7 +298,7 @@
             <sv:value>HST.Item</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-            <sv:value>ExampleComponentWindowCreationFilter.skip</sv:value>
+            <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
             <sv:value>true</sv:value>
@@ -318,7 +318,7 @@
             <sv:value>HST.Item</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-            <sv:value>ExampleComponentWindowCreationFilter.skip</sv:value>
+            <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
             <sv:value>true</sv:value>

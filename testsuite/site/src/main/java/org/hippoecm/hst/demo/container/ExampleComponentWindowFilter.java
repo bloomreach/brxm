@@ -17,20 +17,20 @@ package org.hippoecm.hst.demo.container;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.container.HstComponentWindowCreationFilter;
+import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class ExampleComponentWindowCreationFilter implements HstComponentWindowCreationFilter {
+public class ExampleComponentWindowFilter implements HstComponentWindowFilter {
 
     @Override
-    public boolean skipComponentWindow(HstRequestContext requestContext, HstComponentConfiguration compConfig)
-            throws HstComponentException {
-        
-        if("true".equals(compConfig.getParameter("ExampleComponentWindowCreationFilter.skip"))) {
-            return true;
+    public HstComponentWindow doFilter(HstRequestContext requestContext, HstComponentConfiguration compConfig,
+            HstComponentWindow window) throws HstComponentException {
+        if("true".equals(compConfig.getParameter("ExampleComponentWindowCreationFilter.hide"))) {
+            window.setVisible(false);
         }
-        
-        return false;
+        return window;
     }
 
+  
 }

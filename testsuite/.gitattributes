@@ -83,7 +83,7 @@ site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=
 site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowCreationFilter.java -text svneol=unset#text/plain
+site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
