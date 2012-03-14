@@ -153,10 +153,17 @@ public interface ContainerConstants {
      * http session attribute to indicate a single sign on session is created through the cms
      */
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
-    
+
     /**
-     * The attribute used on the request to indicate that the request is from a cms context : Typically the _rp rest calls
-     * from the template composer
+     * The attribute used on the request to indicate that the request is from a CMS context that also might need to 
+     * use the credentials from the cms (jcr session) user, for example a REST call that needs to modify the HST config
      */ 
     String CMS_HOST_CONTEXT = "org.hippoecm.hst.container.sso_cms_context";
+    
+
+    /**
+     * The attribute used on the request to indicate that the request is from a cms context : This can be a REST call, or 
+     * a request for the preview website in a cms environment (host)
+     */ 
+    String REQUEST_COMES_FROM_CMS = "org.hippoecm.hst.container.request_comes_from_cms";
 }

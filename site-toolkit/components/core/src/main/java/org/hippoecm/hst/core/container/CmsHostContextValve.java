@@ -25,7 +25,7 @@ public class CmsHostContextValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
 
         context.getServletRequest().setAttribute(ContainerConstants.CMS_HOST_CONTEXT, Boolean.TRUE);
-
+        context.getServletRequest().setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
         context.invokeNext();
 
     }

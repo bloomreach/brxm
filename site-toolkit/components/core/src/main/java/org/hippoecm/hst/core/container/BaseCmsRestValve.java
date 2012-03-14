@@ -21,12 +21,10 @@ import static org.hippoecm.hst.core.container.CmsRestValvesConsts.CREDENTIALS_AT
 import java.io.IOException;
 
 import javax.jcr.Credentials;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,15 +64,6 @@ public abstract class BaseCmsRestValve extends AbstractValve {
                 log.error(ERROR_MESSAGE_EXCEPTION_WHILE_SENDING_ERROR, ioe);
             }
         }
-    }
-
-    /*
-     * We invoke the next valve if the call is not from the cms. A call is *not* from the cms template composer if:
-     * 1) The renderHost == null AND
-     * 2) ContainerConstants.CMS_HOST_CONTEXT attribute is not TRUE
-     */
-    protected boolean doesCallComeFromCms(HstRequestContext context, HttpServletRequest request) {
-        return ( (context.getRenderHost() != null) || (Boolean.TRUE.equals(request.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))));
     }
 
     protected void logError(Logger logger, String message) {

@@ -39,7 +39,6 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.HstComponentFactory;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
-import org.hippoecm.hst.core.container.HstComponentWindowFactory;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -239,6 +238,13 @@ public interface HstRequestContext {
      * for the target Mount path and context path (if to be included).
      */
     boolean isEmbeddedRequest();
+    
+    /**
+     * @return <code>true</code> when the request is from a cms context: This can be some REST call from the cms, or 
+     * a channel preview request inside the cms or over the HOST of the cms
+     */
+    boolean isCmsRequest();
+    
     
     /**
      * Returns the contextPath of the embedding application for an embedded request, otherwise null

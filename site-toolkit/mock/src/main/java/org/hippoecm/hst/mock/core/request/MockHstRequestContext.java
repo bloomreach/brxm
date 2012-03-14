@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -413,6 +414,11 @@ public class MockHstRequestContext implements HstRequestContext {
     @Override
     public String getRenderHost() {
         return renderHost;
+    }
+
+    @Override
+    public boolean isCmsRequest() {
+        return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS));
     }
 
 

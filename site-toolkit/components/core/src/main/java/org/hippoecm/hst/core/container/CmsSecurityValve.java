@@ -77,12 +77,8 @@ public class CmsSecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
-        /*
-         * we invoke the next valve if the call is not from the cms. A call is *not* from the cms template composer if:
-         * 1) The renderHost == null AND
-         * 2) ContainerConstants.CMS_HOST_CONTEXT attribute is not TRUE
-         */
-        if(requestContext.getRenderHost() == null && !Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
+        
+        if(servletRequest.getHeader("CMS-User") == null && !requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
             if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
                 // When the ignoredPrefix is not equal cmsPreviewPrefix the request is only allowed in the CMS CONTEXT

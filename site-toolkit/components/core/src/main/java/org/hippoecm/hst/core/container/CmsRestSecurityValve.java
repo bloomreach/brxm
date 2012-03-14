@@ -48,7 +48,7 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
-        if(!doesCallComeFromCms(requestContext, servletRequest)) {
+        if(!requestContext.isCmsRequest()) {
             setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_BAD_CMS_REST_CALL);
             return;
         }

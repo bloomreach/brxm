@@ -206,8 +206,8 @@ public class HstFilter implements Filter {
 
     	HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
-     	
-    	// Cross-context includes are not (yet) supported to be handled directly by HstFilter
+        
+      	// Cross-context includes are not (yet) supported to be handled directly by HstFilter
     	// Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
     	// which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
     	// but in that case the portlet container will have setup a wrapper request as embedded within this web application (not cross-context).
@@ -341,7 +341,7 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedMount(resolvedMount);
                         // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
                         String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
-                        if (renderingHost != null) {
+                        if (renderingHost != null) { 
                             requestContext.setRenderHost(renderingHost);
                             requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
                             // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
@@ -356,6 +356,8 @@ public class HstFilter implements Filter {
                                     // if the VirtualHosts#getCmsPreviewPrefix() is empty, not the live & preview can be shown: Then, we'll 
                                     // return the preview decorated mount
                                     if(shouldDecorateMountToPreview(vHosts, resolvedMount)) {
+                                        // we now know for sure the call came from a CMS context. 
+                                        req.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
                                         Mount mount = resolvedMount.getMount();
                                         if(!(mount instanceof ContextualizableMount)) {
                                             throw new MatchException("The matched mount for request '" + hostName + " and " +containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
