@@ -73,12 +73,17 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             try {
                 hadResults = false;
                 rs = getBundles(lastNodeId, maxCount);
+                if (lastNodeId != null && !access.getStorageModelBinaryKeys()) {
+                    // skip the last node id of the previous batch,
+                    // we already processed that one
+                    rs.next();
+                }
                 while (rs.next()) {
-                    hadResults = true;
                     // do check
                     NodeId lastChecked = checkEntry(visitor, rs);
                     if (lastChecked != null) {
                         lastNodeId = lastChecked;
+                        hadResults = true;
                     }
                 }
             } catch (SQLException e) {

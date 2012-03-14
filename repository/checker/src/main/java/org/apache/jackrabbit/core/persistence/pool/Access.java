@@ -79,9 +79,6 @@ public class Access {
             sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
             sql = sql + " ORDER BY NODE_ID_HI, NODE_ID_LO";
         }
-        if("derby".equals(pm.getDatabaseType())) {
-            sql += " offset ? rows fetch next "+getBundleBatchSize()+" rows only";
-        }
         // for MySQL we would like have to add on the createStatement: ResultSet.TYPE_FORWARD_ONLY and ResultSet.CONCUR_READ_ONLY
         return sql;
     }
