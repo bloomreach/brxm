@@ -31,11 +31,11 @@ public class Access {
     public void storeBundle(NodePropBundle bundle) throws ItemStateException {
         pm.storeBundle(bundle);
     }
-    
+
     public String getBundleDeleteSQL() {
         return pm.bundleDeleteSQL;
     }
-    
+
     private byte[] getBytes(UUID node) {
         byte[] bytes = new byte[16];
         bytes[0] = (byte)((node.getMostSignificantBits() >> 56) & 0xff);
@@ -69,34 +69,22 @@ public class Access {
         int count = getConnectionHelper().update(getBundleDeleteSQL(), arguments);
         return count >= 1;
     }
-    
+
     public String getBundleSelectAllSQL() {
         String sql = pm.bundleSelectAllIdsSQL;
-        if (getStorageModelBinaryKeys()) {
-            sql = sql.replace("NODE_ID", "*");
-            sql = sql + " ORDER BY NODE_ID";
-        } else {
-            sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
-            sql = sql + " ORDER BY NODE_ID_HI, NODE_ID_LO";
+        sql = sql.replace("NODE_ID_HI, NODE_ID_LO", "*");
+        sql = sql.replace("NODE_ID", "*");
+        if("derby".equals(pm.getDatabaseType())) {
+            sql += " offset ? rows fetch next "+getBundleBatchSize()+" rows only";
+        } else if("mysql".equals(pm.getDatabaseType())) {
+            sql += " LIMIT ?, " + getBundleBatchSize();
         }
+        // for MySQL we would like have to add on the createStatement: ResultSet.TYPE_FORWARD_ONLY and ResultSet.CONCUR_READ_ONLY
         return sql;
     }
-    
-    public String getBundleSelectAllFromSQL() {
-        String sql = pm.bundleSelectAllIdsFromSQL;
-        if (getStorageModelBinaryKeys()) {
-            // only replace first to skip the order clause
-            sql = sql.replaceFirst("NODE_ID", "*");
-        } else {
-            // only replace first to skip the order clause
-            sql = sql.replaceFirst("NODE_ID_HI, NODE_ID_LO", "*");
-        }
-        return sql;
-    }
-    
-    
+
     public int getBundleBatchSize() {
-         if("derby".equals(pm.getDatabaseType())) {
+        if("derby".equals(pm.getDatabaseType())) {
             return 16;
         } else if("mysql".equals(pm.getDatabaseType())) {
             return 1000;
@@ -111,7 +99,7 @@ public class Access {
         sql = sql.replace("NODE_ID", "COUNT(*)");
         return sql;
     }
-    
+
     public boolean getStorageModelBinaryKeys() {
         return pm.getStorageModel() == pm.SM_BINARY_KEYS;
     }

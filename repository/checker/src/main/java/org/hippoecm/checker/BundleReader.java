@@ -25,10 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-
 import org.apache.jackrabbit.core.data.DataIdentifier;
 import org.apache.jackrabbit.core.data.DataRecord;
 import org.apache.jackrabbit.core.data.DataStore;
@@ -42,7 +40,6 @@ import org.apache.jackrabbit.core.persistence.util.ErrorHandling;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle.ChildNodeEntry;
 import org.apache.jackrabbit.core.persistence.util.NodePropBundle.PropertyEntry;
-import org.apache.jackrabbit.core.util.db.DbUtility;
 import org.apache.jackrabbit.core.value.InternalValue;
 
 class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitable<NodeDescription>, BLOBStore, DataStore {;
@@ -58,98 +55,60 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
         this.repair = repair;
     }
 
-    /**
-     * 
-     */
-    public void accept(Visitor<NodeDescription> visitor) {
-        int maxCount = access.getBundleBatchSize();
-
-        ResultSet rs = null;
-        NodeId lastNodeId = null;
-
-        boolean hadResults = true;
-        
-        while(hadResults) {
-            try {
-                hadResults = false;
-                rs = getBundles(lastNodeId, maxCount);
-                while (rs.next()) {
-                    hadResults = true;
-                    // do check
-                    NodeId lastChecked = checkEntry(visitor, rs);
-                    if (lastChecked != null) {
-                        lastNodeId = lastChecked;
-                    }
-                }
-            } catch (SQLException e) {
-               log.error("FATAL ERROR RETRIEVING NODE SET", e);
-               break;
-            } finally {
-                DbUtility.close(rs);
-            }
-        }
-        log.info("No more nodes found: done.");
-    }
-
-    
-    protected NodeId checkEntry(Visitor<NodeDescription> visitor, ResultSet rs) {
+    public int getSize() {
+        int size = -1;
         try {
-            Map.Entry<NodeId, InputStream> bundle = readEntry(rs);
-            final NodeId nodeId = bundle.getKey();
-            try {
-                InputStream in = bundle.getValue();
-                if (in != null) {
-                    try {
-                        readBundle(nodeId, in, visitor, onlyReferenceable);
-                    } catch (IOException ex) {
-                        Checker.log.error("Unable to load bundle content with id "+nodeId+": "+ex.getClass().getName()+": "+ex.getMessage(), ex);
-                        repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
-                    }
-                } else {
-                    Checker.log.error("Unable to load bundle with id "+nodeId+" removing it");
-                    repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
-                }
-                return nodeId;
-            } catch (Throwable ex) {
-                Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
+            ResultSet rs = access.getConnectionHelper().exec(access.getBundleSelectCountSQL(), new String[] { }, false, 0);
+            if (rs.next()) {
+                size = rs.getInt(1);
+            } else {
+                size = -1;
             }
-        } catch (Throwable ex) {
-            Checker.log.error("FATAL ERROR RETRIEVING NODE ID: "+ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        }
-        return null;
-    }
-    
-    
-    /**
-     * Get ResultSet for bundles from store.
-     * @param bigger last NodeId
-     * @param maxCount
-     * @return the ResultSet
-     * @throws SQLException 
-     */
-    protected ResultSet getBundles(NodeId bigger, int maxCount) throws SQLException {
-        if (bigger == null) {
-            return access.getConnectionHelper().exec(access.getBundleSelectAllSQL(), null, false, maxCount);
-        } else {
-            return access.getConnectionHelper().exec(access.getBundleSelectAllFromSQL(), getKey(bigger), false, maxCount);
+            rs.close();
+            return size;
+        } catch (SQLException ex) {
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            return 0;
         }
     }
-    
 
-    /**
-     * Constructs a parameter list for a PreparedStatement
-     * for the given node identifier.
-     *
-     * @param id the node id
-     * @return a list of Objects
-     */
-    protected Object[] getKey(NodeId id) {
-        if (access.getStorageModelBinaryKeys()) {
-            return new Object[] { id.getRawBytes() };
-        } else {
-            return new Object[] { id.getMostSignificantBits(), id.getLeastSignificantBits() };
-
+    public void accept(Visitor<NodeDescription> visitor) {
+        try {
+            int totalSize = getSize();
+            int batchSize = access.getBundleBatchSize();
+            int incrementSize = (batchSize <= 0 ? totalSize : batchSize);
+            for (int position = 0; position < totalSize; position += incrementSize) {
+                ResultSet rs;
+                rs = access.getConnectionHelper().exec(access.getBundleSelectAllSQL(), new Integer[] {new Integer(position)}, false, 0);
+                while (rs.next()) {
+                    try {
+                        Map.Entry<NodeId, InputStream> bundle = readEntry(rs);
+                        final NodeId nodeId = bundle.getKey();
+                        try {
+                            InputStream in = bundle.getValue();
+                            if (in != null) {
+                                try {
+                                    readBundle(nodeId, in, visitor, onlyReferenceable);
+                                } catch (IOException ex) {
+                                    Checker.log.error("Unable to load bundle content with id "+nodeId+": "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+                                    repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
+                                }
+                            } else {
+                                Checker.log.error("Unable to load bundle with id "+nodeId+" removing it");
+                                repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
+                            }
+                        } catch (Throwable ex) {
+                            Checker.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                            repair.removeNode(Repair.RepairStatus.PENDING, create(nodeId));
+                        }
+                    } catch (Throwable ex) {
+                        Checker.log.error("FATAL ERROR RETRIEVING NODE ID: "+ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                    }
+                }
+                rs.close();
+            }
+        } catch (SQLException ex) {
+            Checker.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
@@ -265,11 +224,5 @@ class BundleReader extends DatabaseDelegate<NodeDescription> implements Visitabl
             }
             return references;
         }
-    }
-
-    @Override
-    public int getSize() {
-        // fetching the size is too expensive for InnoDB tables
-        return -1;
     }
 }
