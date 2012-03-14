@@ -22,17 +22,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
-import javax.jcr.NamespaceRegistry;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.VersioningConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.persistence.pool.Access;
@@ -63,8 +60,6 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
-            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
-            NodeTypeRegistry ntReg = new NodeTypeRegistry(nsReg, fs);
             Traverse traverse = new Traverse();
             {
                 VersioningConfig wspConfig = repConfig.getVersioningConfig();
@@ -73,14 +68,13 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        nsReg, ntReg,
+                        null, null,
                         repConfig.getDataStore()));
                 Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
-                    int size = bundleReader.getSize();
-                    log.info("Traversing through " + size + " bundles");
-                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size, progress);
+                    log.info("Traversing bundles");
+                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, progress);
                     clean &= traverse.checkVersionBundles(iterable, repair);
                     if (fix) {
                         repair.perform(bundleReader);
@@ -94,15 +88,14 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        nsReg, ntReg,
+                        null, null,
                         repConfig.getDataStore()));
                 log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
-                    int size = bundleReader.getSize();
-                    log.info("Traversing through " + size + " bundles");
-                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, size, progress);
+                    log.info("Traversing bundles");
+                    Iterable<NodeDescription> iterable = Coroutine.<NodeDescription>toIterable(bundleReader, progress);
                     //traverse.checkVersionBundles(iterable);
                     clean &= traverse.checkBundles(iterable, repair);
                     if (fix) {
@@ -124,6 +117,7 @@ public class Checker {
                 }
                 {
                     ReferencesReader referenceReader = new ReferencesReader(persistMgr);
+                    log.info("Traversing references");
                     Iterable<NodeReference> iterable = Coroutine.<NodeReference>toIterable(referenceReader, referenceReader.getSize(), progress);
                     clean &= traverse.checkReferences(iterable);
                     if(fix) {
@@ -231,8 +225,6 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
-            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
-            NodeTypeRegistry ntReg = new NodeTypeRegistry(nsReg, fs);
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
                 log.info("Checking workspace with name: '" + wspConfig.getName() +"'");
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
@@ -240,14 +232,13 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        nsReg, ntReg,
+                        null, null,
                         repConfig.getDataStore()));
                 log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
                 {
                     BundleReader bundleReader = new BundleReader(persistMgr, false, repair);
-                    int size = bundleReader.getSize();
-                    log.info("Traversing through " + size + " bundles");
+                    log.info("Traversing through bundles");
                     bundleReader.accept(new SanityChecker(repair, mode, checkerUUIDs, checkerNames));
                     repair.perform(bundleReader);
                 }
@@ -315,7 +306,7 @@ public class Checker {
                     for (Name name : node.bundle.getPropertyNames()) {
                         if ("mixinTypes".equals(name.getLocalName()) && "http://www.jcp.org/jcr/1.0".equals(name.getNamespaceURI())) {
                             if(repairSet == null) {
-                                StringBuffer sb = new StringBuffer();
+                                StringBuilder sb = new StringBuilder();
                                 sb.append("{").append(name.getNamespaceURI()).append("}").append(name.getLocalName());
                                 for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
                                     try {
@@ -378,16 +369,11 @@ public class Checker {
                         }
                         sb.append("  properties\n");
                         for (Name name : node.bundle.getPropertyNames()) {
-                            sb.append("    ").append(name.toString()).append("\n");
-                            if ("mixinTypes".equals(name.getLocalName()) && "http://www.jcp.org/jcr/1.0".equals(name.getNamespaceURI())) {
-                                for (InternalValue value : node.bundle.getPropertyEntry(name).getValues()) {
-                                    try {
-                                        sb.append("      ").append(value.getName().toString());
-                                    } catch (RepositoryException ex) {
-                                        sb.append("      invalid");
-                                    }
-                                    sb.append("\n");
-                                }
+                            NodePropBundle.PropertyEntry propertyEntry = node.bundle.getPropertyEntry(name);
+                            sb.append("    ").append("type : ").append(PropertyType.nameFromValue(propertyEntry.getType())).append(", name : ").append(name.toString()).append("\n");
+                            for (InternalValue value : propertyEntry.getValues()) {
+                                sb.append("      ").append(value.toString());
+                                sb.append("\n");
                             }
                         }
                         System.err.println(sb.toString());

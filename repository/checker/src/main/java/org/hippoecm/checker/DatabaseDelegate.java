@@ -136,9 +136,11 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
             }
             return bytes;
         } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }
@@ -149,7 +151,7 @@ public abstract class DatabaseDelegate<T> implements Visitable<T> {
         if(nodeId == null)
             return nullUUID;
         //return UUID.nameUUIDFromBytes(getUUID(nodeId).getRawBytes());
-        return UUID.fromString(UUID.fromString(nodeId.toString()).toString());
+        return UUID.fromString(nodeId.toString());
     }
 
     static UUID create(String string) {

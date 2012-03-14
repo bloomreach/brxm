@@ -89,7 +89,7 @@ class Repair {
             return;
         actions.add(new RemoveNode(node));
     }
-    
+
     void setProperty(RepairStatus statusChange, UUID node, Name property, InternalValue[] values) {
         if(report(statusChange))
             return;
