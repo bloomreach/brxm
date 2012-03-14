@@ -1,20 +1,4 @@
 
-/*
- * Copyright 2012 Hippo.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 function FullScreen(editor, args) {
   this.editor = editor;
   this.originalSizes = null;
@@ -85,6 +69,13 @@ Xinha.prototype._fullscreen = function(resize) {
     e.sizeEditor(w + 'px', h + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
     e._sizing = false;
     if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreenrestore);
+
+    //Because of HREPTWO-3990 we have to use a custom setHTML implementation that doesn't work in fullscreen.
+    //As a workaround we disable the custom undo behavior that Xinha provides in fullscreen mode, see CMS7-5847 
+    if(Xinha.ie_version == 7 || Xinha.ie_version == 8) {
+      e._customUndo = false;
+    }
+
   }
 
   function sizeItDown() {
@@ -104,6 +95,11 @@ Xinha.prototype._fullscreen = function(resize) {
 
     e._sizing = false;
     if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreen);
+
+    //See CMS7-5847
+    if(Xinha.ie_version == 7 || Xinha.ie_version == 8) {
+      e._customUndo = true;
+    }
   }
 
   /** It's not possible to reliably get scroll events, particularly when we are hiding the scrollbars
