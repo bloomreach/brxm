@@ -31,7 +31,6 @@ import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +77,7 @@ public class EventModel implements IComponentAssignedModel<String> {
             // add eventClass to resolve workflow resource bundle
             this.method = node.getProperty("hippolog:eventMethod").getString() + ",class="
                     + node.getProperty("hippolog:eventClass").getString();
-            String userId = node.getProperty("hippolog:eventUser").getString();
-            this.user = new User(userId).getDisplayName();
+            this.user = node.getProperty("hippolog:eventUser").getString();
             this.nameModel = nameModel;
         } catch (RepositoryException ex) {
             JcrItemModel itemModel = eventNode.getItemModel();
