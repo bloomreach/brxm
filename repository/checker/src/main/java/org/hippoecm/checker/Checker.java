@@ -22,8 +22,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -60,6 +64,7 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
+            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
             Traverse traverse = new Traverse();
             {
                 VersioningConfig wspConfig = repConfig.getVersioningConfig();
@@ -68,7 +73,7 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null, null,
+                        nsReg, null,
                         repConfig.getDataStore()));
                 Repair repair = new Repair();
                 {
@@ -88,7 +93,7 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null, null,
+                        nsReg, null,
                         repConfig.getDataStore()));
                 log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
@@ -225,6 +230,7 @@ public class Checker {
         PersistenceManager persistMgr = null;
         try {
             FileSystem fs = repConfig.getFileSystem();
+            NamespaceRegistry nsReg = new NamespaceRegistryImpl(fs);
             for (WorkspaceConfig wspConfig : repConfig.getWorkspaceConfigs()) {
                 log.info("Checking workspace with name: '" + wspConfig.getName() +"'");
                 PersistenceManagerConfig pmConfig = wspConfig.getPersistenceManagerConfig();
@@ -232,7 +238,7 @@ public class Checker {
                 persistMgr.init(new PMContext(
                         new File(repConfig.getHomeDir()), fs,
                         RepositoryImpl.ROOT_NODE_ID,
-                        null, null,
+                        nsReg, null,
                         repConfig.getDataStore()));
                 log.info("Initialized persistence manager: " + persistMgr.getClass().getName());
                 Repair repair = new Repair();
