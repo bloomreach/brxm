@@ -339,7 +339,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     }
 
                 } else {
-                    propertyField = this.add({
+                    var propertyFieldConfig = {
                         fieldLabel: property.get('label'),
                         xtype: property.get('type'),
                         value: value,
@@ -357,7 +357,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                                 }
                             }
                         }
-                    });
+                    };
+                    if (property.get('type') === 'checkbox') {
+                        propertyFieldConfig.checked = (value === true || value === 'true');
+                        propertyFieldConfig.listeners.check = function(checkbox, checked) {
+                            checkbox.setRawValue(checked);
+                        }
+                    }
+                    propertyField = this.add(propertyFieldConfig);
                     if (isDefaultValue) {
                         propertyField.addClass('default-value');
                     }
