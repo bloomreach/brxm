@@ -802,7 +802,6 @@ config/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/shortcuts-workflows-frontend.xml svneol=native#text/plain
 config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/plain
-console/frontend/hippo-cms-console-frontend.iml -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
@@ -927,8 +926,6 @@ console/frontend/src/site/apt/index.apt -text
 console/frontend/src/site/site.xml svneol=native#text/plain
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/Base64EncodingTest.java -text
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain
-console/hippo-cms-console.iml -text
-console/repository/hippo-cms-console-repository.iml -text
 console/repository/src/main/resources/frontend-console.xml -text svneol=unset#text/plain
 console/repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
 dependencies/pom.xml svneol=native#text/plain
@@ -1694,7 +1691,6 @@ perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/edit/EditorManagerT
 perspectives/src/test/resources/cmstest.cnd -text
 perspectives/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 /pom.xml svneol=native#text/plain
-reporting/frontend/hippo-cms-reporting-frontend.iml -text
 reporting/frontend/pom.xml svneol=native#text/plain
 reporting/frontend/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeReportingBehavior.java -text
 reporting/frontend/src/main/java/org/onehippo/cms7/reports/ExtPlugin.java -text
@@ -1717,7 +1713,6 @@ reporting/frontend/src/main/java/org/onehippo/cms7/reports/plugins/report-panel-
 reporting/frontend/src/main/java/org/onehippo/cms7/reports/reports-32.png -text
 reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css -text
 reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/toolbar/bg2.gif -text
-reporting/repository/hippo-cms-reporting-repository.iml -text
 reporting/repository/src/main/resources/hippo-reports-facets.xml -text
 reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
