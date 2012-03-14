@@ -42,7 +42,11 @@ builtin/target
 checker-app/.classpath
 checker-app/.project
 checker-app/.settings
+checker-app/blobs
+checker-app/cluster_node.id
+checker-app/hippo-repository-checker-app.iml
 checker-app/target
+checker-app/workspaces
 checker/*.tmp
 checker/.classpath
 checker/.pom.xml.swp
