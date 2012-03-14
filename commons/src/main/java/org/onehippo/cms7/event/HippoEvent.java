@@ -44,7 +44,6 @@ public class HippoEvent<E extends HippoEvent<E>> {
 
     public HippoEvent(String application) {
         put(APPLICATION, application);
-        put(RESULT, "success");
     }
 
     public void sealEvent() {
