@@ -256,10 +256,11 @@ public class User implements Comparable<User>, IClusterable {
             if (iter.hasNext()) {
                 init(iter.nextNode());
             } else {
-                throw new IllegalArgumentException("User {} does not exist".replace("{}", username));
+                log.error("User {} does not exist, returning object without state.", username);
             }
         } catch (RepositoryException e) {
             log.error("Unable to get node for user '{}' while constructing user", username, e);
+            this.username = username;
             throw new IllegalStateException("Error while obtaining user", e);
         }
     }
