@@ -16,7 +16,13 @@ function InsertImage(editor) {
     var cfg = editor.config;
     var self = this;
 
-    editor.config.btnList.insertimage[3] = function() { self.show(); }
+    editor.config.btnList.insertimage[3] = function() { 
+      self.show(); 
+    };
+    editor._insertImage = function(target) {
+      self.show(target);
+    };  
+      
 }
 
 Xinha.Config.prototype.InsertImage = {

@@ -3,17 +3,17 @@ function CreateExternalLink(editor, args) {
     var cfg = editor.config;
     var self = this;
     
+    if(typeof editor._createExternalLink === 'undefined') {
+      editor._createExternalLink = function() {
+          self.show(self._getSelectedAnchor());
+      };
+    }
+  
     editor.config.registerButton('createexternallink', 
-            this._lc('External link'), 
-            [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], 
-            false, 
-            function() {
-                if(Xinha.is_ie && Xinha.ie_version == 6) {
-                    alert('Custom buttons in IE6 blur the focus on selected text, rendering this plugin useless. Use a decent browser instead (IE7, FireFox, Safari, Google Chrome, Opera, etc).')
-                } else {
-                    self.show(self._getSelectedAnchor());
-                }
-            }
+        this._lc('External link'), 
+        [_editor_url + cfg.imgURL + "ed_buttons_main.png",5,1], 
+        false, 
+        editor._createExternalLink    
     );
 }
 

@@ -6,6 +6,27 @@ function CreateLink(editor, args) {
     editor.config.btnList.createlink[0] = this._lc('Internal link');
     editor.config.btnList.createlink[3] = function() {
         self.show(self._getSelectedAnchor()); 
+    };
+
+    if(typeof editor._createLink == 'undefined') {
+        editor._createLink = function(target) {
+            if(!target) {
+              target = self._getSelectedAnchor();
+            }
+
+            if(target && target.tagName.toLowerCase() == 'a' && target.href.length > 0) {
+              var attrValue = editor.fixRelativeLinks(target.getAttribute('href', 2));
+              var startsWith = function(str) {
+                return attrValue.match("^"+str) == str;
+              };
+              
+              if(startsWith('http://') || startsWith('https://') || startsWith('mailto:') || startsWith('ftp://')) {
+                editor._createExternalLink();
+                return;
+              }
+            }
+            self.show(target);
+        };
     }
 }
 

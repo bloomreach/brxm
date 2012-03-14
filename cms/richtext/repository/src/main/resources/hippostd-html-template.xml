@@ -173,7 +173,6 @@
           <sv:value>CreateLink</sv:value>
           <sv:value>CreateExternalLink</sv:value>
           <sv:value>InsertImage</sv:value>
-          <sv:value>FullscreenCompatible</sv:value>
           <sv:value>TableOperations</sv:value>
         </sv:property>
         <sv:property sv:name="Xinha.skin" sv:type="String">

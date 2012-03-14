@@ -1826,6 +1826,7 @@ richtext/resources/src/main/patches/bugfix/CMS7-5277.patch -text
 richtext/resources/src/main/patches/enhancement/HREPTWO-4261.patch -text
 richtext/resources/src/site/apt/index.apt -text
 richtext/resources/src/site/site.xml svneol=native#text/plain
+richtext/resources/webResources/xinha/XinhaCore.js -text
 richtext/resources/webResources/xinha/iconsets/Hippo/de/bold.gif -text
 richtext/resources/webResources/xinha/iconsets/Hippo/de/italic.gif -text
 richtext/resources/webResources/xinha/iconsets/Hippo/de/underline.gif -text
@@ -1837,6 +1838,7 @@ richtext/resources/webResources/xinha/iconsets/Hippo/fr/strikethrough.gif -text
 richtext/resources/webResources/xinha/iconsets/Hippo/fr/underline.gif -text
 richtext/resources/webResources/xinha/iconsets/Hippo/iconset.xml -text svneol=unset#text/plain
 richtext/resources/webResources/xinha/images/ed_buttons_main.gif -text
+richtext/resources/webResources/xinha/modules/FullScreen/full-screen.js -text
 richtext/resources/webResources/xinha/plugins/AutoResize/AutoResize.js svneol=native#text/plain
 richtext/resources/webResources/xinha/plugins/CreateExternalLink/CreateExternalLink.js svneol=native#text/plain
 richtext/resources/webResources/xinha/plugins/CreateExternalLink/lang/nl.js svneol=native#text/plain

@@ -630,12 +630,12 @@ if (!YAHOO.hippo.EditorManager) {
 
                 //check if there is a Xinha instance in fullscreen
                 if (this.isFullScreen()) {
-                    var t = this.xinha.plugins["FullscreenCompatible"];
-                    t.instance.editor._fullscreenCompatible(true);
-                    t.instance.editor.originalSizes.x = newWidth;
-                    t.instance.editor.originalSizes.y = newHeight;
-                    this.sizeState.w = newWidth;
-                    this.sizeState.h = newHeight;
+                    var fsp = this.getFullscreenPlugin();
+                    if(fsp != null) {
+                        fsp.instance.editor._fullscreen(true);
+                        this.sizeState.w = newWidth;
+                        this.sizeState.h = newHeight;
+                    }
                 } else {
                     this.setSize(newWidth, newHeight);
                 }
@@ -658,9 +658,24 @@ if (!YAHOO.hippo.EditorManager) {
                 return this.config.textarea;
             },
 
+            /**
+            * Check if the deprecated FullscreenCompatible plugin is loaded, otherwise check for the builtin FullScreen
+             * module.
+            */
             isFullScreen : function() {
-                var t = this.xinha.plugins["FullscreenCompatible"];
-                return Lang.isObject(t) && Lang.isBoolean(t.instance.editor._isFullScreen) && t.instance.editor._isFullScreen;
+                var pl = this.getFullscreenPlugin();
+                return pl != null && pl.instance.editor._isFullScreen
+            },
+
+            getFullscreenPlugin : function() {
+                var candidates = ['FullscreenCompatible', 'FullScreen'];
+                for(var i=0; i<candidates.length; i++) {
+                    var t = this.xinha.plugins[candidates[i]];
+                    if(!Lang.isUndefined(t) && Lang.isObject(t.instance) && Lang.isObject(t.instance.editor)) {
+                        return t;
+                    }
+                }
+                return null;
             },
 
             calculateHeight : function() {
