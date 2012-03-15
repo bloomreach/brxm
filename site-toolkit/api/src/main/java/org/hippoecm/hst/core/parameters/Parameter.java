@@ -31,6 +31,19 @@ import java.lang.annotation.Target;
 public @interface Parameter {
     
     /**
+     * This is a special name that can be used for {@link Parameter#name()}. Typically, the CMS UI might also show this property differently
+     * There is only one single @Parameter allowed in an interface with the name equal to "HIDE_NAME", thus for example:
+     * 
+     *  <blockquote>
+     *  <pre>
+     *   @Parameter(name = Parameter.HIDE_NAME, displayName = "Hide")
+     *   public boolean isHidden();
+     *   </pre>
+     *   </blockquote>
+     */
+    static final String HIDE_NAME =  "org.hippoecm.hst.core.parameters.Parameter.hide"; 
+    
+    /**
      * @return the name of the parameter used, also see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String)} . This element is mandatory.
      */
     String name();
