@@ -76,7 +76,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(2, result.size());
         assertEquals("parameterOne", result.get(0).getName());
         assertEquals("baz", result.get(0).getValue());
-        assertEquals("bar", result.get(0).getDefaultValue());
+        assertEquals("", result.get(0).getDefaultValue());
         assertEquals("parameterTwo", result.get(1).getName());
         assertEquals("", result.get(1).getValue());
         assertEquals("test", result.get(1).getDefaultValue());
