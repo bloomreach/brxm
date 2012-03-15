@@ -359,10 +359,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         }
                     };
                     if (property.get('type') === 'checkbox') {
-                        propertyFieldConfig.checked = (value === true || value === 'true');
-                        propertyFieldConfig.listeners.check = function(checkbox, checked) {
-                            checkbox.setRawValue(checked);
-                        }
+                        propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
                     }
                     propertyField = this.add(propertyFieldConfig);
                     if (isDefaultValue) {
