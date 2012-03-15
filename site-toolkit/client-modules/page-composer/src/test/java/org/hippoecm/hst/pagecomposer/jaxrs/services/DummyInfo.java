@@ -4,10 +4,10 @@ import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface DummyInfo {
 
-    @Parameter(name = "foo")
+    @Parameter(name = "parameterOne")
     String getParameterOne();
     
-    @Parameter(name = "bar", required = true, defaultValue = "test")
+    @Parameter(name = "parameterTwo", required = true, defaultValue = "test")
     String getParameterTwo();
 
 }
