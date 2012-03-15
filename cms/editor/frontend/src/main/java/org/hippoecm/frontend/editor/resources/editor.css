@@ -498,6 +498,7 @@
 
 .hippo-editor .hippo-editor-field-value .hippo-editor-field-value-container input {
   margin: 0;
+  height: 18px;
 }
 
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield-item {
