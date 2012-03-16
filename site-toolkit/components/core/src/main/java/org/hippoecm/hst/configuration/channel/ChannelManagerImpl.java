@@ -40,6 +40,8 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.ChannelException.Type;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -385,8 +387,15 @@ public class ChannelManagerImpl implements MutableChannelManager {
             for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                 try {
                     listener.channelCreated(event);
+                } catch (ChannelManagerEventListenerException e) {
+                    if(e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
+                        session.refresh(false);
+                        throw new ChannelException(e.getMessage(), e , Type.STOPPED_BY_LISTENER, "Channel creation stopped by listener '"+listener.getClass().getName()+"'");
+                    } else {
+                        log.warn("Channel created event listener, " + listener + ", failed to handle the event. Continue channel processing", e);
+                    }
                 } catch (Exception listenerEx) {
-                    log.error("Channel created event listener, " + listener + ", failed to handle the event", listenerEx);
+                    log.warn("Channel created event listener, " + listener + ", failed to handle the event", listenerEx);
                 }
             }
 
@@ -455,11 +464,18 @@ public class ChannelManagerImpl implements MutableChannelManager {
             for (ChannelManagerEventListener listener : channelManagerEventListeners) {
                 try {
                     listener.channelUpdated(event);
-                } catch (Exception listenerEx) {
+                } catch (ChannelManagerEventListenerException e) {
+                    if(e.getStatus() == Status.STOP_CHANNEL_PROCESSING) {
+                        session.refresh(false);
+                        throw new ChannelException(e.getMessage(), e , Type.STOPPED_BY_LISTENER, "Channel '"+channel.getId()+"' update stopped by listener '"+listener.getClass().getName()+"'");
+                    } else {
+                        log.warn("Channel created event listener, " + listener + ", failed to handle the event. Continue channel processing", e);
+                    }
+                }  catch (Exception listenerEx) {
                     log.error("Channel updated event listener, " + listener + ", failed to handle the event", listenerEx);
                 }
             }
-
+            
             channels = null;
 
             session.save();

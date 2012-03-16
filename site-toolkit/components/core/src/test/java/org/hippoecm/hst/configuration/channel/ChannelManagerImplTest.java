@@ -46,6 +46,8 @@ import javax.security.auth.Subject;
 
 import org.easymock.IAnswer;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.channel.ChannelException.Type;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -448,6 +450,54 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, listener3.getUpdatedCount());
     }
 
+    @Test
+    public void testChannelManagerShortCircuitingEventListeners() throws RepositoryException, ChannelException, PrivilegedActionException {
+        Node configNode = getSession().getRootNode().getNode("hst:hst");
+        Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+    
+        Node bp = bpFolder.addNode("cmit-test-bp2", HstNodeTypes.NODETYPE_HST_BLUEPRINT);
+        bp.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATION, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
+        Node channelBlueprint = bp.addNode(HstNodeTypes.NODENAME_HST_CHANNEL, HstNodeTypes.NODETYPE_HST_CHANNEL);
+        channelBlueprint.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, TestInfoClass.class.getName());
+        Node defaultChannelInfo = channelBlueprint.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        defaultChannelInfo.setProperty("getme", "noot");
+        getSession().save();
+
+        final ChannelManagerImpl manager = createManager();
+
+        Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
+        channel.setName("cmit-channel2");
+        channel.setUrl("http://cmit-myhost2");
+        channel.setContentRoot("/");
+        Map<String, Object> properties = channel.getProperties();
+        assertTrue(properties.containsKey("getme"));
+        assertEquals("noot", properties.get("getme"));
+        
+        ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
+        
+        manager.addChannelManagerEventListeners(shortCircuitingListener);
+
+        Subject subject = createSubject();
+        final Channel channelToPersist = channel;
+        
+        String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
+            @Override
+            public String run() {
+                try {
+                    String s = manager.persist("cmit-test-bp2", channelToPersist);
+                    fail("The persist should fail");
+                    return s;
+                } catch (ChannelException e) {
+                    // we should get here because of MyShortCircuitingEventListener
+                    assertTrue("Type of the ChannelException should be  STOPPED_BY_LISTENER ",e.getType() == Type.STOPPED_BY_LISTENER);
+                    return null;
+                }
+            }
+        }, null);
+       
+        assertTrue("channelId should be null ",channelId == null);
+    }
+    
     private Subject createSubject() {
         Subject subject = new Subject();
         subject.getPrivateCredentials().add(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -554,7 +604,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         private int createdCount;
         private int updatedCount;
         
-        public void channelCreated(ChannelManagerEvent event) {
+        public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
             Blueprint blueprint = event.getBlueprint();
             Channel channel = event.getChannel();
             Node configRootNode = event.getConfigRootNode();
@@ -564,7 +614,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             ++createdCount;
         }
 
-        public void channelUpdated(ChannelManagerEvent event) {
+        public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
             Blueprint blueprint = event.getBlueprint();
             Channel channel = event.getChannel();
             Node configRootNode = event.getConfigRootNode();
@@ -581,5 +631,19 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         public int getUpdatedCount() {
             return updatedCount;
         }
+    }
+    
+    private static class MyShortCircuitingEventListener implements ChannelManagerEventListener {
+
+        @Override
+        public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
+            throw new ChannelManagerEventListenerException(Status.STOP_CHANNEL_PROCESSING);
+        }
+
+        @Override
+        public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
+            throw new ChannelManagerEventListenerException(Status.STOP_CHANNEL_PROCESSING);
+        } 
+        
     }
 }

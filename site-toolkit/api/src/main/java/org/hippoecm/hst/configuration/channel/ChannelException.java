@@ -30,7 +30,8 @@ public class ChannelException extends Exception {
         UNKNOWN("unknown"),
         MOUNT_EXISTS("mount.exists"),
         MOUNT_NOT_FOUND("mount.not.found"),
-        CANNOT_CREATE_CONTENT("cannot.create.content");
+        CANNOT_CREATE_CONTENT("cannot.create.content"),
+        STOPPED_BY_LISTENER("stopped.by.listener");
 
         private final String key;
 
@@ -46,6 +47,7 @@ public class ChannelException extends Exception {
         }
 
     }
+    
 
     private static final long serialVersionUID = 1L;
     private static final String[] ZERO_PARAMETERS = new String[0];

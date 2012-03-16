@@ -55,8 +55,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
     private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
-    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
-
 
     @GET
     @Path("/parameters/{locale}/{prefix}")
@@ -101,6 +99,27 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return new ContainerItemComponentRepresentation().represents(node, locale, prefix);
     }
 
+    /**
+     * 
+     * @return all the configured unique variants (prefixes) for this component 
+     */
+    @GET
+    @Path("/variants")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getVariants() {
+        return null;
+    }
+
+    /**
+     * Creates new variant / prefix with default values copied
+     * @return
+     */
+    @POST
+    @Path("/variant/{variantid}") 
+    public Response createNew() {
+        return null;
+    }
+    
     @POST
     @Path("/parameters/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)

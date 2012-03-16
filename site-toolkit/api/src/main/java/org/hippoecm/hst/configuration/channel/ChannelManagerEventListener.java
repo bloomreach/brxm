@@ -18,6 +18,8 @@ package org.hippoecm.hst.configuration.channel;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
+
 /**
  * Allows implementers to register callback methods that will be executed
  * when a <CODE>ChannelManager</CODE> event occurs.
@@ -40,8 +42,12 @@ public interface ChannelManagerEventListener {
      * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 
      * {@link ChannelManagerEvent#getConfigRootNode()} are being persisted. 
      * @param event the {@link ChannelManagerEvent}
+     * @throws ChannelManagerEventListenerException an exception that an implementation may choose to throw to have the {@link ChannelManager} 
+     * log a warning or even completely short circuit the channel processing when the {@link ChannelManagerEventListenerException} has
+     * {@link ChannelManagerEventListenerException#getStatus()} equal to {@link Status#STOP_CHANNEL_PROCESSING}
+     * 
      */
-    void channelCreated(ChannelManagerEvent event);
+    void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException;
 
     /**
      * Called immediately after a channel has been updated through {@link ChannelManager#save(Channel)}.
@@ -50,7 +56,10 @@ public interface ChannelManagerEventListener {
      * saved through {@link Session#save()} : Thus, any jcr modifications made on the backing jcr {@link Node} from the 
      * {@link ChannelManagerEvent#getConfigRootNode()} are being persisted.
      * @param event the {@link ChannelManagerEvent}
+     * @throws ChannelManagerEventListenerException an exception that an implementation may choose to throw to have the {@link ChannelManager} 
+     * log a warning or even completely short circuit the channel processing when the {@link ChannelManagerEventListenerException} has
+     * {@link ChannelManagerEventListenerException#getStatus()} equal to {@link Status#STOP_CHANNEL_PROCESSING}
      */
-    void channelUpdated(ChannelManagerEvent event);
+    void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException;
 
 }
