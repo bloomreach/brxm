@@ -13,6 +13,7 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,7 +44,16 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
 
     private static final long serialVersionUID = 1L;
-    private static final List<?> PROVIDERS = Collections.singletonList(new JacksonJaxbJsonProvider());
+    private static final List<?> PROVIDERS;
+
+    static {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enableDefaultTyping();
+        objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
+        JacksonJaxbJsonProvider jjjProvider = new JacksonJaxbJsonProvider();
+        jjjProvider.setMapper(objectMapper);
+        PROVIDERS = Collections.singletonList(jjjProvider);
+    }
 
     private final String restUri;
 
@@ -64,43 +74,43 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass) {
-    	return JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
+        return JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
     }
 
-	@Override
-	public <T> T createRestProxy(Class<T> restServiceApiClass, Subject subject) {
-		T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
+    @Override
+    public <T> T createRestProxy(Class<T> restServiceApiClass, Subject subject) {
+        T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
 
-		try {
-			// The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
-			// which caused problems matching with the relevant JAXRS resource
-			WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.APPLICATION_JSON);
-			return clientProxy;
-		} catch (Exception ex) {
-			if (log.isErrorEnabled()) {
-				log.error(String.format(PARAM_ERROR_MESSAGE_ERROR_WHILE_CREATING_PROXY, ex.getClass().getName(), ex.getMessage(), ex));
-			}
+        try {
+            // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
+            // which caused problems matching with the relevant JAXRS resource
+            WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.APPLICATION_JSON);
+            return clientProxy;
+        } catch (Exception ex) {
+            if (log.isErrorEnabled()) {
+                log.error(String.format(PARAM_ERROR_MESSAGE_ERROR_WHILE_CREATING_PROXY, ex.getClass().getName(), ex.getMessage(), ex));
+            }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 
-	protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
-		if (subject == null) {
-			throw new IllegalArgumentException(ERROR_MESSAGE_NULL_SUBJECT_IS_PASSED);
-		}
+    protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
+        if (subject == null) {
+            throw new IllegalArgumentException(ERROR_MESSAGE_NULL_SUBJECT_IS_PASSED);
+        }
 
-		Set<Object> credentials = subject.getPrivateCredentials();
+        Set<Object> credentials = subject.getPrivateCredentials();
 
-		if ( (credentials == null) || (credentials.isEmpty()) ) {
-			throw new IllegalArgumentException(ERROR_MESSAGE_SUBJECT_HAS_NO_CREDENTIALS);
-		}
+        if ( (credentials == null) || (credentials.isEmpty()) ) {
+            throw new IllegalArgumentException(ERROR_MESSAGE_SUBJECT_HAS_NO_CREDENTIALS);
+        }
 
-		Iterator<Object> credentialsIterator = credentials.iterator();
-		SimpleCredentials subjectCredentials = (SimpleCredentials) credentialsIterator.next();
+        Iterator<Object> credentialsIterator = credentials.iterator();
+        SimpleCredentials subjectCredentials = (SimpleCredentials) credentialsIterator.next();
 
-		CredentialCipher credentialCipher = CredentialCipher.getInstance();
-		return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
-	}
+        CredentialCipher credentialCipher = CredentialCipher.getInstance();
+        return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
+    }
 
 }
