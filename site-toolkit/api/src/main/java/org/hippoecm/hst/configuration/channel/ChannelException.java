@@ -62,14 +62,11 @@ public class ChannelException extends Exception {
     }
 
     public ChannelException(String message, Type type, String... parameters) {
-        this(message, null, type);
+        this(message, null, type, parameters);
     }
 
     public ChannelException(String message, Throwable cause, Type type, String... parameters) {
-        super(message);
-        if (cause != null) {
-            initCause(cause);
-        }
+        super(message, cause);
         this.type = type;
         this.parameters = parameters == null ? ZERO_PARAMETERS : parameters;
     }
