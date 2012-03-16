@@ -22,6 +22,7 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -71,6 +72,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         } catch (ContainerException ce) {
             logError(log, String.format(ERROR_MESSAGE_JCR_SESSION_PROPAGATION_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+            dePropagateJcrSession();
             return;
         }
 
@@ -79,15 +81,15 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         } catch (ContainerException ce) {
             logError(log, String.format(ERROR_MESSAGE_REQUEST_PROCESSING_CHAIN_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-            return;
+        } finally {
+            dePropagateJcrSession();
         }
 
-        dePropagateJcrSession();
     }
 
     protected void propagateJcrSession(Credentials credentials) throws ContainerException {
         try {
-            // COMMENT - MNour: There should be a better way to make this more clean middleware oriented implementation
+            // There should be a better way to make this more clean middleware oriented implementation
             if (credentials == null) {
                 // Create a read only JCR session
                 CmsJcrSessionThreadLocal.setJcrSession(repository.login());
@@ -103,7 +105,12 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
     }
 
     protected void dePropagateJcrSession() {
-        // TODO - MNour: Make the valve to check if the session still alive or not, if yes then is should log it out
+        Session session = CmsJcrSessionThreadLocal.getJcrSession();
+
+        if (session != null) {
+            session.logout();
+        }
+
         CmsJcrSessionThreadLocal.clearJcrSession();
     }
 
