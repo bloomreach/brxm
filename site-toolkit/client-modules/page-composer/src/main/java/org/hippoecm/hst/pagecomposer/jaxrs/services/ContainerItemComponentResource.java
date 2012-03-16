@@ -99,27 +99,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return new ContainerItemComponentRepresentation().represents(node, locale, prefix);
     }
 
-    /**
-     * 
-     * @return all the configured unique variants (prefixes) for this component 
-     */
-    @GET
-    @Path("/variants")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getVariants() {
-        return null;
-    }
-
-    /**
-     * Creates new variant / prefix with default values copied
-     * @return
-     */
-    @POST
-    @Path("/variant/{variantid}") 
-    public Response createNew() {
-        return null;
-    }
-    
     @POST
     @Path("/parameters/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
