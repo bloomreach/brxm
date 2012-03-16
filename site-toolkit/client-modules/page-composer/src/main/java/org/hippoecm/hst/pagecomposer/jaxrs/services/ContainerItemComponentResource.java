@@ -133,7 +133,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
                 Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
                 if (!(paramPrefixes.length == paramNames.length && paramPrefixes.length == paramValues.length)) {
-                    // TODO: log warning
+                    log.warn("Parameter names, values and prefixes are are not all of equal length for '{}'", node.getPath());
                     return error(HST_PARAMETERNAMEPREFIXES + ", " + HST_PARAMETERNAMES + " and " 
                             + HST_PARAMETERVALUES + " properties do not have the same number of values");
                 }
@@ -151,7 +151,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
                 Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
                 if (paramNames.length != paramValues.length) {
-                    // TODO: log warning
+                    log.warn("Parameter names and values are not of equal length for '{}'", node.getPath());
                     return error(HST_PARAMETERNAMES + " and " + HST_PARAMETERVALUES 
                             + " properties do not have the same number of values");
                 }
