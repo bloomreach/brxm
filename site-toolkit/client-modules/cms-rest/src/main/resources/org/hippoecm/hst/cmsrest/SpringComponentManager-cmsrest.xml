@@ -18,11 +18,34 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+  <bean id="cmsRestJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+    <property name="mapper" ref="cmsRestJacksonObjectMapper" />
+  </bean>
+
+  <bean id="cmsRestJacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+
+  <!-- Enable Jackson JSON ObjectMapper default typing -->
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
+    <property name="targetMethod" value="enableDefaultTyping" />
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
+    <property name="targetMethod" value="enableDefaultTypingAsProperty" />
+    <property name="arguments">
+        <list>
+            <value type="org.codehaus.jackson.map.ObjectMapper.DefaultTyping">OBJECT_AND_NON_CONCRETE</value>
+            <value>@class</value>
+        </list>
+    </property>
+  </bean>
+
   <bean id="jaxrsCmsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
     <property name="address" value="/"/>
     <property name="providers">
       <list>
-        <ref bean="jaxrsRestJsonProvider"/>
+        <ref bean="cmsRestJsonProvider"/>
       </list>
     </property>
     <property name="resourceProviders">

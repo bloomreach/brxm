@@ -89,6 +89,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- Jackson JSON dependencies -->
+    <dependency>
+    	<groupId>org.codehaus.jackson</groupId>
+    	<artifactId>jackson-core-asl</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>

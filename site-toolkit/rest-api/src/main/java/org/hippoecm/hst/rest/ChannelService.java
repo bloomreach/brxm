@@ -17,19 +17,26 @@
 package org.hippoecm.hst.rest;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Channel} resources
@@ -72,6 +79,18 @@ public interface ChannelService {
     public void save(Channel channel);
 
 	/**
+	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id
+	 * 
+	 * @param blueprintId - The {@link Blueprint} id
+	 * @param channel - {@link Channel} object instance
+	 * @return The new {@link Channel}'s id
+	 */
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String persist(@QueryParam("blueprint") String blueprintId, Channel channel);
+
+	/**
 	 * Retrieve {@link Channel} property definitions
 	 * 
 	 * @param id - {@link Channel} id
@@ -80,7 +99,7 @@ public interface ChannelService {
 	@GET
 	@Path("/{id}#propdefs")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<HstPropertyDefinition> getChannelPropertyDefinitions(@PathParam("id") String id);
+	public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(@PathParam("id") String id);
 
 	/**
 	 * Check whether use can modify {@link Channel}(s) or not
@@ -102,5 +121,18 @@ public interface ChannelService {
 	@Path("/{id}#infoClassInfo")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ChannelInfoClassInfo getChannelInfoClassInfo(@PathParam("id") String id);
+
+    /**
+     * Retrieve a {@link ResourceBundle} converted to {@link Properties} of {@link Channel} identified by an Id
+     * 
+     * @param id - {@link Channel} id
+     * @param language - {@link Locale} language
+     * @return {@link Properties} equivalent of a {@link Channel}'s {@link ResourceBundle}
+     */
+	@GET
+    @Path("/{id}#resourcevalue")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Properties getChannelResourceValues(@PathParam("id") String id, @QueryParam("language") String language);
 
 }

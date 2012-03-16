@@ -821,8 +821,38 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     public Workflow getWorkflow(String category, Node node) throws RepositoryException {
         Workspace workspace = node.getSession().getWorkspace();
-        WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
-        return wfm.getWorkflow(category, node);
+
+        ClassLoader workspaceClassloader = workspace.getClass().getClassLoader();
+        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+        
+        try {
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(workspaceClassloader);
+            }
+            
+            WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
+            return wfm.getWorkflow(category, node);
+        } catch (RepositoryException e) {
+            throw e;
+        } catch (Exception e) {
+            // other exception which are not handled properly in the repository (we cannot do better here then just log them)
+            if(log.isDebugEnabled()) {
+                log.warn("Exception in workflow", e);
+            } else {
+                log.warn("Exception in workflow: {}", e.toString());
+            }
+        } finally { 
+            if (workspaceClassloader != currentClassloader) {
+                Thread.currentThread().setContextClassLoader(currentClassloader);
+            }
+        }
+        
+        return null;
+
+        // OLD CODE
+//        Workspace workspace = node.getSession().getWorkspace();
+//        WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
+//        return wfm.getWorkflow(category, node);
     }
 
     private static boolean isVirtual(final Node node) throws RepositoryException {

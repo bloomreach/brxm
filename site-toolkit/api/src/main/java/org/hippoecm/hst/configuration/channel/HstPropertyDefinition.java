@@ -26,20 +26,22 @@ import org.hippoecm.hst.core.parameters.HstValueType;
  */
 public interface HstPropertyDefinition {
 
-    HstValueType getValueType();
+    public HstValueType getValueType();
 
-    String getName();
+    public String getName();
 
-    Object getDefaultValue();
+    public Object getDefaultValue();
 
     public boolean isRequired();
 
-    List<Annotation> getAnnotations();
+    public List<Annotation> getAnnotations();
 
     /**
      * @param annotationClass the annotationClass to check
      * @return Returns the annotation T if present on the {@link HstPropertyDefinition} and returns <code>null</code> if not present
      */
-    <T extends Annotation> T getAnnotation(Class<T> annotationClass);
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass);
+
+    public <T extends Annotation> List<Annotation> getAnnotations(List<Class<? extends Annotation>> annotationClasses);
 
 }

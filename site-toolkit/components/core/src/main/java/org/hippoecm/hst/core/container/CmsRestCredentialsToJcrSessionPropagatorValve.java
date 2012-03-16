@@ -68,12 +68,21 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
 
         try {
             propagateJcrSession(credentials);
-            context.invokeNext();
-            dePropagateJcrSession();
         } catch (ContainerException ce) {
             logError(log, String.format(ERROR_MESSAGE_JCR_SESSION_PROPAGATION_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+            return;
         }
+
+        try {
+            context.invokeNext();
+        } catch (ContainerException ce) {
+            logError(log, String.format(ERROR_MESSAGE_REQUEST_PROCESSING_CHAIN_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+            return;
+        }
+
+        dePropagateJcrSession();
     }
 
     protected void propagateJcrSession(Credentials credentials) throws ContainerException {
@@ -94,7 +103,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
     }
 
     protected void dePropagateJcrSession() {
-        // QUESTION: Should we make the valve responsible for login out from JCR session
+        // TODO - MNour: Make the valve to check if the session still alive or not, if yes then is should log it out
         CmsJcrSessionThreadLocal.clearJcrSession();
     }
 

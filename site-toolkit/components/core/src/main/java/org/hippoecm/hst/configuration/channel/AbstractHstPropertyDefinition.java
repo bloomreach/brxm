@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,6 +71,20 @@ public abstract class AbstractHstPropertyDefinition implements HstPropertyDefini
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends Annotation> List<Annotation> getAnnotations(List<Class<? extends Annotation>> annotationClasses) {
+        List<Annotation> annotations = new ArrayList<Annotation>();
+
+        for (Class<? extends Annotation> annotationClass : annotationClasses) {
+            Annotation annotation = getAnnotation(annotationClass);
+            if (annotation != null) {
+                annotations.add(annotation);
+            }
+        }
+
+        return annotations;
     }
 
 }

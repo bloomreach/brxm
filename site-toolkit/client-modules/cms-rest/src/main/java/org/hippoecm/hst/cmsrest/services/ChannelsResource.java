@@ -17,27 +17,30 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNELS_RETRIEVAL_ERROR;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_PERSISTING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_SAVING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
 import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
+import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
-import org.hippoecm.hst.core.parameters.FieldGroup;
-import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
-import org.hippoecm.hst.rest.beans.FieldGroupInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
+import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,12 +108,41 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         }
     }
 
+    @Override
+    public String persist(String blueprintId, Channel channel) {
+        try {
+            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
+            // COMMENT - MNour: We should use a proper validation framework!
+            validate();
+            // COMMENT - MNour: This is only test data
+            return channelManager.persist(blueprintId, channel);
+        } catch (ResourceRequestValidationException rrve) {
+            if (log.isWarnEnabled()) {  
+                log.warn(PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
+            }
+            // COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+            //                  For now return empty list
+            // throw rrve;
+            // COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
+        } catch (ChannelException ce) {
+            if (log.isErrorEnabled()) {
+                if (log.isErrorEnabled()) {
+                    log.error(String.format(MESSAGE_CHANNEL_PERSISTING_ERROR, channel, ce.getClass().getName(), ce.getMessage(), ce));
+                }
+            }
+        }
+
+        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        //                  HST, CMS and services!
+        return null;
+    }
+
     /* (non-Javadoc)
      * @see org.hippoecm.hst.rest.ChannelService#getChannelPropertyDefinitions(String id)
      */
     @Override
-    public List<HstPropertyDefinition> getChannelPropertyDefinitions(String id) {
-        return channelManager.getPropertyDefinitions(id);
+    public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(String id) {
+        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(channelManager.getPropertyDefinitions(id));
     }
 
     /* (non-Javadoc)
@@ -152,7 +184,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
 
             if (channelInfoClass != null) {
-                channelInfoClassInfo = buildChannelInfoClassInfo(channelInfoClass);
+                channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
             }
 
             return channelInfoClassInfo;
@@ -169,29 +201,22 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         return null;
     }
 
-    protected ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
-        ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
-
-        channelInfoClassInfo.setClassName(channelInfoClass.getName());
-        channelInfoClassInfo.setFieldsGroup(buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
-        return channelInfoClassInfo;
-    }
-
-    protected List<FieldGroupInfo> buildFieldGroupListInfo(FieldGroupList fieldsGroup) {
-        List<FieldGroupInfo> fieldsGroupList = new ArrayList<FieldGroupInfo>();
-        for (FieldGroup fieldGroup : fieldsGroup.value()) {
-            fieldsGroupList.add(buildFieldGroupInfo(fieldGroup));
+    @Override
+    public Properties getChannelResourceValues(String id, String language) {
+        try {
+            Channel channel = channelManager.getChannelById(id);
+            return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
+        } catch (ChannelException ce) {
+            if (log.isDebugEnabled()) {
+                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES, id), ce);
+            } else {
+                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES, id, ce);
+            }
         }
 
-        return fieldsGroupList; 
-    }
-
-    protected FieldGroupInfo buildFieldGroupInfo(FieldGroup fieldGroup) {
-        FieldGroupInfo fieldGroupInfo = new FieldGroupInfo();
-
-        fieldGroupInfo.setValue(fieldGroup.value());
-        fieldGroupInfo.setTitleKey(fieldGroup.titleKey());
-        return fieldGroupInfo;
+        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        //                  HST, CMS and services!        
+        return null;
     }
 
 }

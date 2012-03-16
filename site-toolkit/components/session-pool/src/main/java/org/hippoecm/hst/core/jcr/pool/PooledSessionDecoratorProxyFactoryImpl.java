@@ -34,28 +34,14 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
     public final Session decorate(Session session) {
         return decorate(session, null);
     }
-    
+
     public final Session decorate(Session session, String userID) {
         PooledSession pooledSessionProxy = null;
         ProxyFactory factory = new ProxyFactory();
         PooledSessionInterceptor interceptor = new PooledSessionInterceptor(userID);
-        
-        ClassLoader sessionClassloader = session.getClass().getClassLoader();
-        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-        
-        try {
-            if (sessionClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(sessionClassloader);
-            }
-            
-            pooledSessionProxy = (PooledSession) factory.createInterceptorProxy(session.getClass().getClassLoader(), session, interceptor, new Class [] { PooledSession.class });
-            interceptor.setPooledSessionProxy(pooledSessionProxy);
-        } finally {
-            if (sessionClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
-            }
-        }
-        
+
+        pooledSessionProxy = (PooledSession) factory.createInterceptorProxy(Thread.currentThread().getContextClassLoader(), session, interceptor, new Class [] { PooledSession.class });
+        interceptor.setPooledSessionProxy(pooledSessionProxy);
         return pooledSessionProxy;
     }
 
