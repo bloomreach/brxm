@@ -33,6 +33,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
         this.mountId = config.mountId;
         this.resources = config.resources;
         this.locale = config.locale;
+        this.silent = true;
         config = Ext.apply(config, { activeTab: 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
     },
@@ -62,7 +63,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
             }
         }.createDelegate(this));
         this.on('tabchange', function(panel, tab) {
-            if (tab) {
+            if (!this.silent && tab) {
                 this.fireEvent('variantChange', tab.componentId, tab.variant);
             }
         }, this);
@@ -96,9 +97,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.TabPanel,
     },
     
     load: function(variant) {
+        this.silent = true;
         this.removeAll();
         this.initTabs();
         this.selectVariant(variant);
+        var tab = this.getActiveTab();
+        this.fireEvent('variantChange', tab.componentId, tab.variant);
+        this.silent = false;
+
         var self = this;
         this.future.when(function() {
             self.items.each(function(item) { item.load(); }, self);

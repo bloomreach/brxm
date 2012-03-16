@@ -357,8 +357,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     showProperties : function(record, variant) {
         var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
         componentPropertiesPanel.setComponentId(record.get('id'));
-        componentPropertiesPanel.selectVariant(variant);
-        componentPropertiesPanel.load();
+        componentPropertiesPanel.load(variant);
         if (this.propertiesWindow) {
             this.propertiesWindow.setTitle(record.get('name'));
             this.propertiesWindow.show();
