@@ -108,20 +108,42 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(1, values.length);
         assertEquals("bar", values[0].getString());
         
-        // 2. if params is empty parameters should be removed
+        // 2. if params is empty, old values should be kept AS IS
         params = new MetadataMap<String, String>();
         new ContainerItemComponentResource().doSetParameters(node, null, params);
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(!node.hasProperty(HST_PARAMETERVALUES));
+        names = node.getProperty(HST_PARAMETERNAMES).getValues();
+        assertEquals(1, names.length);
+        assertEquals("parameterOne", names[0].getString());
+        
+        values = node.getProperty(HST_PARAMETERVALUES).getValues();
+        assertEquals(1, values.length);
+        assertEquals("bar", values[0].getString());
         assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
         
         // 3. add bar = test without prefix
-        // because test is annotated default value for bar nothing should be persisted
+        // We should keep the already existing "parameterOne = bar" 
+        // but now should also have "parameterTwo = test" : Even though the default
+        // value for DummyInfo for "parameterTwo = test" , we STILL store it
         params = new MetadataMap<String, String>();
         params.add("parameterTwo", "test");
         new ContainerItemComponentResource().doSetParameters(node, null, params);
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(!node.hasProperty(HST_PARAMETERVALUES));
+        
+        names = node.getProperty(HST_PARAMETERNAMES).getValues();
+        assertEquals(2, names.length);
+        
+        // names[0] is either  parameterOne or parameterTwo (not sure about the order)
+        assertTrue(names[0].getString().equals("parameterOne") || names[0].getString().equals("parameterTwo"));
+        assertTrue(names[1].getString().equals("parameterOne") || names[1].getString().equals("parameterTwo"));
+        
+        values = node.getProperty(HST_PARAMETERVALUES).getValues();
+        assertEquals(2, values.length);
+        if(names[0].getString().equals("parameterOne")) {
+            assertEquals("bar", values[0].getString());
+            assertEquals("test", values[1].getString());
+        } else {
+            assertEquals("test", values[0].getString());
+            assertEquals("bar", values[1].getString());
+        }
         assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
 
     }
@@ -158,28 +180,10 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(1, prefixes.length);
         assertEquals("prefix", prefixes[0].getString());
         
-        // 2. if params is empty parameters should be removed
+
+        // 2. if params is empty, old values should be kept AS IS
         params = new MetadataMap<String, String>();
         new ContainerItemComponentResource().doSetParameters(node, "prefix", params);
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(!node.hasProperty(HST_PARAMETERVALUES));
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-
-        // 3. if prefixed parameter value is same as default parameter value then don't persist
-        
-        // first set default parameter parameterOne = bar
-        node.setProperty(HST_PARAMETERNAMES, new String[] {"parameterOne"});
-        node.setProperty(HST_PARAMETERVALUES, new String[] {"bar"});
-        session.save();
-
-        // try to add parameterOne = bar in variant "prefix"
-        params = new MetadataMap<String, String>();
-        params.add("parameterOne", "bar");
-        new ContainerItemComponentResource().doSetParameters(node, "prefix", params);
-        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-        
         names = node.getProperty(HST_PARAMETERNAMES).getValues();
         assertEquals(1, names.length);
         assertEquals("parameterOne", names[0].getString());
@@ -188,35 +192,40 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(1, values.length);
         assertEquals("bar", values[0].getString());
         
-        // 4. if prefixed parameter value is different from default parameter value but same
-        // as annotated default value then do persist
+        prefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
+        assertEquals(1, prefixes.length);
+        assertEquals("prefix", prefixes[0].getString());
+
+        // 3. if prefixed parameter value is same as default parameter value then persist anyway
         
-        // first set default parameter bar = baz (different from annotated default)
-        node.setProperty(HST_PARAMETERNAMES, new String[] {"bar"});
-        node.setProperty(HST_PARAMETERVALUES, new String[] {"baz"});
+        // first set default parameter parameterOne = bar
+        node.setProperty(HST_PARAMETERNAMES, new String[] {"parameterOne"});
+        node.setProperty(HST_PARAMETERVALUES, new String[] {"bar"});
+        node.setProperty(HST_PARAMETERNAMEPREFIXES, new String[] {""});
         session.save();
-        
-        // try to add bar = test in variant "prefix" (test is annotated default for bar)
+
+        // try to add parameterOne = bar in variant "prefix"
         params = new MetadataMap<String, String>();
-        params.add("bar", "test");
+        params.add("parameterOne", "bar");
         new ContainerItemComponentResource().doSetParameters(node, "prefix", params);
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
         assertTrue(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
         
+        // we should now have default parameterOne = bar and prefixed parameterOne = bar
+        
         names = node.getProperty(HST_PARAMETERNAMES).getValues();
         assertEquals(2, names.length);
-        assertEquals("bar", names[0].getString());
-        assertEquals("bar", names[1].getString());
-        
+        assertEquals("parameterOne", names[0].getString());
+        assertEquals("parameterOne", names[1].getString());
+
         values = node.getProperty(HST_PARAMETERVALUES).getValues();
         assertEquals(2, values.length);
-        assertEquals("baz", values[0].getString());
-        assertEquals("test", values[1].getString());
+        assertEquals("bar", values[0].getString());
+        assertEquals("bar", values[1].getString());
         
         prefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
-        assertEquals(2, prefixes.length);
-        assertEquals("", prefixes[0].getString());
-        assertEquals("prefix", prefixes[1].getString());
+        assertEquals(2, values.length);
+        
     }
 }

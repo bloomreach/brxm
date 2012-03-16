@@ -15,11 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,8 +38,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.slf4j.Logger;
@@ -126,6 +121,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             prefix = "default";
         }
 
+        // first fill all the already stored parameters of the jcr Node in hstParameters
+        // the KEY = the prefix, and the value a Map of paramatername/parametervalue entries
         Map<String, Map<String, String>> hstParameters = new HashMap<String, Map<String, String>>();
         if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
             if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
@@ -162,20 +159,11 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             }
         }
         
+        // now get the map of parameters for the current 'prefix' as those are the once we will change
         Map<String, String> prefixedParameters = hstParameters.get(prefix);
         if (prefixedParameters == null) {
             prefixedParameters = new HashMap<String, String>();
             hstParameters.put(prefix, prefixedParameters);
-        }
-        
-        // remove parameters for which there are no new values
-        Iterator<Entry<String,String>> iter = prefixedParameters.entrySet().iterator();
-        while (iter.hasNext()) {
-            String paramName = iter.next().getKey();
-            List<String> newValues = params.get(paramName);
-            if (newValues == null || newValues.isEmpty()) {
-                iter.remove();
-            }
         }
         
         // add / replace parameters for which there are values
@@ -187,9 +175,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                prefixedParameters.put(param, params.getFirst(param));
             }
         }
-        
-        Map<String, String> annotatedDefaultValues = getAnnotatedDefaultValues(node);
-
+    
         List<String> prefixes = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
@@ -199,30 +185,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             for (Entry<String, String> f : e.getValue().entrySet()) {
                 String name = f.getKey();
                 String value = f.getValue();
-                if (value == null || value.isEmpty()) {
-                    // value is empty so don't persist
-                    continue;
-                }
-                if (!paramPrefix.isEmpty()) {
-                    Map<String, String> defaultParams = hstParameters.get("default");
-                    String defaultValue = defaultParams == null ? null : defaultParams.get(name);
-                    if (value.equals(defaultValue)) {
-                        // doesn't override the default value so don't persist
-                        continue;
-                    }
-                    if (defaultValue == null || defaultValue.isEmpty()) {
-                        // will fall back on annotated default
-                        String annotatedDefaultValue = annotatedDefaultValues.get(name);
-                        if (value.equals(annotatedDefaultValue)) {
-                            continue;
-                        }
-                    }
-                } else {
-                    String annotatedDefaultValue = annotatedDefaultValues.get(name);
-                    if (value.equals(annotatedDefaultValue)) {
-                        continue;
-                    }
-                }
                 if (!paramPrefix.isEmpty()) {
                     // only add the HST_PARAMETERNAMEPREFIXES property 
                     // if there are actually prefixed name/value pairs
@@ -256,37 +218,4 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return ok("Properties saved successfully.", null);
     }
     
-    private static Map<String, String> getAnnotatedDefaultValues(Node node) {
-        try {
-            String componentClassName = null;
-            if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
-                componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
-            }
-
-            if (componentClassName != null) {
-                Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-                if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                    ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                    Class<?> classType = parametersInfo.type();
-                    if (classType == null) {
-                        return Collections.emptyMap();
-                    }
-                    Map<String, String> result = new HashMap<String, String>();
-                    for (Method method : classType.getMethods()) {
-                        if (method.isAnnotationPresent(Parameter.class)) {
-                            Parameter annotation = method.getAnnotation(Parameter.class);
-                            result.put(annotation.name(), annotation.defaultValue());
-                        }
-                    }
-                    return result;
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to load annotated default values", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load annotated default values", e);
-        }
-
-        return Collections.emptyMap();
-    }
 }
