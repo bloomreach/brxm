@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -80,7 +79,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private Map<String, Blueprint> blueprints;
     private Map<String, Channel> channels;
-    private Credentials credentials;
     private Repository repository;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
@@ -93,10 +91,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(new ArrayList<ChannelManagerEventListener>());
 
     public ChannelManagerImpl() {
-    }
-
-    public void setCredentials(final Credentials credentials) {
-        this.credentials = credentials;
     }
 
     public void setRepository(final Repository repository) {

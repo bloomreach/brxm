@@ -459,8 +459,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         final ChannelManagerImpl manager = new ChannelManagerImpl();
         manager.setRepository(getRepository());
-        // FIXME: use readonly credentials
-        manager.setCredentials(getCredentials());
         
         ComponentManager cm = createMock(ComponentManager.class);
         setComponentManager(cm);
