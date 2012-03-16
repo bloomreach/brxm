@@ -49,6 +49,7 @@
     <atomikos.version>3.1.4</atomikos.version>
 
     <easymock.version>2.4</easymock.version>
+    <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
