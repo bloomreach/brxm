@@ -27,7 +27,6 @@
   <bean id="org.hippoecm.hst.configuration.channel.ChannelManager" class="org.hippoecm.hst.configuration.channel.ChannelManagerImpl">
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
     <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
     <property name="contentRoot" value="${channel.manager.contentRoot}"/>
   </bean>
 
