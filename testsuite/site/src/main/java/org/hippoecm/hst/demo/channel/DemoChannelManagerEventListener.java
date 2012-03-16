@@ -22,6 +22,7 @@ import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEvent;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
+import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +39,15 @@ public class DemoChannelManagerEventListener implements ChannelManagerEventListe
     
     private static Logger log = LoggerFactory.getLogger(DemoChannelManagerEventListener.class);
 
-    public void channelCreated(ChannelManagerEvent event) {
+    public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been created. {}", channelManagerEventToString(event));
     }
 
-    public void channelUpdated(ChannelManagerEvent event) {
+    public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been updated. {}", channelManagerEventToString(event));
     }
 
-    private String channelManagerEventToString(ChannelManagerEvent event) {
+    private String channelManagerEventToString(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         StringBuilder sb = new StringBuilder(100);
         sb.append("{ ");
         
