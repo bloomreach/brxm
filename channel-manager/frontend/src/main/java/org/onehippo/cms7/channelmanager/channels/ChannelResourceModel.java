@@ -1,5 +1,6 @@
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,24 +13,27 @@ class ChannelResourceModel extends LoadableDetachableModel<String> {
 
     private final Channel channel;
     private final String key;
+    private final ChannelStore channelStore;
 
-    ChannelResourceModel(Channel channel, String key) {
+    ChannelResourceModel(String key, Channel channel, ChannelStore channelStore) {
         this.channel = channel;
         this.key = key;
+        this.channelStore = channelStore;
     }
 
     @Override
     protected String load() {
-        return getChannelResourceValue(channel, key);
+        if (StringUtils.isNotEmpty(key)) {
+            Properties bundleProperties = channelStore.getChannelResourceValues(channel);
+            if (bundleProperties != null && bundleProperties.containsKey(key)) {
+                return bundleProperties.getProperty(key);
+            }
+        }
+
+        return null;
     }
 
     static String getChannelResourceValue(Channel channel, String key) {
-        if (StringUtils.isNotEmpty(key)) {
-            ResourceBundle bundle = ChannelUtil.getResourceBundle(channel);
-            if (bundle != null && bundle.containsKey(key)) {
-                return bundle.getString(key);
-            }
-        }
         return null;
     }
 

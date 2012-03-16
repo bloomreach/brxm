@@ -16,8 +16,6 @@
 package org.onehippo.cms7.channelmanager.channels;
 
 import java.lang.reflect.Field;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,16 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
@@ -43,13 +42,11 @@ import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
-import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.security.HstSubject;
-import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.rest.SiteService;
+import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +56,7 @@ import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.data.ExtField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 
 /**
  * Channel JSON Store.
@@ -249,7 +247,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             return null;
         }
 
-        Session session = ((UserSession) RequestCycle.get().getSession()).getJcrSession();
+        javax.jcr.Session session = ((UserSession) RequestCycle.get().getSession()).getJcrSession();
         try {
             if (session.nodeExists(channelIconPath)) {
                 String url = encodeUrl("binaries" + channelIconPath);
@@ -301,20 +299,24 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // Custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
+        Properties properties = null;
+
         for (Channel channel : getChannels()) {
-            String header = ChannelResourceModel.getChannelResourceValue(channel, fieldName);
+            properties = getChannelResourceValues(channel);
+            String header = properties.getProperty(fieldName);
             if (header != null) {
                 return header;
             }
         }
 
         // No translation found, is the site down?
-        if (ChannelUtil.getChannelManager() == null) {
+        SiteService siteService = restProxyService.createRestProxy(SiteService.class);
+        if (!siteService.isAlive()) {
             log.info("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
-                    fieldName, org.apache.wicket.Session.get().getLocale());
+                    fieldName, Session.get().getLocale());
         } else {
             log.warn("Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. Falling back to the field name itself as the column header.",
-                    fieldName, org.apache.wicket.Session.get().getLocale());
+                    fieldName, Session.get().getLocale());
         }
 
         return fieldName;
@@ -343,25 +345,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        final ChannelManager channelManager = ChannelUtil.getChannelManager();
-        if (channelManager == null) {
-            log.info("Cannot retrieve the channel manager, assuming that the current user cannot modify channels");
-            return false;
-        }
-
-        Subject subject = createSubject();
-        try {
-            return HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Boolean>() {
-                public Boolean run() throws ChannelException {
-                    return channelManager.canUserModifyChannels();
-                }
-            }, null);
-        } catch (PrivilegedActionException e) {
-            log.error("Could not determine privileges", e.getException());
-            return false;
-        } finally {
-            HstSubject.clearSubject();
-        }
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
+        return channelService.canUserModifyChannels();
     }
 
     public List<Channel> getChannels() {
@@ -389,15 +374,36 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return channel;
     }
 
-    public List<HstPropertyDefinition> getChannelPropertyDefinitions(Channel channel) {
-        // COMMENT - MNour: This is just a mockup!
-        return new ArrayList<HstPropertyDefinition>();
+    public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
+        // ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, Arrays.asList(new PTHProvider()));
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        return channelService.getChannelPropertyDefinitions(channel.getId());
+    }
+    
+    public Properties getChannelResourceValues(Channel channel) {
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        return channelService.getChannelResourceValues(channel.getId(), Session.get().getLocale().toString());
     }
 
     public void saveChannel(Channel channel) {
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
+        channelService.save(channel);
+    }
+
+    /**
+     * @param channel the channel to get the ChannelInfo class for
+     * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a
+     * custom ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
+     */
+    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) {
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        return channelService.getChannelInfoClassInfo(channel.getId());
+    }
+
+    protected Subject getSubject() {
         // This code can be in a utility but I am leaving it like that not to be forgotten
-        // cause this is ugly and needs to be handled in a middleware way of thing
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        // cause this is ugly and needs to be handled in a middleware oriented way of thing
+        UserSession session = (UserSession) Session.get();
 
         @SuppressWarnings("deprecation")
         Credentials credentials = session.getCredentials();
@@ -405,9 +411,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
-
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, subject);
-        channelService.save(channel);
+        return subject;
     }
 
     protected void loadChannels() {
@@ -428,7 +432,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     @Override
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
-        final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        // final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
@@ -463,31 +467,23 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        // Save channel (FIXME: move boilerplate to CMS engine)
-        Subject subject = createSubject();
-        try {
-            String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
-                        public String run() throws ChannelException {
-                            return channelManager.persist(blueprintId, newChannel);
-                        }
-                    }, null);
-            log.info("Created new channel with ID '{}'", channelId);
-        } catch (PrivilegedActionException e) {
-            log.info("Could not persist new channel '" + newChannel.getName() + "'", e.getException());
-            throw createActionFailedException(e.getException(), newChannel);
-        } finally {
-            HstSubject.clearSubject();
-        }
+        String channelId = persistChannel(blueprintId, newChannel);
+        log.info("Created new channel with ID '{}'", channelId);
 
-        // removed the old cached channels to force a refresh
+        // Removed the old cached channels to force a refresh
         this.channels = null;
 
-        // no need to return the create record; it will be loaded when the list of channels is refreshed
+        // No need to return the create record; it will be loaded when the list of channels is refreshed
         return null;
     }
 
+    protected String persistChannel(String blueprintId, Channel newChannel) {
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
+        return channelService.persist(blueprintId, newChannel);
+    }
+
     private Subject createSubject() {
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = (UserSession) Session.get();
 
         @SuppressWarnings("deprecation")
         Credentials credentials = session.getCredentials();
@@ -520,7 +516,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (StringUtils.isEmpty(absPath)) {
             return null;
         }
-        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
         try {
             if (!session.nodeExists(absPath)) {
                 return null;

@@ -51,7 +51,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStoreFac
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_nl.properties -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelUtil.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
