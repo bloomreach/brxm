@@ -927,16 +927,6 @@
                     <artifactId>hippo-addon-publication-workflow-common</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms7.hst</groupId>
-                    <artifactId>hst-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms7.hst</groupId>
-                    <artifactId>hst-commons</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
                 </dependencies>
               </container>
             </configuration>
