@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Cleans up hippo event log entries. The module can be configured at "/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig"
  * with the following options:<br/>
- * - property 'cronexpression' (String) a quartz cron expression specifying when to run the clean up job. Defaults to daily at 3 am.
+ * - property 'cronexpression' (String) a quartz cron expression specifying when to run the clean up job.
  * - property 'maxitems' (Long) the maximum number of items to keep in the logs. Defaults to -1, which means no maximum.
  * - property 'keepitemsfor' (Long) the number of milliseconds to keep items in the logs.
  */
@@ -75,7 +75,7 @@ public class EventLogCleanupModule implements DaemonModule {
 
     private Session session;
     private Scheduler scheduler;
-    private String cronExpression = "0 0 3 * * ?"; // fire at 3 am every day
+    private String cronExpression = null;
     private long maxitems = -1;
     private long itemtimeout = -1;
     private JobListener jobListener;
@@ -99,6 +99,10 @@ public class EventLogCleanupModule implements DaemonModule {
     }
 
     private void startScheduler() {
+        if (cronExpression == null) {
+            // no cron expression configured
+            return;
+        }
         try {
             SchedulerFactory factory = new StdSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
             scheduler = factory.getScheduler();
@@ -112,6 +116,10 @@ public class EventLogCleanupModule implements DaemonModule {
     }
 
     private void scheduleJob() {
+        if (cronExpression == null) {
+            // no cron expression configured
+            return;
+        }
         if (scheduler == null) {
             // starting scheduler failed
             return;
@@ -131,11 +139,14 @@ public class EventLogCleanupModule implements DaemonModule {
         }
     }
 
-    private void unschedulJob() throws SchedulerException {
+    private void unscheduleJob() throws SchedulerException {
         scheduler.deleteJob(job.getName(), job.getGroup());
     }
 
     private void configure() throws RepositoryException {
+        cronExpression = null;
+        maxitems = -1;
+        itemtimeout = -1;
         if (session.nodeExists(CONFIG_NODE_PATH)) {
             Node configNode = session.getNode(CONFIG_NODE_PATH);
             if (configNode.hasProperty(CONFIG_CRONEXPRESSION_PROPERTY)) {
@@ -162,18 +173,18 @@ public class EventLogCleanupModule implements DaemonModule {
 
     @Override
     public void shutdown() {
-        if (scheduler != null) {
-            try {
-                scheduler.shutdown();
-            } catch (SchedulerException e) {
-                log.error("Error shutting down quartz scheduler: " + e);
-            }
-        }
         if (configurationListener != null) {
             try {
                 session.getWorkspace().getObservationManager().removeEventListener(configurationListener);
             } catch (RepositoryException e) {
                 log.error("Error removing configuration event listener: " + e);
+            }
+        }
+        if (scheduler != null) {
+            try {
+                scheduler.shutdown();
+            } catch (SchedulerException e) {
+                log.error("Error shutting down quartz scheduler: " + e);
             }
         }
     }
@@ -209,25 +220,30 @@ public class EventLogCleanupModule implements DaemonModule {
                 NodeIterator nodes = query.execute().getNodes();
                 long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
                 long cleanupSize = totalSize - maxitems;
-                log.info("Event log total size is " + totalSize);
-                log.info("Number of items to clean up is " + cleanupSize);
-                for (int i = 0; i < cleanupSize; i++) {
-                    try {
-                        Node node = nodes.nextNode();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Removing event log item at " + node.getPath());
+                if (cleanupSize > 0) {
+                    log.info("Event log total size is " + totalSize);
+                    log.info("Number of items to clean up is " + cleanupSize);
+                    for (int i = 0; i < cleanupSize; i++) {
+                        try {
+                            Node node = nodes.nextNode();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Removing event log item at " + node.getPath());
+                            }
+                            node.remove();
+                            if (i % 10 == 0) {
+                                session.save();
+                                try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                            }
+                        } catch (RepositoryException e) {
+                            log.error("Error while cleaning up event log", e);
                         }
-                        node.remove();
-                        if (i % 10 == 0) {
-                            session.save();
-                            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Error while cleaning up event log", e);
                     }
-                }
-                if (session.hasPendingChanges()) {
-                    session.save();
+                    if (session.hasPendingChanges()) {
+                        session.save();
+                    }
+                    log.info("Done cleaning " + cleanupSize + " items");
+                } else {
+                    log.info("Event log total size is less than maximum allowed items: no cleanup needed");
                 }
             }
         }
@@ -240,25 +256,30 @@ public class EventLogCleanupModule implements DaemonModule {
                 Query query = queryManager.createQuery(queryString, Query.SQL);
                 NodeIterator nodes = query.execute().getNodes();
                 long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
-                log.info("Number of items to clean is " + totalSize);
-                int i = 0;
-                while (nodes.hasNext()) {
-                    try {
-                        Node node = nodes.nextNode();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Removing event log item at " + node.getPath());
+                if (totalSize > 0) {
+                    log.info("Number of items to clean is " + totalSize);
+                    int i = 0;
+                    while (nodes.hasNext()) {
+                        try {
+                            Node node = nodes.nextNode();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Removing event log item at " + node.getPath());
+                            }
+                            node.remove();
+                            if (i++ % 10 == 0) {
+                                session.save();
+                                try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                            }
+                        } catch (RepositoryException e) {
+                            log.error("Error while cleaning up event log", e);
                         }
-                        node.remove();
-                        if (i++ % 10 == 0) {
-                            session.save();
-                            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Error while cleaning up event log", e);
                     }
-                }
-                if (session.hasPendingChanges()) {
-                    session.save();
+                    if (session.hasPendingChanges()) {
+                        session.save();
+                    }
+                    log.info("Done cleaning " + totalSize + " items");
+                } else {
+                    log.info("No timed out items: no cleanup needed");
                 }
             }
         }
@@ -269,9 +290,11 @@ public class EventLogCleanupModule implements DaemonModule {
         @Override
         public void onEvent(EventIterator events) {
             try {
-                unschedulJob();
-                configure();
-                scheduleJob();
+                synchronized (EventLogCleanupModule.this) {
+                    unscheduleJob();
+                    configure();
+                    scheduleJob();
+                }
             } catch (RepositoryException e) {
                 log.error("Failed to reconfigure event log cleaner", e);
             } catch (SchedulerException e) {
