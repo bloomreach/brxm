@@ -143,6 +143,10 @@
               <name>org.onehippo.repository.test.keepserver</name>
               <value>true</value>
             </property>
+            <property>
+              <name>org.apache.jackrabbit.core.state.validatehierarchy</name>
+              <value>true</value>
+            </property>
           </systemProperties>
           <excludes>
             <exclude>**/*PerfTestCase.java</exclude>

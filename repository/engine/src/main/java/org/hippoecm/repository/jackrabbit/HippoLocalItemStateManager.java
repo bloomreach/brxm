@@ -701,12 +701,12 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         @Override
         public boolean has(ItemId id) {
-            return upstream.has(id) && !deletedExternals.containsKey(id);
+            return upstream.has(id) && !HippoLocalItemStateManager.this.deletedExternals.containsKey(id);
         }
 
         @Override
         public boolean deleted(ItemId id) {
-            return upstream.deleted(id) && !deletedExternals.containsKey(id);
+            return upstream.deleted(id) && !HippoLocalItemStateManager.this.deletedExternals.containsKey(id);
         }
 
         @Override
