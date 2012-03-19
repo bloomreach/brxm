@@ -297,17 +297,22 @@
 
 .channel-manager .collapse-group {
     cursor: pointer;
-    padding-left: 17px;
+    padding-left: 20px;
+    height: 17px;
 }
 
 .channel-manager .collapse-group.expanded {
     background: url(channels/triangle-expanded.png) no-repeat;
-    padding-bottom: 2px;
+    padding-top: 3px;
+    height: 17px;
+    display:block;
 }
 
 .channel-manager .collapse-group.collapsed {
     background: url(channels/triangle-collapsed.png) no-repeat;
-    padding-bottom: 2px;
+    padding-top: 3px;
+    height: 17px;
+    display: block;
 }
 
 .channel-manager .regionIcon {
