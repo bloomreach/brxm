@@ -17,8 +17,11 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,6 +29,7 @@ import javax.jcr.Value;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.repository.TestCase;
 import org.junit.Test;
@@ -228,4 +232,79 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(2, values.length);
         
     }
+    
+    
+    @Test
+    public void testVariantCreation()  throws RepositoryException {
+        build(session, emptyTestComponent);
+        Node node = session.getNode("/test/component");
+
+       
+        MultivaluedMap<String, String> params = null;
+
+        // 1. add a non annotated parameter for 'default someNonAnnotatedParameter = lux 
+        params = new MetadataMap<String, String>();
+        params.add("parameterOne", "bar");
+        params.add("someNonAnnotatedParameter", "lux");
+        new ContainerItemComponentResource().doSetParameters(node, null, params);
+        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
+        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
+        // do not contain HST_PARAMETERNAMEPREFIXES
+        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
+        
+        // the explicit configured parameters for 'default' prefix
+        Map<String, String> defaultParams =  ContainerItemComponentResource.getConfiguredDefaultValues(node);
+        assertTrue(defaultParams.containsKey("parameterOne"));
+        assertTrue(defaultParams.containsKey("someNonAnnotatedParameter"));
+        
+        Map<String, String> defaultAnnotated =  ContainerItemComponentResource.getAnnotatedDefaultValues(node);
+        assertTrue(defaultAnnotated.containsKey("parameterOne"));
+        assertEquals(defaultAnnotated.get("parameterOne"), "");
+        assertTrue(defaultAnnotated.containsKey("parameterTwo"));
+        assertEquals(defaultAnnotated.get("parameterTwo"), "test");
+       
+        
+        Set<String> variants =  ContainerItemComponentResource.getVariants(node);
+        assertTrue(variants.size() == 1);
+        assertTrue(variants.contains("default"));
+        
+        // 2. create a new variant 'lux' : The creation of the variant should 
+        // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
+        // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
+        new ContainerItemComponentResource().doCreateVariant(node, "newvar");
+        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
+        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
+        // now it must contain HST_PARAMETERNAMEPREFIXES
+        assertTrue(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
+        
+        variants = ContainerItemComponentResource.getVariants(node);
+        assertTrue(variants.size() == 2);
+        assertTrue(variants.contains("default"));
+        assertTrue(variants.contains("newvar"));
+        
+        // getHstParameters(node, true) only fetches the default parameters
+        Map<String, Map<String, String>> hstParameters = ContainerItemComponentResource.getHstParameters(node, true);
+        assertTrue(hstParameters.containsKey("default"));
+        assertFalse(hstParameters.containsKey("newvar"));
+        
+
+        // getHstParameters(node, false) only fetches all parameters
+        hstParameters = ContainerItemComponentResource.getHstParameters(node, false);
+        assertTrue(hstParameters.containsKey("default"));
+        assertTrue(hstParameters.containsKey("newvar"));
+        
+        Map<String, String> newVarParams = hstParameters.get("newvar");
+        assertTrue(newVarParams.size() == 2);
+        assertTrue(newVarParams.containsKey("parameterOne"));
+        assertEquals(newVarParams.get("parameterOne"), "bar");
+        assertTrue(newVarParams.containsKey("parameterTwo"));
+        // from  @Parameter(name = "parameterTwo", required = true, defaultValue = "test")
+        assertEquals(newVarParams.get("parameterTwo"), "test");
+        
+
+        assertFalse(newVarParams.containsKey("someNonAnnotatedParameter"));
+        
+        
+    }
+    
 }

@@ -118,7 +118,7 @@ public class AbstractConfigResource {
         entity.setSuccess(true);
         return Response.ok().entity(entity).build();
     }
-
+    
     protected Response error(String msg) {
         return error(msg, ArrayUtils.EMPTY_STRING_ARRAY);
     }
@@ -130,6 +130,17 @@ public class AbstractConfigResource {
         return Response.serverError().entity(entity).build();
     }
 
+
+    protected Response created(Object data) {
+        ExtResponseRepresentation extResponse = new ExtResponseRepresentation(data);
+        return Response.status(Response.Status.CREATED).entity(extResponse).build();
+    }
+    
+    protected  Response conflict(String message) {
+        return Response.status(Response.Status.CONFLICT).entity(message).build();
+    } 
+
+    
     protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
         if (annotatedClasses == null) {
             String annoClassPathResourcePath = "";
