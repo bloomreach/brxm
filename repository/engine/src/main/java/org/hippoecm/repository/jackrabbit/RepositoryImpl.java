@@ -70,8 +70,14 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
         ClusterConfig clusterConfig = getRepositoryConfig().getClusterConfig();
+        // setting the cluster node id as system property can be removed once we upgrade to
+        // JR 2.2.12 / 2.4.1 also see WorkflowEventLoggerWorkflowImpl
         if (clusterConfig != null && clusterConfig.getId() != null) {
-            System.setProperty(ClusterNode.SYSTEM_PROPERTY_NODE_ID, clusterConfig.getId());
+            try {
+                System.setProperty(ClusterNode.SYSTEM_PROPERTY_NODE_ID, clusterConfig.getId());
+            } catch (SecurityException e) {
+                log.warn("Cannot set cluster node id system property" + e.getClass().getName() + ": " + e.getMessage());
+            }
         }
     }
 
