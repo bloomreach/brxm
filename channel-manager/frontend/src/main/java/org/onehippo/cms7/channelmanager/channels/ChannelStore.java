@@ -432,8 +432,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     @Override
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
-        // final ChannelManager channelManager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
@@ -480,18 +478,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected String persistChannel(String blueprintId, Channel newChannel) {
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, getSubject());
         return channelService.persist(blueprintId, newChannel);
-    }
-
-    private Subject createSubject() {
-        UserSession session = (UserSession) Session.get();
-
-        @SuppressWarnings("deprecation")
-        Credentials credentials = session.getCredentials();
-
-        Subject subject = new Subject();
-        subject.getPrivateCredentials().add(credentials);
-        subject.setReadOnly();
-        return subject;
     }
 
     private ActionFailedException createActionFailedException(Exception cause, Channel newChannel) {
