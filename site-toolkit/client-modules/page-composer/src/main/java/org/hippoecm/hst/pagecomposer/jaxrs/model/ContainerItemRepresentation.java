@@ -15,11 +15,11 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 /**
  * This class can probably be removed once new items are added through the in-memory model instead of created
@@ -30,10 +30,10 @@ import javax.jcr.RepositoryException;
 public class ContainerItemRepresentation extends ComponentRepresentation {
 
     public ContainerItemRepresentation represent(Node node) throws RepositoryException {
-        setId(node.getUUID());
+        setId(node.getIdentifier());
         setName(node.getName());
         setPath(node.getPath());
-        setParentId(node.getParent().getUUID());
+        setParentId(node.getParent().getIdentifier());
         setTemplate(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_TEMPLATE).getString());
         setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
         setXtype(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
