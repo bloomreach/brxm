@@ -162,6 +162,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      */
     @POST
     @Path("/variant/{variantid}") 
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variantid") String variantid) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
@@ -185,6 +186,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     
     @POST
     @Path("/variant/delete/{variantid}") 
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variantid") String variantid) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
