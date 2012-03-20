@@ -63,6 +63,36 @@
       <sv:value>1902.1</sv:value>
     </sv:property>
   </sv:node>
+  <!-- hippostd:html template german translation -->
+  <sv:node sv:name="hippostd-html-template-de">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippostd-html-template_de.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/hippostd</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1902.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- hippostd:html template italian translation -->
+  <sv:node sv:name="hippostd-html-template-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippostd-html-template_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/hippostd</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1902.3</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- system html template -->
   <sv:node sv:name="system-html-template">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -91,6 +121,36 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1902.1</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- system html template italian translations -->
+  <sv:node sv:name="system-html-template-it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>system-html-template_it.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/system</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1902.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- system html template german translations -->
+  <sv:node sv:name="system-html-template-de">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>system-html-template_de.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/system</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>1902.3</sv:value>
     </sv:property>
   </sv:node>
   <!-- html cleaner service -->

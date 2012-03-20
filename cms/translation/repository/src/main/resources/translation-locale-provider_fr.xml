@@ -58,4 +58,18 @@
     </sv:node>
   </sv:node>
 
+  <sv:node sv:name="de" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>fr</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Allemand</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>

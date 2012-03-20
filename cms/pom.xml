@@ -123,7 +123,7 @@
     <htmlcleaner.version>1.02.06</htmlcleaner.version>
     <xerces.xercesImpl.version>2.8.1</xerces.xercesImpl.version>
 
-    <sonar.l10n.locales>nl,fr,it</sonar.l10n.locales>
+    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
   <!-- 
