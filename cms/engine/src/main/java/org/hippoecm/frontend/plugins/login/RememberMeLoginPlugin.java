@@ -30,6 +30,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -83,7 +84,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
                     String passphrase = cookies[i].getValue();
                     if (passphrase != null && passphrase.contains("$")) {
-                        username = Base64.decode(passphrase.split("\\$")[1]);
+                        username = new String(Base64.decodeBase64(passphrase.split("\\$")[1]));
                         password = "********";
                         rememberme = true;
                     }
@@ -136,7 +137,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             String passphrase = cookies[i].getValue();
                             String strings[] = passphrase.split("\\$");
                             if (strings.length == 3) {
-                                username = Base64.decode(strings[1]);
+                                username = new String(Base64.decodeBase64(strings[1]));
                                 password = strings[0] + "$" + strings[2];
                             }
                             break;
@@ -178,7 +179,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
                             digest.update(username.getBytes());
                             digest.update(password.getBytes());
-                            String passphrase = digest.getAlgorithm() + "$" + Base64.encode(username) + "$" + Base64.encode(new String(digest.digest()));
+                            String passphrase = digest.getAlgorithm() + "$" + Base64.encodeBase64String(username.getBytes()) + "$" + Base64.encodeBase64String(digest.digest());
                             ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(
                                     RememberMeLoginPlugin.class.getName(), passphrase));
                             Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
@@ -220,55 +221,4 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         }
     }
 
-    public static class Base64 {
-        public static String base64code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-        public static String encode(String string) {
-            StringBuffer encoded = new StringBuffer();
-            int paddingCount = (3 - (string.length() % 3)) % 3;
-            string += "\0\0".substring(0, paddingCount);
-            for (int i = 0; i < string.length(); i += 3) {
-                int j = (string.charAt(i) << 16) + (string.charAt(i + 1) << 8) + string.charAt(i + 2);
-                encoded.append(base64code.charAt((j >> 18) & 0x3f));
-                encoded.append(base64code.charAt((j >> 12) & 0x3f));
-                encoded.append(base64code.charAt((j >> 6) & 0x3f));
-                encoded.append(base64code.charAt(j & 0x3f));
-            }
-            return encoded.substring(0, encoded.length() - paddingCount) + "==".substring(0, paddingCount);
-        }
-
-        public static String decode(String string) {
-            StringBuffer decoded = new StringBuffer();
-            for (int i = 0; i < string.length(); i += 4) {
-                int value = 0;
-                int count = 3;
-                for (int j = 0; j < 4; j++) {
-                    int ch = (i + j < string.length() ? string.charAt(i + j) : '=');
-                    if (ch >= 'A' && ch <= 'Z') {
-                        ch = ch - 'A';
-                    } else if (ch >= 'a' && ch <= 'z') {
-                        ch = ch - 'a' + 26;
-                    } else if (ch >= '0' && ch <= '9') {
-                        ch = ch - '0' + 52;
-                    } else if (ch == '+') {
-                        ch = 62;
-                    } else if (ch == '/') {
-                        ch = 63;
-                    } else if (ch == '=') {
-                        ch = 0;
-                        --count;
-                    }
-                    value = (value << 6) | ch;
-                }
-                decoded.append((char) ((value >> 16) & 0xff));
-                if (count > 1) {
-                    decoded.append((char) ((value >> 8) & 0xff));
-                }
-                if (count > 2) {
-                    decoded.append((char) (value & 0xff));
-                }
-            }
-            return new String(decoded);
-        }
-    }
 }

@@ -924,7 +924,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutPlugin
 console/frontend/src/main/java/org/hippoecm/tools/projectexport/DownloadLink.java -text
 console/frontend/src/site/apt/index.apt -text
 console/frontend/src/site/site.xml svneol=native#text/plain
-console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/Base64EncodingTest.java -text
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain
 console/repository/src/main/resources/frontend-console.xml -text svneol=unset#text/plain
 console/repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#text/plain
