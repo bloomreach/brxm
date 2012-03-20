@@ -131,13 +131,18 @@ public class AbstractConfigResource {
     }
 
 
-    protected Response created(Object data) {
-        ExtResponseRepresentation extResponse = new ExtResponseRepresentation(data);
-        return Response.status(Response.Status.CREATED).entity(extResponse).build();
+    protected Response created(String msg) {
+        ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        entity.setMessage(msg);
+        entity.setSuccess(true);
+        return Response.status(Response.Status.CREATED).entity(entity).build();
     }
     
-    protected  Response conflict(String message) {
-        return Response.status(Response.Status.CONFLICT).entity(message).build();
+    protected  Response conflict(String msg) {
+        ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        entity.setMessage(msg);
+        entity.setSuccess(true);
+        return Response.status(Response.Status.CONFLICT).entity(entity).build();
     } 
 
     
