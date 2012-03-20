@@ -7,6 +7,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
@@ -16,6 +17,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ExtStoreFuture.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel_nl.properties -text
@@ -29,18 +31,23 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_de.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow_nl.properties -text
@@ -48,6 +55,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelResource
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStoreFactory.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_nl.properties -text
@@ -76,6 +84,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEdito
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditorResourceBehaviour.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor_nl.properties -text
@@ -90,6 +99,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin_nl.properties -text
@@ -99,6 +109,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerS
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
@@ -156,6 +167,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ExtLinkPicker.js
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ImageSetPathWidget_nl.properties -text
@@ -163,10 +175,13 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/InlinePreviewIma
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JsonUtil.java -text
+frontend/src/main/java/org/onehippo/cms7/marketing/MarketingPerspective_de.properties -text
+frontend/src/main/java/org/onehippo/cms7/marketing/personas/PersonaManagerPanel_de.properties -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtilTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.java -text
@@ -176,6 +191,7 @@ repository/src/main/resources/channel-manager-perspective.xml eol=lf
 repository/src/main/resources/document-url-service.xml -text
 repository/src/main/resources/hippoecm-extension.xml eol=lf
 repository/src/main/resources/workflow-channelactions.xml -text
+repository/src/main/resources/workflow-channelactions_de.xml -text
 repository/src/main/resources/workflow-socialsharing.xml -text
 test/pom.xml -text
 test/src/main/webapp/HST-vbox.html -text

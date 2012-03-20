@@ -88,7 +88,7 @@
                 commentElement.parentNode.appendChild(newLink);
             }
 
-            $(newLink).append('<span class="' + HST.CLASS.EDITLINK + '-left"><span class="' + HST.CLASS.EDITLINK + '-right"><span class="' + HST.CLASS.EDITLINK + '-center">Edit content</span></span></span>');
+            $(newLink).append('<span class="' + HST.CLASS.EDITLINK + '-left"><span class="' + HST.CLASS.EDITLINK + '-right"><span class="' + HST.CLASS.EDITLINK + '-center">'+this.resources['edit-document']+'</span></span></span>');
             newLink.setAttribute(HST.ATTR.ID, id);
             newLink.setAttribute('href', '');
             newLink.setAttribute('class', HST.CLASS.EDITLINK);

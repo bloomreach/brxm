@@ -22,6 +22,8 @@
     <hippo.addon-hst-configuration-editor.version>1.10.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
     <junit.version>4.5</junit.version>
+
+    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
   <repositories>
