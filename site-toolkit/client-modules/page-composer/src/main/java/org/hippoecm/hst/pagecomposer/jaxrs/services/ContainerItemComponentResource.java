@@ -29,7 +29,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -70,7 +69,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/parameters/{locale}/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
     public ContainerItemComponentRepresentation getParameters(@Context HttpServletRequest servletRequest,
-                                          @Context HttpServletResponse servletResponse, 
                                           @PathParam("locale") String localeString,
                                           @PathParam("prefix") String prefix) {
 
@@ -112,8 +110,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @POST
     @Path("/parameters/{prefix}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setParameters(@Context HttpServletRequest servletRequest, 
-                            @Context HttpServletResponse servletResponse,
+    public Response setParameters(@Context HttpServletRequest servletRequest,
                             @PathParam("prefix") String prefix,
                             MultivaluedMap<String, String> params) {
         try {
@@ -127,12 +124,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             throw new WebApplicationException(e);
         }
     }
-    
-    /**
-     * Note that the variants returned might contain variants that are not available any more in the variants store : Just
-     * all configured variant ids for the current component are returned
-     * @return all the configured unique variants (prefixes) currently configured for this component
-     */
+
+   /**
+    * Note that the variants returned might contain variants that are not available any more in the variants store : Just
+    * all configured variant ids for the current component are returned
+    * @param servletRequest the current servlet request
+    * @return all the configured unique variants (prefixes) currently configured for this component
+    */
     @GET 
     @Path("/variants") 
     @Produces(MediaType.APPLICATION_JSON)
@@ -156,9 +154,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * </p>
      * <p>
      * If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
-     * we return {@link AbstractConfigResource#created(Object)}
+     * we return {@link AbstractConfigResource#created(String)}
      * </p>
-     * @return
+     * @param servletRequest the current servlet request
+     * @param variantid the variant to create
+     * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
+     * we return {@link AbstractConfigResource#created(String)}
      */
     @POST
     @Path("/variant/{variantid}") 
@@ -211,13 +212,20 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * Sets the parameters for some prefix. If the prefix is <code>null</code>, then 'default' prefix is assumed.
      * 
      * If <code>params</code> is <code>null</code> it means that the <code>prefix</code> (only if NOT null) will have <b>all</b> its params 
-     * removed  
-     * @param node
-     * @param prefix
+     * removed
+     * <p>
+     * If the <code>prefix</code> is <code>null</code> or equals to {@link #DEFAULT_PARAMETER_PREFIX}, then only the
+     * parameters that are part of <code>params</code> will be set. Already existing default parameters will be untouched. If the
+     * <code>prefix</code> is not empty, then all existing parameters for the <code>prefix</code> are removed and reset to
+     * <code>params</code>
+     * </p>
+     * @param node the current container item node
+     * @param prefix the variant/prefix to set the parameters for
      * @param params the params to set, or, if <code>null</code>, indicates that the prefix needs to be removed
-     * @return
-     * @throws IllegalStateException
-     * @throws RepositoryException
+     * @return the ext result of the action
+     * @throws IllegalStateException when the parameters cannot be stored
+     * @throws IllegalArgumentException when the input is invalid
+     * @throws RepositoryException when some repository exception happened
      */
     Response doSetParameters(Node node, String prefix, MultivaluedMap<String, String> params)
             throws IllegalStateException, IllegalArgumentException, RepositoryException {
@@ -249,6 +257,10 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             }
             hstParameters.remove(prefix);
         } else {
+            if (!DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
+                // because not default prefix, we first remove the existing parameters
+                prefixedParameters.clear();
+            }
             // add / replace parameters for which there are values
             for (String param : params.keySet()) {
                 // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
@@ -349,10 +361,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * tries to create a new variant for id <code>variantid</code>. The new variant will consists of all the explicitly 
      * configured 'default' parameters and values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured as
      * 'default' parameter. 
-     * @param containerItem
-     * @param variantid
-     * @throws IllegalStateException
-     * @throws RepositoryException
+     * @param containerItem the node of the current container item
+     * @param variantid the id of the variant to create
+     * @return {@link AbstractConfigResource#created(String)} when the variant with id <code>variantid</code> could be created
+     * @throws IllegalStateException when the parameters cannot be stored
+     * @throws IllegalArgumentException when the input is invalid
+     * @throws RepositoryException when some repository exception happened
      */
     Response doCreateVariant(Node containerItem, String variantid) throws IllegalStateException, IllegalArgumentException, RepositoryException {
         Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
@@ -383,10 +397,11 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     
     
     /**
+     * @param node the current container item node
      * @return the Map<String,String> of all configured parameternames & values, without taking annotated  defaults 
      * or names into account. If no default configured values are present, an Empty map is returned
-     * @throws RepositoryException 
-     * @throws IllegalStateException 
+     * @throws IllegalStateException when the parameters cannot be stored
+     * @throws RepositoryException when some repository exception happened
      */
     static Map<String, String> getConfiguredDefaultValues(Node node) throws IllegalStateException, RepositoryException {
         Map<String, Map<String, String>> hstParameters = getHstParameters(node, true);
@@ -400,7 +415,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     /**
      * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
      * empty default value are also represented in the returned map.
-     * @param node
+     * @param node the current container item node
      * @return the Map of all {@link Parameter} names and their default value
      */
     static Map<String, String> getAnnotatedDefaultValues(Node node) {
@@ -413,7 +428,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             if (componentClassName != null) {
                 Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
                 if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                    ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                    ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
                     Class<?> classType = parametersInfo.type();
                     if (classType == null) {
                         return Collections.emptyMap();

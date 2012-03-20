@@ -65,9 +65,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         build(session, testComponent);
         Node node = session.getNode("/test/component");
         
-        List<ContainerItemComponentPropertyRepresentation> result = null;
-                
-        result = new ContainerItemComponentResource().doGetParameters(node, null, "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "").getProperties();
         assertEquals(2, result.size());
         assertEquals("parameterOne", result.get(0).getName());
         assertEquals("bar", result.get(0).getValue());
@@ -90,29 +88,24 @@ public class ContainerItemComponentResourceTest extends TestCase {
     public void testSetParametersWithoutPrefix() throws RepositoryException {
         build(session, emptyTestComponent);
         Node node = session.getNode("/test/component");
-        
-        Value[] names = null;
-        Value[] values = null;
-        
-        MultivaluedMap<String, String> params = null;
-        
+
         // 1. add foo = bar
-        params = new MetadataMap<String, String>();
+        MultivaluedMap<String, String> params = new MetadataMap<String, String>();
         params.add("parameterOne", "bar");
         new ContainerItemComponentResource().doSetParameters(node, null, params);
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-        
-        names = node.getProperty(HST_PARAMETERNAMES).getValues();
+        assertFalse(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
+
+        Value[] names = node.getProperty(HST_PARAMETERNAMES).getValues();
         assertEquals(1, names.length);
         assertEquals("parameterOne", names[0].getString());
-        
-        values = node.getProperty(HST_PARAMETERVALUES).getValues();
+
+        Value[] values = node.getProperty(HST_PARAMETERVALUES).getValues();
         assertEquals(1, values.length);
         assertEquals("bar", values[0].getString());
         
-        // 2. if params is empty, old values should be kept AS IS
+        // 2. if params is empty, old values should be kept for 'default' AS IS
         params = new MetadataMap<String, String>();
         new ContainerItemComponentResource().doSetParameters(node, null, params);
         names = node.getProperty(HST_PARAMETERNAMES).getValues();
@@ -122,7 +115,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         values = node.getProperty(HST_PARAMETERVALUES).getValues();
         assertEquals(1, values.length);
         assertEquals("bar", values[0].getString());
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
+        assertFalse(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
         
         // 3. add bar = test without prefix
         // We should keep the already existing "parameterOne = bar" 
@@ -148,7 +141,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
             assertEquals("test", values[0].getString());
             assertEquals("bar", values[1].getString());
         }
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
+        assertFalse(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
 
     }
     
@@ -157,11 +150,11 @@ public class ContainerItemComponentResourceTest extends TestCase {
         build(session, emptyTestComponent);
         Node node = session.getNode("/test/component");
         
-        Value[] names = null;
-        Value[] values = null;
-        Value[] prefixes = null;
+        Value[] names;
+        Value[] values;
+        Value[] prefixes;
         
-        MultivaluedMap<String, String> params = null;
+        MultivaluedMap<String, String> params;
         
         // 1. add foo = bar
         params = new MetadataMap<String, String>();
@@ -185,21 +178,14 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals("prefix", prefixes[0].getString());
         
 
-        // 2. if params is empty, old values should be kept AS IS
+        // 2. if params is empty, old values for a PREFIX should be REMOVED : because
+        // there is no 'default' prefix configured, all parameters should be removed now
         params = new MetadataMap<String, String>();
         new ContainerItemComponentResource().doSetParameters(node, "prefix", params);
-        names = node.getProperty(HST_PARAMETERNAMES).getValues();
-        assertEquals(1, names.length);
-        assertEquals("parameterOne", names[0].getString());
-        
-        values = node.getProperty(HST_PARAMETERVALUES).getValues();
-        assertEquals(1, values.length);
-        assertEquals("bar", values[0].getString());
-        
-        prefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
-        assertEquals(1, prefixes.length);
-        assertEquals("prefix", prefixes[0].getString());
 
+        assertFalse(node.hasProperty(HST_PARAMETERNAMES));
+        assertFalse(node.hasProperty(HST_PARAMETERVALUES));
+        assertFalse(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
         // 3. if prefixed parameter value is same as default parameter value then persist anyway
         
         // first set default parameter parameterOne = bar
@@ -227,8 +213,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals(2, values.length);
         assertEquals("bar", values[0].getString());
         assertEquals("bar", values[1].getString());
-        
-        prefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
+
         assertEquals(2, values.length);
         
     }
@@ -240,7 +225,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         Node node = session.getNode("/test/component");
 
        
-        MultivaluedMap<String, String> params = null;
+        MultivaluedMap<String, String> params;
 
         // 1. add a non annotated parameter for 'default someNonAnnotatedParameter = lux 
         params = new MetadataMap<String, String>();
