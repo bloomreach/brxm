@@ -207,9 +207,12 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
         return result;
     }
 
-    private static String getClusterNodeId() {
-        // When we upgrade to 2.2.12 / 2.4.1 we should use Repository.getDescriptor(RepositoryImpl.JACKRABBIT_CLUSTER_ID)
-        // instead of this system property
-        return System.getProperty("org.apache.jackrabbit.core.cluster.node_id", DEFAULT_CLUSTER_NODE_ID);
+    private String getClusterNodeId() {
+        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+        if (clusteNodeId == null) {
+            clusteNodeId = DEFAULT_CLUSTER_NODE_ID;
+        }
+        return clusteNodeId;
     }
+
 }

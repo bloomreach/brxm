@@ -63,6 +63,12 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
 
+    /**
+     * Key to a <code>string</code> descriptor. Returns the repository cluster id if
+     * and only if clustering is enabled.
+     */
+    public static final String JACKRABBIT_CLUSTER_ID = "jackrabbit.cluster.id";
+    
     private Map<String, ReplicatorNode> replicatorNodes;
 
     private ReplicationJournal journal;
@@ -70,14 +76,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
         ClusterConfig clusterConfig = getRepositoryConfig().getClusterConfig();
-        // setting the cluster node id as system property can be removed once we upgrade to
-        // JR 2.2.12 / 2.4.1 also see WorkflowEventLoggerWorkflowImpl
+        // setting the cluster node id as descriptor here can be removed
+        // when we upgrade to JR 2.2.12 / 2.4.1
         if (clusterConfig != null && clusterConfig.getId() != null) {
-            try {
-                System.setProperty(ClusterNode.SYSTEM_PROPERTY_NODE_ID, clusterConfig.getId());
-            } catch (SecurityException e) {
-                log.warn("Cannot set cluster node id system property" + e.getClass().getName() + ": " + e.getMessage());
-            }
+            setDescriptor(JACKRABBIT_CLUSTER_ID, clusterConfig.getId());
         }
     }
 
