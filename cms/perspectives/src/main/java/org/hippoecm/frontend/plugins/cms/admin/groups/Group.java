@@ -342,12 +342,7 @@ public class Group implements Comparable<Group>, IClusterable {
      * @throws RepositoryException
      */
     public void delete() throws RepositoryException {
-
-        // Remove the permissions for this group before deleting the group
-        List<PermissionBean> permissions = PermissionBean.forGroup(this);
-        for (PermissionBean permission : permissions) {
-            permission.getAuthRole().removeGroup(groupname);
-        }
+        removeAllPermissions();
 
         Node parent = node.getParent();
         node.remove();
@@ -362,6 +357,19 @@ public class Group implements Comparable<Group>, IClusterable {
                     .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
                     .message("deleted group " + groupname);
             eventBus.post(event);
+        }
+    }
+
+    /**
+     * Removes all permissions for this group
+     *
+     * @throws RepositoryException When a repository error occurs while removing a group reference on an AuthRole
+     *                             object
+     */
+    public void removeAllPermissions() throws RepositoryException {
+        List<PermissionBean> permissions = PermissionBean.forGroup(this);
+        for (PermissionBean permission : permissions) {
+            permission.getAuthRole().removeGroup(groupname);
         }
     }
 
