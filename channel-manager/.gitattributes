@@ -67,6 +67,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/list-view.png -
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/mobile.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/nl_NL.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ru_RU.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-expanded.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/future.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/ExtWireframe.js -text
