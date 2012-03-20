@@ -35,7 +35,7 @@ public class ExampleComponentWindowFilteringValve  implements Valve {
     public void invoke(ValveContext context) throws ContainerException {
         HstMutableRequestContext requestContext = (HstMutableRequestContext) context.getRequestContext();
 
-        requestContext.addComponentWindowCreationFilters(new ExampleComponentWindowFilter());
+        requestContext.addComponentWindowFilter(new ExampleComponentWindowFilter());
         context.invokeNext();
     }
 
