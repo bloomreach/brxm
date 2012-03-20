@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -29,7 +30,6 @@ import javax.jcr.Value;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
-import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.repository.TestCase;
 import org.junit.Test;
@@ -301,10 +301,23 @@ public class ContainerItemComponentResourceTest extends TestCase {
         // from  @Parameter(name = "parameterTwo", required = true, defaultValue = "test")
         assertEquals(newVarParams.get("parameterTwo"), "test");
         
-
         assertFalse(newVarParams.containsKey("someNonAnnotatedParameter"));
         
+        // 3. try to remove the new variant
+        new ContainerItemComponentResource().doDeleteVariant(node, "newvar");
+        variants = ContainerItemComponentResource.getVariants(node);
+        assertTrue(variants.size() == 1);
+        assertTrue(variants.contains("default"));
         
+        // 4. try to remove the 'default' variant : this should not be allowed
+        boolean removeSucceeded = true;
+        try {
+            new ContainerItemComponentResource().doDeleteVariant(node, "default");
+            fail("Default variant should not be possible to be removed");
+        } catch (IllegalArgumentException e) {
+            removeSucceeded = false;
+        }
+        assertFalse("Remove should not have succeeded", removeSucceeded);
     }
     
 }

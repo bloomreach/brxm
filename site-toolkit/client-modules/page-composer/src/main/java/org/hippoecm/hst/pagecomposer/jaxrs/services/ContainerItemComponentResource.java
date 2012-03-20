@@ -120,6 +120,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return doSetParameters(getRequestConfigNode(getRequestContext(servletRequest)), prefix, params);
         } catch (IllegalStateException e) {
             return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return error(e.getMessage());
         } catch (RepositoryException e) {
             log.error("Unable to set the parameters of the component", e);
             throw new WebApplicationException(e);
@@ -172,16 +174,55 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         } catch (IllegalStateException e) {
             log.warn("Could not create variant ", e);
             return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not create variant ", e);
+            return error(e.getMessage());
         } catch (RepositoryException e) {
             log.error("Unable to create new variant " + e, e);
             throw new WebApplicationException(e);
         }
     }
     
+    @POST
+    @Path("/variant/delete/{variantid}") 
+    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variantid") String variantid) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        try {
+            Set<String> variants = getVariants(containerItem);
+            if (!variants.contains(variantid)) {
+                return conflict("Cannot delete variant '"+variantid+"' because does not exist");
+            }
+            return doDeleteVariant(containerItem, variantid);
+        } catch (IllegalStateException e) {
+            log.warn("Could not delete variant ", e);
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not delete variant ", e);
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("Unable to create new variant " + e, e);
+            throw new WebApplicationException(e);
+        }
+    }
     
+    /**
+     * Sets the parameters for some prefix. If the prefix is <code>null</code>, then 'default' prefix is assumed.
+     * 
+     * If <code>params</code> is <code>null</code> it means that the <code>prefix</code> (only if NOT null) will have <b>all</b> its params 
+     * removed  
+     * @param node
+     * @param prefix
+     * @param params the params to set, or, if <code>null</code>, indicates that the prefix needs to be removed
+     * @return
+     * @throws IllegalStateException
+     * @throws RepositoryException
+     */
     Response doSetParameters(Node node, String prefix, MultivaluedMap<String, String> params)
-            throws IllegalStateException, RepositoryException {
+            throws IllegalStateException, IllegalArgumentException, RepositoryException {
         if (prefix == null || prefix.isEmpty()) {
+            if(params == null) {
+                throw new IllegalArgumentException("Not both prefix and params can be null");
+            }
             prefix = DEFAULT_PARAMETER_PREFIX;
         }
         // first fill all the already stored parameters of the jcr Node in hstParameters
@@ -199,16 +240,23 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             hstParameters.put(prefix, prefixedParameters);
         }
         
-        // add / replace parameters for which there are values
-        for (String param : params.keySet()) {
-            // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
-            // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
-            // has been replaced by a request header.
-            if(!"FORCE_CLIENT_HOST".equals(param)) {
-               prefixedParameters.put(param, params.getFirst(param));
+        if(params == null) {
+            // remove the prefix if it is not DEFAULT
+            if (DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
+                throw new IllegalArgumentException("Not allowed to remove the 'default' prefix");
+            }
+            hstParameters.remove(prefix);
+        } else {
+            // add / replace parameters for which there are values
+            for (String param : params.keySet()) {
+                // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
+                // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
+                // has been replaced by a request header.
+                if(!"FORCE_CLIENT_HOST".equals(param)) {
+                   prefixedParameters.put(param, params.getFirst(param));
+                }
             }
         }
-    
         List<String> prefixes = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
@@ -304,7 +352,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * @throws IllegalStateException
      * @throws RepositoryException
      */
-    Response doCreateVariant(Node containerItem, String variantid) throws IllegalStateException, RepositoryException {
+    Response doCreateVariant(Node containerItem, String variantid) throws IllegalStateException, IllegalArgumentException, RepositoryException {
         Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
         Map<String, String> configuredDefaultValues = getConfiguredDefaultValues(containerItem);
         
@@ -319,6 +367,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         doSetParameters(containerItem, variantid, paramsForNewVariant);
         return created("Variant '"+variantid+"' created sucessfully");
     }
+    
+    Response doDeleteVariant(Node containerItem, String variantid) throws IllegalStateException, IllegalArgumentException, RepositoryException {
+        doSetParameters(containerItem, variantid, null);
+        return ok("Variant '"+variantid+"' deleted succesfully");
+    }
+    
     
     static Set<String> getVariants(Node containerItem) throws RepositoryException {
         Map<String, Map<String, String>> hstParameters = getHstParameters(containerItem, false);
