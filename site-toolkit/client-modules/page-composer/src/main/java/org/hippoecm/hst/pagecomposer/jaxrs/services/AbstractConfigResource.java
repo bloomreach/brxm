@@ -141,7 +141,7 @@ public class AbstractConfigResource {
     protected  Response conflict(String msg) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);
-        entity.setSuccess(true);
+        entity.setSuccess(false);
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
     } 
 
