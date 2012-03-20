@@ -15,20 +15,19 @@
  */
 package org.hippoecm.hst.upgrade;
 
-import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.ext.UpdaterContext;
-import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.ext.UpdaterItemVisitor.NamespaceVisitor;
 import org.hippoecm.repository.ext.UpdaterItemVisitor.NodeTypeVisitor;
+import org.hippoecm.repository.ext.UpdaterModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
