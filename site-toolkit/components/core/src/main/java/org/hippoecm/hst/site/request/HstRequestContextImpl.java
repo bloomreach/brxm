@@ -553,7 +553,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public void addComponentWindowCreationFilters(HstComponentWindowFilter filter) {
+    public void addComponentWindowFilter(HstComponentWindowFilter filter) {
         if (filters == null) {
             filters = new ArrayList<HstComponentWindowFilter>();
         }

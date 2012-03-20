@@ -399,7 +399,7 @@ public class MockHstRequestContext implements HstRequestContext {
      * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}  
      * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
      */
-    public void addComponentWindowCreationFilters(HstComponentWindowFilter filter) {
+    public void addComponentWindowFilters(HstComponentWindowFilter filter) {
         if (filters == null) {
             filters = new ArrayList<HstComponentWindowFilter>();
         }

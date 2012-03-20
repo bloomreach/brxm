@@ -114,7 +114,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}  
      * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
      */
-    void addComponentWindowCreationFilters(HstComponentWindowFilter filter);
+    void addComponentWindowFilter(HstComponentWindowFilter filter);
     
     /**
      * @param fullyQualifiedURLs sets whether created URLs will be fully qualified

@@ -51,7 +51,7 @@ public class TestComponentWindowFilter {
         HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
         expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
 
-        // container items with matching, non-matching and no HstComponentWindowCreationFilter
+        // container items with matching, non-matching and no HstComponentWindowFilter
         TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
         expect(compConfig.getChildren()).andReturn(children);
 
@@ -71,7 +71,7 @@ public class TestComponentWindowFilter {
 
         // set up request context
         MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.addComponentWindowCreationFilters(new HstComponentWindowFilter() {
+        requestContext.addComponentWindowFilters(new HstComponentWindowFilter() {
             @Override
             public HstComponentWindow doFilter(HstRequestContext requestContext, HstComponentConfiguration compConfig,
                     HstComponentWindow window) throws HstComponentException {
@@ -89,7 +89,7 @@ public class TestComponentWindowFilter {
         HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
         expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
 
-        // container items with matching, non-matching and no HstComponentWindowCreationFilter
+        // container items with matching, non-matching and no HstComponentWindowFilter
         TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
         expect(compConfig.getChildren()).andReturn(children);
 
@@ -110,7 +110,7 @@ public class TestComponentWindowFilter {
 
         // set up request context
         MockHstRequestContext requestContext = new MockHstRequestContext();
-        requestContext.addComponentWindowCreationFilters(new HstComponentWindowFilter() {
+        requestContext.addComponentWindowFilters(new HstComponentWindowFilter() {
             @Override
             public HstComponentWindow doFilter(HstRequestContext requestContext, HstComponentConfiguration compConfig,
                     HstComponentWindow window) throws HstComponentException {
@@ -128,7 +128,7 @@ public class TestComponentWindowFilter {
         HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
         expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
 
-        // container items with matching, non-matching and no HstComponentWindowCreationFilter
+        // container items with matching, non-matching and no HstComponentWindowFilter
         TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
         expect(compConfig.getChildren()).andReturn(children);
 
