@@ -8,7 +8,7 @@
       <sv:value>hst:channel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
-      <sv:value>English Demo Site (live)</sv:value>
+      <sv:value>English Demo Site</sv:value>
     </sv:property>
     <sv:node sv:name="hst:channelinfo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -24,7 +24,7 @@
       <sv:value>hst:channel</sv:value>
     </sv:property>
     <sv:property sv:name="hst:name" sv:type="String">
-      <sv:value>French Demo Site (live)</sv:value>
+      <sv:value>French Demo Site</sv:value>
     </sv:property>
     <sv:node sv:name="hst:channelinfo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
