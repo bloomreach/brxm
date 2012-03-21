@@ -20,8 +20,6 @@ import org.hippoecm.repository.ext.UpdaterItemVisitor.NamespaceVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
 public class Upgrader_MicroCndChange_2_1_2 implements UpdaterModule {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: Upgrader2_24_A.java 31706 2011-12-07 12:34:06Z aschrijvers $";
 
     public void register(final UpdaterContext context) {
         context.registerName("upgrader-microchange_2_1_2");
