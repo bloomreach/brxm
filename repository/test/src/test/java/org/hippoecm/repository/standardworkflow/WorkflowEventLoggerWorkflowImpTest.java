@@ -28,21 +28,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class WorkflowEventLoggerWorkflowImpTest extends TestCase {
-
-    private static String cluster_id;
-    
-    @BeforeClass
-    public static void setUpClass() {
-        cluster_id = System.getProperty("org.apache.jackrabbit.core.cluster.node_id");
-        System.setProperty("org.apache.jackrabbit.core.cluster.node_id", "test");
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-        if (cluster_id != null) {
-            System.setProperty("org.apache.jackrabbit.core.cluster.node_id", cluster_id);
-        }
-    }
     
     @After
     public void tearDown() throws Exception {
@@ -56,16 +41,15 @@ public class WorkflowEventLoggerWorkflowImpTest extends TestCase {
 
     @Test
     public void testCreateWorkflowEventLoggerImpl() throws Exception {
-        System.out.println(session);
         new WorkflowEventLoggerWorkflowImpl(null, session, null);
-        assertTrue(session.itemExists("/hippo:log/test"));
+        assertTrue(session.itemExists("/hippo:log/default"));
     }
 
     @Test
     public void testLogEvent() throws Exception {
         WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
         eventLogger.logEvent("userName", "className", "methodName");
-        Node logFolder = session.getNode("/hippo:log/test");
+        Node logFolder = session.getNode("/hippo:log/default");
         Node currentNode = logFolder;
         for (int i = 0; i < 4; i++) {
             NodeIterator nodes = currentNode.getNodes();
