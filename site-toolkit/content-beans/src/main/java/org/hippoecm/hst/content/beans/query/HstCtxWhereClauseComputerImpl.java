@@ -135,15 +135,26 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                 return 0;
             }
             
-            if (this.length == o.length) {
-                return 1;
-            }
-            
             if (this.length > o.length) {
                 return -1;
-            } else {
+            }
+            if(this.length < o.length) {
                 return 1;
             }
+            if(fromPath.length() > o.fromPath.length()) {
+                return -1;
+            }
+            if(fromPath.length() < o.fromPath.length()) {
+                return 1;
+            }
+
+            if(toPath.length() > o.toPath.length()) {
+                return -1;
+            }
+            if(toPath.length() < o.toPath.length()) {
+                return 1;
+            }
+            return 0;
 
         }
 
@@ -167,8 +178,13 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             if(obj == null || !(obj instanceof Mapper)) {
                 return false;
             }
-            if(this.fromPath.equals(((Mapper)obj).fromPath)) {
-                return true;
+            Mapper o = (Mapper)obj;
+            if(this.length == o.length) {
+                if(this.fromPath.equals(o.fromPath)) {
+                    if(this.toPath.equals(o.toPath)) {
+                        return true;
+                    }
+                }
             }
             return false;
         }
