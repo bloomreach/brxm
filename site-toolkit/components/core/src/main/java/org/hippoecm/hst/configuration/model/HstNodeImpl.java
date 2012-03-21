@@ -295,8 +295,8 @@ public class HstNodeImpl implements HstNode {
             cr = cr.getParent();
             pathBuilder.insert(0, cr.getValueProvider().getName()).insert(0, "/");
         }
-        return this.getClass().getSimpleName() + "[path= "+pathBuilder.toString()+" + nodeTypeName=" + nodeTypeName + ", " + " + JcrValueProvider Path =" + getValueProvider().getPath() + ", " +
-        		"stale=" + stale + ", inherited=" + inherited + "]";
+        return this.getClass().getSimpleName() + "[path=" + pathBuilder.toString() + ", nodeTypeName=" + nodeTypeName +
+                ", JcrValueProvider path=" + getValueProvider().getPath() + ", stale=" + stale + ", inherited=" + inherited + "]";
     }
 
     
