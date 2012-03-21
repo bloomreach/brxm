@@ -284,7 +284,6 @@ public class PluginUserSession extends UserSession {
         }
     }
 
-    @Override
     public Credentials getCredentials() {
         return credentials.getJcrCredentials();
     }
