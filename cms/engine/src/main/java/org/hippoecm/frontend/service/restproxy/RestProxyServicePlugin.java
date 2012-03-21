@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
@@ -18,6 +19,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,21 +81,25 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     }
 
     @Override
-    public <T> T createRestProxy(Class<T> restServiceApiClass, Subject subject) {
+    public <T> T createSecureRestProxy(Class<T> restServiceApiClass) {
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
 
-        try {
-            // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
-            // which caused problems matching with the relevant JAXRS resource
-            WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.APPLICATION_JSON);
-            return clientProxy;
-        } catch (Exception ex) {
-            if (log.isErrorEnabled()) {
-                log.error(String.format(PARAM_ERROR_MESSAGE_ERROR_WHILE_CREATING_PROXY, ex.getClass().getName(), ex.getMessage(), ex));
-            }
+        Subject subject = getSubject();
+        // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
+        // which caused problems matching with the relevant JAXRS resource
+        WebClient.client(clientProxy).header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject)).accept(MediaType.APPLICATION_JSON);
+        return clientProxy;
+    }
 
-            return null;
-        }
+    protected Subject getSubject() {
+        PluginUserSession session = (PluginUserSession) UserSession.get();
+
+        Credentials credentials = session.getCredentials();
+        Subject subject = new Subject();
+
+        subject.getPrivateCredentials().add(credentials);
+        subject.setReadOnly();
+        return subject;
     }
 
     protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {

@@ -17,16 +17,16 @@ public interface IRestProxyService extends IClusterable {
      * @param <T> the generic type of the REST service API class.
      * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
      */
-    public <T> T createRestProxy(Class<T> restServiceApiClass);
+    <T> T createRestProxy(Class<T> restServiceApiClass);
 
     /**
      * Creates a proxy to a REST service based on the provided class and security {@link Subject}
+     * A security {@link Subject} which indicates that the caller wants a security context to be propagated with the REST call
      *
      * @param restServiceApiClass the class representing the REST service API.
      * @param <T> the generic type of the REST service API class.
-     * @param subject A security {@link Subject} which indicates that the caller wants a security context to be propagated with the REST call
      * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
      */
-    public <T> T createRestProxy(Class<T> restServiceApiClass, Subject subject);
+    <T> T createSecureRestProxy(Class<T> restServiceApiClass);
 
 }

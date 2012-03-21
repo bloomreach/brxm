@@ -25,11 +25,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 
-/**
- * This class is available for backwards compatibility, but should not be used by
- * plugins.
- */
-@Deprecated
 public class UserCredentials {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -37,7 +32,6 @@ public class UserCredentials {
     private Credentials credentials = null;
     private String username = "";
 
-    @Deprecated
     public UserCredentials(String username, String password) {
         this(new SimpleCredentials(username, (password != null ? password.toCharArray() : new char[0])));
         this.username = username;
@@ -70,10 +64,6 @@ public class UserCredentials {
             } catch (UnsupportedCallbackException e) {
             }
         }
-    }
-
-    @Deprecated
-    public UserCredentials() {
     }
 
     public String getUsername() {

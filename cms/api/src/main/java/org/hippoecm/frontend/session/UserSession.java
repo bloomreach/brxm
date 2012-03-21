@@ -15,16 +15,15 @@
  */
 package org.hippoecm.frontend.session;
 
+import javax.jcr.Session;
+import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.QueryManager;
+
 import org.apache.wicket.Request;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hippoecm.frontend.observation.IFacetRootsObserver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
-
-import javax.jcr.Credentials;
-import javax.jcr.Session;
-import javax.jcr.observation.ObservationManager;
-import javax.jcr.query.QueryManager;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference
@@ -44,16 +43,6 @@ public abstract class UserSession extends WebSession {
     public UserSession(Request request) {
         super(request);
     }
-
-    /**
-     * The user credentials; usage is discouraged, as it exposes details on how the
-     * UserSession was constructed.  This method can only be used when repository
-     * authentication was used.
-     *
-     * @return
-     */
-    @Deprecated
-    public abstract Credentials getCredentials();
 
     public abstract ClassLoader getClassLoader();
 
