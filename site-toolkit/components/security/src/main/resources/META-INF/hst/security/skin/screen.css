@@ -81,10 +81,6 @@ body.hippo-root #doc3 {
   width: 50%;
 }
 
-.hippo-global-alignright {
-  fuck-text-align: right
-}
-
 .hippo-global-alignmiddle {
   text-align: center;
   vertical-align: middle
