@@ -54,28 +54,22 @@ public final class ChannelStoreFactory {
         String localeProviderServiceId = config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName());
         ILocaleProvider localeProvider = context.getService(localeProviderServiceId, ILocaleProvider.class);
         if (localeProvider == null) {
-            throw new IllegalStateException(String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
+            throw new IllegalStateException(
+                    String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
         }
 
-        ChannelStore channelStore = new ChannelStore("channel-store",
-                fieldList,
-                parseSortColumn(config, storeFieldNames),
-                parseSortOrder(config),
-                new LocaleResolver(localeProvider),
-                restProxyService);
+        ChannelStore channelStore = new ChannelStore("channel-store", fieldList,
+                                                     parseSortColumn(config, storeFieldNames), parseSortOrder(config),
+                                                     new LocaleResolver(localeProvider), restProxyService);
 
         if (config.containsKey("channelRegionIconPath")) {
             channelStore.setChannelRegionIconPath(config.getString("channelRegionIconPath"));
         }
         if (config.containsKey("channelTypeIconPath")) {
             channelStore.setChannelTypeIconPath(config.getString("channelTypeIconPath"));
-        }            
+        }
 
         return channelStore;
-    }
-
-    public static ChannelStore createStore(IPluginContext context, IPluginConfig config) {
-    	return createStore(context, config, null);
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {
