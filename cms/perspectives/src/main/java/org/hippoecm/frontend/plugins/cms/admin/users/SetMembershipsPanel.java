@@ -27,6 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -64,7 +65,6 @@ public class SetMembershipsPanel extends Panel {
     private static final Logger log = LoggerFactory.getLogger(SetMembershipsPanel.class);
     private Group selectedGroup;
     private final IModel userModel;
-    private final ListView localList;
     private final IPluginContext context;
 
     public SetMembershipsPanel(final String id, final IPluginContext context,
@@ -80,6 +80,14 @@ public class SetMembershipsPanel extends Panel {
 
         // All local groups
         Form form = new Form("form");
+
+        final WebMarkupContainer localMembershipContainer = new WebMarkupContainer("localMembershipsContainer");
+        localMembershipContainer.setOutputMarkupId(true);
+        form.add(localMembershipContainer);
+
+        final WebMarkupContainer externalMembershipsContainer = new WebMarkupContainer("externalMembershipsContainer");
+        externalMembershipsContainer.setOutputMarkupId(true);
+        form.add(externalMembershipsContainer);
 
         AjaxButton submit = new AjaxButton("submit", form) {
             private static final long serialVersionUID = 1L;
@@ -102,13 +110,13 @@ public class SetMembershipsPanel extends Panel {
                             eventBus.post(event);
                         }
                         info(getString("user-membership-added", new DetachableGroup(selectedGroup)));
-                        localList.removeAll();
                     }
                 } catch (RepositoryException e) {
                     error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
                     log.error("Failed to add memberships", e);
                 }
-                target.addComponent(SetMembershipsPanel.this);
+                target.addComponent(localMembershipContainer);
+                target.addComponent(externalMembershipsContainer);
             }
 
         };
@@ -125,9 +133,10 @@ public class SetMembershipsPanel extends Panel {
 
         // local memberships
         Label localLabel = new Label("local-memberships-label", new ResourceModel("user-local-memberships"));
-        localList = new MembershipsListEditView("local-memberships", user);
+        MembershipsListEditView localList =
+                new MembershipsListEditView("local-memberships", user, localMembershipContainer);
         form.add(localLabel);
-        form.add(localList);
+        localMembershipContainer.add(localList);
 
         // external memberships
         Label externalLabel = new Label("external-memberships-label", new ResourceModel("user-external-memberships"));
@@ -135,7 +144,7 @@ public class SetMembershipsPanel extends Panel {
         externalLabel.setVisible((user.getExternalMemberships().size() > 0));
         externalList.setVisible((user.getExternalMemberships().size() > 0));
         form.add(externalLabel);
-        form.add(externalList);
+        externalMembershipsContainer.add(externalList);
 
 
         // add a cancel/back button
@@ -158,13 +167,15 @@ public class SetMembershipsPanel extends Panel {
 
         private static final long serialVersionUID = 1L;
 
-        private User user;
+        private final User user;
+        private final WebMarkupContainer updateTarget;
 
-        public MembershipsListEditView(final String id, final User user) {
+        public MembershipsListEditView(final String id, final User user, WebMarkupContainer updateTarget) {
             super(id);
-            ArrayList<Group> groups = new ArrayList<Group>(user.getLocalMembershipsAsListOfGroups());
-            setModel(new Model<ArrayList<Group>>(groups));
             this.user = user;
+            this.updateTarget = updateTarget;
+
+            setModel(new PropertyModel<List<Group>>(user, "localMembershipsAsListOfGroups"));
             setReuseItems(false);
             setOutputMarkupId(true);
             DomainDataProvider.setDirty();
@@ -184,7 +195,6 @@ public class SetMembershipsPanel extends Panel {
 
             item.add(groupLink);
 
-            
             List<PermissionBean> groupPermissions = group.getPermissions();
             Map<Domain, List<String>> domainsWithRoles = new HashMap<Domain, List<String>>();
             for (PermissionBean permission : groupPermissions) {
@@ -196,7 +206,7 @@ public class SetMembershipsPanel extends Panel {
                 roles.add(permission.getAuthRole().getRole());
                 domainsWithRoles.put(domain, roles);
             }
-            
+
             DomainLinkListPanel domainLinkList = new DomainLinkListPanel(
                     "securityDomains", domainsWithRoles,
                     findParent(ViewUserPanel.class)
@@ -223,12 +233,11 @@ public class SetMembershipsPanel extends Panel {
                             eventBus.post(event);
                         }
                         info(getString("user-membership-removed", new Model<Group>(group)));
-                        localList.removeAll();
                     } catch (RepositoryException e) {
                         error(getString("user-membership-remove-failed", new Model<Group>(group)));
                         log.error("Failed to remove memberships", e);
                     }
-                    target.addComponent(SetMembershipsPanel.this);
+                    target.addComponent(updateTarget);
                 }
             });
         }

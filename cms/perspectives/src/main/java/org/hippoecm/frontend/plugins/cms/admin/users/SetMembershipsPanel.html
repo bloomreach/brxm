@@ -19,7 +19,7 @@
     <form wicket:id="form">
         <wicket:enclosure child="local-memberships-label">
             <span wicket:id="local-memberships-label"/>
-            <table class="hippo-controlpanel-table-default hippo-list-details">
+            <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="localMembershipsContainer">
                 <tr>
                     <th>
                         <wicket:message key="table-header-groups"/>
@@ -40,7 +40,7 @@
         </wicket:enclosure>
         <wicket:enclosure child="external-memberships-label">
             <span wicket:id="external-memberships-label"/>
-            <table class="hippo-controlpanel-table-default hippo-list-details">
+            <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="externalMembershipsContainer">
                 <tr wicket:id="external-memberships">
                     <th>
                         <wicket:message key="table-header-groups"/>
