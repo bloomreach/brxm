@@ -325,7 +325,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                             @Override
                             protected void onOk() {
                                 final String userName = user.getUsername();
-                                deleteGroupMemberShip(group, userName);
+                                deleteGroupMemberShip(userName);
                                 List<DetachableUser> updatedGroupMembers = group.getMembersAsDetachableUsers();
                                 listModel.setObject(new ArrayList<DetachableUser>(updatedGroupMembers));
                             }
@@ -348,12 +348,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     /**
      * Delete a member from the list of group members.
      *
-     * @param groupToChange The group where the user is a member of.
      * @param userName      The userName of the user which is a member of the Group.
      */
-    private void deleteGroupMemberShip(final Group groupToChange, final String userName) {
+    private void deleteGroupMemberShip(final String userName) {
         try {
-            groupToChange.removeMembership(userName);
+            group.removeMembership(userName);
             HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
             if (eventBus != null) {
                 final UserSession userSession = UserSession.get();
@@ -361,7 +360,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         .user(userSession.getJcrSession().getUserID())
                         .action("remove-user-from-group")
                         .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
-                        .message("removed user " + userName + " from group " + groupToChange.getGroupname());
+                        .message("removed user " + userName + " from group " + group.getGroupname());
                 eventBus.post(event);
             }
             Session.get().info(getString("group-member-removed", null));
