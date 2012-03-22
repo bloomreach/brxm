@@ -144,7 +144,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             final long maxWidth = config.getAsLong("display.max.width", 800);
             final long maxHeight = config.getAsLong("display.max.height", 800);
 
-            return width < maxWidth && height < maxHeight;
+            return width <= maxWidth && height <= maxHeight;
         } catch (PathNotFoundException e) {
             // width and/or height are not available
             return false;
