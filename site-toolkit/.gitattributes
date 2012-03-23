@@ -841,6 +841,7 @@ content-beans/src/test/java/org/hippoecm/hst/content/beans/PersistableTextPage.j
 content-beans/src/test/java/org/hippoecm/hst/content/beans/PersistableTextPageCopy.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/TestSimpleBean.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/manager/TestWorkflowPersistenceManager.java svneol=native#text/plain
+content-beans/src/test/java/org/hippoecm/hst/content/beans/query/HstCtxWhereClauseComputerImplTest.java -text
 content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstFilters.java -text svneol=unset#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstQuery.java -text svneol=unset#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/standard/HippoItemTest.java svneol=native#text/plain

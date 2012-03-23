@@ -113,7 +113,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         }
     }
     
-    protected class Mapper implements KeyValue<String, String>, Comparable<Mapper> {
+    protected static class Mapper implements KeyValue<String, String>, Comparable<Mapper> {
         String fromPath;
         String toPath;
         int length;
