@@ -243,7 +243,7 @@ public class EventLogCleanupModule implements DaemonModule {
                         lockManager.lock(CONFIG_NODE_PATH, false, true, ONE_WEEK, null);
                         return true;
                     } catch (LockException e) {
-                        log.warn("Failed to obtain lock: event log cleanup will not run");
+                        log.warn("Failed to obtain lock: " + e.getMessage() + ". Event log cleanup will not run");
                     }
                 }
             } catch (RepositoryException e) {
