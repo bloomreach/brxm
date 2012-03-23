@@ -163,14 +163,4 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
         htmls = null;
     }
 
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoDocument)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
-
-
 }

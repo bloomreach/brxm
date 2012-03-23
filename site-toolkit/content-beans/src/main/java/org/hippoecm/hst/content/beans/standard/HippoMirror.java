@@ -127,13 +127,5 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
         derefWrapper = new BeanWrapper<HippoBean>(null);
         return null;
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoMirror)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
 
 }

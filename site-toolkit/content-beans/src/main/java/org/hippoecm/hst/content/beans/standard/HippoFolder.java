@@ -222,15 +222,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     public <T> HippoDocumentIterator<T> getDocumentIterator(Class<T> beanMappingClass){
         return new HippoDocumentIteratorImpl<T>(beanMappingClass);
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoFolder)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
-    
+
     private class HippoDocumentIteratorImpl<T> implements HippoDocumentIterator<T> {
 
         NodeIterator nodeIterator;

@@ -42,13 +42,4 @@ public class HippoAsset extends HippoDocument implements HippoAssetBean{
         }
         return resource.getBean();
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoAsset)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
-    
 }

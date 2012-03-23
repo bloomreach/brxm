@@ -68,14 +68,6 @@ public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryI
         original = getHippoGalleryImageBean("hippogallery:original");
         return original.getBean();
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoGalleryImageSet)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
 
     private BeanWrapper<HippoGalleryImageBean> getHippoGalleryImageBean(String relPath){
         BeanWrapper<HippoGalleryImageBean> image; 

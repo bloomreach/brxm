@@ -69,13 +69,5 @@ public class HippoStdPubWfRequest extends HippoItem implements HippoRequestBean 
     public Calendar getRequestDate() {
         return getProperty("hippostdpubwf:reqdate");
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoStdPubWfRequest)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
 
 }

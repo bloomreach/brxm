@@ -32,7 +32,7 @@ import org.hippoecm.hst.content.beans.Node;
 public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
 
     private Map<String, K> translations;
-    private Class<HippoBean> beanMappingClass;
+    private Class<K> beanMappingClass;
     
     public List<String> getAvailableLocales() {
         populate();
@@ -41,7 +41,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
 
     public K getTranslation(String locale) {
         populate();
-        return (K)translations.get(locale);
+        return translations.get(locale);
     }
 
 
@@ -64,14 +64,11 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
         }
         // use LinkedHashMap as we want to keep the order of the locales
         translations = new LinkedHashMap<String,K>();
-        if(beanMappingClass == null) {
-            beanMappingClass = HippoBean.class;
-        } 
-        
-        List<HippoBean> childBeans = getChildBeans(beanMappingClass);
-        for(HippoBean child : childBeans) {
+        List<K> childBeans ;
+        childBeans = getChildBeans(beanMappingClass);
+        for(K child : childBeans) {
             // the child name is the locale
-            translations.put(child.getName(), (K)child);
+            translations.put(child.getName(), child);
         }
         
     }
@@ -81,16 +78,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
      * <code>beanMappingClass</code> will be returned
      * @param beanMappingClass
      */
-    public void setBeanMappingClass(Class<HippoBean> beanMappingClass) {
+    public void setBeanMappingClass(Class<K> beanMappingClass) {
         this.beanMappingClass = beanMappingClass;
      }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof HippoAvailableTranslations)) {
-            return false;
-        }
-        return super.equals(obj);
-    }
-
 }
