@@ -22,9 +22,8 @@ package org.hippoecm.hst.content.beans.standard;
 public interface HippoAssetBean extends HippoBean{
     
     /**
-     * Get the asset 
-     *
-     * @return the resource containing the asset
+     * @return the {@link HippoResourceBean} containing the binary asset and <code>null</code> is there
+     * is not asset available
      */
     HippoResourceBean getAsset();
 
