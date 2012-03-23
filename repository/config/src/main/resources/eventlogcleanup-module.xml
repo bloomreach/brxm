@@ -22,6 +22,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
     </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:lockable</sv:value>
+    </sv:property>
     <sv:property sv:name="cronexpression" sv:type="String">
       <sv:value>0 0 3 * * ?</sv:value>
      </sv:property>

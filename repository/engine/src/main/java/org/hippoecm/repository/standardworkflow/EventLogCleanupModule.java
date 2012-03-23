@@ -22,6 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -59,6 +62,8 @@ public class EventLogCleanupModule implements DaemonModule {
     private static final String CONFIG_MAXITEMS_PROPERTY = "maxitems";
     private static final String CONFIG_KEEP_ITEMS_FOR = "keepitemsfor";
     private static final String CONFIG_CRONEXPRESSION_PROPERTY = "cronexpression";
+    private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
+    private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
     private static final Properties SCHEDULER_FACTORY_PROPERTIES = new Properties();
     static {
         SCHEDULER_FACTORY_PROPERTIES.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "HippoEventLogCleanupScheduler");
@@ -71,6 +76,7 @@ public class EventLogCleanupModule implements DaemonModule {
     private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
     private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item WHERE hippolog:timestamp < $timeoutTimestamp ORDER BY hippolog:timestamp ASC";
     private static final int EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
+    private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
     private static Boolean buzy = false;
 
     private Session session;
@@ -193,23 +199,64 @@ public class EventLogCleanupModule implements DaemonModule {
 
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
-            log.info("Running event log cleanup job");
+
             synchronized (buzy) {
                 if (buzy) {
                     return;
                 }
                 buzy = true;
             }
+
+            Session session = (Session) context.getMergedJobDataMap().get("session");
+            // try to get a lock
+            if (!lock(session)) {
+                return;
+            }
+
+            log.info("Running event log cleanup job");
             long maxitems = (Long) context.getMergedJobDataMap().get(CONFIG_MAXITEMS_PROPERTY);
             long itemtimeout = (Long) context.getMergedJobDataMap().get(CONFIG_KEEP_ITEMS_FOR);
-            Session session = (Session) context.getMergedJobDataMap().get("session");
+
             try {
                 removeTooManyItems(maxitems, session);
                 removeTimedOutItems(itemtimeout, session);
             } catch (RepositoryException e) {
                 log.error("Error while cleaning up event log", e);
             } finally {
+                unlock(session);
                 buzy = false;
+            }
+
+        }
+        
+        private boolean lock(Session session) {
+            try {
+                Node lockable = session.getNode(CONFIG_NODE_PATH);
+                if (!lockable.isNodeType("mix:lockable")) {
+                    log.error("Node " + CONFIG_NODE_PATH + " must be lockable");
+                    return false;
+                }
+                LockManager lockManager = session.getWorkspace().getLockManager();
+                if (!lockManager.isLocked(CONFIG_NODE_PATH)) {
+                    try {
+                        lockManager.lock(CONFIG_NODE_PATH, false, true, ONE_WEEK, null);
+                        return true;
+                    } catch (LockException e) {
+                        log.warn("Failed to obtain lock: event log cleanup will not run");
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to obtain lock: event log cleanup will not run", e);
+            }
+            return false;
+        }
+        
+        private void unlock(Session session) {
+            try {
+                LockManager lockManager = session.getWorkspace().getLockManager();
+                lockManager.unlock(CONFIG_NODE_PATH);
+            } catch (RepositoryException e) {
+                log.error("Error releasing lock", e);
             }
         }
         
@@ -289,16 +336,30 @@ public class EventLogCleanupModule implements DaemonModule {
 
         @Override
         public void onEvent(EventIterator events) {
-            try {
-                synchronized (EventLogCleanupModule.this) {
-                    unscheduleJob();
-                    configure();
-                    scheduleJob();
+            boolean reconfigure = false;
+            // only reconfigure if any configuration properties changed
+            while(events.hasNext()) {
+                try {
+                    String eventPath = events.nextEvent().getPath();
+                    if (!eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER)) {
+                        reconfigure = true;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to determine if event is a reconfigure event", e);
                 }
-            } catch (RepositoryException e) {
-                log.error("Failed to reconfigure event log cleaner", e);
-            } catch (SchedulerException e) {
-                log.error("Failed to reconfigure event log cleaner", e);
+            }
+            if (reconfigure) {
+                try {
+                    synchronized (EventLogCleanupModule.this) {
+                        unscheduleJob();
+                        configure();
+                        scheduleJob();
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Failed to reconfigure event log cleaner", e);
+                } catch (SchedulerException e) {
+                    log.error("Failed to reconfigure event log cleaner", e);
+                }
             }
         }
     }
