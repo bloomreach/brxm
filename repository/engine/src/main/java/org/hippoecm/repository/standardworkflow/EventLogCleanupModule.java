@@ -208,7 +208,8 @@ public class EventLogCleanupModule implements DaemonModule {
             }
 
             Session session = (Session) context.getMergedJobDataMap().get("session");
-            // try to get a lock
+
+            // make sure only one cluster node runs the scheduled cleanup job
             if (!lock(session)) {
                 return;
             }
