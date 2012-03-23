@@ -597,24 +597,46 @@ public class HippoItem implements HippoBean {
      */
 
     public int compareTo(HippoBean hippoBean) {
-        // if hippoFolder == null, a NPE will be thrown which is fine because the arg is not allowed to be null.
+        if (hippoBean == null) {
+            throw new NullPointerException("HippoBean to compareTo is not allowed to be null");
+        }
         if (this.getName() == null) {
-            // should not be possible
-            return -1;
+            throw new IllegalStateException("getName() for a HippoBean cannot return null");
         }
         if (hippoBean.getName() == null) {
-            // should not be possible
-            return 1;
+            throw new IllegalStateException("getName() for a HippoBean cannot return null");
         }
-        if (this.getName().equals(hippoBean.getName())) {
-            if (this.equals(hippoBean)) {
-                return 0;
-            }
-            // do not return 0, because then this.equals(hippoFolder) should also be true
-            return 1;
+        int val = this.getName().compareTo(hippoBean.getName());
+        if(val != 0) {
+            return val;
         }
-        return this.getName().compareTo(hippoBean.getName());
 
+        // return the compareTo of the backing path : this to be in sync with the equals
+        if (this.getPath() == null) {
+            return 1;
+        }
+        if (hippoBean.getPath() == null) {
+            return -1;
+        }
+        return this.getPath().compareTo(hippoBean.getPath());
+    }
+
+
+    /**
+     * equality is based on the absolute path of the backing jcr node.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (this.getPath() == null) {
+            return false;
+        }
+        if(obj instanceof HippoBean) {
+            return this.getPath().equals(((HippoBean)obj).getPath());
+        }
+        return false;
     }
 
     /**
@@ -627,7 +649,7 @@ public class HippoItem implements HippoBean {
     }
 
     /**
-     * Try to attach the jcr Node again with this session. 
+     * Try to attach the jcr Node again with this session.
      * @param session
      */
     public void attach(Session session) {
@@ -647,23 +669,6 @@ public class HippoItem implements HippoBean {
         } catch (RepositoryException e) {
             log.error("Repository exception while trying to attach jcr node: {}", e);
         }
-    }
-
-    /**
-     * equality is based on the absolute path of the backing jcr node.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-             return true;
-        }
-        if (this.getPath() == null) {
-            return false;
-        }
-        if(obj instanceof HippoBean) {
-            return this.getPath().equals(((HippoBean)obj).getPath());
-        }
-        return false;
     }
 
     /**
