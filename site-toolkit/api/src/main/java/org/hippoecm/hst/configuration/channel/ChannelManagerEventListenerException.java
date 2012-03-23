@@ -17,7 +17,8 @@ package org.hippoecm.hst.configuration.channel;
 
 /**
  * Exception that you can throw in a {@link ChannelManagerEventListener} implementation : When you
- * wants to short circuit the processing of the {@link Channel} creation / update entirely, you have to use 
+ * wants to short circuit the processing of the {@link Channel} creation / update entirely, you have to use
+ * {@link Status#STOP_CHANNEL_PROCESSING}
  * 
  */
 public class ChannelManagerEventListenerException extends Exception {
