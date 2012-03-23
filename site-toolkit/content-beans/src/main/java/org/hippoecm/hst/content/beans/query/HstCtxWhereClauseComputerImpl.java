@@ -16,7 +16,6 @@
 package org.hippoecm.hst.content.beans.query;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -62,7 +61,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
     }
     
     public HstVirtualizer getVirtualizer(Node scope) throws HstContextualizeException{
-        Set<KeyValue<String, String>> pathMappers = new HashSet<KeyValue<String, String>>();
+        Set<KeyValue<String, String>> pathMappers = new TreeSet<KeyValue<String, String>>();
         pathMappers.add(getPathMapper(scope));
         return new HstVirtualizerImpl(pathMappers);
     }
@@ -129,13 +128,16 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
 
         public int compareTo(Mapper o) {
             if (o == null) {
-                return 1;
+                throw new NullPointerException("Not allowed to compare with null");
             }
             if(o == this || o.equals(this)) {
                 return 0;
             }
-            
+
             if (this.length > o.length) {
+                // if the length, and thus the number of slashes is larger for this,
+                // this Mapper should be tried as first as it is a deeper scoped mapper: Therefor
+                // return -1
                 return -1;
             }
             if(this.length < o.length) {
@@ -165,30 +167,38 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
         public String getValue() {
             return this.toPath;
         }
-        
-        // only the fromPath is important because this is the key
-        @Override 
-        public int hashCode(){
-            return fromPath.hashCode();
-        }
-        
-       
+
         @Override
-        public boolean equals(Object obj) {
-            if(obj == null || !(obj instanceof Mapper)) {
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Mapper o = (Mapper)obj;
-            if(this.length == o.length) {
-                if(this.fromPath.equals(o.fromPath)) {
-                    if(this.toPath.equals(o.toPath)) {
-                        return true;
-                    }
-                }
+
+            final Mapper mapper = (Mapper) o;
+
+            if (length != mapper.length) {
+                return false;
             }
-            return false;
+            if (!fromPath.equals(mapper.fromPath)) {
+                return false;
+            }
+            if (!toPath.equals(mapper.toPath)) {
+                return false;
+            }
+
+            return true;
         }
 
+        @Override
+        public int hashCode() {
+            int result = fromPath.hashCode();
+            result = 31 * result + toPath.hashCode();
+            result = 31 * result + length;
+            return result;
+        }
         @Override
         public String toString(){
             return Mapper.class.getName() + ":" + fromPath + " --> " + toPath ;
@@ -197,7 +207,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
     
     public String getCtxWhereClause(Node node) throws HstContextualizeException{
         StringBuilder facetSelectClauses = new StringBuilder();
-        String path = null;
+        String path;
         if(node == null) {
             throw new HstContextualizeException("Unable to create context where clause for a node (scope) that is null.");
         }
@@ -208,7 +218,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
             }
             
             HippoNode currentNode = (HippoNode)node;
-            Node canonical = (HippoNode)currentNode.getCanonicalNode();
+            Node canonical = currentNode.getCanonicalNode();
             
             
             while(canonical == null) {
@@ -317,7 +327,7 @@ public class HstCtxWhereClauseComputerImpl implements HstCtxWhereClauseComputer{
                         String value = values[i].getString();
                         if (mode.equals("clear") || mode.equals("stick")) {
                             log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
-                            continue;
+                            // continue to next
                         } else {
                             if (facetSelectClauses.length() > 0) {
                                 facetSelectClauses.append(" and ");
