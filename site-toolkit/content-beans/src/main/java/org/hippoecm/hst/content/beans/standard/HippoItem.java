@@ -601,10 +601,10 @@ public class HippoItem implements HippoBean {
             throw new NullPointerException("HippoBean to compareTo is not allowed to be null");
         }
         if (this.getName() == null) {
-            throw new IllegalStateException("getName() for a HippoBean cannot return null");
+            throw new IllegalStateException("getName() for a HippoBean should not be possible to be null");
         }
         if (hippoBean.getName() == null) {
-            throw new IllegalStateException("getName() for a HippoBean cannot return null");
+            throw new IllegalStateException("getName() for a HippoBean should not be possible to be null");
         }
         int val = this.getName().compareTo(hippoBean.getName());
         if(val != 0) {
