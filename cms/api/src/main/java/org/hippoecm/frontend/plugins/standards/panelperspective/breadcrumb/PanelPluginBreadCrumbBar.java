@@ -15,10 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -59,8 +63,29 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
         }
     }
 
+    private volatile List<IBreadCrumbModelListener> removed = null;
+
     public PanelPluginBreadCrumbBar(String id) {
         super(id);
+    }
+
+    @Override
+    public void removeListener(final IBreadCrumbModelListener listener) {
+        if (removed == null) {
+            removed = new ArrayList<IBreadCrumbModelListener>();
+        }
+        removed.add(listener);
+    }
+
+    @Override
+    protected void onDetach() {
+        if (removed != null) {
+            for (IBreadCrumbModelListener listener : removed) {
+                super.removeListener(listener);
+            }
+            removed = null;
+        }
+        super.onDetach();
     }
 
     @Override
