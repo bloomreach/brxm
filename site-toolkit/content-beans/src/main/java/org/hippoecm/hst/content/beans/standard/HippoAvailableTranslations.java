@@ -76,7 +76,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
     /**
      * Sets the <code>beanMappingClass</code> for this {@link HippoAvailableTranslationsBean}. Only translations of type
      * <code>beanMappingClass</code> will be returned
-     * @param beanMappingClass
+     * @param beanMappingClass the type of class the available translations should be off
      */
     public void setBeanMappingClass(Class<K> beanMappingClass) {
         this.beanMappingClass = beanMappingClass;
