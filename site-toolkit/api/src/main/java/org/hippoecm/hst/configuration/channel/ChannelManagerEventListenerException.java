@@ -25,7 +25,7 @@ public class ChannelManagerEventListenerException extends Exception {
 
     private static final long serialVersionUID = 1L;
     
-    enum Status {
+    public enum Status {
         STOP_CHANNEL_PROCESSING,
         LOG_AND_CONTINUE
     }
