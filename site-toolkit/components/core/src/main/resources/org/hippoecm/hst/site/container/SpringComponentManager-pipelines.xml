@@ -62,7 +62,6 @@
    
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
     <property name="repository" ref="javax.jcr.Repository.cms"/>
-    <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
   </bean>
 
   <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestSecurityValve"/>

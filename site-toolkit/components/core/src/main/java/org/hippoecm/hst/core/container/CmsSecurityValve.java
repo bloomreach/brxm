@@ -50,10 +50,7 @@ public class CmsSecurityValve extends AbstractValve {
 
     private final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
 
-    private final static String DEFAULT_PATH_SUFFIX = "./";
-    
     private Repository repository;
-    private String pathSuffixDelimiter = DEFAULT_PATH_SUFFIX;
 
     @SuppressWarnings("deprecation")
     private final static String CMS_LOCATION = ContainerConstants.CMS_LOCATION;
@@ -62,9 +59,6 @@ public class CmsSecurityValve extends AbstractValve {
         this.repository = repository;
     }
 
-    public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
-        this.pathSuffixDelimiter = pathSuffixDelimiter;
-    }
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
@@ -122,7 +116,8 @@ public class CmsSecurityValve extends AbstractValve {
                 destinationURL.append(servletRequest.getRequestURI());
                
                 if(requestContext.getPathSuffix() != null) {
-                    destinationURL.append(pathSuffixDelimiter).append(requestContext.getPathSuffix());
+                    String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
+                    destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
                 }
                 
                 String qString =  servletRequest.getQueryString();
