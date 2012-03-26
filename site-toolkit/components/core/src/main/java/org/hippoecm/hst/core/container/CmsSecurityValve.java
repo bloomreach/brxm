@@ -21,8 +21,6 @@ import java.security.SignatureException;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -49,21 +47,16 @@ import org.onehippo.sso.CredentialCipher;
  * </p>
  */
 public class CmsSecurityValve extends AbstractValve {
-    private static final String SSO_BASED_SESSION_ATTR_NAME = CmsSecurityValve.class.getName() + ".jcrSession";
+
+    private final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
 
     private final static String DEFAULT_PATH_SUFFIX = "./";
     
     private Repository repository;
     private String pathSuffixDelimiter = DEFAULT_PATH_SUFFIX;
-    // default max refresh interval for refresh on lazy session is 5 minutes
-    protected long maxRefreshIntervalOnLazySession = 300000;
-    
+
     @SuppressWarnings("deprecation")
     private final static String CMS_LOCATION = ContainerConstants.CMS_LOCATION;
-    
-    public void setMaxRefreshIntervalOnLazySession(long maxRefreshIntervalOnLazySession) {
-        this.maxRefreshIntervalOnLazySession = maxRefreshIntervalOnLazySession;
-    }
 
     public void setRepository(Repository repository) {
         this.repository = repository;
@@ -77,7 +70,7 @@ public class CmsSecurityValve extends AbstractValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
-        
+
         if(servletRequest.getHeader("CMS-User") == null && !requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
             if(!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
@@ -97,16 +90,14 @@ public class CmsSecurityValve extends AbstractValve {
         HttpSession session = servletRequest.getSession(true);
 
         // Verify that cms user in request header is same as the one associated
-        // with the jcr session, already bound to the http session.
+        // with the credentials on the HttpSession
         String cmsUser = servletRequest.getHeader("CMS-User");
         if (cmsUser != null) {
-            Session jcrSession = (Session) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-            if (jcrSession != null && !jcrSession.getUserID().equals(cmsUser)) {
-                jcrSession.logout();
-
-                session.setAttribute(SSO_BASED_SESSION_ATTR_NAME, null);
-                session.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, null);
-                session.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, false);
+            String currentCmsUser = (String) session.getAttribute(CMS_USER_ID_ATTR);
+            if (currentCmsUser != null && !currentCmsUser.equals(cmsUser)) {
+                session.removeAttribute(CMS_USER_ID_ATTR);
+                session.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+                session.removeAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED);
             }
         }
 
@@ -172,7 +163,6 @@ public class CmsSecurityValve extends AbstractValve {
                     Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
                     session.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
                     session.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
-                    setSSOSession(session, cred);
                 } catch (SignatureException se) {
                     throw new ContainerException(se);
                 }
@@ -184,47 +174,25 @@ public class CmsSecurityValve extends AbstractValve {
         if(Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
             // we are in a request for the REST template composer 
             synchronized (session) {
-                LazySession lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-                if(!lazySession.isLive()) {
-                    log.debug("SSO jcr session is not live. Try to get a new one.");
-                    setSSOSession(session, (Credentials)session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
-                    lazySession = (LazySession) session.getAttribute(SSO_BASED_SESSION_ATTR_NAME);
-                }
+                LazySession lazySession = null;
                 try {
-                    if (maxRefreshIntervalOnLazySession > 0L) {
-                        // First check whether the maxRefreshInterval has passed
-                        if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
-                            lazySession.refresh(false);
-                        } else {
-                            // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
-                            long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
-                            if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
-                                lazySession.refresh(false);
-                            }
-                        }
-                    } else {
-                        // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
-                        lazySession.refresh(false);
+                    try {
+                        lazySession = (LazySession) repository.login((Credentials) session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+                        session.setAttribute(CMS_USER_ID_ATTR, lazySession.getUserID());
+                    } catch (Exception e) {
+                        throw new ContainerException("Failed to create session based on SSO.", e);
                     }
-                } catch (RepositoryException e) {
-                    throw new ContainerException("Failed to refresh jcr session.", e);
+                    ((HstMutableRequestContext) requestContext).setSession(lazySession);
+                    context.invokeNext();
+                } finally {
+                    if (lazySession != null) {
+                        lazySession.logout();
+                    }
                 }
-                ((HstMutableRequestContext) requestContext).setSession(lazySession);
-                context.invokeNext();
             }
             // only set the cms based lazySession on the request context when the context is the cms context
         } else {
             context.invokeNext();
-        }
-    }
-
-    protected void setSSOSession(HttpSession httpSession, Credentials credentials) throws ContainerException {
-        LazySession lazySession;
-        try {
-            lazySession = (LazySession) repository.login(credentials);
-            httpSession.setAttribute(SSO_BASED_SESSION_ATTR_NAME, lazySession);
-        } catch (Exception e) {
-            throw new ContainerException("Failed to create session based on SSO.", e);
         }
     }
 
