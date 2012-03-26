@@ -155,7 +155,9 @@ public class ActionValve extends AbstractValve {
                                 // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
                                 location = "/";
                             }
-                            
+                            if (location.startsWith("?")) {
+                                location = "/" + location;
+                            }
                             if (location.startsWith("http:") || location.startsWith("https:")) {
                                 servletResponse.sendRedirect(location);
                             } else {
