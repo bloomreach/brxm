@@ -355,7 +355,7 @@ public class BaseHstComponent extends GenericHstComponent {
     /**
      * @param request the {@link HstRequest}
      * @return the {@link HstQueryManager}
-     * @see returns same as {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)} does
+     * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)}
      */
     public HstQueryManager getQueryManager(HstRequest request){
         return getQueryManager(request.getRequestContext());
@@ -365,7 +365,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * 
      * @param  ctx the {@link HstRequestContext}
      * @return the {@link HstQueryManager}
-     * @see returns same as {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)} does
+     * @see  {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)}
      */
     public HstQueryManager getQueryManager(HstRequestContext ctx) {
         HstQueryManager queryManager = null;
@@ -380,7 +380,7 @@ public class BaseHstComponent extends GenericHstComponent {
     /**
      * @param  session the {@link Session}
      * @return the {@link HstQueryManager}
-     * @see returns same as {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)} does
+     * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)}
      */
     public HstQueryManager getQueryManager(Session session) {
         HstQueryManager queryManager = null;
