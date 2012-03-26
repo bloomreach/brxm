@@ -52,9 +52,6 @@ public class CmsSecurityValve extends AbstractValve {
 
     private Repository repository;
 
-    @SuppressWarnings("deprecation")
-    private final static String CMS_LOCATION = ContainerConstants.CMS_LOCATION;
-
     public void setRepository(Repository repository) {
         this.repository = repository;
     }
@@ -105,16 +102,15 @@ public class CmsSecurityValve extends AbstractValve {
                 if(!(requestContext.getResolvedMount().getMount() instanceof MutableMount)) {
                     throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
                 }
-                
-                MutableMount mount = (MutableMount)requestContext.getResolvedMount().getMount();
+
                 StringBuilder destinationURL = new StringBuilder();
-                destinationURL.append(servletRequest.getScheme()).append("://");
-                destinationURL.append(HstRequestUtils.getRequestHosts(servletRequest, false)[0]);
-                // for SSO, we also go through the CMS. We always need the contextpath in the requests to the HST
-                //destinationURL.append(servletRequest.getContextPath());
-               
+                String cmsBaseUrl = servletRequest.getHeader("Referer");
+                if (cmsBaseUrl == null) {
+                    throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
+                }
+                destinationURL.append(cmsBaseUrl);
                 destinationURL.append(servletRequest.getRequestURI());
-               
+
                 if(requestContext.getPathSuffix() != null) {
                     String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
                     destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
@@ -124,27 +120,14 @@ public class CmsSecurityValve extends AbstractValve {
                 if(qString != null) {
                     destinationURL.append("?").append(qString);
                 }
-                
+
                 // generate key; redirect to cms
                 try {
-                    String cmsAuthUrl = null;
-                    String cmsBaseUrl;
-                    if (StringUtils.isEmpty(mount.getCmsLocation())) {
-                        log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on the hst:virtualhostgroup to get rid of this warning");
-                        cmsBaseUrl = requestContext.getContainerConfiguration().getString(CMS_LOCATION);
-                    } else {
-                        cmsBaseUrl = mount.getCmsLocation();
+                    if (!cmsBaseUrl.endsWith("/")) {
+                        cmsBaseUrl += "/";
                     }
-                    
-                    if(cmsBaseUrl == null) {
-                        log.error("No cmsAuthUrl specified");
-                    } else {
-                        if (!cmsBaseUrl.endsWith("/")) {
-                            cmsBaseUrl += "/";
-                        }
-                        cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
-                        servletResponse.sendRedirect(cmsAuthUrl);
-                    }  
+                    String cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
+                    servletResponse.sendRedirect(cmsAuthUrl);
                 } catch (UnsupportedEncodingException e) {
                     log.error("Unable to encode the destination url with utf8 encoding" + e.getMessage(), e);
                 } catch (IOException e) {
@@ -177,6 +160,7 @@ public class CmsSecurityValve extends AbstractValve {
                     } catch (Exception e) {
                         throw new ContainerException("Failed to create session based on SSO.", e);
                     }
+                    // only set the cms based lazySession on the request context when the context is the cms context
                     ((HstMutableRequestContext) requestContext).setSession(lazySession);
                     context.invokeNext();
                 } finally {
@@ -185,7 +169,6 @@ public class CmsSecurityValve extends AbstractValve {
                     }
                 }
             }
-            // only set the cms based lazySession on the request context when the context is the cms context
         } else {
             context.invokeNext();
         }
