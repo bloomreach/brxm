@@ -193,6 +193,7 @@ repository/src/main/resources/hippoecm-extension.xml eol=lf
 repository/src/main/resources/workflow-channelactions.xml -text
 repository/src/main/resources/workflow-channelactions_de.xml -text
 repository/src/main/resources/workflow-socialsharing.xml -text
+repository/src/main/resources/workflow-socialsharing_de.xml -text
 test/pom.xml -text
 test/src/main/webapp/HST-vbox.html -text
 test/src/main/webapp/WEB-INF/web.xml -text

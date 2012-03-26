@@ -11,7 +11,7 @@
       <sv:value>de</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>View</sv:value>
+      <sv:value>Zeige Dokument in</sv:value>
     </sv:property>
   </sv:node>
 
