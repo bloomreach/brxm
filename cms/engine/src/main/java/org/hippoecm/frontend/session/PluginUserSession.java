@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -234,7 +235,7 @@ public class PluginUserSession extends UserSession {
         }
 
         try {
-            getJcrSession().getNode(String.format(FRONTEND_APPLICATION_ABSOLUTE_PATH, getApplicationName()));
+            getJcrSession().getNode(String.format(FRONTEND_APPLICATION_ABSOLUTE_PATH, getApplicationName("cms")));
         } catch (PathNotFoundException pne) {
             login();
             throw new LoginException(LoginException.CAUSE.ACCESS_DENIED, pne);
@@ -419,6 +420,11 @@ public class PluginUserSession extends UserSession {
         return markupId + "_" + componentNum;
     }
 
+    public String getApplicationName(String defaultAppName) {
+        String applicationName = getApplicationName();
+        return StringUtils.isNotBlank(applicationName) ? applicationName : defaultAppName;
+    }
+
     public String getApplicationName() {
         String applicationName;
         Session session = getJcrSession();
@@ -429,11 +435,6 @@ public class PluginUserSession extends UserSession {
         } else {
             applicationName = WebApplicationHelper.getConfigurationParameter((WebApplication)Application.get(),
                     Main.PLUGIN_APPLICATION_NAME, null);
-        }
-
-        if (applicationName == null) {
-            log.warn(WARN_MESSAGE_NO_PLUGIN_APPLICATION_NAME);
-            applicationName = "cms";
         }
 
         return applicationName;
