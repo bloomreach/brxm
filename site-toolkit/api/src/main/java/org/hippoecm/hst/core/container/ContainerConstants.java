@@ -125,11 +125,6 @@ public interface ContainerConstants {
     String MOUNT_ALIAS_ASSETS = "assets";
     
     /**
-     * 'composermode' type name
-     */
-    String COMPOSERMODE = "composermode";
-    
-    /**
      * 'composer_info' attr type name
      */
     String COMPOSER_MODE_ATTR_NAME = "org.hippoecm.hst.composer_info";
