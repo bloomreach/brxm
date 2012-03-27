@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.jcr.Credentials;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
@@ -62,6 +63,9 @@ public class PluginUserSession extends UserSession {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    private static final String ERROR_MESSAGE_WHILE_ACCESSING_REPO = "Error while accessing repository";
+    private static final String WARN_MESSAGE_NO_PLUGIN_APPLICATION_NAME = "No plugin application name found! Using 'cms' as a deafult value!";
+    private static final String FRONTEND_APPLICATION_ABSOLUTE_PATH = "/hippo:configuration/hippo:frontend/%s";
 
     static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
@@ -82,10 +86,6 @@ public class PluginUserSession extends UserSession {
     }
 
     public PluginUserSession(Request request) {
-        this(request, (UserCredentials)null);
-    }
-
-    public PluginUserSession(Request request, UserCredentials credentials) {
         super(request);
 
         classLoader = new LoadableDetachableModel<ClassLoader>() {
@@ -124,8 +124,6 @@ public class PluginUserSession extends UserSession {
             }
 
         };
-
-        login(credentials);
 
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
@@ -224,8 +222,27 @@ public class PluginUserSession extends UserSession {
         return login(credentials, null);
     }
 
-    public boolean login(UserCredentials credentials) {
-        return login(credentials, null);
+    public void login() {
+        login((UserCredentials) null, null);
+    }
+
+    public void login(UserCredentials credentials) throws LoginException {
+        boolean success = login(credentials, null);
+
+        if (!success) {
+            throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS);
+        }
+
+        try {
+            getJcrSession().getNode(String.format(FRONTEND_APPLICATION_ABSOLUTE_PATH, getApplicationName()));
+        } catch (PathNotFoundException pne) {
+            login();
+            throw new LoginException(LoginException.CAUSE.ACCESS_DENIED, pne);
+        } catch (RepositoryException re) {
+            logException(ERROR_MESSAGE_WHILE_ACCESSING_REPO, re);
+            login();
+            throw new LoginException(LoginException.CAUSE.REPOSITORY_ERROR, re);
+        }
     }
 
     @Deprecated
@@ -406,12 +423,28 @@ public class PluginUserSession extends UserSession {
         String applicationName;
         Session session = getJcrSession();
         String userID = session.getUserID();
+
         if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {
             applicationName = WebApplicationHelper.getConfigurationParameter((WebApplication)Application.get(),
                     Main.PLUGIN_APPLICATION_NAME, null);
         }
+
+        if (applicationName == null) {
+            log.warn(WARN_MESSAGE_NO_PLUGIN_APPLICATION_NAME);
+            applicationName = "cms";
+        }
+
         return applicationName;
     }
+
+    protected void logException(String message, Exception exc) {
+        if(log.isDebugEnabled()) {
+            log.warn(message, exc);
+        } else {
+            log.warn(String.format("%s %s", message, "{}"), exc.toString());
+        }
+    }
+
 }

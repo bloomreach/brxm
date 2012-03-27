@@ -324,7 +324,9 @@ public class Main extends WebApplication {
 
     @Override
     public UserSession newSession(Request request, Response response) {
-        return new PluginUserSession(request);
+        PluginUserSession userSession = new PluginUserSession(request);
+        userSession.login();
+        return userSession;
     }
 
     @Override

@@ -32,6 +32,7 @@ import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -169,7 +170,17 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     }
                 }
             }
-            boolean success = userSession.login(new UserCredentials(this));
+
+            boolean success = true;
+            PageParameters loginExceptionPageParameters = null;
+
+            try {
+                userSession.login(new UserCredentials(this));
+            } catch (org.hippoecm.frontend.session.LoginException le) {
+                success = false;
+                loginExceptionPageParameters = buildPageParameters(le);
+            }
+
             if (success) {
                 ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
                 if (rememberme) {
@@ -217,7 +228,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
             }
             userSession.setLocale(new Locale(selectedLocale));
-            redirect(success);
+            redirect(success, loginExceptionPageParameters);
         }
     }
 

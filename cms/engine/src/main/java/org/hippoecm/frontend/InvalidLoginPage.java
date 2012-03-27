@@ -15,15 +15,42 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.session.LoginException;
 
 public class InvalidLoginPage extends PluginPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    private final static String DEFAULT_KEY = "invalid.login";
+    private final static Map<LoginException.CAUSE, String> causeKeys;
 
-    public InvalidLoginPage() {
-        super();
-        
-        info(new StringResourceModel("invalid.login", this, null).getString());
+    static {
+        causeKeys = new HashMap<LoginException.CAUSE, String>(2);
+        causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS, "invalid.login");
+        causeKeys.put(LoginException.CAUSE.ACCESS_DENIED, "access.denied");
+        causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR, "repository.error");
     }
+
+    public InvalidLoginPage(final PageParameters parameters) {
+        super();
+        String key = DEFAULT_KEY;
+
+        if (parameters != null) {
+            Object loginException = (LoginException) parameters.get(LoginException.class.getName());
+            
+            if ((loginException != null) && (loginException instanceof LoginException)) {
+                key = causeKeys.get(((LoginException) loginException).getLoginExceptionCause());
+                key = StringUtils.isNotBlank(key) ? key : DEFAULT_KEY;
+            }
+
+        }
+
+        info(new StringResourceModel(key, this, null).getString());
+    }
+
 }

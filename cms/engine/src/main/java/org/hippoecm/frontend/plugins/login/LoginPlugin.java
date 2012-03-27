@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -62,6 +63,7 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -72,6 +74,9 @@ public class LoginPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
+
+    private static final String ERROR_MESSAGE_LOGIN_FAILURE = "Login failure!";
+    private static final String PAGE_PARAMS_KEY_LOGIN_EXCEPTION = LoginException.class.getName();
 
     public static final String DEFAULT_LOCALE = "en";
 
@@ -229,20 +234,53 @@ public class LoginPlugin extends RenderPlugin {
             PluginUserSession userSession = (PluginUserSession) getSession();
             String username = usernameTextField.getDefaultModelObjectAsString();
             HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
-            boolean success = userSession.login(new UserCredentials(this));
-            if (success) {
-                ConcurrentLoginFilter.validateSession(session, username, false);
+
+            boolean success = true;
+            PageParameters loginExceptionPageParameters = null;
+            try {
+                userSession.login(new UserCredentials(this));
+            } catch (LoginException le) {
+                log.error(ERROR_MESSAGE_LOGIN_FAILURE, le);
+                success = false;
+                loginExceptionPageParameters = buildPageParameters(le);
             }
+
+            ConcurrentLoginFilter.validateSession(session, username, false);
             userSession.setLocale(new Locale(selectedLocale));
-            redirect(success);
+            redirect(success, loginExceptionPageParameters);
         }
 
-        protected void redirect(boolean success) {
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
+                    NameCallback nameCallback = (NameCallback) callback;
+                    nameCallback.setName(username);
+                } else if (callback instanceof PasswordCallback) {
+                    PasswordCallback passwordCallback = (PasswordCallback) callback;
+                    passwordCallback.setPassword(password.toCharArray());
+                }
+            }
+        }
+
+        protected PageParameters buildPageParameters(LoginException le) {
+            Map<String, LoginException> pageParameters = new HashMap<String, LoginException>(1);
+            
+            pageParameters.put(PAGE_PARAMS_KEY_LOGIN_EXCEPTION, le);
+            return new PageParameters(pageParameters);
+        }
+
+        protected void redirect(boolean success, PageParameters pageParameters) {
             if (success == false) {
                 Main main = (Main) Application.get();
                 main.resetConnection();
-                throw new RestartResponseException(InvalidLoginPage.class);
+
+                if (pageParameters != null) {
+                    throw new RestartResponseException(new InvalidLoginPage(pageParameters));
+                } else {
+                    throw new RestartResponseException(InvalidLoginPage.class);
+                }
             }
+
             if (parameters != null) {
                 visitFormComponents(new FormComponent.IVisitor() {
                     public Object formComponent(IFormVisitorParticipant formComponent) {
@@ -260,16 +298,10 @@ public class LoginPlugin extends RenderPlugin {
             }
         }
 
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for (Callback callback : callbacks) {
-                if (callback instanceof NameCallback) {
-                    NameCallback nameCallback = (NameCallback) callback;
-                    nameCallback.setName(username);
-                } else if (callback instanceof PasswordCallback) {
-                    PasswordCallback passwordCallback = (PasswordCallback) callback;
-                    passwordCallback.setPassword(password.toCharArray());
-                }
-            }
+        protected void redirect(boolean success) {
+            redirect(success, null);
         }
+
     }
+
 }

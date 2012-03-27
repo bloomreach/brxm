@@ -43,8 +43,8 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.WebCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,17 +116,13 @@ public class DirectLoginPlugin extends RenderPlugin implements CallbackHandler {
 
         add(new FeedbackPanel("feedback").setEscapeModelStrings(false));
         add(new Label("pinger"));
+    }
 
-        login();
-}
-
-    protected void login() {
+    protected void login() throws LoginException {
         PluginUserSession userSession = (PluginUserSession)getSession();
         HttpSession session = ((WebRequest)getRequest()).getHttpServletRequest().getSession(true);
-        boolean success = userSession.login(new UserCredentials(this));
-        if (success) {
-            ConcurrentLoginFilter.validateSession(session, username(), false);
-        }
+        userSession.login(new UserCredentials(this));
+        ConcurrentLoginFilter.validateSession(session, username(), false);
         userSession.setLocale(new Locale(selectedLocale));
         userSession.getJcrSession();
         /* FIXME: this would be a much better solution than a refresh,
