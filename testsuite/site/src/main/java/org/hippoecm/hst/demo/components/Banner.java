@@ -39,9 +39,7 @@ public class Banner extends BaseHstComponent {
         BannerInfo paramsInfo = getParametersInfo(request);
         
         int width = paramsInfo.getBannerWidth();
-        
-        log.info("The width of the banner is '{}'", String.valueOf(width));
-        log.info("Border color of the banner is '{}",paramsInfo.getBorderColor() );
+
         request.setAttribute("borderColor",  paramsInfo.getBorderColor());
         
         String path = getComponentConfiguration().getCanonicalPath();
