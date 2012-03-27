@@ -108,6 +108,10 @@ public class CmsSecurityValve extends AbstractValve {
                 if (cmsUrl == null) {
                     throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
                 }
+                if (cmsUrl.indexOf("?") > -1) {
+                    // we do not need the query String for the cms url.
+                    cmsUrl = cmsUrl.substring(0, cmsUrl.indexOf("?"));
+                }
                 if (!cmsUrl.endsWith("/")) {
                     cmsUrl += "/";
                 }
@@ -115,19 +119,15 @@ public class CmsSecurityValve extends AbstractValve {
                 String cmsBaseUrl = getBaseUrl(cmsUrl);
                 destinationURL.append(cmsBaseUrl);
 
-                HttpServletRequest origReq = servletRequest;
                 // we append the request uri including the context path (normally this is /site/...)
-                if (origReq instanceof ServletRequestWrapper) {
-                    // we need to get the original non wrapped request, because that contains the original non-modified request URI (including
-                    // the part after the HstManager#getPathSuffixDelimiter())
-                    while (origReq instanceof ServletRequestWrapper) {
-                        origReq = (HttpServletRequest)((ServletRequestWrapper) origReq).getRequest();
-                    }
+                destinationURL.append(servletRequest.getRequestURI());
+
+                if(requestContext.getPathSuffix() != null) {
+                    String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
+                    destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
                 }
 
-                destinationURL.append(origReq.getRequestURI());
-
-                String qString =  origReq.getQueryString();
+                String qString =  servletRequest.getQueryString();
                 if(qString != null) {
                     destinationURL.append("?").append(qString);
                 }
