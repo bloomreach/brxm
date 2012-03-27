@@ -24,6 +24,7 @@ import javax.jcr.Repository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sound.midi.SysexMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -111,10 +112,14 @@ public class CmsSecurityValve extends AbstractValve {
                 if (!cmsBaseUrl.endsWith("/")) {
                     cmsBaseUrl += "/";
                 }
-                destinationURL.append(cmsBaseUrl);
+                // from the cmsBaseUrl, we now need from the referer everything up to the contextpath : Thus,
+                // scheme + host + port
+                int indexOfDoubleSlash = cmsBaseUrl.indexOf("//");
+                int indexOfRequestURI = cmsBaseUrl.substring(indexOfDoubleSlash +2).indexOf("/") + indexOfDoubleSlash +2;
+                String cmsHost = cmsBaseUrl.substring(0, indexOfRequestURI);
+                destinationURL.append(cmsHost);
                 // we append the request uri including the context path (normally this is /site/...)
-                // we need to strip the leading slash to avoid double //
-                destinationURL.append(servletRequest.getRequestURI().substring(1));
+                destinationURL.append(servletRequest.getRequestURI());
 
                 if(requestContext.getPathSuffix() != null) {
                     String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
