@@ -112,6 +112,9 @@ public class BlueprintHandler {
                     blueprint.getPrototypeChannel().setHstMountPoint(mountPoint);
                 }
             }
+            if (prototypeMount.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
+                blueprint.getPrototypeChannel().setLocale(prototypeMount.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE).getString());
+            }
         }
     }
 

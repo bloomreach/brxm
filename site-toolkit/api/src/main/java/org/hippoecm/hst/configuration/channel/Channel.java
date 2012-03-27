@@ -165,15 +165,7 @@ public class Channel {
     public String getType() {
         return this.type;
     }
-    
-    public void setRegion(String region) {
-        this.region = region;
-    }
-    
-    public String getRegion() {
-        return this.region;
-    }
-    
+
     public boolean isComposerModeEnabled() {
         return composerModeEnabled;
     }

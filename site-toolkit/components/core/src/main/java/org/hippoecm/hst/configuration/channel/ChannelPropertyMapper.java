@@ -56,10 +56,6 @@ public class ChannelPropertyMapper {
             channel.setType(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE).getString());
         }
 
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_REGION)) {
-            channel.setRegion(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_REGION).getString());
-        }
-
         if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
             String className = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS).getString();
             try {
@@ -98,11 +94,6 @@ public class ChannelPropertyMapper {
             channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE, channel.getType());
         } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE)) {
             channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE).remove();
-        }
-        if (channel.getRegion() != null) {
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_REGION, channel.getRegion());
-        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_REGION)) {
-            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_REGION).remove();
         }
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName != null) {
