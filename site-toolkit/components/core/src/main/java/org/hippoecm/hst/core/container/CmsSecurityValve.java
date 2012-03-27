@@ -181,10 +181,6 @@ public class CmsSecurityValve extends AbstractValve {
         }
     }
 
-
-    // from a url, return everything up to the contextpath : Thus,
-    // scheme + host + port
-
     /**
      * from a url, return everything up to the contextpath : Thus,
      * scheme + host + port
