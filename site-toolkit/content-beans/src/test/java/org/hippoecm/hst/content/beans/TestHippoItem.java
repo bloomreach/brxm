@@ -73,7 +73,6 @@ public class TestHippoItem  {
         set.add(sameNameDiffPath1);
         set.add(sameNameDiffPath2);
 
-        System.out.println(set.size());
         assertTrue(set.size() == 6);
 
         treeSet.add(item1);
