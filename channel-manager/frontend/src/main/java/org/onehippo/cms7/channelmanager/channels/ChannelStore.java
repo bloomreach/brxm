@@ -200,11 +200,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
         object.put("channelTypeImg", channelIconUrl);
 
-        if (StringUtils.isNotEmpty(channel.getRegion())) {
-            object.put("channelRegion", channel.getRegion());
+        if (StringUtils.isNotEmpty(channel.getLocale())) {
+            object.put("channelRegion", channel.getLocale());
             String regionIconUrl = getChannelRegionIconUrl(channelFieldValues);
             if (StringUtils.isEmpty(regionIconUrl)) {
-                regionIconUrl = getIconResourceReferenceUrl(channel.getRegion() + ".png");
+                regionIconUrl = getIconResourceReferenceUrl(channel.getLocale() + ".png");
             }
             if (StringUtils.isNotEmpty(regionIconUrl)) {
                 object.put("channelRegionImg", regionIconUrl);
