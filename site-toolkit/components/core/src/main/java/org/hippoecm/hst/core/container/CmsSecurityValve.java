@@ -108,8 +108,13 @@ public class CmsSecurityValve extends AbstractValve {
                 if (cmsBaseUrl == null) {
                     throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
                 }
+                if (!cmsBaseUrl.endsWith("/")) {
+                    cmsBaseUrl += "/";
+                }
                 destinationURL.append(cmsBaseUrl);
-                destinationURL.append(servletRequest.getRequestURI());
+                // we append the request uri including the context path (normally this is /site/...)
+                // we need to strip the leading slash to avoid double //
+                destinationURL.append(servletRequest.getRequestURI().substring(1));
 
                 if(requestContext.getPathSuffix() != null) {
                     String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
@@ -123,9 +128,6 @@ public class CmsSecurityValve extends AbstractValve {
 
                 // generate key; redirect to cms
                 try {
-                    if (!cmsBaseUrl.endsWith("/")) {
-                        cmsBaseUrl += "/";
-                    }
                     String cmsAuthUrl = cmsBaseUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
                     servletResponse.sendRedirect(cmsAuthUrl);
                 } catch (UnsupportedEncodingException e) {
