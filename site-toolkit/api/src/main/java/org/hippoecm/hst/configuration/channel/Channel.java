@@ -26,7 +26,6 @@ public class Channel {
 
     private String name;
     private String type;
-    private String region;
     private String hostname;
     private String contextPath;
     private String cmsPreviewPrefix;
@@ -74,8 +73,6 @@ public class Channel {
         this.cmsPreviewPrefix = orig.cmsPreviewPrefix;
         this.url = orig.url;
         this.type = orig.type;
-        this.region = orig.region;
-
         this.hstMountPoint = orig.hstMountPoint;
         this.hstConfigPath = orig.hstConfigPath;
         this.contentRoot = orig.contentRoot;
@@ -257,7 +254,6 @@ public class Channel {
         b.append("id=").append(id);
         b.append(",name=").append(name);
         b.append(",type=").append(type);
-        b.append(",region=").append(region);
         b.append(",url=").append(url);
         b.append(",hstConfigPath=").append(hstConfigPath);
         b.append(",contentRoot=").append(contentRoot);
