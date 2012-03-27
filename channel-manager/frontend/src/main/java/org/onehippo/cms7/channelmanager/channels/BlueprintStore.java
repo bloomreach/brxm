@@ -85,7 +85,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
             object.put(FIELD_NAME, blueprint.getName());
             object.put(FIELD_DESCRIPTION, blueprint.getDescription());
 
-            boolean hasPrototype = blueprint.hasContentPrototype();
+            boolean hasPrototype = blueprint.getHasContentPrototype();
             object.put(FIELD_HAS_CONTENT_PROTOTYPE, hasPrototype);
 
             Channel channel = blueprint.getPrototypeChannel();
