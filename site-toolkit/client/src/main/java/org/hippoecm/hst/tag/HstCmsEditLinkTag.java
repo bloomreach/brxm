@@ -109,23 +109,18 @@ public class HstCmsEditLinkTag extends TagSupport  {
             return EVAL_PAGE;
         }
         if (var == null && servletRequest.getSession(false) != null && !Boolean.TRUE.equals(servletRequest.getSession(false).getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED)) ) {
-            log.debug("Skipping cms edit html comment snippet because request in not in a SSO CMS CONTEXT.");
+            log.debug("Skipping cms edit html comment snippet because request is not in a SSO CMS CONTEXT.");
             return EVAL_PAGE;
         } 
-        
-        // cmsBaseUrl is something like : http://localhost:8080
-        String cmsBaseUrl = null;
+
         ContextualizableMount mount = (ContextualizableMount)hstRequestContext.getResolvedMount().getMount();
-        
-        if (StringUtils.isEmpty(mount.getCmsLocation())) {
-            log.warn("Using deprecated hst-config.property 'cms.location' . Configure the correct 'hst:cmslocation' property on the hst:virtualhostgroup to get rid of this warning");
-            cmsBaseUrl = hstRequestContext.getContainerConfiguration().getString(ContainerConstants.CMS_LOCATION);
-        } else {
-            cmsBaseUrl = mount.getCmsLocation();
-        }
-        
+
+
+        // cmsBaseUrl is something like : http://localhost:8080
+        String cmsBaseUrl = mount.getCmsLocation();
+
         if(cmsBaseUrl == null || "".equals(cmsBaseUrl)) {
-            log.warn("Skipping cms edit url because cms location property is not configured: Configure '{}' property in your hst-config.properties.", ContainerConstants.CMS_LOCATION);
+            log.warn("Skipping cms edit url because cms location property is not configured in hst hostgroup configuration");
             return EVAL_PAGE;
         }
         if(cmsBaseUrl.endsWith("/")) {
@@ -133,10 +128,10 @@ public class HstCmsEditLinkTag extends TagSupport  {
         }
         
         HippoNode node = (HippoNode)this.hippoBean.getNode();
-        String nodeLocation = null;
-        String nodeId = null;
+        String nodeLocation;
+        String nodeId;
         try {
-            Node editNode = (HippoNode)node.getCanonicalNode();
+            Node editNode = node.getCanonicalNode();
             if( editNode == null) {
                 log.debug("Cannot create a 'surf and edit' link for a pure virtual jcr node: '{}'", node.getPath());
                 return EVAL_PAGE;
@@ -271,7 +266,6 @@ public class HstCmsEditLinkTag extends TagSupport  {
     /**
      * Sets the var property.
      * @param var The var to set
-     * @return void
      */
     public void setVar(String var) {
         this.var = var;

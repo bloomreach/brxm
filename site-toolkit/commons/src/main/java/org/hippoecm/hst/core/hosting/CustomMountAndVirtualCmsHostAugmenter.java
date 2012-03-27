@@ -89,8 +89,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     /**
      * Every virtual hostgroup that has a hst:cmslocation property defined we try to add the correct mount for.
-     * If there is no hst:cmslocation defined on the virtual hostgroup, then we check whether there is cmslocation define by
-     * ContainerConfiguration#getString(ContainerConstants.CMS_LOCATION)  : This is a deprecated way to configure the cmslocation
      */
     @Override
     public void augment(HstManager manager) throws RepositoryNotAvailableException {

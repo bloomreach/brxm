@@ -177,8 +177,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             
             String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
             if(cmsLocation == null) {
-                log.info("VirtualHostGroup '{}' does not have a property hst:cmslocation configured. It is preferred for surf & edit and the template composer" +
-                		"that this property is configured on the hst:virtualhostgroup node.", hostGroupNode.getValueProvider().getName());
+                log.warn("VirtualHostGroup '{}' does not have a property hst:cmslocation configured.", hostGroupNode.getValueProvider().getName());
             } else {
                 try {
                     URI testLocation = new URI(cmsLocation);
