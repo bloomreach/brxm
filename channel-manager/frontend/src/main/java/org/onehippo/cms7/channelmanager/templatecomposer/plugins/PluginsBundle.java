@@ -14,7 +14,7 @@ public final class PluginsBundle {
 
     public static final String MI_FRAME_MSG = "miframe/modules/mifmsg.js";
 
-    public static final String JSONP = "jsonp/jsonp.js";
+    public static final String VTABS = "vtabs/VerticalTabPanel.js";
 
     public static final String ALL = "plugins-all.js";
 

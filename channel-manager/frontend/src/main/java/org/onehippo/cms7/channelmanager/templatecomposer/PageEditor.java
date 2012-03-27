@@ -157,6 +157,7 @@ public class PageEditor extends ExtPanel {
         }
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
+        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css"));
         add(new TemplateComposerResourceBehavior());
 
         this.channelPropertiesWindow = new ChannelPropertiesWindow(context, (ChannelStore) channelStoreFuture.getStore());

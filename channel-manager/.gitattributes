@@ -157,9 +157,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/gradient.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/wheel.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/jsonp/jsonp.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.css -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ExtLinkPicker.java -text

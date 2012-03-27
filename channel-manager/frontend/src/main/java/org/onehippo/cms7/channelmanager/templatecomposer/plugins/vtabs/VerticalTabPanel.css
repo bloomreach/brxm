@@ -1,0 +1,42 @@
+/* VrTabPanel CSS for Blue theme */
+
+/* Left Panel background */
+.x-tot2ivn-vr-tab-panel {		
+	background: #CEDFF5;	
+	border-color: #99BBE8 !important;
+}
+
+/* Left Panel */
+.x-tot2ivn-vr-tab-panel-header {
+	float: left;	
+}
+
+.x-tot2ivn-vr-tab-panel .x-tot2ivn-vr-tab-strip-spacer { visibility: hidden; }
+.x-tot2ivn-vr-tab-panel ul.x-tot2ivn-vr-tab-strip-top { border-bottom: 0; }
+
+.x-tot2ivn-vr-tab-strip-wrap{
+	border-bottom: 1px solid #aac3e5;
+}
+
+/* Right Body Panel */
+.x-tot2ivn-vr-tab-panel-bwrap {
+	border-left: 1px solid #99BBE8;
+	float: right;
+	background: #fff;	
+}
+
+/* Menu Items */
+.x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-strip-title {
+	display: inline-block;
+	float: left;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;		
+}
+
+.x-tab-strip span.x-tot2ivn-vr-tab-strip-text,
+/* Active Items. Adjust tab padding in here !! */
+.x-tab-strip-active .x-tab-right span.x-tot2ivn-vr-tab-strip-text{
+	padding-top: 7px !important;
+	padding-bottom: 7px !important;	
+}
