@@ -82,7 +82,7 @@ public class BlueprintHandler {
                 throw new ItemNotFoundException(String.format("Blueprint %s has neither a hst:configuration node prototype or a fixed hst:configurationpath", blueprint.getId()));
             }
 
-            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.hasContentPrototype()) {
+            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.getHasContentPrototype()) {
                 final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 final String docbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
 

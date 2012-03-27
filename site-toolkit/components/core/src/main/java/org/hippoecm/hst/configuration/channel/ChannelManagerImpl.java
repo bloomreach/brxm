@@ -605,7 +605,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         // first to avoid a partial save). Otherwise, we can directly use the existing content path in the channel.
         Session jcrSession = configRoot.getSession();
         Node contentRoot = jcrSession.getRootNode();
-        if (!blueprint.hasContentPrototype()) {
+        if (!blueprint.getHasContentPrototype()) {
             String channelContentRoot = channel.getContentRoot();
             if (StringUtils.isNotEmpty(channelContentRoot) && jcrSession.nodeExists(channelContentRoot)) {
                 contentRoot = jcrSession.getNode(channelContentRoot);
@@ -636,7 +636,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         // Create content if the blueprint contains a content prototype. The path of the created content node has to
         // be set on the HST site nodes.
-        if (blueprint.hasContentPrototype()) {
+        if (blueprint.getHasContentPrototype()) {
             final Node contentRootNode = createContent(blueprint, session, channelId, channel);
 
             final Node liveContentMirror = liveSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);

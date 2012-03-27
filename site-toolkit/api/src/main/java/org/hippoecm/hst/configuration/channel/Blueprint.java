@@ -108,14 +108,14 @@ public class Blueprint {
      *
      * @return <code>true</code> if a prototype exists, <code>false</code> otherwise
      */
-	public boolean hasContentPrototype() {
+	public boolean getHasContentPrototype() {
 		return hasContentPrototype;
 	}
 
 	/**
 	 * Set whether a {@link Blueprint} has content prototype or not
 	 * 
-	 * @param hasContentPrototype - The {@link Blueprint} <code>hasContentPrototype</code> flag value to set
+	 * @param hasContentPrototype - The {@link Blueprint} <code>getHasContentPrototype</code> flag value to set
 	 */
 	public void setHasContentPrototype(boolean hasContentPrototype) {
 		this.hasContentPrototype = hasContentPrototype;
