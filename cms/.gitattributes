@@ -948,6 +948,7 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog_de.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog_it.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.html svneol=native#text/plain
