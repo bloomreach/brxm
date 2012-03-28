@@ -126,6 +126,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:channel</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:channelinfoclass" sv:type="String">
+      <sv:value>org.hippoecm.hst.demo.channel.DemoChannelInfo</sv:value>
+    </sv:property>
     <sv:node sv:name="hst:channelinfo">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:channelinfo</sv:value>

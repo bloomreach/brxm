@@ -59,6 +59,8 @@ site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/
 site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
+site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
+site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
 site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain

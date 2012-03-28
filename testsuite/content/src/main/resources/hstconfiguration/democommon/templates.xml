@@ -94,7 +94,8 @@
         hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
         &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
         &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
-        hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
+        hippohtml=document.html/&gt;
+        &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;
         &lt;#if "${document.resource!}" != ""&gt;
         &lt;@hst.link var="resource"
         hippobean=document.resource /&gt; &lt;#if
