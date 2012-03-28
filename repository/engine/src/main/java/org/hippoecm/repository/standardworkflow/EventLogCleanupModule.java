@@ -197,6 +197,8 @@ public class EventLogCleanupModule implements DaemonModule {
 
     public static class EventLogCleanupJob implements Job {
 
+        private static final String DEFAULT_CLUSTER_NODE_ID = "default";
+
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
 
@@ -240,7 +242,7 @@ public class EventLogCleanupModule implements DaemonModule {
                 LockManager lockManager = session.getWorkspace().getLockManager();
                 if (!lockManager.isLocked(CONFIG_NODE_PATH)) {
                     try {
-                        lockManager.lock(CONFIG_NODE_PATH, false, true, ONE_WEEK, null);
+                        lockManager.lock(CONFIG_NODE_PATH, false, false, ONE_WEEK, getClusterNodeId(session));
                         return true;
                     } catch (LockException e) {
                         log.warn("Failed to obtain lock: " + e.getMessage() + ". Event log cleanup will not run");
@@ -330,6 +332,14 @@ public class EventLogCleanupModule implements DaemonModule {
                     log.info("No timed out items: no cleanup needed");
                 }
             }
+        }
+
+        private String getClusterNodeId(Session session) {
+            String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+            if (clusteNodeId == null) {
+                clusteNodeId = DEFAULT_CLUSTER_NODE_ID;
+            }
+            return clusteNodeId;
         }
     }
 
