@@ -17,7 +17,7 @@ public class ManagerServiceFactory {
         if(service == null) {
             try {
                 if(jcrSession instanceof HippoSession) {
-                    Class<? extends ManagerService> managerServiceFactory = Class.forName("org.onehippo.repository.remoteHippoManagerServiceImpl").asSubclass(ManagerService.class);
+                    Class<? extends ManagerService> managerServiceFactory = Class.forName("org.onehippo.repository.remote.HippoManagerServiceImpl").asSubclass(ManagerService.class);
                     service = managerServiceFactory.getConstructor(new Class[] {HippoSession.class}).newInstance(new Object[] {jcrSession});
                 } else if (Class.forName("org.apache.jackrabbit.rmi.client.ClientSession").isInstance(jcrSession)) {
                     String managerAddress = jcrSession.getRepository().getDescriptor("manager");
