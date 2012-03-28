@@ -60,7 +60,6 @@ site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#te
 site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
-site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
 site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
@@ -130,6 +129,7 @@ site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -
 site/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
 site/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
 site/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
+site/src/main/resources/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
 site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
 site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.properties -text
 site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.html -text
