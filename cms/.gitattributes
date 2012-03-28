@@ -1254,6 +1254,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/rename-16.pn
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/workflow/where-used-16.png -text svneol=unset#unset
 editor/pom.xml -text
 editor/repository/pom.xml -text
+editor/repository/src/main/resources/cms-validators_de.xml -text
 editor/repository/src/main/resources/committype-workflows.xml -text
 editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
 editor/repository/src/main/resources/default-workflows.xml svneol=native#text/plain
