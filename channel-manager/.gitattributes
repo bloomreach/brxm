@@ -181,8 +181,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_fr
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JsonUtil.java -text
-frontend/src/main/java/org/onehippo/cms7/marketing/MarketingPerspective_de.properties -text
-frontend/src/main/java/org/onehippo/cms7/marketing/personas/PersonaManagerPanel_de.properties -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtilTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.java -text
