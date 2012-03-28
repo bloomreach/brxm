@@ -17,6 +17,11 @@ package org.hippoecm.hst.core.container;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * NoContentValve 
  * When this valve is used, it does not make sense to also have valves that write content to the {@link HttpServletResponse}
@@ -24,10 +29,17 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class NoContentValve implements Valve {
 
+    private final static Logger log = LoggerFactory.getLogger(NoContentValve.class);
+
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
         HttpServletResponse servletResponse = context.getServletResponse();
+        String url = HstRequestUtils.getFarthestRequestHost(context.getServletRequest()) +  context.getServletRequest().getRequestURI();
+        if (!StringUtils.isEmpty(context.getServletRequest().getQueryString())) {
+            url += "?" + context.getServletRequest().getQueryString();
+        }
+        log.warn("Return HttpServletResponse.SC_NO_CONTENT (204) because NoopPipeline was invoked for request {}", url);
         servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
         context.invokeNext();
     }
