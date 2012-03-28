@@ -62,7 +62,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelStore_nl
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/DefaultChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/LocaleResolver.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtil.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/cn_ZH.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/de_DE.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/en_US.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/es_ES.png -text
@@ -78,6 +77,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ru_RU.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-collapsed.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-expanded.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/zh_CN.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/future.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
