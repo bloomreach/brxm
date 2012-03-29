@@ -28,7 +28,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
             };
 
             this.stores = {
-                toolkit : oldContext.stores.toolkit,
                 pageModel : oldContext.stores.pageModel
             };
             this.hasPreviewHstConfig = oldContext.hasPreviewHstConfig;
@@ -88,17 +87,13 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     _initToolkitStore : function(mountId) {
-        if (this.ids.mountId === mountId) {
-            return new Hippo.Future(function(onSuccess) {
-                onSuccess(this.stores.toolkit);
-            }.createDelegate(this));
+        if (this.ids.mountId !== mountId) {
+            this.fireEvent('mountChanged', {
+                oldMountId: this.mountId,
+                mountId: mountId,
+                previewMode: this.previewMode
+            });
         }
-
-        this.fireEvent('mountChanged', {
-            oldMountId: this.mountId,
-            mountId: mountId,
-            previewMode: this.previewMode
-        });
 
         this.ids.mountId = mountId;
         this.ids.pageId = null;
