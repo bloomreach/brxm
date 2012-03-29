@@ -27,13 +27,13 @@ public class InvalidLoginPage extends PluginPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private final static String DEFAULT_KEY = "invalid.login";
-    private final static Map<LoginException.CAUSE, String> causeKeys;
+    private final static Map<String, String> causeKeys;
 
     static {
-        causeKeys = new HashMap<LoginException.CAUSE, String>(2);
-        causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS, "invalid.login");
-        causeKeys.put(LoginException.CAUSE.ACCESS_DENIED, "access.denied");
-        causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR, "repository.error");
+        causeKeys = new HashMap<String, String>(3);
+        causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
+        causeKeys.put(LoginException.CAUSE.ACCESS_DENIED.name(), "access.denied");
+        causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR.name(), "repository.error");
     }
 
     public InvalidLoginPage(final PageParameters parameters) {
@@ -41,10 +41,10 @@ public class InvalidLoginPage extends PluginPage {
         String key = DEFAULT_KEY;
 
         if (parameters != null) {
-            Object loginException = (LoginException) parameters.get(LoginException.class.getName());
-            
-            if ((loginException != null) && (loginException instanceof LoginException)) {
-                key = causeKeys.get(((LoginException) loginException).getLoginExceptionCause());
+            Object loginExceptionCause = parameters.get(LoginException.CAUSE.class.getName());
+
+            if ((loginExceptionCause != null) && (loginExceptionCause instanceof String)) {
+                key = causeKeys.get(loginExceptionCause);
                 key = StringUtils.isNotBlank(key) ? key : DEFAULT_KEY;
             }
 

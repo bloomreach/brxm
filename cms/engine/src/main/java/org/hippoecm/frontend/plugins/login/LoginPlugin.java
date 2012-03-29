@@ -76,7 +76,7 @@ public class LoginPlugin extends RenderPlugin {
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
 
     private static final String ERROR_MESSAGE_LOGIN_FAILURE = "Login failure!";
-    private static final String PAGE_PARAMS_KEY_LOGIN_EXCEPTION = LoginException.class.getName();
+    private static final String PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE = LoginException.CAUSE.class.getName();
 
     public static final String DEFAULT_LOCALE = "en";
 
@@ -240,7 +240,7 @@ public class LoginPlugin extends RenderPlugin {
             try {
                 userSession.login(new UserCredentials(this));
             } catch (LoginException le) {
-                log.error(ERROR_MESSAGE_LOGIN_FAILURE, le);
+                log.debug(ERROR_MESSAGE_LOGIN_FAILURE, le);
                 success = false;
                 loginExceptionPageParameters = buildPageParameters(le);
             }
@@ -263,9 +263,9 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         protected PageParameters buildPageParameters(LoginException le) {
-            Map<String, LoginException> pageParameters = new HashMap<String, LoginException>(1);
+            Map<String, String> pageParameters = new HashMap<String, String>(1);
             
-            pageParameters.put(PAGE_PARAMS_KEY_LOGIN_EXCEPTION, le);
+            pageParameters.put(PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE, le.getLoginExceptionCause().name());
             return new PageParameters(pageParameters);
         }
 
