@@ -26,6 +26,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     locale : null,
     componentId : null,
     silent : true,
+    allVariantsStore: null,
 
     constructor : function (config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -33,6 +34,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.mountId = config.mountId;
         this.resources = config.resources;
         this.locale = config.locale;
+
+        this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+            composerRestMountUrl: this.composerRestMountUrl,
+            variantsUuid: this.variantsUuid
+        });
 
         config = Ext.apply(config, { activeTab : 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
@@ -43,7 +49,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
 
         this.on('tabchange', function (panel, tab) {
             if (!this.silent && tab) {
-                this.fireEvent('variantChange', tab.componentId, tab.variant);
+                this.fireEvent('variantChange', tab.componentId, tab.variant ? tab.variant.id : undefined);
             }
         }, this);
     },
@@ -56,27 +62,41 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.silent = true;
         this.beginUpdate();
         this.removeAll();
-        this._loadVariantStore().when(function () {
-            this._initTabs();
-            this._selectTabByVariant(variant);
 
-            var tab = this.getActiveTab();
-            this.fireEvent('variantChange', tab.componentId, tab.variant);
-            this.silent = false;
+        this._loadAllVariantsStore().when(function() {
+            this._loadVariantStore().when(function () {
+                this._initTabs();
+                this._selectTabByVariant(variant);
 
-            var futures = [];
-            this.items.each(function (item) {
-                futures.push(item.load());
-            }, this);
+                var tab = this.getActiveTab();
+                this.fireEvent('variantChange', tab.componentId, tab.variant.id);
+                this.silent = false;
 
-            Hippo.Future.join(futures).when(function () {
-                this.endUpdate();
+                var futures = [];
+                this.items.each(function (item) {
+                    futures.push(item.load());
+                }, this);
+
+                Hippo.Future.join(futures).when(function () {
+                    this.endUpdate();
+                }.createDelegate(this)).otherwise(function () {
+                    this.endUpdate();
+                }.createDelegate(this));
             }.createDelegate(this)).otherwise(function () {
                 this.endUpdate();
+                this.silent = false;
             }.createDelegate(this));
-        }.createDelegate(this)).otherwise(function () {
+        }.createDelegate(this)).otherwise(function() {
             this.endUpdate();
             this.silent = false;
+        }.createDelegate(this));
+    },
+
+    _loadAllVariantsStore: function() {
+        return new Hippo.Future(function (success, fail) {
+            this.allVariantsStore.on('load', success, {single : true});
+            this.allVariantsStore.on('exception', fail, {single : true});
+            this.allVariantsStore.load();
         }.createDelegate(this));
     },
 
@@ -97,7 +117,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     scope : this
                 });
             } else {
-                this.variants = ['default'];
+                this.variants = [{id: 'default', name: 'Default'}];
                 success();
             }
         }.createDelegate(this));
@@ -106,20 +126,23 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     _loadVariants : function (records) {
         this.variants = [];
         for (var i = 0; i < records.length; i++) {
-            this.variants.push(records[i]);
+            var id = records[i];
+            var record = this.allVariantsStore.getById(id);
+            var name = record ? record.get('name') : id;
+            this.variants.push({ id: id, name: name});
         }
-        this.variants.push('plus');
+        this.variants.push({id: 'plus', name: '+'});
     },
 
     _loadException : function (response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only default variant will be available: ' + response.status + ':' + response.statusText);
-        this.variants = ['default'];
+        this.variants = [{id: 'default', name: 'Default'}];
     },
 
     _initTabs : function () {
         for (var i = 0; i < this.variants.length; i++) {
             var form;
-            if ('plus' == this.variants[i]) {
+            if ('plus' == this.variants[i].id) {
                 form = new Hippo.ChannelManager.TemplateComposer.PlusForm({
                     mountId : this.mountId,
                     composerRestMountUrl : this.composerRestMountUrl,
@@ -127,6 +150,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     locale : this.locale,
                     componentId : this.componentId,
                     variants : this.variants,
+                    title: this.variants[i].name,
                     variantsUuid : this.variantsUuid,
                     listeners : {
                         'save' : function (tab, variant) {
@@ -138,6 +162,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             } else {
                 form = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
                     variant : this.variants[i],
+                    title: this.variants[i].name,
                     mountId : this.mountId,
                     composerRestMountUrl : this.composerRestMountUrl,
                     resources : this.resources,
@@ -158,7 +183,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
 
     _selectTabByVariant : function (variant) {
         for (var i = 0; i < this.variants.length; i++) {
-            if (this.variants[i] == variant) {
+            if (this.variants[i].id == variant) {
                 this.setActiveTab(i);
                 return;
             }
@@ -176,45 +201,23 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
     locale : null,
 
     constructor : function (config) {
-        this.title = '<span style="font-size: +3; font-weight: bold">+</span>';
+        this.title = '<span style="font-size: 140%;">' + config.title + '</span>';
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.resources = config.resources;
         this.locale = config.locale;
         this.componentId = config.componentId;
-        this.variants = config.variants;
         this.variantsUuid = config.variantsUuid;
 
-        var self = this;
-        var reader = new Ext.data.JsonReader({
-            root : 'data',
-            fields : ['id', 'name', 'description']
-        });
-        reader.readRecords = function (o) {
-            var result = Ext.data.JsonReader.prototype.readRecords.call(this, o);
-            var records = [];
-            if (result.success) {
-                for (var i = 0; i < result.records.length; i++) {
-                    var record = result.records[i];
-                    if (self.variants.indexOf(record.get('id')) < 0) {
-                        records.push(record);
-                    }
-                }
-            }
-
-            return {
-                success : result.success,
-                records : records,
-                totalRecords : records.length
-            };
+        var variantIds = [];
+        for (var i = 0; i < config.variants.length; i++) {
+            variantIds.push(config.variants[i].id);
         };
-        this.variantsStore = new Ext.data.Store({
-            autoLoad : false,
-            reader : reader,
-            proxy : new Ext.data.HttpProxy({
-                method : 'GET',
-                url : this.composerRestMountUrl + '/' + this.variantsUuid + './variants/?FORCE_CLIENT_HOST=true'
-            })
+
+        this.variantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+            composerRestMountUrl: this.composerRestMountUrl,
+            skipIds: variantIds,
+            variantsUuid: this.variantsUuid
         });
 
         Hippo.ChannelManager.TemplateComposer.PlusForm.superclass.constructor.call(this, config);
@@ -273,6 +276,50 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
     }
 });
 
+Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
+
+    constructor : function(config) {
+        var self = this;
+
+        this.skipIds = config.skipIds || [];
+
+        var proxy = new Ext.data.HttpProxy({
+            api: {
+                read: config.composerRestMountUrl + '/' + config.variantsUuid + './variants/?FORCE_CLIENT_HOST=true',
+                create: '#',
+                update: '#',
+                destroy: '#'
+            }
+        });
+
+        Ext.apply(config, {
+            id: 'VariantsStore',
+            proxy: proxy,
+            prototypeRecord :  [
+                {name: 'id' },
+                {name: 'name' },
+                {name: 'description' }
+            ],
+            sortInfo: {
+                field: 'name',
+                direction: 'ASC'
+            },
+            listeners: {
+                load: function(store, records, options) {
+                    for (var i = 0; i < records.length; i++) {
+                        if (self.skipIds.indexOf(records[i].get('id')) >= 0) {
+                            store.remove(records[i]);
+                        }
+                    }
+                }
+            }
+        });
+
+        Hippo.ChannelManager.TemplateComposer.VariantsStore.superclass.constructor.call(this, config);
+    }
+
+});
+
 Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
     mountId : null,
     variant : null,
@@ -295,15 +342,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
     initComponent : function () {
         var buttons = [];
-        if (this.variant != 'default') {
+        if (this.variant.id != 'default') {
             buttons.push({
                 text : 'delete',
                 handler : function () {
                     Ext.Ajax.request({
                         method : 'POST',
-                        url : this.composerRestMountUrl + '/' + this.componentId + './variant/delete/' + this.variant + '?FORCE_CLIENT_HOST=true',
+                        url : this.composerRestMountUrl + '/' + this.componentId + './variant/delete/' + this.variant.id + '?FORCE_CLIENT_HOST=true',
                         success : function () {
-                            this.fireEvent('delete', this, this.variant);
+                            this.fireEvent('delete', this, this.variant.id);
                         },
                         scope : this
                     });
@@ -357,11 +404,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             headers : {
                 'FORCE_CLIENT_HOST' : 'true'
             },
-            url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant + '?FORCE_CLIENT_HOST=true',
+            url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant.id + '?FORCE_CLIENT_HOST=true',
             method : 'POST',
             success : function () {
-                Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant);
-                Ext.getCmp('componentPropertiesPanel').load(this.variant);
+                Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
+                Ext.getCmp('componentPropertiesPanel').load(this.variant.id);
             }.bind(this)
         });
     },
@@ -556,7 +603,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 method : 'GET',
                 root : 'properties',
                 fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue' ],
-                url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant + '?FORCE_CLIENT_HOST=true'
+                url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
             });
 
             componentPropertiesStore.on('load', function () {

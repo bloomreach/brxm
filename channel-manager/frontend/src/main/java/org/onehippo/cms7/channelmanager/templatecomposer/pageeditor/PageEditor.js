@@ -341,9 +341,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         cancel: function() {
                             window1.hide();
                         },
-                        variantChange: function(id, variant) {
+                        variantChange: function(id, variantId) {
                             if (id != null) {
-                                this.selectVariant(id, variant);
+                                this.selectVariant(id, variantId);
                             }
                         },
                         scope: this
