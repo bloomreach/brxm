@@ -240,6 +240,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                     },
                     url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
                     success: function () {
+                        // reset pageContext, the page and toolkit stores must be reloaded
+                        self.pageContext = null;
                         // refresh iframe to get new hst config uuids. previewMode=false will initialize
                         // the editor for editing with the refresh
                         self.refreshIframe.call(self, null);
