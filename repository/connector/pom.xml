@@ -23,7 +23,6 @@
 
   <name>Repository Connector</name>
   <description>Hippo Repository Connector</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-connector</artifactId>
   <packaging>jar</packaging>
 

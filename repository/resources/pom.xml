@@ -23,7 +23,6 @@
 
   <name>Repository Resources</name>
   <description>Hippo Repository Web Application Resources</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-resources</artifactId>
   <packaging>war</packaging>
 

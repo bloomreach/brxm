@@ -17,9 +17,7 @@
 
   <name>Repository Checker Application</name>
   <description>Hippo Repository Consistency Checker Application</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-checker-app</artifactId>
-  <version>2.23.02-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <parent>
@@ -77,12 +75,10 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
-      <version>2.2.10</version>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>2.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -125,19 +121,16 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
@@ -181,7 +174,6 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
         <configuration>
           <fork>true</fork>
           <meminitial>128m</meminitial>
@@ -194,7 +186,6 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.2</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -208,13 +199,11 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.5</version>
       </plugin>
-      <plugin>      
+      <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-remote-resources-plugin</artifactId>
-        <version>1.1</version>  
         <executions>
           <execution>
             <goals>
@@ -232,7 +221,6 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.1</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -256,7 +244,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
         <inherited>true</inherited>
         <configuration>
           <archive>

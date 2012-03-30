@@ -23,7 +23,6 @@
 
   <name>Repository Utilities</name>
   <description>Hippo Repository Generic JCR Utilities</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-utilities</artifactId>
   <packaging>jar</packaging>
 

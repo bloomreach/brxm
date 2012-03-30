@@ -23,7 +23,6 @@
 
   <name>Repository Test</name>
   <description>Hippo Repository Test</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-test</artifactId>
   <packaging>jar</packaging>
 
@@ -31,12 +30,10 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
-      <version>${hippo.commons.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
-      <version>${hippo.services.version}</version>
     </dependency>
 
     <dependency>
@@ -125,6 +122,48 @@
 
   <build>
     <defaultGoal>test</defaultGoal>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+            <additionalBuildcommands>
+              <buildCommand>
+                <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
+              </buildCommand>
+            </additionalBuildcommands>
+            <additionalProjectnatures>
+              <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
+            </additionalProjectnatures>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.datanucleus</groupId>
+                    <artifactId>maven-datanucleus-plugin</artifactId>
+                    <versionRange>[2.2.1,)</versionRange>
+                    <goals>
+                      <goal>enhance</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

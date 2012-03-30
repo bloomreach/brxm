@@ -23,7 +23,6 @@
 
   <name>Repository LDAP based Authorization</name>
   <description>Hippo Repository LDAP-based authorization add-on</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-ldap</artifactId>
   <packaging>jar</packaging>
   

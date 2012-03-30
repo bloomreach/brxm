@@ -23,7 +23,6 @@
 
   <name>Repository Servlets</name>
   <description>Hippo Repository Servlets</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-servlets</artifactId>
   <packaging>jar</packaging>
 

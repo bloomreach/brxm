@@ -23,7 +23,6 @@
 
   <name>Repository Application</name>
   <description>Hippo Repository Application</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-application</artifactId>
   <packaging>war</packaging>
 

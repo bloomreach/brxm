@@ -21,7 +21,6 @@
     <version>2.23.02-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-tools-documentation</artifactId>
   <name>Repository Documentation tools</name>
   <description>Hippo Repository Documentation Tools</description>

@@ -23,7 +23,6 @@
 
   <name>Repository Engine</name>
   <description>Hippo Repository Engine</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-engine</artifactId>
   <packaging>jar</packaging>
 
@@ -87,7 +86,6 @@
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
-      <version>${quartz.version}</version>
       <exclusions>
         <exclusion>
           <groupId>javax.transaction</groupId>
@@ -132,19 +130,16 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
-      <version>10.8.1.2</version>
     </dependency>
 
     <!-- Testing needs a JTA implementation -->

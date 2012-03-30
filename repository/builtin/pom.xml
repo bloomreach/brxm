@@ -23,7 +23,6 @@
 
   <name>Repository Builtin workflow</name>
   <description>Hippo Repository builtin workflow API package</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-builtin</artifactId>
   <packaging>jar</packaging>
 

@@ -23,7 +23,6 @@
 
   <name>Repository Modules</name>
   <description>Hippo Repository Modules</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-modules</artifactId>
   <packaging>jar</packaging>
 

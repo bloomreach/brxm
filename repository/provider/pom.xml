@@ -23,7 +23,6 @@
 
   <name>Repository Provider Module Interface</name>
   <description>Hippo Repository Data Provider Module Interface</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-provider</artifactId>
   <packaging>jar</packaging>
 

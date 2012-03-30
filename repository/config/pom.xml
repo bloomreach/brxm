@@ -24,19 +24,16 @@
   <name>Repository Default Configuration</name>
   <description>Hippo Repository default configuration</description>
   <artifactId>hippo-repository-config</artifactId>
-  <groupId>org.onehippo.cms7</groupId>
   <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
-      <version>${hippo.commons.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
-      <version>${hippo.services.version}</version>
     </dependency>
 
     <dependency>

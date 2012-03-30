@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2008 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +24,6 @@
 
   <name>Repository API</name>
   <description>Hippo Repository specific extensions to the JCR API</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-api</artifactId>
 
   <dependencies>
@@ -58,6 +58,30 @@
             <additionalProjectnatures>
               <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
             </additionalProjectnatures>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.datanucleus</groupId>
+                    <artifactId>maven-datanucleus-plugin</artifactId>
+                    <versionRange>[2.2.1,)</versionRange>
+                    <goals>
+                      <goal>enhance</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
           </configuration>
         </plugin>
       </plugins>

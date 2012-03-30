@@ -23,7 +23,6 @@
 
   <name>Repository Upgrade Module</name>
   <description>Hippo Repository Upgrade Module</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-upgrade</artifactId>
   <packaging>jar</packaging>
 

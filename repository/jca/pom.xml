@@ -23,7 +23,6 @@
 
   <name>Repository JCA</name>
   <description>Hippo Repository Adapter</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-jca</artifactId>
   <packaging>rar</packaging>
   <build>
@@ -96,25 +95,21 @@
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-api</artifactId>
-      <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions-jta</artifactId>
-      <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>transactions</artifactId>
-      <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.atomikos</groupId>
       <artifactId>atomikos-util</artifactId>
-      <version>${atomikos.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
