@@ -226,5 +226,17 @@
       <sv:value>readwrite</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="read-authrole">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:authrole</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:groups" sv:type="String">
+      <sv:value>everybody</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:role" sv:type="String">
+      <sv:value>readonly</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
 
