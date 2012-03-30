@@ -23,7 +23,6 @@
 
   <name>Repository Dependencies</name>
   <description>Hippo Repository Dependencies</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-dependencies</artifactId>
   <packaging>pom</packaging>
 

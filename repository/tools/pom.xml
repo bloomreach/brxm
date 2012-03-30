@@ -23,7 +23,6 @@
 
   <name>Repository Tools</name>
   <description>Hippo Repository Tools</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-repository-tools</artifactId>
   <packaging>pom</packaging>
 
