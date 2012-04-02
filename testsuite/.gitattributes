@@ -1,10 +1,8 @@
 * text=auto !eol
 /README.txt -text svneol=unset#text/plain
-api/hippo-testsuite-api.iml -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/MatrixOperator.java -text
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/RandomGenerator.java -text
-cms/hippo-testsuite-cms.iml -text
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
 conf/context.xml -text
@@ -60,7 +58,6 @@ linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/Ma
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/base.xml -text
 /pom.xml svneol=native#text/plain
-random-numbers/hippo-testsuite-random-numbers.iml -text
 random-numbers/pom.xml -text
 random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/RandomGeneratorImpl.java -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
