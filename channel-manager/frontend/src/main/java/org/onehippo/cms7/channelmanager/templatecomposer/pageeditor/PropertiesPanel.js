@@ -344,7 +344,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         var buttons = [];
         if (this.variant.id != 'default') {
             buttons.push({
-                text : 'delete',
+                text : this.resources['properties-panel-button-delete'],
                 handler : function () {
                     Ext.Ajax.request({
                         method : 'POST',
