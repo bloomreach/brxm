@@ -44,30 +44,30 @@ public class TestSpringComponentManagerWithAddonModules {
         // build and add analytics module definition
         ModuleDefinition def1 = new ModuleDefinition();
         def1.setName("org.example.analytics");
-        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics/*.xml"));
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
         // build and add analytics/reports module definition
         ModuleDefinition def11 = new ModuleDefinition();
         def11.setName("reports");
-        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics/reports/*.xml"));
+        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
         // build and add analytics/statistics module definition
         ModuleDefinition def12 = new ModuleDefinition();
         def12.setName("statistics");
-        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics/statistics/*.xml"));
+        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
         def1.setModuleDefinitions(Arrays.asList(def11, def12));
         addonModuleDefs.add(def1);
         
         // build and add analytics2 module definition 
         ModuleDefinition def2 = new ModuleDefinition();
         def2.setName("org.example.analytics2");
-        def2.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/*.xml"));
+        def2.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/*.xml"));
         // build and add analytics2/reports module definition
         ModuleDefinition def21 = new ModuleDefinition();
         def21.setName("reports");
-        def21.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/reports/*.xml"));
+        def21.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/reports/*.xml"));
         // build and add analytics2/statistics module definition
         ModuleDefinition def22 = new ModuleDefinition();
         def22.setName("statistics");
-        def22.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/statistics/*.xml"));
+        def22.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/statistics/*.xml"));
         def2.setModuleDefinitions(Arrays.asList(def21, def22));
         addonModuleDefs.add(def2);
         

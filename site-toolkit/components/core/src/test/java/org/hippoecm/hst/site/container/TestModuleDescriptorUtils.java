@@ -42,7 +42,7 @@ public class TestModuleDescriptorUtils {
         List<String> configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml",
                 configLocations.get(0));
         
         List<ModuleDefinition> children = moduleDef.getModuleDefinitions();
@@ -56,7 +56,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/reports/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml",
                 configLocations.get(0));
         
         moduleDef = findModuleDefinitionByName(children, "statistics");
@@ -66,7 +66,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/statistics/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml",
                 configLocations.get(0));
     }
     
@@ -89,7 +89,7 @@ public class TestModuleDescriptorUtils {
         List<String> configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml",
                 configLocations.get(0));
         
         List<ModuleDefinition> children = moduleDef.getModuleDefinitions();
@@ -103,7 +103,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/reports/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml",
                 configLocations.get(0));
         
         moduleDef = findModuleDefinitionByName(children, "statistics");
@@ -113,7 +113,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics/statistics/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml",
                 configLocations.get(0));
 
         
@@ -126,7 +126,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/*.xml",
                 configLocations.get(0));
         
         children = moduleDef.getModuleDefinitions();
@@ -140,7 +140,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/reports/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/reports/*.xml",
                 configLocations.get(0));
         
         moduleDef = findModuleDefinitionByName(children, "statistics");
@@ -150,7 +150,7 @@ public class TestModuleDescriptorUtils {
         configLocations = moduleDef.getConfigLocations();
         assertNotNull(configLocations);
         assertEquals(1, configLocations.size());
-        assertEquals("classpath*:META-INF/hst-assembly/addon/org.example.analytics2/statistics/*.xml", 
+        assertEquals("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/statistics/*.xml",
                 configLocations.get(0));
     }
     
