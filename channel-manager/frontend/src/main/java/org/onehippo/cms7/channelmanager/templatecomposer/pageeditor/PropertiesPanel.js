@@ -35,10 +35,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.resources = config.resources;
         this.locale = config.locale;
 
-        this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
-            composerRestMountUrl: this.composerRestMountUrl,
-            variantsUuid: this.variantsUuid
-        });
+        if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
+            this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+                composerRestMountUrl: this.composerRestMountUrl,
+                variantsUuid: this.variantsUuid
+            });
+        }
 
         config = Ext.apply(config, { activeTab : 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
@@ -63,33 +65,45 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.beginUpdate();
         this.removeAll();
 
-        this._loadAllVariantsStore().when(function() {
-            this._loadVariantStore().when(function () {
-                this._initTabs();
-                this._selectTabByVariant(variant);
+        var loadVariantTabs = function() {
+            this._initTabs();
+            this._selectTabByVariant(variant);
 
-                var tab = this.getActiveTab();
-                this.fireEvent('variantChange', tab.componentId, tab.variant.id);
-                this.silent = false;
+            var tab = this.getActiveTab();
+            this.fireEvent('variantChange', tab.componentId, tab.variant.id);
+            this.silent = false;
 
-                var futures = [];
-                this.items.each(function (item) {
-                    futures.push(item.load());
-                }, this);
+            var futures = [];
+            this.items.each(function (item) {
+                futures.push(item.load());
+            }, this);
 
-                Hippo.Future.join(futures).when(function () {
-                    this.endUpdate();
+            Hippo.Future.join(futures).when(function () {
+                this.endUpdate();
+            }.createDelegate(this)).otherwise(function () {
+                this.endUpdate();
+            }.createDelegate(this));
+        }.createDelegate(this);
+
+        if (typeof(this.variantsUuid) === 'undefined' || this.variantsUuid === null) {
+            this.variants = [{id: 'default', name: 'Default'}];
+            this._hideTabs();
+            loadVariantTabs();
+        } else {
+            this._showTabs();
+            this._loadAllVariantsStore().when(function() {
+                this._loadVariantStore().when(function () {
+                    this._showTabs();
+                    loadVariantTabs();
                 }.createDelegate(this)).otherwise(function () {
                     this.endUpdate();
+                    this.silent = false;
                 }.createDelegate(this));
-            }.createDelegate(this)).otherwise(function () {
+            }.createDelegate(this)).otherwise(function() {
                 this.endUpdate();
                 this.silent = false;
             }.createDelegate(this));
-        }.createDelegate(this)).otherwise(function() {
-            this.endUpdate();
-            this.silent = false;
-        }.createDelegate(this));
+        }
     },
 
     _loadAllVariantsStore: function() {
@@ -184,6 +198,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             this.relayEvents(form, ['cancel']);
             this.add(form);
         }
+    },
+
+    _hideTabs : function() {
+        this.tabWidth = 0;
+    },
+
+    _showTabs : function() {
+        this.tabWidth = 130;
     },
 
     _selectTabByVariant : function (variant) {
