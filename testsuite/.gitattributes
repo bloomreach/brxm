@@ -1,5 +1,10 @@
 * text=auto !eol
 /README.txt -text svneol=unset#text/plain
+api/hippo-testsuite-api.iml -text
+api/pom.xml -text
+api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/MatrixOperator.java -text
+api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/RandomGenerator.java -text
+cms/hippo-testsuite-cms.iml -text
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
 conf/context.xml -text
@@ -49,7 +54,17 @@ content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=u
 content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-editor.xml -text svneol=unset#text/plain
 content/src/main/resources/security/user-siteuser.xml -text svneol=unset#text/plain
+linear-algebra/hippo-testsuite-linear-algebra.iml -text
+linear-algebra/pom.xml -text
+linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MatrixOperatorImpl.java -text
+linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+linear-algebra/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/base.xml -text
 /pom.xml svneol=native#text/plain
+random-numbers/hippo-testsuite-random-numbers.iml -text
+random-numbers/pom.xml -text
+random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/RandomGeneratorImpl.java -text
+random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+random-numbers/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/randomnumbers/base.xml -text
 site/pom.xml svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
@@ -63,6 +78,7 @@ site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
 site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/Algebra.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/BannerInfo.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/Block.java -text
@@ -150,6 +166,7 @@ site/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=un
 site/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/algebra.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/archive.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/banner.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/block.jsp -text

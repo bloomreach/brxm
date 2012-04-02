@@ -72,7 +72,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-content</artifactId>
-      <version>1.03.02-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     
     <!--  Gallery picker dependency -->

@@ -39,7 +39,9 @@
     <junit.version>4.8.2</junit.version>
 
     <freemarker.version>2.3.18</freemarker.version>
-    
+
+    <commons-math.version>2.2</commons-math.version>
+
     <filesync.override>false</filesync.override>
      
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
@@ -91,6 +93,12 @@
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-math</artifactId>
+        <version>${commons-math.version}</version>
       </dependency>
 
       <dependency>
@@ -177,6 +185,12 @@
         </property>
       </activation>
       <modules>
+        <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
+        modules, also see HSTTWO-2038 -->
+        <module>api</module>
+        <module>random-numbers</module>
+        <module>linear-algebra</module>
+        <!-- End Add-on component context -->
         <module>content</module>
         <module>cms</module>
         <module>site</module>

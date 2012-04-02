@@ -16,194 +16,203 @@
 
 -->
 <sv:node sv:name="hst:sitemenus" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemenus</sv:value>
+  </sv:property>
+  <sv:node sv:name="main">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenus</sv:value>
+      <sv:value>hst:sitemenu</sv:value>
     </sv:property>
-    <sv:node sv:name="main">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenu</sv:value>
-        </sv:property>
-        <sv:node sv:name="Home">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>home</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="French Home by path">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>accueil</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:mountalias" sv:type="String">
-              <sv:value>fr_site</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="French Home by id">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <!-- The french sitemap home item contains hst:refId = homeId hence home should also work -->
-                <sv:value>homeId</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:mountalias" sv:type="String">
-              <sv:value>fr_site</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="About">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>about</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Mashup">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemenuitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-            <sv:value>mashup</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="News">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>news</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="News1">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>news1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="News2">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>news2</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="NewsCtxOnly">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>newsctxonly/foo/bar</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Products">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>products</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Search">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>search</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Wikipedia">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>wikipedia</sv:value>
-            </sv:property>
-            <sv:node sv:name="Archive">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>wikipedia/archive</sv:value>
-            </sv:property>
-        </sv:node>
-        </sv:node>
-        <sv:node sv:name="Form Component Example">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>form</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Faceted">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>faceted</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:depth" sv:type="Long">
-                <sv:value>1</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:repobased" sv:type="Boolean">
-                <sv:value>true</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Contact-Spring">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>contact-spring</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Contact-Dispatch">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>contact-dispatch</sv:value>
-            </sv:property>
-        </sv:node>
-        <sv:node sv:name="Contact-SpringMVC">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:sitemenuitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-                <sv:value>contact-springmvc</sv:value>
-            </sv:property>
-        </sv:node>
+    <sv:node sv:name="Home">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>home</sv:value>
+      </sv:property>
     </sv:node>
-    
+    <sv:node sv:name="French Home by path">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>accueil</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:mountalias" sv:type="String">
+        <sv:value>fr_site</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="French Home by id">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <!-- The french sitemap home item contains hst:refId = homeId hence home should also work -->
+        <sv:value>homeId</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:mountalias" sv:type="String">
+        <sv:value>fr_site</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="About">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>about</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Mashup">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>mashup</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="News">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>news</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="News1">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>news1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="News2">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>news2</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="NewsCtxOnly">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>newsctxonly/foo/bar</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Products">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>products</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Search">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>search</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Wikipedia">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>wikipedia</sv:value>
+      </sv:property>
+      <sv:node sv:name="Archive">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemenuitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+          <sv:value>wikipedia/archive</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="Form Component Example">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>form</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Faceted">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>faceted</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Contact-Spring">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>contact-spring</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Contact-Dispatch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>contact-dispatch</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Contact-SpringMVC">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>contact-springmvc</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="Algebra">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>algebra</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
 </sv:node>

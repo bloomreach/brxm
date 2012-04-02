@@ -290,4 +290,12 @@
       <sv:value>jsp/components/layout/mashup.jsp</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="algebra">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/algebra.jsp</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

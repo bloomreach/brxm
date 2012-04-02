@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd">
+  <name>org.hippoecm.hst.demo.addonmodules.linearalgebra</name>
+  <config-locations>
+    <config-location>classpath*:META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/*.xml</config-location>
+  </config-locations>
+</module>
