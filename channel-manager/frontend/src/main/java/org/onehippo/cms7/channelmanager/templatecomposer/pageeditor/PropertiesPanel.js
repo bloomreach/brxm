@@ -117,7 +117,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     scope : this
                 });
             } else {
-                this.variants = [{id: 'default', name: 'Default'}];
+                this.variants = [{id: 'default', name: this.resources['properties-panel-variant-default']}];
                 success();
             }
         }.createDelegate(this));
@@ -127,16 +127,21 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.variants = [];
         for (var i = 0; i < records.length; i++) {
             var id = records[i];
-            var record = this.allVariantsStore.getById(id);
-            var name = record ? record.get('name') : id;
-            this.variants.push({ id: id, name: name});
+            if (id == 'default') {
+                this.variants.push({ id: 'default', name: this.resources['properties-panel-variant-default']});
+            } else {
+                var record = this.allVariantsStore.getById(id);
+                if (typeof record !== 'undefined') {
+                    this.variants.push({ id: id, name: record.get('name')});
+                }
+            }
         }
-        this.variants.push({id: 'plus', name: '+'});
+        this.variants.push({id: 'plus', name: this.resources['properties-panel-variant-plus']});
     },
 
     _loadException : function (response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only default variant will be available: ' + response.status + ':' + response.statusText);
-        this.variants = [{id: 'default', name: 'Default'}];
+        this.variants = [{id: 'default', name: this.resources['properties-panel-variant-default']}];
     },
 
     _initTabs : function () {
