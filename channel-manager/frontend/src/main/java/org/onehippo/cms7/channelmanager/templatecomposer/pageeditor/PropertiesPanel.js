@@ -172,7 +172,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     title: this.variants[i].name,
                     variantsUuid : this.variantsUuid,
                     listeners : {
-                        'save' : function (tab, variant) {
+                        save : function (tab, variant) {
+                            this._cleanupVariants();
                             this.load(variant);
                         },
                         scope : this
@@ -188,7 +189,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     locale : this.locale,
                     componentId : this.componentId,
                     listeners : {
-                        'delete' : function (tab, variant) {
+                        save : function() {
+                            this._cleanupVariants();
+                        },
+                        delete : function (tab, variant) {
+                            this._cleanupVariants();
                             this.load();
                         },
                         scope : this
@@ -216,6 +221,22 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             }
         }
         this.setActiveTab(0);
+    },
+
+    _cleanupVariants: function() {
+        var variantIds = [];
+        this.allVariantsStore.each(function(record) {
+            variantIds.push(record.get('id'));
+        })
+        Ext.Ajax.request({
+            method : 'POST',
+            url : this.composerRestMountUrl + '/' + this.componentId + './variants' + '?FORCE_CLIENT_HOST=true',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params: Ext.util.JSON.encode(variantIds),
+            scope : this
+        });
     }
 
 });
@@ -316,6 +337,11 @@ Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelMa
                 create: '#',
                 update: '#',
                 destroy: '#'
+            },
+            listeners: {
+                beforewrite: function(proxy, action, records) {
+                    return this.api[action].url !== '#';
+                }
             }
         });
 
