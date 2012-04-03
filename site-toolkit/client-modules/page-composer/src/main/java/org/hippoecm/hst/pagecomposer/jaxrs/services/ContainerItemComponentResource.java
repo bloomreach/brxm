@@ -17,8 +17,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +31,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,6 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -139,11 +143,61 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             Set<String> variants = getVariants(getRequestConfigNode(getRequestContext(servletRequest)));
             return ok("Available variants: ", variants);
         } catch (RepositoryException e) {
-            log.error("Unable to get the parameters of the component " + e, e);
+            log.error("Unable to get the parameters of the component", e);
             throw new WebApplicationException(e);
         }
     }
-    
+
+    /**
+     * Removes all variants from this container item that are not provided.
+     *
+     * @param servletRequest the current servlet request
+     * @param variantsToKeep a list of variants to keep for this container item
+     * @return the variants that have been removed from this container item
+     */
+    @POST
+    @Path("/variants")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response cleanupVariants(@Context HttpServletRequest servletRequest, String[] variantsToKeep) {
+        try {
+            Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+            Set<String> removedVariants = doCleanupVariants(containerItem, variantsToKeep);
+            return ok("Removed variants:", removedVariants);
+        } catch (RepositoryException e) {
+            log.error("Unable to cleanup the variants of the component", e);
+            throw new WebApplicationException(e);
+        }
+
+    }
+
+    /**
+     * Removes all variants that are not provided.
+     *
+     * @param containerItem the container item node
+     * @param variantsToKeep the list of variants to keep
+     * @return a list of variants that have been removed
+     * @throws RepositoryException when some repository exception happened
+     */
+    private Set<String> doCleanupVariants(final Node containerItem, final String[] variantsToKeep) throws RepositoryException {
+        Set<String> keepVariants = new HashSet<String>();
+        keepVariants.addAll(Arrays.asList(variantsToKeep));
+        keepVariants.add(DEFAULT_PARAMETER_PREFIX);
+
+        Set<String> allVariants = getVariants(containerItem);
+
+        Set<String> removed = new HashSet<String>();
+
+        for (String variant : allVariants) {
+            if (StringUtils.isNotEmpty(variant) && !keepVariants.contains(variant)) {
+                log.debug("Removing configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
+                doSetParameters(containerItem, variant, null);
+                removed.add(variant);
+            }
+        }
+
+        return removed;
+    }
 
     /**
      * <p>
@@ -207,7 +261,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             throw new WebApplicationException(e);
         }
     }
-    
+
     /**
      * Sets the parameters for some prefix. If the prefix is <code>null</code>, then 'default' prefix is assumed.
      * 
