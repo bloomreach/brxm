@@ -189,10 +189,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     locale : this.locale,
                     componentId : this.componentId,
                     listeners : {
-                        save : function() {
+                        'save' : function() {
                             this._cleanupVariants();
                         },
-                        delete : function (tab, variant) {
+                        'delete' : function (tab, variant) {
                             this._cleanupVariants();
                             this.load();
                         },
