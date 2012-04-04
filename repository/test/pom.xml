@@ -171,10 +171,6 @@
         <configuration>
           <systemProperties>
             <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-            <property>
               <name>rep.home</name>
               <value>${project.build.directory}</value>
             </property>

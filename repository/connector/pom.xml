@@ -133,10 +133,6 @@
         <configuration>
           <systemProperties>
             <property>
-              <name>history.points</name>
-              <value>${history.points}</value>
-            </property>
-            <property>
               <name>org.onehippo.repository.test.keepserver</name>
               <value>true</value>
             </property>
