@@ -211,16 +211,17 @@ public class EventLogCleanupModule implements DaemonModule {
 
             Session session = (Session) context.getMergedJobDataMap().get("session");
 
-            // make sure only one cluster node runs the scheduled cleanup job
-            if (!lock(session)) {
-                return;
-            }
-
-            log.info("Running event log cleanup job");
-            long maxitems = (Long) context.getMergedJobDataMap().get(CONFIG_MAXITEMS_PROPERTY);
-            long itemtimeout = (Long) context.getMergedJobDataMap().get(CONFIG_KEEP_ITEMS_FOR);
-
             try {
+                // make sure only one cluster node runs the scheduled cleanup job
+                if (!lock(session)) {
+                    return;
+                }
+
+                log.info("Running event log cleanup job");
+
+                long maxitems = (Long) context.getMergedJobDataMap().get(CONFIG_MAXITEMS_PROPERTY);
+                long itemtimeout = (Long) context.getMergedJobDataMap().get(CONFIG_KEEP_ITEMS_FOR);
+
                 removeTooManyItems(maxitems, session);
                 removeTimedOutItems(itemtimeout, session);
             } catch (RepositoryException e) {
@@ -257,7 +258,10 @@ public class EventLogCleanupModule implements DaemonModule {
         private void unlock(Session session) {
             try {
                 LockManager lockManager = session.getWorkspace().getLockManager();
-                lockManager.unlock(CONFIG_NODE_PATH);
+                Lock lock = lockManager.getLock(CONFIG_NODE_PATH);
+                if (lock.isLockOwningSession()) {
+                    lockManager.unlock(CONFIG_NODE_PATH);
+                }
             } catch (RepositoryException e) {
                 log.error("Error releasing lock", e);
             }
