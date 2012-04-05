@@ -37,7 +37,6 @@ if (!YAHOO.hippo.TreeWidget) {
         YAHOO.extend(YAHOO.hippo.TreeWidget, YAHOO.hippo.Widget, {
 
             calculateWidthAndHeight: function(sizes) {
-                console.log('calculating width&height');
                 this._setWidth(2000); //make sure initial calculation isn't blocked by a broken UI
 
                 var width = 0;
