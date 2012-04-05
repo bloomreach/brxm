@@ -34,6 +34,7 @@ import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -86,6 +87,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private String uuidBehavior = "Create new uuids on import";
     private String mergeBehavior = "Disable merging";
     private String derefBehavior = "Throw error when not found";
+    private boolean saveBehavior = false;
 
     private final void InitMaps() {
         uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
@@ -114,10 +116,12 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
         DropDownChoice reference = new DropDownChoice("derefBehaviors", new PropertyModel(this, "derefBehavior"), new ArrayList<String>(derefOpts.values()));
+        CheckBox save = new CheckBox("saveBehavior", new PropertyModel(this, "saveBehavior"));
 
         add(uuid.setNullValid(false).setRequired(true));
         add(merge.setNullValid(false).setRequired(true));
         add(reference.setNullValid(false).setRequired(true));
+        add(save);
 
         // file upload
         setMultiPart(true);
@@ -159,10 +163,25 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 String absPath = nodeModel.getNode().getPath();
                 log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," + derefBehavior);
 
-                ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
-                // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
-                // modelReference.setModel(newNodeModel);
-                info("Import done.");
+                if (saveBehavior) {
+                    nodeModel.getNode().getSession().save();
+                }
+
+                try {
+                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
+
+                    // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
+                    // modelReference.setModel(newNodeModel);
+                    info("Import done.");
+                
+                    if (saveBehavior) {
+                        nodeModel.getNode().getSession().save();
+                    }
+                } finally {
+                    if (saveBehavior) {
+                        nodeModel.getNode().getSession().refresh(false);
+                    }
+                }
 
             } catch (PathNotFoundException ex) {
                 log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
@@ -211,6 +230,13 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
     public String getUuidBehavior() {
         return uuidBehavior;
+    }
+
+    public void setSaveBehavior(boolean saveBehavior) {
+        this.saveBehavior = saveBehavior;
+    }
+    public boolean getSaveBehavior() {
+        return saveBehavior;
     }
 
     @Override
