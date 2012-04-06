@@ -52,7 +52,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeException;
-import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,45 +136,18 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
     }
 
-    private final class CategoryView extends AbstractView<ITypeDescriptor> {
-        private static final long serialVersionUID = 1L;
+
+    private final class CategoryView extends SectionView<ITypeDescriptor> {
 
         private CategoryView(String id, Category category) {
             super(id, category);
         }
 
         @Override
-        public void populateItem(Item<ITypeDescriptor> item) {
-            final ITypeDescriptor type = item.getModelObject();
-            AjaxLink<Void> link = new AjaxLink<Void>("template") {
-                private static final long serialVersionUID = 1L;
+        public void populateItem(final Item<ITypeDescriptor> item) {
+            super.populateItem(item);
 
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
-                    String prefix = containingType.getName();
-                    if (prefix.indexOf(':') > 0) {
-                        prefix = prefix.substring(0, prefix.indexOf(':'));
-                        if (!type.isMixin()) {
-                            try {
-                                containingType.addField(new JavaFieldDescriptor(prefix, type));
-                            } catch (TypeException e) {
-                                TemplateListPlugin.this.error(e.getLocalizedMessage());
-                            }
-                        } else {
-                            List<String> superTypes = containingType.getSuperTypes();
-                            superTypes.add(type.getName());
-                            containingType.setSuperTypes(superTypes);
-                        }
-                    } else {
-                        log.warn("adding a field to a primitive type is not supported");
-                    }
-                }
-            };
-            final String name = type.getName();
-            link.add(new Label("template-name", new TypeTranslator(new JcrNodeTypeModel(name)).getTypeName()));
-            item.add(link);
-
+            final String name = item.getModelObject().getName();
             item.add(new AbstractBehavior() {
                 private static final long serialVersionUID = 1L;
 
@@ -183,7 +155,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                 public void onComponentTag(final Component component, final ComponentTag tag) {
                     Object classes = tag.getUserData("class");
                     if (classes instanceof String) {
-                        tag.put("class", (String) classes + " " + name.toLowerCase().replace(':', '_'));
+                        tag.put("class", classes + " " + name.toLowerCase().replace(':', '_'));
                     } else {
                         tag.put("class", name.toLowerCase().replace(':', '_'));
                     }
@@ -192,8 +164,30 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         }
 
         @Override
-        public void destroyItem(Item<ITypeDescriptor> item) {
-            // nothing
+        void onClickItem(final ITypeDescriptor type) {
+            ITypeDescriptor containingType = TemplateListPlugin.this.getModelObject();
+            String prefix = containingType.getName();
+            if (prefix.indexOf(':') > 0) {
+                prefix = prefix.substring(0, prefix.indexOf(':'));
+                if (!type.isMixin()) {
+                    try {
+                        containingType.addField(new JavaFieldDescriptor(prefix, type));
+                    } catch (TypeException e) {
+                        TemplateListPlugin.this.error(e.getLocalizedMessage());
+                    }
+                } else {
+                    List<String> superTypes = containingType.getSuperTypes();
+                    superTypes.add(type.getName());
+                    containingType.setSuperTypes(superTypes);
+                }
+            } else {
+                log.warn("adding a field to a primitive type is not supported");
+            }
+        }
+
+        @Override
+        IModel<String> getNameModel(final ITypeDescriptor type) {
+            return new TypeTranslator(new JcrNodeTypeModel(type.getName())).getTypeName();
         }
     }
 
@@ -209,8 +203,32 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
         return false;
     }
 
-    private Category active;
-    private List<Category> categories;
+    abstract class CategorySection extends Section {
+        final Category category;
+
+        CategorySection(ITemplateEngine engine, List<String> editableTypes, String name) {
+            this.category = new Category(engine, editableTypes, name) {
+                @Override
+                boolean isTypeInCategory(final ITypeDescriptor descriptor) {
+                    return CategorySection.this.isTypeInCategory(descriptor);
+                }
+            };
+        }
+
+        abstract boolean isTypeInCategory(final ITypeDescriptor descriptor);
+
+        public IModel<String> getTitleModel() {
+            return new ResourceModel(category.getName());
+        }
+
+        public SectionView<?> createView(final String id) {
+            SectionView<?> templateView = new CategoryView(id, category);
+            templateView.populate();
+            return templateView;
+        }
+    }
+
+    private Section active;
 
     public TemplateListPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -242,8 +260,8 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             String typeName = containingType.getName();
             final String prefix = typeName.substring(0, typeName.indexOf(':'));
 
-            categories = new ArrayList<Category>(3);
-            categories.add(new Category(engine, editableTypes, "primitive") {
+            final List<Section> sections = new ArrayList<Section>(5);
+            sections.add(new CategorySection(engine, editableTypes, "primitive") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -254,7 +272,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     return false;
                 }
             });
-            categories.add(new Category(engine, editableTypes, "compound") {
+            sections.add(new CategorySection(engine, editableTypes, "compound") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -265,7 +283,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     return false;
                 }
             });
-            categories.add(new Category(engine, editableTypes, "custom") {
+            sections.add(new CategorySection(engine, editableTypes, "custom") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -276,7 +294,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     return false;
                 }
             });
-            categories.add(new Category(engine, editableTypes, "mixins") {
+            sections.add(new CategorySection(engine, editableTypes, "mixins") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -284,26 +302,27 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     return descriptor.isMixin();
                 }
             });
-            active = categories.get(0);
+            sections.add(new InheritedFieldSection(context, config));
+            active = sections.get(0);
 
-            fragment.add(new ListView<Category>("categories", categories) {
+            fragment.add(new ListView<Section>("categories", sections) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected void populateItem(ListItem<Category> item) {
-                    final Category category = item.getModelObject();
+                protected void populateItem(ListItem<Section> item) {
+                    final Section section = item.getModelObject();
 
-                    AbstractView<ITypeDescriptor> templateView = new CategoryView("templates", category);
-                    templateView.populate();
                     MarkupContainer container = new WebMarkupContainer("container") {
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         public boolean isVisible() {
-                            return active == category;
+                            return active == section;
                         }
 
                     };
+
+                    SectionView<?> templateView = section.createView("templates");
                     container.add(templateView);
                     item.add(container);
 
@@ -312,17 +331,17 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                         @Override
                         public void onClick(AjaxRequestTarget target) {
-                            active = category;
+                            active = section;
                             redraw();
                         }
                     };
-                    link.add(new Label("category", new ResourceModel(category.getName())));
+                    link.add(new Label("category", section.getTitleModel()));
                     link.add(new CssClassAppender(new LoadableDetachableModel<String>() {
                         private static final long serialVersionUID = 1L;
 
                         @Override
                         protected String load() {
-                            if (active == category) {
+                            if (active == section) {
                                 return "focus";
                             }
                             return "";

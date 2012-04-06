@@ -1023,11 +1023,15 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_f
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ILayoutAware.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/InheritedFieldSection.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ListViewPluginEditorPlugin.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/PreviewClusterConfig.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/RenderPluginEditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/RenderPluginEditorPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/Section.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/SectionView.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateBuilder.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateBuilderConstants.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateListPlugin.properties svneol=native#text/plain

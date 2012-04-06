@@ -67,19 +67,19 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
 
         addExtensionPoint("template");
 
-        clusterModelId = context.getReference(this).getServiceId() + ".model.cluster";
+        clusterModelId = getServiceId(TemplateBuilderConstants.MODEL_CLUSTER);
         ModelReference clusterModelService = new ModelReference(clusterModelId, null);
         clusterModelService.init(getPluginContext());
 
-        typeModelId = context.getReference(this).getServiceId() + ".model.type";
+        typeModelId = getServiceId(TemplateBuilderConstants.MODEL_TYPE);
         ModelReference typeModelService = new ModelReference(typeModelId, null);
         typeModelService.init(getPluginContext());
 
-        selectedPluginId = context.getReference(this).getServiceId() + ".model.selected_plugin";
+        selectedPluginId = getServiceId(TemplateBuilderConstants.MODEL_SELECTED_PLUGIN);
         final ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
         selectedPluginService.init(getPluginContext());
 
-        selectedExtPtId = context.getReference(this).getServiceId() + ".model.selected_extension_point";
+        selectedExtPtId = getServiceId(TemplateBuilderConstants.MODEL_SELECTED_EXTENSION_POINT);
         final ModelReference selectedExtPtService = new ModelReference(selectedExtPtId, null);
         selectedExtPtService.init(getPluginContext());
 
@@ -95,12 +95,18 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             final IModel selectedExtensionPointModel = new SelectedExtensionPointModel(selectedExtPtService);
             final IModel<String> selectedPluginModel = new SelectedPluginModel(selectedPluginService);
             builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context, selectedExtensionPointModel, selectedPluginModel);
+
+            context.registerService(builder, getServiceId(TemplateBuilderConstants.MODEL_BUILDER));
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             throw new RuntimeException("Failed to initialize", ex);
         } catch (BuilderException e) {
             log.info(e.getMessage());
         }
+    }
+
+    private String getServiceId(String key) {
+        return getPluginConfig().getString(key, getPluginContext().getReference(this).getServiceId() + "." + key);
     }
 
     @Override

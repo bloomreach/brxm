@@ -112,11 +112,20 @@
         <sv:property sv:name="frontend:services" sv:type="String">
           <sv:value>wicket.id</sv:value>
         </sv:property>
-        <sv:property sv:name="model.extensionpoint" sv:type="String">
+        <sv:property sv:name="model.selected_extension_point" sv:type="String">
           <sv:value>${cluster.id}.model.extensionpoint</sv:value>
+        </sv:property>
+        <sv:property sv:name="model.selected_plugin" sv:type="String">
+          <sv:value>${cluster.id}.model.selected_plugin</sv:value>
         </sv:property>
         <sv:property sv:name="model.type" sv:type="String">
           <sv:value>${cluster.id}.model.type</sv:value>
+        </sv:property>
+        <sv:property sv:name="model.cluster" sv:type="String">
+          <sv:value>${cluster.id}.model.cluster</sv:value>
+        </sv:property>
+        <sv:property sv:name="model.builder" sv:type="String">
+          <sv:value>${cluster.id}.model.builder</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

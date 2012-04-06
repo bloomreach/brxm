@@ -768,7 +768,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         return type;
     }
 
-    public ITypeDescriptor getTypeDescriptor() throws BuilderException {
+    public ITypeDescriptor getTypeDescriptor() {
         return new BuilderTypeDescriptor();
     }
 

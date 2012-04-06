@@ -285,7 +285,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     Property prop = props.nextProperty();
                     if (!prop.getDefinition().isProtected()) {
                         if (prop.isMultiple()) {
-                            clone.setProperty(prop.getName(), prop.getValues());
+                            clone.setProperty(prop.getName(), prop.getValues(), prop.getType());
                         } else {
                             clone.setProperty(prop.getName(), prop.getValue());
                         }
@@ -297,8 +297,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     if (definition.isAutoCreated()) {
                         continue;
                     }
-                    NodeType declaringType = definition.getDeclaringNodeType();
-                    if (clone.isNodeType(declaringType.getName())) {
+                    if (clone.getPrimaryNodeType().canAddChildNode(child.getName(), child.getPrimaryNodeType().getName())) {
                         subject.getSession().move(child.getPath(), clone.getPath() + "/" + child.getName());
                     }
                 }
