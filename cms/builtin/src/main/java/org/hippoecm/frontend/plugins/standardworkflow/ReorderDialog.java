@@ -344,8 +344,10 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
                 ListItem selection = dataProvider.iterator(0, 1).next();
                 selectionChanged(dataProvider.model(selection));
             } else {
+                top.setEnabled(false);
                 up.setEnabled(false);
                 down.setEnabled(false);
+                bottom.setEnabled(false);
             }
         }
 
