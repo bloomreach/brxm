@@ -58,14 +58,18 @@ public class JcrStoreManager extends AbstractStoreManager {
     // FIXME
     public void setSession(Session session) {
         this.session = session;
-        try {
-            if (session instanceof HippoSession) {
-                columnResolver = new ColumnResolverImpl(((HippoWorkspace)session.getWorkspace()).getHierarchyResolver());
-            } else {
-                columnResolver = new ColumnResolverImpl(ManagerServiceFactory.getManagerService(session).getHierarchyResolver());
+        if(session != null) {
+            try {
+                if (session instanceof HippoSession) {
+                    columnResolver = new ColumnResolverImpl(((HippoWorkspace)session.getWorkspace()).getHierarchyResolver());
+                } else {
+                    columnResolver = new ColumnResolverImpl(ManagerServiceFactory.getManagerService(session).getHierarchyResolver());
+                }
+            } catch (RepositoryException ex) {
+                log.error("unable to obtain hierarchymanager", ex);
             }
-        } catch(RepositoryException ex) {
-            log.error("unable to obtain hierarchymanager", ex);
+        } else {
+            columnResolver = null;
         }
         typeResolver = null;
     }

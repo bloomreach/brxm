@@ -130,13 +130,6 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory implements 
 
         @Override
         public void close() {
-            /*for (ManagedConnectionResourceListener listener : listeners) {
-                listener.managedConnectionPreClose();
-            }
-            if (session != null) {
-                session.logout();
-                session = null;
-            }*/
         }
     }
 }

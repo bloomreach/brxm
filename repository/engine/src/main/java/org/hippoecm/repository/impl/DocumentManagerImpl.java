@@ -96,10 +96,12 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
             ph = null;
         }
         if (pm != null) {
+            pm.evictAll();
             pm.close();
             pm = null;
         }
         if (pmf != null) {
+            pmf.getDataStoreCache().evictAll();
             pmf.close();
             pmf = null;
         }
@@ -197,7 +199,7 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
         } else {
             pm.makePersistent(object);
         }
-    }
+}
 
     public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
         try {

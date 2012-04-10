@@ -312,9 +312,7 @@ public class JcrPersistenceHandler implements StorePersistenceHandler {
             if (storeMgr.getRuntimeManager() != null) {
                 storeMgr.getRuntimeManager().incrementFetchCount();
             }
-        }
-
-        finally {
+        } finally {
             mconn.release();
         }
     }
