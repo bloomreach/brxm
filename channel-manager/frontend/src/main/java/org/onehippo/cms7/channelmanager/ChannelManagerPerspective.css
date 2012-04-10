@@ -390,3 +390,7 @@
     padding-bottom: 1px;
     padding-right: 5px;
 }
+
+.x-combo-list-item {
+    text-align: left;
+}
