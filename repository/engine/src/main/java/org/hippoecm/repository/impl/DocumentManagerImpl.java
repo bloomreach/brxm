@@ -149,55 +149,59 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
     }
     
     public void putObject(String uuid, Node types, Object object) throws RepositoryException {
-        if(pm == null) {
-            pm = pmf.getPersistenceManager();
-        }
-        if(types != null) {
-            storeManager.setTypes(types);
-        }
-        
-        Transaction tx = pm.currentTransaction();
-        tx.setNontransactionalRead(true);
-        tx.setNontransactionalWrite(true);
-        boolean transactional = true;
-        if(transactional && !tx.isActive()) {
-            try {
-                tx.begin();
-                if(uuid != null) {
-                    Node node = session.getNodeByUUID(uuid);
-                    if(!node.isCheckedOut()) {
-                        if(node.isNodeType("mix:versionable")) {
-                            node.checkout();
-                        }
-                        try {
-                            Node parent = node.getParent();
-                            if(parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                if(!parent.isCheckedOut()) {
-                                    parent.checkout();
-                                }
+        try {
+            if (pm == null) {
+                pm = pmf.getPersistenceManager();
+            }
+            if (types != null) {
+                storeManager.setTypes(types);
+            }
+
+            Transaction tx = pm.currentTransaction();
+            tx.setNontransactionalRead(true);
+            tx.setNontransactionalWrite(true);
+            boolean transactional = true;
+            if (transactional && !tx.isActive()) {
+                try {
+                    tx.begin();
+                    if (uuid != null) {
+                        Node node = session.getNodeByUUID(uuid);
+                        if (!node.isCheckedOut()) {
+                            if (node.isNodeType("mix:versionable")) {
+                                node.checkout();
                             }
-                        } catch(ItemNotFoundException ex)  {
-                            // no parent as this is root node, ignore.
+                            try {
+                                Node parent = node.getParent();
+                                if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                                    if (!parent.isCheckedOut()) {
+                                        parent.checkout();
+                                    }
+                                }
+                            } catch (ItemNotFoundException ex) {
+                                // no parent as this is root node, ignore.
+                            }
                         }
                     }
+                    pm.makePersistent(object);
+                    tx.commit();
+                } catch (JDODataStoreException ex) {
+                    Throwable e = ex.getCause();
+                    if (e instanceof RepositoryException) {
+                        RepositoryException exception = (RepositoryException)e;
+                        log.error(exception.getClass().getName() + ": " + exception.getMessage(), exception);
+                        throw exception;
+                    } else {
+                        throw ex;
+                    }
+                } finally {
+                    if (tx.isActive())
+                        tx.rollback();
                 }
+            } else {
                 pm.makePersistent(object);
-                tx.commit();
-            } catch(JDODataStoreException ex) {
-                Throwable e = ex.getCause();
-                if(e instanceof RepositoryException) {
-                    RepositoryException exception = (RepositoryException) e;
-                    log.error(exception.getClass().getName()+": "+exception.getMessage(), exception);
-                    throw exception;
-                } else {
-                    throw ex;
-                }
-            } finally {
-                if(tx.isActive())
-                    tx.rollback();
             }
-        } else {
-            pm.makePersistent(object);
+        } finally {
+            storeManager.setTypes(null);
         }
 }
 
