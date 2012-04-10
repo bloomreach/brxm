@@ -18,6 +18,31 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+  <bean id="annotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
+    <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
+    <property name="typeFieldName" value="@class" />
+  </bean>
+
+  <bean id="cmsRestJacksonJsonModule" class="org.codehaus.jackson.map.module.SimpleModule">
+    <constructor-arg value="CmsRestJacksonJsonModule" />
+    <constructor-arg>
+        <bean class="org.codehaus.jackson.Version">
+            <constructor-arg value="2" />
+            <constructor-arg value="25" />
+            <constructor-arg value="02" />
+            <constructor-arg value="SNAPSHOT" />
+        </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="cmsRestJacksonJsonModule" />
+    <property name="targetMethod" value="addSerializer" />
+    <property name="arguments">
+        <ref bean="annotationJsonSerializer" />
+    </property>
+  </bean>
+
   <bean id="cmsRestJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
     <property name="mapper" ref="cmsRestJacksonObjectMapper" />
   </bean>
@@ -38,6 +63,14 @@
             <value type="org.codehaus.jackson.map.ObjectMapper.DefaultTyping">OBJECT_AND_NON_CONCRETE</value>
             <value>@class</value>
         </list>
+    </property>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="cmsRestJacksonObjectMapper" />
+    <property name="targetMethod" value="registerModule" />
+    <property name="arguments">
+        <ref bean="cmsRestJacksonJsonModule" />
     </property>
   </bean>
 
