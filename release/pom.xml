@@ -47,7 +47,7 @@
     <hippo.addon-channel-manager.version>2.23.02-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
     <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
-    <hippo.addon-automatic-export.version>2.02.02</hippo.addon-automatic-export.version>
+    <hippo.addon-automatic-export.version>2.02.03</hippo.addon-automatic-export.version>
     <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
 
