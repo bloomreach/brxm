@@ -163,6 +163,10 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 String absPath = nodeModel.getNode().getPath();
                 log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," + derefBehavior);
 
+                // If save-after-import is enabled and the import fails, we do a Session.refresh(false) to revert any
+                // changes done by the import. However, any changes done *before* the import will then also be lost.
+                // We therefore have to save before importing, so all changes before the import are persisted regardless
+                // of what happens during the import.
                 if (saveBehavior) {
                     nodeModel.getNode().getSession().save();
                 }
