@@ -45,13 +45,15 @@ Hippo.Msg = (function() {
         if (blockingType[type]) {
             blocked = true;
             if (args.length >= 3) {
-                var oldFunction = args[2];
+                var oldCallback = args[2];
                 var scope = this;
                 if (args.length >= 4) {
                     scope = args[3];
                 }
                 args[2] = function() {
-                    oldFunction.apply(scope, arguments);
+                    if (typeof oldCallback === 'function') {
+                        oldCallback.apply(scope, arguments);
+                    }
                     blocked = false;
                     if (msgQueue.length > 0) {
                         var nextMessage = msgQueue.shift();

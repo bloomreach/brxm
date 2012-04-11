@@ -32,8 +32,8 @@ Hippo.Future = function(func) {
     var self = this;
     func.call(this, function(value) {
         self.onSuccess.call(self, value)
-    }, function() {
-        self.onFailure.call(self)
+    }, function(value) {
+        self.onFailure.call(self, value)
     });
 };
 
@@ -77,14 +77,15 @@ Hippo.Future.prototype = {
         this.cleanup();
     },
 
-    onFailure: function() {
+    onFailure: function(value) {
         if (this.completed) {
             return;
         }
+        this.value = value;
         this.success = false;
         this.completed = true;
         for (var i = 0; i < this.failureHandlers.length; i++) {
-            this.failureHandlers[i].call(this);
+            this.failureHandlers[i].call(this, value);
         }
         this.cleanup();
     },

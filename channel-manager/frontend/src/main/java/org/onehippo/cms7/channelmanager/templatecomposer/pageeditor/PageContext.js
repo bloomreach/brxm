@@ -74,8 +74,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 console.info('pageContextInitialized');
                 this.fireEvent('pageContextInitialized');
             }.createDelegate(this));
-        }.createDelegate(this)).otherwise(function() {
-            this.fireEvent('pageContextInitializationFailed');
+        }.createDelegate(this)).otherwise(function(value) {
+            this.fireEvent('pageContextInitializationFailed', value);
         }.createDelegate(this));
     },
 
@@ -188,7 +188,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     }
                 },
                 failure : function(responseObject) {
-                    onFail();
+                    onFail(responseObject);
                 }
             });
         }.createDelegate(this));
