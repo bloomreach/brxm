@@ -16,11 +16,14 @@
 package org.hippoecm.hst.rest.beans;
 
 
+import java.io.Serializable;
+
 /**
  * Information about a document in a certain channel.
  */
-public class ChannelDocument {
+public class ChannelDocument implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private static final int HASH_SEED = 17;
     private static final int ODD_PRIME = 37;
 
