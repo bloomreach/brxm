@@ -39,12 +39,14 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPane
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel_de.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelIconPanel_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_de.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelOverview_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelPropertiesWindow.java -text
