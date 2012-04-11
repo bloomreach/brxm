@@ -109,9 +109,6 @@
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
     
-    <!-- default empty export directory, override to enable export -->
-    <hippoecm.export.dir />
-    
   </properties>
 
   <licenses>
