@@ -593,3 +593,17 @@ div.hippo-diff-removed div.resource-values, div.hippo-diff-added div.resource-va
   padding: 0 10px 0 10px;
   clear: both;
 }
+
+div.lock-ui {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:99999;
+  width:100%;
+  height:100%;
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  cursor: wait;
+  opacity: 0.6;
+}

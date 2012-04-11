@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.builder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -55,7 +56,7 @@ public class FieldEditor extends Panel {
         if (typeName.indexOf(':') > 0) {
             prefix = typeName.substring(0, typeName.indexOf(':'));
         }
-        addFormField(new TextField<String>("path", new IModel<String>() {
+        addFormField(new LockedTextField<String>("path", new IModel<String>() {
             private static final long serialVersionUID = 1L;
 
             public String getObject() {
@@ -258,6 +259,18 @@ public class FieldEditor extends Panel {
     }
 
     protected void onUpdate(AjaxRequestTarget target) {
+    }
+    
+    class LockedTextField<T> extends TextField<T> implements IAjaxIndicatorAware {
+
+        public LockedTextField(String id, IModel<T> tiModel) {
+            super(id, tiModel);
+        }
+
+        @Override
+        public String getAjaxIndicatorMarkupId() {
+            return "veil";
+        }
     }
     
     private static class CheckBoxDisableCssClassAppender extends CssClassAppender {
