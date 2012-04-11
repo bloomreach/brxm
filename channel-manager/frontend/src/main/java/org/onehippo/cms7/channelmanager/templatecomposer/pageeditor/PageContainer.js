@@ -376,11 +376,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }, this);
         this.pageContext.on('pageContextInitializationFailed', function(reasonObject) {
             this.previewMode = this.pageContext.previewMode;
-            if (typeof reasonObject !== 'undefined' && reasonObject !== null
-                    && reasonObject.status === 404 && this._hasFocus()) {
+            console.error(this.resources['page-context-initialization-failed-message']);
+            console.error(reasonObject);
+            if (this._hasFocus()) {
                 Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
-            } else {
-                console.error(this.resources['page-context-initialization-failed-message']);
             }
             this._fail();
         }, this);
