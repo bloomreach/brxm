@@ -33,14 +33,12 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -79,11 +77,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
         boolean rememberme = false;
-        Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+        Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
-                    String passphrase = cookies[i].getValue();
+            for (Cookie cookie : cookies) {
+                if (RememberMeLoginPlugin.class.getName().equals(cookie.getName())) {
+                    String passphrase = cookie.getValue();
                     if (passphrase != null && passphrase.contains("$")) {
                         username = new String(Base64.decodeBase64(passphrase.split("\\$")[1]));
                         password = "********";
@@ -100,7 +98,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     protected class SignInForm extends org.hippoecm.frontend.plugins.login.LoginPlugin.SignInForm {
         private static final long serialVersionUID = 1L;
 
-        public boolean rememberme;
+        private boolean rememberme;
 
         public void setRememberme(boolean value) {
             rememberme = value;
@@ -112,10 +110,13 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         public SignInForm(final String id, boolean rememberme) {
             super(id);
+
             this.rememberme = rememberme;
+
             if (rememberme) {
                 add(new AttributeModifier("autocomplete", true, new Model<String>("off")));
             }
+
             CheckBox rememberMeCheckbox = new CheckBox("rememberme", new PropertyModel<Boolean>(this, "rememberme"));
             add(rememberMeCheckbox);
             rememberMeCheckbox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -124,6 +125,32 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     setResponsePage(this.getFormComponent().getPage());
                 }
             });
+
+            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                private static final long serialVersionUID = 1L;
+
+                protected void onUpdate(AjaxRequestTarget target) {
+                    SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                }
+            });
+
+            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                private static final long serialVersionUID = 1L;
+
+                protected void onUpdate(AjaxRequestTarget target) {
+                    SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                }
+            });
+        }
+
+        protected void clearCookie(String cookieName) {
+            Cookie cookie = retrieveWebRequest().getCookie(cookieName);
+
+            if (cookie != null) {
+                cookie.setMaxAge(0);
+                cookie.setValue(null);
+                retrieveWebResponse().addCookie(cookie);
+            }
         }
 
         @Override
@@ -132,10 +159,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             String password = RememberMeLoginPlugin.this.password;
             if (rememberme) {
                 if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
-                    Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
-                    for (int i = 0; i < cookies.length; i++) {
-                        if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName())) {
-                            String passphrase = cookies[i].getValue();
+                    Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
+                    for (Cookie cookie : cookies) {
+                        if (RememberMeLoginPlugin.class.getName().equals(cookie.getName())) {
+                            String passphrase = cookie.getValue();
                             String strings[] = passphrase.split("\\$");
                             if (strings.length == 3) {
                                 username = new String(Base64.decodeBase64(strings[1]));
@@ -161,11 +188,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         public final void onSubmit() {
             PluginUserSession userSession = (PluginUserSession) getSession();
             if (!rememberme) {
-                Cookie[] cookies = ((WebRequest)RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+                Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
                 if (cookies != null) {
-                    for (int i = 0; i < cookies.length; i++) {
-                        if (RememberMeLoginPlugin.class.getName().equals(cookies[i].getName()) || getClass().getName().equals(cookies[i].getName())) {
-                            ((WebResponse)RequestCycle.get().getResponse()).clearCookie(cookies[i]);
+                    for (Cookie cookie : cookies) {
+                        if (RememberMeLoginPlugin.class.getName().equals(cookie.getName()) || getClass().getName().equals(cookie.getName())) {
+                            retrieveWebResponse().clearCookie(cookie);
                         }
                     }
                 }
@@ -182,7 +209,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
 
             if (success) {
-                ConcurrentLoginFilter.validateSession(((WebRequest)SignInForm.this.getRequest()).getHttpServletRequest().getSession(true), usernameTextField.getDefaultModelObjectAsString(), false);
+                ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true)
+                        ,usernameTextField.getDefaultModelObjectAsString()
+                        ,false);
+
                 if (rememberme) {
                     Session jcrSession = userSession.getJcrSession();
                     if (jcrSession.getUserID().equals(username)) {
@@ -190,9 +220,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
                             digest.update(username.getBytes());
                             digest.update(password.getBytes());
-                            String passphrase = digest.getAlgorithm() + "$" + Base64.encodeBase64String(username.getBytes()) + "$" + Base64.encodeBase64String(digest.digest());
-                            ((WebResponse)RequestCycle.get().getResponse()).addCookie(new Cookie(
-                                    RememberMeLoginPlugin.class.getName(), passphrase));
+                            String passphrase = digest.getAlgorithm() + "$"
+                                    + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
+                                    + Base64.encodeBase64URLSafeString(digest.digest());
+
+                            retrieveWebResponse().addCookie(new Cookie(RememberMeLoginPlugin.class.getName(), passphrase));
                             Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
                             String[] strings = passphrase.split("\\$");
                             userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
@@ -206,6 +238,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         }
                     }
                 }
+
                 HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
                 if (eventBus != null) {
                     HippoEvent event = new HippoEvent(userSession.getApplicationName())
@@ -227,6 +260,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     eventBus.post(event);
                 }
             }
+
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success, loginExceptionPageParameters);
         }

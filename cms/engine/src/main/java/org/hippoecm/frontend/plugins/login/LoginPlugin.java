@@ -135,22 +135,24 @@ public class LoginPlugin extends RenderPlugin {
             }
 
             // check if user has previously selected a locale
-            Cookie[] cookies = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getCookies();
+            Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
             if (cookies != null) {
-                for (int i = 0; i < cookies.length; i++) {
-                    if (LOCALE_COOKIE.equals(cookies[i].getName())) {
-                        if (locales.contains(cookies[i].getValue())) {
-                            selectedLocale = cookies[i].getValue();
+                for (Cookie cookie : cookies) {
+                    if (LOCALE_COOKIE.equals(cookie.getName())) {
+                        if (locales.contains(cookie.getValue())) {
+                            selectedLocale = cookie.getValue();
                             getSession().setLocale(new Locale(selectedLocale));
                         }
                     }
                 }
             }
 
-            add(usernameTextField = new RequiredTextField<String>("username", new PropertyModel<String>(LoginPlugin.this,
-                    "username")));
+            add(usernameTextField = new RequiredTextField<String>("username", new PropertyModel<String>(
+                    LoginPlugin.this, "username")));
+
             add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
                     "password")));
+
             add(locale = new DropDownChoice<String>("locale", 
                 new PropertyModel<String>(this, "selectedLocale") {
                     private static final long serialVersionUID = 1L;
@@ -181,7 +183,7 @@ public class LoginPlugin extends RenderPlugin {
                     //immediately set the locale when the user changes it
                     Cookie localeCookie = new Cookie(LOCALE_COOKIE, selectedLocale);
                     localeCookie.setMaxAge(365 * 24 * 3600); // expire one year from now
-                    ((WebResponse) RequestCycle.get().getResponse()).addCookie(localeCookie);
+                    retrieveWebResponse().addCookie(localeCookie);
                     getSession().setLocale(new Locale(selectedLocale));
                     setResponsePage(this.getFormComponent().getPage());
                 }
@@ -194,12 +196,15 @@ public class LoginPlugin extends RenderPlugin {
                     String username = this.getComponent().getDefaultModelObjectAsString();
                     HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
                             .getSession(true);
+
                     if (ConcurrentLoginFilter.isConcurrentSession(session, username)) {
                         userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null,
                                 new Object[] { username }));
+
                     } else {
                         userLabel.setDefaultModel(new Model<String>(""));
                     }
+
                     target.addComponent(userLabel);
                     LoginPlugin.this.username = username;
                 }
@@ -302,6 +307,14 @@ public class LoginPlugin extends RenderPlugin {
             redirect(success, null);
         }
 
+    }
+
+    public WebRequest retrieveWebRequest() {
+        return (WebRequest) RequestCycle.get().getRequest();
+    }
+
+    public WebResponse retrieveWebResponse() {
+        return (WebResponse) RequestCycle.get().getResponse();
     }
 
 }
