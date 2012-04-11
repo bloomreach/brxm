@@ -1080,6 +1080,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/TextTemplateP
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/ValueTemplatePlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/ValueTemplatePlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry_compat.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry_leftright.html svneol=native#text/plain
