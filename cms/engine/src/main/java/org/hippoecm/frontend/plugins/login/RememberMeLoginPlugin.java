@@ -122,6 +122,14 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             rememberMeCheckbox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
                 protected void onUpdate(AjaxRequestTarget target) {
+                    // When the 'Remember me' check-box is un-checked Username and Password fields should be cleared 
+                    if (!SignInForm.this.getRememberme()) {
+                        SignInForm.this.usernameTextField.setModelObject("");
+                        SignInForm.this.passwordTextField.setModelObject("");
+                        // Also remove the cookie which contains user information
+                        SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                    }
+
                     setResponsePage(this.getFormComponent().getPage());
                 }
             });
