@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.NoSuchElementException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -35,24 +37,24 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** 
+/**
  * <p>Basic implementation of <code>javax.jcr.Repository</code> that is
  * configured via JavaBeans properties.</p>
  *
  * @version $Id$
  */
 public class BasicPoolingRepository implements PoolingRepository, PoolingRepositoryMBean, MultipleRepositoryAware {
-    
+
     private Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
-    
+
     private volatile boolean active;
-    
+
     private Repository repository;
     private Credentials defaultCredentials;           // credentials provided by the configuration or the user
     private Credentials internalDefaultCredentials;   // credentials used for real JCR API invocations.
     private boolean isSimpleDefaultCredentials;
     private SessionDecorator sessionDecorator;
-    
+
     private String repositoryProviderClassName = "org.hippoecm.hst.core.jcr.pool.JcrHippoRepositoryProvider";
     private JcrRepositoryProvider jcrRepositoryProvider;
     private String repositoryAddress;
@@ -60,35 +62,37 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private String defaultCredentialsUserIDSeparator = String.valueOf('\uFFFF');
     private char [] defaultCredentailsPassword;
     private String defaultWorkspaceName;
-    
+
     private boolean refreshOnPassivate = true;
     private long maxRefreshIntervalOnPassivate;
     private boolean keepChangesOnRefresh = false;
     private long sessionsRefreshPendingTimeMillis;
-    
+
     private PooledSessionRefresher pooledSessionRefresher;
-    
+
     private ResourceLifecycleManagement pooledSessionLifecycleManagement;
     private MultipleRepository multipleRepository;
-    
+
     private PoolingCounter poolingCounter;
-    
+
+    private final ReentrantLock lock = new ReentrantLock();
+
     public void setLogger(Logger log) {
         this.log = log;
     }
-    
+
     public Logger getLogger() {
         return log;
     }
-    
+
     public void setRepositoryProviderClassName(String repositoryProviderClassName) {
         this.repositoryProviderClassName = repositoryProviderClassName;
     }
-    
+
     public String getRepositoryProviderClassName() {
         return this.repositoryProviderClassName;
     }
-    
+
     public void setRepository(Repository repository) throws RepositoryException {
         this.repository = repository;
     }
@@ -96,11 +100,11 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public Repository getRepository() throws RepositoryException {
         return this.repository;
     }
-    
+
     public void setRepositoryAddress(String repositoryAddress) {
         this.repositoryAddress = repositoryAddress;
     }
-    
+
     public String getRepositoryAddress() {
         return this.repositoryAddress;
     }
@@ -109,11 +113,11 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         isSimpleDefaultCredentials = (defaultCredentials != null && (defaultCredentials instanceof SimpleCredentials));
         this.defaultCredentials = defaultCredentials;
         internalDefaultCredentials = defaultCredentials;
-        
+
         if (isSimpleDefaultCredentials) {
             String userID = ((SimpleCredentials) defaultCredentials).getUserID();
             String userIDOnly = StringUtils.substringBefore(userID, defaultCredentialsUserIDSeparator);
-            
+
             if (!userID.equals(userIDOnly)) {
                 internalDefaultCredentials = new SimpleCredentials(userIDOnly, ((SimpleCredentials) defaultCredentials).getPassword());
             }
@@ -123,23 +127,23 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public Credentials getDefaultCredentials() {
         return this.defaultCredentials;
     }
-    
+
     public void setDefaultCredentialsUserID(String defaultCredentialsUserID) {
         this.defaultCredentialsUserID = defaultCredentialsUserID;
     }
-    
+
     public String getDefaultCredentialsUserID() {
         return this.defaultCredentialsUserID;
     }
-    
+
     public void setDefaultCredentialsUserIDSeparator(String defaultCredentialsUserIDSeparator) {
         this.defaultCredentialsUserIDSeparator = defaultCredentialsUserIDSeparator;
     }
-    
+
     public String getDefaultCredentialsUserIDSeparator() {
         return this.defaultCredentialsUserIDSeparator;
     }
-    
+
     public void setDefaultCredentialsPassword(char [] defaultCredentailsPassword) {
         if (defaultCredentailsPassword == null) {
             this.defaultCredentailsPassword = null;
@@ -148,53 +152,53 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             System.arraycopy(defaultCredentailsPassword, 0, this.defaultCredentailsPassword, 0, defaultCredentailsPassword.length);
         }
     }
-    
+
     public char [] getDefaultCredentialsPassword() {
         if (defaultCredentailsPassword == null) {
             return null;
         }
-        
+
         char [] value = new char[defaultCredentailsPassword.length];
         System.arraycopy(defaultCredentailsPassword, 0, value, 0, defaultCredentailsPassword.length);
         return value;
     }
-    
+
     public void setDefaultWorkspaceName(String defaultWorkspaceName) {
         this.defaultWorkspaceName = defaultWorkspaceName;
     }
-    
+
     public String getDefaultWorkspaceName() {
         return defaultWorkspaceName;
     }
-    
+
     public void setRefreshOnPassivate(boolean refreshOnPassivate) {
         this.refreshOnPassivate = refreshOnPassivate;
     }
-    
+
     public boolean getRefreshOnPassivate() {
         return this.refreshOnPassivate;
     }
-    
+
     public void setMaxRefreshIntervalOnPassivate(long maxRefreshIntervalOnPassivate) {
         this.maxRefreshIntervalOnPassivate = maxRefreshIntervalOnPassivate;
     }
-    
+
     public long getMaxRefreshIntervalOnPassivate() {
         return maxRefreshIntervalOnPassivate;
     }
-    
+
     public void setKeepChangesOnRefresh(boolean keepChangesOnRefresh) {
         this.keepChangesOnRefresh = keepChangesOnRefresh;
     }
-    
+
     public boolean getKeepChangesOnRefresh() {
         return this.keepChangesOnRefresh;
     }
-    
+
     public void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis) {
         this.sessionsRefreshPendingTimeMillis = sessionsRefreshPendingTimeMillis;
     }
-    
+
     public long getSessionsRefreshPendingAfter() {
         return this.sessionsRefreshPendingTimeMillis;
     }
@@ -218,15 +222,15 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public SessionDecorator getSessionDecorator() {
         return this.sessionDecorator;
     }
-    
+
     public void setResourceLifecycleManagement(ResourceLifecycleManagement pooledSessionLifecycleManagement) {
         this.pooledSessionLifecycleManagement = pooledSessionLifecycleManagement;
-        
+
         if (this.pooledSessionLifecycleManagement instanceof PoolingRepositoryAware) {
             ((PoolingRepositoryAware) this.pooledSessionLifecycleManagement).setPoolingRepository(this);
         }
     }
-    
+
     public ResourceLifecycleManagement getResourceLifecycleManagement() {
         return this.pooledSessionLifecycleManagement;
     }
@@ -301,17 +305,17 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         if (sessionPool == null || !isActive()) {
             throw new RepositoryException("The session pool of the pooling repository has not been initialized or closed.");
         }
-        
+
         Session session = null;
-        
+
         try {
             session = (Session) sessionPool.borrowObject();
-            
-            // If client retrieves a session, then register it as a disposable. 
+
+            // If client retrieves a session, then register it as a disposable.
             if (pooledSessionLifecycleManagement != null && pooledSessionLifecycleManagement.isActive()) {
                 pooledSessionLifecycleManagement.registerResource(session);
             }
-            
+
             if (poolingCounter != null) {
                 poolingCounter.sessionObtained();
             }
@@ -361,19 +365,19 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
             NoSuchWorkspaceException, RepositoryException {
         return login(credentials);
     }
-    
+
     public void returnSession(Session session) {
         if (sessionPool == null) {
             if (log.isDebugEnabled()) {
                 log.debug("The session pool of the pooling repository has not been initialized yet.");
             }
-            
+
             return;
         }
-        
+
         try {
             this.sessionPool.returnObject(session);
-            
+
             if (poolingCounter != null) {
                 poolingCounter.sessionReturned();
             }
@@ -384,23 +388,23 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 log.warn("Failed to return session to the pool. {}", e.toString());
             }
         }
-        
+
         if (this.sessionPool.getNumActive() < 0) {
             log.error("SEVERE: The session pool is broken with negative active session count. {}", this.sessionPool.getNumActive());
         }
     }
-    
+
     public void setMultipleRepository(MultipleRepository multipleRepository) {
         this.multipleRepository = multipleRepository;
     }
-    
+
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
         Session session = null;
-        
+
         if (this.multipleRepository != null && this.multipleRepository.containsRepositoryByCredentials(credentials)) {
             session = this.multipleRepository.login(credentials);
         }
-        
+
         return session;
     }
 
@@ -429,23 +433,23 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
      * The behavior of borrowing a session when the pool is exhausted.
      * <ul>
      *   <li>
-     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_FAIL}, 
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_FAIL},
      *     borrowing will throw a {@link NoAvailableSessionException}.
      *   </li>
      *   <li>
-     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_GROW}, 
-     *     borrowing will create a new session and return it, 
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_GROW},
+     *     borrowing will create a new session and return it,
      *     essentially making {@link #maxActive} meaningless.
      *   </li>
      *   <li>
-     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_BLOCK}, 
-     *     borrowing will block until a new or idle session is available. 
-     *     If a positive {@link #maxWait} value is supplied, 
-     *     borrowing will block for at most that many milliseconds, 
+     *     When {@link #whenExhaustedAction} is {@link PoolingRepository#WHEN_EXHAUSTED_BLOCK},
+     *     borrowing will block until a new or idle session is available.
+     *     If a positive {@link #maxWait} value is supplied,
+     *     borrowing will block for at most that many milliseconds,
      *     after which a {@link NoAvailableSessionException} will be thrown.
      *     If {@link #maxWait} is non-positive, borrowing will block indefinitely.
      *   </li>
-     * </ul> 
+     * </ul>
      */
     private String whenExhaustedAction = WHEN_EXHAUSTED_BLOCK;
     /**
@@ -498,11 +502,17 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
      * <strong>MUST</strong> be a valid statement.
      */
     protected String validationQuery = null;
-    
+
     public synchronized boolean isActive() {
         return active;
     }
-    
+
+    @Override
+    public Lock getLock() {
+       return lock;
+    }
+
+
     public synchronized void initialize() throws RepositoryException {
         doClose();
         doInitialize();

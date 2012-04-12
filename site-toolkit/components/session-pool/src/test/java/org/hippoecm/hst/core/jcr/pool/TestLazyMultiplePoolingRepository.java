@@ -157,29 +157,55 @@ public class TestLazyMultiplePoolingRepository {
         assertEquals("Active session count is not zero.", 0, defaultRepository.getNumActive());
         assertEquals("Active session count is not zero.", 0, wikiRepository.getNumActive());
     }
-    
+
     @Test
     public void testAutomaticDisposing() throws Exception {
         ((LazyMultipleRepositoryImpl) multipleRepository).setTimeBetweenEvictionRunsMillis(5000);
         ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");
-        
+
         Session session = multipleRepository.login(wikiCreds);
         assertNotNull(session);
         Repository wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
         assertNotNull(wikiRepo);
         session.logout();
-        
+
         session = multipleRepository.login(disposableWikiCreds);
         assertNotNull(session);
         Repository disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
         assertNotNull(disposableWikiRepo);
         session.logout();
-        
+
         Thread.sleep(15000L);
-        
+
         wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
         assertNotNull(wikiRepo);
-        
+
+        disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
+        assertNull(disposableWikiRepo);
+    }
+
+    @Test
+    public void testAutomaticDisposingVeryShortEvictionRun() throws Exception {
+        ((LazyMultipleRepositoryImpl) multipleRepository).setTimeBetweenEvictionRunsMillis(1);
+        ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");
+
+        Session session = multipleRepository.login(wikiCreds);
+        assertNotNull(session);
+        Repository wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
+        assertNotNull(wikiRepo);
+        session.logout();
+
+        session = multipleRepository.login(disposableWikiCreds);
+        assertNotNull(session);
+        Repository disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
+        assertNotNull(disposableWikiRepo);
+        session.logout();
+
+        Thread.sleep(15000L);
+
+        wikiRepo = multipleRepository.getRepositoryByCredentials(wikiCreds);
+        assertNotNull(wikiRepo);
+
         disposableWikiRepo = multipleRepository.getRepositoryByCredentials(disposableWikiCreds);
         assertNull(disposableWikiRepo);
     }
