@@ -17,13 +17,15 @@ package org.hippoecm.hst.configuration.channel;
 
 import static org.hippoecm.hst.configuration.channel.ChannelConsts.ERROR_MESSAGE_CHANNEL_ID_HAS_BEEN_ALREADY_SET;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Channel {
+public class Channel implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
-
     private String name;
     private String type;
     private String hostname;
