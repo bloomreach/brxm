@@ -150,6 +150,10 @@
     </sv:property>
     <sv:property sv:name="frontend:properties" sv:type="String">
       <sv:value>nodetypes</sv:value>
+      <sv:value>root.path</sv:value>
+    </sv:property>
+    <sv:property sv:name="root.path" sv:type="String">
+      <sv:value>/content/documents</sv:value>
     </sv:property>
     <sv:node sv:name="navigator">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
