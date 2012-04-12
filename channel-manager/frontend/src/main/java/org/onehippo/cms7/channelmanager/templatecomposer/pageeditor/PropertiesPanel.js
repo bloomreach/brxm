@@ -224,19 +224,21 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _cleanupVariants: function() {
-        var variantIds = [];
-        this.allVariantsStore.each(function(record) {
-            variantIds.push(record.get('id'));
-        })
-        Ext.Ajax.request({
-            method : 'POST',
-            url : this.composerRestMountUrl + '/' + this.componentId + './variants' + '?FORCE_CLIENT_HOST=true',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            params: Ext.util.JSON.encode(variantIds),
-            scope : this
-        });
+        if (this.allVariantsStore) {
+            var variantIds = [];
+            this.allVariantsStore.each(function(record) {
+                variantIds.push(record.get('id'));
+            })
+            Ext.Ajax.request({
+                method : 'POST',
+                url : this.composerRestMountUrl + '/' + this.componentId + './variants' + '?FORCE_CLIENT_HOST=true',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                params: Ext.util.JSON.encode(variantIds),
+                scope : this
+            });
+        }
     }
 
 });
@@ -586,7 +588,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
                         });
 
-//                        this.doLayout(false, true); //Layout the form otherwise we can't use the link in the panel.
                         Ext.get("combo" + i).on("click", this._createDocument, this, {
                             docType : property.get('docType'),
                             docLocation : property.get('docLocation'),
@@ -595,9 +596,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     }
 
                 } else {
+                    var xtype = property.get('type');
                     var propertyFieldConfig = {
                         fieldLabel : property.get('label'),
-                        xtype : property.get('type'),
+                        xtype : xtype,
                         value : value,
                         defaultValue : defaultValue,
                         allowBlank : !property.get('required'),
@@ -614,20 +616,29 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                             }
                         }
                     };
-                    if (property.get('type') === 'checkbox') {
+                    if (xtype === 'checkbox') {
                         propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
+                    } else if (xtype == 'linkpicker') {
+                        propertyFieldConfig.pickerConfig = {
+                            configuration: property.get('pickerConfiguration'),
+                            remembersLastVisited: property.get('pickerRemembersLastVisited'),
+                            initialPath: property.get('pickerInitialPath'),
+                            isRelativePath: property.get('pickerPathIsRelative'),
+                            rootPath: property.get('pickerRootPath'),
+                            selectableNodeTypes: property.get('pickerSelectableNodeTypes')
+                        }
                     }
                     propertyField = this.add(propertyFieldConfig);
 
-                    if (property.get('type') === 'checkbox') {
+                    if (xtype === 'checkbox') {
                         // When an HTML checkbox is not checked, its value is not send to the server (this is default
                         // HTML checkbox behavior). However, when the variant is empty, the server won't remove any
                         // missing property values. As a result, we cannot uncheck the checkbox of the default variant
-                        // without additional trickery. The solution is to include a hidden form field for each checbox
+                        // without additional trickery. The solution is to include a hidden form field for each checkbox
                         // with the same name and the value 'false' *after* the checkbox field. The hidden field which
-                        // will always be sent. So, when a checkbox is checked, the second value of the hidden field
+                        // will always be send. So, when a checkbox is checked, the second value of the hidden field
                         // will be ignored by the server. When a checkbox is not checked, only the hidden field will
-                        // be sent, caused the server to pick up the value 'false'.
+                        // be send, caused the server to pick up the value 'false'.
                         var hiddenUncheckedCheckboxFieldConfig = {
                             name: propertyFieldConfig.name,
                             value: false,
@@ -643,7 +654,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             }
             this.saveButton.show();
         }
-//        this.doLayout(false, true);
     },
 
     _loadException : function (proxy, type, actions, options, response) {
@@ -657,8 +667,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             text : errorText,
             fieldLabel : this.resources['properties-panel-error-field-label']
         });
-
-//        this.doLayout(false, true);
     },
 
     load : function () {
@@ -667,7 +675,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 autoLoad : false,
                 method : 'GET',
                 root : 'properties',
-                fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue' ],
+                fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
+                    'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes' ],
                 url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
             });
 

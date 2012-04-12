@@ -30,7 +30,7 @@ Hippo.ChannelManager.ExtLinkPickerFactory = Ext.extend(Ext.util.Observable, {
     },
 
     openPicker: function(currentValue, pickerConfig, cb) {
-        this.on('picked', cb, {single: true});
+        this.on('picked', cb, this, {single: true});
         this.fireEvent('pick', currentValue, Ext.util.JSON.encode(pickerConfig));
     }
 });

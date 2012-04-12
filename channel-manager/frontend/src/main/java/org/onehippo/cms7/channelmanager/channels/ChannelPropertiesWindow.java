@@ -49,6 +49,7 @@ import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.onehippo.cms7.channelmanager.model.AbsoluteRelativePathModel;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.onehippo.cms7.channelmanager.widgets.DropDownListWidget;
 import org.onehippo.cms7.channelmanager.widgets.ImageSetPathWidget;
@@ -158,7 +159,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         final HstPropertyDefinitionInfo propDefInfo = getPropertyDefinition(key);
 
                         item.add(new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore)));
-                        item.add(getWidget(context, propDefInfo, key));
+                        item.add(getWidget(context, channel, propDefInfo, key));
 
                         // add help text
                         final IModel<String> helpModel = new ChannelResourceModel(key + HELP_SUFFIX, channel, channelStore);
@@ -202,7 +203,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         });
     }
     
-    private Component getWidget(IPluginContext context, HstPropertyDefinitionInfo propDefInfo, String key) {
+    private Component getWidget(IPluginContext context, Channel channel, HstPropertyDefinitionInfo propDefInfo, String key) {
         final HstValueType propType = propDefInfo.getValueType();
 
         // render an image set field?
@@ -217,8 +218,10 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         JcrPath jcrPath = (JcrPath) propDefInfo.getAnnotation(JcrPath.class);
         if (jcrPath != null && propType.equals(HstValueType.STRING)) {
             IModel<String> delegate = new StringModel(channel.getProperties(), key);
-            IModel<String> model = new UuidFromPathModel(delegate);
-            return new JcrPathWidget(context, WICKET_ID_VALUE, jcrPath, model);
+            IModel<String> absToRelModel = new AbsoluteRelativePathModel(delegate, delegate.getObject(),
+                    jcrPath.isRelative(), channel.getContentRoot());
+            IModel<String> uuidFromPathModel = new UuidFromPathModel(absToRelModel);
+            return new JcrPathWidget(context, WICKET_ID_VALUE, jcrPath, channel.getContentRoot(), uuidFromPathModel);
         }
 
         // render a drop-down list?

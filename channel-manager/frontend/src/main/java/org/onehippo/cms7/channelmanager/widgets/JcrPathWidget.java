@@ -59,14 +59,19 @@ public class JcrPathWidget extends Panel {
     private String previewName;
     private AjaxLink<Void> remove;
 
-    public JcrPathWidget(final IPluginContext context, final String id, final JcrPath path, final IModel<String> model) {
+    public JcrPathWidget(final IPluginContext context, final String id, final JcrPath path, final String rootPath, final IModel<String> model) {
         super(id, model);
 
+        String initialPath = path.pickerInitialPath();
+        if (path.isRelative()) {
+            initialPath = rootPath + (initialPath.startsWith("/") ? "" : "/") + initialPath;
+        }
         JavaPluginConfig pickerConfig = createPickerConfig(
                 path.pickerConfiguration(),
                 path.pickerRemembersLastVisited(),
                 path.pickerSelectableNodeTypes(),
-                path.pickerInitialPath()
+                initialPath,
+                rootPath
         );
 
         IDialogFactory dialogFactory = createDialogFactory(context, pickerConfig, model);
@@ -99,7 +104,7 @@ public class JcrPathWidget extends Panel {
     }
 
     static JavaPluginConfig createPickerConfig(String pickerConfigPath, boolean remembersLastVisited,
-                                        String[] selectableNodeTypes, String initialPath) {
+                                        String[] selectableNodeTypes, String initialPath, String rootPath) {
         JavaPluginConfig pickerConfig = new JavaPluginConfig();
         pickerConfig.put("cluster.name", pickerConfigPath);
         pickerConfig.put(NodePickerControllerSettings.LAST_VISITED_ENABLED, Boolean.toString(remembersLastVisited));
@@ -111,12 +116,18 @@ public class JcrPathWidget extends Panel {
                 Node node = session.getNode(initialPath);
                 pickerConfig.put(NodePickerControllerSettings.BASE_UUID, node.getIdentifier());
             } catch (PathNotFoundException e) {
-                log.warn("Initial folder picker path not found: '{}'. Using the default initial path of '{}' instead.",
+                log.warn("Initial picker path not found: '{}'. Using the default initial path of '{}' instead.",
                         initialPath, pickerConfigPath);
             } catch (RepositoryException e) {
-                log.error("Could not retrieve the UUID of initial folder picker path node '" + initialPath
+                log.error("Could not retrieve the UUID of initial picker path node '" + initialPath
                         + "'. Using the default initial path of '" + pickerConfigPath + "' instead.", e);
             }
+        }
+        if (StringUtils.isNotEmpty(rootPath)) {
+            // set the cluster option 'root.path', which will be used as the root of the navigator in the document picker
+            final JavaPluginConfig clusterOptions = new JavaPluginConfig();
+            clusterOptions.put("root.path", rootPath);
+            pickerConfig.put("cluster.options", clusterOptions);
         }
         return pickerConfig;
     }

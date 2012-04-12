@@ -100,6 +100,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-i.png -text svneol=
 frontend/src/main/java/org/onehippo/cms7/channelmanager/icon-view.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/list-view.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/loading.gif -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/model/AbsoluteRelativePathModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/model/UuidFromPathModel.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/ChannelActionsPlugin.java -text
