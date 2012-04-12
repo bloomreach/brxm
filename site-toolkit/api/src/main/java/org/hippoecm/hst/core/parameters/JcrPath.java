@@ -21,7 +21,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated method returns an absolute JCR path that can be selected via a 'picker'.
+ * Indicates that the annotated method returns a JCR path that can be selected via a 'picker'. The path can be absolute,
+ * or relative to the canonical content root of the channel in which this annotation is used (see {@link #isRelative()}).
+ *
  * This annotation should only be used on public getter methods.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -62,5 +64,14 @@ public @interface JcrPath {
      * @return the node types to be able to select in the picker.
      */
     String[] pickerSelectableNodeTypes() default { "hippo:document" };
+
+    /**
+     * Whether this path is relative to the canonical content root path of the channel in which this annotation is
+     * used. The default is 'false', i.e. the path is absolute.
+     *
+     * @return whether this path is relative to the canonical content root path of the channel in which this annotation
+     * is used.
+     */
+    boolean isRelative() default false;
 
 }

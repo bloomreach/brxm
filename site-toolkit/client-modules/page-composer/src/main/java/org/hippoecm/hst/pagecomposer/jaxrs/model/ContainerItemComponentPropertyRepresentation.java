@@ -15,6 +15,14 @@ public class ContainerItemComponentPropertyRepresentation {
     private boolean allowCreation;
     private String docLocation;
 
+    private String pickerConfiguration;
+    private String pickerInitialPath;
+    private String pickerRootPath;
+
+    private boolean pickerPathIsRelative;
+    private boolean pickerRemembersLastVisited;
+    private String[] pickerSelectableNodeTypes;
+
     public ContainerItemComponentPropertyRepresentation() {
         name = "";
         value = "";
@@ -107,4 +115,53 @@ public class ContainerItemComponentPropertyRepresentation {
     public void setDocLocation(String docLocation) {
         this.docLocation = docLocation;
     }
+
+    public String getPickerConfiguration() {
+        return pickerConfiguration;
+    }
+
+    public void setPickerConfiguration(final String pickerConfiguration) {
+        this.pickerConfiguration = pickerConfiguration;
+    }
+
+    public String getPickerInitialPath() {
+        return pickerInitialPath;
+    }
+
+    public void setPickerInitialPath(final String pickerInitialPath) {
+        this.pickerInitialPath = pickerInitialPath;
+    }
+
+    public String getPickerRootPath() {
+        return pickerRootPath;
+    }
+
+    public void setPickerRootPath(final String pickerRootPath) {
+        this.pickerRootPath = pickerRootPath;
+    }
+
+    public boolean isPickerPathIsRelative() {
+        return pickerPathIsRelative;
+    }
+
+    public void setPickerPathIsRelative(final boolean pickerPathIsRelative) {
+        this.pickerPathIsRelative = pickerPathIsRelative;
+    }
+
+    public boolean isPickerRemembersLastVisited() {
+        return pickerRemembersLastVisited;
+    }
+
+    public void setPickerRemembersLastVisited(final boolean pickerRemembersLastVisited) {
+        this.pickerRemembersLastVisited = pickerRemembersLastVisited;
+    }
+
+    public String[] getPickerSelectableNodeTypes() {
+        return pickerSelectableNodeTypes;
+    }
+
+    public void setPickerSelectableNodeTypes(final String[] pickerSelectableNodeTypes) {
+        this.pickerSelectableNodeTypes = pickerSelectableNodeTypes;
+    }
+
 }

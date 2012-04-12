@@ -96,7 +96,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                     log.warn("Failed to create Locale from string '{}'", localeString);
                 }
             }
-            return doGetParameters(getRequestConfigNode(requestContext), locale, prefix);
+            String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
+            return doGetParameters(getRequestConfigNode(requestContext), locale, prefix, currentMountCanonicalContentPath);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
@@ -107,8 +108,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return null;
     }
     
-    ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
-        return new ContainerItemComponentRepresentation().represents(node, locale, prefix);
+    ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
+        return new ContainerItemComponentRepresentation().represents(node, locale, prefix, currentMountCanonicalContentPath);
     }
 
     @POST

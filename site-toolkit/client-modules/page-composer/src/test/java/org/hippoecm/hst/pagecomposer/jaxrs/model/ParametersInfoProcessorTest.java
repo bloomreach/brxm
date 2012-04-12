@@ -25,6 +25,7 @@ import java.util.List;
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.junit.Test;
@@ -70,6 +71,14 @@ public class ParametersInfoProcessorTest {
 
         @Parameter(name="11-shortClass")
         Short getShortClass();
+
+        @Parameter(name="12-jcrpath")
+        @JcrPath(pickerInitialPath = "/content/documents/subdir/foo")
+        String getJcrPath();
+
+        @Parameter(name="13-relativejcrpath")
+        @JcrPath(isRelative = true, pickerInitialPath = "subdir/foo", pickerConfiguration = "cms-pickers/mycustompicker")
+        String getRelativeJcrPath();
     }
     @ParametersInfo(type=NewstyleInterface.class)
     static class NewstyleContainer {
@@ -77,9 +86,11 @@ public class ParametersInfoProcessorTest {
 
     @Test
     public void additionalAnnotationBasedProcessing() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
-        assertEquals(12, properties.size());
+        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        assertEquals(14, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -123,6 +134,18 @@ public class ParametersInfoProcessorTest {
 
         ContainerItemComponentPropertyRepresentation shortClassProperty = properties.get(11);
         assertEquals("numberfield", shortClassProperty.getType());
+
+        ContainerItemComponentPropertyRepresentation jcrPathProperty = properties.get(12);
+        assertEquals("linkpicker", jcrPathProperty.getType());
+        assertEquals("cms-pickers/documents", jcrPathProperty.getPickerConfiguration());
+        assertEquals("/content/documents/subdir/foo", jcrPathProperty.getPickerInitialPath());
+        assertEquals(currentMountCanonicalContentPath, jcrPathProperty.getPickerRootPath());
+
+        ContainerItemComponentPropertyRepresentation relativeJcrPathProperty = properties.get(13);
+        assertEquals("linkpicker", relativeJcrPathProperty.getType());
+        assertEquals("cms-pickers/mycustompicker", relativeJcrPathProperty.getPickerConfiguration());
+        assertEquals("subdir/foo", relativeJcrPathProperty.getPickerInitialPath());
+        assertEquals(currentMountCanonicalContentPath, relativeJcrPathProperty.getPickerRootPath());
     }
 
     private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {
@@ -157,7 +180,7 @@ public class ParametersInfoProcessorTest {
     public void testInvalidReturnTypeAnnotationCombination() {
         ParametersInfo parameterInfo = InvalidReturnTypeAnnotationCombination.class.getAnnotation(ParametersInfo.class);
         // the getProperties below are expected to log some warnings
-        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null);
+        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, "");
         assertEquals(2, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order

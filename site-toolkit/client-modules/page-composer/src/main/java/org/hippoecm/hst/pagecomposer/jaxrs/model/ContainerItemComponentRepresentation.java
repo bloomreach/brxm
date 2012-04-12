@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.slf4j.Logger;
@@ -74,7 +75,8 @@ public class ContainerItemComponentRepresentation {
         BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null), 
         DATE("datefield", new Class[]{Date.class, Calendar.class}, null), 
         COLOR("colorfield", new Class[]{String.class}, Color.class), 
-        DOCUMENT("combo", new Class[]{String.class}, DocumentLink.class), 
+        DOCUMENT("combo", new Class[]{String.class}, DocumentLink.class),
+        JCR_PATH("linkpicker", new Class[]{String.class}, JcrPath.class),
         UNKNOWN("textfield", null, null);
         
         final String xtype;
@@ -134,7 +136,7 @@ public class ContainerItemComponentRepresentation {
      * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
-    public ContainerItemComponentRepresentation represents(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
+    public ContainerItemComponentRepresentation represents(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
         Map<String, String> hstParameters = null;
         //Get the parameter names and values from the component node.
@@ -166,7 +168,7 @@ public class ContainerItemComponentRepresentation {
             Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
                 ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
-                properties = getProperties(parametersInfo, locale);
+                properties = getProperties(parametersInfo, locale, currentMountCanonicalContentPath);
             }
             if (hstParameters != null) {
                 for (ContainerItemComponentPropertyRepresentation prop : properties) {
@@ -188,7 +190,8 @@ public class ContainerItemComponentRepresentation {
         this.properties = properties;
     }
     
-    static List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale) {
+    static List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale,
+                                                                            String currentMountCanonicalContentPath) {
         final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
 
         final Class<?> classType = parameterInfo.type();
@@ -236,6 +239,22 @@ public class ContainerItemComponentRepresentation {
                         prop.setDocType(documentLink.docType());
                         prop.setDocLocation(documentLink.docLocation());
                         prop.setAllowCreation(documentLink.allowCreation());
+                        break;
+                    }
+                } else if (type.annotationType == JcrPath.class) {
+                    // for JcrPath we need some extra processing too
+                    for (Annotation annotation : method.getAnnotations()) {
+                        if (annotation.annotationType() != type.annotationType) {
+                            continue;
+                        }
+                        type = ParameterType.JCR_PATH;
+                        JcrPath jcrPath = (JcrPath) annotation;
+                        prop.setPickerConfiguration(jcrPath.pickerConfiguration());
+                        prop.setPickerInitialPath(jcrPath.pickerInitialPath());
+                        prop.setPickerRootPath(currentMountCanonicalContentPath);
+                        prop.setPickerPathIsRelative(jcrPath.isRelative());
+                        prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
+                        prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
                         break;
                     }
                 }

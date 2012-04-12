@@ -65,7 +65,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         build(session, testComponent);
         Node node = session.getNode("/test/component");
         
-        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "", "").getProperties();
         assertEquals(2, result.size());
         assertEquals("parameterOne", result.get(0).getName());
         assertEquals("bar", result.get(0).getValue());
@@ -74,7 +74,7 @@ public class ContainerItemComponentResourceTest extends TestCase {
         assertEquals("", result.get(1).getValue());
         assertEquals("test", result.get(1).getDefaultValue());
         
-        result = new ContainerItemComponentResource().doGetParameters(node, null, "prefix").getProperties();
+        result = new ContainerItemComponentResource().doGetParameters(node, null, "prefix", "").getProperties();
         assertEquals(2, result.size());
         assertEquals("parameterOne", result.get(0).getName());
         assertEquals("baz", result.get(0).getValue());
