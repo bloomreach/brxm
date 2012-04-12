@@ -103,6 +103,8 @@ public final class Modules<T extends Object> implements Iterable<T> {
                                         Object moduleInstance = moduleClass.newInstance();
                                         modules.add(moduleInstance);
                                     }
+                                } catch (NoClassDefFoundError ex) {
+                                    log.warn("Cannot instantiate module class {}: {}", moduleClassName, ex);
                                 } catch (ClassNotFoundException ex) {
                                     log.warn("Cannot instantiate module class {}: {}", moduleClassName, ex);
                                 } catch (InstantiationException ex) {
