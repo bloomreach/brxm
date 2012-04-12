@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.rest.beans;
 
+import java.io.Serializable;
+
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 
@@ -23,9 +25,11 @@ import org.hippoecm.hst.core.parameters.FieldGroupList;
  * An information class for {@link FieldGroup}
  * 
  * This class is used to serialize information about different {@link FieldGroup} in an {@link FieldGroupList}
- * cause Java annotations can not be serialized onver the wire directly 
+ * because Java annotations cannot be serialized over the wire directly.
  */
-public class FieldGroupInfo {
+public class FieldGroupInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String[] value;
     String titleKey;
