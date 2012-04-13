@@ -16,7 +16,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
@@ -53,7 +52,8 @@
     <yui.sources.version>1.01.09</yui.sources.version>
     
     <jmxremote.port>9875</jmxremote.port>
-    
+
+    <dependency.solr.version>3.5.0</dependency.solr.version>
   </properties>
   
   <repositories>
@@ -194,11 +194,15 @@
         <module>content</module>
         <module>cms</module>
         <module>site</module>
+        <module>solr</module>
       </modules>
     </profile>
 
     <profile>
       <id>cargo.run</id>
+      <properties>
+        <solr.data.dir>${repo.path}/solr</solr.data.dir>
+      </properties>
      <build>
         <plugins>
           <plugin>
@@ -226,12 +230,20 @@
                       <context>/site</context>
                     </properties>
                   </deployable>
+                  <deployable>
+                    <location>${project.basedir}/solr/target/solr.war</location>
+                    <type>war</type>
+                    <properties>
+                      <context>/solr</context>
+                    </properties>
+                  </deployable>
                 </deployables>
               </configuration>
               <container>
                 <systemProperties>
                   <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                  <solr.data.dir>${solr.data.dir}</solr.data.dir>
                 </systemProperties>
              </container>
             </configuration>
