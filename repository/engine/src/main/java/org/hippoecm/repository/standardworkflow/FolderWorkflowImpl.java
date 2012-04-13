@@ -929,12 +929,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public Document moveTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        String path = subject.getPath();
+        Node folder = rootSession.getNode(path);
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot move document when document with same name exists");
         }
-        Node source = rootSession.getNodeByUUID(offspring.getIdentity());
+        Node source = rootSession.getNodeByIdentifier(offspring.getIdentity());
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }
@@ -943,7 +943,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         folder.getSession().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);
-        folder.save();
+        rootSession.save();
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
         return new Document(folder.getNode(targetName).getUUID());
     }
