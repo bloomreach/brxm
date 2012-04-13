@@ -15,18 +15,24 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
+import org.hippoecm.frontend.editor.builder.BuilderContext;
 import org.hippoecm.frontend.editor.builder.EditorContext;
 import org.hippoecm.frontend.editor.builder.FieldEditor;
 import org.hippoecm.frontend.editor.builder.IBuilderListener;
@@ -66,8 +72,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
         private IModel<IFieldDescriptor> fieldModel;
         private boolean shown = true;
 
-        public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited,
-                ITypeDescriptor type, boolean edit) throws TemplateEngineException {
+        public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited, ITypeDescriptor type, boolean edit) throws TemplateEngineException {
             super(context, properties);
 
             this.type = type;
@@ -115,12 +120,12 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                             TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
                             IFieldDescriptor field = tde.getField();
                             switch (tde.getType()) {
-                            case FIELD_CHANGED:
-                                if (PropertyEditor.this.edited.getString("field").equals(field.getName())) {
-                                    PropertyEditor.this.redraw();
-                                    FieldPluginEditorPlugin.this.updatePreview();
-                                    break;
-                                }
+                                case FIELD_CHANGED:
+                                    if (PropertyEditor.this.edited.getString("field").equals(field.getName())) {
+                                        PropertyEditor.this.redraw();
+                                        FieldPluginEditorPlugin.this.updatePreview();
+                                        break;
+                                    }
                             }
                         }
                     }
@@ -140,7 +145,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                 try {
                     IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), IEditor.Mode.EDIT);
                     panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target,
-                            edit);
+                                                        edit);
                 } catch (TemplateEngineException e) {
                     log.error("engine exception when rendering template parameter editor", e);
                 }
@@ -187,8 +192,8 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
             helperConfig.putAll(config);
             helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
-            helper = new PropertyEditor(getPluginContext(), helperConfig,
-                    getBuilderContext().getEditablePluginConfig(), type, edit);
+            helper = new PropertyEditor(getPluginContext(), helperConfig, getBuilderContext().getEditablePluginConfig(),
+                                        type, edit);
             helper.show(getBuilderContext().hasFocus());
             getBuilderContext().addBuilderListener(new IBuilderListener() {
                 private static final long serialVersionUID = 1L;
@@ -208,6 +213,55 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
     private ITemplateEngine getTemplateEngine() {
         return getPluginContext().getService(getEffectivePluginConfig().getString("engine"), ITemplateEngine.class);
+    }
+
+    @Override
+    protected boolean validateDelete() {
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
+        BuilderContext builderContext = getBuilderContext();
+
+        final String field = getBuilderContext().getEditablePluginConfig().getString("field");
+        if (StringUtils.isEmpty(field)) {
+            return true;
+        }
+
+        // do not delete if there is a subtype that has an editor template for this field
+        final List<ITypeDescriptor> subTypes = builderContext.getType().getSubTypes();
+        final ITemplateEngine templateEngine = context.getService(config.getString(ITemplateEngine.ENGINE),
+                                                                  ITemplateEngine.class);
+        final List<String> subTypeNames = new ArrayList<String>();
+        for (ITypeDescriptor subType : subTypes) {
+            try {
+                final IClusterConfig template = templateEngine.getTemplate(subType, IEditor.Mode.VIEW);
+                for (IPluginConfig plugin : template.getPlugins()) {
+                    if (StringUtils.equals(field, plugin.getString("field"))) {
+                        subTypeNames.add(subType.getName());
+                    }
+                }
+            } catch (TemplateEngineException e) {
+                // This error does not prevent deletion.
+                log.warn("Misconfiguration of type definition {} encountered.", subType.getName());
+            }
+        }
+        if (subTypeNames.size() > 0) {
+            error(buildErrorMessage(field, subTypeNames));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Builds error message with subTypeNames.
+     *
+     * @param subTypeNames names of subTypes where the field exists.
+     * @return the formatted error message.
+     */
+    private String buildErrorMessage(String field, List<String> subTypeNames) {
+        final String[] types = subTypeNames.toArray(new String[subTypeNames.size()]);
+        StringResourceModel srm = new StringResourceModel("field-is-inherited", this, null,
+                                                          new String[]{field, Strings.join(", ", types)});
+        return srm.getObject();
     }
 
 }

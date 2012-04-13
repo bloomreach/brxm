@@ -1093,6 +1093,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin$PropertyEditor.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_it.properties -text

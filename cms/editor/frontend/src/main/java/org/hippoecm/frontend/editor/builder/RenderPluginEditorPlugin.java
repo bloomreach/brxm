@@ -15,14 +15,12 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
@@ -36,8 +34,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
 import org.hippoecm.frontend.editor.layout.ILayoutControl;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
@@ -49,16 +45,13 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,53 +138,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                // do not delete if there is a subtype that has an editor template for this field
-                final List<ITypeDescriptor> subTypes = builderContext.getType().getSubTypes();
-                final ITemplateEngine templateEngine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
-                final List<String> subTypeNames = new ArrayList<String>();
-                for(ITypeDescriptor subType : subTypes) {
-                    try {
-                        final IClusterConfig template = templateEngine.getTemplate(subType, IEditor.Mode.VIEW);
-                        for(IPluginConfig plugin : template.getPlugins()) {
-                            if(StringUtils.equals(builderContext.getPluginId(), plugin.getName())) {
-                                subTypeNames.add(subType.getName());
-                            }
-                        }
-                    } catch (TemplateEngineException e) {
-                        // This error does not prevent deletion.
-                        log.warn("Misconfiguration of type definition {} encountered.", subType.getName());
-                    }
+                if (validateDelete()) {
+                    builderContext.delete();
                 }
-                if(subTypeNames.size() > 0) {
-                    error(buildErrorMessage(subTypeNames));
-                    return;
-                }
-                builderContext.delete();
-            }
 
-            /**
-             * Builds error message with subTypeNames.
-             * @param subTypeNames names of subTypes where the field exists.
-             * @return the formatted error message.
-             */
-            private String buildErrorMessage(final List<String> subTypeNames) {
-                StringBuilder sb = new StringBuilder("The field ");
-                sb.append(builderContext.getPluginId());
-                sb.append(" cannot be deleted. It exists in subtype");
-                if(subTypeNames.size() > 1) {
-                    sb.append("s");
-                }
-                sb.append(" ");
-                boolean first = true;
-                for(String subTypeName : subTypeNames) {
-                    if(!first) {
-                        sb.append(", ");
-                    }
-                    sb.append(subTypeName);
-                    first = false;
-                }
-                sb.append(".");
-                return sb.toString();
             }
 
             @Override
@@ -362,6 +312,10 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         registerChildTrackers();
 
         redraw();
+    }
+
+    protected boolean validateDelete() {
+        return false;
     }
 
     protected void registerExtensionPointSelector() {
