@@ -78,16 +78,16 @@ public class TestObjectConverterUtils {
         
         Collection<Class<? extends HippoBean>> annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(resourceScanner, locationPattern);
         ObjectConverter objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        
-        assertNull(objectConverter.getAnnotatedClassFor("test:documentinterface"));
-        assertNull(objectConverter.getAnnotatedClassFor("test:abstractdocument"));
+
+        assertEquals(DocumentInterface.class, objectConverter.getAnnotatedClassFor("test:documentinterface"));
+        assertEquals(AbstractBean.class, objectConverter.getAnnotatedClassFor("test:abstractdocument"));
         assertEquals(TextBean.class, objectConverter.getAnnotatedClassFor("test:textdocument"));
         assertEquals(CommentBean.class, objectConverter.getAnnotatedClassFor("test:comment"));
         assertNull(objectConverter.getAnnotatedClassFor("test:packagedocument"));
         assertNull(objectConverter.getAnnotatedClassFor("test:privatedocument"));
-        
-        assertNull("test:documentinterface", objectConverter.getPrimaryNodeTypeNameFor(DocumentInterface.class));
-        assertNull("test:abstractdocument", objectConverter.getPrimaryNodeTypeNameFor(AbstractBean.class));
+
+        assertEquals("test:documentinterface", objectConverter.getPrimaryNodeTypeNameFor(DocumentInterface.class));
+        assertEquals("test:abstractdocument", objectConverter.getPrimaryNodeTypeNameFor(AbstractBean.class));
         assertEquals("test:textdocument", objectConverter.getPrimaryNodeTypeNameFor(TextBean.class));
         assertEquals("test:comment", objectConverter.getPrimaryNodeTypeNameFor(CommentBean.class));
         assertNull("test:packagedocument", objectConverter.getPrimaryNodeTypeNameFor(PackageBean.class));

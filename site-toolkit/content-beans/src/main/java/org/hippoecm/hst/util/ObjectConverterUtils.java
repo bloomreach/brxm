@@ -243,7 +243,7 @@ public class ObjectConverterUtils {
      * Class resources will be collected by the specified <CODE>resourceScanner</CODE>.
      *  
      * @param resourceScanner
-     * @param locationPattern
+     * @param locationPatterns
      * @return
      * @throws IOException
      * @throws SAXException
@@ -265,14 +265,14 @@ public class ObjectConverterUtils {
                     log.warn("ObjectConverterUtils skipped annotated class registration. The class cannot be loaded: {}.", className);
                     continue;
                 }
-                
+
                 int mod = clazz.getModifiers();
-                
-                if (Modifier.isAbstract(mod) || Modifier.isInterface(mod) || !Modifier.isPublic(mod)) {
-                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be a non-abstract public class: {}.", className);
+
+                if (!Modifier.isPublic(mod)) {
+                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be a *public* class: {}.", className);
                     continue;
                 }
-                
+
                 if (HippoBean.class.isAssignableFrom(clazz)) {
                     annotatedClasses.add((Class<? extends HippoBean>) clazz);
                 } else {
