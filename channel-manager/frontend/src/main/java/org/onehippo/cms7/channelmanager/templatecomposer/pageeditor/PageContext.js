@@ -74,8 +74,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 console.info('pageContextInitialized');
                 this.fireEvent('pageContextInitialized');
             }.createDelegate(this));
-        }.createDelegate(this)).otherwise(function(value) {
-            this.fireEvent('pageContextInitializationFailed', value);
+        }.createDelegate(this)).otherwise(function(error) {
+            this.fireEvent('pageContextInitializationFailed', error);
         }.createDelegate(this));
     },
 
@@ -188,7 +188,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     }
                 },
                 failure : function(responseObject) {
-                    onFail(responseObject);
+                    onFail(new Ext.Error("HST-Meta-Data request failed", { status: responseObject.status, statusText: responseObject.statusText}));
                 }
             });
         }.createDelegate(this));
