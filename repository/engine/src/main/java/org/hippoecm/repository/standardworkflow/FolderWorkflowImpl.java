@@ -326,10 +326,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void doArchive(String source, String destination) throws ConstraintViolationException, PathNotFoundException, ItemNotFoundException, VersionException, VersionException, AccessDeniedException, RepositoryException {
-        rootSession.getWorkspace().move(source, destination);
-        String targetParentPath = destination.substring(1, destination.lastIndexOf("/"));
+        rootSession.move(source, destination);
+        rootSession.save();
+        String targetParentPath = destination.substring(0, destination.lastIndexOf("/"));
         String targetName = destination.substring(destination.lastIndexOf("/")+1);
-        for (NodeIterator targetsIter = rootSession.getRootNode().getNode(targetParentPath).getNodes(targetName); targetsIter.hasNext(); ) {
+        for (NodeIterator targetsIter = rootSession.getNode(targetParentPath).getNodes(targetName); targetsIter.hasNext(); ) {
             Node target = targetsIter.nextNode();
             try {
                 if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
@@ -358,30 +359,28 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(config.exists() && config.containsKey("attic") && config.get("attic") instanceof String) {
             atticPath = (String) config.get("attic");
         }
-        if(name.startsWith("/"))
+        if (atticPath == null) {
+            throw new WorkflowException("No attic for archivation defined");
+        }
+        if (!rootSession.nodeExists(atticPath)) {
+            throw new WorkflowException("Attic " + atticPath + " for archivation does not exist");
+        }
+        if(name.startsWith("/")) {
             name  = name.substring(1);
-        String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        }
+        String path = subject.getPath();
+        Node folder = rootSession.getNode(path);
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
-            if (atticPath != null) {
-                if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    offspring = offspring.getParent();
-                }
-                if (subject.getPath().equals(atticPath)) {
-                    offspring.remove();
-                    folder.save();
-                } else {
-                    if (rootSession.getRootNode().hasNode(atticPath.substring(1))) {
-                        doArchive(folder.getPath() + "/" + offspring.getName(),
-                                  atticPath + "/" + atticName(atticPath, offspring.getName(), true));
-                    } else {
-                        throw new WorkflowException("Attic " + atticPath + " for archivation does not exist");
-                    }
-                }
-            } else {
-                throw new WorkflowException("No attic for archivation defined");
+            if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                offspring = offspring.getParent();
             }
+            if (subject.getPath().equals(atticPath)) {
+                offspring.remove();
+                folder.save();
+            } else {
+                doArchive(folder.getPath() + "/" + offspring.getName(),
+                        atticPath + "/" + atticName(atticPath, offspring.getName(), true));            }
         }
     }
 
@@ -391,11 +390,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(config.exists() && config.get("attic") instanceof String) {
             atticPath = (String) config.get("attic");
         }
-        String path = subject.getPath().substring(1);
-        Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
-        if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
-            if (atticPath != null) {
+        if (atticPath == null) {
+            throw new WorkflowException("No attic for archivation defined");
+        }
+        String path = subject.getPath();
+        Node folderNode = rootSession.getNode(path);
+        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        if (documentNode.getPath().startsWith(path+"/")) {
             if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getParent();
             }
@@ -404,9 +405,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 folderNode.save();
             } else {
                 doArchive(documentNode.getPath(), atticPath + "/" + atticName(atticPath, documentNode.getName(), true));
-            }
-            } else {
-                throw new WorkflowException("No attic for archivation defined");
             }
         }
     }
@@ -943,7 +941,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
-        folder.getSession().getWorkspace().move(source.getPath(), folder.getPath() + "/" + targetName);
+        folder.getSession().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);
         folder.save();
         ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
