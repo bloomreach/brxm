@@ -41,6 +41,7 @@ public interface FrontendNodeType {
     String FRONTEND_SERVICES = "frontend:services";
     String FRONTEND_REFERENCES = "frontend:references";
     String FRONTEND_PROPERTIES = "frontend:properties";
+    String FRONTEND_SAVEONEXIT = "frontend:saveonexit";
     String FRONTEND_RENDERER = "frontend:renderer";
     String FRONTEND_FIRSTNAME = "frontend:firstname";
     String FRONTEND_LASTNAME = "frontend:lastname";

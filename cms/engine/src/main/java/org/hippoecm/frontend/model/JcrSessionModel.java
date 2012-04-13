@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model;
 
 import java.rmi.RemoteException;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -40,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Session model that uses the Main application to construct a JCR session.  When the model is attached,
- * pending changes are persisted.
- * <p>
+ * A Session model that uses the Main application to construct a JCR session.  When the model is attached, pending
+ * changes are persisted.
+ * <p/>
  * Plugins can subclass this model to refine the way the session is obtained.
  */
 public class JcrSessionModel extends LoadableDetachableModel<Session> {
@@ -58,6 +59,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     private UserCredentials credentials;
     private String remoteAddress;
+    private boolean saveOnExit;
 
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
@@ -69,24 +71,27 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         if (session != null) {
             log.debug("Flushing session of {}", session.getUserID());
             if (session.isLive()) {
-                try {
-                    session.refresh(true);
-                    session.save();
-                    if (session.getRootNode().hasNode("hippo:log")) {
-                        try {
-                            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
-                                    "internal", session.getRootNode().getNode("hippo:log"));
-                            if (workflow instanceof EventLoggerWorkflow) {
-                                ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository", "logout");
+                if (saveOnExit) {
+                    try {
+                        session.refresh(true);
+                        session.save();
+                        if (session.getRootNode().hasNode("hippo:log")) {
+                            try {
+                                Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
+                                        "internal", session.getRootNode().getNode("hippo:log"));
+                                if (workflow instanceof EventLoggerWorkflow) {
+                                    ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository",
+                                                                              "logout");
+                                }
+                            } catch (AccessDeniedException e) {
+                                log.debug("Access denied when logging logout", e);
                             }
-                        } catch (AccessDeniedException e) {
-                            log.debug("Access denied when logging logout", e);
                         }
+                    } catch (RepositoryException e) {
+                        log.error("Error when logging out", e);
+                    } catch (RemoteException e) {
+                        log.error("Remote error when logging out", e);
                     }
-                } catch (RepositoryException e) {
-                    log.error("Error when logging out", e);
-                } catch (RemoteException e) {
-                    log.error("Remote error when logging out", e);
                 }
                 session.logout();
             }
@@ -118,7 +123,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                 // don't log logouts from anonymous (eg login screen)
                 log.info("[" + getRemoteAddr() + "] Logout as " + username + " from Hippo CMS 7");
             }
-            }
+        }
         if (isAttached()) {
             flush();
         }
@@ -165,7 +170,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
-        Main main = (Main)Application.get();
+        Main main = (Main) Application.get();
         HippoRepository repository = main.getRepository();
         if (credentials != null) {
             return repository.getRepository().login(credentials.getJcrCredentials());
@@ -175,11 +180,11 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     private void logLogin(Session session) throws RepositoryException, RemoteException {
-        if (session != null && session.getRootNode().hasNode(HippoNodeType.LOG_PATH)
-                && session.getRootNode().getNode(HippoNodeType.LOG_PATH).getProperty("hippolog:enabled")
-                        .getBoolean()) {
-            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
-                    "internal", session.getRootNode().getNode(HippoNodeType.LOG_PATH));
+        if (session != null && session.getRootNode().hasNode(HippoNodeType.LOG_PATH) && session.getRootNode().getNode(
+                HippoNodeType.LOG_PATH).getProperty("hippolog:enabled").getBoolean()) {
+            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow("internal",
+                                                                                                           session.getRootNode().getNode(
+                                                                                                                   HippoNodeType.LOG_PATH));
             if (workflow instanceof EventLoggerWorkflow) {
                 ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository", "login");
             }
@@ -200,13 +205,14 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         }
         return false;
     }
-    
+
     protected Node getUserNode(Session session) throws RepositoryException {
         String userId = session.getUserID();
         StringBuilder statement = new StringBuilder();
         statement.append("//element");
         statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-        statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
+        statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append(
+                "'").append(']');
         Query q;
         q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
         QueryResult result = q.execute();
@@ -215,14 +221,18 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
         }
         return null;
     }
-    
-    
+
+
     /**
      * Helper method for logging
+     *
      * @return ip address of client
      */
     private String getRemoteAddr() {
         return remoteAddress;
     }
 
+    public void setSaveOnExit(final boolean saveOnExit) {
+        this.saveOnExit = saveOnExit;
+    }
 }

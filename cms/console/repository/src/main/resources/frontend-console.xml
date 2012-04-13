@@ -19,6 +19,9 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:application</sv:value>
   </sv:property>
+  <sv:property sv:name="frontend:saveonexit" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
   <sv:node sv:name="console">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
