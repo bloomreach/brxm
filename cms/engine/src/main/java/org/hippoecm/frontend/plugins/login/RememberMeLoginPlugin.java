@@ -55,6 +55,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
+    private static final int REMEMBERME_COOKIE_DEFAULT_MAX_AGE = 1209600;
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
@@ -232,7 +233,9 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                     + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
                                     + Base64.encodeBase64URLSafeString(digest.digest());
 
-                            retrieveWebResponse().addCookie(new Cookie(RememberMeLoginPlugin.class.getName(), passphrase));
+                            final Cookie rememberMeCookie = new Cookie(RememberMeLoginPlugin.class.getName(), passphrase);
+                            rememberMeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("rememberme.cookie.maxage", REMEMBERME_COOKIE_DEFAULT_MAX_AGE));
+                            retrieveWebResponse().addCookie(rememberMeCookie);
                             Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
                             String[] strings = passphrase.split("\\$");
                             userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
