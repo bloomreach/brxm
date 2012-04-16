@@ -59,7 +59,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     private UserCredentials credentials;
     private String remoteAddress;
-    private boolean saveOnExit;
+    private boolean saveOnExit = true;
 
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
