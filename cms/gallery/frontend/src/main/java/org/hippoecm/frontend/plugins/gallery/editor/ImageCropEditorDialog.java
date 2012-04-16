@@ -44,12 +44,12 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.gallery.editor.crop.CropBehavior;
+import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
+import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropSettings;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
-import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
@@ -70,9 +70,10 @@ public class ImageCropEditorDialog extends AbstractDialog {
     private Dimension originalImageDimension;
     private Dimension thumbnailDimension;
 
-    private ImageCropEditorDialog(){}
+    private ImageCropEditorDialog() {
+    }
 
-    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor){
+    public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
 
         this.galleryProcessor = galleryProcessor;
@@ -91,25 +92,25 @@ public class ImageCropEditorDialog extends AbstractDialog {
         boolean isPreviewVisible = false;
         String thumbnailDimensionsLabel = StringUtils.EMPTY;
 
-        try{
+        try {
             thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
             isPreviewVisible = thumbnailDimension.getWidth() <= 200;
-            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:"+ thumbnailDimension.getHeight() +"px"), ";"));
-            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:"+ thumbnailDimension.getWidth() +"px"), ";"));
-            thumbnailDimensionsLabel = String.valueOf((int)thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight());
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:" + thumbnailDimension.getHeight() + "px"), ";"));
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:" + thumbnailDimension.getWidth() + "px"), ";"));
+            thumbnailDimensionsLabel = String.valueOf((int) thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight());
         } catch (RepositoryException e) {
             log.error("Cannot retrieve thumbnail dimensions", e);
             error(e);
-        } catch (GalleryException e){
+        } catch (GalleryException e) {
             log.error("Cannot retrieve thumbnail dimensions", e);
             error(e);
         }
 
-        try{
+        try {
             Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             originalImageDimension = new Dimension(
-                (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
+                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
             );
 
             JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
@@ -124,23 +125,23 @@ public class ImageCropEditorDialog extends AbstractDialog {
         }
 
         boolean isUpscalingEnabled = true;
-        try{
+        try {
             isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(thumbnailImageNode);
-        } catch (GalleryException e){
+        } catch (GalleryException e) {
             log.error("Cannot retrieve Upscaling configuration option", e);
             error(e);
-        }
-        catch (RepositoryException e){
+        } catch (RepositoryException e) {
             log.error("Cannot retrieve Upscaling configuration option", e);
             error(e);
         }
 
-        originalImage.add(new CropBehavior(
-                regionField.getMarkupId(),
+        ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
                 imagePreviewContainer.getMarkupId(),
                 originalImageDimension,
                 thumbnailDimension,
-                isUpscalingEnabled));
+                isUpscalingEnabled);
+        originalImage.add(new ImageCropBehavior(cropSettings));
+        originalImage.setOutputMarkupId(true);
 
         add(originalImage);
         imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
@@ -149,8 +150,8 @@ public class ImageCropEditorDialog extends AbstractDialog {
         add(imagePreviewContainer);
 
         Label previewDescription = new Label("preview-description", isPreviewVisible ?
-            new StringResourceModel("preview-description-enabled", this, null) :
-            new StringResourceModel("preview-description-disabled", this, null));
+                new StringResourceModel("preview-description-enabled", this, null) :
+                new StringResourceModel("preview-description-disabled", this, null));
         add(previewDescription);
 
         Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{thumbnailDimensionsLabel}));
@@ -176,7 +177,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
         int left = jsonObject.getInt("left");
         int width = jsonObject.getInt("width");
         try {
-            Node originalImageNode = ((Node)getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            Node originalImageNode = ((Node) getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
             ImageReader reader = ImageUtils.getImageReader(mimeType);
             if (reader == null) {
@@ -189,17 +190,17 @@ public class ImageCropEditorDialog extends AbstractDialog {
             MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(originalImageNode.getProperty(JcrConstants.JCR_DATA).getStream());
             reader.setInput(imageInputStream);
             BufferedImage original = reader.read(0);
-            Dimension dimension = galleryProcessor.getDesiredResourceDimension((Node)getModelObject());
+            Dimension dimension = galleryProcessor.getDesiredResourceDimension((Node) getModelObject());
             Object hints;
             boolean highQuality;
-            if(Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
+            if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
                 hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
                 highQuality = true;
             } else {
                 hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
                 highQuality = false;
             }
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
+            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height, (int) dimension.getWidth(), (int) dimension.getHeight(), hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail);
 
             Node modelObject = (Node) getModelObject();
@@ -218,5 +219,11 @@ public class ImageCropEditorDialog extends AbstractDialog {
             log.error("Unable to create thumbnail image", ex);
             error(ex);
         }
+    }
+
+    @Override
+    protected boolean isFullscreenEnabled() {
+        return true;
+
     }
 }

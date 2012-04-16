@@ -59,3 +59,9 @@
     background: url("res/button_upload_hover.png") no-repeat scroll 0 0 transparent;
     cursor: pointer;
 }
+
+.fullscreen-crop-action {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #999;
+}

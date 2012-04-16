@@ -50,6 +50,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
@@ -67,8 +68,8 @@ import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
 /**
- * Utility class for implementing the {@link IDialogService.Dialog} interface.
- * Provides OK and Cancel buttons by default, that can be manipulated.
+ * Utility class for implementing the {@link IDialogService.Dialog} interface. Provides OK and Cancel buttons by
+ * default, and has support for fullscreen mode which is enabled by overriding {@code isFullscreenEnabled}.
  */
 public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
     private static final long serialVersionUID = 1L;
@@ -84,6 +85,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
+
+    private boolean fullscreen = false;
 
     protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
         private static final long serialVersionUID = 1L;
@@ -305,14 +308,14 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             button.setEnabled(enabled);
             button.setVisible(visible);
             if (getKeyType() != null) {
-                button.add(new InputBehavior(new KeyType[] { getKeyType() }, EventType.click));
+                button.add(new InputBehavior(new KeyType[]{getKeyType()}, EventType.click));
             }
             return button;
         }
 
         public void setEnabled(boolean isset) {
             enabled = isset;
-            if(button != null) {
+            if (button != null) {
                 button.setEnabled(isset);
                 if (ajax) {
                     AjaxRequestTarget target = AjaxRequestTarget.get();
@@ -327,7 +330,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             visible = isset;
             if (button != null) {
                 button.setVisible(isset);
-                if(ajax) {
+                if (ajax) {
                     AjaxRequestTarget target = AjaxRequestTarget.get();
                     if (target != null) {
                         target.addComponent(button);
@@ -369,7 +372,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
             return false;
         }
-        
+
         protected KeyType getKeyType() {
             return null;
         }
@@ -405,7 +408,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
-        
+
         feedback = new ExceptionFeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
         add(feedback);
@@ -430,7 +433,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             protected void onSubmit() {
                 handleSubmit();
             }
-            
+
             @Override
             protected KeyType getKeyType() {
                 return KeyType.Enter;
@@ -454,7 +457,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 b.setDefaultFormProcessing(false);
                 return super.decorate(b);
             }
-            
+
             @Override
             protected KeyType getKeyType() {
                 return KeyType.Escape;
@@ -462,6 +465,24 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         };
         buttons.add(cancel);
+
+        if (isFullscreenEnabled()) {
+            final AjaxButton goFullscreen = new AjaxButton("button",
+                    new AbstractReadOnlyModel<String>() {
+                        @Override
+                        public String getObject() {
+                            return getString(fullscreen ? "exit-fullscreen" : "fullscreen");
+                        }
+                    }) {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    target.appendJavascript(getFullscreenScript());
+                    target.addComponent(this); //update button label
+                    fullscreen = !fullscreen;
+                }
+            };
+            addButton(goFullscreen);
+        }
 
         add(indicator = new AjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
@@ -471,9 +492,48 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
             }
         });
-        
+
     }
-    
+
+    /**
+     * Construct javascript that looks up the latest dialog and executes the toggleFullscreen function. Additional
+     * javascript can be added by overriding <code>getAdditionalFullscreenScript</code>
+     *
+     * @return Javascript that toggles the dialog between fullscreen and initial size
+     */
+    protected String getFullscreenScript() {
+        StringBuilder script = new StringBuilder();
+        script.append("var wDialog = Wicket.Window.get();");
+        script.append("if (typeof wDialog !== 'undefined') {");
+        script.append("    var fullscreen = wDialog.toggleFullscreen();");
+        String additional = getAdditionalFullscreenScript(fullscreen);
+        if (additional != null) {
+            script.append(additional);
+        }
+        script.append("}");
+        return script.toString();
+    }
+
+    /**
+     * Add custom javascript to be executed after the dialog has gone fullscreen or returned to it's initial size.
+     *
+     * @param isFullscreen flag indicating the current fullscreen state
+     * @return Custom javascript that is executed after the dialog changed fullscreen state
+     */
+    protected String getAdditionalFullscreenScript(boolean isFullscreen) {
+        return null;
+    }
+
+    /**
+     * If this method returns true a fullscreen button will be added to the dialog which toggle's the between fullscreen
+     * and initial size.
+     *
+     * @return true to enable fullscreen support
+     */
+    protected boolean isFullscreenEnabled() {
+        return false;
+    }
+
     @Override
     protected void onDetach() {
         if (fmm != null) {
@@ -486,7 +546,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     protected void onDefaultSubmit() {
         handleSubmit();
     }
-    
+
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new ExceptionFeedbackPanel(id);
     }
@@ -620,7 +680,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
         super.onError();
     }
-    
+
     protected void onOk() {
     }
 
@@ -652,7 +712,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         }
     }
-    
+
     public void onClose() {
         AjaxRequestTarget target = AjaxRequestTarget.get();
         if (target != null) {

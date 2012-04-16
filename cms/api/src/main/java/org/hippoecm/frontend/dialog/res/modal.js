@@ -313,7 +313,9 @@ Wicket.Window.prototype = {
 			
 			onClose: function() { }, /* called when window is closed */
 		
-			mask: "semi-transparent" /* or "transparent" */
+			mask: "semi-transparent", /* or "transparent" */
+            
+            isFullscreen : false
 			
 		}, settings || { });
 		
@@ -443,7 +445,12 @@ Wicket.Window.prototype = {
 		}	
 		
 		this.caption.getElementsByTagName("a")[0].onclick = this.settings.onCloseButton.bind(this);
-	},
+
+        //register window resize listener
+        if(YAHOO.util.Event) {
+            YAHOO.util.Event.on(window, 'resize', this.onWindowResize, this, true);      
+        }
+    },
 
 	/**
 	 * Unbinds the event handlers.
@@ -460,7 +467,12 @@ Wicket.Window.prototype = {
 		this.unbind(this.top);
 		
 		this.caption.getElementsByTagName("a")[0].onclick = null;
-	},
+
+        //unregister window resize listener
+        if(YAHOO.util.Event) {
+            YAHOO.util.Event.removeListener(window, 'resize', this.onWindowResize);
+        }
+    },
 	
 	/**
 	 * Returns the content document
@@ -727,7 +739,7 @@ Wicket.Window.prototype = {
 				return "Reloading this page will cause the modal window to disappear.";
 			}				
 		}
-
+        
 		// create the mask that covers the background		
 		this.createMask();	
 	},
@@ -770,10 +782,10 @@ Wicket.Window.prototype = {
 		if (typeof(this.update) != "undefined")
 			window.clearInterval(this.update);
 
-    //HippoAjax cleanup hook.  
-    if(YAHOO.hippo.HippoAjax) {
-      YAHOO.hippo.HippoAjax.cleanupModal(this);      
-    }
+        //HippoAjax cleanup hook.  
+        if(YAHOO.hippo.HippoAjax) {
+          YAHOO.hippo.HippoAjax.cleanupModal(this);      
+        }
 
 		// clean event bindings
 		this.bindClean();
@@ -1083,7 +1095,81 @@ Wicket.Window.prototype = {
 		this.resizing();
 						
 		return this.res;
-	}
+	},
+    
+    onWindowResize : function(e) {
+        if(this.isFullscreen) {
+            var w = this.window;
+            var f = this.content;
+
+            var width  = Wicket.Window.getViewportWidth();
+            var height = Wicket.Window.getViewportHeight();
+
+            w.style.width = width  + "px";
+            w.style.height = height  + "px";
+            w.style.top = 0 + "px";
+            w.style.left = 0 + "px";
+
+            f.style.height = height  + "px";
+            f.style.width = width + "px";
+            this.resizing();
+        }
+    },
+    
+    toggleFullscreen : function() {
+        var w = this.window;
+        var f = this.content;
+        
+        if (this.isFullscreen) {
+            //go small
+
+            w.className = this.oldWClassname;
+            
+            w.style.width = this.oldWWidth;
+            w.style.height = this.oldWHeight;
+            w.style.top = this.oldWTop;
+            w.style.left = this.oldWLeft;
+
+            f.style.width = this.oldCWidth;
+            f.style.height = this.oldCHeight;
+            f.style.top = this.oldCTop;
+            f.style.left = this.oldCLeft;
+
+            this.resizing();
+            this.isFullscreen = false;
+        } else {
+            //go fullscreen
+            this.oldWClassname = w.className;
+            w.className = w.className + ' ' + 'modal_fullscreen'; 
+            
+            //save previous dimensions
+            this.oldWWidth = w.style.width;
+            this.oldWHeight = w.style.height;
+            this.oldWTop = w.style.top;
+            this.oldWLeft = w.style.left;
+
+            this.oldCWidth = f.style.width;
+            this.oldCHeight = f.style.height;
+            this.oldCTop = f.style.top;
+            this.oldCLeft = f.style.left;
+
+            var width  = Wicket.Window.getViewportWidth();
+            var height = Wicket.Window.getViewportHeight();
+
+            w.style.width = width  + "px";
+            w.style.height = height  + "px";
+            w.style.top = 0 + "px";
+            w.style.left = 0 + "px";
+
+            f.style.height = height  + "px";
+            f.style.width = width + "px";
+            f.className = 'modal_fullscreen_content';
+
+            this.resizing();
+            this.isFullscreen = true;
+        }
+        return this.isFullscreen;
+    }
 }
 
 /**

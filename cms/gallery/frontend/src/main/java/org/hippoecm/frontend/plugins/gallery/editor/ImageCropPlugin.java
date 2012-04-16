@@ -56,7 +56,8 @@ public class ImageCropPlugin extends RenderPlugin {
 
         String mode = config.getString("mode", "edit");
         final IModel<Node> jcrImageNodeModel = getModel();
-        final GalleryProcessor processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+        GalleryProcessor _processor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
+        final GalleryProcessor processor = _processor == null ? new DefaultGalleryProcessor() : _processor;
 
         boolean isOriginal = true;
         boolean isOriginalImageWidthSmallerThanThumbWidth = false;
@@ -64,30 +65,30 @@ public class ImageCropPlugin extends RenderPlugin {
         boolean areExceptionsThrown = false;
 
         //Check if this is the original image
-        try{
+        try {
             isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(jcrImageNodeModel.getObject().getName());
-        } catch (RepositoryException e){
+        } catch (RepositoryException e) {
             error(e);
             log.error("Cannot retrieve name of original image node", e);
             areExceptionsThrown = true;
         }
 
         //Get dimensions of this thumbnail variant
-        try{
-            Dimension thumbnailDimension = (processor == null ? new DefaultGalleryProcessor() : processor).getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
+        try {
+            Dimension thumbnailDimension = processor.getDesiredResourceDimension((Node) jcrImageNodeModel.getObject());
             Node originalImageNode = ((Node) getModelObject()).getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             Dimension originalImageDimension = new Dimension(
-                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                        (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
+                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
 
             isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
             isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
 
-        } catch(RepositoryException e){
+        } catch (RepositoryException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
             areExceptionsThrown = true;
-        } catch(GalleryException e){
+        } catch (GalleryException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
             areExceptionsThrown = true;
@@ -96,25 +97,25 @@ public class ImageCropPlugin extends RenderPlugin {
         Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
         cropButton.setVisible("edit".equals(mode) && !isOriginal);
 
-        if("edit".equals(mode)){
-            if(!isOriginal && !areExceptionsThrown && !isOriginalImageWidthSmallerThanThumbWidth && !isOriginalImageHeightSmallerThanThumbHeight) {
+        if ("edit".equals(mode)) {
+            if (!isOriginal && !areExceptionsThrown && !isOriginalImageWidthSmallerThanThumbWidth && !isOriginalImageHeightSmallerThanThumbHeight) {
                 cropButton.add(new AjaxEventBehavior("onclick") {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, (processor == null ? new DefaultGalleryProcessor() : processor)));
+                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, processor));
                     }
                 });
             }
 
             cropButton.add(new AttributeAppender("class", new Model<String>(
-                (isOriginal || areExceptionsThrown || isOriginalImageWidthSmallerThanThumbWidth || isOriginalImageHeightSmallerThanThumbHeight) ? "crop-button inactive" : "crop-button active"
+                    (isOriginal || areExceptionsThrown || isOriginalImageWidthSmallerThanThumbWidth || isOriginalImageHeightSmallerThanThumbHeight) ? "crop-button inactive" : "crop-button active"
             ), " "));
             String buttonTipProperty =
-                areExceptionsThrown ? "crop-button-tip-inactive-error" :
-                isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
-                isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
-                "crop-button-tip";
+                    areExceptionsThrown ? "crop-button-tip-inactive-error" :
+                            isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
+                                    isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
+                                            "crop-button-tip";
 
             cropButton.add(new AttributeAppender("title", new Model<String>(new StringResourceModel(buttonTipProperty, this, null).getString()), ""));
         }
