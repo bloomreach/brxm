@@ -33,12 +33,14 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -55,7 +57,9 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
 
-    private static final int REMEMBERME_COOKIE_DEFAULT_MAX_AGE = 1209600;
+    private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
+    private static final String REMEMBERME_COOKIE_NAME = "rememberme";
+    private static final String HIPPO_AUTO_LOGIN_COOKIE_NAEM = "hal";
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
@@ -73,25 +77,36 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         if (supported != null) {
             add(new BrowserCheckBehavior(supported));
         }
+
+        // Check for remember me cookie
+        if ((retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
+                && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM) != null)) {
+
+            tryToAutoLoginWithRememberMe();
+        }
+    }
+
+    protected void tryToAutoLoginWithRememberMe() {
+        SignInForm signInForm = (SignInForm) createSignInForm("rememberMeAutoLoginSignInForm");
+        signInForm.onSubmit();
     }
 
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
-        boolean rememberme = false;
-        Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (RememberMeLoginPlugin.class.getName().equals(cookie.getName())) {
-                    String passphrase = cookie.getValue();
-                    if (passphrase != null && passphrase.contains("$")) {
-                        username = new String(Base64.decodeBase64(passphrase.split("\\$")[1]));
-                        password = "********";
-                        rememberme = true;
-                    }
-                    break;
+        Cookie rememberMeCookie = retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME); 
+        boolean rememberme = (rememberMeCookie != null) ? Boolean.valueOf(rememberMeCookie.getValue()) : false;
+
+        if (rememberme) {
+            Cookie halCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+            if (halCookie != null) {
+                String passphrase = rememberMeCookie.getValue();
+                if (passphrase != null && passphrase.contains("$")) {
+                    username = new String(Base64.decodeBase64(passphrase.split("\\$")[1]));
+                    password = "********";
                 }
             }
         }
+
         LoginPlugin.SignInForm form = new SignInForm(id, rememberme);
         return form;
     }
@@ -122,13 +137,19 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             add(rememberMeCheckbox);
             rememberMeCheckbox.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
+
                 protected void onUpdate(AjaxRequestTarget target) {
                     // When the 'Remember me' check-box is un-checked Username and Password fields should be cleared 
                     if (!SignInForm.this.getRememberme()) {
                         SignInForm.this.usernameTextField.setModelObject("");
                         SignInForm.this.passwordTextField.setModelObject("");
                         // Also remove the cookie which contains user information
-                        SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                        clearCookie(REMEMBERME_COOKIE_NAME);
+                        clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                    } else {
+                        Cookie remembermeCookie = new Cookie(REMEMBERME_COOKIE_NAME, String.valueOf(true));
+                        remembermeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("rememberme.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
+                        retrieveWebResponse().addCookie(remembermeCookie);
                     }
 
                     setResponsePage(this.getFormComponent().getPage());
@@ -139,7 +160,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
                 }
             });
 
@@ -147,39 +168,30 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    SignInForm.this.clearCookie(RememberMeLoginPlugin.class.getName());
+                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
                 }
             });
-        }
 
-        protected void clearCookie(String cookieName) {
-            Cookie cookie = retrieveWebRequest().getCookie(cookieName);
-
-            if (cookie != null) {
-                cookie.setMaxAge(0);
-                cookie.setValue(null);
-                retrieveWebResponse().addCookie(cookie);
-            }
         }
 
         @Override
         public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             String username = RememberMeLoginPlugin.this.username;
             String password = RememberMeLoginPlugin.this.password;
+
             if (rememberme) {
                 if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
-                    Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
-                    for (Cookie cookie : cookies) {
-                        if (RememberMeLoginPlugin.class.getName().equals(cookie.getName())) {
-                            String passphrase = cookie.getValue();
-                            String strings[] = passphrase.split("\\$");
-                            if (strings.length == 3) {
-                                username = new String(Base64.decodeBase64(strings[1]));
-                                password = strings[0] + "$" + strings[2];
-                            }
-                            break;
+                    Cookie remembermeCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+
+                    if (remembermeCookie != null) {
+                        String passphrase = remembermeCookie.getValue();
+                        String strings[] = passphrase.split("\\$");
+                        if (strings.length == 3) {
+                            username = new String(Base64.decodeBase64(strings[1]));
+                            password = strings[0] + "$" + strings[2];
                         }
                     }
+
                     for (Callback callback : callbacks) {
                         if (callback instanceof NameCallback) {
                             ((NameCallback)callback).setName(username);
@@ -190,21 +202,18 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     return;
                 }
             }
+
             super.handle(callbacks);
         }
 
         @Override
         public final void onSubmit() {
             PluginUserSession userSession = (PluginUserSession) getSession();
+
             if (!rememberme) {
-                Cookie[] cookies = retrieveWebRequest().getHttpServletRequest().getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if (RememberMeLoginPlugin.class.getName().equals(cookie.getName()) || getClass().getName().equals(cookie.getName())) {
-                            retrieveWebResponse().clearCookie(cookie);
-                        }
-                    }
-                }
+                clearCookie(REMEMBERME_COOKIE_NAME);
+                clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                clearCookie(getClass().getName());
             }
 
             boolean success = true;
@@ -233,8 +242,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                     + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
                                     + Base64.encodeBase64URLSafeString(digest.digest());
 
-                            final Cookie rememberMeCookie = new Cookie(RememberMeLoginPlugin.class.getName(), passphrase);
-                            rememberMeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("rememberme.cookie.maxage", REMEMBERME_COOKIE_DEFAULT_MAX_AGE));
+                            final Cookie rememberMeCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM, passphrase);
+                            rememberMeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
                             retrieveWebResponse().addCookie(rememberMeCookie);
                             Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
                             String[] strings = passphrase.split("\\$");
@@ -273,7 +282,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
 
             userSession.setLocale(new Locale(selectedLocale));
-            redirect(success, loginExceptionPageParameters);
+            if (rememberme && success) {
+                throw new RestartResponseException(PluginPage.class);
+            } else {
+                redirect(success, loginExceptionPageParameters);
+            }
         }
     }
 

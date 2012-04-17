@@ -55,7 +55,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.PluginPage;
@@ -307,14 +306,6 @@ public class LoginPlugin extends RenderPlugin {
             redirect(success, null);
         }
 
-    }
-
-    public WebRequest retrieveWebRequest() {
-        return (WebRequest) RequestCycle.get().getRequest();
-    }
-
-    public WebResponse retrieveWebResponse() {
-        return (WebResponse) RequestCycle.get().getResponse();
     }
 
 }

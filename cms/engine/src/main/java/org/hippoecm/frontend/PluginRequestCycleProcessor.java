@@ -99,8 +99,16 @@ public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
             Page page = ((IPageRequestTarget) target).getPage();
             if (page instanceof Home) {
                 ((Home) page).processEvents();
+            }
+        }
+    }
 
-                // FIXME: should be part of respond
+    @Override
+    public void respond(RequestCycle requestCycle) {
+        IRequestTarget target = requestCycle.getRequestTarget();
+        if (target instanceof IPageRequestTarget) {
+            Page page = ((IPageRequestTarget) target).getPage();
+            if (page instanceof Home) {
                 if (target instanceof PluginRequestTarget) {
                     ((Home) page).render((PluginRequestTarget) target);
                 } else {
@@ -108,14 +116,24 @@ public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
                 }
             }
         } else if (target instanceof BookmarkablePageRequestTarget) {
-            // FIXME: should be part of respond
-            Page page = ((BookmarkablePageRequestTarget) target).getPage();
+            BookmarkablePageRequestTarget bprt = (BookmarkablePageRequestTarget) target;
+            Page page = bprt.getPage();
+
+            // create the page instance
+            if (page == null) {
+                bprt.processEvents(requestCycle);
+                page = bprt.getPage();
+                
+            }
+
             if (page instanceof Home) {
                 ((Home) page).render((PluginRequestTarget) null);
             }
         }
+        
+        super.respond(requestCycle);
     }
-
+    
     @Override
     protected IRequestCodingStrategy newRequestCodingStrategy() {
         Main main = (Main) Application.get();

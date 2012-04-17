@@ -17,11 +17,15 @@ package org.hippoecm.frontend.plugins.logout;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.Cookie;
 
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
@@ -47,6 +51,15 @@ public class LogoutLink extends Panel {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                // Remove the Hippo Auto Login cookie
+                Cookie cookie = ((WebRequest) RequestCycle.get().getRequest()).getCookie("hal");
+
+                if (cookie != null) {
+                    cookie.setMaxAge(0);
+                    cookie.setValue("");
+                    ((WebResponse) RequestCycle.get().getResponse()).addCookie(cookie);
+                }
+
                 UserSession userSession = (UserSession) getSession();
                 try {
                     Node rootNode = userSession.getRootNode();
