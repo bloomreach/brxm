@@ -129,7 +129,9 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
             this.rememberme = rememberme;
 
-            if (rememberme) {
+            if (RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("signin.form.autocomplete", false)) {
+                add(new AttributeModifier("autocomplete", true, new Model<String>("on")));
+            } else {
                 add(new AttributeModifier("autocomplete", true, new Model<String>("off")));
             }
 

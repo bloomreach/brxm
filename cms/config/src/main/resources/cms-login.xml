@@ -36,6 +36,9 @@
       <sv:property sv:name="hal.cookie.maxage" sv:type="Long">
         <sv:value>1209600</sv:value>
       </sv:property>
+      <sv:property sv:name="signin.form.autocomplete" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
       </sv:property>
