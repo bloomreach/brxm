@@ -503,6 +503,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      */
     protected String getFullscreenScript() {
         StringBuilder script = new StringBuilder();
+        script.append("(function() {");
         script.append("var wDialog = Wicket.Window.get();");
         script.append("if (typeof wDialog !== 'undefined') {");
         script.append("    var fullscreen = wDialog.toggleFullscreen();");
@@ -511,6 +512,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             script.append(additional);
         }
         script.append("}");
+        script.append("})();");
         return script.toString();
     }
 
