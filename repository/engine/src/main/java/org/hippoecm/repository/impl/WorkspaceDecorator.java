@@ -346,8 +346,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     @Override
     public void move(String srcAbsPath, String destAbsPath) throws ConstraintViolationException, VersionException,
             AccessDeniedException, PathNotFoundException, ItemExistsException, LockException, RepositoryException {
-        logger.warn("You are using Workspace.move. This method is unsafe to use in a concurrent environment " +
-                "because it can cause repository inconsistencies. Please use Session.move instead.");
         super.move(srcAbsPath, destAbsPath);
         touch(destAbsPath);
     }
