@@ -25,10 +25,10 @@
             <sv:value>hippo:translation</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>fr</sv:value>
+            <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Une chaîne de caractère est vide</sv:value>
+            <sv:value>Una stringa è vuota</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -39,10 +39,10 @@
             <sv:value>hippo:translation</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>fr</sv:value>
+            <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Un caractère invalide est présent</sv:value>
+            <sv:value>È presente un carattere non valido</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -53,10 +53,10 @@
             <sv:value>hippo:translation</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value>fr</sv:value>
+            <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Le champ ne correspond pas à une adresse e-mail.</sv:value>
+            <sv:value>Il campo non corrisponde ad un indirizzo email valido.</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
