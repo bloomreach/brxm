@@ -21,7 +21,12 @@ import java.util.List;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.resources.JavaScriptReference;
+import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -60,6 +65,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
         pending = new LinkedList<Dialog>();
 
+        add(JavascriptPackageResource.getHeaderContribution(
+                new JavascriptResourceReference(DialogWindow.class, "res/hippo-modal.js")));
+        add(CSSPackageResource.getHeaderContribution(DialogWindow.class, "res/hippo-modal.css"));
         add(new EventStoppingBehavior("onclick"));
     }
 
@@ -90,7 +98,12 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     public void close() {
-        close(AjaxRequestTarget.get());
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            close(target);
+        } else {
+            respondOnWindowClosed(null);
+        }
     }
 
     public void render(PluginRequestTarget target) {

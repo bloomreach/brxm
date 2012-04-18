@@ -26,8 +26,6 @@ api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.html svneol=nativ
 api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/IDialogFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/IDialogService.java -text svneol=unset#text/plain
-api/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.html svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/dialog/ModalWindow.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/ajax-loader.gif -text
 api/src/main/java/org/hippoecm/frontend/dialog/modal-window.patch -text
 api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-alpha.png -text svneol=unset#image/png
@@ -38,8 +36,8 @@ api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-alpha.png -text 
 api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-1-ie.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-alpha.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/dialog/res/frame-gray-2-ie.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/dialog/res/modal.css svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/dialog/res/modal.js svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/res/hippo-modal.css svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/res/hippo-modal.js -text
 api/src/main/java/org/hippoecm/frontend/dialog/res/transparent1.gif -text
 api/src/main/java/org/hippoecm/frontend/dialog/res/transparent2.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/editor/AbstractCmsEditor$EditorWrapper.html svneol=native#text/plain
