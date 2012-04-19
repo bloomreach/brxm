@@ -35,6 +35,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -59,7 +60,7 @@ public class HstLinkTag extends ParamContainerTag {
 
     protected HstLink link;
     
-    protected HippoBean hippoBean;
+    protected ContentBean contentBean;
 
     protected String path;
 
@@ -143,8 +144,20 @@ public class HstLinkTag extends ParamContainerTag {
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
         HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
         
+        HippoBean hippoBean = null;
+        if (contentBean != null) {
+            if (contentBean instanceof HippoBean) {
+                hippoBean = (HippoBean) contentBean;
+            } else {
+                // TOOD enable custom linkrewriters
+                writeOrSetVar(contentBean.getPath());
+                cleanup();
+                return EVAL_PAGE;
+            }
+        }
+        
         if(linkForAttributeSet) {
-            if(this.link == null && this.path == null && this.hippoBean == null && siteMapItemRefId == null) {
+            if(this.link == null && this.path == null && hippoBean == null && siteMapItemRefId == null) {
                 String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
                 if(dispatcher == null) {
                     log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
@@ -194,6 +207,7 @@ public class HstLinkTag extends ParamContainerTag {
            }
            
            log.warn("There is no HstRequestContext on the request. Cannot create an HstLink outside the hst request processing. Return");
+           cleanup();
            return EVAL_PAGE;
        } 
        
@@ -226,9 +240,10 @@ public class HstLinkTag extends ParamContainerTag {
            mount = reqContext.getResolvedMount().getMount();
        }
        
-       if(this.link == null && this.hippoBean != null) {
+       if(this.link == null && hippoBean != null) {
             if(hippoBean.getNode() == null) {
                 log.warn("Cannot get a link for a detached node");
+                cleanup();
                 return EVAL_PAGE;
             }
             if(mountAliasOrTypeSet) {
@@ -253,6 +268,7 @@ public class HstLinkTag extends ParamContainerTag {
 
         if(this.link == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -362,7 +378,7 @@ public class HstLinkTag extends ParamContainerTag {
         parametersMap.clear();
         removedParametersList.clear();
         var = null;
-        hippoBean = null;
+        contentBean = null;
         scope = null;
         path = null;
         siteMapItemRefId = null;
@@ -404,8 +420,8 @@ public class HstLinkTag extends ParamContainerTag {
         return link;
     }
     
-    public HippoBean getHippobean(){
-        return this.hippoBean;
+    public ContentBean getHippobean(){
+        return this.contentBean;
     }
     
     public String getPath(){
@@ -480,13 +496,13 @@ public class HstLinkTag extends ParamContainerTag {
         this.navigationStateful = navigationStateful;
     }
     
-    public void setHippobean(HippoBean hippoBean) {
+    public void setHippobean(ContentBean hippoBean) {
         if(linkForAttributeSet) {
             log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr hippoBean '{}'", hippoBean.getPath());
             return;    
          } 
          linkForAttributeSet = true;
-        this.hippoBean = hippoBean;
+        this.contentBean = hippoBean;
     }
     
     public void setMount(String mount) {

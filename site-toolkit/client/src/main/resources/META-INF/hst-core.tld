@@ -230,11 +230,11 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
-      <description>A HippoBean object. This is typically one of your bean mapped objects</description>
+      <description>A ContentBean object. This is typically one of your bean mapped objects</description>
       <name>hippobean</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
-      <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
+      <type>org.hippoecm.hst.content.beans.standard.ContentBean</type>
     </attribute>
     <attribute>
       <description>A string id, which is the refId of a sitemap item you want to link to. Note that the sitemapitem
