@@ -936,6 +936,10 @@ sandbox/ocm/src/test/resources/testproject-namespace.xml svneol=native#text/plai
 sandbox/ocm/src/test/resources/testproject-types.cnd -text
 sandbox/pom.xml svneol=native#text/plain
 sandbox/src/site/site.xml -text
+solr-client/pom.xml -text
+solr-client/src/main/java/org/hippoecm/hst/solr/HippoSolrManagerImpl.java -text
+solr-client/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+solr-client/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/solr/SpringComponentManager-solr.xml -text
 solr-content-beans/pom.xml -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/DocumentObjectBinder.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/HippoSolrManager.java -text
