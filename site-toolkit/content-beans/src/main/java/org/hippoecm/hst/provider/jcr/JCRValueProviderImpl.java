@@ -611,7 +611,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 if(canonical != null) {
                     this.identifier = canonical.getIdentifier();
                 } else {
-                    log.warn("Cannot get an identifier for a virtual only node '{}'", jcrNode.getPath());
+                    log.debug("Node '{}' is virtual only. Using virtual path as identifier", jcrNode.getPath());
+                    this.identifier = jcrNode.getPath(); 
                 }
             } catch (RepositoryException e) {
                 log.warn("Repository Exception during fetching canonical path: ", e);
