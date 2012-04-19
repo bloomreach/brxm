@@ -25,7 +25,7 @@ import org.hippoecm.hst.content.beans.query.HstContextualizeException;
 import org.hippoecm.hst.content.beans.query.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
-public class HippoBeanIteratorImpl implements HippoBeanIterator{
+public class HippoBeanIteratorImpl implements HippoBeanIterator {
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HippoBeanIteratorImpl.class);
     
