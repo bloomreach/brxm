@@ -110,6 +110,8 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
     <maven.plugins.jaxb-schemagen.version>1.2</maven.plugins.jaxb-schemagen.version>
+
+    <dependency.solr.version>3.5.0</dependency.solr.version>
   </properties>
 
   <!--
@@ -783,6 +785,8 @@
         <module>commons</module>
         <module>test</module>
         <module>content-beans</module>
+        <module>solr-content-beans</module>
+        <module>solr-client</module>
         <module>toolkit-resources</module>
         <module>components</module>
         <module>client</module>
