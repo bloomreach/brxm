@@ -18,6 +18,7 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:newsdocument")
@@ -25,10 +26,11 @@ public class NewsBean extends TextBean{
 
     private HippoGalleryImageSetBean imageBean;
     private boolean imagesLoaded = false;
-    
+
+
     @Override
+    @IndexField
     public Calendar getDate() {
-        
         return getProperty("demosite:date");
     }
 

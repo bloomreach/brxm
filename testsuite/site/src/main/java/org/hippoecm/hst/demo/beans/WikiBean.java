@@ -16,11 +16,14 @@
 package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.IndexField;
 
 @Node(jcrType = "demosite:wikidocument")
 public class WikiBean extends TextBean {
+
     private String[] categories;
 
+    @IndexField
     public String[] getCategories() {
         return categories == null ? (String[]) getProperty("demosite:categories") : categories;
     }

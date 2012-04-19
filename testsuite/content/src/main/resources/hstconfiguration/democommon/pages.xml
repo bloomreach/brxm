@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2010 Hippo B.V.
+    Copyright (C) 2010 - 2012 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -120,22 +120,38 @@
 			</sv:property>
 		</sv:node>
 	</sv:node>
-	<sv:node sv:name="searchpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:component</sv:value>
-		</sv:property>
-		<sv:property sv:name="hst:referencecomponent" sv:type="String">
-			<sv:value>hst:pages/standard</sv:value>
-		</sv:property>
-		<sv:node sv:name="body">
-			<sv:property sv:name="jcr:primaryType" sv:type="Name">
-				<sv:value>hst:component</sv:value>
-			</sv:property>
-			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodysearch</sv:value>
-			</sv:property>
-		</sv:node>
-	</sv:node>
+  <sv:node sv:name="searchpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodysearch</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="solrsearchpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodysolrsearch</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 	<sv:node sv:name="faceted">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>
@@ -168,22 +184,39 @@
             </sv:property>
         </sv:node>
     </sv:node>
-    <sv:node sv:name="wikipedia">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:component</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
-        </sv:property>
-        <sv:node sv:name="body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hst:component</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:referencecomponent" sv:type="String">
-                <sv:value>hst:components/bodywikipedia</sv:value>
-            </sv:property>
-        </sv:node>
+  <sv:node sv:name="wikipedia">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodywikipedia</sv:value>
+      </sv:property>
     </sv:node>
+  </sv:node>
+  <sv:node sv:name="gogreenindexer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodygogreenindexer</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
     <sv:node sv:name="faceted_detailpage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:component</sv:value>

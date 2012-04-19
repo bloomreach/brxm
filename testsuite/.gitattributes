@@ -65,6 +65,7 @@ site/pom.xml svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/CommentLinkBean.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/beans/GoGreenProductBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
@@ -86,6 +87,7 @@ site/src/main/java/org/hippoecm/hst/demo/components/Faceted.java svneol=native#t
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedAddProduct.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedDetail.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/FacetedRight.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/GoGreenExternalProductIndexer.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/Home.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/HstForm.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/LeftMenu.java svneol=native#text/plain
@@ -95,6 +97,7 @@ site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#te
 site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/SolrSearch.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
@@ -176,12 +179,14 @@ site/src/main/webapp/WEB-INF/jsp/components/main/facetedaddproduct.jsp -text svn
 site/src/main/webapp/WEB-INF/jsp/components/main/facetedproductpage.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/facetedright.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/formpage.jsp -text
+site/src/main/webapp/WEB-INF/jsp/components/main/gogreenindexer.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/home.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/leftmenu.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/solrsearch.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/wikipedia.jsp -text svneol=unset#text/plain
@@ -221,6 +226,7 @@ site/src/main/webapp/images/vorige.gif -text
 site/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
 site/src/main/webapp/javascript/simple-io.js -text
 solr/pom.xml -text
+solr/solr.iml -text
 solr/src/main/java/org/hippoecm/hst/demo/servlet/SolrConfigContextListener.java -text
 solr/src/main/webapp/WEB-INF/solr/README.txt -text
 solr/src/main/webapp/WEB-INF/solr/conf/admin-extra.html -text

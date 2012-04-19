@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/target/generated-sources/annotations" />
+        </sourceRoots>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-shared-archive-resources" />
+      <excludeFolder url="file://$MODULE_DIR$/target/solr" />
+      <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
+      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.solr:solr-core:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.solr:solr-solrj:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-codec:commons-codec:1.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-io:commons-io:1.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.woodstox:wstx-asl:3.2.7" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:jcl-over-slf4j:1.6.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.solr:solr-noggit:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-core:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-analyzers:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-highlighter:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-memory:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-queries:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: jakarta-regexp:jakarta-regexp:1.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-misc:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-spatial:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-spellchecker:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.lucene:lucene-grouping:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.solr:solr-commons-csv:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.google.guava:guava:r05" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-cms7-commons:1.02.00-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-services:2-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-repository-api:2.23.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-cms-sso:2.23.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-repository-builtin:2.23.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7:hippo-addon-publication-workflow-common:2.23.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7.hst:hst-api:2.25.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.onehippo.cms7.hst:hst-commons:2.25.02-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jcr:jcr:2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.jdo:jdo2-api:2.3-eb" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.mail:mail:1.4.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-logging:commons-logging-api:1.1" level="project" />
+  </component>
+</module>
+

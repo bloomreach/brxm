@@ -23,6 +23,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
@@ -39,7 +40,8 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     private String html;
     
     protected final static String HTML_NODEPATH = "demosite:body";
-    
+
+    @IndexField
     public String getTitle() {
         return title == null ? (String)getProperty("demosite:title"): title ;
     }
@@ -47,8 +49,9 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     public void setTitle(String title) { 
         this.title = title;
     }
-    
-   
+
+
+    @IndexField
     public String getSummary() {
         return summary == null ? (String)getProperty("demosite:summary"): summary ;
     }
@@ -57,9 +60,13 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
         this.summary = summary;
     }
 
-    
-    public HippoHtml getHtml(){
-        return getHippoHtml(HTML_NODEPATH);    
+    @IndexField
+    public String getHtmlContent(){
+        return getHippoHtml(HTML_NODEPATH).getContent();
+    }
+
+     public HippoHtml getHtml(){
+        return getHippoHtml(HTML_NODEPATH);
     }
     
     public void setHtml(String html) throws ContentNodeBindingException{

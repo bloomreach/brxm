@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2010 Hippo B.V.
+    Copyright (C) 2010 - 2012 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -259,14 +259,22 @@
     </sv:property>
   </sv:node>
 
-    <sv:node sv:name="search">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:sitemapitem</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-            <sv:value>hst:pages/searchpage</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="search">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/searchpage</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="solrSearch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+      <sv:value>hst:pages/solrsearchpage</sv:value>
+    </sv:property>
+  </sv:node>
     <sv:node sv:name="error">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitem</sv:value>
@@ -323,6 +331,14 @@
                 <sv:value>faceted/${1}</sv:value>
             </sv:property>
         </sv:node>
+    </sv:node>
+    <sv:node sv:name="gogreen-rest-product-indexer">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/gogreenindexer</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="wikipedia">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

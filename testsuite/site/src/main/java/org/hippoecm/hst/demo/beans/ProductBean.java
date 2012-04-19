@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="demosite:productdocument")
@@ -34,12 +35,14 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     
     private HippoGalleryImageSetBean imageBean;
     private boolean imagesLoaded = false;
-    
+
+    @IndexField
     public String getTitle() {
         // product does not have a title
         return this.getLocalizedName();
     }
-    
+
+    @IndexField
     public String getBrand() {
         if (brand == null) {
             brand = getProperty("demosite:brand");
@@ -50,7 +53,8 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     public void setBrand(String brand) {
         this.brand = brand;
     }
-    
+
+    @IndexField
     public String getProduct() {
         if (product == null) {
             product = getProperty("demosite:product");
@@ -61,7 +65,8 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     public void setProduct(String product) {
         this.product = product;
     }
-    
+
+    @IndexField
     public String getColor() {
         if (color == null) {
             color = getProperty("demosite:color");
@@ -72,7 +77,8 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     public void setColor(String color) {
         this.color = color;
     }
-    
+
+    @IndexField
     public String getType() {
         if (type == null) {
             type = getProperty("demosite:type");
@@ -94,7 +100,8 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     public void setPrice(Double price) {
         this.price = price;
     }
-    
+
+    @IndexField
     public String[] getTags() {
         if (tags == null) {
             tags = getProperty("hippostd:tags");

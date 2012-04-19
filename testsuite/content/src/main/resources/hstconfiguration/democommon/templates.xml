@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2010 Hippo B.V.
+    Copyright (C) 2010 - 2012 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -168,6 +168,16 @@
       <sv:value>jsp/components/main/search.jsp</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="solrsearchresults">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:containers" sv:type="String"/>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/solrsearch.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="todolist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
@@ -194,6 +204,15 @@
       <sv:value>jsp/components/main/wikipedia.jsp</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="gogreenindexer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/gogreenindexer.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="facetedaddproduct">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
