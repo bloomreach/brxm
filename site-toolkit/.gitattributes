@@ -56,6 +56,9 @@ api/src/main/java/org/hippoecm/hst/content/beans/ObjectBeanManagerException.java
 api/src/main/java/org/hippoecm/hst/content/beans/ObjectBeanPersistenceException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/SimpleObjectConverter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/SimpleObjectConverterAware.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/index/IndexField.java -text
+api/src/main/java/org/hippoecm/hst/content/beans/index/NoIndex.java -text
+api/src/main/java/org/hippoecm/hst/content/beans/index/ReIndexOnChange.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/manager/ObjectBeanManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/manager/ObjectBeanPersistenceManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/manager/ObjectConverter.java svneol=native#text/plain
@@ -80,6 +83,7 @@ api/src/main/java/org/hippoecm/hst/content/beans/query/filter/Filter.java svneol
 api/src/main/java/org/hippoecm/hst/content/beans/query/filter/NodeTypeFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/filter/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/standard/ContentBean.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAssetBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAvailableTranslationsBean.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoBean.java svneol=native#text/plain

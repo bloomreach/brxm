@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstContextualizeException;
 import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
@@ -48,9 +49,14 @@ public class HippoItem implements HippoBean {
 
     protected transient Node node;
     protected String comparePath;
+    protected String path;
+    protected String name;
+    protected String localizedName;
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
+
+    private String canonicalUUID;
 
     private boolean availableTranslationsBeanInitialized;
     @SuppressWarnings("rawtypes")
@@ -78,21 +84,87 @@ public class HippoItem implements HippoBean {
         return this.valueProvider;
     }
 
+    @IndexField
     public String getName() {
-        return valueProvider.getName();
+        if (name != null) {
+            return name;
+        }
+        if (valueProvider != null) {
+            name = valueProvider.getName();
+        }
+        return name;
     }
-    
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @IndexField
     public String getLocalizedName() {
-        return valueProvider.getLocalizedName();
+        if (localizedName != null) {
+            return localizedName;
+        }
+        if (valueProvider != null) {
+            localizedName = valueProvider.getLocalizedName();
+        }
+        return localizedName;
+    }
+
+    public void setLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
     }
 
     public String getPath() {
-        return (valueProvider == null) ? null : valueProvider.getPath();
+        if (path != null) {
+            return path;
+        }
+
+        if (valueProvider != null) {
+            path = valueProvider.getPath();
+        }
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
+    @IndexField
+    public String getComparePath() {
+        if (comparePath != null) {
+            return comparePath;
+        }
+        HippoNode node = (HippoNode) getNode();
+        if (node == null) {
+            throw new IllegalStateException("Cannot get comparePath if jcr node is null");
+        }
+        Node canonical = null;
+        try {
+            canonical = node.getCanonicalNode();
+            if (canonical == null) {
+                // virtual only
+                comparePath = node.getPath();
+            } else {
+                comparePath = canonical.getPath();
+            }
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Cannot get comparePath", e);
+        }
+        return comparePath;
+    }
+    
+    public void setComparePath(String comparePath) {
+        this.comparePath = comparePath;
     }
 
     @Override
+    @IndexField(name="canonicalUUID")
     public String getCanonicalUUID() {
-        return getValueProvider().getIdentifier();
+        return canonicalUUID == null ? getValueProvider().getIdentifier() : canonicalUUID;
+    }
+
+    public void setCanonicalUUID(String canonicalUUID) {
+        this.canonicalUUID = canonicalUUID;
     }
 
     @Override
@@ -541,52 +613,14 @@ public class HippoItem implements HippoBean {
             if (!(compare instanceof HippoItem)) {
                 return false;
             }
-
             HippoItem compareItem = (HippoItem) compare;
-            
-            if (compareItem.comparePath == null) {
-                HippoNode node = (HippoNode) compareItem.getNode();
-                if (node == null) {
-                    return false;
-                }
-                Node canonical = null;
-                try {
-                    canonical = node.getCanonicalNode();
-                    if (canonical == null) {
-                        // virtual only
-                        compareItem.comparePath = node.getPath();
-                    } else {
-                        compareItem.comparePath = canonical.getPath();
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Repository exception during compare", e);
-                    return false;
-                }
-               
+            try {
+                return compareItem.getComparePath().equals(HippoItem.this.getComparePath());
+            } catch (IllegalStateException e) {
+                log.error("Could not compare items correctly : ", e);
+                return false;
             }
-            if (HippoItem.this.comparePath == null) {
-                HippoNode node = (HippoNode) HippoItem.this.getNode();
-                if (node == null) {
-                    return false;
-                }
-                Node canonical = null;
-                try {
-                    canonical = node.getCanonicalNode();
-                    if (canonical == null) {
-                        // virtual only
-                        HippoItem.this.comparePath = node.getPath();
-                    } else {
-                        HippoItem.this.comparePath = canonical.getPath();
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Repository exception during compare", e);
-                    return false;
-                }
-            }
-            if (compareItem.comparePath != null && HippoItem.this.comparePath != null) {
-                return compareItem.comparePath.equals(HippoItem.this.comparePath);
-            }
-            return false;
+
         }
 
     }
@@ -601,10 +635,10 @@ public class HippoItem implements HippoBean {
             throw new NullPointerException("HippoBean to compareTo is not allowed to be null");
         }
         if (this.getName() == null) {
-            throw new IllegalStateException("getName() for a HippoBean should not be possible to be null");
+            throw new IllegalStateException("Cannot compare when getName is null");
         }
         if (hippoBean.getName() == null) {
-            throw new IllegalStateException("getName() for a HippoBean should not be possible to be null");
+            throw new IllegalStateException("Cannot compare when getName is null");
         }
         int val = this.getName().compareTo(hippoBean.getName());
         if(val != 0) {

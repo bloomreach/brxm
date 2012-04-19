@@ -26,7 +26,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.repository.api.HippoNode;
 
-public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<HippoBean> {
+public interface HippoBean extends ContentBean, NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
     /**
      * This returns the backing jcr node for this bean. 
@@ -51,15 +51,6 @@ public interface HippoBean extends NodeAware, ObjectConverterAware, Comparable<H
      * @return the localized node name of the backing jcr node and <code>null</code> when some {@link RepositoryException} happens
      */
     String getLocalizedName();
-
-    /**
-     * This returns the absolute path of the backing jcr node for this bean, for example /documents/content/myprojec/news/article
-     * 
-     * When the jcr node is virtual, it returns the virtual path.
-     * 
-     * @return the absolute jcr path of the backing jcr node. 
-     */
-    String getPath();
     
     /**
      * Returns the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> when 

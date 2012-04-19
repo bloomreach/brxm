@@ -103,6 +103,10 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supproted yet");
     }
 
+    public void setPath(String path) {
+        throw new UnsupportedOperationException("Not supproted yet");
+    }
+
     public Map<String, Object> getProperties() {
         throw new UnsupportedOperationException("Not supproted yet");
     }
