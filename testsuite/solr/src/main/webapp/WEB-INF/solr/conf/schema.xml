@@ -609,7 +609,8 @@ unknown fields indexed and/or stored by default -->
   <copyField source="localizedName" dest="text"/>
   <copyField source="title" dest="text"/>
   <copyField source="summary" dest="text"/>
-  <copyField source="htmlContent" dest="text"/>
+  <!-- for example max 3000 chars -->
+  <copyField source="htmlContent" dest="text" maxChars="3000"/>
   <copyField source="brand" dest="text"/>
   <copyField source="product" dest="text"/>
   <copyField source="color" dest="text"/>
