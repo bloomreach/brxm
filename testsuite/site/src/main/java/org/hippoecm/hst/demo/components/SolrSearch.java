@@ -41,25 +41,6 @@ public class SolrSearch extends AbstractSearchComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
 
-        if ("true".equals(getPublicRequestParameter(request,"addDummy"))) {
-            GoGreenProductBean bean = new GoGreenProductBean();
-            bean.setPath("http://www.demo.onehippo.com/something");
-            bean.setTitle("Gogreen product title");
-            bean.setSummary("Gogreen product summary");
-            bean.setDescription("Gogreen product description");
-            bean.setCategories(new String[]{"foo", "bar"});
-            bean.setPrice(201.20D);
-
-            try {
-                solrManager.getSolrServer().addBean(bean);
-                solrManager.getSolrServer().commit();
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (SolrServerException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
         String query = getPublicRequestParameter(request, "query");
         if (query == null || "".equals(query)) {
             query = request.getParameter("query");
