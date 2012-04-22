@@ -176,6 +176,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
             this._initIFrameListeners();
             var iFrameUrl = this.contextPath;
+            if (iFrameUrl === '/') {
+                iFrameUrl = '';
+            }
             if (this.cmsPreviewPrefix) {
                 iFrameUrl += '/'+this.cmsPreviewPrefix;
             }
