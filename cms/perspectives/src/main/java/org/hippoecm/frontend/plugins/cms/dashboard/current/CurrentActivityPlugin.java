@@ -15,7 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
+import java.text.DateFormat;
 import java.util.Iterator;
+
+import javax.jcr.Node;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,9 +27,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -35,16 +36,12 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CurrentActivityPlugin extends RenderPlugin {
+public class CurrentActivityPlugin extends RenderPlugin<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -62,25 +59,27 @@ public class CurrentActivityPlugin extends RenderPlugin {
         redraw();
     }
 
-    private class CurrentActivityView extends RefreshingView {
+    private class CurrentActivityView extends RefreshingView<Node> {
         private static final long serialVersionUID = 1L;
+
+        private final DateFormat dateFormat;
 
         public CurrentActivityView(String id, IModel model) {
             super(id, model);
+            dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected Iterator getItemModels() {
-            final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
-            final Iterator iter = dataProvider.iterator(0, 0);
-            return new Iterator() {
+        protected Iterator<IModel<Node>> getItemModels() {
+            final IDataProvider<Node> dataProvider = (IDataProvider<Node>) getDefaultModel();
+            final Iterator<? extends Node> iter = dataProvider.iterator(0, 0);
+            return new Iterator<IModel<Node>>() {
 
                 public boolean hasNext() {
                     return iter.hasNext();
                 }
 
-                public Object next() {
+                public IModel<Node> next() {
                     return dataProvider.model(iter.next());
                 }
 
@@ -92,7 +91,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
         }
 
         @Override
-        protected void populateItem(final Item item) {
+        protected void populateItem(final Item<Node> item) {
             // Add even/odd row css styling
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
@@ -103,29 +102,26 @@ public class CurrentActivityPlugin extends RenderPlugin {
                 }
             }));
 
-            final DocumentEvent documentEvent = new DocumentEvent((JcrNodeModel) item.getModel());
+            final DocumentEvent documentEvent = new DocumentEvent(item.getModel());
+            final IModel<String> nameModel = documentEvent.getName();
             String path = documentEvent.getDocumentPath();
-            IModel nameModel = documentEvent.getName();
             if (path != null) {
                 path = fixPathForRequests(path);
-                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel);
+                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
                 BrowseLinkTarget target = new BrowseLinkTarget(path);
-                BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", new Model(target),
-                        label);
+                BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", new Model<BrowseLinkTarget>(target), label);
                 item.add(link);
             } else {
-                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel);
+                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
                 Label entryLabel = new Label("entry", label);
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);
             }
         }
 
-        /**
+        /*
          * FIXME: This is a temporary(?) best effort fix for not showing "hippo:request" in 
-         * the activity view. 
-         * @param path
-         * @return
+         * the activity view.
          */
         private String fixPathForRequests(String path) {
             if (!path.endsWith("hippo:request")) {

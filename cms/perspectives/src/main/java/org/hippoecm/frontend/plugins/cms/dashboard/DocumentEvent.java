@@ -44,8 +44,8 @@ public class DocumentEvent extends JcrObject {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
+    private static final Pattern pattern = Pattern.compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
 
     private String sourceVariant;
     private boolean sourceVariantExists;
@@ -64,16 +64,14 @@ public class DocumentEvent extends JcrObject {
             sourceVariant = null;
             sourceVariantExists = false;
             if (node.hasProperty("hippolog:eventDocument")) {
-                sourceVariant = node.getProperty("hippolog:eventDocument").getValue().getString();
+                sourceVariant = node.getProperty("hippolog:eventDocument").getString();
                 sourceVariantExists = session.itemExists(sourceVariant);
             }
 
             targetVariant = null;
             targetVariantExists = false;
             if (node.hasProperty("hippolog:eventReturnValue")) {
-                targetVariant = node.getProperty("hippolog:eventReturnValue").getValue().getString();
-                Pattern pattern = Pattern
-                        .compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
+                targetVariant = node.getProperty("hippolog:eventReturnValue").getString();
                 Matcher matcher = pattern.matcher(targetVariant);
                 if (matcher.matches()) {
                     for (int i = 1; i <= matcher.groupCount(); i++) {
@@ -82,9 +80,8 @@ public class DocumentEvent extends JcrObject {
                             targetVariant = patternElement;
                         } else {
                             String path = uuid2Path(patternElement);
-                            if (path != null && !path.equals("")) {
-                                targetVariantExists = session.itemExists(path);
-                                if (targetVariantExists) {
+                            if (path != null && !path.isEmpty()) {
+                                if (targetVariantExists = session.itemExists(path)) {
                                     targetVariant = path;
                                     break;
                                 }
@@ -107,11 +104,10 @@ public class DocumentEvent extends JcrObject {
                     if (target instanceof Version) {
                         Version version = (Version) target;
                         VersionHistory containingHistory = version.getContainingHistory();
-                        String versionableUUID = containingHistory.getVersionableUUID();
-                        String path = uuid2Path(versionableUUID);
-                        if (path != null && !path.equals("")) {
-                            targetVariantExists = session.itemExists(path);
-                            if (targetVariantExists) {
+                        String versionableIdentifier = containingHistory.getVersionableUUID();
+                        String path = uuid2Path(versionableIdentifier);
+                        if (path != null && !path.isEmpty()) {
+                            if (targetVariantExists = session.itemExists(path)) {
                                 targetVariant = path;
                             }
                         } else {
@@ -135,7 +131,7 @@ public class DocumentEvent extends JcrObject {
         try {
             Node node = getNode();
             if (node.hasProperty("hippolog:eventMethod")) {
-                return node.getProperty("hippolog:eventMethod").getValue().getString();
+                return node.getProperty("hippolog:eventMethod").getString();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -147,7 +143,7 @@ public class DocumentEvent extends JcrObject {
         try {
             Node node = getNode();
             if (node.hasProperty("hippolog:eventDocument")) {
-                return node.getProperty("hippolog:eventDocument").getValue().getString();
+                return node.getProperty("hippolog:eventDocument").getString();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -224,25 +220,21 @@ public class DocumentEvent extends JcrObject {
         return null;
     }
 
-    String uuid2Path(String uuid) {
-        if (uuid == null || uuid.equals("")) {
+    private String uuid2Path(String uuid) {
+        if (uuid == null || uuid.isEmpty()) {
             return null;
         }
         try {
             Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             return node.getPath();
-        } catch (ItemNotFoundException e) {
-            return null;
+        } catch (ItemNotFoundException ignore) {
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
-            return null;
         }
+        return null;
     }
 
     @Override
-    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
-        // TODO Auto-generated method stub
-
-    }
+    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {}
 }

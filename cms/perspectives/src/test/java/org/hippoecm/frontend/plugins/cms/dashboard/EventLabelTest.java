@@ -15,17 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -62,14 +57,11 @@ public class EventLabelTest extends PluginTest {
         root.addNode("test", "nt:unstructured");
     }
 
-    Node createEventNode(Long timestamp, String method, String user) throws NoSuchNodeTypeException, LockException,
-            VersionException, ConstraintViolationException, RepositoryException {
+    private Node createEventNode(Long timestamp, String method, String user) throws RepositoryException {
         return createEventNode(timestamp, method, user, null);
     }
 
-    Node createEventNode(Long timestamp, String method, String user, String[] arguments) throws ItemExistsException,
-            PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
-            ConstraintViolationException, RepositoryException {
+    private Node createEventNode(Long timestamp, String method, String user, String[] arguments) throws RepositoryException {
         Node node = root.getNode("test").addNode(timestamp.toString(), "hippolog:item");
         node.setProperty("hippolog:timestamp", timestamp);
         node.setProperty("hippolog:eventClass", EventLabelTest.class.getName());
@@ -104,7 +96,7 @@ public class EventLabelTest extends PluginTest {
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }
@@ -123,7 +115,7 @@ public class EventLabelTest extends PluginTest {
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }
@@ -144,7 +136,7 @@ public class EventLabelTest extends PluginTest {
         DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }
@@ -168,7 +160,7 @@ public class EventLabelTest extends PluginTest {
         String path = parser.getDocumentPath();
         assertEquals("/test/testDocument", path);
 
-        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName());
+        EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
         TestLabel testLabel = new TestLabel(label);
         assertEquals("One minute ago, testUser called test method on testDocument", testLabel.getModelObject());
     }

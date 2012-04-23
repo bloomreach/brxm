@@ -36,23 +36,30 @@ import org.slf4j.LoggerFactory;
 
 public class EventModel implements IComponentAssignedModel<String> {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
+
+    private static final long ONE_MINUTE = 60 * 1000;
+    private static final long FIVE_MINUTES = 5 * 60 * 1000;
+    private static final long TEN_MINUTES = 10 * 60 * 1000;
+    private static final long HALF_AN_HOUR = 30 * 60 * 1000;
+    private static final long ONE_HOUR = 60 * 60 * 1000;
+    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(EventModel.class);
+    private static final Logger log = LoggerFactory.getLogger(EventModel.class);
 
-    private DateFormat df;
+    private DateFormat dateFormat;
     private String time;
     private String method;
     private String user;
     private IModel<String> nameModel;
 
     public EventModel(JcrNodeModel eventNode) {
-        this(eventNode, null);
+        this(eventNode, null, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT));
     }
 
-    public EventModel(JcrNodeModel eventNode, IModel<String> nameModel) {
+    public EventModel(JcrNodeModel eventNode, IModel<String> nameModel, DateFormat dateFormat) {
         Node node = eventNode.getNode();
         try {
             if (node == null || !node.isNodeType("hippolog:item")) {
@@ -60,20 +67,10 @@ public class EventModel implements IComponentAssignedModel<String> {
                         "CurrentActivityPlugin can only process Nodes of type hippolog:item.");
             }
 
-            //FIXME: detect client timezone (use StyleDateConverter?)
-            //TimeZone tz = TimeZone.getTimeZone("Europe/Amsterdam");
-            df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-            //df.setTimeZone(tz);
+            this.dateFormat = dateFormat;
 
-            Calendar nodeCal = Calendar.getInstance();
-            nodeCal.setTime(new Date(node.getProperty("hippolog:timestamp").getLong()));
-            String timestamp = "";
-            try {
-                timestamp = relativeTime(nodeCal);
-            } catch (IllegalArgumentException ex) {
-            }
+            this.time = relativeTime(node.getProperty("hippolog:timestamp").getLong());
 
-            this.time = timestamp;
             // add eventClass to resolve workflow resource bundle
             this.method = node.getProperty("hippolog:eventMethod").getString() + ",class="
                     + node.getProperty("hippolog:eventClass").getString();
@@ -89,91 +86,81 @@ public class EventModel implements IComponentAssignedModel<String> {
         }
     }
 
-    public IWrapModel wrapOnAssignment(Component component) {
+    @Override
+    public IWrapModel<String> wrapOnAssignment(Component component) {
         return new AssignmentWrapper(component);
     }
 
+    @Override
     public String getObject() {
         throw new UnsupportedOperationException("Model " + getClass() + " does not support getObject(Object)");
     }
 
+    @Override
     public void setObject(String object) {
         throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
     }
 
+    @Override
     public void detach() {
         if (nameModel != null) {
             nameModel.detach();
         }
     }
 
-    private String relativeTime(Calendar nodeCal) {
-        Calendar currentCal = Calendar.getInstance();
+    private String relativeTime(final long then) {
 
-        Calendar yesterdayCal = Calendar.getInstance();
-        yesterdayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
-                .get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-        yesterdayCal.add(Calendar.DAY_OF_MONTH, -1);
+        final long now = System.currentTimeMillis();
 
-        Calendar todayCal = Calendar.getInstance();
-        todayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
-                .get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-
-        Calendar thisEveningCal = Calendar.getInstance();
-        thisEveningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
-                .get(Calendar.DAY_OF_MONTH), 23, 59, 59);
-
-        Calendar thisAfternoonCal = Calendar.getInstance();
-        thisAfternoonCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
-                .get(Calendar.DAY_OF_MONTH), 18, 0, 0);
-
-        Calendar thisMorningCal = Calendar.getInstance();
-        thisMorningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal
-                .get(Calendar.DAY_OF_MONTH), 12, 0, 0);
-
-        Calendar hourAgoCal = Calendar.getInstance();
-        hourAgoCal.add(Calendar.HOUR, -1);
-
-        Calendar halfHourAgoCal = Calendar.getInstance();
-        halfHourAgoCal.add(Calendar.MINUTE, -30);
-
-        Calendar tenMinutesAgoCal = Calendar.getInstance();
-        tenMinutesAgoCal.add(Calendar.MINUTE, -10);
-
-        Calendar fiveMinutesAgoCal = Calendar.getInstance();
-        fiveMinutesAgoCal.add(Calendar.MINUTE, -5);
-
-        Calendar oneMinuteAgoCal = Calendar.getInstance();
-        oneMinuteAgoCal.add(Calendar.MINUTE, -1);
-
-        if (nodeCal.after(oneMinuteAgoCal)) {
+        if (then > now-ONE_MINUTE) {
             return "one-minute";
         }
-        if (nodeCal.after(fiveMinutesAgoCal)) {
+        if (then > now-FIVE_MINUTES) {
             return "five-minutes";
         }
-        if (nodeCal.after(tenMinutesAgoCal)) {
+        if (then > now-TEN_MINUTES) {
             return "ten-minutes";
         }
-        if (nodeCal.after(halfHourAgoCal)) {
+        if (then > now-HALF_AN_HOUR) {
             return "half-hour";
         }
-        if (nodeCal.after(hourAgoCal)) {
+        if (then > now-ONE_HOUR) {
             return "hour";
         }
-        if (nodeCal.before(thisMorningCal) && nodeCal.after(todayCal)) {
-            return "morning";
+
+        final Calendar cal = Calendar.getInstance();
+
+        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        final long today = cal.getTimeInMillis();
+
+        if (then > today) {
+            cal.set(Calendar.HOUR, 12);
+            final long thisMorning = cal.getTimeInMillis();
+            if (then < thisMorning) {
+                return "morning";
+            }
+
+            cal.set(Calendar.HOUR, 18);
+            final long thisAfternoon = cal.getTimeInMillis();
+            if (then < thisAfternoon) {
+                return "afternoon";
+            }
+
+            final long tomorrow = today + ONE_DAY;
+            if (then < tomorrow) {
+                return "evening";
+            }
         }
-        if (nodeCal.before(thisAfternoonCal) && nodeCal.after(todayCal)) {
-            return "afternoon";
-        }
-        if (nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) {
-            return "evening";
-        }
-        if (nodeCal.after(yesterdayCal)) {
+
+        final long yesterday = today - ONE_DAY;
+
+        if (then > yesterday) {
             return "yesterday";
         }
-        return df.format(nodeCal);
+
+        return dateFormat.format(new Date(then));
     }
 
     private class AssignmentWrapper implements IWrapModel<String> {
@@ -185,13 +172,12 @@ public class EventModel implements IComponentAssignedModel<String> {
             this.component = component;
         }
 
-        /**
-         * @see org.apache.wicket.model.IWrapModel#getWrappedModel()
-         */
+        @Override
         public IModel<String> getWrappedModel() {
             return EventModel.this;
         }
 
+        @Override
         public String getObject() {
             try {
                 if (nameModel != null) {
@@ -210,13 +196,12 @@ public class EventModel implements IComponentAssignedModel<String> {
             }
         }
 
+        @Override
         public void detach() {
             EventModel.this.detach();
         }
 
-        /**
-         * @see org.apache.wicket.model.AbstractReadOnlyModel#setObject
-         */
+        @Override
         public void setObject(String object) {
             throw new UnsupportedOperationException("Model " + getClass() + " does not support setObject(Object)");
         }
