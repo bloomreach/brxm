@@ -61,7 +61,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
     private static final String REMEMBERME_COOKIE_NAME = "rememberme";
-    private static final String HIPPO_AUTO_LOGIN_COOKIE_NAEM = "hal";
+    private static final String HIPPO_AUTO_LOGIN_COOKIE_NAME = "hal";
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
@@ -82,7 +82,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         // Check for remember me cookie
         if ((retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
-                && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM) != null)) {
+                && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)) {
 
             tryToAutoLoginWithRememberMe();
         }
@@ -99,7 +99,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         boolean rememberme = (rememberMeCookie != null) ? Boolean.valueOf(rememberMeCookie.getValue()) : false;
 
         if (rememberme) {
-            Cookie halCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+            Cookie halCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
             if (halCookie != null) {
                 String passphrase = rememberMeCookie.getValue();
                 if (passphrase != null && passphrase.contains("$")) {
@@ -149,7 +149,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         SignInForm.this.passwordTextField.setModelObject("");
                         // Also remove the cookie which contains user information
                         clearCookie(REMEMBERME_COOKIE_NAME);
-                        clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                        clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
                     } else {
                         Cookie remembermeCookie = new Cookie(REMEMBERME_COOKIE_NAME, String.valueOf(true));
                         remembermeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("rememberme.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
@@ -164,7 +164,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
                 }
             });
 
@@ -172,7 +172,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                    clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
                 }
             });
 
@@ -185,7 +185,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
             if (rememberme) {
                 if (password == null || password.equals("") || password.replaceAll("\\*", "").equals("")) {
-                    Cookie remembermeCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                    Cookie remembermeCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
 
                     if (remembermeCookie != null) {
                         String passphrase = remembermeCookie.getValue();
@@ -212,14 +212,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         @Override
         public final void onSubmit() {
-            
-            Cookie newCookie = new Cookie("foo", "bar");
-            
             PluginUserSession userSession = (PluginUserSession) getSession();
 
             if (!rememberme) {
                 clearCookie(REMEMBERME_COOKIE_NAME);
-                clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM);
+                clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
                 clearCookie(getClass().getName());
             }
 
@@ -249,7 +246,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                     + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
                                     + Base64.encodeBase64URLSafeString(digest.digest());
 
-                            final Cookie halCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM, passphrase);
+                            final Cookie halCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAME, passphrase);
                             halCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
                             halCookie.setSecure(RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.secure.cookies", false));
 

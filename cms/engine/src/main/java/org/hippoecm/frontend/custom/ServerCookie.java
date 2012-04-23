@@ -25,15 +25,17 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.servlet.http.Cookie;
+
 
 /**
  *  Server-side cookie representation.
- *  Allows recycling and uses MessageBytes as low-level
- *  representation ( and thus the byte-> char conversion can be delayed
- *  until we know the charset ).
- *
- *  Tomcat.core uses this recyclable object to represent cookies,
- *  and the facade will convert it to the external representation.
+ *  
+ *  A copy of Tomcat's ServerCookie class.
+ *  All code is deleted except for the code related and relevant to generating the 'Set-Cookie' header
+ *  
+ *  This is a work around to overcome the unavailability of {@link Cookie#setHttpOnly(boolean)} which is only available
+ *  from Servlet API(s) version 3.0 while we are using Servlet API(s) version 2.5
  */
 @SuppressWarnings("serial")
 public class ServerCookie implements Serializable {
