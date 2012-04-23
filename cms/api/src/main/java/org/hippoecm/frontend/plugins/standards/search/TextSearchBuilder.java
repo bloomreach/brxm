@@ -39,7 +39,7 @@ public class TextSearchBuilder implements IClusterable {
 
     public static final String TEXT_QUERY_NAME = "text";
     
-    private static final String DEFAULT_IGNORED_CHARS = "+-&|!(){}[]^\"~*?:\\";
+    private static final String DEFAULT_IGNORED_CHARS = "&|!(){}[]^\"~*?:\\";
 
     private String text;
     private String[] scope;
