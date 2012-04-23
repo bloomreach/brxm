@@ -39,6 +39,12 @@
       <sv:property sv:name="signin.form.autocomplete" sv:type="Boolean">
         <sv:value>false</sv:value>
       </sv:property>
+      <sv:property sv:name="use.secure.cookies" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
+      <sv:property sv:name="use.httponly.cookies" sv:type="Boolean">
+        <sv:value>false</sv:value>
+      </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
       </sv:property>

@@ -40,7 +40,9 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.custom.ServerCookie;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -210,6 +212,9 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         @Override
         public final void onSubmit() {
+            
+            Cookie newCookie = new Cookie("foo", "bar");
+            
             PluginUserSession userSession = (PluginUserSession) getSession();
 
             if (!rememberme) {
@@ -244,9 +249,19 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                     + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
                                     + Base64.encodeBase64URLSafeString(digest.digest());
 
-                            final Cookie rememberMeCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM, passphrase);
-                            rememberMeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
-                            retrieveWebResponse().addCookie(rememberMeCookie);
+                            final Cookie halCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAEM, passphrase);
+                            halCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger("hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
+                            halCookie.setSecure(RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.secure.cookies", false));
+
+                            // Replace with Cookie#setHttpOnly when we upgrade to a container compliant with
+                            // Servlet API(s) v3.0t his was added cause the setHttpOnly/isHttpOnly at the time of
+                            // developing this code were not available cause we used to use Servlet API(s) v2.5
+                            RememberMeLoginPlugin.this.addCookieWithHttpOnly(
+                                    halCookie,
+                                    retrieveWebResponse(),
+                                    RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.httponly.cookies",
+                                            false));
+
                             Node userinfo = jcrSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
                             String[] strings = passphrase.split("\\$");
                             userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
@@ -289,6 +304,22 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             } else {
                 redirect(success, loginExceptionPageParameters);
             }
+        }
+    }
+
+    // TO be deleted when we upgrade to a container compliant with Servlet API(s) v3.0
+    // This was added cause the setHttpOnly/isHttpOnly at the time of developing this code were not available
+    // cause we used to use Servlet API(s) v2.5
+    private void addCookieWithHttpOnly(Cookie cookie, WebResponse response, boolean useHttpOnly) {
+        if (useHttpOnly) {
+            final StringBuffer setCookieHeaderBuffer = new StringBuffer();
+            ServerCookie.appendCookieValue(setCookieHeaderBuffer, cookie.getVersion(), cookie.getName(),
+                    cookie.getValue(), cookie.getPath(), cookie.getDomain(), cookie.getComment(), cookie.getMaxAge(),
+                    cookie.getSecure(), useHttpOnly);
+
+            response.getHttpServletResponse().addHeader("Set-Cookie", setCookieHeaderBuffer.toString());
+        } else {
+            response.addCookie(cookie);
         }
     }
 
