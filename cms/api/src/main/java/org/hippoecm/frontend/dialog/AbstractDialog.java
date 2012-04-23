@@ -254,9 +254,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        if (!closing) {
-                            ButtonWrapper.this.onSubmit();
-                        }
+                        ButtonWrapper.this.onSubmit();
                     }
 
                     @Override
@@ -277,9 +275,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
                     @Override
                     public void onSubmit() {
-                        if (!closing) {
-                            ButtonWrapper.this.onSubmit();
-                        }
+                        ButtonWrapper.this.onSubmit();
                     }
 
                     @Override
@@ -394,7 +390,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private Panel container;
     private AjaxIndicatorAppender indicator;
 
-    private transient boolean closing = false;
     protected boolean cancelled = false;
 
     public AbstractDialog() {
@@ -565,10 +560,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     protected final void closeDialog() {
-        if (!closing) {
-            closing = true;
-            dialogService.close();
-        }
+        dialogService.close();
     }
 
     // button manipulation routines

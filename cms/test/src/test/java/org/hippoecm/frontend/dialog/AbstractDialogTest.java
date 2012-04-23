@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -27,6 +29,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 public class AbstractDialogTest {
     @SuppressWarnings("unused")
@@ -50,6 +55,19 @@ public class AbstractDialogTest {
 
     }
 
+    public static class FailureDialog extends AbstractDialog {
+
+        @Override
+        protected void onOk() {
+            error("dialog submit failed");
+        }
+
+        public IModel getTitle() {
+            return new Model("title");
+        }
+
+    }
+
     protected HippoTester tester;
     private PluginPage home;
     protected IPluginContext context;
@@ -64,7 +82,7 @@ public class AbstractDialogTest {
     }
 
     @Test
-    public void doubleSubmitDoesNotTriggerOnOKTwice() {
+    public void okButtonIsHiddenAfterSubmit() {
         WebRequestCycle cycle = tester.createRequestCycle();
         AjaxRequestTarget target = tester.getApplication().newAjaxRequestTarget(home);
         cycle.setRequestTarget(target);
@@ -75,7 +93,23 @@ public class AbstractDialogTest {
         tester.processRequestCycle(cycle);
 
         tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
-        tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
+        Component button = home.get("dialog:content:form:buttons:0:button");
+        assertFalse("OK Button still visible after successful submit", button.isVisibleInHierarchy());
     }
 
+    @Test
+    public void okButtonIsPresentAfterFailure() {
+        WebRequestCycle cycle = tester.createRequestCycle();
+        AjaxRequestTarget target = tester.getApplication().newAjaxRequestTarget(home);
+        cycle.setRequestTarget(target);
+
+        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+        dialogService.show(new FailureDialog());
+
+        tester.processRequestCycle(cycle);
+
+        tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
+        Component button = home.get("dialog:content:form:buttons:0:button");
+        assertTrue("OK Button was hidden after failed submit", button.isVisibleInHierarchy());
+    }
 }

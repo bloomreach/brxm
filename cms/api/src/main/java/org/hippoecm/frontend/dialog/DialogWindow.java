@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.resources.JavaScriptReference;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
@@ -145,4 +146,35 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
     }
 
+    /**
+     * Shows the modal window.
+     *
+     * @param target
+     *            Request target associated with current ajax request.
+     */
+    public void show(final AjaxRequestTarget target)
+    {
+        if (!super.isShown())
+        {
+            getContent().setVisible(true);
+            target.addComponent(this);
+        }
+    }
+
+    /**
+     * @see org.apache.wicket.markup.html.panel.Panel#renderHead(org.apache.wicket.markup.html.internal.HtmlHeaderContainer)
+     */
+    public void renderHead(HtmlHeaderContainer container)
+    {
+        super.renderHead(container);
+        if (super.isShown())
+        {
+            container.getHeaderResponse().renderOnDomReadyJavascript(getWindowOpenJavascript());
+        }
+    }
+
+    @Override
+    protected boolean makeContentVisible() {
+        return shown != null;
+    }
 }
