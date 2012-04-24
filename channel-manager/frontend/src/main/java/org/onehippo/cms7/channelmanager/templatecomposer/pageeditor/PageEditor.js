@@ -295,7 +295,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.on('mountChanged', function(data) {
             this.channelStoreFuture.when(function(config) {
                 var collection = config.store.query('mountId', data.mountId);
-                var channelRecord = collection.first()
+                var channelRecord = collection.first();
                 if (typeof this.showTitleSwitchTimeout !== 'undefined') {
                     window.clearTimeout(this.showTitleSwitchTimeout);
                 }
