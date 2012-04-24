@@ -122,6 +122,13 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     initComponent: function() {
         Hippo.ChannelManager.ChannelGridPanel.superclass.initComponent.apply(this, arguments);
         this.addEvents('add-channel', 'channel-selected');
+        var self = this;
+        this.on('afterlayout', function() {
+            var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
+            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
+                self.el.dom.style.height = (arguments[0].body.h - 55)+'px';
+            }, true);
+        }, this, {single: true});
     },
 
     // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.

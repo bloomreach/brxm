@@ -394,3 +394,7 @@
 .x-combo-list-item {
     text-align: left;
 }
+
+.channel-manager #channel-grid-panel {
+    overflow: auto;
+}
