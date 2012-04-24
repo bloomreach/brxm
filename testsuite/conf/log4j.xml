@@ -67,7 +67,7 @@
   </logger>
 
   <!-- audit logging -->
-  <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
+  <logger additivity="false" name="org.onehippo.audit">
     <level value="info"/>
     <appender-ref ref="audit"/>
   </logger>
