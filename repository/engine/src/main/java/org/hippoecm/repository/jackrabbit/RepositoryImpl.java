@@ -75,12 +75,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
-        ClusterConfig clusterConfig = getRepositoryConfig().getClusterConfig();
-        // setting the cluster node id as descriptor here can be removed
-        // when we upgrade to JR 2.2.12 / 2.4.1
-        if (clusterConfig != null && clusterConfig.getId() != null) {
-            setDescriptor(JACKRABBIT_CLUSTER_ID, clusterConfig.getId());
-        }
     }
 
     @Override
