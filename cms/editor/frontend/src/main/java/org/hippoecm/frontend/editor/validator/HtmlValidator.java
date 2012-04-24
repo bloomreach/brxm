@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
+
+import com.google.common.base.CharMatcher;
 
 import org.apache.wicket.IClusterable;
 import org.cyberneko.html.parsers.SAXParser;
@@ -38,7 +39,7 @@ public class HtmlValidator implements IClusterable {
     public static final String INVALID_XML = "invalid-xml";
     public static final String HTML_IS_EMPTY = "html-is-empty";
 
-    public static Pattern NON_WHITESPACE = Pattern.compile(".*\\S.*", Pattern.DOTALL);
+    public static final String[] VALID_ELEMENTS = new String[] {"img", "object", "embed", "form", "applet"};
 
     static class Handler extends DefaultHandler {
         boolean valid = false;
@@ -46,7 +47,7 @@ public class HtmlValidator implements IClusterable {
         @Override
         public void characters(char[] chars, int start, int length) throws SAXException {
             String value = new String(chars, start, length).intern();
-            if (NON_WHITESPACE.matcher(value).matches()) {
+            if(CharMatcher.INVISIBLE.negate().matchesAnyOf(value)) {
                 valid = true;
             }
         }
@@ -54,8 +55,11 @@ public class HtmlValidator implements IClusterable {
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
                 throws SAXException {
-            if ("img".equalsIgnoreCase(localName)) {
-                valid = true;
+            for(String element : VALID_ELEMENTS) {
+                if(element.equalsIgnoreCase(localName)) {
+                    valid = true;
+                    break;
+                }
             }
         }
 

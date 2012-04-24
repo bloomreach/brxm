@@ -49,7 +49,7 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
     @Override
     public void preValidation(IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
+            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptiness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
             htmlValidator = new HtmlValidator();
