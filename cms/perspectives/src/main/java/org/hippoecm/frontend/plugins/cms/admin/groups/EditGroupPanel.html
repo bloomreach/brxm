@@ -15,19 +15,23 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:extend>
-    <h2><wicket:message key="group-edit-panel-title"/></h2>
+<wicket:extend>
+    <h2>
+        <wicket:message key="group-edit-panel-title"/>
+    </h2>
     <form class="hippo-controlpanel-form" wicket:id="form">
-      <table>
-        <tr>
-          <td><wicket:message key="group-description"/></td>
-          <td><input type="text" wicket:id="description"/></td>
-        </tr>
-      </table>
-      <div class="hippo-controlpanel-actions">
-        <input type="submit" wicket:message="value:group-save-action" wicket:id="save-button"/>
-        <input type="submit" wicket:message="value:group-cancel-action" wicket:id="cancel-button"/>
-      </div>
+        <table>
+            <tr>
+                <td>
+                    <wicket:message key="group-description"/>
+                </td>
+                <td><input type="text" wicket:id="description" size="100"/></td>
+            </tr>
+        </table>
+        <div class="hippo-controlpanel-actions">
+            <input type="submit" wicket:message="value:group-save-action" wicket:id="save-button"/>
+            <input type="submit" wicket:message="value:group-cancel-action" wicket:id="cancel-button"/>
+        </div>
     </form>
-  </wicket:extend>
+</wicket:extend>
 </html>
