@@ -54,12 +54,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
 
     @Override
     public Iterator<Domain> iterator(int first, int count) {
-        populateDomainList();
-        List<Domain> domains = new ArrayList<Domain>();
-        for (int i = first; i < (count + first); i++) {
-            domains.add(domainList.get(i));
-        }
-
+        List<Domain> domains = getDomainList();
         Collections.sort(domains, new Comparator<Domain>() {
             public int compare(Domain domain1, Domain domain2) {
                 int direction = getSort().isAscending() ? 1 : -1;
@@ -68,7 +63,8 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
             }
         });
 
-        return domains.subList(first, Math.min(first + count, domains.size())).iterator();
+        final int endIndex = Math.min(first + count, domains.size());
+        return domains.subList(first, endIndex).iterator();
     }
 
     @Override
@@ -78,8 +74,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
 
     @Override
     public int size() {
-        populateDomainList();
-        return domainList.size();
+        return getDomainList().size();
     }
 
     /**
@@ -120,5 +115,10 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
                 log.error("Error while trying to query domain nodes.", e);
             }
         }
+    }
+
+    public List<Domain> getDomainList() {
+        populateDomainList();
+        return domainList;
     }
 }

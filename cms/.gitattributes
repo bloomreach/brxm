@@ -1816,6 +1816,8 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_it.properties -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/TestSuite.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/SearchableDataProviderTest.java -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/DomainDataProviderTest.java -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/admin/domains/MockNode.java -text
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/browse/service/BrowseServiceTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
