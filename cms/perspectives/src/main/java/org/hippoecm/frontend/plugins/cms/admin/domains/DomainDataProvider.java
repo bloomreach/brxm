@@ -58,7 +58,6 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
         Collections.sort(domains, new Comparator<Domain>() {
             public int compare(Domain domain1, Domain domain2) {
                 int direction = getSort().isAscending() ? 1 : -1;
-
                 return direction * (domain1.compareTo(domain2));
             }
         });
@@ -93,13 +92,13 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
                 return;
             }
             domainList.clear();
-            NodeIterator iter;
+            NodeIterator iterator;
             try {
                 @SuppressWarnings("deprecation")
-                Query listQuery = ((UserSession) Session.get()).getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
-                iter = listQuery.execute().getNodes();
-                while (iter.hasNext()) {
-                    Node node = iter.nextNode();
+                Query listQuery = UserSession.get().getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
+                iterator = listQuery.execute().getNodes();
+                while (iterator.hasNext()) {
+                    Node node = iterator.nextNode();
                     if (node != null) {
                         try {
                             domainList.add(new Domain(node));

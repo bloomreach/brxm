@@ -1,37 +1,55 @@
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import javax.jcr.RepositoryException;
+import javax.jcr.Node;
 
+import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
 import junit.framework.Assert;
 
 /**
  */
-public class DomainDataProviderTest {
+public class DomainDataProviderTest extends PluginTest {
+
+    @Test
+    public void testDataProviderQuery() throws Exception {
+        DomainDataProvider provider = new DomainDataProvider();
+        Node domainsFolder = root.getNode("hippo:configuration/hippo:domains");
+        
+        Assert.assertEquals(domainsFolder.getNodes().getSize(), provider.getDomainList().size());
+    }
+
+    @Test
+    public void testDirtyDataProvider() throws Exception {
+        DomainDataProvider provider = new DomainDataProvider();
+        Node domainsFolder = root.getNode("hippo:configuration/hippo:domains");
+        
+        Assert.assertEquals(domainsFolder.getNodes().getSize(), provider.getDomainList().size());
+        
+        //add a custom domain
+        domainsFolder.addNode("myTestDomain1", "hipposys:domain");
+        session.save();
+
+        DomainDataProvider.setDirty();
+        Assert.assertEquals(domainsFolder.getNodes().getSize(), provider.getDomainList().size());
+
+        //Cleanup
+        domainsFolder.getNode("myTestDomain1").remove();
+        session.save();
+    }
 
     @Test
     public void testIterator() throws Exception {
-        final List<Domain> testDomains = new ArrayList<Domain>(10);
-        for (int i = 0; i < 10; i++) {
-            String name = "domain #" + i;
-            testDomains.add(new MockDomain(name));
-        }
+        Node domainsFolder = root.getNode("hippo:configuration/hippo:domains");
+        long numDomains = domainsFolder.getNodes().getSize();
 
-        DomainDataProvider mockProvider = new DomainDataProvider() {
-            @Override
-            public List<Domain> getDomainList() {
-                return testDomains;
-            }
-        };
+        DomainDataProvider provider = new DomainDataProvider();
 
         final int pageSize = 6;
-        Iterator firstPage = mockProvider.iterator(0, pageSize);
-        Iterator secondPage = mockProvider.iterator(pageSize, pageSize);
+        Iterator firstPage = provider.iterator(0, pageSize);
+        Iterator secondPage = provider.iterator(pageSize, pageSize);
 
         int firstPageSize = 0;
         while (firstPage.hasNext()) {
@@ -46,24 +64,6 @@ public class DomainDataProviderTest {
         }
 
         Assert.assertTrue(firstPageSize == 6);
-        Assert.assertTrue(secondPageSize == 4);
+        Assert.assertTrue(secondPageSize == (numDomains - firstPageSize));
     }
-
-    private class MockDomain extends Domain {
-
-        final private String name;
-
-        private MockDomain(String name) throws RepositoryException {
-            // Using a Mock Node here, because Domains cannot be created via the CMS and thus there is no empty
-            // constructor
-            super(new MockNode());
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-    }
-
 }
