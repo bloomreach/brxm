@@ -152,7 +152,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             captchaImage = new Image("captchaImage", captchaImageResource);
 
             final boolean useCaptcha = getPluginConfig().getAsBoolean("use.captcha", false);
-            final int nrUnsuccessfulLogins = getPluginConfig().getAsInteger("nr.unsuccessful.logins", 3);
+            int nrUnsuccessfulLogins = getPluginConfig().getAsInteger("nr.unsuccessful.logins", 3);
+            nrUnsuccessfulLogins = (nrUnsuccessfulLogins < 0) ? 3 : nrUnsuccessfulLogins;
             if (useCaptcha && session.getUnsuccessfulLoginCounter() >= nrUnsuccessfulLogins) {
                 captchaImage.setVisible(true);
                 captchaTextField.setVisible(true);
