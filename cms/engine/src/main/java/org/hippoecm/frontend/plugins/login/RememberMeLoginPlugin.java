@@ -36,9 +36,14 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.PluginPage;
@@ -116,7 +121,15 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     protected class SignInForm extends org.hippoecm.frontend.plugins.login.LoginPlugin.SignInForm {
         private static final long serialVersionUID = 1L;
 
+        private final CaptchaImageResource captchaImageResource;
+        // Random captcha password to match against
+        private final String imagePass;
+        private final Image captchaImage;
+        private final Label captchaLabel;
+        private final RequiredTextField<String> captchaTextField;
+
         private boolean rememberme;
+        private String captchaTextValue;
 
         public void setRememberme(boolean value) {
             rememberme = value;
@@ -128,6 +141,31 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         public SignInForm(final String id, boolean rememberme) {
             super(id);
+
+            final PluginUserSession session = (PluginUserSession) getSession();
+
+            // Prepare Captcha resources
+            imagePass = randomString(6, 8);
+            captchaImageResource = new CaptchaImageResource(imagePass);
+            captchaLabel = new Label("captchaLabel", new ResourceModel("captcha-label", "Enter the letters above"));
+            captchaTextField = new RequiredTextField<String>("captcha", new PropertyModel<String>(SignInForm.this, "captchaTextValue"));
+            captchaImage = new Image("captchaImage", captchaImageResource);
+
+            final boolean useCaptcha = getPluginConfig().getAsBoolean("use.captcha", false);
+            final int nrUnsuccessfulLogins = getPluginConfig().getAsInteger("nr.unsuccessful.logins", 3);
+            if (useCaptcha && session.getUnsuccessfulLoginCounter() >= nrUnsuccessfulLogins) {
+                captchaImage.setVisible(true);
+                captchaTextField.setVisible(true);
+                captchaLabel.setVisible(true);
+            } else {
+                captchaImage.setVisible(false);
+                captchaTextField.setVisible(false);
+                captchaLabel.setVisible(false);
+            }
+
+            add(captchaImage);
+            add(captchaTextField);
+            add(captchaLabel);
 
             this.rememberme = rememberme;
 
@@ -212,7 +250,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         @Override
         public final void onSubmit() {
-            PluginUserSession userSession = (PluginUserSession) getSession();
+            final PluginUserSession userSession = (PluginUserSession) getSession();
 
             if (!rememberme) {
                 clearCookie(REMEMBERME_COOKIE_NAME);
@@ -225,6 +263,15 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
             try {
                 userSession.login(new UserCredentials(this));
+                // Check if captcha is shown and then check whether the provided value is correct or not
+                if (captchaImage.isVisible() && captchaTextField.isVisible()) {
+                    success = captchaTextValue.equalsIgnoreCase(imagePass);
+                    if (!success) {
+                        throw new org.hippoecm.frontend.session.LoginException(
+                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTACHA);
+
+                    }
+                }
             } catch (org.hippoecm.frontend.session.LoginException le) {
                 success = false;
                 loginExceptionPageParameters = buildPageParameters(le);
@@ -282,7 +329,16 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             .message(username + " logged in");
                     eventBus.post(event);
                 }
+
+                // Make sure to reset the unsuccessful login counter not to make problems for later logins while
+                // the session is not yet invalidated
+                userSession.resetUnsuccessfulLoginCounter();
             } else {
+                // Increment the number of unsuccessful logins
+                userSession.setUnSuccessfulLoginCounter(userSession.getUnsuccessfulLoginCounter() + 1);
+                // Get an anonymous session, this is in case the user provided valid username and password
+                // but failed to provide a valid captcha is case it was enabled and displayed
+                userSession.login();
                 HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
                 if (eventBus != null) {
                     HippoEvent event = new HippoEvent(userSession.getApplicationName())
@@ -302,6 +358,21 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 redirect(success, loginExceptionPageParameters);
             }
         }
+    }
+
+    private static int randomInt(int min, int max) {
+        return (int) (Math.random() * (max - min) + min);
+    }
+
+    private String randomString(int min, int max) {
+        int num = randomInt(min, max);
+        byte b[] = new byte[num];
+
+        for (int i = 0; i < num; i++) {
+            b[i] = (byte) randomInt('a', 'z');
+        }
+
+        return new String(b);
     }
 
     // TO be deleted when we upgrade to a container compliant with Servlet API(s) v3.0

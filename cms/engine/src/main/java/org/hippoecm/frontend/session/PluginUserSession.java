@@ -74,6 +74,7 @@ public class PluginUserSession extends UserSession {
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
+    private int unsuccessfulLoginCounter;
     private UserCredentials credentials;
 
     public UserCredentials getUserCredentials() {
@@ -86,6 +87,8 @@ public class PluginUserSession extends UserSession {
 
     public PluginUserSession(Request request) {
         super(request);
+
+        unsuccessfulLoginCounter = 0;
 
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -152,6 +155,18 @@ public class PluginUserSession extends UserSession {
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();
+    }
+
+    public int getUnsuccessfulLoginCounter() {
+        return unsuccessfulLoginCounter;
+    }
+
+    public void setUnSuccessfulLoginCounter(int loginCounter) {
+        this.unsuccessfulLoginCounter = loginCounter;
+    }
+    
+    public void resetUnsuccessfulLoginCounter() {
+        this.unsuccessfulLoginCounter = 0;
     }
 
     private IModel<Session> getJcrSessionModel() {

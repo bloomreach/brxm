@@ -23,7 +23,7 @@ public class LoginException extends Exception {
 
     private CAUSE cause;
 
-    public static enum CAUSE {INCORRECT_CREDENTIALS, ACCESS_DENIED, REPOSITORY_ERROR}
+    public static enum CAUSE {INCORRECT_CREDENTIALS, ACCESS_DENIED, REPOSITORY_ERROR, INCORRECT_CAPTACHA}
 
     public LoginException(CAUSE cause) {
         this.cause = cause;
