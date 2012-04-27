@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -55,6 +56,32 @@ public class User implements Comparable<User>, IClusterable {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
+    private static final class SerializableEntry<K, V> implements Entry<K, V>, Serializable {
+
+        private final K key;
+        private final V value;
+
+        private SerializableEntry(final K key, final V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public K getKey() {
+            return null;
+        }
+
+        @Override
+        public V getValue() {
+            return null;
+        }
+
+        @Override
+        public V setValue(final V value) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private static final String NT_USER = "hipposys:user";
 
     public static final String PROP_FIRSTNAME = "hipposys:firstname";
@@ -68,10 +95,8 @@ public class User implements Comparable<User>, IClusterable {
 
     private static final String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
-    private static final String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType="
-            + "'hipposys:group' AND hipposys:members='{}'";
-    private static final String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE "
-            + "hipposys:members='{}'";
+    private static final String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType=" + "'hipposys:group' AND hipposys:members='{}'";
+    private static final String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE " + "hipposys:members='{}'";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
 
@@ -177,7 +202,7 @@ public class User implements Comparable<User>, IClusterable {
     public List<Entry<String, String>> getPropertiesList() {
         List<Entry<String, String>> l = new ArrayList<Entry<String, String>>();
         for (Entry<String, String> e : properties.entrySet()) {
-            l.add(e);
+            l.add(new SerializableEntry<String, String>(e.getKey(), e.getValue()));
         }
         return l;
     }
@@ -312,11 +337,11 @@ public class User implements Comparable<User>, IClusterable {
             }
         }
 
-        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH)
-                .getNode(HippoNodeType.SECURITY_PATH);
+        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(
+                HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
         if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
-            passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)
-                    .getDouble() * ONEDAYMS);
+            passwordMaxAge = (long) (securityNode.getProperty(
+                    HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
         }
     }
 
@@ -425,8 +450,7 @@ public class User implements Comparable<User>, IClusterable {
      * @param value
      * @throws RepositoryException
      */
-    private void setOrRemoveStringProperty(final Node node, final String name, final String value)
-            throws RepositoryException {
+    private void setOrRemoveStringProperty(final Node node, final String name, final String value) throws RepositoryException {
         if (value == null && !node.hasProperty(name)) {
             return;
         }
@@ -532,8 +556,7 @@ public class User implements Comparable<User>, IClusterable {
      * @return true if the password is the same as one of the previous passwords, false otherwise
      * @throws RepositoryException
      */
-    public boolean isPreviousPassword(final char[] password, final int numberOfPreviousPasswords)
-            throws RepositoryException {
+    public boolean isPreviousPassword(final char[] password, final int numberOfPreviousPasswords) throws RepositoryException {
         // is current password?
         if (node != null && node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String currentPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
