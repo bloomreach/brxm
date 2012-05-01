@@ -65,7 +65,8 @@ public class SolrSearch extends AbstractSearchComponent {
 
             HippoQuery hippoQuery = solrManager.createQuery(query);
             hippoQuery.setLimit(pageSize);
-            hippoQuery.setOffset((page - 1) * pageSize);
+            int offset = (page - 1) * pageSize;
+            hippoQuery.setOffset(offset);
 
             // include scoring
             hippoQuery.getSolrQuery().setIncludeScore(true);
@@ -92,7 +93,9 @@ public class SolrSearch extends AbstractSearchComponent {
             request.setAttribute("result", result);
             request.setAttribute("query", query);
 
-            System.out.println("TOOK " + (System.currentTimeMillis() - start));
+           // System.out.println("TOOK " + (System.currentTimeMillis() - start));
+
+            int maxPages = 20;
 
             // add pages
             if(result.getSize() > pageSize) {
@@ -101,8 +104,24 @@ public class SolrSearch extends AbstractSearchComponent {
                 if(result.getSize() % pageSize != 0) {
                     numberOfPages++;
                 }
-                for(int i = 0; i < numberOfPages; i++) {
-                    pages.add(i + 1);
+
+                if (numberOfPages > maxPages) {
+                    int startAt = 0;
+                    if (offset > (10 * pageSize)) {
+                        startAt = offset / pageSize;
+                        startAt = startAt - 10;
+                    }
+                    for(int i = startAt; i < numberOfPages; i++) {
+                        pages.add(i + 1);
+                        if (i == (startAt + maxPages)) {
+                            break;
+                        }
+                    }
+
+                } else {
+                    for(int i = 0; i < numberOfPages; i++) {
+                        pages.add(i + 1);
+                    }
                 }
 
                 request.setAttribute("page", page);

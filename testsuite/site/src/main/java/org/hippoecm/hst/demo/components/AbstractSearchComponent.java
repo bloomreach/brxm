@@ -73,8 +73,9 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
 
             hstQuery.setLimit(pageSize);
-            hstQuery.setOffset((page - 1) * pageSize);
-            
+            int offset = (page - 1) * pageSize;
+            hstQuery.setOffset(offset);
+
             if (sortBy != null) {
                 hstQuery.addOrderByDescending(sortBy);
             }
@@ -91,7 +92,9 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
 
             request.setAttribute("result", result);
             request.setAttribute("crPage", page);
-            
+
+            int maxPages = 20;
+
             // add pages
             if(result.getTotalSize() > pageSize) {
                 List<Integer> pages = new ArrayList<Integer>();
@@ -99,8 +102,24 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                 if(result.getTotalSize() % pageSize != 0) {
                     numberOfPages++;
                 }
-                for(int i = 0; i < numberOfPages; i++) {
-                    pages.add(i + 1);
+
+                if (numberOfPages > maxPages) {
+                    int startAt = 0;
+                    if (offset > (10 * pageSize)) {
+                        startAt = offset / pageSize;
+                        startAt = startAt - 10;
+                    }
+                    for(int i = startAt; i < numberOfPages; i++) {
+                        pages.add(i + 1);
+                        if (i == (startAt + maxPages)) {
+                            break;
+                        }
+                    }
+
+                } else {
+                    for(int i = 0; i < numberOfPages; i++) {
+                        pages.add(i + 1);
+                    }
                 }
                 request.setAttribute("pages", pages);
             }

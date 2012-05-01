@@ -94,6 +94,19 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
             return;
         }
 
+
+        String offsetStr = request.getParameter("offset");
+        int offset = 0;
+        try {
+            offset = Integer.parseInt(offsetStr);
+            if (offset < 0) {
+                offset = 0;
+            }
+        } catch (NumberFormatException e) {
+            response.setRenderParameter("message", "offset must be a number but was '" + offsetStr + "'");
+            return;
+        }
+
         try {
             parser = impl.newSAXParser();
             InputStream wikiStream = null;
@@ -121,7 +134,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                 } else {
                     wikiFolder = baseNode.getNode("wikipedia");
                 }
-                handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs);
+                handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset);
 
                 if (wikiStream == null) {
                     parser.parse(f, handler);
@@ -153,19 +166,22 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
         private Node currentSubFolder;
         private int numberOfSubFolders = 1;
         private int total;
+        private int offset;
         private StringBuilder fieldText = new StringBuilder();
         private boolean recording = false;
         int count = 0;
-        int maxDocsPerFolder = 50;
-        int maxSubFolders = 25;
+        int offsetcount = 0;
+        int maxDocsPerFolder = 200;
+        int maxSubFolders = 50;
         long startTime = 0;
         private final String[] users = { "ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
                 "junaid", "ate", "tjeerd", "verberg", "simon", "jannis" };
         private Random rand;
 
-        public WikiPediaToJCRHandler(Node wikiFolder, int total) throws Exception {
+        public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset) throws Exception {
             this.wikiFolder = wikiFolder;
             this.total = total;
+            this.offset = offset;
             currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
             currentFolder.addMixin("hippo:harddocument");
             currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
@@ -179,64 +195,77 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                 startTime = System.currentTimeMillis();
             }
             if (qName.equals("page")) {
-                try {
-                    count++;
-                    if (count >= total) {
-                        System.out.println(total);
-                        wikiFolder.getSession().save();
-
-                        System.out.println("Total added wiki docs = " + count + ". It took "
-                                + (System.currentTimeMillis() - startTime) + " ms.");
-                        throw new ForcedStopException();
+                if (offsetcount < offset) {
+                    offsetcount++;
+                    if ((offsetcount % maxDocsPerFolder) == 0) {
+                        System.out.println("Offset '"+offset+"' not yet reached. Currently at '"+offsetcount+"'");
                     }
-                    if ((count % maxDocsPerFolder) == 0) {
-                        wikiFolder.getSession().save();
-                        if (numberOfSubFolders >= maxSubFolders) {
-                            currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
-                            currentFolder.addMixin("hippo:harddocument");
-                            numberOfSubFolders = 0;
+                }
+
+                if (offsetcount == offset) {
+                    try {
+                        count++;
+                        if (count >= total) {
+                            System.out.println(total);
+                            wikiFolder.getSession().save();
+    
+                            System.out.println("Total added wiki docs = " + count + ". It took "
+                                    + (System.currentTimeMillis() - startTime) + " ms.");
+                            throw new ForcedStopException();
                         }
-                        currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(),
-                                "hippostd:folder");
-                        currentSubFolder.addMixin("hippo:harddocument");
-                        numberOfSubFolders++;
-                        System.out.println("Counter = " + count);
+                        if ((count % maxDocsPerFolder) == 0) {
+                            wikiFolder.getSession().save();
+                            if (numberOfSubFolders >= maxSubFolders) {
+                                currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+                                currentFolder.addMixin("hippo:harddocument");
+                                numberOfSubFolders = 0;
+                            }
+                            currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(),
+                                    "hippostd:folder");
+                            currentSubFolder.addMixin("hippo:harddocument");
+                            numberOfSubFolders++;
+                            System.out.println("Counter = " + count);
+                        }
+                        Calendar cal = Calendar.getInstance();
+                        String docName = "doc-" + cal.getTimeInMillis();
+                        Node handle;
+    
+                        handle = currentSubFolder.addNode(docName, "hippo:handle");
+                        handle.addMixin("hippo:hardhandle");
+                        handle.addMixin("hippo:translated");
+    
+                        Node translation = handle.addNode("hippo:translation", "hippo:translation");
+                        translation.setProperty("hippo:message", docName);
+                        translation.setProperty("hippo:language", "");
+    
+                        doc = handle.addNode(docName, "demosite:wikidocument");
+                        doc.addMixin("hippo:harddocument");
+    
+                        String[] availability = { "live", "preview" };
+                        doc.setProperty("hippo:availability", availability);
+                        doc.setProperty("hippostd:stateSummary", "live");
+                        doc.setProperty("hippostd:state", "published");
+                        doc.setProperty("hippostdpubwf:lastModifiedBy", users[rand.nextInt(users.length)]);
+                        doc.setProperty("hippostdpubwf:createdBy", users[rand.nextInt(users.length)]);
+                        doc.setProperty("hippostdpubwf:lastModificationDate", Calendar.getInstance());
+                        doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance());
+                        doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance());
+                    } catch (RepositoryException e) {
+                        e.printStackTrace();
                     }
-                    Calendar cal = Calendar.getInstance();
-                    String docName = "doc-" + cal.getTimeInMillis();
-                    Node handle;
-
-                    handle = currentSubFolder.addNode(docName, "hippo:handle");
-                    handle.addMixin("hippo:hardhandle");
-                    handle.addMixin("hippo:translated");
-
-                    Node translation = handle.addNode("hippo:translation", "hippo:translation");
-                    translation.setProperty("hippo:message", docName);
-                    translation.setProperty("hippo:language", "");
-
-                    doc = handle.addNode(docName, "demosite:wikidocument");
-                    doc.addMixin("hippo:harddocument");
-
-                    String[] availability = { "live", "preview" };
-                    doc.setProperty("hippo:availability", availability);
-                    doc.setProperty("hippostd:stateSummary", "live");
-                    doc.setProperty("hippostd:state", "published");
-                    doc.setProperty("hippostdpubwf:lastModifiedBy", users[rand.nextInt(users.length)]);
-                    doc.setProperty("hippostdpubwf:createdBy", users[rand.nextInt(users.length)]);
-                    doc.setProperty("hippostdpubwf:lastModificationDate", Calendar.getInstance());
-                    doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance());
-                    doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance());
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
                 }
             }
 
             if (qName.equals("title")) {
-                recording = true;
+                if (offsetcount == offset) {
+                   recording = true;
+                }
             }
 
             if (qName.equals("text")) {
-                recording = true;
+                if (offsetcount == offset) {
+                    recording = true;
+                }
             }
 
             super.startElement(uri, localName, qName, attributes);
@@ -244,39 +273,41 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals("page")) {
-                checkCorrectDoc();
-                finishedDoc = doc;
-            } else if (qName.equals("title") && recording) {
-                checkCorrectDoc();
-                try {
-                    doc.setProperty("demosite:title", fieldText.toString().trim());
-                    fieldText = new StringBuilder();
-                } catch (RepositoryException e) {
-                    throw new SAXException(e);
-                }
-            } else if (qName.equals("text") && recording) {
-                checkCorrectDoc();
-                try {
-                    String text = fieldText.toString().trim();
-                    if (text.length() > 100) {
-                        doc.setProperty("demosite:summary", text.substring(0, 100));
-                    } else {
-                        doc.setProperty("demosite:summary", text);
+            if (offsetcount == offset) {
+                if (qName.equals("page")) {
+                    checkCorrectDoc();
+                    finishedDoc = doc;
+                } else if (qName.equals("title") && recording) {
+                    checkCorrectDoc();
+                    try {
+                        doc.setProperty("demosite:title", fieldText.toString().trim());
+                        fieldText = new StringBuilder();
+                    } catch (RepositoryException e) {
+                        throw new SAXException(e);
                     }
-                    Node body = doc.addNode("demosite:body", "hippostd:html");
-                    body.setProperty("hippostd:content", text);
-
-                    Matcher m = categoryPattern.matcher(text);
-                    List<String> categories = new ArrayList<String>();
-                    while (m.find()) {
-                        categories.add(m.group(1));
+                } else if (qName.equals("text") && recording) {
+                    checkCorrectDoc();
+                    try {
+                        String text = fieldText.toString().trim();
+                        if (text.length() > 100) {
+                            doc.setProperty("demosite:summary", text.substring(0, 100));
+                        } else {
+                            doc.setProperty("demosite:summary", text);
+                        }
+                        Node body = doc.addNode("demosite:body", "hippostd:html");
+                        body.setProperty("hippostd:content", text);
+    
+                        Matcher m = categoryPattern.matcher(text);
+                        List<String> categories = new ArrayList<String>();
+                        while (m.find()) {
+                            categories.add(m.group(1));
+                        }
+                        doc.setProperty("demosite:categories", categories.toArray(new String[categories.size()]));
+    
+                        fieldText = new StringBuilder();
+                    } catch (RepositoryException e) {
+                        throw new SAXException(e);
                     }
-                    doc.setProperty("demosite:categories", categories.toArray(new String[categories.size()]));
-
-                    fieldText = new StringBuilder();
-                } catch (RepositoryException e) {
-                    throw new SAXException(e);
                 }
             }
             super.endElement(uri, localName, qName);

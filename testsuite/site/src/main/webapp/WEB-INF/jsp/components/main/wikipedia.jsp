@@ -54,6 +54,10 @@
             <td><input type="text" name="number"/></td>
           </tr>
           <tr>
+            <td>Offset: </td>
+            <td><input type="text" name="offset" value="0"/></td>
+          </tr>
+          <tr>
             <td>Wiki location on filesystem:</td>
             <td><input type="text" name="filesystemLocation"/></td>
           </tr>
