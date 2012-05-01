@@ -55,9 +55,16 @@ public interface UpdaterContext {
 
     /**
      * The registerStartTag method MUST be called AT LEAST ONCE.
-     * @param name the begin goals from which to start an update
+     * @param name the begin goals from which to start an update, this tag is
+     * removed when the updater has run.
      */
     public void registerStartTag(String name);
+    
+    /**
+     * The registerExpectTag may be called zero, once or multiple times.
+     * @param name the begin goal that must be present, but will not be removed.
+     */
+    public void registerExpectTag(String name);
 
     /**
      * The registerEndTag method MUST be called EXACTLY ONCE.

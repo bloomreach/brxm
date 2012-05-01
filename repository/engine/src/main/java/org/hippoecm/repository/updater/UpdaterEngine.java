@@ -108,7 +108,8 @@ public class UpdaterEngine {
         Set<String> beforeModule;
         Set<String> afterModule;
         Set<String> startTag;
-        String endTag;
+        Set<String> expectTag;
+        Set<String> endTag;
         List<ItemVisitor> visitors;
         ContextWorkspace workspace;
 
@@ -117,7 +118,8 @@ public class UpdaterEngine {
             this.beforeModule = new TreeSet<String>();
             this.afterModule = new TreeSet<String>();
             this.startTag = new TreeSet<String>();
-            this.endTag = null;
+            this.expectTag = new TreeSet<String>();
+            this.endTag = new TreeSet<String>();
             this.visitors = new LinkedList<ItemVisitor>();
         }
 
@@ -137,8 +139,12 @@ public class UpdaterEngine {
             startTag.add(name);
         }
 
+        public void registerExpectTag(String name) {
+            expectTag.add(name);
+        }
+
         public void registerEndTag(String name) {
-            endTag = name;
+            endTag.add(name);
         }
 
         public void registerVisitor(ItemVisitor visitor) {
@@ -424,9 +430,11 @@ public class UpdaterEngine {
                 if (!"m8-bootstrap".equals(registration.name)) {
                     log.warn("module "+registration.name+" did not specify start tag");
                 }
-                if(!currentVersions.contains(registration.endTag)) {
-                    isValid = true;
-                    singleRunner = true;
+                for (String endTag : registration.endTag) {
+                    if(!currentVersions.contains(endTag)) {
+                        isValid = true;
+                        singleRunner = true;
+                    }
                 }
             }
             for (String requestedVersion : registration.startTag) {
@@ -435,9 +443,17 @@ public class UpdaterEngine {
                     break;
                 }
             }
-            if(registration.endTag != null && registration.startTag.contains(registration.endTag)) {
-                log.error("module "+registration.name+" specified circular start-end tag dependency; disabling module");
-                isValid = false;
+            for (String requestedVersion : registration.expectTag) {
+                if (!currentVersions.contains(requestedVersion)) {
+                    isValid = false;
+                    break;
+                }
+            }
+            for (String endTag : registration.endTag) {
+                if(registration.startTag.contains(endTag)) {
+                    log.error("module "+registration.name+" specified circular start-end tag dependency; disabling module");
+                    isValid = false;
+                }
             }
             if (!isValid) {
                 iter.remove();
@@ -591,7 +607,7 @@ public class UpdaterEngine {
         }
         for (ModuleRegistration registration : modules) {
             if(registration.endTag != null) {
-                currentVersions.add(registration.endTag);
+                currentVersions.addAll(registration.endTag);
             }
         }
         StringBuffer logInfo = new StringBuffer();
