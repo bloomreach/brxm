@@ -2,6 +2,7 @@
 /.idea
 /.project
 /.settings
+api/*.iml
 api/*.tmp
 api/.classpath
 api/.project
@@ -18,6 +19,7 @@ api/tmlog.lck
 api/version
 api/wdbp-error-log.txt
 api/workspaces
+application/*.iml
 application/*.tmp
 application/.classpath
 application/.project
@@ -48,6 +50,7 @@ checker-app/cluster_node.id
 checker-app/hippo-repository-checker-app.iml
 checker-app/target
 checker-app/workspaces
+checker/*.iml
 checker/*.tmp
 checker/.classpath
 checker/.pom.xml.swp
@@ -68,6 +71,7 @@ config/.project
 config/.settings
 config/hippo-repository-config.iml
 config/target
+connector/*.iml
 connector/*.tmp
 connector/.classpath
 connector/.project
@@ -81,6 +85,7 @@ connector/tm.out.1
 connector/tm.out.lck
 connector/tmlog.lck
 connector/wdbp-error-log.txt
+dependencies/*.iml
 dependencies/.project
 dependencies/.settings
 dependencies/target
@@ -109,6 +114,7 @@ engine/version
 engine/wdbp-error-log.txt
 engine/workspaces
 /hippo-repository.iml
+jca/*.iml
 jca/*.tmp
 jca/.classpath
 jca/.project
@@ -123,10 +129,12 @@ jca/tm.out.lck
 jca/tmlog.lck
 jca/wdbp-error-log.txt
 /jpox.log
+ldap/*.iml
 ldap/.classpath
 ldap/.project
 ldap/.settings
 ldap/target
+modules/*.iml
 modules/*.tmp
 modules/.classpath
 modules/.project
@@ -140,6 +148,7 @@ modules/tm.out.1
 modules/tm.out.lck
 modules/tmlog.lck
 modules/wdbp-error-log.txt
+provider/*.iml
 provider/*.tmp
 provider/.classpath
 provider/.pom.xml.swp
@@ -155,10 +164,12 @@ provider/tm.out.1
 provider/tm.out.lck
 provider/tmlog.lck
 provider/wdbp-error-log.txt
+resources/*.iml
 resources/.classpath
 resources/.project
 resources/.settings
 resources/target
+servlets/*.iml
 servlets/*.tmp
 servlets/.classpath
 servlets/.pom.xml.swp
@@ -196,6 +207,7 @@ test/tmlog.lck
 test/version
 test/wdbp-error-log.txt
 test/workspaces
+tools/*.iml
 tools/.project
 tools/.settings
 tools/documentation/.classpath
@@ -219,6 +231,7 @@ tools/testutils/tmlog.lck
 tools/testutils/version
 tools/testutils/wdbp-error-log.txt
 tools/testutils/workspaces
+upgrade/*.iml
 upgrade/*.tmp
 upgrade/.classpath
 upgrade/.project
@@ -232,6 +245,7 @@ upgrade/tm.out.1
 upgrade/tm.out.lck
 upgrade/tmlog.lck
 upgrade/wdbp-error-log.txt
+utilities/*.iml
 utilities/*.tmp
 utilities/.classpath
 utilities/.project
