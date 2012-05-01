@@ -20,6 +20,14 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
+  <sv:property sv:name="hippo:version" sv:type="String" sv:multiple="true">
+    <!-- NOTE: remove updater module with frontend-v24 as end tag from pom.xml when bumping the frontend-v24 version
+         because the frontend namespace did not have a start tag before
+    -->
+    <sv:value>frontend-v24</sv:value>
+    <sv:value>reporting-v24</sv:value>
+  </sv:property>
+
   <!--Node type definitions for frontend-->
   <sv:node sv:name="frontend">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
