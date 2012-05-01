@@ -226,7 +226,6 @@ site/src/main/webapp/images/vorige.gif -text
 site/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
 site/src/main/webapp/javascript/simple-io.js -text
 solr/pom.xml -text
-solr/solr.iml -text
 solr/src/main/java/org/hippoecm/hst/demo/servlet/SolrConfigContextListener.java -text
 solr/src/main/webapp/WEB-INF/solr/README.txt -text
 solr/src/main/webapp/WEB-INF/solr/conf/admin-extra.html -text
