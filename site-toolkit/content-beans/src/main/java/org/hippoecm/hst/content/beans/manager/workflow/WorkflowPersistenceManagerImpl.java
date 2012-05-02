@@ -136,52 +136,6 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
         super(session, objectConverter);
         this.contentNodeBinders = contentNodeBinders;
     }
-   
-    /**
-     * Creates content node(s) with the specified node type at the specified absolute path.
-     * <P>
-     * The absolute path could be regarded differently according to physical implementations.
-     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
-     * On the other hand, a sophisticated implementation can regard the path as an input for 
-     * a workflow-enabled document/folder path. 
-     * </P>
-     *
-     * @param absPath the absolute node path
-     * @param nodeTypeName the node type name of the content object
-     * @param name the content node name
-     * @throws ObjectBeanPersistenceException
-     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     * to get the absolute path of the created node.
-     */
-    @Deprecated
-    public void create(String absPath, String nodeTypeName, String name) throws ObjectBeanPersistenceException {
-        createAndReturn(absPath, nodeTypeName, name, false);
-    }
-    
-    /**
-     * Creates content node(s) with the specified node type at the specified absolute path.
-     * <P>
-     * The absolute path could be regarded differently according to physical implementations.
-     * For example, an implementation can regard the path as a simple one to create a simple JCR node.
-     * On the other hand, a sophisticated implementation can regard the path as an input for 
-     * a workflow-enabled document/folder path. 
-     * </P>
-     * <P>
-     * If <CODE>autoCreateFolders</CODE> is true, then folders will be automatically created.
-     * </P>
-     *
-     * @param absPath the absolute node path
-     * @param nodeTypeName the node type name of the content object
-     * @param name the content node name
-     * @param autoCreateFolders the flag to create folders
-     * @throws ObjectBeanPersistenceException
-     * @deprecated the name of the created node can differ from the passed name. Use {@link #createAndReturn(String absPath, String nodeTypeName, String name, boolean autoCreateFolders)}
-     * to get the absolute path of the created node.
-     */
-    @Deprecated
-    public void create(String absPath, String nodeTypeName, String name, boolean autoCreateFolders) throws ObjectBeanPersistenceException {
-        createAndReturn(absPath, nodeTypeName, name, autoCreateFolders);
-    }
 
      /**
      * Creates content node(s) with the specified node type at the specified absolute path.
@@ -228,7 +182,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
             Node rootNode = session.getRootNode();
             Node curNode = rootNode;
-            String folderNodePath = null;
+            String folderNodePath;
             
             for (String folderName : folderNames) {
                 String folderNodeName = uriEncoding.encode(folderName);
@@ -332,7 +286,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * If there's no content node binder found, then this implementation will do updating
      * only without any bindings.
      * </P>
-     * @param content
+     * @param content the object to update
      * @throws ObjectBeanPersistenceException
      */
     public void update(Object content) throws ObjectBeanPersistenceException {
@@ -370,8 +324,8 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * <P>
      * Therefore, if a developer wants to customize the bindings, the developer should provide a <CODE>customContentNodeBinder</CODE>.
      * </P>
-     * @param content
-     * @param customContentNodeBinder
+     * @param content the object to update
+     * @param customContentNodeBinder the custom {@link ContentNodeBinder}
      * @throws ObjectBeanPersistenceException
      */
     @SuppressWarnings("unchecked")
@@ -386,7 +340,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 Workflow wf = getWorkflow(documentNodeWorkflowCategory, contentNode);
                 
                 if (wf != null) {
-                    Document document = null;
+                    Document document;
                     if(customContentNodeBinder != null) {
                         if (wf instanceof EditableWorkflow) {
                             EditableWorkflow ewf = (EditableWorkflow) wf;
@@ -413,7 +367,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                                     }
                                 }
                             } else {
-                                document = ewf.disposeEditableInstance();
+                                 ewf.disposeEditableInstance();
                             }
                         } else {
                             throw new ObjectBeanPersistenceException("The workflow is not a EditableWorkflow for " + path + ": " + wf);
@@ -442,7 +396,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     
     /**
      * Removes the content node which is mapped to the object.
-     * @param content
+     * @param content the object to remove
      * @throws ObjectBeanPersistenceException
      */
     public void remove(Object content) throws ObjectBeanPersistenceException {
@@ -501,7 +455,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     
     /**
      * Invokes {@link javax.jcr.Session#refresh(boolean)}.  
-     * @param keepChanges
+     * @param keepChanges whether to keep changes or not
      * @throws ObjectBeanPersistenceException
      */
     public void refresh(boolean keepChanges) throws ObjectBeanPersistenceException {
@@ -514,7 +468,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     
     /**
      * Sets the folder node type name which is used to create folders.
-     * @param folderNodeTypeName
+     * @param folderNodeTypeName the name of the folder
      */
     public void setFolderNodeTypeName(String folderNodeTypeName) {
         this.folderNodeTypeName = folderNodeTypeName;
@@ -522,7 +476,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Gets the folder node type name which is used to create folders.
-     * @return
+     * @return the <code>folderNodeTypeName</code>
      */
     public String getFolderNodeTypeName() {
         return folderNodeTypeName;
@@ -530,7 +484,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     
     /**
      * Gets the workflow category name used to get a folder workflow.
-     * @return
+     * @return he <code>folderNodeWorkflowCategory</code>
      */
     public String getFolderNodeWorkflowCategory() {
         return folderNodeWorkflowCategory;
@@ -538,7 +492,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Sets the workflow category name used to get a folder workflow.
-     * @param folderNodeWorkflowCategory
+     * @param folderNodeWorkflowCategory sets the folderNodeWorkflowCategory
      */
     public void setFolderNodeWorkflowCategory(String folderNodeWorkflowCategory) {
         this.folderNodeWorkflowCategory = folderNodeWorkflowCategory;
@@ -546,7 +500,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Gets the workflow category name used to get a document workflow.
-     * @return
+     * @return returns the documentNodeWorkflowCategory
      */
     public String getDocumentNodeWorkflowCategory() {
         return documentNodeWorkflowCategory;
@@ -554,7 +508,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Sets the workflow category name used to get a document workflow.
-     * @param documentNodeWorkflowCategory
+     * @param documentNodeWorkflowCategory the documentNodeWorkflowCategory to set
      */
     public void setDocumentNodeWorkflowCategory(String documentNodeWorkflowCategory) {
         this.documentNodeWorkflowCategory = documentNodeWorkflowCategory;
@@ -562,7 +516,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Gets the workflow category name used to add a folder.
-     * @return
+     * @return returns folderAdditionWorkflowCategory
      */
     public String getFolderAdditionWorkflowCategory() {
         return folderAdditionWorkflowCategory;
@@ -570,7 +524,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Sets the workflow category name used to add a folder.
-     * @param folderAdditionWorkflowCategory
+     * @param folderAdditionWorkflowCategory the folderAdditionWorkflowCategory to set
      */
     public void setFolderAdditionWorkflowCategory(String folderAdditionWorkflowCategory) {
         this.folderAdditionWorkflowCategory = folderAdditionWorkflowCategory;
@@ -578,7 +532,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Gets the workflow category name used to add a document.
-     * @return
+     * @return returns the documentAdditionWorkflowCategory
      */
     public String getDocumentAdditionWorkflowCategory() {
         return documentAdditionWorkflowCategory;
@@ -586,7 +540,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
     /**
      * Sets the workflow category name used to add a document.
-     * @param documentAdditionWorkflowCategory
+     * @param documentAdditionWorkflowCategory the documentAdditionWorkflowCategory to set
      */
     public void setDocumentAdditionWorkflowCategory(String documentAdditionWorkflowCategory) {
         this.documentAdditionWorkflowCategory = documentAdditionWorkflowCategory;
@@ -678,7 +632,7 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
      * <CODE>absPath</CODE> by canonicalizing or dereferencing.
      * </P>
      * 
-     * @param absPath
+     * @param absPath the absPath to get the existing folder for
      * @return  A node for the existing folder or <code>null</code> when the folder node does not exist
      * @throws RepositoryException
      */
