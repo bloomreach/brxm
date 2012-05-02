@@ -24,10 +24,8 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ForkedISO8601;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 
 public class FilterImpl implements Filter{
@@ -43,7 +41,6 @@ public class FilterImpl implements Filter{
     /**
      * AND and OR filters are evaluated at the end when #getJcrExpression is called.
      * This allows us to change those filters even after those are added to filter
-     * @see #processChildFilters()
      * @see #getJcrExpression()
      */
     private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
@@ -53,14 +50,7 @@ public class FilterImpl implements Filter{
     private enum ChildFilterType {
         OR, AND
     }
-    
-    /**
-     * @deprecated use  {@link HstQuery#createFilter()} or {@link #FilterImpl(Session)} instead
-     */
-    @Deprecated
-    public FilterImpl(){
-    }
-    
+
     public FilterImpl(Session session ){
         // note,the session can be null as long as HSTTWO-1600 is not done
         this.session = session;
@@ -380,13 +370,7 @@ public class FilterImpl implements Filter{
     
     public String getCalendarWhereXPath(Calendar value) throws FilterException{
           try {
-            if(session == null) {
-                // this part can go away when the deprecated new FilterImpl() and the Session in the FilterImpl constructor cannot be 
-                // null anymore.
-                return "xs:dateTime('" +ForkedISO8601.format(value)+"')";
-            } else {
-                return "xs:dateTime('"+session.getValueFactory().createValue(value).getString()+ "')";
-            }
+            return "xs:dateTime('"+session.getValueFactory().createValue(value).getString()+ "')";
         } catch (RepositoryException e) {
            throw new FilterException("Cannot create xpath for calendar value:", e);
         }

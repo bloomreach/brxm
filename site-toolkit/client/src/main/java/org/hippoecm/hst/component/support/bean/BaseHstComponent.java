@@ -342,15 +342,6 @@ public class BaseHstComponent extends GenericHstComponent {
         return null;
         
     }
-    
-    /**
-     * @deprecated use {@link #getQueryManager(HstRequest)}, {@link #getQueryManager(HstRequestContext)} or #getQue instead
-     */
-    @Deprecated
-    public HstQueryManager getQueryManager(){
-        log.warn("This method getQueryManager() has been deprecated. Use getQueryManager(HstRequestContext) or getQueryManager(HstRequest) instead");
-       return hstQueryManagerFactory.createQueryManager(this.objectConverter);
-    }
 
     /**
      * @param request the {@link HstRequest}

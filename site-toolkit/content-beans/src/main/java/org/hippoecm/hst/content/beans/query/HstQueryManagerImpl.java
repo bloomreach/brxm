@@ -29,24 +29,12 @@ import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 
-public class HstQueryManagerImpl implements HstQueryManager{
+public class HstQueryManagerImpl implements HstQueryManager {
 
     private ObjectConverter objectConverter;
     private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     private Session session;
  
-    /**
-     * 
-     * @param objectConverter
-     * @param hstCtxWhereClauseComputer
-     * @deprecated use {@link #HstQueryManagerImpl(Session, ObjectConverter, HstCtxWhereClauseComputer)} instead
-     */
-    @Deprecated
-    public HstQueryManagerImpl(ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
-        this.objectConverter = objectConverter;
-        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
-    }
-    
 
     public HstQueryManagerImpl(Session session, ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
         this.session = session;

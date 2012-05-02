@@ -15,6 +15,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
@@ -322,17 +323,23 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
                 if (canIndex) {
                     if (!firstIndexingCrawlDone) {
                         try {
-                            solrServer.deleteByQuery("*:*"); // delete everything!
-                            solrServer.commit();
+                            SolrQuery solrQuery = new SolrQuery();
+                            solrQuery.setQuery("*:*");
+                            if (solrServer.query(solrQuery).getResults().size()  > 0 ) {
+                                firstIndexingCrawlDone = true;
+                            } else {
+                                solrServer.deleteByQuery("*:*"); // delete everything!
+                                solrServer.commit();
 
-                            long start = System.currentTimeMillis();
-                            Node jcrNode = session.getNode(rootScope);
-                            AutoBeanCommittingAndClearingList<ContentBean> beansToIndex =
-                                    new AutoBeanCommittingAndClearingList<ContentBean>(1000, solrServer);
-                            indexDescendantDocuments(jcrNode, beansToIndex);
-                            beansToIndex.commit();
-                            firstIndexingCrawlDone = true;
-                            System.out.println("It took " + (System.currentTimeMillis() - start) + " ms to index " + beansToIndex.totalCommitted+" documents ");
+                                long start = System.currentTimeMillis();
+                                Node jcrNode = session.getNode(rootScope);
+                                AutoBeanCommittingAndClearingList<ContentBean> beansToIndex =
+                                        new AutoBeanCommittingAndClearingList<ContentBean>(1000, solrServer);
+                                indexDescendantDocuments(jcrNode, beansToIndex);
+                                beansToIndex.commit();
+                                firstIndexingCrawlDone = true;
+                                System.out.println("It took " + (System.currentTimeMillis() - start) + " ms to index " + beansToIndex.totalCommitted+" documents ");
+                            }
                         } catch (SolrServerException e) {
                             e.printStackTrace();
                         } catch (IOException e) {

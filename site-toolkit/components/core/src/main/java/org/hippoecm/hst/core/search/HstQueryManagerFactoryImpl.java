@@ -46,13 +46,6 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
 
-    
-    public HstQueryManager createQueryManager(ObjectConverter objectConverter) {
-        log.warn("This method createQueryManager(ObjectConverter) has been deprecated. Use createQueryManager(Session, ObjectConverter) instead");
-        HstQueryManager mngr = new HstQueryManagerImpl(objectConverter, this.getHstCtxWhereClauseComputer());
-        return mngr;
-    }
-
     @Override
     public HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter) {
         HstQueryManager mngr = new HstQueryManagerImpl(session, objectConverter, this.getHstCtxWhereClauseComputer());

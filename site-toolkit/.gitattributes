@@ -835,7 +835,6 @@ content-beans/src/main/java/org/hippoecm/hst/service/AbstractJCRService.java svn
 content-beans/src/main/java/org/hippoecm/hst/service/ServiceBeanAccessProviderImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/service/ServiceFactory.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/util/ContentBeanUtils.java -text svneol=unset#text/plain
-content-beans/src/main/java/org/hippoecm/hst/util/ForkedISO8601.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/util/NOOPELMap.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/util/ObjectConverterUtils.java -text
 content-beans/src/main/java/org/hippoecm/hst/util/SearchInputParsingUtils.java -text svneol=unset#text/plain

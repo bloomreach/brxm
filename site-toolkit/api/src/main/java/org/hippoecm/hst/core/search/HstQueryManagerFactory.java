@@ -18,18 +18,10 @@ package org.hippoecm.hst.core.search;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 
 public interface HstQueryManagerFactory {
-
-    /**
-     * 
-     * @param objectConverter
-     * @return a {@link HstQueryManager}
-     * @deprecated use {@link #createQueryManager(Session, ObjectConverter)} instead
-     */
-    @Deprecated
-    HstQueryManager createQueryManager(ObjectConverter objectConverter);
 
     /**
      * @param session the jcr {@link Session}
@@ -38,6 +30,6 @@ public interface HstQueryManagerFactory {
      */
     HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter);
     
-    org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
+    HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
 
 }
