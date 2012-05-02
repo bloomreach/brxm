@@ -171,56 +171,35 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     
     @Override
     protected Session login(CredentialsWrapper credentialsWrapper) throws LoginException, RepositoryException {
-        PoolingRepository repository = null;
-        try {
-            synchronized (this) {
-                repository = (PoolingRepository)repositoryMap.get(credentialsWrapper);
-                if (repository != null) {
-                    repository.getLock().lock();
-                }
-            }
-
-            if (repository == null) {
-                try {
-                    synchronized (this) {
-                        // this call returns a locked ny this thread repository instance
-                        repository = createRepositoryOnDemand(credentialsWrapper);
-                    }
-                } catch (Exception e) {
-                    throw new RepositoryException(e);
-                }
-            }
-
-            setCurrentThreadRepository(repository);
-
-            String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), credentialsDomainSeparator);
-            Set<String> credsDomains = tlCurrentCredsDomains.get();
-            if (credsDomains == null) {
-                credsDomains = new HashSet<String>();
-                credsDomains.add(credentialsDomain);
-                tlCurrentCredsDomains.set(credsDomains);
-            } else {
-                credsDomains.add(credentialsDomain);
-            }
-
-            return repository.login(credentialsWrapper.getCredentials());
-        } finally {
-            if (repository != null) {
-                repository.getLock().unlock();
+        Repository repository = repositoryMap.get(credentialsWrapper);
+        
+        if (repository == null) {
+            try {
+                repository = createRepositoryOnDemand(credentialsWrapper);
+            } catch (Exception e) {
+                throw new RepositoryException(e);
             }
         }
-        
-    }
 
-    // this method returns a PoolingRepository that is Locked by this thread to avoid the race condition that the inactiveRepositoryDisposer
-    // would dispose it before it actually has been used at all
-    // Thus, methods that call this create repository must make sure they unlock the repository!
-    protected synchronized PoolingRepository createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
+        setCurrentThreadRepository(repository);
+        
+        String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), credentialsDomainSeparator);
+        Set<String> credsDomains = tlCurrentCredsDomains.get();
+        if (credsDomains == null) {
+            credsDomains = new HashSet<String>();
+            credsDomains.add(credentialsDomain);
+            tlCurrentCredsDomains.set(credsDomains);
+        } else {
+            credsDomains.add(credentialsDomain);
+        }
+        
+        return repository.login(credentialsWrapper.getCredentials());
+    }
+    
+    protected synchronized Repository createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
         PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
+        
         if (repository != null) {
-            // the createRepositoryOnDemand already locks the repository because,
-            // the disposer thread could otherwise directly dispose it
-            repository.getLock().lock();
             return repository;
         }
         
@@ -234,10 +213,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         }
         
         repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
-        // the createRepositoryOnDemand already locks the repository because,
-        // the disposer thread could otherwise directly dispose it
-        repository.getLock().lock();
-
+        
         if (repository instanceof MultipleRepositoryAware) {
             ((MultipleRepositoryAware) repository).setMultipleRepository(this);
         }
@@ -426,27 +402,22 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                                     Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
                                     
                                     if (repoMap != null) {
-                                        PoolingRepository tryToRemove = repoMap.get(userID);
-                                        if(tryToRemove != null && tryToRemove.getLock().tryLock()) {
-                                            // only really remove it when we can get a lock, otherwise it is in use again
-                                            repoMap.remove(userID);
+                                        PoolingRepository removed = repoMap.remove(userID);
+                                        
+                                        if (removed != null) {
                                             try {
-                                                try {
-                                                    removeRepository(((BasicPoolingRepository) tryToRemove).getDefaultCredentials());
-                                                    tryToRemove.close();
-                                                } catch (Exception e) {
-                                                    if (log.isDebugEnabled()) {
-                                                        log.warn("Failed to close an inactive pooling repository.", e);
-                                                    } else {
-                                                        log.warn("Failed to close an inactive pooling repository. {}", e.toString());
-                                                    }
+                                                removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
+                                                removed.close();
+                                            } catch (Exception e) {
+                                                if (log.isDebugEnabled()) {
+                                                    log.warn("Failed to close an inactive pooling repository.", e);
+                                                } else {
+                                                    log.warn("Failed to close an inactive pooling repository. {}", e.toString());
                                                 }
-
-                                                if (repoMap.isEmpty()) {
-                                                    Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
-                                                }
-                                            } finally {
-                                                tryToRemove.getLock().unlock();
+                                            }
+                                            
+                                            if (repoMap.isEmpty()) {
+                                                Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
                                             }
                                         }
                                     }

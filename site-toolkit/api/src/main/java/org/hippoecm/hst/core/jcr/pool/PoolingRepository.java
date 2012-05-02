@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.core.jcr.pool;
 
-import java.util.concurrent.locks.Lock;
-
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -28,7 +26,7 @@ import org.hippoecm.hst.core.ResourceLifecycleManagement;
 /**
  * Interface extending {@link javax.jcr.Repository} to allow
  * transparent access to internal session pooling implementation.
- *
+ * 
  * @version $Id$
  */
 public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
@@ -42,26 +40,26 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
      * borrowed again between returns). Violating this contract will result in
      * the same object appearing multiple times in the pool and pool counters
      * (numActive, numIdle) returning incorrect values.</p>
-     *
+     * 
      * @param session
      */
     void returnSession(Session session);
-
+    
     /**
      * Returns the resource lifecycle management implementation of this pool.
-     *
+     * 
      * @see {@link ResourceLifecycleManagement}
      * @return
      */
-    ResourceLifecycleManagement getResourceLifecycleManagement();
-
+    ResourceLifecycleManagement getResourceLifecycleManagement(); 
+    
     /**
      * Tries impersonation by the provided the credentials.
      * If this pooling repository is contained in a {@link MultipleRepository} implementation
      * and the containing {@link MultipleRepository} has a proper repository for the provided credentials,
      * then it can return a proper session impersonated.
      * Otherwise, it returns null.
-     *
+     * 
      * @param credentials
      * @return
      * @throws LoginException
@@ -72,34 +70,22 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
     /**
      * Sets time millis to have each session be refreshed on activation if the session
      * is not refreshed after the specified time millis.
-     *
+     * 
      * @param sessionsRefreshPendingTimeMillis
      */
     void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
-
+    
     /**
      * Returns pooling counter.
      * @return
      */
     PoolingCounter getPoolingCounter();
-
+    
     /**
      * Returns true if pooling repository is initialized to be available and not closed.
-     *
+     * 
      * @return
      */
     boolean isActive();
-
-
-    /**
-     * Acquires the {@link Lock} is there is a lock object available and <code>null</code> otherwise
-     *
-     * <p>If the lock is not available then the current thread becomes
-     * disabled for thread scheduling purposes and lies dormant until the
-     * lock has been acquired.
-     */
-    Lock getLock();
-
-
-
+    
 }
