@@ -57,6 +57,13 @@ import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The JCR backed implementation of the plugin configuration.  It will try to do type conversion
+ * (i.e. string to boolean and vice versa) and single to multiple (and the reverse).
+ * <p>
+ * It allows wrapping, so that subclasses can intercept the retrieval of values to e.g. interpolate
+ * these.
+ */
 public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -67,20 +74,23 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     private class EntryDecorator implements Map.Entry<String, Object> {
 
-        String key;
+        private final String key;
 
         EntryDecorator(Map.Entry<String, Object> upstream) {
             this.key = upstream.getKey();
         }
 
+        @Override
         public String getKey() {
             return key;
         }
 
+        @Override
         public Object getValue() {
             return JcrPluginConfig.this.get(key);
         }
 
+        @Override
         public Object setValue(Object value) {
             return JcrPluginConfig.this.put(key, value);
         }
@@ -126,6 +136,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
                     final Iterator<Map.Entry<String, Object>> iter = base.iterator();
                     return new Iterator<Map.Entry<String, Object>>() {
 
+                        @Override
                         public boolean hasNext() {
                             return iter.hasNext();
                         }
@@ -134,14 +145,17 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
                             final Map.Entry<String, Object> entry = iter.next();
                             return new Map.Entry<String, Object>() {
 
+                                @Override
                                 public String getKey() {
                                     return entry.getKey();
                                 }
 
+                                @Override
                                 public Object getValue() {
                                     return unwrap(entry.getValue());
                                 }
 
+                                @Override
                                 public Object setValue(Object value) {
                                     return upstream.put(entry.getKey(), wrap(value));
                                 }
@@ -149,6 +163,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
                             };
                         }
 
+                        @Override
                         public void remove() {
                             iter.remove();
                         }
@@ -214,6 +229,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return nodeModel;
     }
 
+    @Override
     public String getName() {
         try {
             Node node = nodeModel.getNode();
@@ -354,6 +370,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return StringValue.valueOf(getString(key));
     }
 
+    @Override
     public IPluginConfig getPluginConfig(Object key) {
         if (key instanceof String) {
             String strKey = (String) key;
@@ -372,11 +389,12 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         return null;
     }
 
+    @Override
     public Set<IPluginConfig> getPluginConfigSet() {
         Set<IPluginConfig> configs = new LinkedHashSet<IPluginConfig>();
         try {
             NodeIterator children = nodeModel.getNode().getNodes();
-            for (int i = 0; children.hasNext(); i++) {
+            while (children.hasNext()) {
                 Node child = children.nextNode();
                 if (child != null) {
                     configs.add(wrapConfig(child));
@@ -417,6 +435,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         throw new UnsupportedOperationException("not implemented yet");
     }
 
+    @Override
     public void detach() {
         nodeModel.detach();
         map.detach();
@@ -450,7 +469,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     @Override
     public Object put(String key, Object value) {
         entries = null;
-        return map.put((String) key, unwrap(value));
+        return map.put(key, unwrap(value));
     }
 
     @Override
@@ -474,10 +493,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof JcrPluginConfig) {
-            return ((JcrPluginConfig) other).nodeModel.equals(nodeModel);
-        }
-        return false;
+        return other instanceof JcrPluginConfig && ((JcrPluginConfig) other).nodeModel.equals(nodeModel);
     }
 
     @Override
@@ -487,7 +503,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
 
     @Override
     public String toString() {
-        return "JcrPluginConfig:" + nodeModel.getItemModel().getPath().toString();
+        return "JcrPluginConfig:" + nodeModel.getItemModel().getPath();
     }
 
     protected JcrPluginConfig wrapConfig(Node node) {
@@ -543,6 +559,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         this.obContext = (IObservationContext<IPluginConfig>) context;
     }
@@ -552,6 +569,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void startObservation() {
         IObservationContext obContext = getObservationContext();
         String path = getNodeModel().getItemModel().getPath();
@@ -573,6 +591,7 @@ public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, 
         listener.start();
     }
 
+    @Override
     public void stopObservation() {
         if (listener != null) {
             listener.stop();
