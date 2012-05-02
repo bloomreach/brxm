@@ -45,8 +45,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
 
+    /**
+     * @deprecated never used.
+     */
     public static final String CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".userPrincipalClassName";
 
+    /**
+     * @deprecated never used.
+     */
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
     
     private static volatile String [] CONTAINER_ATTR_NAME_PREFIXES = null;
@@ -66,10 +72,6 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         this.referenceNamespaceIgnored = this.requestContext.getURLFactory().isReferenceNamespaceIgnored();
         this.componentWindow = componentWindow;
         this.parameterNameComponentSeparator = requestContext.getContainerURLProvider().getParameterNameComponentSeparator();
-    }
-    
-    public void setRequest(HttpServletRequest servletRequest) {
-        super.setRequest(servletRequest);
     }
 
     public Map<String, String []> getParameterMap() {
