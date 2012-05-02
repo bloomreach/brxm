@@ -19,10 +19,28 @@ import java.util.List;
 
 import org.hippoecm.frontend.model.ocm.IStore;
 
+/**
+ * A type store makes type descriptors available.  Based on type names, descriptors are retrieved
+ * from persistent or transient storage.
+ */
 public interface ITypeStore extends IStore<ITypeDescriptor> {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * Retrieve the type descriptor of a particular name
+     *
+     * @param name the name of the type
+     *
+     * @return the type descriptor
+     */
     ITypeDescriptor getTypeDescriptor(String name);
 
+    /**
+     * Retrieve all types in a namespace.  The namespace is identified by a prefix.
+     *
+     * @param namespace the prefix for the namespace
+     *
+     * @return the list of type descriptors in the specified namespace
+     */
     List<ITypeDescriptor> getTypes(String namespace);
 }

@@ -17,14 +17,34 @@ package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
+/**
+ * A controller for a cluster of plugins.  It can be used to start and stop the plugins in the cluster.
+ * <p>
+ * Plugins that repeatedly instantiated other clusters of plugins must stop the cluster when it is no longer
+ * in use.  If the cluster has the same lifecycle as the plugin, this is not necessary; the plugin framework
+ * will stop the cluster when the plugin is stopped.
+ */
 public interface IClusterControl extends IClusterable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The cluster configuration.  All parameters have been filled in, so it is no longer the template
+     * that was used to create the cluster control in {@link IPluginContext#newCluster(IClusterConfig, IPluginConfig)}.
+     *
+     * @return the cluster configuration
+     */
     IClusterConfig getClusterConfig();
-    
+
+    /**
+     * Start the plugins in the cluster.
+     */
     void start();
 
+    /**
+     * Stop the plugins in the cluster.
+     */
     void stop();
 
 }

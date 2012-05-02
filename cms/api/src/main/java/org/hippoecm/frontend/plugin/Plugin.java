@@ -17,6 +17,10 @@ package org.hippoecm.frontend.plugin;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
+/**
+ * Base class for plugins.  Implements the IPlugin lifecycle events with no-ops, storing references
+ * to the {@link IPluginContext} and {@link IPluginConfig}.
+ */
 public abstract class Plugin implements IPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -25,7 +29,13 @@ public abstract class Plugin implements IPlugin {
 
     private IPluginContext context;
     private IPluginConfig config;
-    
+
+    /**
+     * Construct a new Plugin.
+     *
+     * @param context the plugin context
+     * @param config the plugin config
+     */
     public Plugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
@@ -44,10 +54,12 @@ public abstract class Plugin implements IPlugin {
     protected IPluginConfig getPluginConfig() {
         return config;
     }
-    
+
+    @Override
     public void start() {
     }
 
+    @Override
     public void stop() {
     }
 

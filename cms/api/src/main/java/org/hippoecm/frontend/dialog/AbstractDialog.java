@@ -539,11 +539,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         super.onDetach();
     }
 
-    @Deprecated
-    protected void onDefaultSubmit() {
-        handleSubmit();
-    }
-
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new ExceptionFeedbackPanel(id);
     }
@@ -555,6 +550,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return fmm;
     }
 
+    /**
+     * Implement {@link IAjaxIndicatorAware}, to let ajax components in the dialog trigger the ajax
+     * indicator when they trigger an ajax request.
+     *
+     * @return the markup id of the ajax indicator
+     */
     public String getAjaxIndicatorMarkupId() {
         return indicator.getMarkupId();
     }
@@ -675,15 +676,23 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         super.onError();
     }
 
+    /**
+     * Callback method invoked when the user clicks the 'OK' button.
+     * When no errors are reported, this will cause the dialog to be closed.
+     */
     protected void onOk() {
     }
 
+    /**
+     * Callback method invoked when the user clicks the 'Cancel' button.
+     */
     protected void onCancel() {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Component getComponent() {
         return container;
     }
@@ -691,6 +700,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     /**
      * {@inheritDoc}
      */
+    @Override
     public void render(PluginRequestTarget target) {
         if (target != null) {
             target.addComponent(feedback);
@@ -707,6 +717,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
+    /**
+     * Implement onClose callback, invoked when the dialog is closed.  Make sure the keyboard shortcuts are
+     * cleaned up correctly.  Subclasses overriding this method should also invoke super#onClose();
+     */
+    @Override
     public void onClose() {
         AjaxRequestTarget target = AjaxRequestTarget.get();
         if (target != null) {
@@ -722,6 +737,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     /**
      * {@inheritDoc}
      */
+    @Override
     public IValueMap getProperties() {
         return LARGE;
     }

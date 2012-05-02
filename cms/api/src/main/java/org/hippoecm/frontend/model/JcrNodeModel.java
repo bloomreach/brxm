@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -48,14 +47,30 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
     private transient boolean parentCached = false;
     private transient JcrNodeModel parent;
 
+    /**
+     * Create a JcrNodeModel based on an JcrItemModel.
+     * The JcrItemModel should provide access to the Node to be wrapped by this model.
+     *
+     * @param model the Item model
+     */
     public JcrNodeModel(JcrItemModel model) {
         super(model);
     }
 
+    /**
+     * Create a JcrNodeModel based on a JCR Node.
+     *
+     * @param node the node to wrap
+     */
     public JcrNodeModel(Node node) {
         super(node);
     }
 
+    /**
+     * Create a JcrNodeModel based on an absolute JCR path.
+     *
+     * @param path the JCR path to the Node.
+     */
     public JcrNodeModel(String path) {
         super(path);
     }
@@ -65,17 +80,22 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
      * the model was initially created with a null object.
      */
     public Node getNode() {
-        return (Node) itemModel.getObject();
+        return (Node) getItemModel().getObject();
     }
 
     @Override
     public Node getObject() {
         return super.getObject();
     }
-    
+
+    /**
+     * Retrieve a JcrNodeModel for the parent node.
+     *
+     * @return a model for the parent Node
+     */
     public JcrNodeModel getParentModel() {
         if (!parentCached) {
-            JcrItemModel parentModel = itemModel.getParentModel();
+            JcrItemModel parentModel = getItemModel().getParentModel();
             if (parentModel != null) {
                 parent = new JcrNodeModel(parentModel);
             } else {
@@ -93,43 +113,41 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
         super.detach();
     }
 
-    /**
-     * @deprecated
-     * Use {@link JcrHelper#isVirtualNode(Node)}
-     */
-    public boolean isVirtual() {
-        try {
-            return JcrHelper.isVirtualNode(getNode());
-        }
-        catch (RepositoryException e) {
-            log.warn("RepositoryException while determining whether node is virtual, returning false", e);
-            return false;
-        }
-    }
-
     // implement IObservable
 
+    /**
+     * Store the observation context to be used to dispatch events.
+     */
     @SuppressWarnings("unchecked")
+    @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         this.context = (IObservationContext<JcrNodeModel>) context;
     }
 
+    /**
+     * Start the observation by listening to JCR {@link Event}s.
+     */
+    @Override
     public void startObservation() {
-        if (itemModel.getObject() == null) {
+        if (getItemModel().getObject() == null) {
             log.info("skipping observation for null node");
             return;
         }
-        if (itemModel.getRelativePath() == null) {
+        if (getItemModel().getRelativePath() == null) {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, "/", true, new String[] { itemModel.getUuid() },
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, "/", true, new String[] { getItemModel().getUuid() },
                     null);
         } else {
             listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, itemModel.getPath(), false, null, null);
+                    | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, getItemModel().getPath(), false, null, null);
         }
         listener.start();
     }
 
+    /**
+     * Stop listening to JCR {@link Event}s.
+     */
+    @Override
     public void stopObservation() {
         if (listener != null) {
             listener.stop();
@@ -141,26 +159,25 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", itemModel.toString())
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", getItemModel().toString())
                 .toString();
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrNodeModel == false) {
+        if (!(object instanceof JcrNodeModel)) {
             return false;
         }
         if (this == object) {
             return true;
         }
         JcrNodeModel nodeModel = (JcrNodeModel) object;
-        return itemModel.equals(nodeModel.getItemModel());
+        return getItemModel().equals(nodeModel.getItemModel());
     }
 
     @Override
     public int hashCode() {
-        return itemModel.hashCode();
-        //return new HashCodeBuilder(57, 433).append(itemModel).toHashCode();
+        return getItemModel().hashCode();
     }
 
 }

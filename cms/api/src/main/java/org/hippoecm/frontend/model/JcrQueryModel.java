@@ -21,7 +21,6 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -32,11 +31,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Data provider that uses a JCR {@link Query} object to retrieve nodes.
+ * <p>
+ * Registering observers for this class is deprecated; plugins should register efficient listeners themselves.
+ * (since 'efficient' is dependent on the query being carried out, this cannot be done generically)
+ */
 public class JcrQueryModel extends LoadableDetachableModel implements IDataProvider, IObservable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -49,14 +53,19 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
     
     private String statement;
     private String language;
-    private IObservationContext context;
-    private JcrEventListener listener;
 
+    /**
+     * Create a model for a JCR query.
+     *
+     * @param statement the statement to execute
+     * @param language  the language of the statement
+     */
     public JcrQueryModel(String statement, String language) {
         this.statement = statement;
         this.language = language;
     }
 
+    @Override
     protected Object load() {
         try {
             QueryManager qmgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
@@ -68,6 +77,7 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
         return null;
     }
 
+    @Override
     public Iterator<Node> iterator(int first, int count) {
         QueryResult result = (QueryResult) getObject();
         if (result != null) {
@@ -101,10 +111,12 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
         return new ArrayList<Node>(0).iterator();
     }
 
-    public IModel model(Object object) {
+    @Override
+    public IModel<Node> model(Object object) {
         return new JcrNodeModel((Node) object);
     }
 
+    @Override
     public int size() {
         QueryResult result = (QueryResult) getObject();
         if (result != null) {
@@ -127,20 +139,17 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
         return 0;
     }
 
+    @Override
     public void setObservationContext(IObservationContext context) {
-        this.context = context;
+        log.warn("An observer for the query '" + statement + "' was registered.  Observing query models has been deprecated.");
     }
 
+    @Override
     public void startObservation() {
-        listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED, "/", true, null, null);
-        listener.start();
     }
 
+    @Override
     public void stopObservation() {
-        if (listener != null) {
-            listener.stop();
-            listener = null;
-        }
     }
 
 }

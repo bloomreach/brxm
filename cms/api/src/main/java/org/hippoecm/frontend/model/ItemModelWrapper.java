@@ -20,13 +20,18 @@ import javax.jcr.Item;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public abstract class ItemModelWrapper<T extends Item> implements IChainingModel<T> {
+/**
+ * Base class for models that can provide objects based on an JCR {@link Item}.
+ *
+ * @param <T> the model object type
+ */
+public abstract class ItemModelWrapper<T> implements IChainingModel<T> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected JcrItemModel itemModel;
+    private JcrItemModel itemModel;
 
     public ItemModelWrapper(JcrItemModel model) {
         itemModel = model;
@@ -46,10 +51,12 @@ public abstract class ItemModelWrapper<T extends Item> implements IChainingModel
 
     // Implement IChainingModel
 
+    @Override
     public IModel<Item> getChainedModel() {
         return itemModel;
     }
 
+    @Override
     public void setChainedModel(IModel<?> model) {
         if (model instanceof JcrItemModel) {
             itemModel = (JcrItemModel) model;
@@ -57,15 +64,19 @@ public abstract class ItemModelWrapper<T extends Item> implements IChainingModel
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public T getObject() {
         return (T) itemModel.getObject();
     }
 
+    @Override
     public void setObject(T object) {
         throw new UnsupportedOperationException("Cannot alter the item of an " + getClass());
     }
 
+    @Override
     public void detach() {
         itemModel.detach();
     }
+
 }

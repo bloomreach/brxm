@@ -29,6 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.session.UserSession;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
  * Model for JCR {@link Item}s.  The model tracks the Item as well as it can, using the
  * first referenceable ancestor plus a relative path as the identification/retrieval method.
  * When the Item (or one of its ancestors) is moved, this is transparent.
+ * <p>
+ * In development, when the model is serialized, it checks whether it has been detached properly.
  */
 public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @SuppressWarnings("unused")
@@ -74,16 +77,31 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         absPath = path;
     }
 
+    /**
+     * Retrieve the identifier (UUID) of the first referencable ancestor node
+     *
+     * @return the UUID
+     */
     public String getUuid() {
         save();
         return uuid;
     }
 
+    /**
+     * Retrieve the JCR path for the Item, relative to the first referencable ancestor
+     *
+     * @return the relative path
+     */
     public String getRelativePath() {
         save();
         return relPath;
     }
 
+    /**
+     * The absolute JCR path for the Item.
+     *
+     * @return the absolute path
+     */
     public String getPath() {
         Item item = getObject();
         if (item != null) {
@@ -100,10 +118,22 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         return absPath;
     }
 
+    /**
+     * Determine whether the Item exists.  This will retrieve the Item from the repository.
+     * If the Item has been loaded in this request cycle (e.g. using {@link IModel#getObject}), but has since
+     * been removed, the returned information may be incorrect.
+     *
+     * @return true when the Item exists
+     */
     public boolean exists() {
         return getObject() != null;
     }
 
+    /**
+     * Retrieve the JcrItemModel for the parent {@link Node}.
+     *
+     * @return the parent JcrItemModel
+     */
     public JcrItemModel<Node> getParentModel() {
         String path = getPath();
         if (path != null) {
@@ -123,30 +153,21 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         return null;
     }
 
-    public boolean hasAncestor(JcrItemModel<Node> model) {
-        if (getPath() != null) {
-            if (model.getPath() != null) {
-                return getPath().startsWith(model.getPath());
-            }
-        }
-        return false;
-    }
-
     // LoadableDetachableModel
 
     @SuppressWarnings("unchecked")
     @Override
     protected T load() {
         try {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
             if (!session.isLive()) {
                 log.warn("session no longer exists");
                 return null;
             }
             if (uuid != null) {
-                Node node = null;
+                Node node;
                 try {
-                    node = session.getNodeByUUID(uuid);
+                    node = session.getNodeByIdentifier(uuid);
                     if (relPath == null) {
                         absPath = node.getPath();
                         return (T) node;
@@ -255,7 +276,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                 }
 
                 if (node != null) {
-                    uuid = node.getUUID();
+                    uuid = node.getIdentifier();
                     if (spb.length() > 1) {
                         relPath = spb.toString().substring(1);
                     }
@@ -295,7 +316,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrItemModel == false) {
+        if (!(object instanceof JcrItemModel)) {
             return false;
         }
         if (this == object) {
@@ -313,13 +334,11 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         if (this.uuid != null && !this.uuid.equals(that.uuid)) {
             return false;
         }
-        
+
         if (this.relPath == null && that.relPath == null) {
             return true;
-        } else if (this.relPath != null) {
-            return this.relPath.equals(that.relPath);
         } else {
-            return false;
+            return this.relPath != null && this.relPath.equals(that.relPath);
         }
     }
 

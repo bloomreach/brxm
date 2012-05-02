@@ -51,20 +51,27 @@ public class ServiceContext implements IPluginContext {
         this.children = new LinkedList<IClusterControl>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IClusterControl newCluster(IClusterConfig template, IPluginConfig parameters) {
         final IClusterControl control = upstream.newCluster(template, parameters);
         children.add(control);
         return new IClusterControl() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public IClusterConfig getClusterConfig() {
                 return control.getClusterConfig();
             }
 
+            @Override
             public void start() {
                 control.start();
             }
 
+            @Override
             public void stop() {
                 control.stop();
                 children.remove(control);
@@ -73,18 +80,34 @@ public class ServiceContext implements IPluginContext {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
         return upstream.getService(name, clazz);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
         return upstream.getServices(name, clazz);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T extends IClusterable> IServiceReference<T> getReference(T service) {
         return upstream.getReference(service);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void registerService(IClusterable service, String name) {
         upstream.registerService(service, name);
         List<IClusterable> list = services.get(name);
@@ -95,6 +118,10 @@ public class ServiceContext implements IPluginContext {
         list.add(service);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void unregisterService(IClusterable service, String name) {
         List<IClusterable> list = services.get(name);
         list.remove(service);
@@ -104,6 +131,10 @@ public class ServiceContext implements IPluginContext {
         upstream.unregisterService(service, name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void registerTracker(IServiceTracker<? extends IClusterable> listener, String name) {
         upstream.registerTracker(listener, name);
         List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
@@ -114,6 +145,10 @@ public class ServiceContext implements IPluginContext {
         list.add(listener);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void unregisterTracker(IServiceTracker<? extends IClusterable> listener, String name) {
         List<IServiceTracker<? extends IClusterable>> list = listeners.get(name);
         list.remove(listener);
@@ -123,6 +158,10 @@ public class ServiceContext implements IPluginContext {
         upstream.unregisterTracker(listener, name);
     }
 
+    /**
+     * Stop clusters that have been started using this service context.  Unregister services and trackers
+     * that have been registered.
+     */
     public void stop() {
         IClusterControl[] controls = children.toArray(new IClusterControl[children.size()]);
         for (IClusterControl control : controls) {

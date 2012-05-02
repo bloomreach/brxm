@@ -26,6 +26,10 @@ import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceFactory;
 
+/**
+ * The dialog service factory wraps access to the dialog service to make sure that a dialog is
+ * closed when the plugin that opened it is stopped.
+ */
 public class DialogServiceFactory implements IServiceFactory<IDialogService> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -50,14 +54,17 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
         context.unregisterService(this, serviceId);
     }
 
+    @Override
     public IDialogService getService(IPluginContext context) {
         return new DialogServiceWrapper();
     }
 
+    @Override
     public Class<? extends IDialogService> getServiceClass() {
         return IDialogService.class;
     }
 
+    @Override
     public void releaseService(IPluginContext context, IDialogService service) {
         ((DialogServiceWrapper) service).dispose();
     }
@@ -82,7 +89,8 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
         private static final long serialVersionUID = 1L;
 
         private Set<DialogWrapper> dialogs = new HashSet<DialogWrapper>();
-        
+
+        @Override
         public void close() {
             rootService.close();
         }
@@ -91,10 +99,12 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
             dialogs.remove(wrapper);
         }
 
+        @Override
         public void render(PluginRequestTarget target) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public void show(Dialog dialog) {
             DialogWrapper wrapper = new DialogWrapper(this, dialog);
             dialogs.add(wrapper);
@@ -124,51 +134,33 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
             this.dialog = dialog;
         }
 
-        /**
-         * @return
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#getComponent()
-         */
+        @Override
         public Component getComponent() {
             return dialog.getComponent();
         }
 
-        /**
-         * @return
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#getProperties()
-         */
+        @Override
         public IValueMap getProperties() {
             return dialog.getProperties();
         }
 
-        /**
-         * @return
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#getTitle()
-         */
+        @Override
         public IModel getTitle() {
             return dialog.getTitle();
         }
 
-        /**
-         * 
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#onClose()
-         */
+        @Override
         public void onClose() {
             dialog.onClose();
             service.onClose(this);
         }
 
-        /**
-         * @param target
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#render(org.hippoecm.frontend.PluginRequestTarget)
-         */
+        @Override
         public void render(PluginRequestTarget target) {
             dialog.render(target);
         }
 
-        /**
-         * @param dialogService
-         * @see org.hippoecm.frontend.dialog.IDialogService.Dialog#setDialogService(org.hippoecm.frontend.dialog.IDialogService)
-         */
+        @Override
         public void setDialogService(IDialogService dialogService) {
             if (dialogService == rootService) {
                 dialog.setDialogService(this.service);

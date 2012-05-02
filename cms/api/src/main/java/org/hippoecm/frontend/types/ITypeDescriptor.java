@@ -21,6 +21,18 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.event.IObservable;
 
+/**
+ * The description of a (JCR) type.  The type system is based on the JCR one, but enriched with
+ * additional information for the CMS interface.
+ * <p>
+ * One refinement over the JCR type system is the use of 'pseudo-types'.  These types do not directly
+ * correspond to JCR types, but instead use a different type for their storage (the 'real' type).
+ * This allows additional semantics to be provided on top of simpler storage, and is usually also represented
+ * differently in the document editor.
+ * <p>
+ * The mutator methods / setters can only be used in a type editing context such as the document type editor.
+ * In other cases, the type should be considered immutable and the mutator methods may not be invoked.
+ */
 public interface ITypeDescriptor extends IClusterable, IObservable {
     final static String SVN_ID = "$Id$";
 
@@ -52,15 +64,6 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * @return an immutable list of super types.
      */
     List<String> getSuperTypes();
-
-    /**
-     * Set the super types of the type.  If the type is a mixin type, then all of the
-     * super types must be mixin types too.  This should not include nt:base for node
-     * types.
-     * 
-     * @param superTypes the list of super types
-     */
-    void setSuperTypes(List<String> superTypes);
 
     /**
      * Retrieve all types that descend from the type.
@@ -95,29 +98,6 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     IFieldDescriptor getField(String key);
 
     /**
-     * Add a field to the type.
-     * 
-     * @param descriptor the field that is added to the type
-     */
-    void addField(IFieldDescriptor descriptor) throws TypeException;
-
-    /**
-     * Remove a field from the type.
-     * 
-     * @param name the name of the field that is removed
-     */
-    void removeField(String name) throws TypeException;
-
-    /**
-     * Declare one of the fields to be the primary item.  This is only valid when
-     * the field has been declared in the type, not in any of its super types.
-     * Additionally, none of the super types may have defined a primary item.
-     * 
-     * @param name
-     */
-    void setPrimary(String name);
-
-    /**
      * Is the type a compound or mixin type, corresponding to a node type.  False
      * for the primitive types or any of their pseudo variants. 
      * 
@@ -125,11 +105,12 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      */
     boolean isNode();
 
-    void setIsNode(boolean isNode);
-
+    /**
+     * Does the type correspond to a mixin, i.e. can it be added dynamically to a Node.
+     *
+     * @return whether the type corresponds to a mixin node type
+     */
     boolean isMixin();
-
-    void setIsMixin(boolean isMixin);
 
     /**
      * Returns true if this type is <code>typeName</code>
@@ -149,6 +130,42 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
      * @return whether fields of the type are automatically validated
      */
     boolean isValidationCascaded();
+
+    /**
+     * Set the super types of the type.  If the type is a mixin type, then all of the
+     * super types must be mixin types too.  This should not include nt:base for node
+     * types.
+     *
+     * @param superTypes the list of super types
+     */
+    void setSuperTypes(List<String> superTypes);
+
+    /**
+     * Add a field to the type.
+     *
+     * @param descriptor the field that is added to the type
+     */
+    void addField(IFieldDescriptor descriptor) throws TypeException;
+
+    /**
+     * Remove a field from the type.
+     *
+     * @param name the name of the field that is removed
+     */
+    void removeField(String name) throws TypeException;
+
+    /**
+     * Declare one of the fields to be the primary item.  This is only valid when
+     * the field has been declared in the type, not in any of its super types.
+     * Additionally, none of the super types may have defined a primary item.
+     *
+     * @param name
+     */
+    void setPrimary(String name);
+
+    void setIsNode(boolean isNode);
+
+    void setIsMixin(boolean isMixin);
 
     /**
      * @param isCascaded are fields of this type always validated

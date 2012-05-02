@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 /**
  * Marker interface for classes that can be instantiated as a plugin.

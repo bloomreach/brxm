@@ -17,12 +17,33 @@ package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
 
+/**
+ * The service tracker interface makes service registry events accessible to plugins.
+ * This is particularly useful for plugins that provide extension points.  Those extension points will
+ * be populated by other plugins by their registration of additional services.  A service tracker allows
+ * the extension point provider by responding in an appropriate manner.
+ *
+ * @param <S> the type of the service to track
+ */
 public interface IServiceTracker<S extends IClusterable> extends IClusterable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * A service is being registered.
+     *
+     * @param service the service that is registered
+     * @param name the name that was used to register the service tracker
+     */
     void addService(S service, String name);
 
+    /**
+     * A service is being unregistered.
+     *
+     * @param service the service that is unregistered
+     * @param name the name that was used to register the service tracker
+     */
     void removeService(S service, String name);
 
+    @Deprecated
     void updateService(S service, String name);
 }

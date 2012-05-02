@@ -16,13 +16,34 @@
 package org.hippoecm.frontend.plugin;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Page;
 import org.apache.wicket.model.IDetachable;
 
+/**
+ * A reference to a service.  This identifies a service by the service id assigned to it by the plugin manager.
+ * <p>
+ * The service reference is cross-page safe.  I.e. if a service lives on a different {@link Page} B, then this
+ * reference can still be serialized on {@link Page} A.
+ * <p>
+ * This interface is not intended to be implemented by clients, the plugin framework will make instances available.
+ *
+ * @param <T> the service interface of the referenced service
+ */
 public interface IServiceReference<T extends IClusterable> extends IDetachable {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * The referenced service.
+     *
+     * @return the service
+     */
     T getService();
 
+    /**
+     * The id for the service.
+     *
+     * @return the id of the service
+     */
     String getServiceId();
 
 }

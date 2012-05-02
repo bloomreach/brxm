@@ -23,6 +23,9 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IObservationContext;
 
+/**
+ * Bean implementation of the {@link IFieldDescriptor} interface.
+ */
 public class JavaFieldDescriptor implements IFieldDescriptor, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

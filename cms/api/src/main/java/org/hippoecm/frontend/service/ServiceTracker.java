@@ -18,6 +18,11 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 
+/**
+ * Service tracker implementation that is aware of it's class.
+ *
+ * @param <S> the service interface class
+ */
 public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -30,18 +35,30 @@ public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S
         this.clazz = clazz;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void addService(S service, String name) {
         if (clazz.isInstance(service)) {
             onServiceAdded(service, name);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void removeService(S service, String name) {
         if (clazz.isInstance(service)) {
             onRemoveService(service, name);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void updateService(S service, String name) {
         if (clazz.isInstance(service)) {
             onServiceChanged(service, name);

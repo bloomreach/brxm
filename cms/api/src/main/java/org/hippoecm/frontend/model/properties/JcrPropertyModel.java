@@ -84,12 +84,12 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
     // The wrapped jcr property
 
     public Property getProperty() {
-        return (Property) itemModel.getObject();
+        return (Property) getItemModel().getObject();
     }
 
     public PropertyDefinition getDefinition(int type, boolean multiValued) {
-        Node node = (Node) itemModel.getParentModel().getObject();
-        String path = itemModel.getPath();
+        Node node = (Node) getItemModel().getParentModel().getObject();
+        String path = getItemModel().getPath();
         String name = path.substring(path.lastIndexOf('/') + 1);
 
         try {
@@ -217,7 +217,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
                         case Event.PROPERTY_CHANGED:
                             String path = event.getPath();
                             JcrItemModel eventModel = new JcrItemModel(path);
-                            if (eventModel.equals(itemModel)) {
+                            if (eventModel.equals(getItemModel())) {
                                 filtered.add(jcrEvent);
                             }
                         }
@@ -252,7 +252,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", itemModel.toString())
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("itemModel", getItemModel().toString())
                 .toString();
     }
 
@@ -265,12 +265,12 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
             return true;
         }
         JcrPropertyModel propertyModel = (JcrPropertyModel) object;
-        return new EqualsBuilder().append(itemModel, propertyModel.itemModel).isEquals();
+        return new EqualsBuilder().append(getItemModel(), propertyModel.getItemModel()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(473, 17).append(itemModel).toHashCode();
+        return new HashCodeBuilder(473, 17).append(getItemModel()).toHashCode();
     }
 
 }

@@ -18,16 +18,14 @@ package org.hippoecm.frontend.model;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.jcr.Item;
-
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.validation.ModelPathElement;
 
 /**
- * Provider that can turn a {@link JcrItemModel} into a {@link IDataProvider}.
+ * Provider that enumerates a list of models based on a {@link JcrItemModel}.
+ * It can be used to uniformly manipulate such lists.
  */
-public abstract class AbstractProvider<T extends Item, M extends IModel> extends ItemModelWrapper<T> {
+public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWrapper<T> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,6 +39,9 @@ public abstract class AbstractProvider<T extends Item, M extends IModel> extends
         super(itemModel);
     }
 
+    /**
+     * Force a reloading of items from the session.
+     */
     public void refresh() {
         elements = null;
     }
@@ -62,25 +63,59 @@ public abstract class AbstractProvider<T extends Item, M extends IModel> extends
         super.detach();
     }
 
-    // IDataProvider implementation, provides the fields of the chained itemModel
-
+    /**
+     * Iterate over the provided elements.
+     *
+     * @param first
+     * @param count
+     *
+     * @return iterator over the elements
+     */
     public Iterator<M> iterator(int first, int count) {
         load();
         return elements.subList(first, first + count).iterator();
     }
 
+    /**
+     * Count the number of elements
+     *
+     * @return the number of elements provided
+     */
     public int size() {
         load();
         return elements.size();
     }
 
+    /**
+     * Add a new element.
+     */
     public abstract void addNew();
 
+    /**
+     * Remove a model from the list.
+     *
+     * @param model the model to remove
+     */
     public abstract void remove(M model);
 
+    /**
+     * Move a model up one position.
+     *
+     * @param model the model to move
+     */
     public abstract void moveUp(M model);
 
+    /**
+     * Retrieve the {@link ModelPathElement} to access an element.
+     *
+     * @param model the element to be made accessible
+     *
+     * @return the ModelPathElement for the element
+     */
     public abstract ModelPathElement getFieldElement(M model);
 
+    /**
+     * Method to be overridden by subclasses, to populate the list of elements.
+     */
     protected abstract void load();
 }
