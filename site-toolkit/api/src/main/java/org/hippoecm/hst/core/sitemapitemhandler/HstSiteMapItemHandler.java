@@ -31,7 +31,7 @@ public interface HstSiteMapItemHandler {
     /**
      * Allows the HstSiteMapItemHandler to initialize itself
      * 
-     * @param servletConfig the servletConfig of the HST container servlet
+     * @param servletContext the servletContext of the HST container servlet
      * @param handlerConfig the componentConfigBean configuration
      * @throws HstSiteMapItemHandlerException
      */
