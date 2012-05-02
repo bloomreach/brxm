@@ -250,15 +250,6 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
-      <description>Deprecated: use fullyQualified instead. If value is 'true' the created link will be a fully qualified
-        link (URLs), thus starting with 'http://' or 'https://' etc
-      </description>
-      <name>external</name>
-      <required>false</required>
-      <rtexprvalue>true</rtexprvalue>
-      <type>java.lang.Boolean</type>
-    </attribute>
-    <attribute>
       <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
         'http://' or 'https://' etc
       </description>
@@ -442,31 +433,6 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.util.List</type>
-    </attribute>
-  </tag>
-
-  <tag>
-    <description>Deprecated: Use 'cmseditlink' tag instead, and make sure you add a 'var=someVar' attribute. Then, the
-      someVar will contain the URL (link) that this tag used to return. This tag can be used to create a surfandedit cms
-      url. Only in preview mode, the tag will output something. In live, it will be ignored.
-    </description>
-    <name>surfandeditlink</name>
-    <tag-class>org.hippoecm.hst.tag.HstSurfAndEditTag</tag-class>
-    <tei-class>org.hippoecm.hst.tag.HstSurfAndEditTag$TEI</tei-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <description>The variable name of the surf and edit link</description>
-      <name>var</name>
-      <required>false</required>
-      <rtexprvalue>false</rtexprvalue>
-      <type>java.lang.String</type>
-    </attribute>
-    <attribute>
-      <description>A HippoBean object. This is typically one of your bean mapped objects</description>
-      <name>hippobean</name>
-      <required>false</required>
-      <rtexprvalue>true</rtexprvalue>
-      <type>org.hippoecm.hst.content.beans.standard.HippoBean</type>
     </attribute>
   </tag>
 
