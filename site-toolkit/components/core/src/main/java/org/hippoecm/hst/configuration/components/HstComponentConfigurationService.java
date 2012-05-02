@@ -67,13 +67,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String serveResourcePath;
     
     private String xtype;
-    
-    /**
-     * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have sample content
-     * @deprecated unused
-     */
-    @Deprecated
-    private String dummyContent;
 
     /**
      * Components of type {@link Type#CONTAINER_ITEM_COMPONENT} can have a filter tag to trigger their rendering.
@@ -174,7 +167,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
           }
         } else if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_ITEM_COMPONENT;
-            dummyContent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_DUMMY_CONTENT));
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
         } else {
             throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
@@ -374,11 +366,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return pageErrorHandlerClassName;
     }
 
-    @Deprecated
-    public String getDummyContent(){
-        return dummyContent;
-    }
-
     @Override
     public String getComponentFilterTag() {
         return componentFilterTag;
@@ -454,7 +441,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.type = child.type;
         copy.canonicalStoredLocation = child.canonicalStoredLocation;
         copy.canonicalIdentifier = child.canonicalIdentifier;
-        copy.dummyContent = child.dummyContent;
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
@@ -462,8 +448,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
-        ArrayList<String> copyToList = (ArrayList<String>) child.usedChildReferenceNames.clone();
-        copy.usedChildReferenceNames = copyToList;
+        copy.usedChildReferenceNames = (ArrayList<String>) child.usedChildReferenceNames.clone();
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = StringPool.get(copy.id + descendant.id);
             HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
@@ -541,9 +526,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.xtype == null) {
                     this.xtype = referencedComp.xtype;
-                }
-                if (this.dummyContent == null) {
-                    this.dummyContent = referencedComp.dummyContent;
                 }
                 if (this.componentFilterTag == null) {
                     this.componentFilterTag = referencedComp.componentFilterTag;
@@ -656,9 +638,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.xtype == null) {
             this.xtype = childToMerge.xtype;
-        }
-        if (this.dummyContent == null) {
-            this.dummyContent = childToMerge.dummyContent;
         }
         if (this.componentFilterTag == null) {
             this.componentFilterTag = childToMerge.componentFilterTag;

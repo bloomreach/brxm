@@ -70,11 +70,7 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES = "hst:parameternameprefixes";
     static final String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";
-    /**
-     * @deprecated unused
-     */
-    @Deprecated
-    static final String COMPONENT_PROPERTY_DUMMY_CONTENT = "hst:dummycontent";
+
     static final String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
 
 
