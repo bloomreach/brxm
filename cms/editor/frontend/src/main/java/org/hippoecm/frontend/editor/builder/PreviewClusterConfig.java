@@ -101,7 +101,7 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
                 String message = ex.getClass().getName() + ": " + ex.getMessage();
                 log.error(message, ex);
             } else {
-                return RenderPluginEditorPlugin.class.getName();
+                return LayoutPluginEditorPlugin.class.getName();
             }
         }
         return null;

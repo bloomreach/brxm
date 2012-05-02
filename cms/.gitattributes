@@ -1023,6 +1023,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_i
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ILayoutAware.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/InheritedFieldSection.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/LayoutPluginEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ListViewPluginEditorPlugin.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/PreviewClusterConfig.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/RenderPluginEditorPlugin.html -text
