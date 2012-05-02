@@ -82,10 +82,10 @@ public class MockContainerConfiguration implements ContainerConfiguration {
     }
 
     public int getInt(String key, int defaultValue) {
-        return getValue(Integer.class, key, new Integer(defaultValue));
+        return getValue(Integer.class, key, defaultValue);
     }
 
-    public List getList(String key) {
+    public List<String> getList(String key) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

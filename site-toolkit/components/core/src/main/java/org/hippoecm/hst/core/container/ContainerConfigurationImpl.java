@@ -78,8 +78,8 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
         return configuration.getInt(key);
     }
 
-    @SuppressWarnings("rawtypes")
-    public List getList(String key) {
+    @SuppressWarnings("unchecked")
+    public List<String> getList(String key) {
         return configuration.getList(key);
     }
 
@@ -103,8 +103,8 @@ public class ContainerConfigurationImpl implements ContainerConfiguration {
         return configuration.getStringArray(key);
     }
 
-    @SuppressWarnings("rawtypes")
-    public Iterator getKeys() {
+    @SuppressWarnings("unchecked")
+    public Iterator<String> getKeys() {
         return configuration.getKeys();
     }
 

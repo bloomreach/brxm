@@ -31,13 +31,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.collection.CompositeCollection;
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HstRequestImpl
@@ -45,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequest {
-
-    private static Logger log = LoggerFactory.getLogger(HstRequestImpl.class);
 
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
 
@@ -82,8 +77,9 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         return getParameterMap(referenceNamespaceIgnored ? "" : referenceNamespace);
     }
     
+    @SuppressWarnings("unchecked")
     public Map<String, String []> getParameterMap(String referencePath) {
-        Map<String, String []> parameterMap = null;
+        Map<String, String []> parameterMap;
         
         String namespace = getReferenceNamespacePath(referencePath);
         String prefix = getFullNamespacePrefix(namespace);
@@ -99,15 +95,14 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                 boolean isRenderPhase = HstRequest.RENDER_PHASE.equals(lifecyclePhase);
                 String targetComponentReferencePrefix = (isRenderPhase ? "" : getFullNamespacePrefix(getReferenceNamespace()));
                 boolean emptyTargetComponentReferencePrefix = "".equals(targetComponentReferencePrefix);
-                boolean namespacedParameter = false;
-                
+
                 for (Enumeration paramNames = super.getParameterNames(); paramNames.hasMoreElements(); ) {
                     String paramName = (String) paramNames.nextElement();
-                    String prefixKey = null;
-                    String paramKey = null;
+                    String prefixKey;
+                    String paramKey;
                     
                     int index = paramName.indexOf(parameterNameComponentSeparator);
-                    namespacedParameter = (index != -1 && index < paramName.length() - 1);
+                    boolean namespacedParameter = (index != -1 && index < paramName.length() - 1);
                     
                     if (namespacedParameter) {
                         prefixKey = paramName.substring(0, index + 1);
@@ -237,10 +232,11 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Enumeration getAttributeNames() {
         List servletRequestAttrs = EnumerationUtils.toList(super.getAttributeNames());
-        Set localRequestAttrs = this.getAttributeMap().keySet();
+        Set<String> localRequestAttrs = this.getAttributeMap().keySet();
         Collection composite = new CompositeCollection(new Collection [] { servletRequestAttrs, localRequestAttrs });
         return Collections.enumeration(composite);
     }
@@ -251,7 +247,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
         
-        Object value = null;
+        Object value;
         
         if (isContainerAttributeName(name)) {
             value = super.getAttribute(name);
@@ -351,9 +347,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (referenceNamespace == null || "".equals(referenceNamespace)) {
             return (noSeparatorForEmpty ? "" : this.parameterNameComponentSeparator);
         }
-        
-        String prefix = referenceNamespace + this.parameterNameComponentSeparator;
-        return prefix;
+       
+        return  referenceNamespace + this.parameterNameComponentSeparator;
     }
 
     protected boolean isContainerAttributeName(String attrName) {
@@ -369,7 +364,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
                         containerAttrNamePrefixes.addAll(this.requestContext.getContainerConfiguration().getList(CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
                     }
                     
-                    CONTAINER_ATTR_NAME_PREFIXES = (String []) containerAttrNamePrefixes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                    CONTAINER_ATTR_NAME_PREFIXES = containerAttrNamePrefixes.toArray(new String[containerAttrNamePrefixes.size()]);
                 }
             }
         }

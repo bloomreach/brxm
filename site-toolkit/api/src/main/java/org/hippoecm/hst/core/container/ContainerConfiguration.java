@@ -123,9 +123,9 @@ public interface ContainerConfiguration {
     /**
      * Get a List of strings associated with the given configuration key. 
      * @param key
-     * @return
+     * @return {@link List} of {@link String}s for <code>key</code>
      */
-    List getList(String key);
+    List<String> getList(String key);
     
     /**
      * Get a long associated with the given configuration key. 
@@ -151,7 +151,7 @@ public interface ContainerConfiguration {
     
     /**
      * Get the list of the keys contained in the configuration. 
-     * @return
+     * @return {@link Iterator} of all the {@link String} keys
      */
     Iterator getKeys();
     
