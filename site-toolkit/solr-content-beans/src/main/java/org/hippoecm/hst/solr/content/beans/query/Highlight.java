@@ -15,9 +15,10 @@
  */
 package org.hippoecm.hst.solr.content.beans.query;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface Highlight {
+public interface Highlight extends Serializable {
     
     String getField();
     

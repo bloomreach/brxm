@@ -33,13 +33,16 @@ public class HitImpl implements Hit {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HitImpl.class);
     private final SolrDocument solrDocument;
     private final DocumentObjectBinder binder;
+    // contentBean and ContentBeanValueProvider are not always Serializable
     private volatile List<ContentBeanValueProvider> contentBeanValueProviders;
+    private volatile ContentBean contentBean;
     private final Map<String,List<String>> highlights;
-    
+
     /**
      *
      * @param solrDocument
      * @param binder
+     * @param highlights
      * @param contentBeanValueProviders the providers to be used to bind the hits to the original sources. When <code>null</code> the
      *                                  hits won't be attached to their providers
      */
@@ -57,15 +60,19 @@ public class HitImpl implements Hit {
 
     @Override
     public ContentBean getContentBean() {
-        ContentBean next = binder.getBean(ContentBean.class, solrDocument);
+        if (contentBean != null) {
+            return contentBean;
+        }
+
+        contentBean = binder.getBean(ContentBean.class, solrDocument);
         if (contentBeanValueProviders == null) {
-            return next;
+            return contentBean;
         }
         for (ContentBeanValueProvider contentBeanValueProvider : contentBeanValueProviders) {
-            if (contentBeanValueProvider.getAnnotatedClasses().contains(next.getClass())) {
+            if (contentBeanValueProvider.getAnnotatedClasses().contains(contentBean.getClass())) {
 
                 try {
-                    contentBeanValueProvider.callbackHandler(next);
+                    contentBeanValueProvider.callbackHandler(contentBean);
                 } catch (BindingException e) {
                     if (log.isDebugEnabled()) {
                         // log stacktrace in debug mode
@@ -76,7 +83,7 @@ public class HitImpl implements Hit {
                 }
             }
         }
-        return next;
+        return contentBean;
 
     }
 
