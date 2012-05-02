@@ -17,15 +17,34 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
-public interface EditableMenuItem extends CommonMenuItem{
+public interface EditableMenuItem extends CommonMenuItem {
+
+    /**
+     * @return the {@link List} of {@link EditableMenuItem}s and empty List if no child menu items available 
+     */
     List<EditableMenuItem> getChildMenuItems();
 
+    /**
+     * 
+     * @param childMenuItem add this {@link EditableMenuItem} to the list of childs
+     */
     void addChildMenuItem(EditableMenuItem childMenuItem);
 
+    /**
+     * @return the {@link EditableMenu} for this {@link EditableMenuItem}
+     */
     EditableMenu getEditableMenu();
 
+    /**
+     * @return the parent {@link EditableMenuItem} of this item and <code>null</code> when there
+     * is not parent
+     */
     EditableMenuItem getParentItem();
-    
+
+    /**
+     * set this EditableMenuItem to expanded (true) or not 
+     * @param expanded when <code>true</code> sets the {@link EditableMenuItem} to expanded
+     */
     void setExpanded(boolean expanded);
     
 
