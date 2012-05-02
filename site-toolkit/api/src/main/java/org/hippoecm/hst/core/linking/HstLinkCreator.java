@@ -35,7 +35,7 @@ public interface HstLinkCreator {
      * Rewrite a jcr uuid to a HstLink wrt its current ResolvedSiteMapItem. 
      * @param uuid the uuid of the node that must be used to link to
      * @param session jcr session 
-     * @param requestContext
+     * @param requestContext the HstRequestContext
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String uuid, Session session, HstRequestContext requestContext);
@@ -43,7 +43,7 @@ public interface HstLinkCreator {
     /**
      * Rewrite a jcr Node to a HstLink wrt its current ResolvedSiteMapItem
      * @param node
-     * @param requestContext
+     * @param requestContext the HstRequestContext
      * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink create(Node node, HstRequestContext requestContext);
@@ -65,7 +65,7 @@ public interface HstLinkCreator {
      * </p>
      * @see #create(Node, HstRequestContext, HstSiteMapItem, boolean, boolean) 
      * @param node the jcr node
-     * @param requestContext the current requestContext
+     * @param requestContext the HstRequestContext
      * @param preferredItem if not null (null means no preferred sitemap item), first a link is trying to be created for this item
      * @param fallback value true or false
       * @return the HstLink for this jcr Node or <code>null</code>
@@ -89,7 +89,7 @@ public interface HstLinkCreator {
      * </p>
      * @see #create(Node, HstRequestContext, HstSiteMapItem, boolean)
      * @param node the jcr node 
-     * @param HstRequestContext  the current requestContext
+     * @param requestContext the HstRequestContext
      * @param preferredItem  if not null (null means no preferred sitemap item), first a link is trying to be created for this item
      * @param fallback value true or false
      * @param navigationStateful value true or false
@@ -104,7 +104,7 @@ public interface HstLinkCreator {
      * <a href="http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html">specify-your-canonical</a> for more info on this subject.
      * 
      * @param node
-     * @param HstRequestContext
+     * @param requestContext the HstRequestContext
      * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink createCanonical(Node node, HstRequestContext requestContext);
@@ -116,7 +116,7 @@ public interface HstLinkCreator {
      * a fallback to {@link #createCanonical(Node, HstRequestContext)} without preferredItem is done.
      * 
      * @param node
-     * @param HstRequestContext
+     * @param requestContext the HstRequestContext
      * @param preferredItem if <code>null</code>, a fallback to {@link #createCanonical(Node, HstRequestContext)} is done
      * @return the HstLink for this jcr Node or <code>null</code>
      */
@@ -129,7 +129,7 @@ public interface HstLinkCreator {
      * it is {@link Mount} from a REST mount used by the template composer, you can use {@link #createAllAvailableCanonicals(Node, HstRequestContext, String)} and specify
      * the <code>type</code> the {@link Mount}'s for the available canonical links should be of.
      * @param node
-     * @param requestContext
+     * @param requestContext the HstRequestContext
      * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to {@link Mount#getTypes()} belonging to the {@link Mount} of the  <code>requestContext</code> 
      * @see #createCanonical(Node, HstRequestContext)
      */
@@ -139,7 +139,7 @@ public interface HstLinkCreator {
      * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup ( {@link VirtualHost#getHostGroupName()} ) of the {@link Mount} for 
      * the {@link HstRequestContext} and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>
      * @param node
-     * @param requestContext
+     * @param requestContext the HstRequestContext
      * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
      * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
      * @see #createCanonical(Node, HstRequestContext)
@@ -149,7 +149,7 @@ public interface HstLinkCreator {
     /**
      * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup <code>hostGroupName</code> and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>  
      * @param node
-     * @param requestContext
+     * @param requestContext the HstRequestContext
      * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
      * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belong to
      * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
@@ -229,17 +229,11 @@ public interface HstLinkCreator {
     /**
      * 
      * @param bean
-     * @param hstRequestContext
+     * @param requestContext the HstRequestContext
      * @return a HstLink for <code>bean</code> and the <code>hstRequestContext</code> or <code>null</code> when no link for the node can be made
      */
-    HstLink create(HippoBean bean, HstRequestContext hstRequestContext);
-   
-    /**
-     * @deprecated use {@link #create(HstSiteMapItem, Mount)} instead
-     */
-    @Deprecated
-    HstLink create(HstSiteMapItem toHstSiteMapItem);
-    
+    HstLink create(HippoBean bean, HstRequestContext requestContext);
+
     /**
      * Regardless the current context, create a HstLink to the HstSiteMapItem that you use as argument. This is only possible if the sitemap item does not
      * contain any ancestor including itself with a wildcard, because the link is ambiguous in that case. 

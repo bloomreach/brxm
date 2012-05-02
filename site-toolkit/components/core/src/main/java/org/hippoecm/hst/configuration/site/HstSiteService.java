@@ -55,19 +55,12 @@ public class HstSiteService implements HstSite {
     private String canonicalIdentifier;
     private String configurationPath;
     private LocationMapTree locationMapTree;
-    
-    /**
-     * @deprecated the mount should not be an instance of hstSite any more
-     */
-    @Deprecated
-    private Mount mount;
-    
+
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
 
     
     public HstSiteService(HstSiteRootNode site, ContextualizableMount mount, HstManagerImpl hstManager) throws ServiceException{
         name = site.getValueProvider().getName();
-        this.mount = mount; 
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = findConfigurationPath(site, hstManager, mount);
         HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
@@ -210,15 +203,6 @@ public class HstSiteService implements HstSite {
            log.info("There is no configuration for 'hst:sitemenus' for this HstSite. The clien cannot use the HstSiteMenusConfiguration");
        }
        
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public Mount getMount() {
-        HstServices.getLogger(FQCN, FQCN).warn("HstSite#getMount() is deprecated. Fetch the Mount from the HstRequestContext#getResolvedMount instead");
-        return this.mount;
     }
 
     /*

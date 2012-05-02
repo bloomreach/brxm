@@ -217,15 +217,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), mount, containerResource));
     }
 
-    /**
-     * @deprecated use {@link #create(HstSiteMapItem, Mount)} instead
-     */
-    @Deprecated
-    public HstLink create(HstSiteMapItem toHstSiteMapItem) {
-        HstServices.getLogger(FQCN, FQCN).warn("HstLinkCreator#create(HstSiteMapItem) is deprecated. Use HstLinkCreator#create(HstSiteMapItem, Mount) instead");
-        return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), toHstSiteMapItem.getHstSiteMap().getSite().getMount()));
-    }
-    
     public HstLink create(HstSiteMapItem toHstSiteMapItem, Mount mount) {
         return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), mount));
     }
@@ -290,8 +281,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         /**
          * Create a HstLinkResolver instance with the current <code>requestContext</code>. The {@link Mount} is taken from this context. If
          * we have a {@link ResolvedSiteMapItem} on the <code>requestContext</code>, we also set this also for the {@link HstLinkResolver} for context aware link rewriting
-         * @param nodemount.getHstSite().getLocationMapTree()
-         * @param resolvedSiteMapItem
+         * @param requestContext
+         * @param node
          */
         HstLinkResolver(Node node, HstRequestContext requestContext){
             this.node = node;
@@ -306,7 +297,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * Create a HstLinkResolver instance for creating a link in this {@link Mount}. We do not take into account the current context from {@link ResolvedSiteMapItem}
          * when creating a {@link HstLinkResolver} through this constructor
          * @param node
-         * @param hstSite
+         * @param mount
          */
         HstLinkResolver(Node node, Mount mount){
             this.node = node;
@@ -680,7 +671,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         /**
          * @param nodePath jcr node path
          * @param tryMount the current mount to try 
-         * @param virtualPath whether the jcr node path belongs to a virtual node
+         * @param resolverProperties whether the jcr node path belongs to a virtual node
          * @return LinkInfo for <code>tryMount</code>and <code>nodePath</code> or <code>null</code>
          */
         private LinkInfo resolveToLinkInfo(String nodePath, Mount tryMount, ResolverProperties resolverProperties){

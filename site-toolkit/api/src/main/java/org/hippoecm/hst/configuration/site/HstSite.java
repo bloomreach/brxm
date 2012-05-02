@@ -23,8 +23,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 
 /**
- * The <code>HstSite</code> object is the object representing a site. It contains a reference to the site content base
- * path returned by {@link #getContentPath()}, to the site's components configuration returned by 
+ * The <code>HstSite</code> object is the object representing a site. It contains a reference to the site's components configuration returned by
  * <code>{@link #getComponentsConfiguration()}</code> and the site's sitemap, returned by <code>{@link #getSiteMap()}</code> and the site's
  * <code>{@link LocationMapTree}</code> return by <code>{@link #getLocationMapTree()}</code>
  * 
@@ -76,14 +75,6 @@ public interface HstSite {
      */
     HstSiteMenusConfiguration getSiteMenusConfiguration();
 
-    
-    /**
-     * @return the {@link Mount} object through which this <code>hstSite</code> is accessible
-     * @deprecated Through the {@link HstRequestContext#getResolvedMount()#getMount()} the {@link Mount} should be accessed
-     */
-    @Deprecated
-    Mount getMount();
-    
     /**
      * @return the absolute location where the configuration for this {@link HstSite} is stored
      */
