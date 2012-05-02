@@ -50,12 +50,17 @@ public interface HstSiteMapItemHandler {
     /**
      * Through the {@link SiteMapItemHandlerConfiguration} all (resolved) configuration properties can be accessed. 
      * @return the SiteMapItemHandlerConfiguration backing this HstSiteMapItemHandler
+     * @deprecated  this method will be removed as it should not be needed. The {@link SiteMapItemHandlerConfiguration} can
+     * be accessed by storing the SiteMapItemHandlerConfiguration during the {@link #init(javax.servlet.ServletContext, org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration)}
      */
+    @Deprecated
     SiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration();
     
     /**
      * @return Retrieves the servletContext to which this HstSiteMapItemHandler is bound
+     * @deprecated  this method will be removed as it should not be needed
      */
+    @Deprecated
     ServletContext getServletContext();
     
     /**
