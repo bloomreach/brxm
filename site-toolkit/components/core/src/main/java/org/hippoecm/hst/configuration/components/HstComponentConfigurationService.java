@@ -448,7 +448,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
-        copy.usedChildReferenceNames = (ArrayList<String>) child.usedChildReferenceNames.clone();
+        copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = StringPool.get(copy.id + descendant.id);
             HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
@@ -553,9 +553,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         }
                     }
                 }
-                
-                ArrayList<String> copyToList = (ArrayList<String>) referencedComp.usedChildReferenceNames.clone();
-                this.usedChildReferenceNames.addAll(copyToList);
+
+                this.usedChildReferenceNames.addAll(referencedComp.usedChildReferenceNames);
 
                 // now we need to merge all the descendant components from the referenced component with this component.
 
