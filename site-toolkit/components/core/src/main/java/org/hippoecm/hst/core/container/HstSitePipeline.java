@@ -169,17 +169,7 @@ public class HstSitePipeline implements Pipeline
             System.arraycopy(cleanupValve, 0, this.cleanupValves, 0, cleanupValve.length);
         }
     }
-    
-    /**
-     * 
-     * @param cleanupValve
-     * @deprecated use {@link #addCleanUpValve(Valve)}
-     */
-    @Deprecated
-    public void addPostInvokingValve(Valve cleanupValve) {
-        log.warn("addPostInvokingValve is deprecated. Use addCleanUpValve instead");
-        cleanupValves = add(cleanupValves, cleanupValve);
-    }
+
     
     /*
      * 
@@ -208,10 +198,7 @@ public class HstSitePipeline implements Pipeline
     
     public void initialize() throws ContainerException {
     }
-    
-    public void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        throw new ContainerException("beforeInvoke should not be called any more. Before invoking valves execution is done by invoke ");
-    }
+
 
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         if (mergedProcessingValves == null) {
@@ -220,12 +207,7 @@ public class HstSitePipeline implements Pipeline
         
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedProcessingValves);
     }
-     
-    public void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        log.warn("HstSitePipeline#afterInvoke has been deprecated. Use HstSitePipeline#cleanup instead");
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, cleanupValves);
-    }
-    
+
     public void cleanup(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, cleanupValves);
     }

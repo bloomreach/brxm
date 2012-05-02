@@ -34,19 +34,6 @@ public interface Pipeline
      * @throws ContainerException
      */
     void initialize() throws ContainerException;
-    
-    /**
-     * Does pre-processing step for the request processing.
-     * 
-     * @param requestContainerConfig the HstComponent container configuration
-     * @param requestContext
-     * @param servletRequest
-     * @param servletResponse
-     * @throws ContainerException
-     * @deprecated Not use any more. The {@link #invoke(HstContainerConfig, HstRequestContext, HttpServletRequest, HttpServletResponse)} combines beforeInvoke as well 
-     */
-    @Deprecated
-    void beforeInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
 
     /**
      * Invokes the request processing, aka the initialization and rendering valves
@@ -58,20 +45,7 @@ public interface Pipeline
      * @throws ContainerException
      */
     void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
-    
-    /**
-     * Does post-processing step for the request processing.
-     * 
-     * @param requestContainerConfig the HstComponent container configuration
-     * @param requestContext
-     * @param servletRequest
-     * @param servletResponse
-     * @throws ContainerException
-     * @deprecated use {@link #cleanup(HstContainerConfig, HstRequestContext, HttpServletRequest, HttpServletResponse)} instead
-     */
-    @Deprecated 
-    void afterInvoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException;
-    
+
     /**
      * Does post-processing step for the request processing.
      * 
