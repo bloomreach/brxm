@@ -153,7 +153,7 @@ public interface ContainerConfiguration {
      * Get the list of the keys contained in the configuration. 
      * @return {@link Iterator} of all the {@link String} keys
      */
-    Iterator getKeys();
+    Iterator<String> getKeys();
     
     /**
      * Checks if the container is running under development mode
