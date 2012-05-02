@@ -184,7 +184,7 @@ public class TestLazyMultiplePoolingRepository {
         assertNull(disposableWikiRepo);
     }
 
-    @Ignore
+    @Test
     public void testAutomaticDisposingVeryShortEvictionRun() throws Exception {
         ((LazyMultipleRepositoryImpl) multipleRepository).setTimeBetweenEvictionRunsMillis(1);
         ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");

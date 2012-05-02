@@ -23,8 +23,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.jcr.Credentials;
@@ -171,17 +171,28 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
     
     @Override
     protected Session login(CredentialsWrapper credentialsWrapper) throws LoginException, RepositoryException {
-        Repository repository = repositoryMap.get(credentialsWrapper);
+        Session session = null;
         
-        if (repository == null) {
-            try {
-                repository = createRepositoryOnDemand(credentialsWrapper);
-            } catch (Exception e) {
-                throw new RepositoryException(e);
+        try {
+            PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
+            
+            if (repository != null) {
+                if (!repository.isClosingWhenNotInUse()) {
+                    synchronized (this) {
+                        if (!repository.isClosingWhenNotInUse()) {
+                            session = repository.login(credentialsWrapper.getCredentials());
+                            setCurrentThreadRepository(repository);
+                        }
+                    }
+                }
             }
+            
+            if (session == null) {
+                session = getSessionFromRepositoryOnDemand(credentialsWrapper);
+            }
+        } catch (Exception e) {
+            throw new RepositoryException(e);
         }
-
-        setCurrentThreadRepository(repository);
         
         String credentialsDomain = StringUtils.substringAfter(credentialsWrapper.getUserID(), credentialsDomainSeparator);
         Set<String> credsDomains = tlCurrentCredsDomains.get();
@@ -193,9 +204,74 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             credsDomains.add(credentialsDomain);
         }
         
-        return repository.login(credentialsWrapper.getCredentials());
+        return session;
     }
-    
+
+    private synchronized Session getSessionFromRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
+        Session session = null;
+        PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
+        
+        if (repository != null && !repository.isClosingWhenNotInUse()) {
+            session = repository.login(credentialsWrapper.getCredentials());
+            setCurrentThreadRepository(repository);
+            return session;
+        }
+        
+        Map<String, String> configMap = new HashMap<String, String>(defaultConfigMap);
+        String userID = credentialsWrapper.getUserID();
+        configMap.put("defaultCredentialsUserID", userID);
+        configMap.put("defaultCredentialsPassword", credentialsWrapper.getPassword());
+        
+        if (poolingRepositoryFactory == null) {
+            poolingRepositoryFactory = new BasicPoolingRepositoryFactory();
+        }
+        
+        repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
+        
+        if (repository instanceof MultipleRepositoryAware) {
+            ((MultipleRepositoryAware) repository).setMultipleRepository(this);
+        }
+        
+        ResourceLifecycleManagement resourceLifecycleManagement = repository.getResourceLifecycleManagement();
+        
+        if (resourceLifecycleManagement != null) {
+            resourceLifecycleManagement.setAlwaysActive(pooledSessionLifecycleManagementActive);
+        }
+
+        // create session first in order to increase active count and to not be closeable.
+        // before registering this new created repository into the maps.
+        session = repository.login(credentialsWrapper.getCredentials());
+        setCurrentThreadRepository(repository);
+
+        String credentialsDomain = StringUtils.substringAfter(userID, credentialsDomainSeparator);
+        Map<String, PoolingRepository> credsDomainRepos = repositoriesMapByCredsDomain.get(credentialsDomain);
+        
+        if (credsDomainRepos == null) {
+            credsDomainRepos = Collections.synchronizedMap(new HashMap<String, PoolingRepository>());
+        }
+        
+        credsDomainRepos.put(userID, repository);
+        
+        repositoriesMapByCredsDomain.put(credentialsDomain, credsDomainRepos);
+        
+        lazyResourceLifecycleManagements = null;
+        repositoryMap.put(credentialsWrapper, repository);
+        
+        if (timeBetweenEvictionRunsMillis > 0L && inactiveRepositoryDisposer == null) {
+            inactiveRepositoryDisposer = new InactiveRepositoryDisposer();
+            inactiveRepositoryDisposer.start();
+        }
+        
+        return session;
+    }
+
+    /**
+     * @deprecated Won't be supported any more.
+     * @see {@link #getSessionFromRepositoryOnDemand(CredentialsWrapper)}
+     * @param credentialsWrapper
+     * @return
+     * @throws Exception
+     */
     protected synchronized Repository createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
         PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
         
@@ -383,6 +459,8 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             while (!stopped) {
                 Map<String, Map<String, PoolingRepository>> clonedRepositoriesMapByCredsDomain = cloneRepositoriesMapByCredsDomain();
                 
+                List<PoolingRepository> reposToClose = new ArrayList<PoolingRepository>();
+                
                 for (Map.Entry<String, Map<String, PoolingRepository>> entry1 : clonedRepositoriesMapByCredsDomain.entrySet()) {
                     String credsDomain = entry1.getKey();
                     Map<String, PoolingRepository> clonedRepoMap = entry1.getValue();
@@ -394,35 +472,38 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                             continue;
                         }
                         
-                        PoolingRepository poolingRepo = entry2.getValue();
+                        BasicPoolingRepository poolingRepo = (BasicPoolingRepository) entry2.getValue();
                         
                         if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
                             synchronized (LazyMultipleRepositoryImpl.this) {
                                 if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
+                                    poolingRepo.setClosingWhenNotInUse(true);
+                                    removeRepository(poolingRepo.getDefaultCredentials());
+                                    reposToClose.add(poolingRepo);
+                                    
                                     Map<String, PoolingRepository> repoMap = repositoriesMapByCredsDomain.get(credsDomain);
                                     
                                     if (repoMap != null) {
-                                        PoolingRepository removed = repoMap.remove(userID);
+                                        repoMap.remove(userID);
                                         
-                                        if (removed != null) {
-                                            try {
-                                                removeRepository(((BasicPoolingRepository) removed).getDefaultCredentials());
-                                                removed.close();
-                                            } catch (Exception e) {
-                                                if (log.isDebugEnabled()) {
-                                                    log.warn("Failed to close an inactive pooling repository.", e);
-                                                } else {
-                                                    log.warn("Failed to close an inactive pooling repository. {}", e.toString());
-                                                }
-                                            }
-                                            
-                                            if (repoMap.isEmpty()) {
-                                                Map<String, PoolingRepository> removedMap = repositoriesMapByCredsDomain.remove(credsDomain);
-                                            }
+                                        if (repoMap.isEmpty()) {
+                                            repositoriesMapByCredsDomain.remove(credsDomain);
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                
+                for (PoolingRepository repo : reposToClose) {
+                    try {
+                        repo.close();
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled()) {
+                            log.warn("Failed to close an inactive pooling repository.", e);
+                        } else {
+                            log.warn("Failed to close an inactive pooling repository. {}", e.toString());
                         }
                     }
                 }

@@ -88,4 +88,9 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
      */
     boolean isActive();
     
+    /**
+     * Returns true if pooling repository is marked to be closed when not in use.
+     * @return
+     */
+    boolean isClosingWhenNotInUse();
 }
