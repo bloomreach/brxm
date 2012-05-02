@@ -9,7 +9,6 @@ api/src/main/java/org/hippoecm/hst/configuration/channel/ChannelManagerEvent.jav
 api/src/main/java/org/hippoecm/hst/configuration/channel/ChannelManagerEventListener.java -text
 api/src/main/java/org/hippoecm/hst/configuration/channel/ChannelManagerEventListenerException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/channel/HstPropertyDefinition.java -text
-api/src/main/java/org/hippoecm/hst/configuration/components/EmptyPropertyEditor.java -text
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentInfo.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfiguration.java svneol=native#text/plain
