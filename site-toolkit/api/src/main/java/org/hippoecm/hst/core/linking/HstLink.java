@@ -31,12 +31,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
  *
  */
 public interface HstLink {
-
-    /**
-     * @deprecated fetch the PATH_SUBPATH_DELIMITER from the {@link HstManager#getPathSuffixDelimiter()} instead
-     */
-    @Deprecated
-    final static String PATH_SUBPATH_DELIMITER = "./";
     
     /**
      * Note: This is *not* a url!
