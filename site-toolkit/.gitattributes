@@ -813,7 +813,6 @@ content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoGallery
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoHtml.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoItem.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoMirror.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoRequest.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoStdPubWfRequest.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoTranslation.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/facetnavigation/AbstractHippoFacetChildNavigation.java svneol=native#text/plain
