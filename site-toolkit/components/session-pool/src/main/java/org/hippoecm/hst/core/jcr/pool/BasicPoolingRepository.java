@@ -46,8 +46,8 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
     private volatile boolean active;
-    private boolean closableWhenNotInUse;
-    private volatile boolean closingWhenNotInUse;
+    private boolean disposableWhenNotInUse;
+    private volatile boolean markedForDisposal;
     
     private Repository repository;
     private Credentials defaultCredentials;           // credentials provided by the configuration or the user
@@ -505,20 +505,20 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
         return active;
     }
     
-    public boolean isClosableWhenNotInUse() {
-        return closableWhenNotInUse;
+    public boolean isDisposableWhenNotInUse() {
+        return disposableWhenNotInUse;
     }
     
-    void setClosableWhenNotInUse(boolean closableWhenNotInUse) {
-        this.closableWhenNotInUse = closableWhenNotInUse;
+    void setDisposableWhenNotInUse(boolean disposableWhenNotInUse) {
+        this.disposableWhenNotInUse = disposableWhenNotInUse;
     }
     
-    public synchronized boolean isClosingWhenNotInUse() {
-        return closingWhenNotInUse;
+    public synchronized boolean isMarkedForDisposal() {
+        return markedForDisposal;
     }
     
-    synchronized void setClosingWhenNotInUse(boolean closingWhenNotInUse) {
-        this.closingWhenNotInUse = closingWhenNotInUse;
+    synchronized void setMarkedForDisposal(boolean markedForDisposal) {
+        this.markedForDisposal = markedForDisposal;
     }
     
     public synchronized void initialize() throws RepositoryException {

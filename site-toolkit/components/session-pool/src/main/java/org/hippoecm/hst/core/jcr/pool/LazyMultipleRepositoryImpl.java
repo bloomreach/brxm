@@ -177,14 +177,14 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
             
             if (repository != null) {
-                if (!repository.isClosableWhenNotInUse()) {
-                    // non disclosable pool, so just go ahead without locking.
+                if (!repository.isDisposableWhenNotInUse()) {
+                    // non closable pool, so just go ahead without locking.
                     session = repository.login(credentialsWrapper.getCredentials());
                 } else {
-                    // disclosable pool. get session only if the pool is not marked to be closing.
-                    if (!repository.isClosingWhenNotInUse()) {
+                    // closable pool. get session only if the pool is not marked to be closing.
+                    if (!repository.isMarkedForDisposal()) {
                         synchronized (this) {
-                            if (!repository.isClosingWhenNotInUse()) {
+                            if (!repository.isMarkedForDisposal()) {
                                 session = repository.login(credentialsWrapper.getCredentials());
                                 setCurrentThreadRepository(repository);
                             }
@@ -217,7 +217,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         Session session = null;
         PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
         
-        if (repository != null && !repository.isClosingWhenNotInUse()) {
+        if (repository != null && !repository.isMarkedForDisposal()) {
             session = repository.login(credentialsWrapper.getCredentials());
             setCurrentThreadRepository(repository);
             return session;
@@ -235,7 +235,7 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
         
         if (disposableUserIDPatternObject != null && disposableUserIDPatternObject.matcher(userID).matches()) {
-            ((BasicPoolingRepository) repository).setClosableWhenNotInUse(true);
+            ((BasicPoolingRepository) repository).setDisposableWhenNotInUse(true);
         }
         
         if (repository instanceof MultipleRepositoryAware) {
@@ -479,14 +479,14 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
                         String userID = entry2.getKey();
                         BasicPoolingRepository poolingRepo = (BasicPoolingRepository) entry2.getValue();
                         
-                        if (!poolingRepo.isClosableWhenNotInUse()) {
+                        if (!poolingRepo.isDisposableWhenNotInUse()) {
                             continue;
                         }
                         
                         if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
                             synchronized (LazyMultipleRepositoryImpl.this) {
                                 if (poolingRepo.getNumIdle() <= 0 && poolingRepo.getNumActive() <= 0) {
-                                    poolingRepo.setClosingWhenNotInUse(true);
+                                    poolingRepo.setMarkedForDisposal(true);
                                     removeRepository(poolingRepo.getDefaultCredentials());
                                     reposToClose.add(poolingRepo);
                                     
