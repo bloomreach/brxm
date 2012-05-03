@@ -130,6 +130,7 @@ sandbox/ocm/workspaces
 sandbox/sandbox.iml
 sandbox/target
 solr-client/target
+solr-content-beans/target
 src/site/.project
 /target
 test/.classpath
