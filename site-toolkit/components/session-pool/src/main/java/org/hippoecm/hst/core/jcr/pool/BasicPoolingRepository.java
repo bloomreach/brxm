@@ -46,6 +46,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private Logger log = LoggerFactory.getLogger(BasicPoolingRepository.class);
     
     private volatile boolean active;
+    private boolean closableWhenNotInUse;
     private volatile boolean closingWhenNotInUse;
     
     private Repository repository;
@@ -502,6 +503,14 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     
     public synchronized boolean isActive() {
         return active;
+    }
+    
+    public boolean isClosableWhenNotInUse() {
+        return closableWhenNotInUse;
+    }
+    
+    void setClosableWhenNotInUse(boolean closableWhenNotInUse) {
+        this.closableWhenNotInUse = closableWhenNotInUse;
     }
     
     public synchronized boolean isClosingWhenNotInUse() {

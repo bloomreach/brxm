@@ -89,7 +89,16 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
     boolean isActive();
     
     /**
+     * Returns true if pooling repository can be marked to be closed when not in use.
+     * For example, if a pooling repository can be disposable at runtime, then this
+     * should return true.
+     * @return
+     */
+    boolean isClosableWhenNotInUse();
+    
+    /**
      * Returns true if pooling repository is marked to be closed when not in use.
+     * This can return true only when {@link #isClosableWhenNotInUse()} returns true.
      * @return
      */
     boolean isClosingWhenNotInUse();

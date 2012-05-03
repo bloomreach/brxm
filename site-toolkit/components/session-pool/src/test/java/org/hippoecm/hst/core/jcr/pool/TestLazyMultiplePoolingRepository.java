@@ -72,7 +72,9 @@ public class TestLazyMultiplePoolingRepository {
         basicPoolConfigMap.put("defaultCredentialsUserIDSeparator", "@");
         
         multipleRepository = new LazyMultipleRepositoryImpl(defaultCreds, basicPoolConfigMap);
-        ((LazyMultipleRepositoryImpl)multipleRepository).setCredentialsDomainSeparator("@");
+        ((LazyMultipleRepositoryImpl) multipleRepository).setCredentialsDomainSeparator("@");
+        ((LazyMultipleRepositoryImpl) multipleRepository).setDisposableUserIDPattern(".*;disposable");
+        
         assertEquals(0, multipleRepository.getRepositoryMap().size());
     }
     
