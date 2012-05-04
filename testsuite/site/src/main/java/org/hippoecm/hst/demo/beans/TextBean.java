@@ -20,7 +20,7 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.HippoResource;
 
 @Node(jcrType="demosite:textdocument")
-public class TextBean extends BaseBean{
+public class TextBean extends BaseBean {
 
 	// if you have in document resources
     public HippoResource getResource() {
