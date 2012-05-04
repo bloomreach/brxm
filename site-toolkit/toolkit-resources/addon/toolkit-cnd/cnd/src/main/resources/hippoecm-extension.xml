@@ -47,7 +47,7 @@
       <sv:value>/hippo:configuration/hippo:initialize/hippo:version</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>hst-2_1_2</sv:value>
+      <sv:value>hst-2_1_3</sv:value>
     </sv:property>
   </sv:node>
 
