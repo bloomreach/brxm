@@ -423,6 +423,12 @@
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
                 <sv:value>hst:pages/productpage</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:componentconfigurationmappingnames" sv:type="String" sv:multiple="true">
+              <sv:value>demosite:newsdocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hst:componentconfigurationmappingvalues" sv:type="String" sv:multiple="true">
+              <sv:value>hst:pages/detailpage</sv:value>
+            </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>products/${1}</sv:value>
             </sv:property>
