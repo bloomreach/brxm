@@ -84,7 +84,7 @@ public class SiteMapItemTag extends TagSupport {
             if(siteMapItem != null) {
                 log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
             } else {
-                siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemById(preferItemId);
+                siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemByRefId(preferItemId);
                 if(siteMapItem == null) {
                     log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedMount.getMount().getName());
                 }
