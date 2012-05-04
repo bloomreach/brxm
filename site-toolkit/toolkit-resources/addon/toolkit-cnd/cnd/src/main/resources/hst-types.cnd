@@ -113,6 +113,9 @@
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:scheme (string)
+- hst:componentconfigurationmappingnames (string) multiple
+- hst:componentconfigurationmappingvalues (string) multiple
+
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable orderable

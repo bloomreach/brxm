@@ -71,8 +71,17 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private int occurences;
     
     private String relativeContentPath;
-    
+
+    /**
+     * Default componentConfigurationId which is used when there is no more
+     * specific componentId to be used through the componentConfigurationIdMappings
+     */
     private String componentConfigurationId;
+
+    /**
+     * Mapping from primary nodeytypes to more specific component ids
+     */
+    private Map<String, String> componentConfigurationIdMappings;
 
     private String portletComponentConfigurationId;
   
@@ -197,10 +206,25 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
-        
+
+        //componentConfigurationIdMappings
+        String[] componentConfigurationNames = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES);
+        String[] componentConfigurationValues = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES);
+
+        if(componentConfigurationNames != null && componentConfigurationValues != null){
+            if(componentConfigurationNames.length != componentConfigurationValues.length) {
+                log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
+            }  else {
+                componentConfigurationIdMappings = new HashMap<String, String>();
+                for(int i = 0; i < componentConfigurationNames.length ; i++) {
+                    this.componentConfigurationIdMappings.put(StringPool.get(componentConfigurationNames[i]), StringPool.get(componentConfigurationValues[i]));
+                }
+            }
+        }
+
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {
-               log.warn("Skipping parameters for component because they only make sense if there are equal number of names and values");
+               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
            }  else {
                for(int i = 0; i < parameterNames.length ; i++) {
                    this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
@@ -208,7 +232,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                }
            }
         }
-        
+
         if(this.parentItem != null){
             // add the parent parameters that are not already present
             for(Entry<String, String> parentParam : this.parentItem.getParameters().entrySet()) {
@@ -325,6 +349,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     public String getComponentConfigurationId() {
         return this.componentConfigurationId;
+    }
+
+    @Override
+    public Map<String, String> getComponentConfigurationIdMappings() {
+        return componentConfigurationIdMappings;
     }
 
     public String getPortletComponentConfigurationId() {

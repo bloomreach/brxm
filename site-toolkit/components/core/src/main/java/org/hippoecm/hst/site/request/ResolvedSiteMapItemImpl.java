@@ -19,13 +19,19 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,35 +51,14 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
+    boolean isComponentResolved;
     
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedMount) {
       
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
        this.resolvedMount = resolvedMount;
-       
-       HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
-       if (hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
-           log.debug("The ResolvedSiteMapItemImpl does not have a component configuration id because the sitemap item '{}' does not have one", hstSiteMapItem.getId());
-       } else {
-           String componentConfigurationId = hstSiteMapItem.getComponentConfigurationId();
-           
-           if (componentConfigurationId != null) {
-               this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
-           }
-           
-           String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
-           
-           if (portletComponentConfigurationId != null) {
-               this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(portletComponentConfigurationId);
-           }
-           
-           if (this.hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
-               log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found. {} or {}", 
-                       componentConfigurationId, portletComponentConfigurationId);
-           }
-       }
-       
+
        /*
         * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
         */
@@ -111,12 +96,22 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     public HstSiteMapItem getHstSiteMapItem() {
         return this.hstSiteMapItem;
     }
-    
+
+
     public HstComponentConfiguration getHstComponentConfiguration() {
+        if (isComponentResolved) {
+            return hstComponentConfiguration;
+        }
+        resolveComponentConfiguration();
+
         return this.hstComponentConfiguration;
     }
 
     public HstComponentConfiguration getPortletHstComponentConfiguration() {
+        if (isComponentResolved) {
+            return portletHstComponentConfiguration;
+        }
+        resolveComponentConfiguration();
         return this.portletHstComponentConfiguration;
     }
     
@@ -163,5 +158,76 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
     public Set<String> getUsers() {
         return hstSiteMapItem.getUsers();
+    }
+
+    private void resolveComponentConfiguration() {
+
+        // check whether there is a more specific mapping
+        String componentConfigurationId = resolveMappedConponentConfigurationId();
+
+        HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
+        if (componentConfigurationId == null && hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
+            log.debug("The ResolvedSiteMapItemImpl does not have a component configuration id because the sitemap item '{}' does not have one", hstSiteMapItem.getId());
+        } else {
+            if (componentConfigurationId == null) {
+                log.debug("No mapped component configuration id, getting the default componentconfiguration id");
+                componentConfigurationId = hstSiteMapItem.getComponentConfigurationId();
+            }
+
+            if (componentConfigurationId != null) {
+                this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
+            }
+
+            String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
+
+            if (portletComponentConfigurationId != null) {
+                this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(portletComponentConfigurationId);
+            }
+
+            if (this.hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
+                log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found. {} or {}",
+                        componentConfigurationId, portletComponentConfigurationId);
+            }
+        }
+        isComponentResolved = true;
+    }
+
+    /**
+     * @return the more specific component configuration id and <code>null<</code> if there is no more specific one
+     */
+    private String resolveMappedConponentConfigurationId() {
+        if (hstSiteMapItem.getComponentConfigurationIdMappings() == null
+               || hstSiteMapItem.getComponentConfigurationIdMappings().isEmpty()) {
+            return null;
+        }
+
+        if (getRelativeContentPath() == null) {
+            log.debug("No relative content path for '{}' so cannot lookup mapped component configuration id", hstSiteMapItem.getId());
+            return null;
+        }
+        try {
+            Session session = RequestContextProvider.get().getSession();
+            String absPath = getResolvedMount().getMount().getContentPath() + "/" + PathUtils.normalizePath(getRelativeContentPath());
+            if (!session.nodeExists(absPath)) {
+                log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
+                return null;
+            }
+            
+            Node node =  session.getNode(absPath);
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                // we need to fetch the document below the handle if it is present
+                if (!node.hasNode(node.getName())) {
+                    log.debug("No mapped configuration can be returned because no document below handle");
+                    return null;
+                }
+                node = node.getNode(node.getName());
+            }
+            String primaryType = node.getPrimaryNodeType().getName();
+            return hstSiteMapItem.getComponentConfigurationIdMappings().get(primaryType);
+
+        } catch (RepositoryException e) {
+            log.error("Repository exception while looking up component mapping", e);
+            return null;
+        }
     }
 }

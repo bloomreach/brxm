@@ -93,6 +93,12 @@ public interface HstSiteMapItem {
      * @return the componentConfigurationId for this <code>SiteMapItem</code> or <code>null</code>
      */
     String getComponentConfigurationId();
+
+    /**
+     * @return the {@link Map} of keys to more specific configurationId's and <code>null</code> if there are no mappings defined
+     * @see #getComponentConfigurationId()
+     */
+    Map<String, String> getComponentConfigurationIdMappings();
     
     /**
      * If a HstSiteMapItem can be used to resolve a url, it must have a portletComponentConfigurationId referencing 

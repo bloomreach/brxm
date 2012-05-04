@@ -38,9 +38,10 @@ public class ContextResolvingValve extends AbstractValve
             // if there is no ResolvedSiteMapItem on the request we cannot continue
             throw new ContainerException("No resolvedSiteMapItem found for this request. Cannot continue request processing");
         }
-        
-        HstComponentConfiguration rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
-        
+        HstComponentConfiguration rootComponentConfig;
+
+        rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
+
         if (!requestContext.isEmbeddedRequest() && requestContext.isPortletContext() && resolvedSiteMapItem.getPortletHstComponentConfiguration() != null) {
         	rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
         }

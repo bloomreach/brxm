@@ -87,6 +87,9 @@ public interface HstNodeTypes {
     static final String SITEMAPITEM_PROPERTY_ERRORCODE =  "hst:errorcode";
     static final String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH =  "hst:relativecontentpath";
     static final String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID =  "hst:componentconfigurationid";
+
+    static final String SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES = "hst:componentconfigurationmappingnames";
+    static final String SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES = "hst:componentconfigurationmappingvalues";
     static final String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
     static final String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     static final String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
