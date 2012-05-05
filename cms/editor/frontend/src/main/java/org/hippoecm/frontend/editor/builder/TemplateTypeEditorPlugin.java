@@ -25,11 +25,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
+import org.hippoecm.frontend.editor.layout.ILayoutContext;
+import org.hippoecm.frontend.editor.layout.ILayoutPad;
+import org.hippoecm.frontend.editor.layout.ILayoutTransition;
+import org.hippoecm.frontend.editor.layout.JavaLayoutPad;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -42,6 +45,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +59,16 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
 
     private TemplateBuilder builder;
     private IClusterControl child;
-    private IObserver templateObserver;
+    private IObserver<IObservable> templateObserver;
     private String clusterModelId;
     private String typeModelId;
     private String selectedPluginId;
     private String selectedExtPtId;
     private String engineId;
+
+    private List<String> names = null;
+    private final ModelReference<String> selectedPluginService;
+    private final ExtensionPointLocator locator;
 
     public TemplateTypeEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -76,25 +84,43 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         typeModelService.init(getPluginContext());
 
         selectedPluginId = getServiceId(TemplateBuilderConstants.MODEL_SELECTED_PLUGIN);
-        final ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
+        selectedPluginService = new ModelReference<String>(selectedPluginId, null);
         selectedPluginService.init(getPluginContext());
 
         selectedExtPtId = getServiceId(TemplateBuilderConstants.MODEL_SELECTED_EXTENSION_POINT);
-        final ModelReference selectedExtPtService = new ModelReference(selectedExtPtId, null);
+
+        locator = new ExtensionPointLocator(selectedPluginService);
+        final IModel selectedExtensionPointModel = new IModel() {
+
+            @Override
+            public String getObject() {
+                return locator.getSelectedExtensionPoint();
+            }
+
+            @Override
+            public void setObject(final Object object) {
+                throw new UnsupportedOperationException("Selected extension point is read only");
+            }
+
+            @Override
+            public void detach() {
+            }
+        };
+        final ModelReference selectedExtPtService = new ModelReference(selectedExtPtId, selectedExtensionPointModel);
         selectedExtPtService.init(getPluginContext());
 
-        IModel nodeModel = getDefaultModel();
+        IModel<Node> nodeModel = getModel();
         try {
-            Node node = (Node) nodeModel.getObject();
+            Node node = nodeModel.getObject();
             String typeName = node.getParent().getName() + ":" + node.getName();
 
             engineId = context.getReference(this).getServiceId() + ".engine";
             TemplateEngineFactory factory = new TemplateEngineFactory(node.getParent().getName());
             context.registerService(factory, engineId);
 
-            final IModel selectedExtensionPointModel = new SelectedExtensionPointModel(selectedExtPtService);
             final IModel<String> selectedPluginModel = new SelectedPluginModel(selectedPluginService);
-            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context, selectedExtensionPointModel, selectedPluginModel);
+            builder = new TemplateBuilder(typeName, !"edit".equals(config.getString("mode")), context,
+                                          selectedExtensionPointModel, selectedPluginModel);
 
             context.registerService(builder, getServiceId(TemplateBuilderConstants.MODEL_BUILDER));
         } catch (RepositoryException ex) {
@@ -143,13 +169,14 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             builderParameters.put("wicket.model", clusterModelId);
             builderParameters.put("model.type", typeModelId);
             builderParameters.put("model.plugin", selectedPluginId);
-            builderParameters.put("model.extensionpoint", selectedExtPtId);
-            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters, "edit".equals(mode));
+//            builderParameters.put("model.extensionpoint", selectedExtPtId);
+            PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters,
+                                                                     "edit".equals(mode));
 
-            context.getService(clusterModelId, IModelReference.class).setModel(new Model(builder.getTemplate()));
-            context.getService(typeModelId, IModelReference.class).setModel(new Model(builder.getTypeDescriptor()));
+            context.getService(clusterModelId, IModelReference.class).setModel(new Model<IClusterConfig>(builder.getTemplate()));
+            context.getService(typeModelId, IModelReference.class).setModel(
+                    new Model<ITypeDescriptor>(builder.getTypeDescriptor()));
             context.getService(selectedPluginId, IModelReference.class).setModel(selectedPlugin);
-            // selectedExtPt ?
 
             IPluginConfig parameters = new JavaPluginConfig();
             parameters.put(ITemplateEngine.ENGINE, engineId);
@@ -158,15 +185,25 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
 
             final IClusterControl control = context.newCluster(template, parameters);
             String modelId = control.getClusterConfig().getString(RenderService.MODEL_ID);
-            IModel prototypeModel = builder.getPrototype();
-            final ModelReference modelService = new ModelReference(modelId, prototypeModel);
+            IModel<Node> prototypeModel = builder.getPrototype();
+            final ModelReference<Node> modelService = new ModelReference<Node>(modelId, prototypeModel);
             modelService.init(getPluginContext());
 
             String typeModelId = config.getString("model.type");
-            final ModelReference typeService = new ModelReference(typeModelId, new Model(builder.getTypeDescriptor()));
+            final ModelReference<ITypeDescriptor> typeService = new ModelReference<ITypeDescriptor>(typeModelId, new Model<ITypeDescriptor>(builder.getTypeDescriptor()));
             typeService.init(getPluginContext());
 
             control.start();
+
+            // select initial target area
+            final JavaLayoutPad rootLayoutPad = new JavaLayoutPad("root");
+            ILayoutAware layout = context.getService(config.getString("template"), ILayoutAware.class);
+            layout.setLayoutContext(new RootLayoutContext(rootLayoutPad));
+            locator.setLayoutAwareRoot(layout);
+            if (selectedPlugin == null) {
+                selectedPlugin = new Model<String>(locator.getDefaultSelectedPlugin());
+                context.getService(selectedPluginId, IModelReference.class).setModel(selectedPlugin);
+            }
 
             context.registerService(templateObserver = new TemplateObserver(builder), IObserver.class.getName());
             child = new ChildClusterControl(control, typeService, modelService);
@@ -176,8 +213,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             log.error("Failed to update model", ex);
         }
     }
-
-    private List<String> names = null;
 
     @Override
     public void render(PluginRequestTarget target) {
@@ -209,6 +244,25 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         super.onDetach();
     }
 
+    private static class RootLayoutContext implements ILayoutContext {
+
+        private final JavaLayoutPad rootLayoutPad;
+
+        public RootLayoutContext(final JavaLayoutPad rootLayoutPad) {
+            this.rootLayoutPad = rootLayoutPad;
+        }
+
+        @Override
+        public ILayoutPad getLayoutPad() {
+            return rootLayoutPad;
+        }
+
+        @Override
+        public void apply(final ILayoutTransition transition) {
+            throw new UnsupportedOperationException("Cannot transition root plugin");
+        }
+    }
+
     private class TemplateObserver implements IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
@@ -227,44 +281,25 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private static class SelectedExtensionPointModel extends LoadableDetachableModel {
-        private static final long serialVersionUID = 1L;
-        private final ModelReference selectedExtPtService;
-
-        public SelectedExtensionPointModel(final ModelReference selectedExtPtService) {
-            this.selectedExtPtService = selectedExtPtService;
-        }
-
-        protected Object load() {
-            IModel upstream = selectedExtPtService.getModel();
-            if (upstream != null) {
-                if (upstream.getObject() != null) {
-                    return upstream.getObject();
-                }
-            }
-            return "${cluster.id}.field";
-        }
-    }
-
     private static class SelectedPluginModel implements IModel<String> {
 
-        private final ModelReference selectedPluginService;
+        private final ModelReference<String> selectedPluginService;
 
-        public SelectedPluginModel(final ModelReference selectedPluginService) {
+        public SelectedPluginModel(final ModelReference<String> selectedPluginService) {
             this.selectedPluginService = selectedPluginService;
         }
 
         @Override
         public String getObject() {
             if (selectedPluginService.getModel() != null) {
-                return (String) selectedPluginService.getModel().getObject();
+                return selectedPluginService.getModel().getObject();
             }
             return null;
         }
 
         @Override
         public void setObject(final String object) {
-            selectedPluginService.setModel(new Model(object));
+            selectedPluginService.setModel(new Model<String>(object));
         }
 
         @Override
@@ -276,10 +311,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     private static class ChildClusterControl implements IClusterControl {
         private static final long serialVersionUID = 1L;
         private final IClusterControl control;
-        private final ModelReference typeService;
-        private final ModelReference modelService;
+        private final ModelReference<ITypeDescriptor> typeService;
+        private final ModelReference<Node> modelService;
 
-        public ChildClusterControl(final IClusterControl control, final ModelReference typeService, final ModelReference modelService) {
+        public ChildClusterControl(final IClusterControl control, final ModelReference<ITypeDescriptor> typeService, final ModelReference<Node> modelService) {
             this.control = control;
             this.typeService = typeService;
             this.modelService = modelService;

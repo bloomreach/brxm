@@ -15,19 +15,28 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import org.hippoecm.frontend.editor.layout.ILayoutControl;
+import java.util.List;
+
+import org.hippoecm.frontend.editor.layout.ILayoutContext;
 import org.hippoecm.frontend.service.IRenderService;
 
 /**
  * Interface to declare a render service to be layout aware.
  * When a render service marked with this interface is registered
  * in the template builder, it can control its position in the
- * layout by addressing the {@link ILayoutControl}.
+ * layout by addressing the {@link org.hippoecm.frontend.editor.layout.ILayoutContext}.
  */
 public interface ILayoutAware extends IRenderService {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    void setLayoutControl(ILayoutControl control);
+    void setLayoutContext(ILayoutContext control);
 
+    ILayoutAware getDefaultChild();
+
+    List<ILayoutAware> getChildren();
+
+    String getTemplateBuilderPluginId();
+
+    String getTemplateBuilderExtensionPoint();
 }

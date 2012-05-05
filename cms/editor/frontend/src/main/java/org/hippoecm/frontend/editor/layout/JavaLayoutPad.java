@@ -28,7 +28,7 @@ public class JavaLayoutPad implements ILayoutPad {
 
     private String name;
     private boolean isList = false;
-    private Orientation orientation = null;
+    private Orientation orientation = Orientation.VERTICAL;
     private Map<String, ILayoutTransition> transitions;
 
     public JavaLayoutPad(String name) {

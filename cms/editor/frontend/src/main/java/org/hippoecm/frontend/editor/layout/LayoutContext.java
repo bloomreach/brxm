@@ -23,7 +23,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * Context for layout editing plugins.  It implements the ILayoutControl interface
  * using the plugin.id config variable.
  */
-public class LayoutControl implements ILayoutControl {
+public class LayoutContext implements ILayoutContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -34,7 +34,7 @@ public class LayoutControl implements ILayoutControl {
     protected final String wicketId; // undecorated wicket.id
     private ILayoutAware service;
 
-    public LayoutControl(BuilderContext builder, ILayoutAware service, ILayoutPad pad, String wicketId) {
+    public LayoutContext(BuilderContext builder, ILayoutAware service, ILayoutPad pad, String wicketId) {
         this.builder = builder;
         this.service = service;
         this.pad = pad;

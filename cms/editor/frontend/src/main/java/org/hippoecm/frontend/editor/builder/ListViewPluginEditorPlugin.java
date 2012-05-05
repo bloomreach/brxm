@@ -20,10 +20,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.editor.layout.ILayoutControl;
+import org.hippoecm.frontend.editor.layout.ILayoutContext;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
-import org.hippoecm.frontend.editor.layout.ListItemLayoutControl;
+import org.hippoecm.frontend.editor.layout.ListItemLayoutContext;
 import org.hippoecm.frontend.editor.layout.ListItemPad;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -51,20 +51,17 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
     }
 
     @Override
-    protected void registerExtensionPointSelector() {
-        getBuilderContext().addBuilderListener(new IBuilderListener() {
-            private static final long serialVersionUID = 1L;
+    public String getTemplateBuilderExtensionPoint() {
+        return getBuilderContext().getEditablePluginConfig().getString("item");
+    }
 
-            public void onFocus() {
-                BuilderContext context = getBuilderContext();
-                context.setSelectedExtensionPoint(context.getEditablePluginConfig().getString("item"));
-            }
-
-            public void onBlur() {
-                // nothing, other plugin should set itself
-            }
-
-        });
+    @Override
+    public List<ILayoutAware> getChildren() {
+        List<ILayoutAware> children = new LinkedList<ILayoutAware>(super.getChildren());
+        if (itemTracker != null) {
+            children.addAll(itemTracker.getItems());
+        }
+        return children;
     }
 
     @Override
@@ -89,7 +86,7 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
         private static final long serialVersionUID = 1L;
 
         private String wicketId;
-        private List<ListItemLayoutControl> controls = new LinkedList<ListItemLayoutControl>();
+        private List<ListItemLayoutContext> controls = new LinkedList<ListItemLayoutContext>();
 
         public ItemTracker(String wicketId) {
             super(ILayoutAware.class);
@@ -99,7 +96,7 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
         @Override
         protected void onServiceAdded(ILayoutAware service, String name) {
             ListItemPad pad;
-            ILayoutControl layoutControl = getLayoutControl();
+            ILayoutContext layoutControl = getLayoutContext();
             if (layoutControl != null) {
                 pad = new ListItemPad(controls, layoutControl.getLayoutPad());
             } else {
@@ -110,21 +107,21 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
                     pad = new ListItemPad(controls, ILayoutPad.Orientation.HORIZONTAL);
                 }
             }
-            ListItemLayoutControl control = new ListItemLayoutControl(getBuilderContext(), service, pad, wicketId,
+            ListItemLayoutContext control = new ListItemLayoutContext(getBuilderContext(), service, pad, wicketId,
                     controls);
             pad.setLayoutControl(control);
             controls.add(control);
 
-            service.setLayoutControl(control);
+            service.setLayoutContext(control);
         }
 
         @Override
         protected void onRemoveService(ILayoutAware service, String name) {
-            service.setLayoutControl(null);
+            service.setLayoutContext(null);
 
-            Iterator<ListItemLayoutControl> controlIter = controls.iterator();
+            Iterator<ListItemLayoutContext> controlIter = controls.iterator();
             while (controlIter.hasNext()) {
-                ListItemLayoutControl control = controlIter.next();
+                ListItemLayoutContext control = controlIter.next();
                 if (control.getService() == service) {
                     controlIter.remove();
                     break;
@@ -132,6 +129,13 @@ public class ListViewPluginEditorPlugin extends RenderPluginEditorPlugin {
             }
         }
 
+        private List<ILayoutAware> getItems() {
+            List<ILayoutAware> services = new LinkedList<ILayoutAware>();
+            for (ListItemLayoutContext control : controls) {
+                services.add(control.getService());
+            }
+            return services;
+        }
     }
 
 }

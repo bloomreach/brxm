@@ -17,9 +17,10 @@ package org.hippoecm.frontend.editor.builder;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,11 +36,10 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
-import org.hippoecm.frontend.editor.layout.ILayoutControl;
+import org.hippoecm.frontend.editor.layout.ILayoutContext;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
-import org.hippoecm.frontend.editor.layout.LayoutControl;
-import org.hippoecm.frontend.editor.layout.LayoutHelper;
+import org.hippoecm.frontend.editor.layout.LayoutContext;
 import org.hippoecm.frontend.editor.layout.RenderContext;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -65,14 +65,14 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
     // control of own location in parent
     private BuilderContext builderContext;
-    private ILayoutControl layoutControl;
+    private ILayoutContext layoutContext;
 
     // descriptor of own layout, for rearranging children
     private RenderContext renderContext;
 
     protected IClusterControl previewControl;
     private IObserver configObserver;
-    private Map<String, ServiceTracker<ILayoutAware>> trackers;
+    private Map<String, ChildTracker> trackers;
     private WebMarkupContainer container;
 
     public RenderPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -117,7 +117,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        layoutControl.apply(transition);
+                        layoutContext.apply(transition);
                     }
 
                     @Override
@@ -168,7 +168,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             }
         }, " "));
         add(container);
-        
+
         if (editable) {
             add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
@@ -201,11 +201,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                         target.addComponent(container);
                     }
                 }
-                
+
             });
         }
-
-        registerExtensionPointSelector();
     }
 
     @Override
@@ -248,17 +246,53 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         }
     }
 
-    public void setLayoutControl(ILayoutControl control) {
-        this.layoutControl = control;
+    public void setLayoutContext(ILayoutContext layoutContext) {
+        this.layoutContext = layoutContext;
     }
 
-    protected ILayoutControl getLayoutControl() {
-        return layoutControl;
+    @Override
+    public String getTemplateBuilderPluginId() {
+        return builderContext.getPluginId();
+    }
+
+    @Override
+    public ILayoutAware getDefaultChild() {
+        if (trackers != null) {
+            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
+                ChildTracker tracker = entry.getValue();
+                final ILayoutAware service = tracker.getService();
+                if (service != null) {
+                    return service;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<ILayoutAware> getChildren() {
+        if (trackers != null) {
+            List<ILayoutAware> children = new LinkedList<ILayoutAware>();
+            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
+                children.add(entry.getValue().getService());
+            }
+            return children;
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getTemplateBuilderExtensionPoint() {
+        return null;
+    }
+
+    protected ILayoutContext getLayoutContext() {
+        return layoutContext;
     }
 
     protected Iterator<ILayoutTransition> getTransitionIterator() {
-        if (layoutControl != null) {
-            final ILayoutPad pad = layoutControl.getLayoutPad();
+        if (layoutContext != null) {
+            final ILayoutPad pad = layoutContext.getLayoutPad();
             final Iterator<String> transitionIter = pad.getTransitions().iterator();
             return new Iterator<ILayoutTransition>() {
 
@@ -318,49 +352,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         return false;
     }
 
-    protected void registerExtensionPointSelector() {
-        Map<String, ILayoutPad> pads = renderContext.getLayoutDescriptor().getLayoutPads();
-        if (pads.size() > 0) {
-            // find default pad to be selected when plugin gets focus
-            String defaultPad = null;
-            for (Map.Entry<String, ILayoutPad> entry : pads.entrySet()) {
-                ILayoutPad pad = entry.getValue();
-                if (pad.isList()) {
-                    defaultPad = LayoutHelper.getWicketId(pad) + ".item";
-                    break;
-                }
-            }
-
-            if (defaultPad != null) {
-                final String value = defaultPad;
-                BuilderContext context = getBuilderContext();
-                context.addBuilderListener(new IBuilderListener() {
-                    private static final long serialVersionUID = 1L;
-
-                    public void onFocus() {
-                        BuilderContext context = getBuilderContext();
-                        context.setSelectedExtensionPoint(value);
-                    }
-
-                    public void onBlur() {
-                        // nothing, other plugin should set itself
-                    }
-
-                });
-
-                // select pad
-                String current = context.getSelectedExtensionPoint();
-                if (current == null) {
-                    context.setSelectedExtensionPoint(value);
-                }
-            } else {
-                log.warn("No default pad found to add new fields to");
-            }
-        }
-    }
-
     protected void registerChildTrackers() {
-        trackers = new TreeMap<String, ServiceTracker<ILayoutAware>>();
+        trackers = new LinkedHashMap<String, ChildTracker>();
 
         IPluginConfig bare = builderContext.getEditablePluginConfig();
         IPluginConfig effective = getEffectivePluginConfig();
@@ -379,7 +372,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
 
     protected void unregisterChildTrackers() {
         if (trackers != null) {
-            for (Map.Entry<String, ServiceTracker<ILayoutAware>> entry : trackers.entrySet()) {
+            for (Map.Entry<String, ChildTracker> entry : trackers.entrySet()) {
                 getPluginContext().unregisterTracker(entry.getValue(), entry.getKey());
             }
             trackers = null;
@@ -399,15 +392,16 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     /**
-     * Service tracker that hands out ILayoutControl instances via the ILayoutAware
-     * interface.  This allows child render services to reposition themselves.
+     * Service tracker that hands out ILayoutControl instances via the ILayoutAware interface.  This allows child render
+     * services to reposition themselves.
      */
     protected class ChildTracker extends ServiceTracker<ILayoutAware> {
         private static final long serialVersionUID = 1L;
 
+        private ILayoutAware service;
         private ILayoutPad pad;
         private String wicketId;
-        private ILayoutControl control;
+        private ILayoutContext control;
 
         public ChildTracker(ILayoutPad pad, String wicketId) {
             super(ILayoutAware.class);
@@ -420,20 +414,28 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             if (control != null) {
                 throw new RuntimeException("A ILayoutAware service has already registered at " + name);
             }
+            this.service = service;
             control = newLayoutControl(service);
-            service.setLayoutControl(control);
+            service.setLayoutContext(control);
         }
 
         @Override
         protected void onRemoveService(ILayoutAware service, String name) {
-            service.setLayoutControl(null);
+            service.setLayoutContext(null);
             control = null;
         }
 
-        protected ILayoutControl newLayoutControl(ILayoutAware service) {
-            return new LayoutControl(builderContext, service, pad, wicketId);
+        public ILayoutAware getService() {
+            return service;
         }
 
+        protected ILayoutContext newLayoutControl(ILayoutAware service) {
+            return new LayoutContext(builderContext, service, pad, wicketId);
+        }
+
+        public ILayoutPad getPad() {
+            return pad;
+        }
     }
 
 }

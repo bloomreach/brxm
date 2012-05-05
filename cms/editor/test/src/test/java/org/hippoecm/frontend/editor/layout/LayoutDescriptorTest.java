@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +22,8 @@ import java.util.Map;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class LayoutDescriptorTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -34,28 +34,27 @@ public class LayoutDescriptorTest extends PluginTest {
      */
     @Test
     public void testDeserialization() {
-        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
-                .getName()
-                + ".Test");
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(),
+                                                               getClass().getPackage().getName() + ".Test");
 
         Map<String, ILayoutPad> pads = descriptor.getLayoutPads();
         assertEquals(2, pads.size());
 
         ILayoutPad first = pads.values().iterator().next();
+        assertEquals("top", first.getName());
+
         List<String> transitions = first.getTransitions();
         assertEquals(1, transitions.size());
-        assertEquals("up", first.getTransition(transitions.get(0)).getName());
+        assertEquals("down", first.getTransition(transitions.get(0)).getName());
     }
 
     /**
-     * Verify that layout descriptor returns a default icon when there is none
-     * provided with the layout itself.
+     * Verify that layout descriptor returns a default icon when there is none provided with the layout itself.
      */
     @Test
     public void testNoIcon() throws Exception {
-        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
-                .getName()
-                + ".NonExistingTest");
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(),
+                                                               getClass().getPackage().getName() + ".NonExistingTest");
         IResourceStream stream = descriptor.getIcon().getResourceStream();
         InputStream input = stream.getInputStream();
         input.close();
@@ -66,9 +65,8 @@ public class LayoutDescriptorTest extends PluginTest {
      */
     @Test
     public void testName() throws Exception {
-        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(), getClass().getPackage()
-                .getName()
-                + ".Test");
+        ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(),
+                                                               getClass().getPackage().getName() + ".Test");
         assertEquals("Test layout", descriptor.getName().getObject());
     }
 

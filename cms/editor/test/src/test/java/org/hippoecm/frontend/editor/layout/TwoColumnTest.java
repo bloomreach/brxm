@@ -22,6 +22,8 @@ import java.util.TreeMap;
 
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.editor.builder.ExtensionPointLocator;
+import org.hippoecm.frontend.editor.builder.ILayoutAware;
 import org.hippoecm.frontend.editor.builder.PreviewClusterConfig;
 import org.hippoecm.frontend.editor.builder.RenderPluginEditorPlugin;
 import org.hippoecm.frontend.model.IModelReference;
@@ -65,12 +67,11 @@ public class TwoColumnTest extends PluginTest {
                         "item", "${cluster.id}.right.item"
     };
 
-    private ModelReference selectedExtPtService;
     private IClusterConfig editedCluster;
     private IClusterControl builderControl;
-    private String selectedExtPtId;
     private String selectedPluginId;
     private String clusterModelId;
+    private ExtensionPointLocator locator;
 
     @Override
     @Before
@@ -90,9 +91,7 @@ public class TwoColumnTest extends PluginTest {
         ModelReference selectedPluginService = new ModelReference(selectedPluginId, null);
         selectedPluginService.init(context);
 
-        selectedExtPtId = "service.model.selected_extension_point";
-        selectedExtPtService = new ModelReference(selectedExtPtId, null);
-        selectedExtPtService.init(context);
+        locator = new ExtensionPointLocator(selectedPluginService);
 
         context.getService(clusterModelId, IModelReference.class).setModel(new Model(editedCluster));
 
@@ -100,13 +99,14 @@ public class TwoColumnTest extends PluginTest {
         builderPluginParameters.put("wicket.helper.id", "service.helpers");
         builderPluginParameters.put("wicket.model", clusterModelId);
         builderPluginParameters.put("model.plugin", selectedPluginId);
-        builderPluginParameters.put("model.extensionpoint", selectedExtPtId);
         PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, builderPluginParameters, true);
 
         IPluginConfig parameters = new JavaPluginConfig();
         parameters.put("wicket.id", "service.root");
         builderControl = context.newCluster(template, parameters);
         builderControl.start();
+
+        locator.setLayoutAwareRoot(context.getService("service.root", ILayoutAware.class));
 
         // render page
         refreshPage();
@@ -120,7 +120,6 @@ public class TwoColumnTest extends PluginTest {
         builderPluginParameters.put("wicket.helper.id", "service.helpers");
         builderPluginParameters.put("wicket.model", clusterModelId);
         builderPluginParameters.put("model.plugin", selectedPluginId);
-        builderPluginParameters.put("model.extensionpoint", selectedExtPtId);
         PreviewClusterConfig template = new PreviewClusterConfig(editedCluster, builderPluginParameters, true);
 
         IPluginConfig parameters = new JavaPluginConfig();
@@ -129,6 +128,8 @@ public class TwoColumnTest extends PluginTest {
         builderControl = context.newCluster(template, parameters);
         builderControl.start();
 
+        locator.setLayoutAwareRoot(context.getService("service.root", ILayoutAware.class));
+
         refreshPage();
     }
     
@@ -136,11 +137,11 @@ public class TwoColumnTest extends PluginTest {
     public void testListExtensionPointSelected() throws Exception {
         // select left list
         tester.executeAjaxEvent("root:preview:extension.left", "onclick");
-        assertEquals("${cluster.id}.left.item", selectedExtPtService.getModel().getObject());
+        assertEquals("${cluster.id}.left.item", locator.getSelectedExtensionPoint());
 
         // select right list
         tester.executeAjaxEvent("root:preview:extension.right", "onclick");
-        assertEquals("${cluster.id}.right.item", selectedExtPtService.getModel().getObject());
+        assertEquals("${cluster.id}.right.item", locator.getSelectedExtensionPoint());
 
 //        Utilities.dump(root.getNode("test"));
 //        printComponents(System.out);

@@ -1014,6 +1014,7 @@ editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PlainJcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PseudoTypeDescriptor.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/BuilderException.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ExtensionPointLocator.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.java -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.properties -text
@@ -1050,9 +1051,9 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/EditableTypes.ja
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateEngine.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateEngineFactory.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/TemplateTypeEditor.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ILayoutControl.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ILayoutContext.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/LayoutHelper.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ListItemLayoutControl.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ListItemLayoutContext.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/ListItemPad.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/layout/TwoColumn.layout.xml svneol=native#text/plain

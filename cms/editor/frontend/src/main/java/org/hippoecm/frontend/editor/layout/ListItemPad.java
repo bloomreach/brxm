@@ -27,16 +27,16 @@ public class ListItemPad extends JavaLayoutPad {
     ILayoutPad parent;
     Orientation orientation;
 
-    List<ListItemLayoutControl> controls;
-    ILayoutControl control;
+    List<ListItemLayoutContext> controls;
+    ILayoutContext control;
 
-    public ListItemPad(List<ListItemLayoutControl> controls, ILayoutPad parent) {
+    public ListItemPad(List<ListItemLayoutContext> controls, ILayoutPad parent) {
         super("item");
         this.controls = controls;
         this.parent = parent;
     }
 
-    public ListItemPad(List<ListItemLayoutControl> controls, Orientation orientation) {
+    public ListItemPad(List<ListItemLayoutContext> controls, Orientation orientation) {
         super("item");
         this.controls = controls;
         this.orientation = orientation;
@@ -47,11 +47,11 @@ public class ListItemPad extends JavaLayoutPad {
      * This control is used to determine the index of this item in the list.
      * @param control
      */
-    public void setLayoutControl(ILayoutControl control) {
+    public void setLayoutControl(ILayoutContext control) {
         this.control = control;
     }
     
-    public ILayoutControl getLayoutControl() {
+    public ILayoutContext getLayoutControl() {
         return this.control;
     }
 
@@ -110,7 +110,7 @@ public class ListItemPad extends JavaLayoutPad {
                 }
 
                 public ILayoutPad getTarget() {
-                    ListItemLayoutControl previous = controls.get(controls.indexOf(control) - 1);
+                    ListItemLayoutContext previous = controls.get(controls.indexOf(control) - 1);
                     return previous.getLayoutPad();
                 }
 
@@ -124,7 +124,7 @@ public class ListItemPad extends JavaLayoutPad {
                 }
 
                 public ILayoutPad getTarget() {
-                    ListItemLayoutControl next = controls.get(controls.indexOf(control) + 1);
+                    ListItemLayoutContext next = controls.get(controls.indexOf(control) + 1);
                     return next.getLayoutPad();
                 }
 

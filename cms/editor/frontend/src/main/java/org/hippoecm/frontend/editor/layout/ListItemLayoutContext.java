@@ -25,18 +25,17 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListItemLayoutControl extends LayoutControl {
+public class ListItemLayoutContext extends LayoutContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ListItemLayoutControl.class);
+    static final Logger log = LoggerFactory.getLogger(ListItemLayoutContext.class);
 
-    private List<ListItemLayoutControl> siblings;
+    private List<ListItemLayoutContext> siblings;
 
-    public ListItemLayoutControl(BuilderContext builder, ILayoutAware service, ListItemPad pad, String wicketId,
-            List<ListItemLayoutControl> siblings) {
+    public ListItemLayoutContext(BuilderContext builder, ILayoutAware service, ListItemPad pad, String wicketId, List<ListItemLayoutContext> siblings) {
         super(builder, service, pad, wicketId);
         this.siblings = siblings;
     }

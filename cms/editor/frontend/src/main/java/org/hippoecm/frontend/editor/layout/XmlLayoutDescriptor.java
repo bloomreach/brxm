@@ -18,11 +18,11 @@ package org.hippoecm.frontend.editor.layout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -146,7 +146,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         this.location = plugin.replace('.', '/');
         this.variant = variant;
 
-        pads = new TreeMap<String, ILayoutPad>();
+        pads = new LinkedHashMap<String, ILayoutPad>();
         transitions = new LinkedList<LayoutTransition>();
 
         // Get layout description.  Use the variant description if it is available.

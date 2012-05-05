@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.editor.builder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -82,16 +84,16 @@ public class InheritedFieldSection extends Section {
                 @Override
                 public List<InheritedField> getData() {
                     ITypeDescriptor type = builder.getTypeDescriptor();
-                    List<InheritedField> fieldList = new LinkedList<InheritedField>();
+                    Map<String, InheritedField> fieldList = new LinkedHashMap<String,InheritedField>();
                     try {
                         addEditableFields(fieldList, type);
                     } catch (TemplateEngineException e) {
                         log.error("Unable to build list of inheritable plugin configurations", e);
                     }
-                    return fieldList;
+                    return new ArrayList<InheritedField>(fieldList.values());
                 }
 
-                private void addEditableFields(List<InheritedField> fieldList, ITypeDescriptor type) throws TemplateEngineException {
+                private void addEditableFields(Map<String, InheritedField> fieldList, ITypeDescriptor type) throws TemplateEngineException {
                     for (String superType : type.getSuperTypes()) {
                         ITypeDescriptor superDescriptor = getTemplateEngine().getType(superType);
                         addEditableFields(fieldList, superDescriptor);
@@ -99,12 +101,12 @@ public class InheritedFieldSection extends Section {
                     ITemplateEngine templateEngine = getTemplateEngine();
                     try {
                         final IClusterConfig template = templateEngine.getTemplate(type, IEditor.Mode.EDIT);
-                        for (Map.Entry<String, IFieldDescriptor> fieldEntry : type.getDeclaredFields().entrySet()) {
+                        for (Map.Entry<String, IFieldDescriptor> fieldEntry : type.getFields().entrySet()) {
                             final String fieldName = fieldEntry.getKey();
                             final IFieldDescriptor fieldDescriptor = fieldEntry.getValue();
                             for (IPluginConfig config : template.getPlugins()) {
                                 if (config.containsKey("field") && fieldName.equals(config.getString("field"))) {
-                                    fieldList.add(new InheritedField(type, fieldDescriptor));
+                                    fieldList.put(fieldName, new InheritedField(type, fieldDescriptor));
                                     break;
                                 }
                             }
