@@ -15,7 +15,11 @@
  */
 package org.hippoecm.hst.upgrade;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.ext.UpdaterContext;
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterItemVisitor.NamespaceVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
@@ -25,6 +29,14 @@ public class Upgrader_MicroCndChange_2_1_3 implements UpdaterModule {
         context.registerName("upgrader-microchange_2_1_3");
         context.registerStartTag("hst-2_1_2");
         context.registerEndTag("hst-2_1_3");
-        context.registerVisitor(new NamespaceVisitor(context, "hst", getClass().getClassLoader().getResourceAsStream("hst-types.cnd")));
+        // delete the 'hst' init node to make sure the compatible hst namespcae gets reloaded
+        context.registerVisitor(new UpdaterItemVisitor.PathVisitor("/hippo:configuration/hippo:initialize"){
+            @Override
+            protected void leaving(final Node node, final int level) throws RepositoryException {
+                if (node.hasNode("hst")) {
+                    node.getNode("hst").remove();
+                }
+            }
+        });
     }
 }
