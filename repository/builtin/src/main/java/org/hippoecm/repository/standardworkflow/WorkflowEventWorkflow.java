@@ -29,6 +29,7 @@ import org.hippoecm.repository.api.WorkflowException;
  * call automatically.  Only a single fire method is applicable at a specific workflow event
  * that is triggered.  Which one depends on the actual workflow call (which caused the trigger
  * to fire) and condition that is being met.
+ * @deprecated use interface WorkflowEventsWorkflow (plural) instead.
  */
 public interface WorkflowEventWorkflow extends Workflow {
     /**

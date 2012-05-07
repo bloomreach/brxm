@@ -93,6 +93,7 @@
     <json-lib.version>2.2.2</json-lib.version>
     <dom4j.version>1.6.1</dom4j.version>
     <xmlunit.version>1.3</xmlunit.version>
+    <easymock.version>3.1</easymock.version>
   </properties>
 
   <scm>
@@ -437,7 +438,7 @@
         <version>${commons-lang.version}</version>
       </dependency>
       <dependency>
-        <groupId>easymock</groupId>
+        <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
       </dependency>

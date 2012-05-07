@@ -36,6 +36,7 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflow.ja
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/RepositoryWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflow.java -text
+builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventsWorkflow.java -text
 builtin/src/site/apt/index.apt -text
 builtin/src/site/site.xml svneol=native#text/plain
 checker-app/pom.xml svneol=native#text/plain
@@ -168,6 +169,7 @@ engine/src/test/java/org/hippoecm/repository/OrderByNodeNameTest.java svneol=nat
 engine/src/test/java/org/hippoecm/repository/PdfExtractionAndIndexingTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
+engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheTest.java -text svneol=unset#text/plain

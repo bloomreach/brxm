@@ -26,6 +26,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
+import org.hippoecm.repository.standardworkflow.WorkflowEventsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,10 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
             Workflow workflow = workflowManager.getWorkflowInternal(wfNode, wfSubject);
             if (workflow instanceof WorkflowEventWorkflow) {
                 WorkflowEventWorkflow event = (WorkflowEventWorkflow)workflow;
+                if (event instanceof WorkflowEventsWorkflow) {
+                    ((WorkflowEventsWorkflow)event).setWorkflowCategory(workflowCategory);
+                    ((WorkflowEventsWorkflow)event).setWorkflowMethod(workflowMethod);
+                }
                 try {
                     if (isDocumentResult) {
                         event.fire((Document)returnObject);
