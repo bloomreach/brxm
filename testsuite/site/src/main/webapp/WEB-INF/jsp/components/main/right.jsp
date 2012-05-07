@@ -42,15 +42,5 @@
          </c:otherwise>
       </c:choose>
   </c:forEach>
-  
- <br/><br/><br/>
- <c:if test="${not empty profile}">
-  <b>Profile</b>
-  <ul>
-    <c:forEach var="personaId" items="${profile.personaIds}" >
-        <li>${personaId}</li>
-    </c:forEach>
-  </ul>
- </c:if>
-  
+
 </div>
