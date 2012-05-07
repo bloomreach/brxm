@@ -55,6 +55,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.PluginPage;
@@ -118,6 +119,8 @@ public class LoginPlugin extends RenderPlugin {
 
         public SignInForm(final String id) {
             super(id);
+
+            setOutputMarkupId(true);
 
             parameters = RequestCycle.get().getRequest().getParameterMap();
 
@@ -184,7 +187,7 @@ public class LoginPlugin extends RenderPlugin {
                     localeCookie.setMaxAge(365 * 24 * 3600); // expire one year from now
                     retrieveWebResponse().addCookie(localeCookie);
                     getSession().setLocale(new Locale(selectedLocale));
-                    setResponsePage(this.getFormComponent().getPage());
+                    target.addComponent(SignInForm.this);
                 }
             });
 
@@ -306,6 +309,14 @@ public class LoginPlugin extends RenderPlugin {
             redirect(success, null);
         }
 
+    }
+
+    protected WebRequest retrieveWebRequest() {
+        return (WebRequest) RequestCycle.get().getRequest();
+    }
+
+    protected WebResponse retrieveWebResponse() {
+        return (WebResponse) RequestCycle.get().getResponse();
     }
 
 }

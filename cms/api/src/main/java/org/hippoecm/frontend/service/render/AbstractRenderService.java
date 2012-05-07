@@ -25,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.RequestCycle;
@@ -39,8 +37,6 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.response.StringResponse;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -573,24 +569,6 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         public void onRemoveService(IRenderService service, String name) {
             list.remove(service);
             redraw();
-        }
-    }
-
-    protected WebRequest retrieveWebRequest() {
-        return (WebRequest) RequestCycle.get().getRequest();
-    }
-
-    protected WebResponse retrieveWebResponse() {
-        return (WebResponse) RequestCycle.get().getResponse();
-    }
-    
-    protected void clearCookie(String cookieName) {
-        Cookie cookie = retrieveWebRequest().getCookie(cookieName);
-
-        if (cookie != null) {
-            cookie.setMaxAge(0);
-            cookie.setValue("");
-            retrieveWebResponse().addCookie(cookie);
         }
     }
 
