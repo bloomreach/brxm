@@ -46,6 +46,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.hippoecm.frontend.PageExpiredErrorPage;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.custom.ServerCookie;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -85,19 +86,25 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         if (supported != null) {
             add(new BrowserCheckBehavior(supported));
         }
+    }
 
-        // Check for remember me cookie
-        if ((retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
-                && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)
-                && (retrieveWebRequest().getHttpServletRequest().getAttribute(HAL_REQUEST_ATTRIBUTE_NAME) == null)) {
-
-            retrieveWebRequest().getHttpServletRequest().setAttribute(HAL_REQUEST_ATTRIBUTE_NAME, true);
-            try {
-                tryToAutoLoginWithRememberMe();
-            } finally {
-                retrieveWebRequest().getHttpServletRequest().removeAttribute(HAL_REQUEST_ATTRIBUTE_NAME);
+    // Determine whether to try to auto-login or not
+    @Override
+    protected void onInitialize() {
+        if (!PageExpiredErrorPage.class.isInstance(getPage())) {
+            // Check for remember me cookie
+            if ((retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
+                    && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)
+                    && (retrieveWebRequest().getHttpServletRequest().getAttribute(HAL_REQUEST_ATTRIBUTE_NAME) == null)) {
+                retrieveWebRequest().getHttpServletRequest().setAttribute(HAL_REQUEST_ATTRIBUTE_NAME, true);
+                try {
+                    tryToAutoLoginWithRememberMe();
+                } finally {
+                    retrieveWebRequest().getHttpServletRequest().removeAttribute(HAL_REQUEST_ATTRIBUTE_NAME);
+                }
             }
         }
+        super.onInitialize();
     }
 
     protected void tryToAutoLoginWithRememberMe() {
