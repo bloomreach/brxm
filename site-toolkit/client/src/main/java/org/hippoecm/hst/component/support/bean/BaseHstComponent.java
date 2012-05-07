@@ -359,13 +359,12 @@ public class BaseHstComponent extends GenericHstComponent {
      * @see  {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)}
      */
     public HstQueryManager getQueryManager(HstRequestContext ctx) {
-        HstQueryManager queryManager = null;
-        try {
+       try {
             return getQueryManager(ctx.getSession());
         } catch (RepositoryException e) {
             log.error("Unable to get a queryManager", e);
-        }    
-        return queryManager;
+        }
+        return null;
     }
     
     /**
