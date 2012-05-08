@@ -629,7 +629,6 @@
           <version>${maven.plugin.release.version}</version>
           <inherited>true</inherited>
           <configuration>
-            <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <!-- Default preparation goals are "clean verify", however for some multi-module projects
                  this isn't always working. If some modules depend on other modules which are not in
