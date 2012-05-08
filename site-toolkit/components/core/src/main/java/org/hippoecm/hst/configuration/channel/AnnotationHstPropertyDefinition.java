@@ -59,9 +59,10 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
             return HstValueType.INTEGER;
         } else if (type == Calendar.class) {
             return HstValueType.DATE;
-        } else if (type == Double.class || type == double.class || type == float.class) {
+        } else if (type == Double.class || type == Float.class || type == double.class || type == float.class) {
             return HstValueType.DOUBLE;
         }
+
         throw new ClassCastException("Could not cast " + type + " to any of the primitive types");
     }
 }

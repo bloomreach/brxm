@@ -129,7 +129,13 @@ sandbox/ocm/version
 sandbox/ocm/workspaces
 sandbox/sandbox.iml
 sandbox/target
+solr-client/.classpath
+solr-client/.project
+solr-client/.settings
 solr-client/target
+solr-content-beans/.classpath
+solr-content-beans/.project
+solr-content-beans/.settings
 solr-content-beans/target
 src/site/.project
 /target
