@@ -90,7 +90,7 @@ private void doAction(HstRequest request, HstResponse response) throws HstCompon
 private void sendRedirect(HstRequest request, HstResponse response, String redirectToSiteMapItemId) {
     HstLinkCreator linkCreator = request.getRequestContext().getHstLinkCreator();
     HstSiteMap siteMap = request.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap();
-    HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId));
+    HstLink link = linkCreator.create(siteMap.getSiteMapItemById(redirectToSiteMapItemId), request.getRequestContext().getResolvedMount().getMount());
 
     StringBuffer url = new StringBuffer();
     
