@@ -282,7 +282,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     success = captchaTextValue.equalsIgnoreCase(imagePass);
                     if (!success) {
                         throw new org.hippoecm.frontend.session.LoginException(
-                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTACHA);
+                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTCHA);
 
                     }
                 }
