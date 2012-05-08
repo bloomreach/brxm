@@ -20,30 +20,30 @@ import java.util.List;
 public interface EditableMenuItem extends CommonMenuItem {
 
     /**
-     * @return the {@link List} of {@link EditableMenuItem}s and empty List if no child menu items available 
+     * @return The {@link List} of {@link EditableMenuItem}s and empty List if no child menu items available 
      */
     List<EditableMenuItem> getChildMenuItems();
 
     /**
      * 
-     * @param childMenuItem add this {@link EditableMenuItem} to the list of childs
+     * @param childMenuItem - Add this {@link EditableMenuItem} to the list of childs
      */
     void addChildMenuItem(EditableMenuItem childMenuItem);
 
     /**
-     * @return the {@link EditableMenu} for this {@link EditableMenuItem}
+     * @return The {@link EditableMenu} for this {@link EditableMenuItem}
      */
     EditableMenu getEditableMenu();
 
     /**
-     * @return the parent {@link EditableMenuItem} of this item and <code>null</code> when there
+     * @return The parent {@link EditableMenuItem} of this item and <code>null</code> when there
      * is not parent
      */
     EditableMenuItem getParentItem();
 
     /**
-     * set this EditableMenuItem to expanded (true) or not 
-     * @param expanded when <code>true</code> sets the {@link EditableMenuItem} to expanded
+     * Set this EditableMenuItem to expanded (true) or not 
+     * @param expanded - When <code>true</code> sets the {@link EditableMenuItem} to expanded
      */
     void setExpanded(boolean expanded);
     

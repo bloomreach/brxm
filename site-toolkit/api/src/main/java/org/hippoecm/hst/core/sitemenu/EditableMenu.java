@@ -20,32 +20,32 @@ import java.util.List;
 public interface EditableMenu extends CommonMenu{
 
     /**
-     * note: the method should have been called getSelectedMenuItem for because of an 
-     * historical type it is called getSelectMenuItem
+     * Note: the method should have been called getSelectedMenuItem because of a 
+     * historical typo it is called getSelectMenuItem
      * @return the selected {@link EditableMenuItem} and <code>null</code> if none selected
      */
     EditableMenuItem getSelectMenuItem();
 
     /**
-     * sets the <code>selectedMenuItem</code> as selected
+     * Sets the <code>selectedMenuItem</code> as selected
      * @param selectedMenuItem the {@link EditableMenuItem} that is selected
      */
     void setSelectedMenuItem(EditableMenuItem selectedMenuItem);
 
     /**
      * 
-     * @return the {@link List} of root {@link EditableMenuItem}s for this {@link EditableMenu}
+     * @return The {@link List} of root {@link EditableMenuItem}s for this {@link EditableMenu}
      */
     List<EditableMenuItem> getMenuItems();
 
     /**
      * 
-     * @return the backing {@link HstSiteMenus} for this {@link EditableMenu}
+     * @return The backing {@link HstSiteMenus} for this {@link EditableMenu}
      */
     HstSiteMenus getHstSiteMenus();
 
     /**
-     * @return the deepest expanded {@link EditableMenuItem} and <code>null</code> if none
+     * @return The deepest expanded {@link EditableMenuItem} and <code>null</code> if none
      * of the items are expanded
      */
     EditableMenuItem getDeepestExpandedItem();
