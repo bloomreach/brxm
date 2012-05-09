@@ -42,7 +42,7 @@ public class HitImpl implements Hit {
      *
      * @param solrDocument
      * @param binder
-     * @param highlights
+     * @param highlights the highlights for this hit and <code>null</code> if there are no highlights
      * @param contentBeanValueProviders the providers to be used to bind the hits to the original sources. When <code>null</code> the
      *                                  hits won't be attached to their providers
      */
@@ -93,13 +93,15 @@ public class HitImpl implements Hit {
         if ( o instanceof Float) {
             return ((Float)o).floatValue();
         }
-        return 0;
+        return -1;
     }
     
     public List<Highlight> getHighlights() {
         List<Highlight> highlightList = new ArrayList<Highlight>();
-        for (Map.Entry<String,List<String>> entry : highlights.entrySet()) {
-            highlightList.add(new HighlightImpl(entry.getKey(), entry.getValue()));
+        if (highlights != null) {
+            for (Map.Entry<String,List<String>> entry : highlights.entrySet()) {
+                highlightList.add(new HighlightImpl(entry.getKey(), entry.getValue()));
+            }
         }
         return highlightList;
     }

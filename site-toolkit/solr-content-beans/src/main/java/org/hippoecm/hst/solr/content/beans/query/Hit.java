@@ -27,7 +27,13 @@ public interface Hit extends Serializable {
 
     ContentBean getContentBean();
 
+    /**
+     * @return the score for this hit and -1 if there is no score available
+     */
     float getScore();
 
+    /**
+     * @return the {@link List} of {@link Highlight}s and empty List if there are no highlights
+     */
     public List<Highlight> getHighlights();
 }
