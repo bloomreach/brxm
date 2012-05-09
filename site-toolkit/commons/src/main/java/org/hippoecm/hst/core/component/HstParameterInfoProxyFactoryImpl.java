@@ -54,8 +54,8 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
      * Override this method if a custom parameterInfoHandler is needed
      * @param componentConfig
      * @param request
-     * @param parameterValueConverter
-     * @return the {@link HstParameterInfoInvocationHandler} used in the created proxy to handle the invocations
+     * @param converter
+     * @return the {@link InvocationHandler} used in the created proxy to handle the invocations
      */
     protected InvocationHandler createHstParameterInfoInvocationHandler(final ComponentConfiguration componentConfig,final HstRequest request,final HstParameterValueConverter converter) {
         return new ParameterInfoInvocationHandler(componentConfig, request, converter);
