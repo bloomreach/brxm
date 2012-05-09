@@ -194,11 +194,11 @@ public class EventLoggerImpl implements WorkflowEventLoggerWorkflow, InternalWor
             if (arguments != null) {
                 logNode.setProperty("hippolog:eventArguments", arguments);
             }
-            logFolder.save();
+            rootSession.save();
         } catch (RepositoryException ex) {
             log.warn("Event logging failed: " + ex.getMessage(), ex);
             try {
-                logFolder.refresh(false);
+                rootSession.refresh(false);
             } catch (RepositoryException ex2) {
                 log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
             }
@@ -211,7 +211,7 @@ public class EventLoggerImpl implements WorkflowEventLoggerWorkflow, InternalWor
             log.warn("Folding appender not implemented yet, falling back to rolling appender");
         }
         try {
-            logFolder.refresh(false);
+            rootSession.refresh(false);
             NodeIterator logNodes = logFolder.getNodes();
             if (logNodes.getSize() > maxSize) {
                 long count = logNodes.getSize() - maxSize;
@@ -229,7 +229,7 @@ public class EventLoggerImpl implements WorkflowEventLoggerWorkflow, InternalWor
                         }
                     }
                 }
-                logFolder.save();
+                rootSession.save();
             }
         } catch (RepositoryException ex) {
             /* normally the cause of this exception is a org.apache.jackrabbit.core.state.NoSuchItemStateException
@@ -238,7 +238,7 @@ public class EventLoggerImpl implements WorkflowEventLoggerWorkflow, InternalWor
              */
             log.debug("Event logging appender failed: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             try {
-                logFolder.refresh(false);
+                rootSession.refresh(false);
             } catch (RepositoryException ex2) {
                 log.error("Event appender fails in failure: " + ex2.getMessage(), ex2);
             }

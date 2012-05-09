@@ -15,12 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +54,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class FolderWorkflowTest extends TestCase {
 
@@ -271,7 +271,7 @@ public class FolderWorkflowTest extends TestCase {
         newOrder.add("zorro");
 
         workflow.reorder(newOrder);
-        node.refresh(false);
+        node.getSession().refresh(false);
 
         it = node.getNodes();
         assertEquals("aap", it.nextNode().getName());

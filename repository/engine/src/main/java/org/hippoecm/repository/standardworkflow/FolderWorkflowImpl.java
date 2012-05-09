@@ -321,7 +321,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 throw new WorkflowException("No template defined for add to folder");
             }
         } finally {
-            target.refresh(false);
+            rootSession.refresh(false);
         }
     }
 
