@@ -28,21 +28,18 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.hippoecm.hst.content.beans.index.IndexField;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -57,8 +54,10 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
     private final Map<Class, List<DocField>> infocache = new ConcurrentHashMap<Class, List<DocField>>();
 
-    private final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME = "hippo_content_bean_fqn_clazz_name";
-    private final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY = "hippo_content_bean_fqn_clazz_hierarchy";
+    public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME = "hippo_content_bean_fqn_clazz_name";
+    public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY = "hippo_content_bean_fqn_clazz_hierarchy";
+    public final static String HIPPO_CONTENT_BEAN_PATH_HIERARCHY = "hippo_path_hierarchy";
+    public final static String HIPPO_CONTENT_BEAN_PATH_DEPTH = "hippo_path_depth";
 
     public DocumentObjectBinder() {
     }
@@ -123,17 +122,27 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         // is not the nicest way to do it here : It could also be achieved by just using the 
         // solr path field, and use copyField to hippo_path_hierarchy and hippo_path_depth
         // and two custom tokenizers. For now, this is a shortcut
-        if (obj instanceof HippoBean) {
-            String path = ((HippoBean)obj).getPath();
+        if (obj instanceof ContentBean) {
+            String path = ((ContentBean)obj).getPath();
+            boolean startedWithSlash = false;
             if (path.startsWith("/")) {
                 path = path.substring(1);
+                startedWithSlash = true;
             }
             String[] split = path.split("/");
-            doc.setField("hippo_path_depth", split.length);
+            doc.setField(HIPPO_CONTENT_BEAN_PATH_DEPTH, split.length);
             StringBuilder builder = new StringBuilder();
             for (String segment : split) {
-                builder.append("/").append(segment);
-                doc.addField("hippo_path_hierarchy", builder.toString());
+                if (builder.length() == 0) {
+                    if (startedWithSlash) {
+                        builder.append("/");
+                    }
+                    builder.append(segment);
+                    doc.addField(HIPPO_CONTENT_BEAN_PATH_HIERARCHY, builder.toString());
+                } else {
+                    builder.append("/").append(segment);
+                    doc.addField(HIPPO_CONTENT_BEAN_PATH_HIERARCHY, builder.toString());
+                }
             }
         }
         return doc;
