@@ -297,7 +297,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true),
                         username, false);
 
-                if (rememberme) {
+                // If rememberme checkbox is checked and there is no cookie already, this happens in case of autologin
+                if (rememberme && retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) == null) {
                     Session jcrSession = userSession.getJcrSession();
                     if (jcrSession.getUserID().equals(username)) {
                         try {
