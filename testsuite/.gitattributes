@@ -97,8 +97,10 @@ site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#te
 site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/SolrRight.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/SolrSearch.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
 site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
@@ -186,7 +188,9 @@ site/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=un
 site/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/solrright.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/solrsearch.jsp -text
+site/src/main/webapp/WEB-INF/jsp/components/main/solrsuggest-ajaxresult.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/wikipedia.jsp -text svneol=unset#text/plain

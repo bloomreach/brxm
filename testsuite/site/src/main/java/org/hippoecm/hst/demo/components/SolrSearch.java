@@ -15,16 +15,16 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.apache.solr.common.util.DateUtil;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.demo.beans.GoGreenProductBean;
+import org.hippoecm.hst.demo.components.solrutil.SolrSearchParams;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.solr.HippoSolrManager;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
@@ -36,19 +36,18 @@ public class SolrSearch extends AbstractSearchComponent {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
 
-
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
-        HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+        SolrSearchParams params = new SolrSearchParams(request);
 
-        String query = getPublicRequestParameter(request, "query");
-        if (query == null || "".equals(query)) {
-            query = request.getParameter("query");
-        }
-
-        if (query == null) {
+        if (params.getQuery() == null) {
+            // no query
             return;
         }
+
+        HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+
+        String query = params.getQuery();
 
         int pageSize = DEFAULT_PAGE_SIZE;
         String pageParam = request.getParameter("page");
@@ -63,37 +62,108 @@ public class SolrSearch extends AbstractSearchComponent {
             //
             // q = title:hippo AND date:[2008-01-08T04:38:24.512Z TO *]
 
+
+            // ************************ CHECK LOCAL PARAMS TO SET *********************************** //
+            // we check whether we need AND-ed or OR-ed results because this needs to be prefixed to the query
+            // Because our schema.xml has <solrQueryParser defaultOperator="OR"/>
+            // we only need to do something in case of AND-ed
+            StringBuilder localParams = new StringBuilder();
+            if (params.isOperatorAnded()) {
+                localParams.append("q.op=AND");
+            }
+
+            // by default in 'text' (all fields) is searched, unless params.getSearchField() != 'all'
+            if (params.getSearchField() != null && !"all".equals(params.getSearchField())) {
+                // we only need to search in some field. This can be added by LocalParam 'df'
+                if (localParams.length() > 0) {
+                    localParams.append(" ");
+                }
+                localParams.append("df="+params.getSearchField());
+            }
+            // ************************ END LOCAL PARAMS TO SET *********************************** //
+
+            // ************************ CHECK DATE RANGE INCLUDED *********************************** //
+            if (params.getFromDate() != null || params.getToDate() != null) {
+                // date range query included. Add this to the query
+                String fromDate;
+                if (params.getFromDate() == null) {
+                    fromDate = "*";
+                } else {
+                    fromDate = DateUtil.getThreadLocalDateFormat().format(params.getFromDate());
+                }
+                String toDate;
+                if (params.getToDate() == null) {
+                    toDate = "*";
+                } else {
+                    toDate = DateUtil.getThreadLocalDateFormat().format(params.getToDate());
+                }
+                query = query + " AND date:["+fromDate+" TO " + toDate + "]";
+                log.debug("Date range added to query : '{}'", query);
+            }
+
+            // ************************ END CHECK DATE RANGE INCLUDED *********************************** //
+            
+            if (localParams.length() > 0) {
+                // prepend local params
+                query = "{!"+localParams.toString()+"}" + query;
+            }
+
+
+            
             HippoQuery hippoQuery = solrManager.createQuery(query);
+
+            if ("external".equals(params.getSearchIn())){
+                hippoQuery.setScopes("http:", "https:");
+            } else if ("current".equals(params.getSearchIn())) {
+                // TODO: this should be the SCOPE :String scope = getSiteContentBaseBean(request).getCanonicalPath();
+                // for this, we first need to index the virtual locations
+                String scope = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
+                hippoQuery.setScopes(scope);
+            }
+            else {
+                // we do not need a scope
+            }
+
+            // Set the limit and offset
             hippoQuery.setLimit(pageSize);
             int offset = (page - 1) * pageSize;
             hippoQuery.setOffset(offset);
 
             // include scoring
-            hippoQuery.getSolrQuery().setIncludeScore(true);
+            if (params.isShowScore()) {
+             hippoQuery.getSolrQuery().setIncludeScore(true);
+            }
 
-            hippoQuery.getSolrQuery().setHighlight(true);
-            hippoQuery.getSolrQuery().setHighlightFragsize(200);
-            hippoQuery.getSolrQuery().setHighlightSimplePre("<b style=\"color:blue\">");
-            hippoQuery.getSolrQuery().setHighlightSimplePost("</b>");
-            hippoQuery.getSolrQuery().addHighlightField("title");
-            hippoQuery.getSolrQuery().addHighlightField("summary");
-            hippoQuery.getSolrQuery().addHighlightField("htmlContent");
+            // if highlighting is enabled
+            if (params.isShowHighlight()) {
+                hippoQuery.getSolrQuery().setHighlight(true);
+                hippoQuery.getSolrQuery().setHighlightFragsize(150);
+                hippoQuery.getSolrQuery().setHighlightSimplePre("<b style=\"color:blue\">");
+                hippoQuery.getSolrQuery().setHighlightSimplePost("</b>");
+                hippoQuery.getSolrQuery().addHighlightField("title");
+                hippoQuery.getSolrQuery().addHighlightField("summary");
+                hippoQuery.getSolrQuery().addHighlightField("htmlContent");
+                //hippoQuery.getSolrQuery()..addHighlightField("*");
+            }
 
-            // enable spelling : note that at least once 'spellcheck.build=true' should be added : for performance
-            // reasons this should not be done every time!!
-            // q=AcademyAwards&spellcheck=true&spellcheck.collate=true&spellcheck.build=true&qt=/spell
+            String sort = params.getSort();
+            // if sort is null, default sort is by score descending
+            if (sort != null) {
+                if ("random".equals(sort)) {
+                    // we map the sort now to <dynamicField name="random_*" type="random" />
+                    // to get a pseudo random search for every new request, we need to map to a 'random' dynamic sort field : Otherwise
+                    // the same random sort keeps being returned as long as the index does not change. We assume 10 random fields is enough
+                    sort = "random_" + new Random().nextInt(10);
+                    hippoQuery.getSolrQuery().addSortField(sort, params.getSortOrder());
+                } else {
+                    hippoQuery.getSolrQuery().addSortField(sort, params.getSortOrder());
+                }
+            }
 
-            //hippoQuery.getSolrQuery().setQueryType("/spell");
-
-           // hippoQuery.getSolrQuery().addSortField("name", org.apache.solr.client.solrj.SolrQuery.ORDER.asc);
-
-            Long start = System.currentTimeMillis();
             HippoQueryResult result = hippoQuery.execute(true);
 
             request.setAttribute("result", result);
-            request.setAttribute("query", query);
-
-           // System.out.println("TOOK " + (System.currentTimeMillis() - start));
+            request.setAttribute("query", params.getQuery());
 
             int maxPages = 20;
 
@@ -129,7 +199,6 @@ public class SolrSearch extends AbstractSearchComponent {
             }
 
         } catch (SolrServerException e) {
-            e.printStackTrace();
             throw new HstComponentException(e);
         }
     }

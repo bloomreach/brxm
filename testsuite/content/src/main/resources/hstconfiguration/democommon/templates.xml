@@ -23,10 +23,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String">
-      <sv:value>header</sv:value>
-      <sv:value>body</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/templates/webpage.jsp</sv:value>
     </sv:property>
@@ -61,9 +57,6 @@
   <sv:node sv:name="threecolumnlayout">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String">
-      <sv:value>content</sv:value>
     </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/components/layout/threecolumnlayout.jsp</sv:value>
@@ -154,7 +147,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String"/>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/templates/rss.jsp</sv:value>
     </sv:property>
@@ -163,7 +155,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String"/>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/components/main/search.jsp</sv:value>
     </sv:property>
@@ -172,9 +163,24 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String"/>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/components/main/solrsearch.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="solrright">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/solrright.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="solrsuggest-ajax">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/solrsuggest-ajaxresult.jsp</sv:value>
     </sv:property>
   </sv:node>
 
@@ -182,7 +188,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String"/>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/components/main/todolist.jsp</sv:value>
     </sv:property>
@@ -191,7 +196,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:containers" sv:type="String"/>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>jsp/components/main/error.jsp</sv:value>
     </sv:property>

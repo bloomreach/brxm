@@ -21,76 +21,70 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%--@elvariable id="result" type="org.hippoecm.hst.solr.content.beans.query.HippoQueryResult"--%>
 
-
-
 <div id="yui-u">
-   <hst:link var="searchURL" path="/solrSearch" />
-   <form action="${searchURL}" method="get">
-      <div><input type="text" name="query" value="${query}" /> <input
-        type="submit" value="Search" /> 
-      </div>
-   </form>
 
-   <c:if test="${query != null && query != ''}">
-  
-    <c:choose>
-      <c:when test="${result.size > 0}">
-        <p></p>
-        <p><b>${result.size}</b> results for <b>${query}</b>.</p>
-  
-        <c:forEach var="hit" items="${result.hits}">
-          <c:set var="bean" value="${hit.contentBean}"/>
-          <hst:link var="link" hippobean="${bean}" />
-          <ul class="list-overview">
-            <li class="title"><a href="${link}">${bean.title}</a> (${hit.score})
-              <div>
-                <c:if test="${hst:isReadable(bean, 'date')}">
-                  <p>
-                    <fmt:formatDate value="${bean.date.time}" type="Date"
-                                    pattern="MMMM d, yyyy h:mm a"/>
-                  </p>
-                </c:if>
-                 <c:forEach var="highlight" items="${hit.highlights}" >
-                  <c:forEach var="excerpt" items="${highlight.excerpts}" >
+  <c:choose>
+    <c:when test="${query eq null}">
+      No search
+    </c:when>
+    <c:otherwise>
+      <c:choose>
+        <c:when test="${result.size > 0}">
+          <p></p>
+          <p><b>${result.size}</b> results for <b>${query}</b>.</p>
+
+          <c:forEach var="hit" items="${result.hits}">
+            <c:set var="bean" value="${hit.contentBean}"/>
+            <hst:link var="link" hippobean="${bean}"/>
+            <ul class="list-overview">
+              <li class="title"><b><a href="${link}">${bean.title}</a></b> <c:if test="${hit.score > 0}">(${hit.score})</c:if>
+                <div>
+                  <c:if test="${hst:isReadable(bean, 'date')}">
                     <p>
-                        ${excerpt}
+                      <fmt:formatDate value="${bean.date.time}" type="Date"
+                                      pattern="MMMM d, yyyy h:mm a"/>
                     </p>
+                  </c:if>
+                  <c:forEach var="highlight" items="${hit.highlights}">
+                    <c:forEach var="excerpt" items="${highlight.excerpts}">
+                      <p>
+                          ${excerpt}
+                      </p>
+                    </c:forEach>
                   </c:forEach>
-                 </c:forEach>
-                <%--c:if test="${hst:isReadable(bean, 'summary')}">
-                  <p>${bean.summary}</p>
-                </c:if--%>
-              </div>
-            </li>
-          </ul>
-        </c:forEach>
-  
-        <c:if test="${fn:length(pages) gt 0}">
-          <ul id="paging-nav">
-            <c:forEach var="page" items="${pages}">
-              <c:set var="active" value="" />
-              <c:choose>
-                <c:when test="${crPage == page}">
-                  <li>${page}</li>
-                </c:when>
-                <c:otherwise>
-                  <hst:renderURL var="pagelink">
-                    <hst:param name="page" value="${page}" />
-                    <hst:param name="query" value="${query}" />
-                  </hst:renderURL>
-                  <li><a href="${pagelink}" title="${page}">${page}</a></li>
-                </c:otherwise>
-              </c:choose>
-            </c:forEach>
-          </ul>
-        </c:if>
-  
-      </c:when>
-      <c:otherwise>
-        <p></p>
-        <p>No results for <b>${query}</b>.</p>
-      </c:otherwise>
-    </c:choose>
-  
-  </c:if>
+                    <%--c:if test="${hst:isReadable(bean, 'summary')}">
+                      <p>${bean.summary}</p>
+                    </c:if--%>
+                </div>
+              </li>
+            </ul>
+          </c:forEach>
+
+          <c:if test="${fn:length(pages) gt 0}">
+            <ul id="paging-nav">
+              <c:forEach var="page" items="${pages}">
+                <c:set var="active" value=""/>
+                <c:choose>
+                  <c:when test="${crPage == page}">
+                    <li>${page}</li>
+                  </c:when>
+                  <c:otherwise>
+                    <hst:renderURL var="pagelink">
+                      <hst:param name="page" value="${page}"/>
+                    </hst:renderURL>
+                    <li><a href="${pagelink}" title="${page}">${page}</a></li>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+            </ul>
+          </c:if>
+
+        </c:when>
+        <c:otherwise>
+          <p></p>
+          <p>No results for <b>${query}</b>.</p>
+        </c:otherwise>
+      </c:choose>
+    </c:otherwise>
+  </c:choose>
 </div>

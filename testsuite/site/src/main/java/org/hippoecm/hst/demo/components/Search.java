@@ -36,10 +36,6 @@ public class Search extends AbstractSearchComponent {
         super.doBeforeRender(request, response);
 
         String query = getPublicRequestParameter(request, "query");
-        
-        if (query == null || "".equals(query)) {
-            query = request.getParameter("query");
-        }
 
         if (query == null) {
             return;

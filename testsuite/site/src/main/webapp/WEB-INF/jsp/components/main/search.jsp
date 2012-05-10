@@ -37,14 +37,14 @@
      <a href="${componentRenderingURL}">Render only this component</a>
      
    </p>
-   
+
    <c:if test="${query != null && query != ''}">
-  
+
     <c:choose>
       <c:when test="${result.totalSize > 0}">
         <p></p>
         <p><b>${result.totalSize}</b> results for <b>${query}</b>.</p>
-  
+
         <c:forEach var="bean" items="${result.hippoBeans}"
           varStatus="indexer">
           <hst:link var="link" hippobean="${bean}" />
@@ -59,7 +59,7 @@
             </li>
           </ul>
         </c:forEach>
-  
+
         <c:if test="${fn:length(pages) gt 0}">
           <ul id="paging-nav">
             <c:forEach var="page" items="${pages}">
@@ -79,13 +79,13 @@
             </c:forEach>
           </ul>
         </c:if>
-  
+
       </c:when>
       <c:otherwise>
         <p></p>
         <p>No results for <b>${query}</b>.</p>
       </c:otherwise>
     </c:choose>
-  
+
   </c:if>
 </div>

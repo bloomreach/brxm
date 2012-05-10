@@ -97,14 +97,16 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
 
         String offsetStr = request.getParameter("offset");
         int offset = 0;
-        try {
-            offset = Integer.parseInt(offsetStr);
-            if (offset < 0) {
-                offset = 0;
+        if (StringUtils.isNotBlank(offsetStr)) {
+            try {
+                offset = Integer.parseInt(offsetStr);
+                if (offset < 0) {
+                    offset = 0;
+                }
+            } catch (NumberFormatException e) {
+                response.setRenderParameter("message", "offset must be a number but was '" + offsetStr + "'");
+                return;
             }
-        } catch (NumberFormatException e) {
-            response.setRenderParameter("message", "offset must be a number but was '" + offsetStr + "'");
-            return;
         }
 
         try {
