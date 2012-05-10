@@ -42,15 +42,17 @@ public class ConcurrentLoginFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws java.io.IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpSession session = req.getSession(false);
+
         if (session != null && session.getAttribute(ATTRIBUTE_SESSIONUSER) != null) {
             ServletContext context = session.getServletContext();
             String user = (String)session.getAttribute(ATTRIBUTE_SESSIONUSER);
             String current = (String)session.getAttribute(ATTRIBUTE_SESSIONMATCH);
             String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
-            if (current == null || !(current.equals("*") || current.equals(match))) {
+            if (current == null || (!current.equals("*") && !current.equals(match))) {
                 session.invalidate();
             }
         }
+
         chain.doFilter(req, response);
     }
 

@@ -32,7 +32,7 @@ public class InvalidLoginPage extends PluginPage {
     static {
         causeKeys = new HashMap<String, String>(3);
         causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
-        causeKeys.put(LoginException.CAUSE.INCORRECT_CAPTCHA.name(), "invalid.captcha");
+        causeKeys.put(LoginException.CAUSE.INCORRECT_CAPTACHA.name(), "invalid.captcha");
         causeKeys.put(LoginException.CAUSE.ACCESS_DENIED.name(), "access.denied");
         causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR.name(), "repository.error");
     }

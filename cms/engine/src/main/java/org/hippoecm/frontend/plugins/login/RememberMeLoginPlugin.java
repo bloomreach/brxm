@@ -96,6 +96,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             if ((retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
                     && (retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)
                     && (retrieveWebRequest().getHttpServletRequest().getAttribute(HAL_REQUEST_ATTRIBUTE_NAME) == null)) {
+
                 retrieveWebRequest().getHttpServletRequest().setAttribute(HAL_REQUEST_ATTRIBUTE_NAME, true);
                 try {
                     tryToAutoLoginWithRememberMe();
@@ -243,6 +244,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     String strings[] = passphrase.split("\\$");
                     if (strings.length == 3) {
                         username = new String(Base64.decodeBase64(strings[1]));
+                        RememberMeLoginPlugin.this.username = username;
                         password = strings[0] + "$" + strings[2];
                     } else {
                         throw new IOException("Invalid cookie format for " + HIPPO_AUTO_LOGIN_COOKIE_NAME);
@@ -282,7 +284,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     success = captchaTextValue.equalsIgnoreCase(imagePass);
                     if (!success) {
                         throw new org.hippoecm.frontend.session.LoginException(
-                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTCHA);
+                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTACHA);
 
                     }
                 }
@@ -292,9 +294,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
 
             if (success) {
-                ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true)
-                        ,usernameTextField.getDefaultModelObjectAsString()
-                        ,false);
+                ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true),
+                        username, false);
 
                 if (rememberme) {
                     Session jcrSession = userSession.getJcrSession();
