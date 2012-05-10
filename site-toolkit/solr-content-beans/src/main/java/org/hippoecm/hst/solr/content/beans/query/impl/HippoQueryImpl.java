@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.solr.content.beans.query.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery;
@@ -25,8 +26,11 @@ import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.HippoSolrManager;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
+import org.slf4j.LoggerFactory;
 
 public class HippoQueryImpl implements HippoQuery {
+    
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(HippoQueryImpl.class);
 
     private HippoSolrManager manager;
 
@@ -48,23 +52,64 @@ public class HippoQueryImpl implements HippoQuery {
 
 
     @Override
-    public void addScope(final String scope) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setScopes(final String... scopes) {
+        setScopes(scopes, true);
     }
 
     @Override
-    public void addScopes(final List<String> scopes) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void setExcludedScopes(final String... scopes) {
+        setScopes(scopes, false);
     }
 
-    @Override
-    public void addExcludedScope(final String scope) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+    private void setScopes(final String[] scopes, boolean include) {
+        if (scopes == null) {
+            throw new IllegalArgumentException("varargs scopes is not allowed to be null");
+        }
+        String fqField ;
+        if (include) {
+            fqField = DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
+        } else {
+            fqField = "-"+DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
+        }
 
-    @Override
-    public void addExcludedScopes(final List<String> scopes) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        
+        // if there is already a scopes FQ set, first remove that one
+        List<String> toRemove = new ArrayList<String>();
+        if (solrQuery.getFilterQueries() != null) {
+            for (String fq : solrQuery.getFilterQueries()) {
+                if (fq.startsWith(fqField)) {
+                    toRemove.add(fq);
+                }
+            }
+            if (!toRemove.isEmpty()) {
+                log.info("The filter query for scopes or excludescopes was already set before. Removing old value");
+                for (String fq : toRemove) {
+                    log.info("removing scope or exclude scope '{}'", fq);
+                    solrQuery.removeFilterQuery(fq);
+                }
+            }
+        }
+
+        StringBuilder scopeFilterQuery = new StringBuilder();
+        for (String scope : scopes) {
+            log.debug("Add scope to search below '{}'", scope);
+            // escape chars like ':'
+            String escapedScope = manager.getQueryParser().escape(scope);
+            if (scopeFilterQuery.length() == 0) {
+                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
+            } else {
+                if (include) {
+                    scopeFilterQuery.append(" OR ");
+                } else {
+                    scopeFilterQuery.append(" AND ");
+                }
+                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
+            }
+        }
+        if (scopeFilterQuery.length() > 0) {
+           solrQuery.addFilterQuery(scopeFilterQuery.toString());
+        }
     }
 
 
@@ -81,14 +126,6 @@ public class HippoQueryImpl implements HippoQuery {
      @Override
     public HippoQueryResult execute(boolean attachProviders) throws SolrServerException {
 
-//        solrQuery.setHighlight(true);
-//
-//        solrQuery.addHighlightField("*");
-//
-//        solrQuery.setIncludeScore(true);
-//
-//        solrQuery.addSortField("name", org.apache.solr.client.solrj.SolrQuery.ORDER.asc);
-
         solrQuery.set("start", offset);
         solrQuery.set("rows", limit);
 
@@ -96,13 +133,12 @@ public class HippoQueryImpl implements HippoQuery {
 
         SolrDocumentList docs = rsp.getResults();
 
-        //System.out.println(rsp.getSpellCheckResponse());
-        //System.out.println(docs.size());
         if (attachProviders) {
             return new HippoQueryResultImpl(rsp, docs , new DocumentObjectBinder(),  manager.getContentBeanValueProviders() );
         }
         return new HippoQueryResultImpl(rsp, docs , new DocumentObjectBinder(), null );
     }
+
 
     @Override
     public void setLimit(int limit) {
@@ -114,4 +150,6 @@ public class HippoQueryImpl implements HippoQuery {
         this.offset = offset;
     }
 
+
+    
 }

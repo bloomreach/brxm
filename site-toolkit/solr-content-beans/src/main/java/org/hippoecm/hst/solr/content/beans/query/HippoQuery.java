@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.solr.content.beans.query;
 
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 
@@ -42,29 +40,22 @@ public interface HippoQuery {
     void setOffset(int offset);
 
     /**
-     * add scope to search below : The scope is an absolute path like /foo/bar/lux or http://www.example.com/news
-     * @param scope
+     * * sets the scopes to search from. Because it is a varargs, you can set multiple <code>scopes</code>. The <code>scopes</code> is an absolute path like /foo/bar/lux or
+     * http://www.example.com/news or http: or https: etc
+     * This method overrides the <code>scopes</code>s that have been set before.
+     * @param scopes the varargs <code>scopes</code> to search below
+     * @throws IllegalArgumentException when <code>scopes</code> is <code>null</code>
      */
-    void addScope(String scope);
-    
-    /**
-     * add scopes to search below : The scope is an absolute path like /foo/bar/lux or http://www.example.com/news
-     * @param scopes
-     */
-    void addScopes(List<String> scopes);
+    void setScopes(String... scopes) throws IllegalArgumentException;
 
     /**
-     * add scope to exclude from search: The scope is an absolute path like /foo/bar/lux or http://www.example.com/news
-     * @param scope
+     * sets the scopes to <b>exclude</b> from searches. Because it is a varargs, you can set multiple <code>scopes</code>s. The <code>scopes</code> is
+     * an absolute path like /foo/bar/lux or http://www.example.com/news or http: or https: etc
+     * This method overrides the <code>scopes</code> that have been set before.
+     * @param scopes   the varargs <code>scopes</code> to NOT return search results from
+     * @throws IllegalArgumentException when <code>scopes</code> is <code>null</code>
      */
-
-    void addExcludedScope(String scope);
-
-    /**
-     * add scopes to exclude from search: The scope is an absolute path like /foo/bar/lux or http://www.example.com/news
-     * @param scopes
-     */
-    void addExcludedScopes(List<String> scopes);
+    void setExcludedScopes(String... scopes);
 
     /**
      * Returns the {@link SolrQuery}. The already set constraints, like scopes and alike

@@ -22,13 +22,39 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
-import org.hippoecm.hst.solr.content.beans.query.HippoQueryManager;
+import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 
 public interface HippoSolrManager {
 
+    /**
+     * @return the {@link SolrServer}
+     * @throws SolrServerException
+     */
     SolrServer getSolrServer() throws SolrServerException;
 
+    /**
+     * <p>
+     * Creates a new {@link HippoQuery} with an initial bootstrappped {@link org.apache.solr.client.solrj.SolrQuery} which
+     * has its {@link org.apache.solr.client.solrj.SolrQuery#setQuery(String)} called with <code>query</code>.
+     * </p>
+     * <p>For <code>query</code> thus the general Solr syntax can be used, see http://wiki.apache.org/solr/SolrQuerySyntax. For example
+     * <pre>
+     *     <code>
+     *        query = title:hippo +createdate:[1976-03-06T23:59:59.999Z TO *]
+     *     </code>
+     *
+     * </pre>
+     * </p>
+     * @param query the <code>query</code> to bootstrap the {@link org.apache.solr.client.solrj.SolrQuery} with.
+     * @return a {@link HippoQuery}
+     */
     HippoQuery createQuery(String query);
+
+    /**
+     * @return a HippoQueryParser instance which can be used to escape or remove Lucene specifc
+     * query chars
+     */
+    HippoQueryParser getQueryParser();
 
     List<ContentBeanValueProvider> getContentBeanValueProviders();
 }

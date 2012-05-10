@@ -28,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.solr.content.beans.BindingException;
 import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
+import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 import org.hippoecm.hst.solr.content.beans.query.impl.HippoQueryImpl;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.repository.api.HippoNode;
@@ -140,6 +141,11 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     @Override
     public HippoQuery createQuery(String query) {
         return new HippoQueryImpl(this, query);
+    }
+
+    @Override
+    public HippoQueryParser getQueryParser() {
+        return HippoQueryParser.getInstance();
     }
 
     @Override
