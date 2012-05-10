@@ -38,6 +38,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.util.DateUtil;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.slf4j.LoggerFactory;
@@ -47,8 +48,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.DocumentObjectBinder {
-
-    private static final FastDateFormat df = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss'Z'", TimeZone.getTimeZone("GMT00:00"));
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(DocumentObjectBinder.class);
 
@@ -500,7 +499,9 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
         private Object format(Object val) {
             if (val instanceof Calendar) {
-                return df.format((Calendar) val);
+                return DateUtil.getThreadLocalDateFormat().format(((Calendar) val).getTime());
+            }if (val instanceof Date) {
+                return DateUtil.getThreadLocalDateFormat().format((Date)val);
             }
             return val;
         }
