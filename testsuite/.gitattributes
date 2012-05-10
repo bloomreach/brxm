@@ -214,6 +214,7 @@ site/src/main/webapp/images/goback.jpg -text svneol=unset#image/jpeg
 site/src/main/webapp/images/headerBack.jpg -text svneol=unset#image/jpeg
 site/src/main/webapp/images/headerBackTop.jpg -text svneol=unset#image/jpeg
 site/src/main/webapp/images/hippo.gif -text
+site/src/main/webapp/images/icons/calendar_icon.gif -text
 site/src/main/webapp/images/icons/document-revert-16.png -text svneol=unset#image/png
 site/src/main/webapp/images/icons/document-save-16.png -text svneol=unset#image/png
 site/src/main/webapp/images/icons/edit-16.png -text svneol=unset#image/png
