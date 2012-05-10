@@ -86,7 +86,7 @@ public class SolrSearchParams {
         }
         if (getPublicRequestParameter(request, "operator") == null) {
             // default OR-ed
-            operator = "or_ed";
+            operator = "and_ed";
         } else {
             operator = getPublicRequestParameter(request, "operator");
         }
@@ -156,7 +156,7 @@ public class SolrSearchParams {
     }
 
     public boolean isOperatorAnded() {
-        return (operator == null) ? false : "and_ed".equals(operator);
+        return (operator == null) ? true : "and_ed".equals(operator);
     }
 
     public String getSearchIn() {
@@ -199,10 +199,10 @@ public class SolrSearchParams {
         request.setAttribute("highlight", showHighlight);
         request.setAttribute("score", showScore);
         request.setAttribute("query", query);
-        if ("and_ed".equals(operator)) {
-            request.setAttribute("operator", "and_ed");
-        } else {
+        if ("or_ed".equals(operator)) {
             request.setAttribute("operator", "or_ed");
+        } else {
+            request.setAttribute("operator", "and_ed");
         }
         request.setAttribute("searchin", searchIn);
         request.setAttribute("searchfield", searchField);

@@ -129,6 +129,16 @@ public class SolrSearch extends AbstractSearchComponent {
             int offset = (page - 1) * pageSize;
             hippoQuery.setOffset(offset);
 
+            // include spellcheck
+            if (params.isShowSpellCheck()) {
+                hippoQuery.getSolrQuery().add("spellcheck", "true");
+                // we only want to spellcheck and return the query input field, not localParams add such
+                hippoQuery.getSolrQuery().add("spellcheck.q", params.getQuery());
+                hippoQuery.getSolrQuery().add("spellcheck.extendedResults", "true");
+                hippoQuery.getSolrQuery().add("spellcheck.collateExtendedResults", "true");
+
+            }
+
             // include scoring
             if (params.isShowScore()) {
              hippoQuery.getSolrQuery().setIncludeScore(true);

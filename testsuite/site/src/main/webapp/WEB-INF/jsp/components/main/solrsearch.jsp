@@ -83,6 +83,31 @@
         <c:otherwise>
           <p></p>
           <p>No results for <b>${query}</b>.</p>
+          Did you mean '<b>${result.queryResponse.spellCheckResponse.collatedResult}</b>' ?
+          <br/><br/>
+          Corrections: <br/>
+          <div>
+            <c:forEach var="collation" items="${result.queryResponse.spellCheckResponse.collatedResults}" >
+              <c:forEach var="correction" items="${collation.misspellingsAndCorrections}">
+                <i>${correction.original}</i> --> <b>${correction.correction}</b><br/>
+              </c:forEach>
+            </c:forEach>
+          </div>
+
+          <br/><br/>
+          <p>
+            Or did you mean one of these below? <br/>
+            <div>
+              <c:forEach var="suggestion" items="${result.queryResponse.spellCheckResponse.suggestions}">
+                <i>${suggestion.token}</i><br/>
+                <c:forEach var="alternative" items="${suggestion.alternatives}" varStatus="counter">
+                  <c:if test="${counter.index < 7}">
+                    &nbsp;&nbsp;&nbsp;${alternative}<br/>
+                  </c:if>
+                </c:forEach>
+              </c:forEach>
+            </div>
+          </p>
         </c:otherwise>
       </c:choose>
     </c:otherwise>

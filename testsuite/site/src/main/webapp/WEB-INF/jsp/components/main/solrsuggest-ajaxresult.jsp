@@ -30,5 +30,5 @@
       &nbsp;&nbsp;&nbsp;${alternative}<br/>
     </c:if>
   </c:forEach>
-</c:forEach>
+ </c:forEach>
 </div>
