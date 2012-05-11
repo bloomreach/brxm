@@ -55,7 +55,37 @@ public interface HippoQuery {
      * @param scopes   the varargs <code>scopes</code> to NOT return search results from
      * @throws IllegalArgumentException when <code>scopes</code> is <code>null</code>
      */
-    void setExcludedScopes(String... scopes);
+    void setExcludedScopes(String... scopes) throws IllegalArgumentException;
+
+    /**
+     * <p>
+     * Method to filter the search result to only <b>include</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     * are of one of the types of <code>classes</code> , or subType if <code>subTypes</code> equals <code>true</code>.
+     * </p>
+     * <p>
+     * When this method is not called at all, the query does not filter on included classes, but returns possibly all classes (unless {@link #setExcludedClasses(boolean, Class[])})
+     * is called)
+     * </p>
+     * @param subTypes whether the result is allowed to contain subtypes of the filter <code>classes</code>
+     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.ContentBean}s 
+     *                of the search result must match one the <code>classes</code>
+     * @throws IllegalArgumentException when <code>classes</code> is <code>null</code>
+     * @see #setExcludedClasses(boolean, Class[])
+     */
+    void setIncludedClasses(boolean subTypes, Class<?>... classes) throws IllegalArgumentException;
+
+    /**
+     * <p>
+     * Method to filter the search result to <b>exclude</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     * are of one of the types of <code>classes</code> , or subType if <code>subTypes</code> equals <code>true</code>.
+     * </p>
+     * @param subTypes whether subtypes of <code>classes</code> should also be excluded
+     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     *                of the search result <b>will not</b> match one the <code>classes</code>
+     * @throws IllegalArgumentException when <code>classes</code> is <code>null</code>
+     * @see #setIncludedClasses(boolean, Class[])
+     */
+    void setExcludedClasses(boolean subTypes, Class<?>... classes) throws IllegalArgumentException;
 
     /**
      * Returns the {@link SolrQuery}. The already set constraints, like scopes and alike

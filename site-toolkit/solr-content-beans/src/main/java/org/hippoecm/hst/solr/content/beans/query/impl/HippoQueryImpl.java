@@ -61,57 +61,21 @@ public class HippoQueryImpl implements HippoQuery {
         setScopes(scopes, false);
     }
 
-    private void setScopes(final String[] scopes, boolean include) {
-        if (scopes == null) {
-            throw new IllegalArgumentException("varargs scopes is not allowed to be null");
+    @Override
+    public void setIncludedClasses(final boolean subTypes, final Class<?>... classes) {
+        if (classes == null) {
+            throw new IllegalArgumentException("varargs classes is not allowed to be null");
         }
-        String fqField ;
-        if (include) {
-            fqField = DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
-        } else {
-            fqField = "-"+DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
-        }
-
-
-        
-        // if there is already a scopes FQ set, first remove that one
-        List<String> toRemove = new ArrayList<String>();
-        if (solrQuery.getFilterQueries() != null) {
-            for (String fq : solrQuery.getFilterQueries()) {
-                if (fq.startsWith(fqField)) {
-                    toRemove.add(fq);
-                }
-            }
-            if (!toRemove.isEmpty()) {
-                log.info("The filter query for scopes or excludescopes was already set before. Removing old value");
-                for (String fq : toRemove) {
-                    log.info("removing scope or exclude scope '{}'", fq);
-                    solrQuery.removeFilterQuery(fq);
-                }
-            }
-        }
-
-        StringBuilder scopeFilterQuery = new StringBuilder();
-        for (String scope : scopes) {
-            log.debug("Add scope to search below '{}'", scope);
-            // escape chars like ':'
-            String escapedScope = manager.getQueryParser().escape(scope);
-            if (scopeFilterQuery.length() == 0) {
-                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
-            } else {
-                if (include) {
-                    scopeFilterQuery.append(" OR ");
-                } else {
-                    scopeFilterQuery.append(" AND ");
-                }
-                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
-            }
-        }
-        if (scopeFilterQuery.length() > 0) {
-           solrQuery.addFilterQuery(scopeFilterQuery.toString());
-        }
+        setClasses(classes, subTypes, true);
     }
 
+    @Override
+    public void setExcludedClasses(final boolean subTypes, final Class<?>... classes) {
+        if (classes == null) {
+            throw new IllegalArgumentException("varargs classes is not allowed to be null");
+        }
+        setClasses(classes, subTypes, false);
+    }
 
     @Override
     public SolrQuery getSolrQuery() {
@@ -128,9 +92,7 @@ public class HippoQueryImpl implements HippoQuery {
 
         solrQuery.set("start", offset);
         solrQuery.set("rows", limit);
-
         QueryResponse rsp = manager.getSolrServer().query(solrQuery);
-
         SolrDocumentList docs = rsp.getResults();
 
         if (attachProviders) {
@@ -149,7 +111,104 @@ public class HippoQueryImpl implements HippoQuery {
     public void setOffset(int offset) {
         this.offset = offset;
     }
-
-
     
+    private void setScopes(final String[] scopes, boolean include) {
+        String fqField ;
+        if (include) {
+            fqField = DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
+        } else {
+            fqField = "-"+DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH_HIERARCHY;
+        }
+
+        // if there is already a scopes FQ for fqField set, first remove that one
+        List<String> toRemove = new ArrayList<String>();
+        if (solrQuery.getFilterQueries() != null) {
+            for (String fq : solrQuery.getFilterQueries()) {
+                if (fq.startsWith(fqField)) {
+                    toRemove.add(fq);
+                }
+            }
+            if (!toRemove.isEmpty()) {
+                log.warn("The filter query for fqField '{}' for scopes or excludescopes was already set before. Removing old value", fqField);
+                for (String fq : toRemove) {
+                    log.warn("removing scope or exclude scope '{}'", fq);
+                    solrQuery.removeFilterQuery(fq);
+                }
+            }
+        }
+
+        StringBuilder scopeFilterQuery = new StringBuilder();
+        for (String scope : scopes) {
+            log.debug("Add scope to search below '{}'", scope);
+            // escape chars like ':'
+            String escapedScope = manager.getQueryParser().escape(scope);
+            if (scopeFilterQuery.length() == 0) {
+                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
+            } else {
+                if (include) {
+                    // inclusions must be OR-ed
+                    scopeFilterQuery.append(" OR ");
+                } else {
+                    // exclusion must be AND-ed
+                    scopeFilterQuery.append(" AND ");
+                }
+                scopeFilterQuery.append(fqField).append(":").append(escapedScope);
+            }
+        }
+        if (scopeFilterQuery.length() > 0) {
+            solrQuery.addFilterQuery(scopeFilterQuery.toString());
+        }
+    }
+
+
+    private void setClasses(final Class<?>[] classes, boolean subTypes, boolean include) {
+        String fqField ;
+        if (subTypes) {
+            fqField = DocumentObjectBinder.HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY;
+        } else {
+            fqField = DocumentObjectBinder.HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME;
+        }
+        if (!include) {
+            fqField = "-"+fqField;
+        } 
+        // if there is already a classes FQ for fqField set, first remove that one
+        List<String> toRemove = new ArrayList<String>();
+        if (solrQuery.getFilterQueries() != null) {
+            for (String fq : solrQuery.getFilterQueries()) {
+                if (fq.startsWith(fqField)) {
+                    toRemove.add(fq);
+                }
+            }
+            if (!toRemove.isEmpty()) {
+                log.warn("The filter query for fqField '{}' for includedClasses or excludedClasses was already set before. Removing old value", fqField);
+                for (String fq : toRemove) {
+                    log.warn("removing includedClasses or excludedClasses scope '{}'", fq);
+                    solrQuery.removeFilterQuery(fq);
+                }
+            }
+        }
+        
+        StringBuilder classesFilterQuery = new StringBuilder();
+        for (Class<?> clazz : classes) {
+            log.debug("Add clazz to search query '{}'", clazz.getName());
+            // escape chars like ':'
+            if (classesFilterQuery.length() == 0) {
+                classesFilterQuery.append(fqField).append(":").append(clazz.getName());
+            } else {
+                if (include) {
+                    // inclusions must be OR-ed
+                    classesFilterQuery.append(" OR ");
+                } else {
+                    // exclusion must be AND-ed
+                    classesFilterQuery.append(" AND ");
+                }
+                classesFilterQuery.append(fqField).append(":").append(clazz.getName());
+            }
+        }
+        if (classesFilterQuery.length() > 0) {
+            solrQuery.addFilterQuery(classesFilterQuery.toString());
+        }
+    }
+
+
 }
