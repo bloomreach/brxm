@@ -189,8 +189,10 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
                                 Node canonical = ((HippoNode)node).getCanonicalNode();
                                 if(canonical != null) {
                                     String identifier = canonical.getIdentifier();
-                                    if (bean.getCanonicalUUID() != null && !bean.getCanonicalUUID().equals(identifier)) {
-                                        throw new BindingException("At path '"+node.getPath()+"' there was indexed a different canonical jcr node then there is currently at '"+canonical.getPath()+"'");
+                                    if (bean.getCanonicalUUID() == null) {
+                                       log.warn("Cannot check bean against canonical uuid because cannot get canonical uuid for '{}'", contentBean.getPath());
+                                    } else if (!bean.getCanonicalUUID().equals(identifier)) {
+                                       throw new BindingException("At path '"+node.getPath()+"' there was indexed a different canonical jcr node then there is currently at '"+canonical.getPath()+"'");
                                     }
                                 }
                             }
