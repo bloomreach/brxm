@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -24,10 +23,7 @@ import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
@@ -110,7 +106,19 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     protected void tryToAutoLoginWithRememberMe() {
         SignInForm signInForm = (SignInForm) createSignInForm("rememberMeAutoLoginSignInForm");
-        signInForm.onSubmit();
+
+        Cookie remembermeCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
+        String passphrase = remembermeCookie.getValue();
+        String strings[] = passphrase.split("\\$");
+        if (strings.length == 3) {
+            username = new String(Base64.decodeBase64(strings[1]));
+            password = strings[0] + "$" + strings[2];
+
+            signInForm.onSubmit();
+        } else {
+            error("Invalid cookie format for " + HIPPO_AUTO_LOGIN_COOKIE_NAME);
+        }
+
     }
 
     @Override
@@ -233,38 +241,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            String username = RememberMeLoginPlugin.this.username;
-            String password = RememberMeLoginPlugin.this.password;
-
-            if (rememberme) {
-                Cookie remembermeCookie = retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
-                if (remembermeCookie != null) {
-                    String passphrase = remembermeCookie.getValue();
-                    String strings[] = passphrase.split("\\$");
-                    if (strings.length == 3) {
-                        username = new String(Base64.decodeBase64(strings[1]));
-                        RememberMeLoginPlugin.this.username = username;
-                        password = strings[0] + "$" + strings[2];
-                    } else {
-                        throw new IOException("Invalid cookie format for " + HIPPO_AUTO_LOGIN_COOKIE_NAME);
-                    }
-
-                    for (Callback callback : callbacks) {
-                        if (callback instanceof NameCallback) {
-                            ((NameCallback)callback).setName(username);
-                        } else if (callback instanceof PasswordCallback) {
-                            ((PasswordCallback)callback).setPassword(password.toCharArray());
-                        }
-                    }
-                    return;
-                }
-            }
-
-            super.handle(callbacks);
-        }
-
-        @Override
         public final void onSubmit() {
             final PluginUserSession userSession = (PluginUserSession) getSession();
 
@@ -278,7 +254,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             PageParameters loginExceptionPageParameters = null;
 
             try {
-                userSession.login(new UserCredentials(this));
+                userSession.login(new UserCredentials(new SimpleCredentials(username, password.toCharArray())));
                 // Check if captcha is shown and then check whether the provided value is correct or not
                 if (captchaImage.isVisible() && captchaTextField.isVisible()) {
                     success = captchaTextValue.equalsIgnoreCase(imagePass);

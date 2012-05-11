@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,11 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
@@ -106,7 +101,7 @@ public class LoginPlugin extends RenderPlugin {
         container.getHeaderResponse().renderOnLoadJavascript("document.forms.signInForm.username.focus();");
     }
 
-    protected class SignInForm extends Form implements CallbackHandler {
+    protected class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
 
         protected final DropDownChoice<String> locale;
@@ -245,7 +240,7 @@ public class LoginPlugin extends RenderPlugin {
             boolean success = true;
             PageParameters loginExceptionPageParameters = null;
             try {
-                userSession.login(new UserCredentials(this));
+                userSession.login(new UserCredentials(new SimpleCredentials(username, password == null ? null : password.toCharArray())));
             } catch (LoginException le) {
                 log.debug(ERROR_MESSAGE_LOGIN_FAILURE, le);
                 success = false;
@@ -255,18 +250,6 @@ public class LoginPlugin extends RenderPlugin {
             ConcurrentLoginFilter.validateSession(session, username, false);
             userSession.setLocale(new Locale(selectedLocale));
             redirect(success, loginExceptionPageParameters);
-        }
-
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for (Callback callback : callbacks) {
-                if (callback instanceof NameCallback) {
-                    NameCallback nameCallback = (NameCallback) callback;
-                    nameCallback.setName(username);
-                } else if (callback instanceof PasswordCallback) {
-                    PasswordCallback passwordCallback = (PasswordCallback) callback;
-                    passwordCallback.setPassword(password.toCharArray());
-                }
-            }
         }
 
         protected PageParameters buildPageParameters(LoginException le) {
