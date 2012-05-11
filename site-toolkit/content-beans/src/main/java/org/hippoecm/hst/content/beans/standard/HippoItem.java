@@ -160,7 +160,14 @@ public class HippoItem implements HippoBean {
     @Override
     @IndexField(name="canonicalUUID")
     public String getCanonicalUUID() {
-        return canonicalUUID == null ? getValueProvider().getIdentifier() : canonicalUUID;
+        if (canonicalUUID != null) {
+            return canonicalUUID;
+        }
+        if (getValueProvider() == null) {
+            log.warn("Cannot get canonicalUUID for '{}' because no value provider. Return null", getPath());
+            return null;
+        }
+        return getValueProvider().getIdentifier();
     }
 
     public void setCanonicalUUID(String canonicalUUID) {
