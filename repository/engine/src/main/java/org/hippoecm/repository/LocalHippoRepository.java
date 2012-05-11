@@ -50,7 +50,7 @@ import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.security.SecurityManager;
+import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.updater.UpdaterEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,13 +276,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 initializeReindex();
             }
             initializeStartup();
-            ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
+            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).init();
             if (upgradeValidateFlag) {
                 log.warn("post migration cycle validating content");
                 ((org.hippoecm.repository.impl.SessionDecorator)rootSession).postValidation();
             }
         } else {
-            ((SecurityManager) jackrabbitRepository.getSecurityManager()).init();
+            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).init();
         }
     }
 

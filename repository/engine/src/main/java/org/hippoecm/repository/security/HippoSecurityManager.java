@@ -18,6 +18,7 @@ package org.hippoecm.repository.security;
 import java.security.Principal;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
@@ -26,6 +27,13 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
 
     @SuppressWarnings("unused")
     static final String SVN_ID = "$Id$";
+
+    /**
+     * Initialize the SecurityManager.
+     * This method is a temporary fix for REPO-368 and will be removed in the future.
+     * @throws RepositoryException
+     */
+    void init() throws RepositoryException;
 
     /**
      * Get the user, group and facet auth principals to the user. The principals 
