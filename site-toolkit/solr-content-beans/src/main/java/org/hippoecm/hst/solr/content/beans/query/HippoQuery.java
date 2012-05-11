@@ -23,7 +23,7 @@ public interface HippoQuery {
     /**
      * The default limit that is used for a HstQuery. Use {@link #setLimit(int)} if you need to override this value.
      */
-    final static int DEFAULT_LIMIT = 100;
+    final static int DEFAULT_LIMIT = 10;
 
     /**
      * Sets the limit of search results.

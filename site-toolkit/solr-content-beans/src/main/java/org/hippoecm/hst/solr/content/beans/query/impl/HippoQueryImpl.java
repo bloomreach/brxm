@@ -24,6 +24,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.CommonParams;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.HippoSolrManager;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
@@ -38,9 +39,6 @@ public class HippoQueryImpl implements HippoQuery {
 
     private SolrQuery solrQuery;
 
-    private int limit = HippoQuery.DEFAULT_LIMIT;
-
-    private int offset;
 
     public HippoQueryImpl(HippoSolrManager manager, String query) {
         this.manager = manager;
@@ -92,8 +90,29 @@ public class HippoQueryImpl implements HippoQuery {
     @Override
     public HippoQueryResult execute(boolean attachProviders) throws SolrServerException {
 
-        solrQuery.set("start", offset);
-        solrQuery.set("rows", limit);
+        if (solrQuery.getRows() == null) {
+            // limit was not set. Set default limit
+            solrQuery.setRows(HippoQuery.DEFAULT_LIMIT);
+        }
+
+
+        // We ALWAYS need to fetch the following STORED properties (perhaps they are missing, however we need to try to fetch them)
+        // if the getFields does not start with * we need to include the fields below
+        // 1. id
+        // 2. HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME
+        // 3. canonicalUUID
+        // 4. name
+        // 5. comparePath
+        // hence add these fields here to be fetched
+        // If all fields are already retrieved nothing changes by adding this here
+
+        if (solrQuery.getFields() != null && !solrQuery.getFields().startsWith("*")) {
+            solrQuery.addField("id");
+            solrQuery.addField(DocumentObjectBinder.HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME);
+            solrQuery.addField("canonicalUUID");
+            solrQuery.addField("name");
+            solrQuery.addField("comparePath");
+        }
 
         long start = System.currentTimeMillis();
         QueryResponse rsp = manager.getSolrServer().query(solrQuery);
@@ -115,12 +134,12 @@ public class HippoQueryImpl implements HippoQuery {
 
     @Override
     public void setLimit(int limit) {
-        this.limit = limit;
+        solrQuery.setRows(limit);
     }
 
     @Override
     public void setOffset(int offset) {
-        this.offset = offset;
+        solrQuery.setStart(offset);
     }
     
     private void setScopes(final String[] scopes, boolean include) {
