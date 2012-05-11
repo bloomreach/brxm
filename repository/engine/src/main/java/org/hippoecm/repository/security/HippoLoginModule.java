@@ -83,7 +83,7 @@ public class HippoLoginModule implements LoginModule {
             RepositoryCallback repositoryCallback = new RepositoryCallback();
             callbackHandler.handle(new Callback[] { ccb, repositoryCallback });
             SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
-            SecurityManager securityManager = ((SecurityManager)((RepositoryImpl)repositoryCallback.getSession().getRepository()).getSecurityManager());
+            HippoSecurityManager securityManager = ((HippoSecurityManager)((RepositoryImpl)repositoryCallback.getSession().getRepository()).getSecurityManager());
 
             ImpersonationCallback impersonationCallback = new ImpersonationCallback();
             try {
@@ -118,7 +118,6 @@ public class HippoLoginModule implements LoginModule {
                 // TODO: check somehow if the user is allowed to impersonate
 
                 log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
-                principals.add(new UserPrincipal(creds.getUserID()));
                 securityManager.assignPrincipals(principals, creds);
 
                 return (validLogin = true);
@@ -126,9 +125,8 @@ public class HippoLoginModule implements LoginModule {
 
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
-                principals.add(new AnonymousPrincipal());
                 log.debug("Authenticated as Anonymous user.");
-                securityManager.assignPrincipals(principals, (String)null);
+                securityManager.assignPrincipals(principals, creds);
                 return (validLogin = true);
             }
 
@@ -141,9 +139,8 @@ public class HippoLoginModule implements LoginModule {
             log.debug("Trying to authenticate as {}", creds.getUserID());
             if (securityManager.authenticate(creds)) {
                 log.info("Authenticated as {}", creds.getUserID());
-                principals.add(new UserPrincipal(creds.getUserID()));
-                validLogin = true;
                 securityManager.assignPrincipals(principals, creds);
+                validLogin = true;
             } else {
                 log.info("NOT Authenticated as {}", creds.getUserID());
                 principals.clear();

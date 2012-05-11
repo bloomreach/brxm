@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -38,9 +39,8 @@ import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
-import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
-
+import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 public class JAASLoginModule implements LoginModule {
@@ -81,16 +81,15 @@ public class JAASLoginModule implements LoginModule {
             if (impersonator != null) {
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
                     throw new LoginException("Anonymous user is not allowed to impersonate");
-                }
-                if (impersonator != null && !impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
+                } else if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
                     principals.add(new SystemPrincipal());
-                    return (validLogin = true);
+                    validLogin = true;
+                    return true;
                 } else {
                     if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
                         throw new LoginException("Valid user principals required for impersonation");
                     }
                     Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
-                    String impersonarorId = iup.getName();
                     // TODO: check somehow if the user is allowed to impersonate
                 }
                 validLogin = true;
@@ -154,17 +153,22 @@ public class JAASLoginModule implements LoginModule {
         callbacks.add(repositoryCallback);
         try {
             callbackHandler.handle(callbacks.toArray(new Callback[callbacks.size()]));
-            SecurityManager securityManager = null;
+            HippoSecurityManager securityManager = null;
             try {
                 if(repositoryCallback.getSession() != null) {
-                    securityManager =  ((SecurityManager) ((RepositoryImpl) repositoryCallback.getSession().getRepository()).getSecurityManager());
+                    securityManager =  ((HippoSecurityManager) ((RepositoryImpl) repositoryCallback.getSession().getRepository()).getSecurityManager());
                 }
             } catch(RepositoryException ex) {
+            }
+            
+            // SimpleCredentials use clone() on the password parameter, so set it to an empty char array if null.
+            if (password == null) {
+                password = new char[0];
             }
             if(!validLogin) {
                 if (username != null) {
                     if (securityManager != null) {
-                        if (!securityManager.authenticate(new SimpleCredentials(username, (password==null?new char[0]:password)))) {
+                        if (!securityManager.authenticate(new SimpleCredentials(username, password))) {
                             throw new LoginException("invalid login");
                         }
                     } else {
@@ -174,7 +178,7 @@ public class JAASLoginModule implements LoginModule {
                 validLogin = !principals.isEmpty();
             }
             if(securityManager != null) {
-                securityManager.assignPrincipals(principals, username);
+                securityManager.assignPrincipals(principals, new SimpleCredentials(username, password));
                 if (username == null) {
                     principals.add(new AnonymousPrincipal());
                 } else {

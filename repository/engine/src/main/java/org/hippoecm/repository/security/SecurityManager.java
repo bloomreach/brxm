@@ -55,7 +55,6 @@ import org.apache.jackrabbit.core.config.SecurityConfig;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
@@ -82,7 +81,7 @@ import org.hippoecm.repository.security.user.DummyUserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecurityManager implements JackrabbitSecurityManager {
+public class SecurityManager implements HippoSecurityManager {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -431,60 +430,6 @@ public class SecurityManager implements JackrabbitSecurityManager {
         return domains;
     }
 
-//    /**
-//     * Get the numerical permissions of a role.
-//     * @param roleId
-//     * @return
-//     * @deprecated
-//     */
-//    public int getJCRPermissionsForRole(String roleId) {
-//        int permissions = 0;
-//        Node roleNode;
-//
-//        // does the role already exists
-//        log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
-//        String path = rolesPath + "/" + roleId;
-//        try {
-//            try {
-//                roleNode = session.getRootNode().getNode(path);
-//                log.trace("Found role node: {}", roleNode.getName());
-//            } catch (PathNotFoundException e) {
-//                log.warn("Role not found: {}", roleId);
-//                return Role.NONE;
-//            }
-//            try {
-//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREAD).getBoolean()) {
-//                    log.trace("Adding jcr read permissions for role: {}", roleId);
-//                    permissions += Role.READ;
-//                }
-//            } catch (PathNotFoundException e) {
-//                // ignore, role doesn't has the permission
-//            }
-//
-//            try {
-//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRWRITE).getBoolean()) {
-//                    log.trace("Adding jcr write permissions for role: {}", roleId);
-//                    permissions += Role.WRITE;
-//                }
-//            } catch (PathNotFoundException e) {
-//                // ignore, role doesn't has the permission
-//            }
-//
-//            try {
-//                if (roleNode.getProperty(HippoNodeType.HIPPO_JCRREMOVE).getBoolean()) {
-//                    log.trace("Adding jcr remove permissions for role: {}", roleId);
-//                    permissions += Role.REMOVE;
-//                }
-//            } catch (PathNotFoundException e) {
-//                // ignore, role doesn't has the permission
-//            }
-//        } catch (RepositoryException e) {
-//            log.error("Error while looking up role: " + roleId, e);
-//            return Role.NONE;
-//        }
-//        return permissions;
-//    }
-
     private Set<String> getRolesForRole(String roleId) {
         return getRolesForRole(roleId, new HashSet<String>());
     }
@@ -615,24 +560,17 @@ public class SecurityManager implements JackrabbitSecurityManager {
     public void assignPrincipals(Set<Principal>principals, SimpleCredentials creds) {
         String userId = null;
         String providerId = null;
-        try {
-           if (creds != null) {
-               userId = creds.getUserID();
-               providerId = (String) creds.getAttribute("providerId");
-           }
-           assignUserPrincipals(principals, userId);
-           assignGroupPrincipals(principals, userId, providerId);
-           assignFacetAuthPrincipals(principals, userId, providerId);
-        } catch(RepositoryException ex) {
-            log.warn("unable to assign principals for user", ex);
-        }
-    }
 
-    public void assignPrincipals(Set<Principal>principals, String userId) {
-        String providerId = null;
+        if (creds != null) {
+            userId = creds.getUserID();
+            providerId = (String) creds.getAttribute("providerId");
+        }
+
+        // XXX: Fixme, why is this needed??
         if (userId != null && userId.equals("system")) {
             userId = null;
         }
+
         try {
            assignUserPrincipals(principals, userId);
            assignGroupPrincipals(principals, userId, providerId);
