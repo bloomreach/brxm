@@ -19,10 +19,11 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%--@elvariable id="result" type="org.hippoecm.hst.solr.content.beans.query.HippoQueryResult"--%>
+<%--@elvariable id="queryResponse" type="org.apache.solr.client.solrj.response.QueryResponse"--%>
 
 <div class="yui-b">
-  <hst:link var="searchURL" path="/solrfaceting" />
+
+  <hst:link var="searchURL"  />
   <form action="${searchURL}" method="get">
     <div>
       <b>Query:</b>
@@ -33,4 +34,39 @@
     </div>
 
   </form>
+
+  <hst:link var="currentLink"/>
+
+  <c:forEach var="facetField" items="${queryResponse.facetFields}">
+    <br/>
+    ${facetField.name}<br/>
+    <ul style="padding-left:20px;">
+      <c:forEach var="facet" items="${facetField.values}">
+        <li>
+            <c:set var="facetLink" value="${currentLink}/${facet.facetField.name}/${facet.name}" />
+            <c:choose>
+              <c:when test="${query eq null}">
+                <a href="${facetLink}">${facet.name} (${facet.count})</a>
+              </c:when>
+              <c:otherwise>
+                <a href="${facetLink}?query=${query}">${facet.name} (${facet.count})</a>
+              </c:otherwise>
+            </c:choose>
+            
+        </li>
+      </c:forEach>
+    </ul>
+  </c:forEach>
+  <c:forEach var="facetRange" items="${queryResponse.facetRanges}">
+    <br/>
+    ${facetRange.name}<br/>
+    <ul style="padding-left:20px;">
+      <c:forEach var="facet" items="${facetRange.counts}">
+        <li>
+            ${facet.value} (${facet.count})
+        </li>
+      </c:forEach>
+    </ul>
+  </c:forEach>
+
 </div>

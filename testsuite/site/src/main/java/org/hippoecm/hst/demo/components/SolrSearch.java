@@ -65,7 +65,7 @@ public class SolrSearch extends AbstractSearchComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         SolrSearchParams params = new SolrSearchParams(request);
 
-        if (params.getQuery() == null) {
+        if (params.getQuery() == null && request.getRequestContext().getResolvedSiteMapItem().getParameter("facetpath") == null) {
             // no query
             return;
         }
@@ -73,6 +73,13 @@ public class SolrSearch extends AbstractSearchComponent {
         HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
 
         String query = params.getQuery();
+        if (query == null) {
+            // faceted path is not null
+            query = "*:*";
+            request.setAttribute("query", "*");
+        } else {
+            request.setAttribute("query", params.getQuery());
+        }
 
         int pageSize = DEFAULT_PAGE_SIZE;
         String pageParam = request.getParameter("page");
@@ -169,6 +176,28 @@ public class SolrSearch extends AbstractSearchComponent {
             // ********************* END CHECK SEARCH FOR SPECIFIC TYPES ONLY ******************* //
 
 
+            // ********************* ACCOUNT FOR FACETED NAVIGATION PATH IF PRESENT *********** //
+            String facetPath = request.getRequestContext().getResolvedSiteMapItem().getParameter("facetpath");
+            if (facetPath != null) {
+                // there is a facet path : Account for the constraints
+                // the facet path looks like key/value/key/value
+
+                String[] constraints = facetPath.split("/");
+                if (constraints.length % 2 != 0) {
+                    log.debug("Invalid constraints because not equal number of keys and values");
+                } else {
+                    int i = 0;
+                    while (i < constraints.length) {
+                        String facetField = constraints[i];
+                        String facetValue = constraints[i+1];
+                        hippoQuery.getSolrQuery().addFilterQuery(facetField + ":" + solrManager.getQueryParser().escape(facetValue));
+                        i+=2;
+                    }
+                }
+            }
+
+            // ********************* END ACCOUNT FOR FACETED NAVIGATION PATH IF PRESENT ******* //
+
 
             // Set the limit and offset
             hippoQuery.setLimit(pageSize);
@@ -187,8 +216,13 @@ public class SolrSearch extends AbstractSearchComponent {
 
             // include scoring
             if (params.isShowScore()) {
-             hippoQuery.getSolrQuery().setIncludeScore(true);
+                hippoQuery.getSolrQuery().setIncludeScore(true);
             }
+
+            // OPTIONAL PERFORMANCE : we are only interested to retrieve the TITLE and SUMMARY fields.
+            // If you do not specify a setFields, ALL fields are retrieved
+            // hippoQuery.getSolrQuery().setFields("title", "summary", "score")
+            // hippoQuery.getSolrQuery().addHighlightField("htmlContent");
 
             // if highlighting is enabled
             if (params.isShowHighlight()) {
@@ -198,7 +232,7 @@ public class SolrSearch extends AbstractSearchComponent {
                 hippoQuery.getSolrQuery().setHighlightSimplePost("</b>");
                 hippoQuery.getSolrQuery().addHighlightField("title");
                 hippoQuery.getSolrQuery().addHighlightField("summary");
-                hippoQuery.getSolrQuery().addHighlightField("htmlContent");
+                //hippoQuery.getSolrQuery().addHighlightField("htmlContent");
                 //hippoQuery.getSolrQuery()..addHighlightField("*");
             }
 
@@ -219,7 +253,6 @@ public class SolrSearch extends AbstractSearchComponent {
             HippoQueryResult result = hippoQuery.execute(true);
 
             request.setAttribute("result", result);
-            request.setAttribute("query", params.getQuery());
 
             int maxPages = 20;
 

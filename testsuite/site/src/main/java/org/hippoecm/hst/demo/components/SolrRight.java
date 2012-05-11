@@ -29,8 +29,6 @@ public class SolrRight extends AbstractSearchComponent {
 
     public static final String SOLR_MODULE_NAME = "org.hippoecm.hst.solr";
 
-    public static final int DEFAULT_PAGE_SIZE = 5;
-
     @Override
     public void doBeforeServeResource(final HstRequest request, final HstResponse response) throws HstComponentException {
         if (request.getParameter("suggestquery") == null) {
@@ -51,6 +49,7 @@ public class SolrRight extends AbstractSearchComponent {
             // because suggestions reuse the spell check component, we can use the spell check response
             request.setAttribute("collated",result.getQueryResponse().getSpellCheckResponse().getCollatedResult());
             request.setAttribute("suggestions",result.getQueryResponse().getSpellCheckResponse().getSuggestions());
+
 
         } catch (SolrServerException e) {
             throw new HstComponentException(e);

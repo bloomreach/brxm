@@ -19,7 +19,6 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%--@elvariable id="result" type="org.hippoecm.hst.solr.content.beans.query.HippoQueryResult"--%>
 
 <hst:element name="link" var="jquerytheme">
   <hst:attribute name="id" value="jquery-theme"/>
@@ -130,7 +129,7 @@
       <input type="checkbox" name="type" value="NewsBean" <c:if test="${types['NewsBean'] eq 'NewsBean'}">checked</c:if> /> News documents<br />
       <input type="checkbox" name="type" value="ProductBean" <c:if test="${types['ProductBean'] eq 'ProductBean'}">checked</c:if> /> Product documents<br />
       <input type="checkbox" name="type" value="WikiBean" <c:if test="${types['WikiBean'] eq 'WikiBean'}">checked</c:if> /> Wiki documents<br />
-      <input type="checkbox" name="type" value="HippoBean" <c:if test="${types['HippoBean'] eq 'HippoBean'}">checked</c:if> /> ONLY JCR documents<br />
+      <input type="checkbox" name="type" value="HippoBean" <c:if test="${types['HippoBean'] eq 'HippoBean'}">checked</c:if> /> HippoBean documents (check include subtypes needed)<br />
       <input type="checkbox" name="type" value="GoGreenProductBean" <c:if test="${types['GoGreenProductBean'] eq 'GoGreenProductBean'}">checked</c:if> /> GoGreenProductBean document<br />
 
       <br/>

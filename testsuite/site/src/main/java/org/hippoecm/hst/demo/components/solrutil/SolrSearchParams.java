@@ -57,25 +57,25 @@ public class SolrSearchParams {
         this.request =  request;
         if (getPublicRequestParameter(request, "suggest") == null) {
             // default true
-            showSuggest = true;
+            showSuggest = false;
         } else {
             showSuggest = (Boolean)ConvertUtils.convert(getPublicRequestParameter(request, "suggest"), Boolean.class);
         }
         if (getPublicRequestParameter(request, "spellcheck") == null) {
             // default true
-            showSpellCheck = true;
+            showSpellCheck = false;
         } else {
             showSpellCheck = (Boolean)ConvertUtils.convert(getPublicRequestParameter(request, "spellcheck"), Boolean.class);
         }
         if (getPublicRequestParameter(request, "highlight") == null) {
             // default true
-            showHighlight = true;
+            showHighlight = false;
         } else {
             showHighlight = (Boolean)ConvertUtils.convert(getPublicRequestParameter(request, "highlight"), Boolean.class);
         }
         if (getPublicRequestParameter(request, "score") == null) {
             // default true
-            showScore = true;
+            showScore = false;
         } else {
             showScore = (Boolean)ConvertUtils.convert(getPublicRequestParameter(request, "score"), Boolean.class);
         }

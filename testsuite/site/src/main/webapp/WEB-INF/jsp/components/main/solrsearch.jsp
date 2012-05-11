@@ -32,7 +32,25 @@
         <c:when test="${result.size > 0}">
           <p></p>
           <p><b>${result.size}</b> results for <b>${query}</b>.</p>
-
+          <c:if test="${fn:length(pages) gt 0}">
+             <ul id="paging-nav"> <b>pages</b>
+              <c:forEach var="page" items="${pages}">
+                <c:set var="active" value=""/>
+                <c:choose>
+                  <c:when test="${crPage == page}">
+                    <li>${page}</li>
+                  </c:when>
+                  <c:otherwise>
+                    <hst:renderURL var="pagelink">
+                      <hst:param name="page" value="${page}"/>
+                    </hst:renderURL>
+                    <li><a href="${pagelink}" title="${page}">${page}</a></li>
+                  </c:otherwise>
+                </c:choose>
+              </c:forEach>
+            </ul>
+          </c:if>
+          <p></p>
           <c:forEach var="hit" items="${result.hits}">
             <c:set var="bean" value="${hit.contentBean}"/>
             <hst:link var="link" hippobean="${bean}"/>
@@ -60,54 +78,37 @@
             </ul>
           </c:forEach>
 
-          <c:if test="${fn:length(pages) gt 0}">
-            <ul id="paging-nav">
-              <c:forEach var="page" items="${pages}">
-                <c:set var="active" value=""/>
-                <c:choose>
-                  <c:when test="${crPage == page}">
-                    <li>${page}</li>
-                  </c:when>
-                  <c:otherwise>
-                    <hst:renderURL var="pagelink">
-                      <hst:param name="page" value="${page}"/>
-                    </hst:renderURL>
-                    <li><a href="${pagelink}" title="${page}">${page}</a></li>
-                  </c:otherwise>
-                </c:choose>
-              </c:forEach>
-            </ul>
-          </c:if>
-
         </c:when>
         <c:otherwise>
           <p></p>
           <p>No results for <b>${query}</b>.</p>
-          Did you mean '<b>${result.queryResponse.spellCheckResponse.collatedResult}</b>' ?
-          <br/><br/>
-          Corrections: <br/>
-          <div>
-            <c:forEach var="collation" items="${result.queryResponse.spellCheckResponse.collatedResults}" >
-              <c:forEach var="correction" items="${collation.misspellingsAndCorrections}">
-                <i>${correction.original}</i> --> <b>${correction.correction}</b><br/>
-              </c:forEach>
-            </c:forEach>
-          </div>
-
-          <br/><br/>
-          <p>
-            Or did you mean one of these below? <br/>
+          <c:if test="${result.queryResponse.spellCheckResponse != null}">
+            Did you mean '<b>${result.queryResponse.spellCheckResponse.collatedResult}</b>' ?
+            <br/><br/>
+            Corrections: <br/>
             <div>
-              <c:forEach var="suggestion" items="${result.queryResponse.spellCheckResponse.suggestions}">
-                <i>${suggestion.token}</i><br/>
-                <c:forEach var="alternative" items="${suggestion.alternatives}" varStatus="counter">
-                  <c:if test="${counter.index < 7}">
-                    &nbsp;&nbsp;&nbsp;${alternative}<br/>
-                  </c:if>
+              <c:forEach var="collation" items="${result.queryResponse.spellCheckResponse.collatedResults}" >
+                <c:forEach var="correction" items="${collation.misspellingsAndCorrections}">
+                  <i>${correction.original}</i> --> <b>${correction.correction}</b><br/>
                 </c:forEach>
               </c:forEach>
             </div>
-          </p>
+
+            <br/><br/>
+            <p>
+              Or did you mean one of these below? <br/>
+              <div>
+                <c:forEach var="suggestion" items="${result.queryResponse.spellCheckResponse.suggestions}">
+                  <i>${suggestion.token}</i><br/>
+                  <c:forEach var="alternative" items="${suggestion.alternatives}" varStatus="counter">
+                    <c:if test="${counter.index < 7}">
+                      &nbsp;&nbsp;&nbsp;${alternative}<br/>
+                    </c:if>
+                  </c:forEach>
+                </c:forEach>
+              </div>
+            </p>
+          </c:if>
         </c:otherwise>
       </c:choose>
     </c:otherwise>
