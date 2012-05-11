@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.retrieveWebRequest;
+import static org.hippoecm.frontend.util.WebApplicationHelper.retrieveWebResponse;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +53,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.PluginPage;
@@ -292,14 +294,6 @@ public class LoginPlugin extends RenderPlugin {
             redirect(success, null);
         }
 
-    }
-
-    protected WebRequest retrieveWebRequest() {
-        return (WebRequest) RequestCycle.get().getRequest();
-    }
-
-    protected WebResponse retrieveWebResponse() {
-        return (WebResponse) RequestCycle.get().getResponse();
     }
 
 }

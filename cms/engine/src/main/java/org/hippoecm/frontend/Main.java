@@ -60,6 +60,7 @@ import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -83,7 +84,6 @@ public class Main extends WebApplication {
     public final static String REPOSITORY_PASSWORD_PARAM = "repository-password";
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
-    public final static String PLUGIN_APPLICATION_NAME = "config";
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
 

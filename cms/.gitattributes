@@ -1352,7 +1352,6 @@ engine/src/main/java/org/hippoecm/frontend/PluginRequestCycleProcessor.java svne
 engine/src/main/java/org/hippoecm/frontend/ResourceRewriteFilter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/WebApplicationHelper.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
 engine/src/main/java/org/hippoecm/frontend/behaviors/contextmenu.js -text
 engine/src/main/java/org/hippoecm/frontend/i18n/AbstractTranslateService.java -text

@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
+import static org.hippoecm.frontend.util.WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME;
+import static org.hippoecm.frontend.util.WebApplicationHelper.clearCookie;
+import static org.hippoecm.frontend.util.WebApplicationHelper.getFullyQualifiedCookieName;
+import static org.hippoecm.frontend.util.WebApplicationHelper.retrieveWebRequest;
+import static org.hippoecm.frontend.util.WebApplicationHelper.retrieveWebResponse;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -62,8 +69,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     private final static String SVN_ID = "$Id: $";
 
     private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
-    private static final String REMEMBERME_COOKIE_NAME = "rememberme";
-    private static final String HIPPO_AUTO_LOGIN_COOKIE_NAME = "hal";
+    private final String REMEMBERME_COOKIE_NAME = getFullyQualifiedCookieName(REMEMBERME_COOKIE_BASE_NAME);
+    private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = getFullyQualifiedCookieName(HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
     private static final String HAL_REQUEST_ATTRIBUTE_NAME = "in_try_hippo_autologin";
     private static final long serialVersionUID = 1L;
 
@@ -123,7 +130,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
-        Cookie rememberMeCookie = retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME); 
+        Cookie rememberMeCookie = retrieveWebRequest().getCookie(getFullyQualifiedCookieName(REMEMBERME_COOKIE_BASE_NAME)); 
         boolean rememberme = (rememberMeCookie != null) ? Boolean.valueOf(rememberMeCookie.getValue()) : false;
 
         if (rememberme) {
@@ -247,6 +254,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             if (!rememberme) {
                 clearCookie(REMEMBERME_COOKIE_NAME);
                 clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
+                // This still exists in case there is a cookie with the old name still exists in browser's cache
                 clearCookie(getClass().getName());
             }
 
@@ -351,16 +359,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             } else {
                 redirect(success, loginExceptionPageParameters);
             }
-        }
-    }
-    
-    protected void clearCookie(String cookieName) {
-        Cookie cookie = retrieveWebRequest().getCookie(cookieName);
-
-        if (cookie != null) {
-            cookie.setMaxAge(0);
-            cookie.setValue("");
-            retrieveWebResponse().addCookie(cookie);
         }
     }
 

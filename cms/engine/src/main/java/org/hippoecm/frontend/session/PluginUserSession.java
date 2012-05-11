@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.session;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME;
+import static org.hippoecm.frontend.util.WebApplicationHelper.getConfigurationParameter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -40,7 +43,6 @@ import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
-import org.hippoecm.frontend.WebApplicationHelper;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.FacetRootsObserver;
@@ -459,8 +461,7 @@ public class PluginUserSession extends UserSession {
         if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {
-            applicationName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(),
-                                                                             Main.PLUGIN_APPLICATION_NAME, null);
+            applicationName = getConfigurationParameter((WebApplication) Application.get(), PLUGIN_APPLICATION_NAME, null);
         }
 
         return applicationName;
