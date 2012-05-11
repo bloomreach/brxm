@@ -532,6 +532,9 @@
         <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
+        <sv:property sv:name="hipposysedit:cascadevalidation" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
         <sv:node sv:name="docbase">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
