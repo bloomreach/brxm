@@ -25,6 +25,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Documented
 
-public @interface NoIndex {
+public @interface IgnoreIndex {
 
 }
