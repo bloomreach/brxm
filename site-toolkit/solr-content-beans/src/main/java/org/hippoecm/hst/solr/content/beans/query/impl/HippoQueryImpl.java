@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.solr.content.beans.query.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,18 +89,27 @@ public class HippoQueryImpl implements HippoQuery {
         return execute(false);
     }
 
-     @Override
+    @Override
     public HippoQueryResult execute(boolean attachProviders) throws SolrServerException {
 
         solrQuery.set("start", offset);
         solrQuery.set("rows", limit);
+
+        long start = System.currentTimeMillis();
         QueryResponse rsp = manager.getSolrServer().query(solrQuery);
+
+        try {
+            log.info("Execution took: '{}' ms. SOLR query = '{}'", (System.currentTimeMillis() - start) , URLDecoder.decode(solrQuery.toString(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            new SolrServerException(e);
+        }
+
         SolrDocumentList docs = rsp.getResults();
 
         if (attachProviders) {
-            return new HippoQueryResultImpl(rsp, docs , new DocumentObjectBinder(),  manager.getContentBeanValueProviders() );
+            return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), manager.getContentBeanValueProviders());
         }
-        return new HippoQueryResultImpl(rsp, docs , new DocumentObjectBinder(), null );
+        return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), null);
     }
 
 
