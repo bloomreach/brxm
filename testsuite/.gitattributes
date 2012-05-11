@@ -188,6 +188,7 @@ site/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=un
 site/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/solrfaceting.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/solrright.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/solrsearch.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/solrsuggest-ajaxresult.jsp -text

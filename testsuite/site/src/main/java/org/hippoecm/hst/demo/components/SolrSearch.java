@@ -15,15 +15,30 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.util.DateUtil;
+import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.demo.beans.GoGreenProductBean;
+import org.hippoecm.hst.demo.beans.NewsBean;
+import org.hippoecm.hst.demo.beans.ProductBean;
+import org.hippoecm.hst.demo.beans.TextBean;
+import org.hippoecm.hst.demo.beans.WikiBean;
 import org.hippoecm.hst.demo.components.solrutil.SolrSearchParams;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.solr.HippoSolrManager;
@@ -36,6 +51,16 @@ public class SolrSearch extends AbstractSearchComponent {
 
     public static final int DEFAULT_PAGE_SIZE = 5;
 
+    private static final Map<String, Class<?>> typeClassMapping = new HashMap<String, Class<?>>();
+    static {
+        typeClassMapping.put(TextBean.class.getSimpleName(), TextBean.class);
+        typeClassMapping.put(NewsBean.class.getSimpleName(), NewsBean.class);
+        typeClassMapping.put(ProductBean.class.getSimpleName(), ProductBean.class);
+        typeClassMapping.put(WikiBean.class.getSimpleName(), WikiBean.class);
+        typeClassMapping.put(HippoBean.class.getSimpleName(), HippoBean.class);
+        typeClassMapping.put(GoGreenProductBean.class.getSimpleName(), GoGreenProductBean.class);
+    }
+    
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         SolrSearchParams params = new SolrSearchParams(request);
@@ -57,11 +82,6 @@ public class SolrSearch extends AbstractSearchComponent {
         int page = getIntValue(pageParam, 1);
 
         try {
-
-            // query can be just Solr syntax, for example :
-            //
-            // q = title:hippo AND date:[2008-01-08T04:38:24.512Z TO *]
-
 
             // ************************ CHECK LOCAL PARAMS TO SET *********************************** //
             // we check whether we need AND-ed or OR-ed results because this needs to be prefixed to the query
@@ -108,10 +128,9 @@ public class SolrSearch extends AbstractSearchComponent {
                 query = "{!"+localParams.toString()+"}" + query;
             }
 
-
-            
             HippoQuery hippoQuery = solrManager.createQuery(query);
 
+            // ************************ CHECK SCOPED SEARCHING *********************************** //
             if ("external".equals(params.getSearchIn())){
                 hippoQuery.setScopes("http:", "https:");
             } else if ("current".equals(params.getSearchIn())) {
@@ -123,6 +142,33 @@ public class SolrSearch extends AbstractSearchComponent {
             else {
                 // we do not need a scope
             }
+            // ************************ END SCOPED SEARCHING *********************************** //
+
+            // ********************* CHECK SEARCH FOR SPECIFIC TYPES ONLY *********************** //
+            if (params.getTypes() != null && params.getTypes().length > 0) {
+               Set<String> types = new HashSet<String>();
+                types.addAll(Arrays.asList(params.getTypes()));
+                if (types.contains("all")) {
+                    // search in 'all' is checked. Don't need to include types
+                } else {
+                    // get all the classes to filter on
+                    Set<Class<?>> filterClasses = new HashSet<Class<?>>();
+                    for (String type : types) {
+                        if (typeClassMapping.containsKey(type)) {
+                            filterClasses.add(typeClassMapping.get(type));
+                        }
+                    }
+                    
+                    if ( !filterClasses.isEmpty()) {
+                        // WE HAVE FILTER CLASSES to apply. Also check 'INCLUDE SUBTYPES' now
+                        boolean subTypes = params.isIncludeSubtypes();
+                        hippoQuery.setIncludedClasses(subTypes, filterClasses.toArray(new Class[filterClasses.size()]));
+                    }
+                }
+            }
+            // ********************* END CHECK SEARCH FOR SPECIFIC TYPES ONLY ******************* //
+
+
 
             // Set the limit and offset
             hippoQuery.setLimit(pageSize);

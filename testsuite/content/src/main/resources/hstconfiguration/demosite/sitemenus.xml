@@ -142,12 +142,35 @@
         <sv:value>search</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="SolrSearch">
+    <sv:node sv:name="Faceted (JCR)">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>
       </sv:property>
       <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>solrSearch</sv:value>
+        <sv:value>faceted</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:depth" sv:type="Long">
+        <sv:value>1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:repobased" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="Solr Search">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>solrsearch</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="Solr Faceted">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemenuitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+        <sv:value>solrfaceting</sv:value>
       </sv:property>
     </sv:node>
 
@@ -184,20 +207,7 @@
         <sv:value>form</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="Faceted">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:sitemenuitem</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
-        <sv:value>faceted</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:depth" sv:type="Long">
-        <sv:value>1</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:repobased" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
+
     <sv:node sv:name="Contact-Spring">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemenuitem</sv:value>

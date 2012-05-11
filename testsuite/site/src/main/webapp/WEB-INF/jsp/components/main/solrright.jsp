@@ -88,7 +88,7 @@
 
 
 <div class="yui-b">
-  <hst:link var="searchURL" path="/solrSearch" />
+  <hst:link var="searchURL" path="/solrsearch" />
   <form action="${searchURL}" method="get">
     <div>
       <input type="checkbox" name="spellcheck" <c:if test="${spellcheck}">checked</c:if> /> Spellcheck<br />
@@ -130,12 +130,12 @@
       <input type="checkbox" name="type" value="NewsBean" <c:if test="${types['NewsBean'] eq 'NewsBean'}">checked</c:if> /> News documents<br />
       <input type="checkbox" name="type" value="ProductBean" <c:if test="${types['ProductBean'] eq 'ProductBean'}">checked</c:if> /> Product documents<br />
       <input type="checkbox" name="type" value="WikiBean" <c:if test="${types['WikiBean'] eq 'WikiBean'}">checked</c:if> /> Wiki documents<br />
-      <input type="checkbox" name="type" value="HippoBean" <c:if test="${types['HippoBean'] eq 'HippoBean'}">checked</c:if> /> JCR documents<br />
+      <input type="checkbox" name="type" value="HippoBean" <c:if test="${types['HippoBean'] eq 'HippoBean'}">checked</c:if> /> ONLY JCR documents<br />
       <input type="checkbox" name="type" value="GoGreenProductBean" <c:if test="${types['GoGreenProductBean'] eq 'GoGreenProductBean'}">checked</c:if> /> GoGreenProductBean document<br />
 
       <br/>
-      <b>Include subtypes:</b>
-      <input type="checkbox" name="includeSubtypes" <c:if test="${includeSubtypes}">checked</c:if> /><br />
+      <input type="checkbox" name="includeSubtypes" <c:if test="${includeSubtypes}">checked</c:if> /> <b>Include subtypes:</b>
+      <br />
 
       <br/><br/>
       <hst:link var="cal_icon" path="/images/icons/calendar_icon.gif"/>

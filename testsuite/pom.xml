@@ -14,14 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   
+
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
     <version>7.8.0-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>hippo-testsuite</artifactId>
   <name>Hippo Test Suite</name>
   <description>Hippo Test Suite</description>
@@ -42,20 +42,20 @@
     <commons-math.version>2.2</commons-math.version>
 
     <filesync.override>false</filesync.override>
-     
+
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
-     
+
     <portlet-api.version>2.0</portlet-api.version>
     <portals-bridges-common.version>2.0</portals-bridges-common.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
     <yui.sources.version>1.01.09</yui.sources.version>
-    
+
     <jmxremote.port>9875</jmxremote.port>
 
     <dependency.solr.version>3.5.0</dependency.solr.version>
   </properties>
-  
+
   <repositories>
     <repository>
       <id>hippo</id>
@@ -69,10 +69,10 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <dependencyManagement>
     <dependencies>
-    
+
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -88,7 +88,7 @@
         <scope>runtime</scope>
       </dependency>
 
-     <!-- other predefined compile scope versioned dependencies -->
+      <!-- other predefined compile scope versioned dependencies -->
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
@@ -113,7 +113,7 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>javax.portlet</groupId>
         <artifactId>portlet-api</artifactId>
@@ -127,7 +127,7 @@
         <version>${portals-bridges-common.version}</version>
         <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-annotation_1.1_spec</artifactId>
@@ -150,7 +150,7 @@
 
     </dependencies>
   </dependencyManagement>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
@@ -203,14 +203,14 @@
       <properties>
         <solr.data.dir>${repo.path}/solr</solr.data.dir>
       </properties>
-     <build>
+      <build>
         <plugins>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <configuration>
-              <properties>
+                <properties>
                   <cargo.jvmargs>
                     <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent} -Dcom.sun.management.jmxremote.port=${jmxremote.port} -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false]]>
                   </cargo.jvmargs>
@@ -245,7 +245,7 @@
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
                 </systemProperties>
-             </container>
+              </container>
             </configuration>
           </plugin>
         </plugins>
@@ -294,7 +294,7 @@
         </plugins>
       </build>
     </profile>
-    
+
   </profiles>
 
   <scm>
@@ -304,4 +304,4 @@
   </scm>
 
 </project>
-    
+
