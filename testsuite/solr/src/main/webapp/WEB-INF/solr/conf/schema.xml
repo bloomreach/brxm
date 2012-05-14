@@ -219,6 +219,10 @@
 	 also applies synonyms. -->
     <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
+        <!-- By default, we skip HTML tags during indexing -->
+        <charFilter class="solr.HTMLStripCharFilterFactory" escapedTags="a, b, body, br, button, caption, center, cite, code, col, dd, em, fieldset, font, form, frame, frameset,
+        h1,h2,h3,h4,h5,h6, head, hr, html, i, iframe, img, input, label, legend, li, link, map, meta, object, ol, option, p, param, pre, q, s, script, select, span, strike, strong,
+        style, sub, sup, table, tbody, td, textarea, tfoot, th, thead, title, tr, tt, u, ul, var" />
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true" />
         <!-- in this example, we will only use synonyms at query time
@@ -508,7 +512,17 @@
     <field name="comparePath" type="string" indexed="true" stored="true" />
     <field name="hippo_content_bean_fqn_clazz_name" type="string" indexed="true" stored="true" required="true" />
     <field name="hippo_content_bean_fqn_clazz_hierarchy" type="string" indexed="true" stored="false" required="false"  multiValued="true"/>
+
+    <!-- mandatory default built-in HippoBean's fields
+         The fields are mandatory to be present, but the attributes are can be changed (stored, indexed, etc)
+    -->
+
+    <!-- html fields are copied to 'text' hence not indexed here directly : store true for highlighting -->
+    <field name="hippoHtmlContent" type="text_general" indexed="false" stored="true" />
+    <field name="htmlContent" type="text_general" indexed="false" stored="true" />
+
     <!-- end mandatory fields -->
+
 
     <!-- Common metadata fields, named specifically to match up with
       SolrCell metadata when parsing rich documents such as Word, PDF.
@@ -517,8 +531,6 @@
     -->
     <field name="title" type="text_general" indexed="true" stored="true" />
     <field name="summary" type="text_general" indexed="true" stored="true"/>
-    <!-- html fields are copied to 'text' hence not indexed here directly : store true for highlighting -->
-    <field name="htmlContent" type="text_general" indexed="false" stored="true" />
 
     <!-- news bean -->
     <field name="date" type="tdate" indexed="true" stored="true" />
@@ -609,6 +621,7 @@ unknown fields indexed and/or stored by default -->
   <copyField source="title" dest="text"/>
   <copyField source="summary" dest="text"/>
   <!-- for example max 3000 chars -->
+  <copyField source="hippoHtmlContent" dest="text" maxChars="3000"/>
   <copyField source="htmlContent" dest="text" maxChars="3000"/>
   <copyField source="brand" dest="text"/>
   <copyField source="product" dest="text"/>
