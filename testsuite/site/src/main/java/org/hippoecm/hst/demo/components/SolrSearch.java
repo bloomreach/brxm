@@ -194,6 +194,9 @@ public class SolrSearch extends AbstractSearchComponent {
                         i+=2;
                     }
                 }
+                setHighlighted(hippoQuery);
+                // for faceting, we want to show highlighting
+
             }
 
             // ********************* END ACCOUNT FOR FACETED NAVIGATION PATH IF PRESENT ******* //
@@ -222,18 +225,10 @@ public class SolrSearch extends AbstractSearchComponent {
             // OPTIONAL PERFORMANCE : we are only interested to retrieve the TITLE and SUMMARY fields.
             // If you do not specify a setFields, ALL fields are retrieved
             // hippoQuery.getSolrQuery().setFields("title", "summary", "score")
-            // hippoQuery.getSolrQuery().addHighlightField("htmlContent");
 
             // if highlighting is enabled
             if (params.isShowHighlight()) {
-                hippoQuery.getSolrQuery().setHighlight(true);
-                hippoQuery.getSolrQuery().setHighlightFragsize(150);
-                hippoQuery.getSolrQuery().setHighlightSimplePre("<b style=\"color:blue\">");
-                hippoQuery.getSolrQuery().setHighlightSimplePost("</b>");
-                hippoQuery.getSolrQuery().addHighlightField("title");
-                hippoQuery.getSolrQuery().addHighlightField("summary");
-                //hippoQuery.getSolrQuery().addHighlightField("htmlContent");
-                //hippoQuery.getSolrQuery()..addHighlightField("*");
+                setHighlighted(hippoQuery);
             }
 
             String sort = params.getSort();
@@ -290,6 +285,18 @@ public class SolrSearch extends AbstractSearchComponent {
         } catch (SolrServerException e) {
             throw new HstComponentException(e);
         }
+    }
+
+    private void setHighlighted(final HippoQuery hippoQuery) {
+        hippoQuery.getSolrQuery().setHighlight(true);
+        hippoQuery.getSolrQuery().setHighlightFragsize(150);
+        hippoQuery.getSolrQuery().setHighlightSimplePre("<b style=\"color:blue\">");
+        hippoQuery.getSolrQuery().setHighlightSimplePost("</b>");
+        // hippoQuery.getSolrQuery().addHighlightField("title");
+        // hippoQuery.getSolrQuery().addHighlightField("summary");
+        // hippoQuery.getSolrQuery().addHighlightField("htmlContent");
+        // highlight in any fetched field
+        hippoQuery.getSolrQuery().addHighlightField("*");
     }
 
 
