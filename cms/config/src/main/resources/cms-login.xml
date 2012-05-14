@@ -46,9 +46,9 @@
         <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="use.captcha" sv:type="Boolean">
-        <sv:value>false</sv:value>
+        <sv:value>true</sv:value>
       </sv:property>
-      <sv:property sv:name="nr.unsuccessful.logins" sv:type="Long">
+      <sv:property sv:name="show.captcha.after.how.many.times" sv:type="Long">
         <sv:value>3</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
