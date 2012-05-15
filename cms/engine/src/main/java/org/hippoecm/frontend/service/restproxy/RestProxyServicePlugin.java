@@ -1,10 +1,13 @@
 package org.hippoecm.frontend.service.restproxy;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +21,10 @@ import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -62,6 +69,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String CONFIG_REST_URI = "rest.uri";
     public static final String CONFIG_SERVICE_ID = "service.id";
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
+    public static final String PING_SERVICE_URI = "ping.service.uri";
+    public static final String PING_SERVICE_TIMEOUT = "ping.service.timeout";
 
     private static final long serialVersionUID = 1L;
     private static final List<?> PROVIDERS;
@@ -78,6 +87,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         PROVIDERS = Collections.singletonList(jjjProvider);
     }
 
+    private boolean siteIsAlive;
     private final String restUri;
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
@@ -88,20 +98,71 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             throw new IllegalStateException("No REST service URI configured. Please set the plugin configuration property '"
                     + CONFIG_REST_URI + "'");
         }
+
         log.debug("Using REST uri '{}'", restUri);
 
         final String serviceId = config.getString(CONFIG_SERVICE_ID, DEFAULT_SERVICE_ID);
         log.debug("Registering this service under id '{}'", serviceId);
         context.registerService(this, serviceId);
+
+        // Make sure that the final ping servuce URL is normalized, no additional '/'
+        String pingServiceUriString = (restUri + config.getString(PING_SERVICE_URI, "/sites/#areAlive")).replaceAll("^://", "/");
+        log.debug("Using Ping REST uri '{}'", pingServiceUriString);
+
+        // Check whether the site is up and running or not
+        try {
+            // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
+            pingServiceUriString = URLEncoder.encode(pingServiceUriString, Charset.defaultCharset().name()).replaceAll(
+                    "%2F", "/").replaceAll("%3A", ":");
+
+            final HttpClient httpClient = new HttpClient();
+            // Set the timeout for the HTTP connection, if the configuration parameter is missing or not set
+            // use default value of 5 minutes
+            httpClient.getParams().setParameter("http.socket.timeout", config.getAsInteger(PING_SERVICE_TIMEOUT, 5 * 60 * 1000));
+            final int responceCode = httpClient.executeMethod(new GetMethod(pingServiceUriString));
+
+            siteIsAlive = (responceCode == HttpStatus.SC_OK);
+        } catch (HttpException httpex) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + pingServiceUriString, httpex);
+            }
+
+            siteIsAlive = false;
+        } catch (UnsupportedEncodingException usence) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + pingServiceUriString, usence);
+            }
+
+            siteIsAlive = false;
+        } catch (IOException ioe) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + pingServiceUriString, ioe);
+            }
+
+            siteIsAlive = false;
+        }
+
     }
 
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass) {
+        // Check whether the site is up and running or not
+        if (!siteIsAlive) {
+            log.warn("It appears that the site is down. Please check with your environment adminstrator!");
+            return null;
+        }
+
         return JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
     }
 
     @Override
     public <T> T createSecureRestProxy(Class<T> restServiceApiClass) {
+        // Check whether the site is up and running or not
+        if (!siteIsAlive) {
+            log.warn("It appears that the site is down. Please check with your environment adminstrator!");
+            return null;
+        }
+
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
 
         Subject subject = getSubject();
@@ -139,7 +200,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         CredentialCipher credentialCipher = CredentialCipher.getInstance();
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
     }
-
+    
     // Would you take a look at the serialization of HstPropertyDefinition
     private static final class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
 
