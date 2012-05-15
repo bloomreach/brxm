@@ -26,6 +26,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/bg.gif -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/breadcrumb-arrow.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/button-edit-content.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-32.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/channel-manager-dimmed-32.png -text svneol=unset#image/png
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/AbstractChannelPropertyEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/BlueprintStore.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanel.java -text

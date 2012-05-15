@@ -16,11 +16,14 @@
 
 package org.onehippo.cms7.channelmanager;
 
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -31,31 +34,56 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.hst.rest.SiteService;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
     private RootPanel rootPanel;
+    private boolean siteIsUp;
     private List<IRenderService> childservices = new LinkedList<IRenderService>();
 
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
-        if (wfConfig != null) {
-            WireframeSettings wfSettings = new WireframeSettings(wfConfig);
-            add(new WireframeBehavior(wfSettings));
+        // Check whether the site is up and running
+        final IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
+        final SiteService siteService = restProxyService.createRestProxy(SiteService.class);
+        try {
+            siteIsUp = siteService.isAlive();
+        } catch (Exception ex) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while checking if the site is up and running or not!", ex);
+            }
+
+            // Assume that site is down
+            siteIsUp = false;
         }
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
-        rootPanel = new RootPanel(context, config, "channel-root");
-        add(rootPanel);
+        if (siteIsUp) {
+            IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+            if (wfConfig != null) {
+                WireframeSettings wfSettings = new WireframeSettings(wfConfig);
+                add(new WireframeBehavior(wfSettings));
+            }
 
-        final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
-        context.registerService(this, channelManagerServiceId);
+            rootPanel = new RootPanel(context, config, "root-panel-div");
+            final Fragment rootPanelFragment = new Fragment("channel-root", "root-panel", this);
+            rootPanelFragment.add(rootPanel);
+            add(rootPanelFragment);
+
+            final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
+            context.registerService(this, channelManagerServiceId);
+        } else {
+            final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-panel", this);
+            dimmedRootPanelFragment.add(new DimmedRootPanel("dimmed-root-panel-div"));
+            add(dimmedRootPanelFragment);
+        }
     }
 
     @Override
@@ -65,15 +93,21 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     @Override
     public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
+        if (siteIsUp) {
+            return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
+        } else {
+            return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-dimmed-" + type.getSize() + ".png");
+        }
     }
 
     @Override
     public void render(final PluginRequestTarget target) {
         super.render(target);
-        rootPanel.render(target);
-        for (IRenderService child : childservices) {
-            child.render(target);
+        if (siteIsUp) {
+            rootPanel.render(target);
+            for (IRenderService child : childservices) {
+                child.render(target);
+            }
         }
     }
 

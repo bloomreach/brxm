@@ -371,7 +371,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
-        // ChannelService channelService = restProxyService.createRestProxy(ChannelService.class, Arrays.asList(new PTHProvider()));
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelPropertyDefinitions(channel.getId());
     }

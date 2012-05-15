@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.management.ServiceNotFoundException;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.wicket.IClusterable;
@@ -61,21 +62,21 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
     private final IRestProxyService restProxyService;
     private final IChannelManagerService channelManagerService;
 
-    public ChannelActionsPlugin(IPluginContext context, IPluginConfig config) {
+    public ChannelActionsPlugin(IPluginContext context, IPluginConfig config) throws ServiceNotFoundException {
         super(context, config);
 
         restProxyService = loadService("REST proxy service", CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class);
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
     }
 
-    private <T extends IClusterable> T loadService(final String name, final String configServiceId, final Class<T> clazz) {
+    private <T extends IClusterable> T loadService(final String name, final String configServiceId, final Class<T> clazz) throws ServiceNotFoundException {
         final String serviceId = getPluginConfig().getString(configServiceId, clazz.getName());
         log.debug("Using {} with id '{}'", name, serviceId);
 
         final T service = getPluginContext().getService(serviceId, clazz);
         if (service == null) {
-            throw new IllegalStateException("Unknown " + name + ": '" + serviceId + "'. "
-                    + "Please set the configuration property '" + configServiceId + "'");
+            log.warn("Could not get service '" + serviceId + "' of type " + clazz.getName());
+            throw new ServiceNotFoundException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
         }
 
         return service;

@@ -398,3 +398,8 @@
 .channel-manager #channel-grid-panel {
     overflow: auto;
 }
+
+.error-status-message {
+  color: #FF0000;
+  font-size: 40px;
+}
