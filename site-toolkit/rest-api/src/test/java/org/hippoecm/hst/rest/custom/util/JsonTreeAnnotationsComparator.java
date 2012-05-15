@@ -662,8 +662,49 @@ public final class JsonTreeAnnotationsComparator {
     }
 
     private static String getNodeType(final JsonNode jsonNode) {
-        // To be implemented, and then use it to report the type that you got as opposed to the expected one
-        return "BLA_DE_BLA_DE_BLA";
+        if (jsonNode == null) {
+            throw new IllegalArgumentException("Null JSON nodes are not allowed!");
+        }
+
+        String nodeType = "NODE_TYPE_NOT_DETECTED";
+
+        if (jsonNode.isArray()) {
+            nodeType = "ARRAY_JSON_NODE";
+        } else if (jsonNode.isBoolean()) {
+            nodeType = "BOOLEAN_JSON_NODE";
+        } else if (jsonNode.isDouble()) {
+            nodeType = "DOUBLE_JSON_NODE";
+        } else if (jsonNode.isFloatingPointNumber()) {
+            nodeType = "FLOAT_JSON_NODE";
+        } else if (jsonNode.isInt() || jsonNode.isIntegralNumber()) {
+            nodeType = "INTEGER_JSON_NODE";
+        } else if (jsonNode.isLong()) {
+            nodeType = "LONG_JSON_NODE";
+        } else if (jsonNode.isNumber()) {
+            nodeType = "NUMBER_JSON_NODE";
+        } else if (jsonNode.isObject()) {
+            nodeType = "OBJECT_JSON_NODE";
+        } else if (jsonNode.isTextual()) {
+            nodeType = "TEXTUAL_JSON_NODE";
+        } else if (jsonNode.isValueNode()) {
+            nodeType = "VALUE_JSON_NODE";
+        } else if (jsonNode.isBigDecimal()) {
+            nodeType = "BIG_DECIMAL_JSON_NODE";
+        } else if (jsonNode.isBigInteger()) {
+            nodeType = "BIG_INTEGER_JSON_NODE";
+        } else if (jsonNode.isBinary()) {
+            nodeType = "BINARY_JSON_NODE";
+        } else if (jsonNode.isContainerNode()) {
+            nodeType = "CONTAINER_JSON_NODE";
+        } else if (jsonNode.isMissingNode()) {
+            nodeType = "MISSING_JSON_NODE";
+        } else if (jsonNode.isNull()) {
+            nodeType = "NULL_JSON_NODE";
+        } else if (jsonNode.isPojo()) {
+            nodeType = "POJO_JSON_NODE";
+        }
+
+        return nodeType;
     }
 
     private static HstPropertyDefinition getHstPropertyDefinition(String name, List<HstPropertyDefinition> hstPropDefs)
