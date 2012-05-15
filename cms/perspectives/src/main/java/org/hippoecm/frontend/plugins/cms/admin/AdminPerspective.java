@@ -25,8 +25,11 @@ import org.hippoecm.frontend.service.IconSize;
 
 public class AdminPerspective extends PanelPluginPerspective {
 
+    private final IPluginConfig pluginConfig;
+
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        this.pluginConfig = config;
         add(CSSPackageResource.getHeaderContribution(AdminPerspective.class, "admin-perspective.css"));
     }
 
@@ -40,4 +43,8 @@ public class AdminPerspective extends PanelPluginPerspective {
         return AdminPanelPlugin.ADMIN_PANEL_SERVICE_ID;
     }
 
+    public IPluginConfig getPluginConfigs()
+    {
+        return this.pluginConfig;
+    }
 }

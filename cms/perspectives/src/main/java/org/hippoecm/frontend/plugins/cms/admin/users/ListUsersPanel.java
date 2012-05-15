@@ -29,6 +29,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -43,6 +44,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.AdminPerspective;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
@@ -58,6 +60,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
     private static final long serialVersionUID = 1L;
 
     private static final int NUMBER_OF_ITEMS_PER_PAGE = 20;
+    private static final String USER_CREATION_ENABLED = "userCreationEnabled";
 
     private final IPluginContext context;
     private final AdminDataTable table;
@@ -82,12 +85,38 @@ public class ListUsersPanel extends AdminBreadCrumbPanel {
         this.userDataProvider = userDataProvider;
         userDataProvider.setDirty();
 
-        add(new PanelPluginBreadCrumbLink("create-user", breadCrumbModel) {
+        PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateUserPanel(componentId, breadCrumbModel, context);
             }
-        });
+
+            @Override
+            public boolean isVisible() {
+                AdminPerspective adminPerspective =  findParent(AdminPerspective.class);
+                if(adminPerspective ==null)
+                {
+                    return true;
+                }
+                return  adminPerspective.getPluginConfigs().getAsBoolean(USER_CREATION_ENABLED, true);
+            }
+        };
+
+
+        WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container"){
+            @Override
+            public boolean isVisible() {
+                AdminPerspective adminPerspective =  findParent(AdminPerspective.class);
+                if(adminPerspective ==null)
+                {
+                    return true;
+                }
+                return  adminPerspective.getPluginConfigs().getAsBoolean(USER_CREATION_ENABLED, true);
+            }
+        };
+
+        createButtonContainer.add(createUserLink);
+        add(createButtonContainer);
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
