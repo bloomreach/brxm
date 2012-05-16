@@ -951,6 +951,7 @@ solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HippoQueryResultImpl.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitImpl.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitIteratorImpl.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/PatternTester.java -text
 src/site/site.xml svneol=native#text/plain
 test/pom.xml -text
 test/src/site/site.xml -text
