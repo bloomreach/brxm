@@ -32,7 +32,13 @@ public @interface AllInOneAnnotation {
     public int intValule() default 0x02;
     public long longValue() default 0x03L;
     public float floatValue() default 0.4F;
+    public float maxFloatValue() default Float.MAX_VALUE;
+    public float minFloatValue() default Float.MIN_VALUE;
+    public float minNormalFloatValue() default Float.MIN_NORMAL;
     public double doubleValue() default 0.5;
+    public double maxDoubleValue() default Double.MAX_VALUE;
+    public double minDoubleValue() default Double.MIN_VALUE;
+    public double minNormalDoubleValue() default Double.MIN_NORMAL;
     public boolean trueValue() default true;
     public boolean falseValue() default false;
     public char charValue() default 'C';

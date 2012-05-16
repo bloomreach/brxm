@@ -30,8 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import junit.framework.AssertionFailedError;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.util.Annotations;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -206,17 +204,27 @@ public final class JsonTreeAnnotationsComparator {
             // serialized in the same order
             for (Annotation annotation : actual) {
                 if (!equivalentFoundAnnotations.contains(annotation)) {
-                    try {
+                    // Assert that JSON node is an object JSON node
+                    assertTrue("Expected an object JSON node but got '" + getNodeType(annotationNode) + "' JSON node!",
+                            annotationNode.isObject());
+
+                    // Assert that expected JSON node has a '@class' textual field which is not null, not empty and has a value
+                    // equals to the class name of actual
+                    final JsonNode annotationClassNameNode = annotationNode.get("@class");
+                    assertNotNull("Expected a '@class' field!", annotationClassNameNode);
+                    assertTrue("Expected a textual '@class' field but got '" + getNodeType(annotationClassNameNode)
+                            + "' field", annotationClassNameNode.isTextual());
+
+                    assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode
+                            .getTextValue().isEmpty());
+
+                    if (annotation.annotationType().getName().equals(annotationClassNameNode.getTextValue())) {
                         assertEquivalent(annotationNode, annotation);
-                        // No failed assertions means that an equivalent annotation has been found
-                        // add to the list of equivalent found annotations and then continue with the next JSON node
                         foundAnEquivalentAnnotation = true;
                         equivalentFoundAnnotations.add(annotation);
                         break;
-                    } catch (AssertionFailedError aferr) {
-                        // Just continue comparing with the rest of the annotations
-                        continue;
                     }
+
                 }
             }
 
@@ -229,6 +237,10 @@ public final class JsonTreeAnnotationsComparator {
 
     public static void assertEquivalent(JsonNode expected, Annotation actual) throws SecurityException,
             IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+
+        // NOTE: The few initial assertions here are the same as some in assertEquivalentAnnoations(JsonNode, List<Annotation>)
+        // thats because this method can be called directly without going through the former one and hence these
+        // assertions needs to be done
 
         // Assert that neither expected nor actual are null
         assertNotNull("Expected a non null JSON node!", expected);
