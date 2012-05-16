@@ -116,9 +116,9 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
                     "%2F", "/").replaceAll("%3A", ":");
 
             final HttpClient httpClient = new HttpClient();
-            // Set the timeout for the HTTP connection, if the configuration parameter is missing or not set
-            // use default value of 5 minutes
-            httpClient.getParams().setParameter("http.socket.timeout", config.getAsInteger(PING_SERVICE_TIMEOUT, 5 * 60 * 1000));
+            // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
+            // use default value of 1 second
+            httpClient.getParams().setParameter("http.socket.timeout", config.getAsInteger(PING_SERVICE_TIMEOUT, 1000));
             final int responceCode = httpClient.executeMethod(new GetMethod(pingServiceUriString));
 
             siteIsAlive = (responceCode == HttpStatus.SC_OK);

@@ -77,7 +77,7 @@
       <sv:value>/sites/#areAlive</sv:value>
     </sv:property>
     <sv:property sv:name="ping.service.timeout" sv:type="Long">
-      <sv:value>300000</sv:value>
+      <sv:value>1000</sv:value>
     </sv:property>
     <sv:property sv:name="service.id" sv:type="String">
       <sv:value>hst.rest.proxy.service</sv:value>
