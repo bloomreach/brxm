@@ -40,6 +40,7 @@ import org.hippoecm.hst.rest.SiteService;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 
+@SuppressWarnings("serial")
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
     private RootPanel rootPanel;
@@ -52,15 +53,12 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         // Check whether the site is up and running
         final IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
         final SiteService siteService = restProxyService.createRestProxy(SiteService.class);
-        try {
-            siteIsUp = siteService.isAlive();
-        } catch (Exception ex) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while checking if the site is up and running or not!", ex);
-            }
 
-            // Assume that site is down
+        // When site service is null most probably the site is down
+        if (siteService == null) {
             siteIsUp = false;
+        } else {
+            siteIsUp = true;
         }
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
