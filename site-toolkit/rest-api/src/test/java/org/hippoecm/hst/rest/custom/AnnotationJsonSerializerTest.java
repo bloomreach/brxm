@@ -36,11 +36,11 @@ import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.custom.util.JsonTreeAnnotationsComparator;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.test.channels.AllInOneChannelInfo;
+import org.onehippo.test.channels.MobileInfo;
+import org.onehippo.test.channels.NoAttributesAnnotationChannelInfo;
+import org.onehippo.test.channels.WebsiteInfo;
 
-import com.onehippo.test.channels.AllInOneChannelInfo;
-import com.onehippo.test.channels.MobileInfo;
-import com.onehippo.test.channels.NoAttributesAnnotationChannelInfo;
-import com.onehippo.test.channels.WebsiteInfo;
 
 /**
  * Test class for the {@link AnnotationJsonSerializer}

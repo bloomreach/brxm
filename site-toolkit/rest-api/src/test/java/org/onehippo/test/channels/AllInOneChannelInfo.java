@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.onehippo.test.channels;
+package org.onehippo.test.channels;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
-import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.onehippo.test.annotations.AllInOneAnnotation;
 
-import com.onehippo.test.annotations.NoAttributesAnnotation;
 
 /**
  * Retrieves the properties of the GoGreen channels.
@@ -32,14 +31,14 @@ import com.onehippo.test.annotations.NoAttributesAnnotation;
                 value = { "logo", "pageTitlePrefix" }
         )
 })
-public interface NoAttributesAnnotationChannelInfo extends ChannelInfo {
+public interface AllInOneChannelInfo extends ChannelInfo {
 
     @Parameter(name = "logo", displayName = "Logo")
-    @JcrPath(
-            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
-            pickerInitialPath = "/content/gallery/logos"
-    )
-    @NoAttributesAnnotation
+//    @JcrPath(
+//            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
+//            pickerInitialPath = "/content/gallery/logos"
+//    )
+    @AllInOneAnnotation
     String getLogoPath();
 
     @Parameter(name = "pageTitlePrefix", displayName = "Page title prefix", defaultValue = "Hippo Go Green")

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.onehippo.test.annotations;
+package org.onehippo.test.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

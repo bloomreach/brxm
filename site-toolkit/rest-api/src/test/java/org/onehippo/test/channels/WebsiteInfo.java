@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.onehippo.test.channels;
+package org.onehippo.test.channels;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
+import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
-
-import com.onehippo.test.annotations.AllInOneAnnotation;
 
 /**
  * Retrieves the properties of the GoGreen channels.
@@ -28,20 +27,27 @@ import com.onehippo.test.annotations.AllInOneAnnotation;
 @FieldGroupList({
         @FieldGroup(
                 titleKey = "fields.channel",
-                value = { "logo", "pageTitlePrefix" }
+                value = { "logo", "pageTitlePrefix", "themeCss" }
         )
 })
-public interface AllInOneChannelInfo extends ChannelInfo {
+public interface WebsiteInfo extends ChannelInfo {
 
-    @Parameter(name = "logo", displayName = "Logo")
-//    @JcrPath(
-//            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
-//            pickerInitialPath = "/content/gallery/logos"
-//    )
-    @AllInOneAnnotation
+    @Parameter(name = "logo")
+    @JcrPath(
+            pickerSelectableNodeTypes = { "hippogogreengallery:imageset" },
+            pickerInitialPath = "/content/gallery/logos"
+    )
     String getLogoPath();
 
-    @Parameter(name = "pageTitlePrefix", displayName = "Page title prefix", defaultValue = "Hippo Go Green")
+    @Parameter(name = "pageTitlePrefix", defaultValue = "Hippo Go Green")
     String getPageTitlePrefix();
+
+    @Parameter(name = "themeCss", defaultValue = "/content/assets/themes/css/green.css")
+    @JcrPath(
+            pickerConfiguration = "cms-pickers/assets",
+            pickerSelectableNodeTypes = {"hippogallery:exampleAssetSet"},
+            pickerInitialPath = "/content/assets/themes/css"
+    )
+    String getThemeCss();
 
 }
