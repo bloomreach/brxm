@@ -24,11 +24,10 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 public interface ContentBean {
 
     /**
-     * This returns the absolute path of the backing provider for this bean, for example /documents/content/myprojec/news/article
-     *
-     * When the provider is a jcr node and is virtual, it returns the virtual path.
-     *
-     * @return the absolute jcr path of the backing jcr node. 
+     * This returns the path of the backing provider for this bean, for example
+     * /documents/content/myprojec/news/article or http://www.example.com/foo/bar
+     * It is not allowed for any implementation to return <code>null</code>
+     * @return the path for this {@link ContentBean}
      */
 
     // the path is used as index id, not the canonical id as we can index
