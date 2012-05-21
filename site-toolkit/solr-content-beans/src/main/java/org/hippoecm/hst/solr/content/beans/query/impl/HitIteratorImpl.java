@@ -23,13 +23,13 @@ import java.util.NoSuchElementException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
 import org.hippoecm.hst.solr.content.beans.query.Hit;
 import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 
-public class HitIteratorImpl implements HitIterator<ContentBean> {
+public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
 
     private long position = 0;
     private final QueryResponse queryResponse;

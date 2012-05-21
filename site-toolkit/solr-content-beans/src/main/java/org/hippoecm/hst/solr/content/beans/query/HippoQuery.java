@@ -59,7 +59,7 @@ public interface HippoQuery {
 
     /**
      * <p>
-     * Method to filter the search result to only <b>include</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     * Method to filter the search result to only <b>include</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}s
      * are of one of the types of <code>classes</code> , or subType if <code>subTypes</code> equals <code>true</code>.
      * </p>
      * <p>
@@ -67,7 +67,7 @@ public interface HippoQuery {
      * is called)
      * </p>
      * @param subTypes whether the result is allowed to contain subtypes of the filter <code>classes</code>
-     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.ContentBean}s 
+     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}s
      *                of the search result must match one the <code>classes</code>
      * @throws IllegalArgumentException when <code>classes</code> is <code>null</code>
      * @see #setExcludedClasses(boolean, Class[])
@@ -76,11 +76,11 @@ public interface HippoQuery {
 
     /**
      * <p>
-     * Method to filter the search result to <b>exclude</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     * Method to filter the search result to <b>exclude</b> results where the backing {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}s
      * are of one of the types of <code>classes</code> , or subType if <code>subTypes</code> equals <code>true</code>.
      * </p>
      * @param subTypes whether subtypes of <code>classes</code> should also be excluded
-     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.ContentBean}s
+     * @param classes the varargs <code>classes</code> that is used as filter for the search : The type (or subType) of the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}s
      *                of the search result <b>will not</b> match one the <code>classes</code>
      * @throws IllegalArgumentException when <code>classes</code> is <code>null</code>
      * @see #setIncludedClasses(boolean, Class[])

@@ -35,7 +35,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -60,7 +60,7 @@ public class HstLinkTag extends ParamContainerTag {
 
     protected HstLink link;
     
-    protected ContentBean contentBean;
+    protected IdentifiableContentBean identifiableContentBean;
 
     protected String path;
 
@@ -112,7 +112,7 @@ public class HstLinkTag extends ParamContainerTag {
     protected boolean fallback = true;
         
     /**
-     * Whether either the <code>link</code>, <code>path</code>, <code>hippoBean</code> or <code>siteMapItemRefId</code> did 
+     * Whether either the <code>link</code>, <code>path</code>, <code>identifiableContentBean</code> or <code>siteMapItemRefId</code> did
      * have its setter called. Also, only one of the setters is allowed. If none called, we return a hst link for the current
      * URL
      */
@@ -145,12 +145,12 @@ public class HstLinkTag extends ParamContainerTag {
         HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
         
         HippoBean hippoBean = null;
-        if (contentBean != null) {
-            if (contentBean instanceof HippoBean) {
-                hippoBean = (HippoBean) contentBean;
+        if (identifiableContentBean != null) {
+            if (identifiableContentBean instanceof HippoBean) {
+                hippoBean = (HippoBean) identifiableContentBean;
             } else {
                 // TOOD enable custom linkrewriters
-                writeOrSetVar(contentBean.getPath());
+                writeOrSetVar(identifiableContentBean.getPath());
                 cleanup();
                 return EVAL_PAGE;
             }
@@ -378,7 +378,7 @@ public class HstLinkTag extends ParamContainerTag {
         parametersMap.clear();
         removedParametersList.clear();
         var = null;
-        contentBean = null;
+        identifiableContentBean = null;
         scope = null;
         path = null;
         siteMapItemRefId = null;
@@ -420,8 +420,8 @@ public class HstLinkTag extends ParamContainerTag {
         return link;
     }
     
-    public ContentBean getHippobean(){
-        return this.contentBean;
+    public IdentifiableContentBean getHippobean(){
+        return this.identifiableContentBean;
     }
     
     public String getPath(){
@@ -496,13 +496,13 @@ public class HstLinkTag extends ParamContainerTag {
         this.navigationStateful = navigationStateful;
     }
     
-    public void setHippobean(ContentBean hippoBean) {
+    public void setHippobean(IdentifiableContentBean identifiableContentBean) {
         if(linkForAttributeSet) {
-            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr hippoBean '{}'", hippoBean.getPath());
+            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr identifiableContentBean '{}'", identifiableContentBean.getPath());
             return;    
          } 
          linkForAttributeSet = true;
-        this.contentBean = hippoBean;
+        this.identifiableContentBean = identifiableContentBean;
     }
     
     public void setMount(String mount) {

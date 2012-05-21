@@ -16,11 +16,10 @@
 package org.hippoecm.hst.solr.content.beans.query.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
@@ -59,7 +58,7 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     }
 
     @Override
-    public HitIterator<ContentBean> getHits() {
+    public HitIterator<IdentifiableContentBean> getHits() {
         return new HitIteratorImpl(queryResponse, docs, binder, contentBeanValueProviders);
     }
 

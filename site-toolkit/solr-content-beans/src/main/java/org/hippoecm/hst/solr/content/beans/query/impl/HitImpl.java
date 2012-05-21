@@ -18,10 +18,9 @@ package org.hippoecm.hst.solr.content.beans.query.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.solr.common.SolrDocument;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.content.beans.BindingException;
 import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
@@ -33,9 +32,9 @@ public class HitImpl implements Hit {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HitImpl.class);
     private final SolrDocument solrDocument;
     private final DocumentObjectBinder binder;
-    // contentBean and ContentBeanValueProvider are not always Serializable
+    // identifiableContentBean and ContentBeanValueProvider are not always Serializable
     private volatile List<ContentBeanValueProvider> contentBeanValueProviders;
-    private volatile ContentBean contentBean;
+    private volatile IdentifiableContentBean identifiableContentBean;
     private final Map<String,List<String>> highlights;
 
     /**
@@ -59,31 +58,35 @@ public class HitImpl implements Hit {
     }
 
     @Override
-    public ContentBean getContentBean() {
-        if (contentBean != null) {
-            return contentBean;
+    public IdentifiableContentBean getIdentifiableContentBean() throws BindingException {
+        if (identifiableContentBean != null) {
+            return identifiableContentBean;
         }
 
-        contentBean = binder.getBean(ContentBean.class, solrDocument);
-        if (contentBeanValueProviders == null) {
-            return contentBean;
-        }
-        for (ContentBeanValueProvider contentBeanValueProvider : contentBeanValueProviders) {
-            if (contentBeanValueProvider.getAnnotatedClasses().contains(contentBean.getClass())) {
+        try {
+            identifiableContentBean = binder.getBean(IdentifiableContentBean.class, solrDocument);
+            if (contentBeanValueProviders == null) {
+                return identifiableContentBean;
+            }
+            for (ContentBeanValueProvider contentBeanValueProvider : contentBeanValueProviders) {
+                if (contentBeanValueProvider.getAnnotatedClasses().contains(identifiableContentBean.getClass())) {
 
-                try {
-                    contentBeanValueProvider.callbackHandler(contentBean);
-                } catch (BindingException e) {
-                    if (log.isDebugEnabled()) {
-                        // log stacktrace in debug mode
-                        log.warn("Could not bind bean to provider", e);
-                    } else {
-                        log.warn("Could not bind bean to provider", e.getMessage());
+                    try {
+                        contentBeanValueProvider.callbackHandler(identifiableContentBean);
+                    } catch (BindingException e) {
+                        if (log.isDebugEnabled()) {
+                            // log stacktrace in debug mode
+                            log.warn("Could not bind bean to provider", e);
+                        } else {
+                            log.warn("Could not bind bean to provider", e.getMessage());
+                        }
                     }
                 }
             }
+            return identifiableContentBean;
+        } catch (Exception e) {
+            throw new BindingException("Could not bind SolrDocument to Content Bean ", e);
         }
-        return contentBean;
 
     }
 

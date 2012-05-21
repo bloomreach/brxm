@@ -26,7 +26,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.repository.api.HippoNode;
 
-public interface HippoBean extends ContentBean, NodeAware, ObjectConverterAware, Comparable<HippoBean> {
+public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectConverterAware, Comparable<HippoBean> {
 
     /**
      * This returns the backing jcr node for this bean. 

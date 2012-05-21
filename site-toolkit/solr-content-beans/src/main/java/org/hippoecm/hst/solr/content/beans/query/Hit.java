@@ -19,13 +19,18 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.solr.common.SolrDocument;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
+import org.hippoecm.hst.solr.content.beans.BindingException;
 
 public interface Hit extends Serializable {
 
     SolrDocument getDoc();
 
-    ContentBean getContentBean();
+    /**
+     * @return the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}
+     * @throws BindingException when the {@link SolrDocument} cannot be binded to the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}
+     */
+    IdentifiableContentBean getIdentifiableContentBean() throws BindingException;
 
     /**
      * @return the score for this hit and -1 if there is no score available

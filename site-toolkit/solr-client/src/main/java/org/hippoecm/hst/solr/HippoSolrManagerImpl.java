@@ -22,7 +22,7 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.solr.content.beans.BindingException;
@@ -159,26 +159,26 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     }
 
     public class JcrContentBeanValueProvider implements ContentBeanValueProvider {
-        List<Class<? extends ContentBean>> annotatedClasses;
+        List<Class<? extends IdentifiableContentBean>> annotatedClasses;
 
 
         public JcrContentBeanValueProvider() {
-            this.annotatedClasses = new ArrayList<Class<? extends ContentBean>>();
+            this.annotatedClasses = new ArrayList<Class<? extends IdentifiableContentBean>>();
             for ( Class<? extends HippoBean> annotatedClass : HippoSolrManagerImpl.this.getAnnotatedClasses()) {
                 annotatedClasses.add(annotatedClass);
             }
         }
         
         @Override
-        public List<Class<? extends ContentBean>> getAnnotatedClasses() {
+        public List<Class<? extends IdentifiableContentBean>> getAnnotatedClasses() {
             return annotatedClasses; 
         }
 
         @Override
-        public void callbackHandler(final ContentBean contentBean) throws BindingException {
-            if (annotatedClasses.contains(contentBean.getClass())) {
-                if (contentBean instanceof HippoBean) {
-                    HippoBean bean = (HippoBean)contentBean;
+        public void callbackHandler(final IdentifiableContentBean identifiableContentBean) throws BindingException {
+            if (annotatedClasses.contains(identifiableContentBean.getClass())) {
+                if (identifiableContentBean instanceof HippoBean) {
+                    HippoBean bean = (HippoBean) identifiableContentBean;
                     try {
                         if (session.nodeExists(bean.getPath())) {
                             Node node = session.getNode(bean.getPath());
@@ -190,7 +190,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
                                 if(canonical != null) {
                                     String identifier = canonical.getIdentifier();
                                     if (bean.getCanonicalUUID() == null) {
-                                       log.warn("Cannot check bean against canonical uuid because cannot get canonical uuid for '{}'", contentBean.getPath());
+                                       log.warn("Cannot check bean against canonical uuid because cannot get canonical uuid for '{}'", identifiableContentBean.getPath());
                                     } else if (!bean.getCanonicalUUID().equals(identifier)) {
                                        throw new BindingException("At path '"+node.getPath()+"' there was indexed a different canonical jcr node then there is currently at '"+canonical.getPath()+"'");
                                     }
@@ -341,8 +341,8 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
 
                                 long start = System.currentTimeMillis();
                                 Node jcrNode = session.getNode(rootScope);
-                                AutoBeanCommittingAndClearingList<ContentBean> beansToIndex =
-                                        new AutoBeanCommittingAndClearingList<ContentBean>(1000, solrServer);
+                                AutoBeanCommittingAndClearingList<IdentifiableContentBean> beansToIndex =
+                                        new AutoBeanCommittingAndClearingList<IdentifiableContentBean>(1000, solrServer);
                                 indexDescendantDocuments(jcrNode, beansToIndex);
                                 beansToIndex.commit();
                                 firstIndexingCrawlDone = true;
@@ -377,7 +377,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
             }
         }
 
-        private void indexDescendantDocuments(Node node, List<ContentBean> beansToIndex) {
+        private void indexDescendantDocuments(Node node, List<IdentifiableContentBean> beansToIndex) {
             try {
                 NodeIterator childNodes = node.getNodes();
                 while (childNodes.hasNext()) {
@@ -410,7 +410,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     }
 
 
-    private class AutoBeanCommittingAndClearingList<E extends ContentBean> extends ArrayList<E> {
+    private class AutoBeanCommittingAndClearingList<E extends IdentifiableContentBean> extends ArrayList<E> {
 
         private static final long serialVersionUID = 1L;
 

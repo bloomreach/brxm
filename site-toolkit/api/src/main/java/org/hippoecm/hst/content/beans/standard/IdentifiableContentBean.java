@@ -18,16 +18,17 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
- * The base marker interface for all beans: This includes beans that can be completely
- * independent of jcr, for example a bean that represents some external src
+ * The base marker interface for all identifiable beans: This includes beans that can be completely
+ * independent of jcr, for example a bean that represents some external src. The {@link #getPath()} must return
+ * the unique identifier for this {@link IdentifiableContentBean} : This is typically the identifier used in indexes
  */
-public interface ContentBean {
+public interface IdentifiableContentBean extends ContentBean {
 
     /**
      * This returns the path of the backing provider for this bean, for example
      * /documents/content/myprojec/news/article or http://www.example.com/foo/bar
      * It is not allowed for any implementation to return <code>null</code>
-     * @return the path for this {@link ContentBean}
+     * @return the path for this {@link IdentifiableContentBean}
      */
 
     // the path is used as index id, not the canonical id as we can index

@@ -18,8 +18,6 @@ package org.hippoecm.hst.solr.content.beans.query;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import org.hippoecm.hst.content.beans.standard.ContentBean;
-
 public interface HitIterator<E> extends Iterator<Hit>, Serializable {
 
     /**

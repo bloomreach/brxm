@@ -13,22 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.hst.solr.beans;
 
-package org.hippoecm.hst.solr.content.beans;
-
-
-import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
-public interface ContentBeanValueProvider {
+public class TestBaseContentBean implements IdentifiableContentBean {
+    
+    private String path;
 
-    /**
-     *
-     * @return the List of {@link IdentifiableContentBean}s that this @{@link ContentBeanValueProvider} can provide (the content for)
-     *
-     */
-     List<Class<? extends IdentifiableContentBean>> getAnnotatedClasses();
+    public TestBaseContentBean() {
 
-    void callbackHandler(IdentifiableContentBean identifiableContentBean) throws BindingException;
+    }
+
+    public TestBaseContentBean(String path) {
+        this.path = path;
+    }
+    
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public void setPath(final String path) {
+        this.path = path;
+    }
+
 }

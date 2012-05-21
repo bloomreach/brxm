@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 /**
  * The result of the execution of the HstQuery.
@@ -45,5 +45,5 @@ public interface HippoQueryResult extends Serializable {
     /**
      * This returns the hits
      */
-    HitIterator<ContentBean> getHits();
+    HitIterator<IdentifiableContentBean> getHits();
 }

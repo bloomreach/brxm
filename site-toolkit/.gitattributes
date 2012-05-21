@@ -81,7 +81,6 @@ api/src/main/java/org/hippoecm/hst/content/beans/query/filter/Filter.java svneol
 api/src/main/java/org/hippoecm/hst/content/beans/query/filter/NodeTypeFilter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/filter/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/content/beans/standard/ContentBean.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAssetBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAvailableTranslationsBean.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoBean.java svneol=native#text/plain
@@ -101,6 +100,7 @@ api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoResourceBean.java
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoResultSetBean.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoTranslated.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/standard/HippoVirtualOnlyBean.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/standard/IdentifiableContentBean.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/standard/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/rewriter/ContentRewriter.java svneol=native#text/plain
@@ -952,6 +952,13 @@ solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitImpl.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/HitIteratorImpl.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/PatternTester.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestCompoundDocumentObjectBinder.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestDocumentObjectBinder.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestBaseContentBean.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestContentBean.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestContentBeanWithCompounds.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestAddress.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestExplicitFieldEndingsAddress.java -text
 src/site/site.xml svneol=native#text/plain
 test/pom.xml -text
 test/src/site/site.xml -text

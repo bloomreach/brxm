@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -30,17 +31,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -52,11 +53,30 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(DocumentObjectBinder.class);
 
     private final Map<Class, List<DocField>> infocache = new ConcurrentHashMap<Class, List<DocField>>();
+    private final Map<Class, Map<String,DocField>> infocacheMap = new ConcurrentHashMap<Class, Map<String, DocField>>();
 
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME = "hippo_content_bean_fqn_clazz_name";
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY = "hippo_content_bean_fqn_clazz_hierarchy";
     public final static String HIPPO_CONTENT_BEAN_PATH_HIERARCHY = "hippo_path_hierarchy";
     public final static String HIPPO_CONTENT_BEAN_PATH_DEPTH = "hippo_path_depth";
+
+    private final static Pattern compoundFieldNamePatternMatcher = Pattern.compile("._[a-zA-Z]");
+    private final static Map<Class<?>, String> supportedTypePatterns = new HashMap<Class<?>, String>();
+    static {
+        supportedTypePatterns.put(String.class, "_txt");
+        supportedTypePatterns.put(Date.class, "_dt");
+        supportedTypePatterns.put(Calendar.class, "_dt");
+        supportedTypePatterns.put(Boolean.class, "_b");
+        supportedTypePatterns.put(boolean.class, "_b");
+        supportedTypePatterns.put(Integer.class, "_i");
+        supportedTypePatterns.put(int.class, "_i");
+        supportedTypePatterns.put(Long.class, "_l");
+        supportedTypePatterns.put(long.class, "_l");
+        supportedTypePatterns.put(Double.class, "_d");
+        supportedTypePatterns.put(double.class, "_d");
+        supportedTypePatterns.put(Float.class, "_f");
+        supportedTypePatterns.put(float.class, "_f");
+    }
 
     public DocumentObjectBinder() {
     }
@@ -82,9 +102,12 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 docField.inject(obj, sdoc);
             }
             return (T) obj;
-        } catch (Exception e) {
-            log.warn("Could not instantiate object of class " + beanClazz, e);
-            return null;
+        } catch (InstantiationException e) {
+            throw new RuntimeException("Could not instantiate object of class " + beanClazz +". There must be a public no-args constructor", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not instantiate object of class " + beanClazz +".", e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Could not instantiate object of class " + beanClazz +".", e);
         }
     }
 
@@ -100,36 +123,33 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         return result;
     }
 
-
     @Override
-    public SolrInputDocument toSolrInputDocument(Object obj) {
-        List<DocField> fields = getDocFields(obj.getClass());
-        if (fields.isEmpty()) {
-            throw new RuntimeException("class: " + obj.getClass() + " does not define any fields.");
+    public SolrInputDocument toSolrInputDocument(Object obj) throws IllegalArgumentException, IllegalStateException {
+        SolrInputDocument doc =  createSolrInputDocument(obj);
+
+        if (doc.getFieldValue("id") == null) {
+            throw new IllegalStateException("Cannot create SolrInputDocument for object '"+obj.toString()+"' because the 'id' field" +
+                    "is missing.");
         }
 
-        SolrInputDocument doc = new SolrInputDocument();
-        for (DocField field : fields) {
-            doc.setField(field.name, field.get(obj));
-        }
         // default field name we always add:
         doc.setField(HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME, obj.getClass().getName());
-
         setClassHierarchyField(doc, obj.getClass());
-        
-        // we index the path and depth of a HippoBean extra : This 
-        // is not the nicest way to do it here : It could also be achieved by just using the 
-        // solr path field, and use copyField to hippo_path_hierarchy and hippo_path_depth
-        // and two custom tokenizers. For now, this is a shortcut
-        if (obj instanceof ContentBean) {
-            String path = ((ContentBean)obj).getPath();
+
+        // we index the path and depth of a IdentifiableContentBean extra :
+        if (obj instanceof IdentifiableContentBean) {
+            String path = ((IdentifiableContentBean)obj).getPath();
+            if (StringUtils.isBlank(path)) {
+                // the path is the identifier for the index. Cannot index this object because it has an illegal state
+                throw new IllegalStateException("IdentifiableContentBean is not allowed to have a #getPath to be null, empty or blank. Cannot index bean");
+            }
             boolean startedWithSlash = false;
             if (path.startsWith("/")) {
                 path = path.substring(1);
                 startedWithSlash = true;
             }
             String[] split = path.split("/");
-            doc.setField(HIPPO_CONTENT_BEAN_PATH_DEPTH, split.length);
+            doc.setField(HIPPO_CONTENT_BEAN_PATH_DEPTH, new Integer(split.length));
             StringBuilder builder = new StringBuilder();
             for (String segment : split) {
                 if (builder.length() == 0) {
@@ -147,21 +167,146 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         return doc;
     }
 
-
-    private List<DocField> getDocFields(Class clazz) {
-        boolean caching = true;
-        if (caching) {
-            List<DocField> fields = infocache.get(clazz);
-            if (fields == null) {
-                synchronized (infocache) {
-                    infocache.put(clazz, fields = collectInfo(clazz));
-                }
-            }
-            return fields;
-        } else {
-            return collectInfo(clazz);
+    /**
+     * This method recursively creates a flattened Solr input document from a
+     * possibly hierarchical IdentifiableContentBean (with sub beans in it) object
+     * @param obj the obj to get the solr document from
+     * @return
+     */
+    private SolrInputDocument createSolrInputDocument(final Object obj) {
+        List<DocField> fields = getDocFields(obj.getClass());
+        if (fields.isEmpty()) {
+            throw new IllegalArgumentException("class: " + obj.getClass() + " does not define any indexable fields.");
         }
 
+        SolrInputDocument doc = new SolrInputDocument();
+        for (DocField field : fields) {
+            Object value = field.get(obj);
+            if (value == null) {
+                // do not index null values
+                continue;
+            }
+            boolean processed = false;
+            if (value instanceof Collection) {
+                // check whether the items are a ContentBean
+                Collection<Object> vals =  (Collection<Object>) value;
+                if (!vals.isEmpty()) {
+                    if (vals.iterator().next() instanceof ContentBean) {
+                        // the @IndexField was added to a method that returns a collection of
+                        // ContentBean's. Index all the annotated fields from this
+                        // content bean
+                        processed = true;
+                        for (Object o : vals) {
+                            try {
+                                SolrInputDocument compound = createSolrInputDocument(o);
+                                // now add all fields to the current SolrInputDocument fields
+                                appendCompoundFields(doc, field.name, compound, o.getClass(), true);
+                            } catch (IllegalArgumentException e) {
+                                log.warn("Cannot index compound ContentBean : {}", e.toString());
+                            }
+                        }
+                    }
+                }
+            } else if (value instanceof Object[]) {
+                // check whether the items are a ContentBean
+                Object[] vals =  (Object[]) value;
+                if (vals.length > 0) {
+                    if (vals[0] instanceof ContentBean) {
+                        // the @IndexField was added to a method that returns a collection of
+                        // ContentBean's. Index all the annotated fields from this
+                        // content bean
+                        processed = true;
+                        for (Object o : vals) {
+                            try {
+                                SolrInputDocument compound = createSolrInputDocument(o);
+                                // now add all fields to the current SolrInputDocument fields
+                                appendCompoundFields(doc, field.name, compound, o.getClass(), true);
+                            } catch (IllegalArgumentException e) {
+                                log.warn("Cannot index compound ContentBean : {}", e.toString());
+                            }
+                        }
+                    }
+                }
+            }else  if (value instanceof ContentBean) {
+                try {
+                    // the @IndexField was added to a method that returns a
+                    // ContentBean. Index all the annotated fields from this
+                    // content bean
+                    processed = true;
+                    SolrInputDocument compound = createSolrInputDocument(value);
+                    // now add all fields to the current SolrInputDocument fields
+                    appendCompoundFields(doc, field.name, compound, value.getClass(),  false);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Cannot index compound ContentBean : {}", e.toString());
+                }
+            }
+            if (!processed) {
+                doc.setField(field.name, format(value));
+            }
+        }
+        return doc;
+    }
+
+    private void appendCompoundFields(final SolrInputDocument doc, final String docFieldName, final SolrInputDocument compound,
+                                      final Class<? extends Object> clazz, final boolean multiValued) {
+
+        for (String fieldName : compound.getFieldNames()) {
+            Collection<Object> values = compound.getFieldValues(fieldName);
+
+            // check whether fieldName OWN its own extension ( _txt, _dt, etc)
+            String compoundFieldName = docFieldName + "_" + fieldName;
+            if (multiValued) {
+                compoundFieldName = compoundFieldName + "_multiple";
+            }
+
+            // If the fieldName already matches the '._[a-zA-Z]' pattern, then, we do not append an extension
+            // Otherwise, we need to append the fieldName with some extension (for example _dt, _l, _b etc) to
+            // indicate some Solr field
+            // For this, we need the return type of the DocField for 'fieldName' : We cannot use the value from 'values'
+            // because for example Calendar or Date have already been formatted into their String representation
+            if (compoundFieldNamePatternMatcher.matcher(fieldName).find()) {
+                // does already have a _xxx pattern
+                for (Object o : values) {
+                    doc.addField(compoundFieldName, format(o));
+                }
+            } else {
+                // does not yet have a _xxx pattern
+                if (!values.isEmpty()) {
+                    DocField docField = infocacheMap.get(clazz).get(fieldName);
+                    if (docField == null) {
+                        throw new IllegalStateException("docField for '"+clazz.getName()+"' was not expected to be null");
+                    }
+                    if (supportedTypePatterns.containsKey(docField.type)) {
+                         compoundFieldName = compoundFieldName + supportedTypePatterns.get(docField.type);
+
+                        for (Object o : values) {
+                            doc.addField(compoundFieldName, format(o));
+                        }
+                    } else {
+                        log.warn("Cannot index unsupported return type '{}' in compound bean. Supported types are '{}' ", docField.type.getName(), supportedTypePatterns.keySet());
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    private List<DocField> getDocFields(Class clazz) {
+       List<DocField> fields = infocache.get(clazz);
+        if (fields == null) {
+            synchronized (infocache) {
+                fields = collectInfo(clazz);
+                infocache.put(clazz, fields);
+
+                HashMap<String, DocField> byMap = new HashMap<String, DocField>(fields.size());
+                for (DocField f : fields) {
+                    byMap.put(f.name, f);
+                }
+                infocacheMap.put(clazz, byMap);
+            }
+        }
+        return fields;
     }
 
     private List<DocField> collectInfo(Class clazz) {
@@ -237,6 +382,59 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             setClassHierarchyField(doc, i);
         }
     }
+
+
+    /*
+     * Formats object val to String in case of val is a Date or Calendar object. When <code>val</code> is an 
+     * array or collection of Date's or Calendar's, all values will be formatted
+     */
+    private static Object format(Object val) {
+        if( val instanceof Collection ) {
+            Collection<Object> vals = (Collection<Object>)val;
+            if (!vals.isEmpty()) {
+                Object first = vals.iterator().next();
+                if (first instanceof Date) {
+                    // assume now all items of this type
+                    Collection<String> strings = new ArrayList<String>(vals.size());
+                    for (Object o : vals) {
+                        strings.add(DateUtil.getThreadLocalDateFormat().format((Date)o));
+                    }
+                    return strings;
+                } else if (first instanceof Calendar) {
+                    // assume now all items of this type
+                    Collection<String> strings = new ArrayList<String>(vals.size());
+                    for (Object o : vals) {
+                        strings.add(DateUtil.getThreadLocalDateFormat().format((Calendar)o));
+                    }
+                    return strings;
+                }
+            } 
+        } else if (val instanceof Object[]) {
+            Object[] vals = (Object[])val;
+            if (vals.length > 0) {
+                if (vals[0] instanceof Date) {
+                    // assume now all items of this type
+                    Collection<String> strings = new ArrayList<String>(vals.length);
+                    for (Object o : vals) {
+                        strings.add(DateUtil.getThreadLocalDateFormat().format((Date) o));
+                    }
+                    return strings;
+                } else if (vals[0] instanceof Calendar) {
+                    // assume now all items of this type
+                    Collection<String> strings = new ArrayList<String>(vals.length);
+                    for (Object o : vals) {
+                        strings.add(DateUtil.getThreadLocalDateFormat().format((Calendar)o));
+                    }
+                    return strings;
+                }
+            }
+        } else if (val instanceof Calendar) {
+            return DateUtil.getThreadLocalDateFormat().format(((Calendar) val).getTime());
+        } else if (val instanceof Date) {
+            return DateUtil.getThreadLocalDateFormat().format((Date)val);
+        }
+        return val;
+    }
     
     private static class DocField {
         private String name;
@@ -251,7 +449,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         * is set to <code>TRUE</code> as well as <code>isList</code> is set to <code>TRUE</code>
         */
         boolean isContainedInMap = false;
-        private Pattern dynamicFieldNamePatternMatcher;
 
         public DocField(Method method) {
             getter = method;
@@ -260,10 +457,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             storeType();
 
             // Look for a matching getter for either field or setter.
-
-            String gname = null;
-            Class<?> declaringClass = null;
-
             String setterName = null;
             if (getter.getName().startsWith("get")) {
                 setterName = "set" + getter.getName().substring(3);
@@ -275,9 +468,9 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     // gets the public setter and exception if none available
                     setter = method.getDeclaringClass().getMethod(setterName, getter.getReturnType());
                 } catch (NoSuchMethodException e) {
-                    log.debug("There is no public setter for '{}' so that field cannot be populated", getter.getName());
+                    log.debug("There is no public setter for '{}' so that field will never be populated from a solr response.", getter.getName());
                 } catch (SecurityException e) {
-                    log.debug("There is no public setter for '{}' so that field cannot be populated", getter.getName());
+                    log.debug("There is no public setter for '{}' so that field will never be populated from a solr response.", getter.getName());
                 }
             }
         }
@@ -287,16 +480,11 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 String getterName = getter.getName();
                 if (getterName.startsWith("get") && getterName.length() > 3) {
                     name = getterName.substring(3, 4).toLowerCase() + getterName.substring(4);
+                } else if (getterName.startsWith("is") && getterName.length() > 2) {
+                    name = getterName.substring(2, 3).toLowerCase() + getterName.substring(3);
                 } else {
                     name = getter.getName();
                 } 
-            }
-            //dynamic fields are annotated as @Field("categories_*")
-            else if (annotation.name().indexOf('*') >= 0) {
-                //if the field was annotated as a dynamic field, convert the name into a pattern
-                //the wildcard (*) is supposed to be either a prefix or a suffix, hence the use of replaceFirst
-                name = annotation.name().replaceFirst("\\*", "\\.*");
-                dynamicFieldNamePatternMatcher = Pattern.compile("^" + name + "$");
             } else {
                 name = annotation.name();
             }
@@ -372,53 +560,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 //this is not a dynamic field. so return te value
                 return fieldValue;
             }
-            //reading dynamic field values
-            if (dynamicFieldNamePatternMatcher != null) {
-                Map<String, Object> allValuesMap = null;
-                ArrayList allValuesList = null;
-                if (isContainedInMap) {
-                    allValuesMap = new HashMap<String, Object>();
-                } else {
-                    allValuesList = new ArrayList();
-                }
-                for (String field : sdoc.getFieldNames()) {
-                    if (dynamicFieldNamePatternMatcher.matcher(field).find()) {
-                        Object val = sdoc.getFieldValue(field);
-                        if (val == null) {
-                            continue;
-                        }
-                        if (isContainedInMap) {
-                            if (isList) {
-                                if (!(val instanceof List)) {
-                                    ArrayList al = new ArrayList();
-                                    al.add(val);
-                                    val = al;
-                                }
-                            } else if (isArray) {
-                                if (!(val instanceof List)) {
-                                    Object[] arr = (Object[]) Array.newInstance(type, 1);
-                                    arr[0] = val;
-                                    val = arr;
-                                } else {
-                                    val = Array.newInstance(type, ((List) val).size());
-                                }
-                            }
-                            allValuesMap.put(field, val);
-                        } else {
-                            if (val instanceof Collection) {
-                                allValuesList.addAll((Collection) val);
-                            } else {
-                                allValuesList.add(val);
-                            }
-                        }
-                    }
-                }
-                if (isContainedInMap) {
-                    return allValuesMap.isEmpty() ? null : allValuesMap;
-                } else {
-                    return allValuesList.isEmpty() ? null : allValuesList;
-                }
-            }
             return null;
         }
 
@@ -464,7 +605,9 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             try {
                 if (setter != null) {
                     Object formatted = formatValueToField(setter, v);
-                    setter.invoke(obj, formatted);
+                    if (formatted != null) {
+                        setter.invoke(obj, formatted);
+                    }
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Exception while setting value : " + v + " on " + setter, e);
@@ -476,10 +619,31 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             if (setter.getParameterTypes().length != 1 ) {
                 throw new IllegalArgumentException("Setter method '"+setter+"' is supposed to have a single argument");
             }
-            if (setter.getParameterTypes()[0].equals(Calendar.class) && (v instanceof Date)) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime((Date) v);
-                return cal;
+            try {
+                if (setter.getParameterTypes()[0].equals(Calendar.class)) {
+                    // try to convert v to calendar
+                    Calendar cal = Calendar.getInstance();
+                    if (v instanceof String) {
+                        Date date = DateUtil.getThreadLocalDateFormat().parse((String) v);
+                        cal.setTime(date);
+                    } else if (v instanceof Date) {
+                        cal.setTime((Date) v);
+                    }
+                    return cal;
+                }
+                if (setter.getParameterTypes()[0].equals(Date.class)) {
+                    // try to convert v to date
+                    Calendar cal = null;
+                    if (v instanceof String) {
+                        return DateUtil.getThreadLocalDateFormat().parse((String) v);
+                    } else if (v instanceof Calendar) {
+                        cal = (Calendar) v;
+                        return cal.getTime();
+                    }
+    
+                }
+            } catch (ParseException e) {
+                log.warn("Could not parse value '' to Date. Return null", v.toString());
             }
             return v;
         }
@@ -488,7 +652,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
             if (getter != null) {
                 try {
-                    return format(getter.invoke(obj, (Object[]) null));
+                    return getter.invoke(obj, (Object[]) null);
                 } catch (Exception e) {
                     throw new RuntimeException("Exception while getting value: " + getter, e);
                 }
@@ -497,13 +661,5 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             return null;
         }
 
-        private Object format(Object val) {
-            if (val instanceof Calendar) {
-                return DateUtil.getThreadLocalDateFormat().format(((Calendar) val).getTime());
-            }if (val instanceof Date) {
-                return DateUtil.getThreadLocalDateFormat().format((Date)val);
-            }
-            return val;
-        }
     }
 }
