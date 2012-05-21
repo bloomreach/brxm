@@ -1,0 +1,2 @@
+["java.util.ArrayList", [{"@class":"org.hippoecm.frontend.service.restproxy.test.annotations.JcrPath","pickerSelectableNodeTypes":["hippogogreengallery:imageset"],"pickerInitialPath":"/content/gallery/logos","pickerConfiguration":"cms-pickers/documents","pickerRemembersLastVisited":true,"isRelative":false},
+{"@class":"org.hippoecm.frontend.service.restproxy.test.annotations.NoAttributesAnnotation"}]]

@@ -3,17 +3,11 @@ package org.hippoecm.frontend.service.restproxy;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Credentials;
@@ -25,25 +19,18 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.TypeDeserializer;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.hippoecm.frontend.service.restproxy.custom.AnnotationJsonDeserializer;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.sso.CredentialCipher;
@@ -79,7 +66,9 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enableDefaultTyping();
         objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
-        SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", new Version(2, 23, 02, "SNAPSHOT"));
+        // Version here used for Jakson JSON purposes and has nothing to do with Hippo CMS Engine version
+        // Just using unknown version as it is of no use to us
+        SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion());
         cmsRestJacksonJsonModule.addDeserializer(Annotation.class, new AnnotationJsonDeserializer());
         objectMapper.registerModule(cmsRestJacksonJsonModule);
         JacksonJaxbJsonProvider jjjProvider = new JacksonJaxbJsonProvider();
@@ -199,349 +188,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
         CredentialCipher credentialCipher = CredentialCipher.getInstance();
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
-    }
-    
-    // Would you take a look at the serialization of HstPropertyDefinition
-    private static final class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Annotation deserialize(JsonParser jsonPasrer, DeserializationContext deserContext) throws IOException,
-                JsonProcessingException {
-
-            Annotation annotation = null;
-            String annotationTypeName = null;
-            Class<? extends Annotation> annotationClass = null;
-            Map<String, Object> annotationAttributes = null;
-
-            while(jsonPasrer.nextToken() != JsonToken.END_OBJECT) {
-                // Read the '@class' field name
-                jsonPasrer.nextToken();
-                // Now read the '@class' field value
-                annotationTypeName = jsonPasrer.getText();
-
-                try {
-                    annotationClass = (Class<? extends Annotation>) Class.forName(annotationTypeName);
-                    annotationAttributes = new HashMap<String, Object>(annotationClass.getDeclaredMethods().length);
-                    while (jsonPasrer.nextToken() != JsonToken.END_OBJECT) {
-                        final String fieldName = jsonPasrer.getCurrentName();
-                        final Method annotationAttribute = annotationClass.getDeclaredMethod(fieldName, new Class<?>[] {});
-                        annotationAttributes.put(fieldName, deserializeAnnotationAttribute(annotationClass, annotationAttribute, jsonPasrer));
-                    }
-                    // Annotation deserialization is done here
-                    break;
-                } catch (ClassNotFoundException cnfe) {
-                    throw new AnnotationProcessingException(String.format("Error while processing annotation: %s", annotationTypeName), cnfe);
-                } catch (SecurityException se) {
-                    throw new AnnotationProcessingException(String.format("Error while processing annotation: %s", annotationTypeName), se);
-                } catch (NoSuchMethodException nsme) {
-                    throw new AnnotationProcessingException(String.format("Error while processing annotation: %s", annotationTypeName), nsme);
-                }
-            }
-
-            annotation = (Annotation) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                    new Class<?>[] { annotationClass }, new AnnotationProxyInvocationHandler(annotationClass, annotationAttributes));
-
-            return annotation;
-        }
-
-        @Override
-        public Object deserializeWithType(JsonParser jp, DeserializationContext ctxt, TypeDeserializer typeDeserializer)
-                throws IOException, JsonProcessingException {
-
-            return deserialize(jp, ctxt);
-        }
-
-    }
-
-    private static final Object deserializeAnnotationAttribute(Class<? extends Annotation> annotationClass, Method annotationAttribute,
-            JsonParser jsonPasrer) throws JsonParseException, IOException {
-
-        jsonPasrer.nextToken();
-        if (annotationAttribute.getReturnType() == byte.class || annotationAttribute.getReturnType() == Byte.class) {
-            return Byte.valueOf(jsonPasrer.getNumberValue().byteValue());
-        } else if (annotationAttribute.getReturnType() == short.class || annotationAttribute.getReturnType() == Short.class) {
-            return Short.valueOf(jsonPasrer.getNumberValue().shortValue());            
-        } else if (annotationAttribute.getReturnType() == int.class || annotationAttribute.getReturnType() == Integer.class) {
-            return Integer.valueOf(jsonPasrer.getNumberValue().intValue());            
-        } else if (annotationAttribute.getReturnType() == long.class || annotationAttribute.getReturnType() == Long.class) {
-            return Long.valueOf(jsonPasrer.getNumberValue().longValue());            
-        } else if (annotationAttribute.getReturnType() == float.class || annotationAttribute.getReturnType() == Float.class) {
-            return Float.valueOf(jsonPasrer.getNumberValue().floatValue());            
-        } else if (annotationAttribute.getReturnType() == double.class || annotationAttribute.getReturnType() == Double.class) {
-            return Double.valueOf(jsonPasrer.getNumberValue().doubleValue());            
-        } else if (annotationAttribute.getReturnType() == double.class || annotationAttribute.getReturnType() == Double.class) {
-            return Double.valueOf(jsonPasrer.getNumberValue().doubleValue());            
-        } else if (annotationAttribute.getReturnType() == boolean.class || annotationAttribute.getReturnType() == Boolean.class ) {
-            return Boolean.valueOf(jsonPasrer.getBooleanValue());
-        } else if (annotationAttribute.getReturnType() == char.class || annotationAttribute.getReturnType() == Character.class ) {
-            return Character.valueOf(jsonPasrer.getTextCharacters()[0]);
-        } else if (annotationAttribute.getReturnType() == String.class) {
-            return jsonPasrer.getText();
-        } else if (annotationAttribute.getReturnType() == byte[].class) {
-            return deserializeBytePrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Byte[].class) {
-            return deserializeByteArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == short[].class) {
-            return deserializeShortPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Short[].class) {
-            return deserializeShortArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == int[].class) {
-            return deserializeIntegerPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Short[].class) {
-            return deserializeIntegerArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == long[].class) {
-            return deserializeLongPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Long[].class) {
-            return deserializeLongArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == float[].class) {
-            return deserializeFloatPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Float[].class) {
-            return deserializeFloatArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == double[].class) {
-            return deserializeDoublePrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Double[].class) {
-            return deserializeDoubleArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == boolean[].class) {
-            return deserializeBooleanPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Boolean[].class) {
-            return deserializeBooleanArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == char[].class) {
-            return deserializeCharacterPrimitiveArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == Character[].class) {
-            return deserializeCharacterArrayAnnotationAttribute(jsonPasrer);
-        } else if (annotationAttribute.getReturnType() == String[].class) {
-            return deserializeStringArrayAnnotationAttribute(jsonPasrer);
-        } else {
-            throw new IllegalArgumentException(String.format("Unrecognized attribute value type %s for annotation %s",
-                    annotationAttribute.getReturnType().getName(), annotationClass.getName()));
-        }
-
-    }
-
-    private static final byte[] deserializeBytePrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Byte[] byteArray = deserializeByteArrayAnnotationAttribute(jsonPasrer);
-        byte[] returnValue = new byte[byteArray.length];
-
-        for (int index = 0; index < byteArray.length; index++) {
-            returnValue[index] = byteArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Byte[] deserializeByteArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Byte> byteArray = new ArrayList<Byte>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            byteArray.add(jsonPasrer.getByteValue());
-        }
-
-        return byteArray.toArray(new Byte[] {});
-    }
-
-    private static final short[] deserializeShortPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Short[] shortArray = deserializeShortArrayAnnotationAttribute(jsonPasrer);
-        short[] returnValue = new short[shortArray.length];
-
-        for (int index = 0; index < shortArray.length; index++) {
-            returnValue[index] = shortArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Short[] deserializeShortArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Short> integerArray = new ArrayList<Short>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            integerArray.add(jsonPasrer.getShortValue());
-        }
-
-        return integerArray.toArray(new Short[] {});
-    }
-
-    private static final int[] deserializeIntegerPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Integer[] integerArray = deserializeIntegerArrayAnnotationAttribute(jsonPasrer);
-        int[] returnValue = new int[integerArray.length];
-
-        for (int index = 0; index < integerArray.length; index++) {
-            returnValue[index] = integerArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Integer[] deserializeIntegerArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Integer> integerArray = new ArrayList<Integer>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            integerArray.add(jsonPasrer.getIntValue());
-        }
-
-        return integerArray.toArray(new Integer[] {});
-    }
-
-    private static final long[] deserializeLongPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Long[] longArray = deserializeLongArrayAnnotationAttribute(jsonPasrer);
-        long[] returnValue = new long[longArray.length];
-
-        for (int index = 0; index < longArray.length; index++) {
-            returnValue[index] = longArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Long[] deserializeLongArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Long> longArray = new ArrayList<Long>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            longArray.add(jsonPasrer.getLongValue());
-        }
-
-        return longArray.toArray(new Long[] {});
-    }
-
-    private static final float[] deserializeFloatPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Float[] floatArray = deserializeFloatArrayAnnotationAttribute(jsonPasrer);
-        float[] returnValue = new float[floatArray.length];
-
-        for (int index = 0; index < floatArray.length; index++) {
-            returnValue[index] = floatArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Float[] deserializeFloatArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Float> floatArray = new ArrayList<Float>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            floatArray.add(jsonPasrer.getFloatValue());
-        }
-
-        return floatArray.toArray(new Float[] {});
-    }
-
-    private static final double[] deserializeDoublePrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Double[] doubleArray = deserializeDoubleArrayAnnotationAttribute(jsonPasrer);
-        double[] returnValue = new double[doubleArray.length];
-
-        for (int index = 0; index < doubleArray.length; index++) {
-            returnValue[index] = doubleArray[index];
-        }
-
-        return returnValue;
-    }
-
-    private static final Double[] deserializeDoubleArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Double> doubleArray = new ArrayList<Double>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            doubleArray.add(jsonPasrer.getDoubleValue());
-        }
-
-        return doubleArray.toArray(new Double[] {});
-    }
-
-    private static final boolean[] deserializeBooleanPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Boolean[] booleanArray = deserializeBooleanArrayAnnotationAttribute(jsonPasrer);
-        boolean[] returnArray = new boolean[booleanArray.length];
-
-        for (int index = 0; index < booleanArray.length; index++) {
-            returnArray[index] = booleanArray[index];
-        }
-
-        return returnArray;
-    }
-
-    private static final Boolean[] deserializeBooleanArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Boolean> booleanArray = new ArrayList<Boolean>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            booleanArray.add(jsonPasrer.getBooleanValue());
-        }
-
-        return booleanArray.toArray(new Boolean[] {});
-    }
-
-    private static final char[] deserializeCharacterPrimitiveArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        Character[] characterArray = deserializeCharacterArrayAnnotationAttribute(jsonPasrer);
-        char[] returnValue = new char[characterArray.length];
-
-        for (int index = 0; index < characterArray.length; index++) {
-            returnValue[index] = characterArray[index];
-        }
-        return returnValue;
-    }
-
-    private static final Character[] deserializeCharacterArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<Character> characterArray = new ArrayList<Character>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            characterArray.add(jsonPasrer.getTextCharacters()[0]);
-        }
-
-        return characterArray.toArray(new Character[] {});
-    }
-
-    private static final String[] deserializeStringArrayAnnotationAttribute(JsonParser jsonPasrer) throws JsonParseException, IOException {
-        List<String> stringArray = new ArrayList<String>();
-
-        while(jsonPasrer.nextToken() != JsonToken.END_ARRAY) {
-            stringArray.add(jsonPasrer.getText());
-        }
-
-        return stringArray.toArray(new String[] {});
-    }
-
-    private static final class AnnotationProxyInvocationHandler implements InvocationHandler {
-
-        private final Class<? extends Annotation> annotationClass;
-        private final Map<String, ?> annotationAttributes;
-
-        public AnnotationProxyInvocationHandler(Class<? extends Annotation> annotationTypeName, Map<String, ?> annotationAttributes) {
-            this.annotationClass = annotationTypeName;
-            this.annotationAttributes = annotationAttributes;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Object returnValue = this.annotationAttributes.get(method.getName());
-
-            if (returnValue != null) {
-                return returnValue;
-            } else if (method.getName().equals("toString")) {
-                return handleToString();
-            } else if (method.getName().equals("annotationType")) {
-                return this.annotationClass;
-            } else {
-                throw new NotImplementedException(String.format("This method can not be handled for : %s", this.handleToString()));
-            }
-        }
-
-        @SuppressWarnings("unused")
-        protected AnnotationProxyInvocationHandler() {
-            annotationClass = null;
-            annotationAttributes = null;
-        }
-
-        protected String handleToString() {
-            String superString = super.toString();
-
-            return String.format("%s : %s", superString, this.annotationClass.getName());
-        }
-
-    }
-
-    @SuppressWarnings("serial")
-    private static final class AnnotationProcessingException extends JsonProcessingException {
-
-        protected AnnotationProcessingException(String msg, Throwable rootCause) {
-            super(msg, rootCause);
-        }
-
     }
 
 }

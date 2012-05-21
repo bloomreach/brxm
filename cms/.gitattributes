@@ -1403,6 +1403,10 @@ engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain
 engine/src/site/apt/index.apt -text
 engine/src/site/site.xml svneol=native#text/plain
+engine/test/main/resources/jackson-json-serialized-annotations/allinonechannelinfo.json -text
+engine/test/main/resources/jackson-json-serialized-annotations/mobileinfo.json -text
+engine/test/main/resources/jackson-json-serialized-annotations/noattributesannotationchannelinfo.json -text
+engine/test/main/resources/jackson-json-serialized-annotations/websiteinfo.json -text
 gallery/common/pom.xml svneol=native#text/plain
 gallery/common/src/main/java/org/hippoecm/repository/gallery/GalleryWorkflow.java -text
 gallery/frontend/pom.xml svneol=native#text/plain
