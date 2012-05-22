@@ -58,7 +58,7 @@ public class HitImpl implements Hit {
     }
 
     @Override
-    public IdentifiableContentBean getIdentifiableContentBean() throws BindingException {
+    public IdentifiableContentBean getBean() throws BindingException {
         if (identifiableContentBean != null) {
             return identifiableContentBean;
         }

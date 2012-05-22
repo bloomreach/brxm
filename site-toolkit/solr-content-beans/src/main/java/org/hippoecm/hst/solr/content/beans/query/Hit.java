@@ -30,7 +30,7 @@ public interface Hit extends Serializable {
      * @return the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}
      * @throws BindingException when the {@link SolrDocument} cannot be binded to the {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}
      */
-    IdentifiableContentBean getIdentifiableContentBean() throws BindingException;
+    IdentifiableContentBean getBean() throws BindingException;
 
     /**
      * @return the score for this hit and -1 if there is no score available
