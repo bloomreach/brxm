@@ -510,16 +510,12 @@
     <field name="hippo_path_hierarchy" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="hippo_path_depth" type="int" indexed="true" stored="false"/>
     <field name="comparePath" type="string" indexed="true" stored="true" />
-    <field name="hippo_content_bean_fqn_clazz_name" type="string" indexed="true" stored="true" required="true" />
+    <field name="hippo_content_bean_fqn_clazz_name" type="string" indexed="true" stored="true" required="true"/>
     <field name="hippo_content_bean_fqn_clazz_hierarchy" type="string" indexed="true" stored="false" required="false"  multiValued="true"/>
 
     <!-- mandatory default built-in HippoBean's fields
          The fields are mandatory to be present, but the attributes are can be changed (stored, indexed, etc)
     -->
-
-    <!-- html fields are copied to 'text' hence not indexed here directly : store true for highlighting -->
-    <field name="hippoHtmlContent" type="text_general" indexed="false" stored="true" />
-    <field name="htmlContent" type="text_general" indexed="false" stored="true" />
 
     <!-- end mandatory fields -->
 
@@ -561,11 +557,41 @@ a "*" only at the start or the end.
 EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
 Longer patterns will be matched first.  if equal size patterns
 both match, the first appearing in the schema will be used.  -->
+
+    <!-- ****************** EXPLICIT FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING ******************  -->
+
+    <!-- set STORED to false if NO highlighting is needed
+         html fields are copied to 'text' hence not indexed here directly
+         -->
+    <field name="hippostdContent_multiple_compound_t"  type="text_general" indexed="false"  stored="true" multiValued="true"/>
+    <field name="hippostdContent_compound_t"  type="text_general" indexed="false"  stored="true"/>
+
+    <!-- ****************** END EXPLICIT FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING **************  -->
+
+    <!-- ****************** DYNAMIC FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING ******************  -->
+    <dynamicField name="*_multiple_compound_i"  type="int"    indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_s"  type="string"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_l"  type="long"   indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_t"  type="text_general" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_b"  type="boolean" indexed="true"  stored="false"  multiValued="true"/>
+    <dynamicField name="*_multiple_compound_f"  type="float"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_d"  type="double" indexed="true"  stored="false" multiValued="true"/>
+
+    <dynamicField name="*_compound_i"  type="int"    indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_s"  type="string"  indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_l"  type="long"   indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_t"  type="text_general" indexed="true" stored="false"/>
+    <dynamicField name="*_compound_b"  type="boolean" indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_f"  type="float"  indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_d"  type="double" indexed="true"  stored="false"/>
+
+    <!-- ***************** END DYNAMIC FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING ******************  -->
+
     <dynamicField name="*_i"  type="int"    indexed="true"  stored="true"/>
     <dynamicField name="*_s"  type="string"  indexed="true"  stored="true"/>
     <dynamicField name="*_l"  type="long"   indexed="true"  stored="true"/>
-    <dynamicField name="*_t"  type="text_general"    indexed="true"  stored="true"/>
-    <dynamicField name="*_txt" type="text_general"    indexed="true"  stored="true" multiValued="true"/>
+    <dynamicField name="*_t"  type="text_general" indexed="true"  stored="true"/>
+    <dynamicField name="*_txt" type="text_general" indexed="true"  stored="true" multiValued="true"/>
     <dynamicField name="*_b"  type="boolean" indexed="true"  stored="true"/>
     <dynamicField name="*_f"  type="float"  indexed="true"  stored="true"/>
     <dynamicField name="*_d"  type="double" indexed="true"  stored="true"/>
@@ -620,9 +646,6 @@ unknown fields indexed and/or stored by default -->
   <copyField source="localizedName" dest="text"/>
   <copyField source="title" dest="text"/>
   <copyField source="summary" dest="text"/>
-  <!-- for example max 3000 chars -->
-  <copyField source="hippoHtmlContent" dest="text" maxChars="3000"/>
-  <copyField source="htmlContent" dest="text" maxChars="3000"/>
   <copyField source="brand" dest="text"/>
   <copyField source="product" dest="text"/>
   <copyField source="color" dest="text"/>
@@ -630,6 +653,20 @@ unknown fields indexed and/or stored by default -->
   <copyField source="type" dest="text"/>
   <copyField source="tags" dest="text"/>
   <copyField source="categories" dest="text"/>
+
+
+  <!-- HIPPO SPECIFIC : EXPLCICIT AND DYNAMIC TEXT COMPOUND FIELDS WE BY DEFAULT ADD to 'text' FIELD -->
+
+  <copyField source="hippostdContent_multiple_compound_t" dest="text" maxChars="3000"/>
+  <copyField source="hippostdContent_compound_t" dest="text" maxChars="3000"/>
+
+  <copyField source="*_multiple_compound_s" dest="text" maxChars="500"/>
+  <copyField source="*_multiple_compound_t" dest="text" maxChars="3000"/>
+  <copyField source="*_compound_s" dest="text" maxChars="500"/>
+  <copyField source="*_compound_t" dest="text" maxChars="3000"/>
+
+  <!-- END HIPPO SPECIFIC : DYNAMIC TEXT COMPOUND FIELDS WE BY DEFAULT ADD to 'text' FIELD -->
+
 
   <!-- Above, multiple source fields are copied to the [text] field.
     Another way to map multiple source fields to the same
