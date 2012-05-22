@@ -84,22 +84,22 @@ public class TestCompoundDocumentObjectBinder {
 
         // will result in the 'mainAddress' prefix + the fieldnames or TestAddress compound + automatic endmapping
 
-        assertTrue(doc.getFieldValue("mainAddress_number_i").equals(11));
+        assertTrue(doc.getFieldValue("mainAddress_number_compound_i").equals(11));
 
         // Long mileage, Double price, Boolean sold should also all be there :
-        assertTrue(doc.getFieldValue("mainAddress_mileage_l").equals(mileage));
-        assertTrue(doc.getFieldValue("mainAddress_price_d").equals(price));
-        assertTrue(doc.getFieldValue("mainAddress_sold_b").equals(sold));
+        assertTrue(doc.getFieldValue("mainAddress_mileage_compound_l").equals(mileage));
+        assertTrue(doc.getFieldValue("mainAddress_price_compound_d").equals(price));
+        assertTrue(doc.getFieldValue("mainAddress_sold_compound_b").equals(sold));
 
         // primitive values are auto-boxed to objects:
         // long primitiveMileage, double primitivePrice, primitiveSold ;
-        assertTrue(doc.getFieldValue("mainAddress_primitiveMileage_l") instanceof  Long);
-        assertTrue(doc.getFieldValue("mainAddress_primitivePrice_d") instanceof  Double);
-        assertTrue(doc.getFieldValue("mainAddress_primitiveSold_b") instanceof  Boolean);
+        assertTrue(doc.getFieldValue("mainAddress_primitiveMileage_compound_l") instanceof  Long);
+        assertTrue(doc.getFieldValue("mainAddress_primitivePrice_compound_d") instanceof  Double);
+        assertTrue(doc.getFieldValue("mainAddress_primitiveSold_compound_b") instanceof  Boolean);
 
-        assertTrue(doc.getFieldValue("mainAddress_primitiveMileage_l").equals(primitiveMileage));
-        assertTrue(doc.getFieldValue("mainAddress_primitivePrice_d").equals(primitivePrice));
-        assertTrue(doc.getFieldValue("mainAddress_primitiveSold_b").equals(primitiveSold));
+        assertTrue(doc.getFieldValue("mainAddress_primitiveMileage_compound_l").equals(primitiveMileage));
+        assertTrue(doc.getFieldValue("mainAddress_primitivePrice_compound_d").equals(primitivePrice));
+        assertTrue(doc.getFieldValue("mainAddress_primitiveSold_compound_b").equals(primitiveSold));
 
 
         // below should give same results for 'allAddresses' and 'theNameOfCopyAddresses' 
@@ -107,56 +107,56 @@ public class TestCompoundDocumentObjectBinder {
         
         for (String fieldName : duplicateFields) {
             // The plural addressList should get its values returned as List and also contain '_multiple' in its name
-            Collection<Object> numbers = doc.getFieldValues(fieldName + "_number_multiple_i");
+            Collection<Object> numbers = doc.getFieldValues(fieldName + "_number_multiple_compound_i");
             assertTrue("array input is expected to be returned as ArrayList", numbers instanceof ArrayList<?>);
             assertTrue(numbers.size() == 2);
             assertTrue(((ArrayList) numbers).get(0) instanceof Integer);
             assertTrue(numbers.contains(new Integer(12)));
             assertTrue(numbers.contains(new Integer(13)));
 
-            Collection<Object> mileages = doc.getFieldValues(fieldName + "_mileage_multiple_l");
+            Collection<Object> mileages = doc.getFieldValues(fieldName + "_mileage_multiple_compound_l");
             assertTrue("array input is expected to be returned as ArrayList", mileages instanceof ArrayList<?>);
             assertTrue(mileages.size() == 2);
             assertTrue(((ArrayList) mileages).get(0) instanceof Long);
             assertTrue(mileages.contains(new Long(100)));
 
-            Collection<Object> primitiveMileages = doc.getFieldValues(fieldName + "_primitiveMileage_multiple_l");
+            Collection<Object> primitiveMileages = doc.getFieldValues(fieldName + "_primitiveMileage_multiple_compound_l");
             assertTrue("array input is expected to be returned as ArrayList", primitiveMileages instanceof ArrayList<?>);
             assertTrue(primitiveMileages.size() == 2);
             assertTrue(((ArrayList) primitiveMileages).get(0) instanceof Long);
             assertTrue(primitiveMileages.contains(new Long(50)));
 
-            Collection<Object> solds = doc.getFieldValues(fieldName + "_sold_multiple_b");
+            Collection<Object> solds = doc.getFieldValues(fieldName + "_sold_multiple_compound_b");
             assertTrue("array input is expected to be returned as ArrayList", solds instanceof ArrayList<?>);
             assertTrue(solds.size() == 2);
             assertTrue(((ArrayList) solds).get(0) instanceof Boolean);
             assertTrue(solds.contains(new Boolean(true)));
 
-            Collection<Object> primitiveSolds = doc.getFieldValues(fieldName + "_primitiveSold_multiple_b");
+            Collection<Object> primitiveSolds = doc.getFieldValues(fieldName + "_primitiveSold_multiple_compound_b");
             assertTrue("array input is expected to be returned as ArrayList", primitiveSolds instanceof ArrayList<?>);
             assertTrue(primitiveSolds.size() == 2);
             assertTrue(((ArrayList) primitiveSolds).get(0) instanceof Boolean);
             assertTrue(primitiveSolds.contains(new Boolean(true)));
 
-            Collection<Object> prices = doc.getFieldValues(fieldName + "_price_multiple_d");
+            Collection<Object> prices = doc.getFieldValues(fieldName + "_price_multiple_compound_d");
             assertTrue("array input is expected to be returned as LinkedList", prices instanceof ArrayList<?>);
             assertTrue(prices.size() == 2);
             assertTrue(((ArrayList) prices).get(0) instanceof Double);
             assertTrue(prices.contains(new Double(25.25)));
 
-            Collection<Object> primitivePrices = doc.getFieldValues(fieldName + "_primitivePrice_multiple_d");
+            Collection<Object> primitivePrices = doc.getFieldValues(fieldName + "_primitivePrice_multiple_compound_d");
             assertTrue("array input is expected to be returned as ArrayList", primitivePrices instanceof ArrayList<?>);
             assertTrue(primitivePrices.size() == 2);
             assertTrue(((ArrayList) primitivePrices).get(0) instanceof Double);
             assertTrue(primitivePrices.contains(new Double(50.50)));
 
-            Collection<Object> dates = doc.getFieldValues(fieldName + "_date_multiple_dt");
+            Collection<Object> dates = doc.getFieldValues(fieldName + "_date_multiple_compound_dt");
             assertTrue("array input is expected to be returned as ArrayList", dates instanceof ArrayList<?>);
             assertTrue(dates.size() == 2);
             assertTrue(((ArrayList) dates).get(0) instanceof String);
             assertTrue(dates.contains(dateAsString));
 
-            Collection<Object> calendars = doc.getFieldValues(fieldName + "_calendar_multiple_dt");
+            Collection<Object> calendars = doc.getFieldValues(fieldName + "_calendar_multiple_compound_dt");
             assertTrue("array input is expected to be returned as ArrayList", calendars instanceof ArrayList<?>);
             assertTrue(calendars.size() == 2);
             assertTrue(((ArrayList) calendars).get(0) instanceof String);

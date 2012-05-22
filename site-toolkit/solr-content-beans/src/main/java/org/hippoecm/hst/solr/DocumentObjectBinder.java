@@ -63,19 +63,19 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     private final static Pattern compoundFieldNamePatternMatcher = Pattern.compile("._[a-zA-Z]");
     private final static Map<Class<?>, String> supportedTypePatterns = new HashMap<Class<?>, String>();
     static {
-        supportedTypePatterns.put(String.class, "_txt");
-        supportedTypePatterns.put(Date.class, "_dt");
-        supportedTypePatterns.put(Calendar.class, "_dt");
-        supportedTypePatterns.put(Boolean.class, "_b");
-        supportedTypePatterns.put(boolean.class, "_b");
-        supportedTypePatterns.put(Integer.class, "_i");
-        supportedTypePatterns.put(int.class, "_i");
-        supportedTypePatterns.put(Long.class, "_l");
-        supportedTypePatterns.put(long.class, "_l");
-        supportedTypePatterns.put(Double.class, "_d");
-        supportedTypePatterns.put(double.class, "_d");
-        supportedTypePatterns.put(Float.class, "_f");
-        supportedTypePatterns.put(float.class, "_f");
+        supportedTypePatterns.put(String.class, "_compound_t");
+        supportedTypePatterns.put(Date.class, "_compound_dt");
+        supportedTypePatterns.put(Calendar.class, "_compound_dt");
+        supportedTypePatterns.put(Boolean.class, "_compound_b");
+        supportedTypePatterns.put(boolean.class, "_compound_b");
+        supportedTypePatterns.put(Integer.class, "_compound_i");
+        supportedTypePatterns.put(int.class, "_compound_i");
+        supportedTypePatterns.put(Long.class, "_compound_l");
+        supportedTypePatterns.put(long.class, "_compound_l");
+        supportedTypePatterns.put(Double.class, "_compound_d");
+        supportedTypePatterns.put(double.class, "_compound_d");
+        supportedTypePatterns.put(Float.class, "_compound_f");
+        supportedTypePatterns.put(float.class, "_compound_f");
     }
 
     public DocumentObjectBinder() {
