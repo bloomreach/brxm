@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -60,7 +62,7 @@ public class SolrFaceting extends AbstractSearchComponent {
                 
                 String[] constraints = facetPath.split("/");
                 if (constraints.length % 2 != 0) {
-                    log.debug("Invalid constraints because not equal number of keys and values");
+                    log.warn("Invalid constraints because not equal number of keys and values");
                 } else {
                     int i = 0;
                     while (i < constraints.length) {
@@ -74,7 +76,7 @@ public class SolrFaceting extends AbstractSearchComponent {
             
             // set rows to 0 : we are not interested to get results, but to get faceted navigation
             solrQuery.setRows(0);
-            solrQuery.addFacetField("brand", "categories", "text");
+            solrQuery.addFacetField("brand", "categories", "title");
             solrQuery.setFacetLimit(10);
 
             Calendar startCal = Calendar.getInstance();
