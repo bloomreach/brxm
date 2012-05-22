@@ -40,10 +40,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-// TODO: Seems like failing because of recent reference component path changes (HSTTWO-1425).
-//       Unit test repository configuration resources seem to be changed as well.
-//       Ignore this for now. 
-@Ignore
 public class TestDefaultPipeline extends AbstractSpringTestCase {
 
     protected HstComponentFactory componentFactory;
@@ -114,7 +110,7 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
         assertTrue("The content of HTTP response is null or empty!", content != null && !"".equals(content.trim()));
     }
 
-    
+    @Test
     public void testDefaultPipeline2() throws ContainerException, UnsupportedEncodingException {
         
         ((MockHttpServletRequest)servletRequest).setPathInfo("/news/2009/februari");
