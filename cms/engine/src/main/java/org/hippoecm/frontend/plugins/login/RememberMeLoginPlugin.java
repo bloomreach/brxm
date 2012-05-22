@@ -44,6 +44,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -415,19 +416,44 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
         protected void createAndAddCaptcha(boolean isVisible) {
             // Prepare Captcha resources
+            if (captchaImage != null) {
+                remove(captchaImage);
+            }
+
+            if (captchaTextField != null) {
+                remove(captchaTextField);
+            }
+
+            if (captchaLabel != null) {
+                remove(captchaLabel);
+            }
+
             imagePass = randomString(6, 8);
             captchaImageResource = new CaptchaImageResource(imagePass);
             captchaLabel = new Label("captchaLabel", new ResourceModel("captcha-label", "Enter the letters above"));
+            // Clear the value of the captcha text field
+            captchaTextValue = "";
             captchaTextField = new RequiredTextField<String>("captcha", new PropertyModel<String>(SignInForm.this, "captchaTextValue"));
-            captchaImage = new Image("captchaImage", captchaImageResource);
+            captchaImage = new Image("captchaImage", captchaImageResource) {
+
+                private static final long serialVersionUID = 1L;
+
+                // This method is overridden to properly forces the browser to refresh the image for the newly created
+                // captcha image component
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    super.onComponentTag(tag);
+                    String src = (String) tag.getAttributes().get("src");
+                    src = src + "&rand=" + Math.random();
+                    tag.getAttributes().put("src", src);
+                }
+
+            };
 
             captchaImage.setVisible(isVisible);
             captchaTextField.setVisible(isVisible);
             captchaLabel.setVisible(isVisible);
 
-            remove(captchaImage);
-            remove(captchaTextField);
-            remove(captchaLabel);
             add(captchaImage);
             add(captchaTextField);
             add(captchaLabel);
