@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
-import static org.hippoecm.frontend.util.WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -84,8 +81,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     }
     
     private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
-    private final String REMEMBERME_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(REMEMBERME_COOKIE_BASE_NAME);
-    private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
+    private final String REMEMBERME_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME);
+    private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
     private static final String HAL_REQUEST_ATTRIBUTE_NAME = "in_try_hippo_autologin";
     private static final long serialVersionUID = 1L;
 
@@ -147,7 +144,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     @Override
     protected LoginPlugin.SignInForm createSignInForm(String id) {
-        Cookie rememberMeCookie = WebApplicationHelper.retrieveWebRequest().getCookie(WebApplicationHelper.getFullyQualifiedCookieName(REMEMBERME_COOKIE_BASE_NAME)); 
+        Cookie rememberMeCookie = WebApplicationHelper.retrieveWebRequest().getCookie(WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME)); 
         boolean rememberme = (rememberMeCookie != null) ? Boolean.valueOf(rememberMeCookie.getValue()) : false;
 
         if (rememberme) {
