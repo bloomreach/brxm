@@ -58,7 +58,7 @@ public class TestCompoundDocumentObjectBinder {
         List<TestAddress> addressList = new ArrayList<TestAddress>();
         addressList.add(new TestAddress("oosteinde", 12, cal, date,
                 mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
-        addressList.add(new TestAddress("oosteinde", 13, cal, date,
+        addressList.add(new TestAddress("eastend", 13, cal, date,
                 mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
 
 
@@ -84,6 +84,7 @@ public class TestCompoundDocumentObjectBinder {
 
         // will result in the 'mainAddress' prefix + the fieldnames or TestAddress compound + automatic endmapping
 
+        assertTrue(doc.getFieldValue("mainAddress_street_compound_t").equals("oosteinde"));
         assertTrue(doc.getFieldValue("mainAddress_number_compound_i").equals(11));
 
         // Long mileage, Double price, Boolean sold should also all be there :
@@ -107,6 +108,13 @@ public class TestCompoundDocumentObjectBinder {
         
         for (String fieldName : duplicateFields) {
             // The plural addressList should get its values returned as List and also contain '_multiple' in its name
+            Collection<Object> streets = doc.getFieldValues(fieldName + "_street_multiple_compound_t");
+            assertTrue("array input is expected to be returned as ArrayList", streets instanceof ArrayList<?>);
+            assertTrue(streets.size() == 2);
+            assertTrue(((ArrayList) streets).get(0) instanceof String);
+            assertTrue(streets.contains("oosteinde"));
+            assertTrue(streets.contains("eastend"));
+
             Collection<Object> numbers = doc.getFieldValues(fieldName + "_number_multiple_compound_i");
             assertTrue("array input is expected to be returned as ArrayList", numbers instanceof ArrayList<?>);
             assertTrue(numbers.size() == 2);

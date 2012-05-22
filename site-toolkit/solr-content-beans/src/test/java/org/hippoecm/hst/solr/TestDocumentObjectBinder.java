@@ -38,13 +38,6 @@ import static org.junit.Assert.fail;
 
 public class TestDocumentObjectBinder {
 
-    // TODO  ADD TESTS FOR mileage, price and sold !!! : Long, Double, Boolean
-    // AND long, double, boolean native
-
-    // private Long mileage;
-    // private Double price;
-    //  private Boolean sold;
-
     @Test
     public void testBaseContentBean() {
         DocumentObjectBinder binder = new DocumentObjectBinder();
