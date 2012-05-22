@@ -51,7 +51,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
 
 
-    @IndexField
+    @IndexField(name="summary")
     public String getSummary() {
         return summary == null ? (String)getProperty("demosite:summary"): summary ;
     }
@@ -61,11 +61,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
 
     @IndexField
-    public String getHtmlContent(){
-        return getHippoHtml(HTML_NODEPATH).getContent();
-    }
-
-     public HippoHtml getHtml(){
+    public HippoHtml getHtml(){
         return getHippoHtml(HTML_NODEPATH);
     }
     
