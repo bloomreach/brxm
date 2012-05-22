@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.logout;
 
-import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
-import static org.hippoecm.frontend.util.WebApplicationHelper.clearCookie;
-import static org.hippoecm.frontend.util.WebApplicationHelper.getFullyQualifiedCookieName;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -29,6 +25,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +49,7 @@ public class LogoutLink extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 // Remove the Hippo Auto Login cookie
-                clearCookie(getFullyQualifiedCookieName(HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
+                WebApplicationHelper.clearCookie(WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
 
                 UserSession userSession = (UserSession) getSession();
                 try {

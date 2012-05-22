@@ -23,9 +23,10 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 
+
 public class WebApplicationHelper {
 
-    public final static String PLUGIN_APPLICATION_NAME = "config";
+    public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
     public static final String HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME = "hal";
     public static final String REMEMBERME_COOKIE_BASE_NAME = "rememberme";
 
@@ -38,7 +39,7 @@ public class WebApplicationHelper {
     public static String getConfigurationParameter(String configParamName, String defaultValue) {
         validateNotBlank(configParamName);
 
-        final String returnValue = getConfigurationParameter((WebApplication) Application.get(), PLUGIN_APPLICATION_NAME, null);
+        final String returnValue = getConfigurationParameter((WebApplication) Application.get(), PLUGIN_APPLICATION_NAME_PARAMETER, null);
 
         return (returnValue == null) ? defaultValue : returnValue;
     }
@@ -46,7 +47,7 @@ public class WebApplicationHelper {
     public static String getFullyQualifiedCookieName(String cookieaBaseName) {
         validateNotBlank(cookieaBaseName);
 
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME, "cms") + "." + cookieaBaseName;
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms") + "." + cookieaBaseName;
     }
 
     public static void clearCookie(String cookieName) {
