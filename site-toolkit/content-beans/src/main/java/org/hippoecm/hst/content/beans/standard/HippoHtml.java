@@ -16,10 +16,12 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.IndexField;
 
 @Node(jcrType="hippostd:html")
 public class HippoHtml extends HippoItem implements HippoHtmlBean{
 
+    @IndexField(name="hippostdContent")
     public String getContent(){
         return getProperty("hippostd:content");
     }
