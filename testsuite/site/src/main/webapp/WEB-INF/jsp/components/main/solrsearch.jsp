@@ -52,7 +52,7 @@
           </c:if>
           <p></p>
           <c:forEach var="hit" items="${result.hits}">
-            <c:set var="bean" value="${hit.contentBean}"/>
+            <c:set var="bean" value="${hit.bean}"/>
             <hst:link var="link" hippobean="${bean}"/>
             <ul class="list-overview">
               <li class="title"><b><a href="${link}">${bean.title}</a></b> <c:if test="${hit.score > 0}">(${hit.score})</c:if>
