@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
@@ -30,12 +31,15 @@ public interface IdentifiableContentBean extends ContentBean {
      * It is not allowed for any implementation to return <code>null</code>
      * @return the path for this {@link IdentifiableContentBean}
      */
-
     // the path is used as index id, not the canonical id as we can index
     // one node in multiple locations
+    @IgnoreForCompoundBean
     @IndexField(name="id")
     String getPath();
 
-    
+    /**
+     * @param path sets the path for this {@link IdentifiableContentBean}
+     * @see #getPath()
+     */
     void setPath(String path);
 }

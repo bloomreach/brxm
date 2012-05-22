@@ -16,6 +16,7 @@
 package org.hippoecm.hst.solr;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
@@ -39,6 +40,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
+import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
@@ -125,7 +127,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
     @Override
     public SolrInputDocument toSolrInputDocument(Object obj) throws IllegalArgumentException, IllegalStateException {
-        SolrInputDocument doc =  createSolrInputDocument(obj);
+        SolrInputDocument doc =  createSolrInputDocument(obj, false);
 
         if (doc.getFieldValue("id") == null) {
             throw new IllegalStateException("Cannot create SolrInputDocument for object '"+obj.toString()+"' because the 'id' field" +
@@ -173,7 +175,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
      * @param obj the obj to get the solr document from
      * @return
      */
-    private SolrInputDocument createSolrInputDocument(final Object obj) {
+    private SolrInputDocument createSolrInputDocument(final Object obj, boolean isCompound) {
         List<DocField> fields = getDocFields(obj.getClass());
         if (fields.isEmpty()) {
             throw new IllegalArgumentException("class: " + obj.getClass() + " does not define any indexable fields.");
@@ -181,6 +183,11 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
         SolrInputDocument doc = new SolrInputDocument();
         for (DocField field : fields) {
+            if (isCompound && field.ignoreForCompoundBean) {
+                // we are indexing a compound bean, that has indication for the current
+                // DocField that is should ignore the field for indexing the compound
+                continue;
+            }
             Object value = field.get(obj);
             if (value == null) {
                 // do not index null values
@@ -198,7 +205,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                         processed = true;
                         for (Object o : vals) {
                             try {
-                                SolrInputDocument compound = createSolrInputDocument(o);
+                                SolrInputDocument compound = createSolrInputDocument(o, true);
                                 // now add all fields to the current SolrInputDocument fields
                                 appendCompoundFields(doc, field.name, compound, o.getClass(), true);
                             } catch (IllegalArgumentException e) {
@@ -218,7 +225,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                         processed = true;
                         for (Object o : vals) {
                             try {
-                                SolrInputDocument compound = createSolrInputDocument(o);
+                                SolrInputDocument compound = createSolrInputDocument(o, true);
                                 // now add all fields to the current SolrInputDocument fields
                                 appendCompoundFields(doc, field.name, compound, o.getClass(), true);
                             } catch (IllegalArgumentException e) {
@@ -233,7 +240,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     // ContentBean. Index all the annotated fields from this
                     // content bean
                     processed = true;
-                    SolrInputDocument compound = createSolrInputDocument(value);
+                    SolrInputDocument compound = createSolrInputDocument(value, true);
                     // now add all fields to the current SolrInputDocument fields
                     appendCompoundFields(doc, field.name, compound, value.getClass(),  false);
                 } catch (IllegalArgumentException e) {
@@ -313,10 +320,17 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         List<DocField> fields = new ArrayList<DocField>();
         // SEARCH for public getter annotated with IndexField
         for (Method method : clazz.getMethods()) {
-            Method annotatedMethod = doGetAnnotatedMethod(method, IndexField.class);
-            if (annotatedMethod != null) {
+            Method annotatedIndexFieldMethod = doGetAnnotatedMethod(method, IndexField.class);
+            if (annotatedIndexFieldMethod != null) {
                 if (Modifier.isPublic(method.getModifiers())) {
-                    fields.add(new DocField(annotatedMethod));
+                    // check whether there is somewhere in the class hierarchy also for the method
+                    // an indication that it should be ignored for compound beans
+                    boolean ignoreForCompoundBean =  false;
+                    if (doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
+                        // there is an annotation that indicates that compound beans should ignore the method for indexing
+                        ignoreForCompoundBean = true;
+                    }
+                    fields.add(new DocField(annotatedIndexFieldMethod, ignoreForCompoundBean));
                 } else {
                     log.warn("Skipping member '{}' which does have an 'IndexField' annotation but it is not accessible.", method.toString());
                 }
@@ -332,15 +346,15 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
      * @param clazz the annotation to look for
      * @return the {@link Method} that contains the annotation <code>clazz</code> and <code>null</code> if none found
      */
-    private static Method doGetAnnotatedMethod(final Method m, Class<IndexField> clazz) {
+    private static Method doGetAnnotatedMethod(final Method m, Class<? extends Annotation> clazz) {
 
         if (m == null) {
             return m;
         }
 
-        IndexField annotation = m.getAnnotation(clazz);
+        Annotation annotation = m.getAnnotation(clazz);
         if(annotation != null ) {
-            // found Subscribe annotation
+            // found annotation
             return m;
         }
 
@@ -441,6 +455,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         private Method getter;
         private Method setter;
         private Class type;
+        private boolean ignoreForCompoundBean = false;
         private boolean isArray = false, isList = false;
 
         /*
@@ -450,8 +465,9 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         */
         boolean isContainedInMap = false;
 
-        public DocField(Method method) {
+        public DocField(Method method, final boolean ignoreForCompoundBean) {
             getter = method;
+            this.ignoreForCompoundBean = ignoreForCompoundBean;
             IndexField annotation = method.getAnnotation(IndexField.class);
             storeName(annotation);
             storeType();

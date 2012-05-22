@@ -54,6 +54,7 @@ api/src/main/java/org/hippoecm/hst/content/beans/ObjectBeanManagerException.java
 api/src/main/java/org/hippoecm/hst/content/beans/ObjectBeanPersistenceException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/SimpleObjectConverter.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/SimpleObjectConverterAware.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/content/beans/index/IgnoreForCompoundBean.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/index/IgnoreIndex.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/index/IndexField.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/index/ReIndexOnChange.java -text
@@ -955,11 +956,14 @@ solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/impl/
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/PatternTester.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestCompoundDocumentObjectBinder.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestDocumentObjectBinder.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/TestIgnoredSuperFieldsCompoundDocumentObjectBinder.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestBaseContentBean.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestContentBean.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestContentBeanWithCompounds.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/TestContentBeanWithIgnoredFieldsForCompounds.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestAddress.java -text
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestExplicitFieldEndingsAddress.java -text
+solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestIgnoredSuperFieldsAddress.java -text
 src/site/site.xml svneol=native#text/plain
 test/pom.xml -text
 test/src/site/site.xml -text
