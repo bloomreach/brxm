@@ -48,7 +48,6 @@ import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.plugin.dom.exception.InvalidStateException;
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 @SuppressWarnings({ "deprecation", "serial" })
@@ -76,7 +75,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         final T service = getPluginContext().getService(serviceId, clazz);
         if (service == null) {
             log.warn("Could not get service '" + serviceId + "' of type " + clazz.getName());
-            throw new InvalidStateException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
+            throw new IllegalStateException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
         }
 
         return service;
