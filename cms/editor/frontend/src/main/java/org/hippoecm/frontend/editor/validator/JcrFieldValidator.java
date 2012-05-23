@@ -117,7 +117,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                             addTypeViolations(violations, childModel, typeViolations);
                         }
                     }
-                } else if (validatorService != null) {
+                }
+                if (validatorService != null) {
                     for (String fieldValidatorType : validators) {
                         if (validatorService.containsValidator(fieldValidatorType)) {
                             violations.addAll(validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel));
