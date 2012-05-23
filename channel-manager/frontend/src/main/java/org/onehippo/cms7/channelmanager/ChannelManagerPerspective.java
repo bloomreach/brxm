@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.channelmanager;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +37,8 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.hst.rest.SiteService;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 @SuppressWarnings("serial")
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
@@ -119,15 +119,17 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
     @Override
     public void viewChannel(final String channelId, String pathInfo, String contextPath, String cmsPreviewPrefix, String templateComposerContextPath) {
-        PageEditor pageEditor = rootPanel.getPageEditor();
-        pageEditor.setChannel(channelId);
-        pageEditor.setRenderPathInfo(pathInfo);
-        pageEditor.setRenderContextPath(contextPath);
-        pageEditor.setCmsPreviewPrefix(cmsPreviewPrefix);
-        pageEditor.setTemplateComposerContextPath(templateComposerContextPath);
-        pageEditor.setPreviewMode(true);
-        rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
-        focus(null);
+        if (siteIsUp) {
+            PageEditor pageEditor = rootPanel.getPageEditor();
+            pageEditor.setChannel(channelId);
+            pageEditor.setRenderPathInfo(pathInfo);
+            pageEditor.setRenderContextPath(contextPath);
+            pageEditor.setCmsPreviewPrefix(cmsPreviewPrefix);
+            pageEditor.setTemplateComposerContextPath(templateComposerContextPath);
+            pageEditor.setPreviewMode(true);
+            rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
+            focus(null);
+        }
     }
 
 }

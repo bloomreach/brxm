@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.plugins.channelactions;
 
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +26,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.management.ServiceNotFoundException;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.wicket.IClusterable;
@@ -51,6 +48,9 @@ import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.plugin.dom.exception.InvalidStateException;
+import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
+
 @SuppressWarnings({ "deprecation", "serial" })
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
@@ -62,21 +62,21 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
     private final IRestProxyService restProxyService;
     private final IChannelManagerService channelManagerService;
 
-    public ChannelActionsPlugin(IPluginContext context, IPluginConfig config) throws ServiceNotFoundException {
+    public ChannelActionsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         restProxyService = loadService("REST proxy service", CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class);
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
     }
 
-    private <T extends IClusterable> T loadService(final String name, final String configServiceId, final Class<T> clazz) throws ServiceNotFoundException {
+    private <T extends IClusterable> T loadService(final String name, final String configServiceId, final Class<T> clazz) {
         final String serviceId = getPluginConfig().getString(configServiceId, clazz.getName());
         log.debug("Using {} with id '{}'", name, serviceId);
 
         final T service = getPluginContext().getService(serviceId, clazz);
         if (service == null) {
             log.warn("Could not get service '" + serviceId + "' of type " + clazz.getName());
-            throw new ServiceNotFoundException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
+            throw new InvalidStateException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
         }
 
         return service;
