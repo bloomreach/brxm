@@ -56,5 +56,9 @@ public interface HippoSolrManager {
      */
     HippoQueryParser getQueryParser();
 
+    /**
+     * 
+     * @return the {@link List} of {@link ContentBeanValueProvider} and empty list of no providers are available
+     */
     List<ContentBeanValueProvider> getContentBeanValueProviders();
 }
