@@ -94,7 +94,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         try {
             Class c = Thread.currentThread().getContextClassLoader().loadClass(beanClazz);
             if (!clazz.isAssignableFrom(c)) {
-                // log warning
+                // log warningis
                 return null;
             }
             obj = c.newInstance();
@@ -131,7 +131,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
         if (doc.getFieldValue("id") == null) {
             throw new IllegalStateException("Cannot create SolrInputDocument for object '"+obj.toString()+"' because the 'id' field" +
-                    "is missing.");
+                    " is missing.");
         }
 
         // default field name we always add:
