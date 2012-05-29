@@ -67,11 +67,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- The hst-solr-client will pull in the hst-solr-content-beans transitively, hence not provided -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-solr-content-beans</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
 
