@@ -62,6 +62,11 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private static final long serialVersionUID = 1L;
     private static final List<?> PROVIDERS;
 
+    private final int pingServiceTimeout;
+    private final String pingServiceUri;
+    private boolean siteIsAlive;
+    private final String restUri;
+
     static {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enableDefaultTyping();
@@ -75,9 +80,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         jjjProvider.setMapper(objectMapper);
         PROVIDERS = Collections.singletonList(jjjProvider);
     }
-
-    private boolean siteIsAlive;
-    private final String restUri;
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -94,51 +96,27 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         log.debug("Registering this service under id '{}'", serviceId);
         context.registerService(this, serviceId);
 
-        // Make sure that the final ping servuce URL is normalized, no additional '/'
-        String pingServiceUriString = (restUri + config.getString(PING_SERVICE_URI, "/sites/#areAlive")).replaceAll("^://", "/");
-        log.debug("Using Ping REST uri '{}'", pingServiceUriString);
+        pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/#areAlive")).replaceAll("^://", "/");
+        log.debug("Using ping REST uri '{}'", pingServiceUri);
 
-        // Check whether the site is up and running or not
-        try {
-            // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
-            pingServiceUriString = URLEncoder.encode(pingServiceUriString, Charset.defaultCharset().name()).replaceAll(
-                    "%2F", "/").replaceAll("%3A", ":");
+        pingServiceTimeout = config.getAsInteger(PING_SERVICE_TIMEOUT, 1000);
+        log.debug("Using ping timeout {}", pingServiceTimeout);
 
-            final HttpClient httpClient = new HttpClient();
-            // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
-            // use default value of 1 second
-            httpClient.getParams().setParameter("http.socket.timeout", config.getAsInteger(PING_SERVICE_TIMEOUT, 1000));
-            final int responceCode = httpClient.executeMethod(new GetMethod(pingServiceUriString));
-
-            siteIsAlive = (responceCode == HttpStatus.SC_OK);
-        } catch (HttpException httpex) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + pingServiceUriString, httpex);
-            }
-
-            siteIsAlive = false;
-        } catch (UnsupportedEncodingException usence) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + pingServiceUriString, usence);
-            }
-
-            siteIsAlive = false;
-        } catch (IOException ioe) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + pingServiceUriString, ioe);
-            }
-
-            siteIsAlive = false;
-        }
-
+        siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
     }
 
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass) {
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
-            log.warn("It appears that the site is down. Please check with your environment adminstrator!");
-            return null;
+            log.warn("It appears that the site might be down. Pinging site one more time!");
+            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+            if (!siteIsAlive) {
+                log.warn("It appears that site is still down. Please check with your administrator!");
+                return null;
+            } else {
+                log.info("Site is up and running.");
+            }
         }
 
         return JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
@@ -148,8 +126,14 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public <T> T createSecureRestProxy(Class<T> restServiceApiClass) {
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
-            log.warn("It appears that the site is down. Please check with your environment adminstrator!");
-            return null;
+            log.warn("It appears that the site might be down. Pinging site one more time!");
+            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+            if (!siteIsAlive) {
+                log.warn("It appears that site is still down. Please check with your administrator!");
+                return null;
+            } else {
+                log.info("Site is up and running.");
+            }
         }
 
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
@@ -188,6 +172,46 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
         CredentialCipher credentialCipher = CredentialCipher.getInstance();
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
+    }
+
+    protected boolean checkSiteIsAlive(int pingServiceTimeout, final String pingServiceUri) {
+        boolean siteIsAlive = false;
+        String normalizedPingServiceUri = "";
+
+        // Check whether the site is up and running or not
+        try {
+            // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
+            normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
+                    .replaceAll("%2F", "/").replaceAll("%3A", ":");
+
+            final HttpClient httpClient = new HttpClient();
+            // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
+            // use default value of 1 second
+            httpClient.getParams().setParameter("http.socket.timeout", pingServiceTimeout);
+            final int responceCode = httpClient.executeMethod(new GetMethod(normalizedPingServiceUri));
+
+            siteIsAlive = (responceCode == HttpStatus.SC_OK);
+        } catch (HttpException httpex) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, httpex);
+            }
+
+            siteIsAlive = false;
+        } catch (UnsupportedEncodingException usence) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, usence);
+            }
+
+            siteIsAlive = false;
+        } catch (IOException ioe) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, ioe);
+            }
+
+            siteIsAlive = false;
+        }
+        
+        return siteIsAlive;
     }
 
 }
