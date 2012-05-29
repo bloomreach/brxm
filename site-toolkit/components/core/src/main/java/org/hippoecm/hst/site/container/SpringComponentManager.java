@@ -193,7 +193,13 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = (T) applicationContext.getBean(name);
             } catch (Exception ignore) {
-                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+                try {
+                    HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+                } catch (Exception ignore2) {
+                    // the HstServices.getLogger also delegates to #getComponent and is not available. To avoid
+                    // stackoverflow, we catch this exception here and use normal logger
+                    log.warn("The requested bean doesn't exist: '{}'", name);
+                }
             }
         } else {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
@@ -217,8 +223,15 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = (T) moduleInstance.getComponent(name);
             } catch (Exception ignore) {
-                HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.", 
-                        name, ArrayUtils.toString(addonModuleNames));
+                 try {
+                     HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
+                             name, ArrayUtils.toString(addonModuleNames));
+                 } catch (Exception ignore2) {
+                    // the HstServices.getLogger also delegates to #getComponent and is not available. To avoid
+                    // stackoverflow, we catch this exception here and use normal logger
+                    log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
+                             name, ArrayUtils.toString(addonModuleNames));
+                }
             }
         }
 
