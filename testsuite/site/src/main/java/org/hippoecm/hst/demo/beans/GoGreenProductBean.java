@@ -5,8 +5,9 @@ import java.util.List;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
-public class GoGreenProductBean implements ContentBean {
+public class GoGreenProductBean implements IdentifiableContentBean {
 
     private String path;
     private String title;
