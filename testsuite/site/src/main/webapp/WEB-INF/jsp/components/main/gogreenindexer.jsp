@@ -33,7 +33,7 @@
       <b>http://www.demo.onehippo.com/restapi/products/food/2011/11./documents?_type=xml</b>
     </p>
     <form action="<hst:actionURL/>" method="get">
-       <input name="url" size="50" value="http://www.demo.onehippo.com/restapi/products/food/2011/11./documents?_type=xml"/>
+       <input name="url" size="25" value="http://www.demo.onehippo.com/restapi/products/food/2011/11./documents?_type=xml"/>
        <input type="submit" value="Index product docs"/>
     </form>
 
