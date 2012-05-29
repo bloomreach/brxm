@@ -73,13 +73,6 @@
       <version>${hippo.hst.version}</version>
     </dependency>
 
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-solr-content-beans</artifactId>
-      <version>${hippo.hst.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>taglibs</groupId>
       <artifactId>standard</artifactId>
