@@ -30,6 +30,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.util.ISO9075;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
@@ -135,7 +136,7 @@ public class Group implements Comparable<Group>, IClusterable {
      * @return the Group with name groupName
      */
     private static Group getGroup(String groupName) {
-        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
+        String queryString = QUERY_GROUP_EXISTS.replace("{}", ISO9075.encode(groupName));
         try {
             @SuppressWarnings("deprecation") Query query = getQueryManager().createQuery(queryString, Query.SQL);
             QueryResult queryResult = query.execute();
@@ -225,7 +226,7 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     public static Group forName(final String groupName) {
-        String queryString = QUERY_GROUP_EXISTS.replace("{}", groupName);
+        String queryString = QUERY_GROUP_EXISTS.replace("{}", ISO9075.encode(groupName));
         Query query;
         try {
             //noinspection deprecation
