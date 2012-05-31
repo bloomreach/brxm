@@ -58,6 +58,14 @@
             <td><input type="text" name="offset" value="0"/></td>
           </tr>
           <tr>
+            <td>Maximum number of documents per folder: </td>
+            <td><input type="text" name="maxDocsPerFolder" value=""/></td>
+          </tr>
+          <tr>
+            <td>Maximum number of subfolders: </td>
+            <td><input type="text" name="maxSubFolder" value=""/></td>
+          </tr>
+          <tr>
             <td>Wiki location on filesystem:</td>
             <td><input type="text" name="filesystemLocation"/></td>
           </tr>

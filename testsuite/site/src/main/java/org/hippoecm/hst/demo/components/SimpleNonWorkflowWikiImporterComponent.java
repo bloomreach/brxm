@@ -58,7 +58,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
 
     // Matches the first word for each category (to keep the number of
     // categories down)
-    private Pattern categoryPattern = Pattern.compile("\\[\\[Category:(\\w+).*?]]");
+    private final Pattern categoryPattern = Pattern.compile("\\[\\[Category:(\\w+).*?]]");
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -94,7 +94,6 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
             return;
         }
 
-
         String offsetStr = request.getParameter("offset");
         int offset = 0;
         if (StringUtils.isNotBlank(offsetStr)) {
@@ -105,6 +104,36 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                 }
             } catch (NumberFormatException e) {
                 response.setRenderParameter("message", "offset must be a number but was '" + offsetStr + "'");
+                return;
+            }
+        }
+
+        String maxDocsPerFolderStr = request.getParameter("maxDocsPerFolder");
+        int maxDocsPerFolder = 200;
+        if (StringUtils.isNotBlank(maxDocsPerFolderStr)) {
+            try {
+                maxDocsPerFolder = Integer.parseInt(maxDocsPerFolderStr);
+                if (maxDocsPerFolder < 0) {
+                    maxDocsPerFolder = 0;
+                }
+            } catch (NumberFormatException e) {
+                response.setRenderParameter("message", "maxDocsPerFolder must be a number but was '"
+                        + maxDocsPerFolderStr + "'");
+                return;
+            }
+        }
+
+        String maxSubFolderStr = request.getParameter("maxSubFolder");
+        int maxSubFolder = 50;
+        if (StringUtils.isNotBlank(maxSubFolderStr)) {
+            try {
+                maxSubFolder = Integer.parseInt(maxSubFolderStr);
+                if (maxSubFolder < 0) {
+                    maxSubFolder = 0;
+                }
+            } catch (NumberFormatException e) {
+                response.setRenderParameter("message", "maxSubFolder must be a number but was '" + maxSubFolderStr
+                        + "'");
                 return;
             }
         }
@@ -136,7 +165,8 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                 } else {
                     wikiFolder = baseNode.getNode("wikipedia");
                 }
-                handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset);
+                handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset, maxDocsPerFolder,
+                        maxSubFolder);
 
                 if (wikiStream == null) {
                     parser.parse(f, handler);
@@ -156,34 +186,36 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
         } catch (ParserConfigurationException e) {
             response.setRenderParameter("message", "Did not import wiki: " + e.toString());
         }
-
     }
 
     class WikiPediaToJCRHandler extends DefaultHandler {
 
-        private Node wikiFolder;
+        private final Node wikiFolder;
         private Node doc;
         private Node finishedDoc;
         private Node currentFolder;
         private Node currentSubFolder;
         private int numberOfSubFolders = 1;
-        private int total;
-        private int offset;
+        private final int total;
+        private final int offset;
+        private final int maxDocsPerFolder;
+        private final int maxSubFolders;
         private StringBuilder fieldText = new StringBuilder();
         private boolean recording = false;
         int count = 0;
         int offsetcount = 0;
-        int maxDocsPerFolder = 200;
-        int maxSubFolders = 50;
         long startTime = 0;
         private final String[] users = { "ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
                 "junaid", "ate", "tjeerd", "verberg", "simon", "jannis" };
-        private Random rand;
+        private final Random rand;
 
-        public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset) throws Exception {
+        public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
+                final int maxSubFolders) throws Exception {
             this.wikiFolder = wikiFolder;
             this.total = total;
             this.offset = offset;
+            this.maxDocsPerFolder = maxDocsPerFolder;
+            this.maxSubFolders = maxSubFolders;
             currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
             currentFolder.addMixin("hippo:harddocument");
             currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
@@ -200,7 +232,8 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                 if (offsetcount < offset) {
                     offsetcount++;
                     if ((offsetcount % maxDocsPerFolder) == 0) {
-                        System.out.println("Offset '"+offset+"' not yet reached. Currently at '"+offsetcount+"'");
+                        System.out.println("Offset '" + offset + "' not yet reached. Currently at '" + offsetcount
+                                + "'");
                     }
                 }
 
@@ -210,7 +243,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                         if (count >= total) {
                             System.out.println(total);
                             wikiFolder.getSession().save();
-    
+
                             System.out.println("Total added wiki docs = " + count + ". It took "
                                     + (System.currentTimeMillis() - startTime) + " ms.");
                             throw new ForcedStopException();
@@ -218,7 +251,8 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                         if ((count % maxDocsPerFolder) == 0) {
                             wikiFolder.getSession().save();
                             if (numberOfSubFolders >= maxSubFolders) {
-                                currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+                                currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(),
+                                        "hippostd:folder");
                                 currentFolder.addMixin("hippo:harddocument");
                                 numberOfSubFolders = 0;
                             }
@@ -231,18 +265,18 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                         Calendar cal = Calendar.getInstance();
                         String docName = "doc-" + cal.getTimeInMillis();
                         Node handle;
-    
+
                         handle = currentSubFolder.addNode(docName, "hippo:handle");
                         handle.addMixin("hippo:hardhandle");
                         handle.addMixin("hippo:translated");
-    
+
                         Node translation = handle.addNode("hippo:translation", "hippo:translation");
                         translation.setProperty("hippo:message", docName);
                         translation.setProperty("hippo:language", "");
-    
+
                         doc = handle.addNode(docName, "demosite:wikidocument");
                         doc.addMixin("hippo:harddocument");
-    
+
                         String[] availability = { "live", "preview" };
                         doc.setProperty("hippo:availability", availability);
                         doc.setProperty("hippostd:stateSummary", "live");
@@ -260,7 +294,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
 
             if (qName.equals("title")) {
                 if (offsetcount == offset) {
-                   recording = true;
+                    recording = true;
                 }
             }
 
@@ -298,14 +332,14 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
                         }
                         Node body = doc.addNode("demosite:body", "hippostd:html");
                         body.setProperty("hippostd:content", text);
-    
+
                         Matcher m = categoryPattern.matcher(text);
                         List<String> categories = new ArrayList<String>();
                         while (m.find()) {
                             categories.add(m.group(1));
                         }
                         doc.setProperty("demosite:categories", categories.toArray(new String[categories.size()]));
-    
+
                         fieldText = new StringBuilder();
                     } catch (RepositoryException e) {
                         throw new SAXException(e);
