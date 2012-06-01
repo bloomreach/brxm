@@ -21,22 +21,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-@Documented
 
 /**
  * <b>Expert</b>
  * <p>
- * Makes it possible to annotate a method that should not be indexed for compound {@link org.hippoecm.hst.content.beans.standard.ContentBean}s. 
- * For example when you have the bean structure below, you do not need the getPath, canonicalUUID, etc etc from the Author to be indexed. 
+ * Makes it possible to annotate a method that should not be indexed for compound {@link org.hippoecm.hst.content.beans.standard.ContentBean}s.
+ * For example when you have the bean structure below, you do not need the getPath, canonicalUUID, etc etc from the Author to be indexed.
  * By adding this {@link IgnoreForCompoundBean} annotation, the method will be skipped when indexing a compound bean into its container bean
  * </p>
  * <pre>
  * <code>
  *     public class NewsBean implements IdendifiableContentBean {
  *
- *         @IndexField
  *         public  String getPath() {
  *             // return path
  *         }
@@ -54,17 +50,26 @@ import java.lang.annotation.Target;
  *     // the Compound
  *     public class Author implements IdendifiableContentBean {
  *
+ *         public  String getPath() {
+ *             // return path
+ *         }
+ *
+ *         public  void setPath(String path) {
+ *            // set path
+ *         }
+ *
+ *         @IndexField
  *         public String getName() {
  *             // return name
  *         }
  *
  *     }
  *
- *     // and the HippoBean has something like
+ *
  *     public interface IdendifiableContentBean {
  *
  *        @IgnoreForCompoundBean
- *        @IndexField
+ *        @IndexField(name="id")
  *        public String getPath();
  *
  *        public void setPath(String path);
@@ -73,10 +78,15 @@ import java.lang.annotation.Target;
  *
  * </code>
  * </pre>
- * 
- * 
- * 
+ *
+ * In the above example, when indexing getAuthor for NewsBean, it won't index the getPath for author in that
+ * case because of the @IgnoreForCompoundBean
+ *
+ *
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Documented
 public @interface IgnoreForCompoundBean {
 
 }

@@ -21,10 +21,45 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * <p>
+ * Annotation that can be used on a public getter method to indicate that its return value or object
+ * should be indexed. If a name is specified, the value of the name will be used as the indexing field.
+ * If name is missing, the name of the getter method is used without the 'get' or 'is' part and the first letter
+ * lowercased. Thus for example
+ * </p>
+ * <pre>
+ * <code>
+ *     public class NewsBean extends BaseBean{
+ *
+ *         @IndexField
+ *         public  String getAuthor() {
+ *             // return author
+ *         }
+ *     }
+ * </code>
+ * </pre>
+ *
+ * Would result in an index field 'author'
+ *
+ * </p>
+ * <pre>
+ * <code>
+ *     public class NewsBean extends BaseBean{
+ *
+ *         @IndexField(name="writer")
+ *         public  String getAuthor() {
+ *             // return author
+ *         }
+ *     }
+ * </code>
+ * </pre>
+ *
+ * would result in a index field 'writer'
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Documented
-
 public @interface IndexField {
 
     public static final String DEFAULT = "#default";
