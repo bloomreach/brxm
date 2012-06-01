@@ -24,7 +24,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.CommonParams;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.HippoSolrManager;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
@@ -88,7 +87,7 @@ public class HippoQueryImpl implements HippoQuery {
     }
 
     @Override
-    public HippoQueryResult execute(boolean attachProviders) throws SolrServerException {
+    public HippoQueryResult execute(boolean attachContentProviders) throws SolrServerException {
 
         if (solrQuery.getRows() == null) {
             // limit was not set. Set default limit
@@ -125,7 +124,7 @@ public class HippoQueryImpl implements HippoQuery {
 
         SolrDocumentList docs = rsp.getResults();
 
-        if (attachProviders) {
+        if (attachContentProviders) {
             return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), manager.getContentBeanValueProviders());
         }
         return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), null);
