@@ -172,7 +172,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                 String configValue = getTextContent(configNode);
                 if(configValue !=null && !configValue.equals("")){
                     // is true by default
-                    if(!Boolean.getBoolean(configValue)){
+                    if (!Boolean.parseBoolean(configValue)) {
                         indexNodeNames = false;
                     }
                     log.debug("Indexing of node names is set to: {}", indexNodeNames);
