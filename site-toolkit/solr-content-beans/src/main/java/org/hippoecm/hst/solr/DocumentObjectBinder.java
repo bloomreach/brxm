@@ -437,7 +437,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     // assume now all items of this type
                     Collection<String> strings = new ArrayList<String>(vals.length);
                     for (Object o : vals) {
-                        strings.add(DateUtil.getThreadLocalDateFormat().format((Calendar)o));
+                        strings.add(DateUtil.getThreadLocalDateFormat().format(((Calendar)o).getTime()));
                     }
                     return strings;
                 }
