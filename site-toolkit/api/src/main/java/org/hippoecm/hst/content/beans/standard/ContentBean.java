@@ -18,7 +18,7 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
- * The marker interface for all beans: This includes beans that can be completely
+ * The marker interface for all beans that can be indexed (thus also compounds): This includes beans that are completely
  * independent of jcr, The beans implementing this {@link ContentBean} don't need a {@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean#getPath()}
  * identifier. Beans that should be possible to be indexed in something like an inversed index, need to implement {@link IdentifiableContentBean}. 
  * Typically classes that implement this {@link ContentBean} but not {@link IdentifiableContentBean} are compounds of an {@link IdentifiableContentBean}

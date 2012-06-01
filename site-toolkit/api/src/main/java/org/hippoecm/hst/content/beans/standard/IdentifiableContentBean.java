@@ -19,7 +19,7 @@ import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
- * The base marker interface for all identifiable beans: This includes beans that can be completely
+ * The base interface for all identifiable beans: This includes beans that can be completely
  * independent of jcr, for example a bean that represents some external src. The {@link #getPath()} must return
  * the unique identifier for this {@link IdentifiableContentBean} : This is typically the identifier used in indexes
  */
