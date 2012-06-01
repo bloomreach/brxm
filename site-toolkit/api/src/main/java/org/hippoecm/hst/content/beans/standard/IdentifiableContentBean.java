@@ -26,9 +26,15 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 public interface IdentifiableContentBean extends ContentBean {
 
     /**
-     * This returns the path of the backing provider for this bean, for example
-     * /documents/content/myprojec/news/article or http://www.example.com/foo/bar
-     * It is not allowed for any implementation to return <code>null</code>
+     * <p>
+     *     This returns the path of the backing provider for this bean, for example
+     *     /documents/content/myprojec/news/article or http://www.example.com/foo/bar
+     *     It is not allowed for any implementation to return <code>null</code>
+     * </p>
+     * <p>
+     *     Since the return value for this method is used as the index document identifier, it must
+     *     be unique for every bean that must be indexed
+     * </p>
      * @return the path for this {@link IdentifiableContentBean}
      */
     // the path is used as index id, not the canonical id as we can index
