@@ -26,12 +26,14 @@ public class NodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
     String mergeBehavior;
     NodeImpl originItem = null;
     String location;
+    int index;
 
     public NodeInfo(Name name, Name nodeTypeName, Name[] mixinNames,
-                    NodeId id, String mergeBehavior, String location) {
+                    NodeId id, String mergeBehavior, String location, int index) {
         super(name, nodeTypeName, mixinNames, id);
         this.mergeBehavior = mergeBehavior;
         this.location = location;
+        this.index = index;
     }
 
     public boolean mergeSkip() {
@@ -56,5 +58,9 @@ public class NodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
 
     public NodeImpl getOrigin() {
         return originItem;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

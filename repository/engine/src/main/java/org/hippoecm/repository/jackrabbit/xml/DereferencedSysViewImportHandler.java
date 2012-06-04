@@ -156,7 +156,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
         if (state.uuid != null) {
             id = NodeId.valueOf(state.uuid);
         }
-        NodeInfo node = new NodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location);
+        NodeInfo node = new NodeInfo(state.nodeName, state.nodeTypeName, mixinNames, id, state.mergeBehavior, state.location, state.index);
         // call Importer
         try {
             if (start) {
@@ -188,10 +188,17 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             // sv:node element
 
             // node name (value of sv:name attribute)
+            int index = 1;
             String svName = getAttribute(atts, NameConstants.SV_NAME);
             if (svName == null) {
                 throw new SAXException(new InvalidSerializedDataException(
                         "missing mandatory sv:name attribute of element sv:node"));
+            }
+
+            int offset = svName.indexOf('[');
+            if (offset != -1) {
+                index = Integer.valueOf(svName.substring(offset+1, svName.length()-1));
+                svName = svName.substring(0, offset);
             }
 
             if (!stack.isEmpty()) {
@@ -210,10 +217,11 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             state.location = atts.getValue(NS_XMLIMPORT, "location");
             try {
                 state.nodeName = resolver.getQName(svName);
+                state.index = index;
             } catch (NameException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal node name: " + name, e));
+                throw new SAXException(new InvalidSerializedDataException("illegal node name: " + svName, e));
             } catch (NamespaceException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal node name: " + name, e));
+                throw new SAXException(new InvalidSerializedDataException("illegal node name: " + svName, e));
             }
             stack.push(state);
         } else if (name.equals(NameConstants.SV_PROPERTY)) {
@@ -231,9 +239,9 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             try {
                 currentPropName = resolver.getQName(svName);
             } catch (NameException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal property name: " + name, e));
+                throw new SAXException(new InvalidSerializedDataException("illegal property name: " + svName, e));
             } catch (NamespaceException e) {
-                throw new SAXException(new InvalidSerializedDataException("illegal property name: " + name, e));
+                throw new SAXException(new InvalidSerializedDataException("illegal property name: " + svName, e));
             }
             
             // property type (sv:type attribute)
@@ -404,6 +412,10 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
          * uuid of current node
          */
         String uuid;
+        /**
+         * index of the current node
+         */
+        int index;
 
         /**
          * list of PropInfo instances representing properties of current node

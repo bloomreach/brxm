@@ -347,6 +347,7 @@ public class DereferencedSessionImporter implements Importer {
         NodeImpl node = null;
         NodeId id = nodeInfo.getId();
         Name nodeName = nodeInfo.getName();
+        int index = ((NodeInfo) nodeInfo).getIndex();
         Name ntName = nodeInfo.getNodeTypeName();
         Name[] mixins = nodeInfo.getMixinNames();
 
@@ -357,7 +358,7 @@ public class DereferencedSessionImporter implements Importer {
                 log.debug("skipping node " + nodeName);
             return;
         }
-        if (parent.hasNode(nodeName)) {
+        if (parent.hasNode(nodeName, index)) {
             if (importPath.equals(parent.safeGetJCRPath())) {
                 // this is the root target node, decided by the user self
                 // only throw an error on the most strict import
@@ -375,7 +376,7 @@ public class DereferencedSessionImporter implements Importer {
                     return;
                 }
             }
-            nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName), (NodeInfo)nodeInfo);
+            nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName, index), (NodeInfo)nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null); // push null onto stack for skipped node
                 return;
