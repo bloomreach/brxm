@@ -15,29 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.util.Iterator;
-
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
-public class ListGroupsPlugin extends AdminPanelPlugin implements IObserver<GroupDataProvider> {
+public class ListGroupsPlugin extends AdminPanelPlugin {
 
     private final GroupDataProvider groupDataProvider;
 
     public ListGroupsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         groupDataProvider = new GroupDataProvider();
-        
-        context.registerService(this, IObserver.class.getName());
     }
 
     @Override
@@ -60,14 +54,4 @@ public class ListGroupsPlugin extends AdminPanelPlugin implements IObserver<Grou
         return new ListGroupsPanel(componentId, getPluginContext(), breadCrumbModel, groupDataProvider);
     }
 
-    @Override
-    public GroupDataProvider getObservable() {
-        return groupDataProvider;
-    }
-
-    @Override
-    public void onEvent(final Iterator<? extends IEvent<GroupDataProvider>> events) {
-        groupDataProvider.setDirty();
-    }
-    
 }

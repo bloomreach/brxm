@@ -15,20 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.Iterator;
-
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
-public class ListUsersPlugin extends AdminPanelPlugin implements IObserver<UserDataProvider> {
+public class ListUsersPlugin extends AdminPanelPlugin {
 
     private final UserDataProvider userDataProvider;
 
@@ -36,8 +32,6 @@ public class ListUsersPlugin extends AdminPanelPlugin implements IObserver<UserD
         super(context, config);
 
         userDataProvider = new UserDataProvider();
-
-        context.registerService(this, IObserver.class.getName());
     }
 
     @Override
@@ -60,13 +54,4 @@ public class ListUsersPlugin extends AdminPanelPlugin implements IObserver<UserD
         return new ListUsersPanel(componentId, getPluginContext(), breadCrumbModel, userDataProvider);
     }
 
-    @Override
-    public UserDataProvider getObservable() {
-        return userDataProvider;
-    }
-
-    @Override
-    public void onEvent(final Iterator<? extends IEvent<UserDataProvider>> events) {
-        userDataProvider.setDirty();
-    }
 }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
@@ -28,6 +29,8 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
     public AdminBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
+        setOutputMarkupId(true);
+
         breadCrumbModel.addListener(new IBreadCrumbModelListener() {
             @Override
             public void breadCrumbActivated(final IBreadCrumbParticipant previousParticipant,
@@ -36,7 +39,9 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             public void breadCrumbAdded(final IBreadCrumbParticipant breadCrumbParticipant) {
-                AdminBreadCrumbPanel.this.onAddedToBreadCrumbsBar();
+                if (breadCrumbParticipant == AdminBreadCrumbPanel.this) {
+                    AdminBreadCrumbPanel.this.onAddedToBreadCrumbsBar();
+                }
             }
 
             @Override
@@ -47,6 +52,13 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
                 }
             }
         });
+    }
+
+    protected void redraw() {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            target.addComponent(this);
+        }
     }
 
     protected void onAddedToBreadCrumbsBar() {

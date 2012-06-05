@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -42,6 +43,8 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
@@ -55,7 +58,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This panel displays a pageable, searchable list of groups.
  */
-public class ListGroupsPanel extends AdminBreadCrumbPanel {
+public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<GroupDataProvider> {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -67,6 +70,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
 
     private AdminDataTable table;
     private IPluginContext context;
+    private final GroupDataProvider groupDataProvider;
 
     /**
      * Constructs a new ListGroupsPanel.
@@ -76,14 +80,11 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
      * @param breadCrumbModel   the breadCrumbModel
      * @param groupDataProvider the groupDataProvider
      */
-    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
-                           final GroupDataProvider groupDataProvider) {
+    public ListGroupsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final GroupDataProvider groupDataProvider) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
         this.context = context;
-
-        groupDataProvider.setDirty();
 
         add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
             @Override
@@ -97,12 +98,9 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         columns.add(new AbstractColumn<Group>(new ResourceModel("group-name"), "groupname") {
             private static final long serialVersionUID = 1L;
 
-            public void populateItem(final Item<ICellPopulator<Group>> item,
-                                     final String componentId,
-                                     final IModel<Group> model) {
+            public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId, final IModel<Group> model) {
 
-                AjaxGroupViewActionLinkLabel action =
-                        new AjaxGroupViewActionLinkLabel(componentId, model.getObject());
+                AjaxGroupViewActionLinkLabel action = new AjaxGroupViewActionLinkLabel(componentId, model.getObject());
                 item.add(action);
             }
         });
@@ -115,7 +113,9 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         form.setOutputMarkupId(true);
         add(form);
 
-        TextField<String> search = new TextField<String>("search-query", new PropertyModel<String>(groupDataProvider, "query"));
+        this.groupDataProvider = groupDataProvider;
+        TextField<String> search = new TextField<String>("search-query",
+                                                         new PropertyModel<String>(this.groupDataProvider, "query"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
@@ -134,15 +134,33 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         add(table);
     }
 
+    @Override
+    protected void onAddedToBreadCrumbsBar() {
+        context.registerService(this, IObserver.class.getName());
+    }
+
+    @Override
+    protected void onRemovedFromBreadCrumbsBar() {
+        context.unregisterService(this, IObserver.class.getName());
+    }
+
+    @Override
+    public GroupDataProvider getObservable() {
+        return groupDataProvider;
+    }
+
+    @Override
+    public void onEvent(final Iterator<? extends IEvent<GroupDataProvider>> events) {
+        redraw();
+    }
+
     private class AjaxGroupViewActionLinkLabel extends Panel {
 
         private AjaxGroupViewActionLinkLabel(final String id, Group group) {
             super(id);
 
-            ViewGroupActionLink link = new ViewGroupActionLink(
-                    "link", new Model<String>(group.getGroupname()), group,
-                    context, ListGroupsPanel.this
-            );
+            ViewGroupActionLink link = new ViewGroupActionLink("link", new Model<String>(group.getGroupname()), group,
+                                                               context, ListGroupsPanel.this);
 
             add(link);
         }
@@ -160,10 +178,10 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
         }
 
         @Override
-        public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId,
-                                 final IModel<Group> model) {
+        public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId, final IModel<Group> model) {
 
-            AjaxLinkLabel action = new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), model);
+            AjaxLinkLabel action = new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"),
+                                                             model);
             item.add(action);
         }
 
@@ -212,8 +230,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel {
                 List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
                 getBreadCrumbModel().setActive(l.get(l.size() - 2));
                 activate(new IBreadCrumbPanelFactory() {
-                    public BreadCrumbPanel create(final String componentId,
-                                                  final IBreadCrumbModel breadCrumbModel) {
+                    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
                         return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
                     }
                 });

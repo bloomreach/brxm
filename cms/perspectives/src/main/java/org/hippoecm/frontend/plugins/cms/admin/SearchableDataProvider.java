@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
+import javax.jcr.observation.EventIterator;
 import javax.jcr.query.Query;
 
 import org.apache.commons.lang.StringUtils;
@@ -80,13 +81,11 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             {" or ", " OR "}
     };
 
-    private static String sessionId = "none";
-
     private final String queryAll;
     private final String observePath;
     private final String[] observeNodeTypes;
     private String query;
-    private transient List<T> list = new ArrayList<T>();
+    private List<T> list = new ArrayList<T>();
     private volatile boolean dirty = true;
     private IObservationContext<JcrNodeModel> context;
     private JcrEventListener listener;
@@ -113,14 +112,8 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
      */
     protected abstract T createBean(Node node) throws RepositoryException;
 
-    /**
-     * Marks the list of beans as dirty so it will be updated the next time it is used.
-     */
-    public void setDirty() {
-        this.dirty = true;
-    }
-
     public Iterator<T> iterator(int first, int count) {
+        populateList(query);
         List<T> result = new ArrayList<T>();
         for (int i = first; i < (count + first); i++) {
             result.add(list.get(i));
@@ -142,42 +135,39 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
      *
      * @param query the query used for free text search to limit the list
      */
-    private synchronized void populateList(String query) {
+    private void populateList(String query) {
         // synchronize on the runtime class, as there can be multiple implementations of this abstract class
-        synchronized (getClass()) {
-            if (!dirty && sessionId.equals(Session.get().getId())) {
-                return;
-            }
-            list.clear();
+        if (!dirty) {
+            return;
+        }
+        list.clear();
 
-            StringBuilder sqlQuery = new StringBuilder(queryAll);
-            if (StringUtils.isNotEmpty(query)) {
-                sqlQuery.append(" and CONTAINS(., '");
-                sqlQuery.append(query);
-                sqlQuery.append("')");
-            }
-            log.debug("Executing query: {}", sqlQuery);
-            try {
-                UserSession session = (UserSession) Session.get();
-                @SuppressWarnings("deprecation") Query listQuery =
-                        session.getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
-                NodeIterator iter = listQuery.execute().getNodes();
-                while (iter.hasNext()) {
-                    Node node = iter.nextNode();
-                    if (node != null) {
-                        try {
-                            list.add(createBean(node));
-                        } catch (RepositoryException e) {
-                            log.warn("Unable to instantiate new bean.", e);
-                        }
+        StringBuilder sqlQuery = new StringBuilder(queryAll);
+        if (StringUtils.isNotEmpty(query)) {
+            sqlQuery.append(" and CONTAINS(., '");
+            sqlQuery.append(query);
+            sqlQuery.append("')");
+        }
+        log.debug("Executing query: {}", sqlQuery);
+        try {
+            UserSession session = (UserSession) Session.get();
+            @SuppressWarnings("deprecation") Query listQuery =
+                    session.getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
+            NodeIterator iter = listQuery.execute().getNodes();
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                if (node != null) {
+                    try {
+                        list.add(createBean(node));
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to instantiate new bean.", e);
                     }
                 }
-                Collections.sort(list);
-                sessionId = Session.get().getId();
-                dirty = false;
-            } catch (RepositoryException e) {
-                log.error("Error while executing query: " + sqlQuery, e);
             }
+            Collections.sort(list);
+            dirty = false;
+        } catch (RepositoryException e) {
+            log.error("Error while executing query: " + sqlQuery, e);
         }
     }
 
@@ -192,7 +182,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     @SuppressWarnings("unused")
     public void setQuery(final String newQuery) {
         this.query = escapeJcrContainsQuery(newQuery);
-        setDirty();
+        dirty = true;
     }
 
     /**
@@ -305,7 +295,13 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     @Override
     public void startObservation() {
         listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, observePath, true, null, observeNodeTypes);
+                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, observePath, true, null, observeNodeTypes) {
+            @Override
+            public void onEvent(final EventIterator events) {
+                dirty = true;
+                super.onEvent(events);
+            }
+        };
         listener.start();
     }
 
@@ -315,6 +311,15 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             listener.stop();
             listener = null;
         }
+    }
+
+    @Override
+    public void detach() {
+        if (listener == null) {
+            dirty = true;
+            list.clear();
+        }
+        super.detach();
     }
 
     // override Object

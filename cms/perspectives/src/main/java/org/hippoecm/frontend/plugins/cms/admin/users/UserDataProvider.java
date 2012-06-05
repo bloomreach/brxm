@@ -37,7 +37,7 @@ public class UserDataProvider extends SearchableDataProvider<User> {
             + " where (hipposys:system <> 'true' or hipposys:system IS NULL)";
 
     public UserDataProvider() {
-        super(QUERY_USER_LIST, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER);
+        super(QUERY_USER_LIST, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
         setSort("username", true);
     }
 

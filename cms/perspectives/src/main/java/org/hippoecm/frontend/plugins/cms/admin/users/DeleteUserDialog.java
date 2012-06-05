@@ -15,16 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -95,16 +89,7 @@ public class DeleteUserDialog extends DeleteDialog<User> {
                         .message("deleted user " + username);
                 eventBus.post(event);
             }
-
-            // one up
-            List<IBreadCrumbParticipant> l = breadCrumbPanel.getBreadCrumbModel().allBreadCrumbParticipants();
-            breadCrumbPanel.getBreadCrumbModel().setActive(l.get(l.size() - 2));
-            breadCrumbPanel.activate(new IBreadCrumbPanelFactory() {
-                public BreadCrumbPanel create(final String componentId,
-                                              final IBreadCrumbModel breadCrumbModel) {
-                    return new ListUsersPanel(componentId, context, breadCrumbModel, new UserDataProvider());
-                }
-            });
+;
         } catch (RepositoryException e) {
             Session.get().warn(getString("user-remove-failed", model));
             log.error("Unable to delete user '" + username + "' : ", e);

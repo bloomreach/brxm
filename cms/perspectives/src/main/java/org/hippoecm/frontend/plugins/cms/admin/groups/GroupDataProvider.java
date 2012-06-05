@@ -35,7 +35,7 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
             + " where (hipposys:system <> 'true' or hipposys:system IS NULL)";
 
     public GroupDataProvider() {
-        super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP);
+        super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
         setSort("groupname", true);
     }
 
