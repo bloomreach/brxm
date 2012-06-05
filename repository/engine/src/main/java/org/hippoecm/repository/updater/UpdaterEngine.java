@@ -721,7 +721,12 @@ public class UpdaterEngine {
                     }
                 }
                 if(nodeIter != null) {
-                    log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ") "+nodeIter.getSize()+" nodes");
+                    long numNodes = nodeIter.getSize();
+                    if(numNodes >= 0) {
+                        log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ") "+nodeIter.getSize()+" nodes");
+                    } else {
+                        log.info("migration update iterated for module " + module.name + " (" + visitor.toString() + ") ");                        
+                    }
                     while(nodeIter.hasNext()) {
                         Node node = nodeIter.nextNode();
                         UpdaterPath path = new UpdaterPath(node.getPath());
