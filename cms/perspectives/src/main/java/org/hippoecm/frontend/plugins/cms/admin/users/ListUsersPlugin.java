@@ -26,6 +26,11 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 
 public class ListUsersPlugin extends AdminPanelPlugin {
 
+    /**
+     * Configuration key for Boolean property to determine whether user creation is enabled.
+     */
+    public final static String USER_CREATION_ENABLED_KEY = "user.creation.enabled";
+
     private final UserDataProvider userDataProvider;
 
     public ListUsersPlugin(IPluginContext context, IPluginConfig config) {
@@ -51,7 +56,7 @@ public class ListUsersPlugin extends AdminPanelPlugin {
 
     @Override
     public PanelPluginBreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
-        return new ListUsersPanel(componentId, getPluginContext(), breadCrumbModel, userDataProvider);
+        return new ListUsersPanel(componentId, getPluginContext(), getPluginConfig(), breadCrumbModel, userDataProvider);
     }
 
 }
