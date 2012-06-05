@@ -161,7 +161,8 @@ public class LoginPlugin extends RenderPlugin {
                 new IChoiceRenderer<String>() {
                     private static final long serialVersionUID = 1L;
                     public String getDisplayValue(String object) {
-                        return new StringResourceModel(object, LoginPlugin.this, null).getString();
+                        Locale locale = new Locale(object);
+                        return new StringResourceModel(object, LoginPlugin.this, null, null, locale.getDisplayLanguage()).getString();
                     }
                     public String getIdValue(String object, int index) {
                         return object;
