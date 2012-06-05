@@ -35,7 +35,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CheckInOutPlugin.class);
-    
+
     private final Image icon;
     private final AjaxLink<Void> link;
 
@@ -45,13 +45,16 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
-            @Override public String getObject() {
-                return isCheckedOut() ? "Check In" : "Check Out";
+
+            @Override
+            public String getObject() {
+                return isVersionable() ? (isCheckedOut() ? "Check In" : "Check Out") : "Not Versionable";
             }
         });
         label.setOutputMarkupId(true);
         label.add(new AttributeModifier("style", true, new Model<String>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public String getObject() {
                 if (!isVersionable()) {
@@ -63,12 +66,12 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         // set up icon component
         icon = new Image("icon") {
             private static final long serialVersionUID = 1L;
-            private final ResourceReference emptyGif 
-                = new ResourceReference(CheckInOutPlugin.class, "empty.gif");
-            private final ResourceReference checkedinIcon 
-                = new ResourceReference(CheckInOutPlugin.class, "checkedin.png");
-            private final ResourceReference checkedoutIcon 
-                = new ResourceReference(CheckInOutPlugin.class, "checkedout.png");
+            private final ResourceReference emptyGif = new ResourceReference(CheckInOutPlugin.class, "empty.gif");
+            private final ResourceReference checkedinIcon = new ResourceReference(CheckInOutPlugin.class,
+                                                                                  "checkedin.png");
+            private final ResourceReference checkedoutIcon = new ResourceReference(CheckInOutPlugin.class,
+                                                                                   "checkedout.png");
+
             @Override
             protected ResourceReference getImageResourceReference() {
                 if (!isVersionable()) {
@@ -82,13 +85,13 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         // set up link component
         link = new AjaxLink<Void>("link") {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if (isVersionable()) {
                     if (isCheckedOut()) {
                         checkin();
-                    }
-                    else {
+                    } else {
                         checkout();
                     }
                 }
@@ -100,25 +103,28 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         link.setEnabled(isVersionable());
         add(link);
     }
-    
+
     private boolean isCheckedOut() {
         try {
-            return getModelObject().isCheckedOut();
+            final Node node = getModelObject();
+            if (node != null) {
+                return node.isCheckedOut();
+            }
         } catch (RepositoryException e) {
             log.error("An error occurred determining if node is checked out.", e);
-            return false;
         }
+        return false;
     }
-    
+
     private boolean isVersionable() {
         try {
-            return getModelObject() == null ? false : getModelObject().isNodeType("mix:versionable");
+            return getModelObject() != null && getModelObject().isNodeType("mix:versionable");
         } catch (RepositoryException e) {
             log.error("An error occurred determining if node is versionable.", e);
             return false;
         }
     }
-    
+
     private void checkin() {
         try {
             getModelObject().checkin();
@@ -126,7 +132,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
             log.error("An error occurred trying to check in node.", e);
         }
     }
-    
+
     private void checkout() {
         try {
             getModelObject().checkout();
@@ -134,7 +140,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
             log.error("An error occurred trying to check out node.", e);
         }
     }
-        
+
     @Override
     protected void onModelChanged() {
         link.setEnabled(isVersionable());

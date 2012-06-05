@@ -18,19 +18,16 @@ package org.hippoecm.frontend.plugins.console.menu.delete;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.frontend.model.IModelReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DeleteDialog extends AbstractDialog<Node> {
     @SuppressWarnings("unused")
@@ -48,7 +45,13 @@ public class DeleteDialog extends AbstractDialog<Node> {
 
         String path;
         try {
-            path = model.getNode().getPath();
+            final Node node = model.getNode();
+            if (node != null) {
+                path = node.getPath();
+            } else {
+                path = "No node selected";
+                setOkEnabled(false);
+            }
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
