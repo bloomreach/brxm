@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.api;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -86,11 +87,12 @@ public interface HippoNode extends Node {
      * on the most complete version of a node, rather than on any presentation
      * of the node.
      *
+     * @throws ItemNotFoundException indicates the canonical node is no longer available
      * @throws RepositoryException indicates a generic unspecified repository error
      * @return the node with the most accurate representation of this node, may be nonsense if
      * there is no sensible canonical version available
      */
-    public Node getCanonicalNode() throws RepositoryException;
+    public Node getCanonicalNode() throws ItemNotFoundException, RepositoryException;
 
     /**
      * Obtains an iterator over the set of nodes that potentially contain
