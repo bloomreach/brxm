@@ -969,9 +969,6 @@ console/repository/src/main/resources/hippoecm-extension.xml -text svneol=unset#
 dependencies/pom.xml svneol=native#text/plain
 editor/common/pom.xml svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/NamespaceValidator.java svneol=native#text/plain
-editor/common/src/main/java/org/hippoecm/editor/cnd/FieldIdentifier.java -text
-editor/common/src/main/java/org/hippoecm/editor/cnd/RemodelHelper.java svneol=native#text/plain
-editor/common/src/main/java/org/hippoecm/editor/cnd/TypeUpdate.java -text
 editor/common/src/main/java/org/hippoecm/editor/model/JcrNamespace.java svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/model/JcrTypeInfo.java svneol=native#text/plain
 editor/common/src/main/java/org/hippoecm/editor/model/JcrTypeVersion.java svneol=native#text/plain
@@ -979,8 +976,6 @@ editor/common/src/main/java/org/hippoecm/editor/repository/EditmodelWorkflow.jav
 editor/common/src/main/java/org/hippoecm/editor/repository/NamespaceWorkflow.java -text
 editor/common/src/main/java/org/hippoecm/editor/repository/TemplateEditorWorkflow.java -text
 editor/frontend/pom.xml -text
-editor/frontend/src/main/java/org/hippoecm/editor/cnd/CndSerializer.java -text
-editor/frontend/src/main/java/org/hippoecm/editor/cnd/UpdateModelBuilder.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/prototype/IPrototypeStore.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/editor/prototype/JcrPrototypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/repository/impl/EditmodelWorkflowImpl.properties svneol=native#text/plain

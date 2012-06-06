@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -40,29 +39,6 @@ import static org.junit.Assert.assertTrue;
 public class TemplateEditorWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    String cnd1 =
-        "<rep='internal'>\n" +
-        "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
-        "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
-        "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
-        "<hippotest3='http://www.hippoecm.org/test2/1.0'>\n" +
-        "\n" +
-        "[hippotest3:test] > hippo:document\n" +
-        "- hippotest3:first (string) mandatory\n" +
-        "+ hippotest3:node\n";
-    String cnd2 =
-        "<rep='internal'>\n" +
-        "<jcr='http://www.jcp.org/jcr/1.0'>\n" +
-        "<nt='http://www.jcp.org/jcr/nt/1.0'>\n" +
-        "<mix='http://www.jcp.org/jcr/mix/1.0'>\n" +
-        "<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>\n" +
-        "<hippotest3='http://www.hippoecm.org/test2/1.1'>\n" +
-        "\n" +
-        "[hippotest3:test] > hippo:document\n" +
-        "- hippotest3:second (string)\n" +
-        "+ hippotest3:node\n";
 
     @Before
     public void setUp() throws Exception {
@@ -123,7 +99,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         assertTrue(session.getRootNode().getNode("test").hasProperty("hippotest2:test"));
     }
 
-    @Ignore
+    @Test
     public void testTemplateEditorType() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
         Node node = root.getNode("hippo:namespaces/hippostd");
@@ -133,56 +109,6 @@ public class TemplateEditorWorkflowTest extends TestCase {
         assertTrue(workflow instanceof NamespaceWorkflow);
         ((NamespaceWorkflow) workflow).addDocumentType("testtype");
         assertTrue(session.getRootNode().hasNode("hippo:namespaces/hippostd/testtype"));
-    }
-
-    @Test
-    public void testBareUpdate() throws RepositoryException, WorkflowException, RemoteException {
-        {
-            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow workflow = workflowManager.getWorkflow("internal", session.getRootNode());
-            assertNotNull(workflow);
-            assertTrue(workflow instanceof RepositoryWorkflow);
-
-            ((RepositoryWorkflow) workflow).createNamespace("hippotest3", "http://www.hippoecm.org/test/1.0");
-            session.refresh(false);
-
-            ((RepositoryWorkflow) workflow).updateModel("hippotest3", cnd1);
-        }
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        {
-            Node handle = session.getRootNode().getNode("test").addNode("testing", "hippo:handle");
-            handle.addMixin("hippo:hardhandle");
-            Node node = handle.addNode("testing", "hippotest3:test");
-            node.addMixin("hippo:harddocument");
-            node.setProperty("hippotest3:first", "foobar");
-            node.addNode("hippotest3:node", "nt:unstructured");
-            session.save();
-            node.checkin();
-            handle.checkin();
-
-            node = session.getRootNode().getNode("test").getNode("testing").getNode("testing");
-            assertEquals("hippotest3:test", node.getPrimaryNodeType().getName());
-        }
-
-        {
-            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-            Workflow workflow = workflowManager.getWorkflow("internal", session.getRootNode());
-            ((RepositoryWorkflow) workflow).updateModel("hippotest3", cnd2);
-        }
-
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-
-        {
-            Node node = session.getRootNode().getNode("test").getNode("testing").getNode("testing");
-            assertEquals("hippotest3:test", node.getPrimaryNodeType().getName());
-            //assertFalse(node.hasProperty("hippotest3:first"));
-            //assertFalse(node.hasProperty("hippotest3:second"));
-            node.setProperty("hippotest3:second", "bla");
-        }
     }
 
 }
