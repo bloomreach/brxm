@@ -252,9 +252,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public synchronized void load(VirtualHosts virtualHosts) throws RepositoryNotAvailableException {
-        Session session = null;
+        SessionReference sessionRef = null;
         try {
-            session = getSession();
+            sessionRef = getSessionReference();
+            Session session = sessionRef.getSession();
             Node configNode = session.getNode(rootPath);
  
             blueprints = new HashMap<String, Blueprint>();
@@ -314,25 +315,16 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Could not load channels and/or blueprints", e);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (sessionRef != null) {
+                sessionRef.release();
             }
         }
     }
 
-    protected Session getSession() throws RepositoryException {
+    protected SessionReference getSessionReference() throws RepositoryException {
         // COMMENT - MNour: This is (really * 10^6) a bad hack. We (realy * 10^6) need to rethink about handling resources
         //                  and relevant security issues in a more concise way!
-        Session jcrSession = CmsJcrSessionThreadLocal.getJcrSession();
-
-        // COMMENT - MNour: This is really a dirty hack
-        // If there is no propagated JCR session
-        if (jcrSession == null) {
-            // Create a read-only one
-            jcrSession = repository.login();
-        }
-
-        return jcrSession;
+        return new SessionReference(CmsJcrSessionThreadLocal.getJcrSession());
     }
 
     public synchronized Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
@@ -376,9 +368,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         Blueprint blueprint = blueprints.get(blueprintId);
 
-        Session session = null;
+        SessionReference sessionRef = null;
         try {
-            session = getSession();
+            sessionRef = getSessionReference();
+            Session session = sessionRef.getSession();
             Node configNode = session.getNode(rootPath);
             String channelId = createUniqueChannelId(channel.getName(), session);
             createChannel(configNode, blueprint, session, channelId, channel);
@@ -407,8 +400,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (sessionRef != null) {
+                sessionRef.release();
             }
         }
     }
@@ -454,9 +447,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (!channels.containsKey(channel.getId())) {
             throw new ChannelException("No channel with id " + channel.getId() + " was found");
         }
-        Session session = null;
+        SessionReference sessionRef = null;
         try {
-            session = getSession();
+            sessionRef = getSessionReference();
+            Session session = sessionRef.getSession();
             Node configNode = session.getNode(rootPath);
             updateChannel(configNode, channel);
 
@@ -482,8 +476,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (sessionRef != null) {
+                sessionRef.release();
             }
         }
     }
@@ -563,20 +557,28 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public synchronized boolean canUserModifyChannels() {
-        Session session = null;
+        SessionReference sessionRef = null;
 
         try {
-            session = getSession();
-            return session.hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
+            sessionRef = getSessionReference();
+            return sessionRef.getSession().hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (sessionRef != null) {
+                sessionRef.release();
             }
         }
 
         return false;
+    }
+
+    /* (non-Javadoc)
+    * @see org.hippoecm.hst.configuration.channel.ChannelManager.getChannelInfoClass(String id)
+    */
+    @Override
+    public Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException {
+        return getChannelInfoClass(getChannelById(id));
     }
 
     public synchronized void invalidate() {
@@ -1011,12 +1013,32 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.configuration.channel.ChannelManager.getChannelInfoClass(String id)
-     */
-    @Override
-    public Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException {
-        return getChannelInfoClass(getChannelById(id));
+    private class SessionReference {
+
+        private final boolean logout;
+        private final Session session;
+
+        SessionReference(Session session) throws RepositoryException {
+            // COMMENT - MNour: This is really a dirty hack
+            // If there is no propagated JCR session
+            if (session == null) {
+                this.session = repository.login();
+                this.logout = true;
+            } else {
+                this.session = session;
+                this.logout = false;
+            }
+        }
+
+        void release() {
+            if (logout) {
+                session.logout();
+            }
+        }
+
+        Session getSession() {
+            return session;
+        }
     }
 
 }
