@@ -69,6 +69,8 @@ import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
+
 public class Main extends WebApplication {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -288,6 +290,10 @@ public class Main extends WebApplication {
             
         });
 
+        if (log.isInfoEnabled()) {
+            String applicationName = WebApplicationHelper.getConfigurationParameter(this, PLUGIN_APPLICATION_NAME_PARAMETER, "cms");
+            log.info("Hippo CMS application " + applicationName + " has started");
+        }
     }
 
     @Override

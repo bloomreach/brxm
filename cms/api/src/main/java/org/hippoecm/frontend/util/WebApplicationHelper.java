@@ -39,15 +39,15 @@ public class WebApplicationHelper {
     public static String getConfigurationParameter(String configParamName, String defaultValue) {
         validateNotBlank(configParamName);
 
-        final String returnValue = getConfigurationParameter((WebApplication) Application.get(), PLUGIN_APPLICATION_NAME_PARAMETER, null);
+        final String returnValue = getConfigurationParameter((WebApplication) Application.get(), configParamName, null);
 
         return (returnValue == null) ? defaultValue : returnValue;
     }
 
-    public static String getFullyQualifiedCookieName(String cookieaBaseName) {
-        validateNotBlank(cookieaBaseName);
+    public static String getFullyQualifiedCookieName(String cookieBaseName) {
+        validateNotBlank(cookieBaseName);
 
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms") + "." + cookieaBaseName;
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms") + "." + cookieBaseName;
     }
 
     public static void clearCookie(String cookieName) {
