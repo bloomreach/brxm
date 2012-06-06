@@ -517,6 +517,7 @@ api/src/main/java/org/hippoecm/frontend/widgets/icons/folder-open-virtual.gif -t
 api/src/main/java/org/hippoecm/frontend/widgets/icons/item-virtual.gif -text
 api/src/main/java/org/hippoecm/frontend/widgets/res/ie6_hover_fix.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/res/menu.gif -text
+api/src/main/java/org/hippoecm/frontend/widgets/res/tree-images.png -text
 api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css svneol=native#text/plain
 api/src/main/java/org/hippoecm/repository/gallery/HippoGalleryNodeType.java -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css -text
