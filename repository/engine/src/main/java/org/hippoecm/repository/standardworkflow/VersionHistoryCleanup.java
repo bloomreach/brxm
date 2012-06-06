@@ -19,13 +19,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
-import org.apache.jackrabbit.core.VersionManagerImpl;
+
 import org.apache.jackrabbit.core.version.InternalVersionHistoryImpl;
 import org.apache.jackrabbit.core.version.InternalVersionManagerImpl;
 import org.apache.jackrabbit.core.version.VersionHistoryImpl;
@@ -189,7 +190,6 @@ public class VersionHistoryCleanup {
                 session.refresh(false);
                 Node node = session.getNodeByUUID(uuid);
                 String path = node.getPath();
-                node = org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(node);
                 node = org.hippoecm.repository.decorating.NodeDecorator.unwrap(node);
                 node = org.hippoecm.repository.impl.NodeDecorator.unwrap(node);
                 InternalVersionHistoryImpl internalVersionHistory = ((InternalVersionHistoryImpl)((VersionHistoryImpl)node).getInternalVersionHistory());

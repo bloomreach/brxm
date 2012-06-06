@@ -74,7 +74,6 @@ public class ExportCndTest extends TestCase {
         Writer out = new StringWriter();
         try {
             Session impl = session;
-            impl = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(impl);
             impl = org.hippoecm.repository.decorating.SessionDecorator.unwrap(impl);
             CompactNodeTypeDefWriter.write(nodeTypeDefs, nsRes, (SessionImpl)impl, out);
         } catch (IOException e) {

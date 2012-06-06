@@ -15,13 +15,7 @@
  */
 package org.hippoecm.repository.updater;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
-import java.io.StringReader;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,17 +25,14 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
-import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
-import org.hippoecm.repository.util.Utilities;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UpdaterRenameTest extends TestCase {
     @SuppressWarnings("unused")
@@ -71,17 +62,23 @@ public class UpdaterRenameTest extends TestCase {
         UpdaterModule module = new UpdaterModule() {
             public void register(UpdaterContext context) {
                 context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("testsubns:document") {
-                        protected void leaving(Node node, int level) throws RepositoryException {
-                            if(node.hasProperty("testsuperns:y")) {
-                                node.setProperty("testsuperns:z", node.getProperty("testsuperns:y").getString());
-                            }
-                            if(node.hasProperty("testsubns:y")) {
-                                node.setProperty("testsubns:z", node.getProperty("testsubns:y").getString());
-                            }
+                    protected void leaving(Node node, int level) throws RepositoryException {
+                        if (node.hasProperty("testsuperns:y")) {
+                            node.setProperty("testsuperns:z", node.getProperty("testsuperns:y").getString());
                         }
-                    });
-                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "testsuperns", "-",  new InputStreamReader(getClass().getClassLoader().getResourceAsStream("repository-testsuperns2.cnd"))));
-                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "testsubns", "-",  new InputStreamReader(getClass().getClassLoader().getResourceAsStream("repository-testsubns2.cnd"))));
+                        if (node.hasProperty("testsubns:y")) {
+                            node.setProperty("testsubns:z", node.getProperty("testsubns:y").getString());
+                        }
+                    }
+                });
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "testsuperns", "-",
+                                                                                new InputStreamReader(
+                                                                                        getClass().getClassLoader().getResourceAsStream(
+                                                                                                "repository-testsuperns2.cnd"))));
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, "testsubns", "-",
+                                                                                new InputStreamReader(
+                                                                                        getClass().getClassLoader().getResourceAsStream(
+                                                                                                "repository-testsubns2.cnd"))));
             }
         };
         List list = new LinkedList();

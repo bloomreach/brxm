@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import org.apache.jackrabbit.core.id.ItemId;
-import org.junit.Ignore;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -31,9 +26,13 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.core.NodeImpl;
+import org.apache.jackrabbit.core.id.ItemId;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class InternalCanonicalPathTest extends TestCase {
     @SuppressWarnings("unused")
@@ -77,7 +76,6 @@ public class InternalCanonicalPathTest extends TestCase {
 
     private ItemId unwrappedItemId(Node node) {
         Node impl = node;
-        impl = org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(impl);
         impl = org.hippoecm.repository.decorating.NodeDecorator.unwrap(impl);
         return ((NodeImpl)impl).getId();
     }

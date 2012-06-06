@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import org.junit.After;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,8 +31,11 @@ import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class FreeTextSearchTest extends TestCase {
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
@@ -362,7 +362,6 @@ public class FreeTextSearchTest extends TestCase {
 
     public static void flushIndex(Repository repository) {
         try {
-            repository = org.hippoecm.repository.decorating.checked.RepositoryDecorator.unwrap(repository);
             repository = org.hippoecm.repository.decorating.RepositoryDecorator.unwrap(repository);
             QueryHandler queryHandler = ((RepositoryImpl)repository).getSearchManager("default").getQueryHandler();
             ((SearchIndex)queryHandler).flush();

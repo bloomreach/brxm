@@ -17,8 +17,6 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
 
-import java.util.List;
-import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
@@ -27,28 +25,6 @@ import org.hippoecm.repository.api.WorkflowException;
 
 public interface RepositoryWorkflow extends Workflow {
     static final String SVN_ID = "$Id$";
-
-    /**
-     * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.
-     */
-    public void updateModel(String prefix, String cnd) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
-
-    /**
-     * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.
-     */
-    public void updateModel(String prefix, String cnd, String contentUpdater, Object contentUpdaterCargo) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
-
-    /**
-     * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.  The map of changes contains, for each type, a set of operations
-     * to apply to nodes of the type.  If a type does not exist yet, it should be in the map with
-     * an empty list.
-     */
-    public void updateModel(final String prefix, final String cnd, final String contentUpdater, Map<String, List<Change>> changes) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * create a new namespace

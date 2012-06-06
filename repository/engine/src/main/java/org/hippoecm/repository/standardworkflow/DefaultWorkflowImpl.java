@@ -164,7 +164,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
         }
         Localized localized;
         if (handle != null) {
-            localized = ((NodeDecorator)org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(subject)).getLocalized(null);
+            localized = ((NodeDecorator)subject).getLocalized(null);
             if (localized == null) {
                 localized = Localized.getInstance();
             }

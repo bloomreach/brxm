@@ -45,7 +45,6 @@ import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.hippoecm.checker.Checker;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
@@ -100,7 +99,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
         session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
-        session = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session);
         session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
         if(session instanceof org.apache.jackrabbit.core.SessionImpl) {
             HippoSessionItemStateManager sessionISM = (HippoSessionItemStateManager) (session instanceof org.hippoecm.repository.jackrabbit.XASessionImpl ? ((org.hippoecm.repository.jackrabbit.XASessionImpl)session).getItemStateManager() : ((org.hippoecm.repository.jackrabbit.SessionImpl)session).getItemStateManager());
@@ -343,7 +341,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         hippoRepositoryFactory = new DecoratorFactoryImpl();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
-        repository = new CheckedDecoratorFactory().getRepositoryDecorator(repository);
 
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init

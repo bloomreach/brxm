@@ -15,24 +15,41 @@
  */
 package org.hippoecm.repository.updater;
 
+import java.io.StringReader;
+import java.rmi.RemoteException;
+import java.util.Collections;
+
+import javax.jcr.Item;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.TestCase;
-
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.ext.UpdaterContext;
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
+import org.hippoecm.repository.ext.UpdaterModule;
+import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class RepositoryWorkflowTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class CndUpdateTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -139,47 +156,17 @@ public class RepositoryWorkflowTest extends TestCase {
         RepositoryWorkflow repowf = (RepositoryWorkflow)wf;
         repowf.createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
         flush();
-        getWorkflow().updateModel("testUpdateModel", cnd1);
+        updateModel("testUpdateModel", cnd1);
         flush();
-        getWorkflow().updateModel("testUpdateModel", cnd2);
+        updateModel("testUpdateModel", cnd2);
         flush();
         session.getRootNode().getNode("test").addNode("folder", "testUpdateModel:folder").addMixin("hippo:harddocument");
         session.save();
         buildDepth2(session.getRootNode().getNode("test/folder"), 3, 150,3, 3,4);
         session.save();
-        getWorkflow().updateModel("testUpdateModel", cnd3);
+        updateModel("testUpdateModel", cnd3);
         flush();
         assertEquals("testUpdateModel:folder", session.getRootNode().getNode("test/folder/testUpdateModel:folder/testUpdateModel:folder[2]").getDefinition().getDeclaringNodeType().getName());
-    }
-
-    @Ignore
-    public void testCustomFolderUpdateExtensivelyA() throws Exception {
-        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.1");
-        flush();
-        getWorkflow().updateModel("testUpdateModel", cnd2);
-        flush();
-        session.getRootNode().getNode("test").addNode("folder", "testUpdateModel:folder").addMixin("hippo:harddocument");
-        session.save();
-        buildDepth2(session.getRootNode().getNode("test/folder"), 150, 150,3, 150,0);
-        session.save();
-        getWorkflow().updateModel("testUpdateModel", cnd3);
-        flush();
-        assertEquals("testUpdateModel:folder", session.getRootNode().getNode("test/folder/testUpdateModel:folder/testUpdateModel:folder[2]").getDefinition().getDeclaringNodeType().getName());
-    }
-
-    @Ignore
-    public void testCustomFolderUpdateExtensivelyB() throws Exception {
-        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.1");
-        flush();
-        getWorkflow().updateModel("testUpdateModel", cnd2);
-        flush();
-        session.getRootNode().getNode("test").addNode("folder", "testUpdateModel:folder").addMixin("hippo:harddocument");
-        session.save();
-        buildDepth2(session.getRootNode().getNode("test/folder"), 3, 150,3, 150,150);
-        session.save();
-        getWorkflow().updateModel("testUpdateModel", cnd3);
-        flush();
-        assertEquals("testUpdateModel:folder", session.getRootNode().getNode("test/folder/testUpdateModel:folder/testUpdateModel:folder").getDefinition().getDeclaringNodeType().getName());
     }
 
     private String cndMoveAggregate1 =
@@ -200,7 +187,7 @@ public class RepositoryWorkflowTest extends TestCase {
     @Test
     public void testMoveAggregate() throws Exception {
        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
-       getWorkflow().updateModel("testUpdateModel", cndMoveAggregate1);
+       updateModel("testUpdateModel", cndMoveAggregate1);
        build(session, new String[] {
             "/test/doc",                               "hippo:handle",
             "jcr:mixinTypes",                          "hippo:hardhandle",
@@ -224,7 +211,79 @@ public class RepositoryWorkflowTest extends TestCase {
            background = server;
        }
        flush();
-       getWorkflow().updateModel("testUpdateModel", cndMoveAggregate2);
+       updateModel("testUpdateModel", cndMoveAggregate2);
        flush();
     }
+
+
+    private void updateModel(final String prefix, final String cnd, final UpdaterModule module) throws WorkflowException, MappingException,
+            RepositoryException, RemoteException {
+        UpdaterModule updateModelUpdaterModule = new UpdaterModule() {
+            public void register(final UpdaterContext context) {
+                context.registerName(module != null ? module.getClass().getName() : getClass().getName());
+                context.registerStartTag(null);
+                context.registerEndTag(null);
+                if (module != null) {
+                    module.register(new UpdaterContext() {
+                        public void registerName(String name) {
+                        }
+
+                        public void registerBefore(String name) {
+                        }
+
+                        public void registerAfter(String name) {
+                        }
+
+                        public void registerStartTag(String name) {
+                        }
+
+                        public void registerExpectTag(String name) {
+                        }
+
+                        public void registerEndTag(String name) {
+                        }
+
+                        public void registerVisitor(ItemVisitor visitor) {
+                            context.registerVisitor(visitor);
+                        }
+
+                        public NodeType getNewType(Session session, String type) throws RepositoryException {
+                            return context.getNewType(session, type);
+                        }
+
+                        public void setName(Item item, String name) throws RepositoryException {
+                            context.setName(item, name);
+                        }
+
+                        public void setPrimaryNodeType(Node node, String name) throws RepositoryException {
+                            context.setPrimaryNodeType(node, name);
+                        }
+
+                        public NodeType[] getNodeTypes(Node node) throws RepositoryException {
+                            return context.getNodeTypes(node);
+                        }
+
+                        public boolean isMultiple(Property property) throws RepositoryException {
+                            return context.isMultiple(property);
+                        }
+
+                        public Workspace getWorkspace() throws RepositoryException {
+                            return context.getWorkspace();
+                        }
+                    });
+                }
+                context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, "-", new StringReader(cnd)));
+                //context.registerVisitor(new UpdaterEngine.Cleaner(context));
+            }
+        };
+        Modules<UpdaterModule> modules = new Modules(Collections.singletonList(updateModelUpdaterModule));
+        UpdaterEngine.migrate(session, modules);
+    }
+
+    public void updateModel(String prefix, String cnd) throws WorkflowException, MappingException,
+            RepositoryException, RemoteException
+    {
+        updateModel(prefix, cnd, null);
+    }
+
 }

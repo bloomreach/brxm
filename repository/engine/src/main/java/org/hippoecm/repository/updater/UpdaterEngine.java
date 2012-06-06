@@ -677,7 +677,7 @@ public class UpdaterEngine {
 
     public static void migrate(Session session, Modules<UpdaterModule> modules) throws UpdaterException, RepositoryException {
         Session subSession = session.impersonate(new SimpleCredentials("workflowuser", new char[] {}));
-        SessionDecorator bareSession = (SessionDecorator) org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(subSession);
+        SessionDecorator bareSession = (SessionDecorator) subSession;
         bareSession.postMountEnabled(false);
         subSession.refresh(false);
         try {
