@@ -58,14 +58,7 @@ public interface ContainerConstants {
      * The key to indicate HstFilter should "reset" itself from being done, allowing multiple invokations.
      */
     String HST_RESET_FILTER = "org.hippoecm.hst.container.HstFilter.reset";
-    
-    /**
-     * The key used to set the cms location for the surf and edit 
-     * @deprecated cms.location should be configured on hst configuration in repository.
-     */
-    @Deprecated
-    String CMS_LOCATION = "cms.location";
-    
+
     /**
      * The head element attribute name prefix used as a hint for container to aggregate.
      */
