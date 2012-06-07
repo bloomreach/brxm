@@ -393,9 +393,12 @@ public interface HippoNodeType {
      */
     public static final String HIPPO_EXTENSIONSOURCE = "hipposys:extensionsource";
     /**
-     *
+     * @deprecated
      */
     public static final String HIPPO_EXTENSIONBUILD = "hipposys:extensionbuild";
+
+    public static final String HIPPO_EXTENSIONVERSION = "hipposys:extensionversion";
+
     public static final String HIPPO_RELOADONSTARTUP = "hippo:reloadonstartup";
     /**
      *
@@ -668,4 +671,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
     public static final String HIPPO_CONTENTPROPADD = "hippo:contentpropadd";
+
+    public static final String HIPPO_PROCESS = "hippo:process";
+    public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
+
 }

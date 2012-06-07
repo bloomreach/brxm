@@ -23,7 +23,8 @@
 
 [hipposys:initializeitem] > hippo:initializeitem
 - hipposys:extensionsource (string)
-- hipposys:extensionbuild (long)
+- hipposys:extensionbuild (long) // deprecated
+- hipposys:extensionversion (string)
 
 // REPOSITORY: DOCUMENT DATA TYPES AND MARKERS
 

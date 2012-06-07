@@ -522,28 +522,14 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                 initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream, configurationURL.getPath());
                 Node mergeInitializationNode = rootSession.getRootNode().
                     getNode("hippo:configuration/hippo:temporary/hippo:initialize");
+                final String moduleVersion = getModuleVersion(configurationURL);
                 for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
                     Node n = mergeIter.nextNode();
-                    long buildNumber = -1;
-                    String configurationURLString = configurationURL.toString();
-                    if (configurationURLString.endsWith("hippoecm-extension.xml")) {
-                        String manifestUrlString = configurationURLString.substring(0, configurationURLString.length() - "hippoecm-extension.xml".length()) + "META-INF/MANIFEST.MF";
-                        try {
-                            Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
-                            String buildString = manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
-                            if (buildString != null) {
-                                buildNumber = Long.parseLong(buildString);
-                            }
-                        } catch (IOException ex) {
-                            // deliberate ignore, manifest file not available so no build number can be obtained
-                        }
-                    }
-                    long existingBuildNumber = -1;
-                    if (initializationFolder.hasNode(n.getName()) && initializationFolder.getNode(n.getName()).hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD)) {
-                        existingBuildNumber = initializationFolder.getNode(n.getName()).getProperty(HippoNodeType.HIPPO_EXTENSIONBUILD).getLong();
-                    }
+
+                    final String existingModuleVersion = getExistingModuleVersion(initializationFolder, n.getName());
+
                     if (!initializationFolder.hasNode(n.getName()) ||
-                        (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && (buildNumber < 0 || existingBuildNumber < 0 || buildNumber > existingBuildNumber))) {
+                        (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && (moduleVersion == null || !moduleVersion.equals(existingModuleVersion)))) {
 
                         if(initializationFolder.hasNode(n.getName())) {
                             // this occurs when reload is on
@@ -555,8 +541,8 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                        ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
                                        : configurationURL.getFile())) {
                             moved.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-                            if (buildNumber >= 0) {
-                                moved.setProperty(HippoNodeType.HIPPO_EXTENSIONBUILD, buildNumber);
+                            if (moduleVersion != null) {
+                                moved.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
                             }
                         }
                         for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD, HippoNodeType.HIPPO_RELOADONSTARTUP }) {
@@ -629,6 +615,33 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                 throw new RepositoryException("Could not initialize repository with configuration content", ex);
             }
         }
+    }
+
+    private static String getModuleVersion(URL configurationURL) {
+        String configurationURLString = configurationURL.toString();
+        if (configurationURLString.endsWith("hippoecm-extension.xml")) {
+            String manifestUrlString = configurationURLString.substring(0, configurationURLString.length() - "hippoecm-extension.xml".length()) + "META-INF/MANIFEST.MF";
+            try {
+                Manifest manifest = new Manifest(new URL(manifestUrlString).openStream());
+                return manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
+            } catch (IOException ex) {
+                // deliberate ignore, manifest file not available so no build number can be obtained
+            }
+        }
+        return null;
+    }
+
+    private static String getExistingModuleVersion(final Node initializationFolder, final String initializeItemName) throws RepositoryException {
+        if (initializationFolder.hasNode(initializeItemName)) {
+            final Node initializeItemNode = initializationFolder.getNode(initializeItemName);
+            if (initializeItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONVERSION)) {
+                return initializeItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONVERSION).getString();
+            }
+            if (initializeItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD)) {
+                return Long.valueOf(initializeItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONBUILD).getLong()).toString();
+            }
+        }
+        return null;
     }
 
     private static NodeIterator getDownstreamItems(final Session session, final String contextNodePath) throws RepositoryException {
