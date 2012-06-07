@@ -215,7 +215,7 @@ button.title-button {
      font-size: 1.2em;
 }
 
-.create-document-link a, a:visited {
+.create-document-link a, .create-document-link a:visited {
     text-decoration: none;
     color:#39f;
 }
