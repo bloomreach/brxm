@@ -556,7 +556,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                             }
                         }
                         String contextNodeName = null;
-                        if (moved.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && moved.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean()) {
+                        if (moved.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && moved.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && moved.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
                             contextNodeName = readContextNodeName(moved);
                         }
                         if (contextNodeName != null) {
