@@ -71,7 +71,18 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
             session.save();
         }
     }
-    
+
+    public WorkflowEventLoggerWorkflowImpl(Session session) throws RepositoryException, WorkflowException {
+        this(session, session, getDefaultLogFolder(session));
+    }
+
+    private static Node getDefaultLogFolder(Session rootSession) throws RepositoryException {
+        if (rootSession.getRootNode().hasNode("hippo:log")) {
+            return rootSession.getRootNode().getNode("hippo:log");
+        }
+        return null;
+    }
+
     @Override
     public Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException {
         return Collections.emptyMap();

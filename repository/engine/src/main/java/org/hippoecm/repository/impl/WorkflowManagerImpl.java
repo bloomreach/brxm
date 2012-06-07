@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2011 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,8 +71,8 @@ import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModuleFactory;
 import org.hippoecm.repository.ext.WorkflowManagerModule;
 import org.hippoecm.repository.ext.WorkflowManagerRegister;
-import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflow;
+import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,12 +112,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
             }
             if (eventLoggerWorkflow == null) {
-                eventLoggerWorkflow = new EventLoggerImpl(rootSession);
+                eventLoggerWorkflow = new WorkflowEventLoggerWorkflowImpl(rootSession);
             }
         } catch (PathNotFoundException ex) {
             log.info("No workflow configuration found. Workflow not started.");
         } catch (RepositoryException ex) {
-            log.error("workflow manager configuration failed: "+ex.getMessage(), ex);
+            log.error("Workflow manager configuration failed: "+ex.getMessage(), ex);
+        } catch (WorkflowException e) {
+            log.error("Failed to create workflow logger: " + e.getMessage(), e);
         }
     }
 

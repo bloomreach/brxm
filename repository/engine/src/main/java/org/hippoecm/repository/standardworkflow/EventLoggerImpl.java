@@ -30,4 +30,8 @@ public class EventLoggerImpl extends WorkflowEventLoggerWorkflowImpl {
         super(userSession, rootSession, subject);
     }
 
+    public EventLoggerImpl(Session session) throws RepositoryException, WorkflowException {
+        super(session);
+    }
+
 }
