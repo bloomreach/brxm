@@ -30,22 +30,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface JAXRSService {
 	
 	String REQUEST_CONTENT_PATH_KEY = "org.hippoecm.hst.jaxrs.request.contentPath";
-	/**
-	 * @deprecated We do not store the contentNode any more on the request, but refetch it instead
-	 */
-	@Deprecated
-    String REQUEST_CONTENT_NODE_KEY = "org.hippoecm.hst.jaxrs.request.contentNode";
-	/**
-     * @deprecated We do not store the contentBean any more on the request, but refetch it instead
-     */
-	@Deprecated
-    String REQUEST_CONTENT_BEAN_KEY = "org.hippoecm.hst.jaxrs.request.contentBean";
-	@Deprecated
-	/**
-     * @deprecated We do not store the contentSiteBaseBean any more on the request, but refetch it instead
-     */
-    String REQUEST_CONTENT_SITE_CONTENT_BASE_BEAN_KEY = "org.hippoecm.hst.jaxrs.request.contentSiteBaseBean";
-	
+
     void initialize() throws ContainerException;
 
 	void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException;
