@@ -500,22 +500,20 @@
         when adding a document.
     -->
 
-    <!-- mandatory fields -->
+
+    <!-- mandatory default built-in HippoBean's fields
+         The fields are mandatory to be present, but the attributes are can be changed (stored, indexed, etc)
+    -->
     <field name="hippo_timestamp" type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
     <field name="id" type="string" indexed="true" stored="true" required="true" />
     <field name="name" type="string" indexed="true" stored="true" />
     <field name="localizedName" type="string" indexed="true" stored="true" />
     <field name="canonicalUUID" type="string" indexed="true" stored="true" />
-    <!-- Do not use type 'text_path' for hippo_path_hierarchy! -->
     <field name="hippo_path_hierarchy" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="hippo_path_depth" type="int" indexed="true" stored="false"/>
     <field name="comparePath" type="string" indexed="true" stored="true" />
     <field name="hippo_content_bean_fqn_clazz_name" type="string" indexed="true" stored="true" required="true"/>
     <field name="hippo_content_bean_fqn_clazz_hierarchy" type="string" indexed="true" stored="false" required="false"  multiValued="true"/>
-
-    <!-- mandatory default built-in HippoBean's fields
-         The fields are mandatory to be present, but the attributes are can be changed (stored, indexed, etc)
-    -->
 
     <!-- end mandatory fields -->
 
