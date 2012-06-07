@@ -128,6 +128,8 @@
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)
+- hippo:process (boolean)
+- hippo:contextnodename (string)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time
