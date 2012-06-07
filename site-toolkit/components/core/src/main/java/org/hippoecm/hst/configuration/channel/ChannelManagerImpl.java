@@ -322,8 +322,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     protected SessionReference getSessionReference() throws RepositoryException {
-        // COMMENT - MNour: This is (really * 10^6) a bad hack. We (realy * 10^6) need to rethink about handling resources
-        //                  and relevant security issues in a more concise way!
+        // TODO rethink about handling resources in a more concise way!
         return new SessionReference(CmsJcrSessionThreadLocal.getJcrSession());
     }
 
@@ -866,11 +865,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
         
         return null;
-
-        // OLD CODE
-//        Workspace workspace = node.getSession().getWorkspace();
-//        WorkflowManager wfm = ((HippoWorkspace) workspace).getWorkflowManager();
-//        return wfm.getWorkflow(category, node);
     }
 
     private static boolean isVirtual(final Node node) throws RepositoryException {
@@ -1019,9 +1013,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
         private final Session session;
 
         SessionReference(Session session) throws RepositoryException {
-            // COMMENT - MNour: This is really a dirty hack
-            // If there is no propagated JCR session
+            // TODO this is a workaround for when there is no propagated JCR session. This should be improved
             if (session == null) {
+                // TODO Why not throw a runtime IllegalStateException here? See HSTTWO-2173
                 this.session = repository.login();
                 this.logout = true;
             } else {
