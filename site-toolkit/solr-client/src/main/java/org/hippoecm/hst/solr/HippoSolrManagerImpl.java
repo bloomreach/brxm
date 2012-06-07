@@ -41,7 +41,7 @@ import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.solr.content.beans.BindingException;
-import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 import org.hippoecm.hst.solr.content.beans.query.impl.HippoQueryImpl;
@@ -82,7 +82,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
     private List<Class<? extends HippoBean>> annotatedClasses;
-    private volatile List<ContentBeanValueProvider> defaultContentBeanValueProviders;
+    private volatile List<ContentBeanBinder> defaultContentBeanBinders;
     
     protected Session session;
     protected boolean stopped = false;
@@ -164,20 +164,20 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     }
 
     @Override
-    public List<ContentBeanValueProvider> getContentBeanValueProviders() {
-        if (defaultContentBeanValueProviders != null) {
-            return defaultContentBeanValueProviders;
+    public List<ContentBeanBinder> getContentBeanBinders() {
+        if (defaultContentBeanBinders != null) {
+            return defaultContentBeanBinders;
         }
-        defaultContentBeanValueProviders = new ArrayList<ContentBeanValueProvider>();
-        defaultContentBeanValueProviders.add(new JcrContentBeanValueProvider());
-        return defaultContentBeanValueProviders;
+        defaultContentBeanBinders = new ArrayList<ContentBeanBinder>();
+        defaultContentBeanBinders.add(new JcrContentBeanBinder());
+        return defaultContentBeanBinders;
     }
 
-    public class JcrContentBeanValueProvider implements ContentBeanValueProvider {
+    public class JcrContentBeanBinder implements ContentBeanBinder {
         List<Class<? extends IdentifiableContentBean>> annotatedClasses;
 
 
-        public JcrContentBeanValueProvider() {
+        public JcrContentBeanBinder() {
             this.annotatedClasses = new ArrayList<Class<? extends IdentifiableContentBean>>();
             for ( Class<? extends HippoBean> annotatedClass : HippoSolrManagerImpl.this.getAnnotatedClasses()) {
                 annotatedClasses.add(annotatedClass);
@@ -190,6 +190,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
         }
 
         @Override
+        // TODO THIS IS NOT ALLOWED TO BE THE CURRENT JCR SESSION!! MUST BE PLUGGED IN!
         public void callbackHandler(final IdentifiableContentBean identifiableContentBean) throws BindingException {
             if (annotatedClasses.contains(identifiableContentBean.getClass())) {
                 if (identifiableContentBean instanceof HippoBean) {

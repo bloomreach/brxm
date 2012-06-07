@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 
@@ -58,7 +58,7 @@ public interface HippoSolrManager {
 
     /**
      * 
-     * @return the {@link List} of {@link ContentBeanValueProvider} and empty list of no providers are available
+     * @return the {@link List} of {@link org.hippoecm.hst.solr.content.beans.ContentBeanBinder} and empty list of no providers are available
      */
-    List<ContentBeanValueProvider> getContentBeanValueProviders();
+    List<ContentBeanBinder> getContentBeanBinders();
 }

@@ -93,33 +93,15 @@ public interface HippoQuery {
      * @return the {@link SolrQuery} to be executed
      */
     SolrQuery getSolrQuery();
-    
-    /**
-     * The execution of the query without having providers attached
-     * @return <code>{@link HippoQueryResult}</code>
-     * @throws SolrServerException
-     */
-    HippoQueryResult execute() throws SolrServerException;
 
     /**
      * <p>
      *  The actual execution of the HstQuery. The HippoQueryResult will never contain one and the same result twice. So, if a result matches
      *  the search criteria twice, it is still returned as one hit.
      * </p>
-     * <p>
-     *  When <code>attachContentProviders</code> is <code>false</code>, the search {@link Hit}s ({@link org.hippoecm.hst.content.beans.standard.IdentifiableContentBean}s)
-     *  won't have their content providers populate them : They will only be populated by there setters that have
-     *  <ol>
-     *      <li>An @IndexField annotated getter</li>
-     *      <li>Are <b>stored</b> fields in the Solr (Lucene) index</li>
-     *  </ol>
-     * </p>
-     *
-     * @param attachContentProviders whether the results should get there providers from {@link org.hippoecm.hst.solr.HippoSolrManager#getContentBeanValueProviders()}
-     *                        attached
      * @return  <code>{@link HippoQueryResult}</code>
      * @throws SolrServerException
      */
-    HippoQueryResult execute(boolean attachContentProviders) throws SolrServerException;
+    HippoQueryResult execute() throws SolrServerException;
 
 }

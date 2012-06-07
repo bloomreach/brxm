@@ -23,7 +23,7 @@ import org.apache.solr.common.SolrDocument;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.content.beans.BindingException;
-import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.Highlight;
 import org.hippoecm.hst.solr.content.beans.query.Hit;
 
@@ -32,9 +32,9 @@ public class HitImpl implements Hit {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HitImpl.class);
     private final SolrDocument solrDocument;
     private final DocumentObjectBinder binder;
-    // identifiableContentBean and ContentBeanValueProvider are not always Serializable
-    private volatile List<ContentBeanValueProvider> contentBeanValueProviders;
-    private volatile IdentifiableContentBean identifiableContentBean;
+    // identifiableContentBean and ContentBeanBinder do not need to be Serializable, hence transient
+    private transient List<ContentBeanBinder> contentBeanBinders;
+    private transient IdentifiableContentBean identifiableContentBean;
     private final Map<String,List<String>> highlights;
 
     /**
@@ -42,14 +42,14 @@ public class HitImpl implements Hit {
      * @param solrDocument
      * @param binder
      * @param highlights the highlights for this hit and <code>null</code> if there are no highlights
-     * @param contentBeanValueProviders the providers to be used to bind the hits to the original sources. When <code>null</code> the
+     * @param contentBeanBinders the providers to be used to bind the hits to the original sources. When <code>null</code> the
      *                                  hits won't be attached to their providers
      */
-    public HitImpl(final SolrDocument solrDocument, final DocumentObjectBinder binder, final Map<String,List<String>> highlights, final List<ContentBeanValueProvider> contentBeanValueProviders) {
+    public HitImpl(final SolrDocument solrDocument, final DocumentObjectBinder binder, final Map<String,List<String>> highlights, final List<ContentBeanBinder> contentBeanBinders) {
         this.solrDocument = solrDocument;
         this.binder = binder;
         this.highlights = highlights;
-        this.contentBeanValueProviders = contentBeanValueProviders;
+        this.contentBeanBinders = contentBeanBinders;
     }
 
     @Override
@@ -65,14 +65,14 @@ public class HitImpl implements Hit {
 
         try {
             identifiableContentBean = binder.getBean(IdentifiableContentBean.class, solrDocument);
-            if (contentBeanValueProviders == null) {
+            if (contentBeanBinders == null) {
                 return identifiableContentBean;
             }
-            for (ContentBeanValueProvider contentBeanValueProvider : contentBeanValueProviders) {
-                if (contentBeanValueProvider.getAnnotatedClasses().contains(identifiableContentBean.getClass())) {
+            for (ContentBeanBinder contentBeanBinder : contentBeanBinders) {
+                if (contentBeanBinder.getAnnotatedClasses().contains(identifiableContentBean.getClass())) {
 
                     try {
-                        contentBeanValueProvider.callbackHandler(identifiableContentBean);
+                        contentBeanBinder.callbackHandler(identifiableContentBean);
                     } catch (BindingException e) {
                         if (log.isDebugEnabled()) {
                             // log stacktrace in debug mode

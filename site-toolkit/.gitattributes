@@ -941,7 +941,7 @@ solr-content-beans/pom.xml -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/DocumentObjectBinder.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/HippoSolrManager.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/BindingException.java -text
-solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/ContentBeanValueProvider.java -text
+solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/ContentBeanBinder.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/Highlight.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/HippoQuery.java -text
 solr-content-beans/src/main/java/org/hippoecm/hst/solr/content/beans/query/HippoQueryParser.java -text

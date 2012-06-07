@@ -21,7 +21,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
-import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
+import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 
@@ -30,14 +31,19 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     private final QueryResponse queryResponse;
     private final SolrDocumentList docs;
     private final DocumentObjectBinder binder;
-    private volatile List<ContentBeanValueProvider> contentBeanValueProviders;
 
-    public HippoQueryResultImpl(final QueryResponse queryResponse, final SolrDocumentList docs, final DocumentObjectBinder binder, final List<ContentBeanValueProvider> contentBeanValueProviders) {
+    // HippoSolrManager and ContentBeanBinder are not serializable hence transient
+    private final transient HippoSolrManager manager;
+    private transient List<ContentBeanBinder> contentBeanBinders;
+
+    public HippoQueryResultImpl(final QueryResponse queryResponse, final SolrDocumentList docs, final DocumentObjectBinder binder,
+                                final HippoSolrManager manager) {
         this.queryResponse = queryResponse;
         this.docs = docs;
         this.binder = binder;
-        this.contentBeanValueProviders = contentBeanValueProviders;
+        this.manager = manager;
     }
+
 
     @Override
     public int getSize() {
@@ -59,7 +65,17 @@ public class HippoQueryResultImpl implements HippoQueryResult {
 
     @Override
     public HitIterator<IdentifiableContentBean> getHits() {
-        return new HitIteratorImpl(queryResponse, docs, binder, contentBeanValueProviders);
+        return new HitIteratorImpl(queryResponse, docs, binder, contentBeanBinders);
+    }
+
+    @Override
+    public void bindHits() {
+        this.contentBeanBinders = manager.getContentBeanBinders();
+    }
+
+    @Override
+    public void bindHits(final List<ContentBeanBinder> binders) {
+        this.contentBeanBinders = binders;
     }
 
 }

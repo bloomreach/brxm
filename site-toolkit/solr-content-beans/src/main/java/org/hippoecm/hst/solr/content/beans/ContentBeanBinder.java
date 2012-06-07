@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
-public interface ContentBeanValueProvider {
+public interface ContentBeanBinder {
 
     /**
      *
-     * @return the List of {@link IdentifiableContentBean}s that this @{@link ContentBeanValueProvider} can provide (the content for)
+     * @return the List of {@link IdentifiableContentBean}s that this @{@link ContentBeanBinder} can provide (the content for)
      *
      */
      List<Class<? extends IdentifiableContentBean>> getAnnotatedClasses();

@@ -16,10 +16,12 @@
 package org.hippoecm.hst.solr.content.beans.query;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 
 /**
  * The result of the execution of the HstQuery.
@@ -46,4 +48,30 @@ public interface HippoQueryResult extends Serializable {
      * This returns the hits
      */
     HitIterator<IdentifiableContentBean> getHits();
+
+    /**
+     * <p>
+     *  binds the IdentifiableContentBean's in the {@link Hit}s to their {@link org.hippoecm.hst.solr.content.beans.ContentBeanBinder
+     *  if there is a binder for the hit. The default availabe {@link org.hippoecm.hst.solr.HippoSolrManager#getContentBeanBinders()}
+     *  are used as binders.
+     * </p>
+     * <p>
+     *  Note that binding the hits to their provider is less efficient than just using the populated beans from the search result. If
+     *  the binder is for example populating hits by fetching external sources over http, this might have quite a negative 
+     *  impact on performance. 
+     * </p>
+     * <p>
+     *     Thus, if you can use the search result without binders, this will be always faster
+     * </p>
+     */
+    void bindHits();
+
+    /**
+     * See {@link #bindHits()} only now, the <code>binders</code> in the argument are used instead of the 
+     * default binders from the {@link org.hippoecm.hst.solr.HippoSolrManager}
+     * @see #bindHits() 
+     * @param binders the <code>binders</code> to use for binding the hits
+     */
+    void bindHits(List<ContentBeanBinder> binders);
+
 }

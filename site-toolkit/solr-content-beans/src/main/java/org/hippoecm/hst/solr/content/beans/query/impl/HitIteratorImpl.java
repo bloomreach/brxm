@@ -25,7 +25,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
-import org.hippoecm.hst.solr.content.beans.ContentBeanValueProvider;
+import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.Hit;
 import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 
@@ -35,20 +35,21 @@ public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
     private final QueryResponse queryResponse;
     private SolrDocumentList docs;
     private DocumentObjectBinder binder;
-    private volatile List<ContentBeanValueProvider> contentBeanValueProviders;
+    private volatile List<ContentBeanBinder> contentBeanBinders;
 
     /**
      *
      * @param queryResponse
      * @param docs
      * @param binder
-     * @param contentBeanValueProviders the providers to be used to bind the hits to the original sources. When <code>null</code> the
+     * @param contentBeanBinders the providers to be used to bind the hits to the original sources. When <code>null</code> the Hits
+     *                           will only have there fields available that can be populated from the search result
      */
-    public HitIteratorImpl(final QueryResponse queryResponse, SolrDocumentList docs, DocumentObjectBinder binder, final List<ContentBeanValueProvider> contentBeanValueProviders) {
+    public HitIteratorImpl(final QueryResponse queryResponse, SolrDocumentList docs, DocumentObjectBinder binder, final List<ContentBeanBinder> contentBeanBinders) {
         this.queryResponse = queryResponse;
         this.docs = docs;
         this.binder = binder;
-        this.contentBeanValueProviders = contentBeanValueProviders;
+        this.contentBeanBinders = contentBeanBinders;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
             highlights = queryResponse.getHighlighting().get(solrDoc.get("id"));
         }
 
-        Hit next = new HitImpl(solrDoc, binder, highlights, contentBeanValueProviders);
+        Hit next = new HitImpl(solrDoc, binder, highlights, contentBeanBinders);
         position++;
         return next;
     }

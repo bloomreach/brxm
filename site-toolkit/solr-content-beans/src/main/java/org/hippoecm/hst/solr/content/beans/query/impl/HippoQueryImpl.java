@@ -83,11 +83,6 @@ public class HippoQueryImpl implements HippoQuery {
 
     @Override
     public HippoQueryResult execute() throws SolrServerException {
-        return execute(false);
-    }
-
-    @Override
-    public HippoQueryResult execute(boolean attachContentProviders) throws SolrServerException {
 
         if (solrQuery.getRows() == null) {
             // limit was not set. Set default limit
@@ -124,10 +119,7 @@ public class HippoQueryImpl implements HippoQuery {
 
         SolrDocumentList docs = rsp.getResults();
 
-        if (attachContentProviders) {
-            return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), manager.getContentBeanValueProviders());
-        }
-        return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), null);
+        return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), manager);
     }
 
 
