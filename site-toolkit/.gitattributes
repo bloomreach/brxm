@@ -409,6 +409,7 @@ commons/src/main/java/org/hippoecm/hst/util/XmlUtils.java -text
 commons/src/site/site.xml -text
 commons/src/test/java/org/hippoecm/hst/container/TestHstContainerRequest.java -text
 commons/src/test/java/org/hippoecm/hst/container/TestRequestContextProvider.java -text
+commons/src/test/java/org/hippoecm/hst/core/component/TestHstParameterInfoProxyFactoryImpl.java -text
 commons/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualhostAugmenterTest.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
