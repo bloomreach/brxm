@@ -1538,9 +1538,7 @@ ents-small-folders h3 {
 
 .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
 .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background-image: url("images/controls/folder-workflow-icon.png");
-  background-repeat: no-repeat;
-  background-position: -1px -2px;
+  background: url("images/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
 }
 
 .hippo-tree div.wicket-tree div.row-selected {
