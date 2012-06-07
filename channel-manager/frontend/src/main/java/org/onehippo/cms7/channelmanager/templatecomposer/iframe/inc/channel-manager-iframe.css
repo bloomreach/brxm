@@ -209,22 +209,6 @@ button.title-button {
     width: 150px;
 }
 
-/*Create Document link Under the Document Selector Combobox*/
-.create-document-link {
-     text-align: right;
-     font-size: 1.2em;
-}
-
-.create-document-link a, .create-document-link a:visited {
-    text-decoration: none;
-    color:#39f;
-}
-
-.create-document-link a:hover {
-    color: white;
-    background-color:#39f;
-}
-
 a.hst-cmseditlink {
     /* button-edit-end.png */
     color: #444;
