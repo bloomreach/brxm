@@ -31,8 +31,8 @@
 - hippolog:eventDocument (string)
 
 [hippolog:folder] > nt:base orderable
-- hippolog:enabled (boolean) = 'true' mandatory autocreated
-- hippolog:appender (string) = 'rolling' mandatory autocreated < 'rolling', 'folding'
-- hippolog:maxsize (long) = '100' mandatory autocreated 
+- hippolog:enabled (boolean) // deprecated
+- hippolog:appender (string) // deprecated
+- hippolog:maxsize (long) // deprecated
 + * (hippolog:folder) = hippolog:folder
 + * (hippolog:item) = hippolog:item multiple
