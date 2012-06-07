@@ -44,7 +44,10 @@ public class SolrRight extends AbstractSearchComponent {
 
             // we want to get suggestions/autocompletion/didyoumean only!
             hippoQuery.getSolrQuery().setQueryType("suggest");
-            HippoQueryResult result = hippoQuery.execute(true);
+            HippoQueryResult result = hippoQuery.execute();
+
+            // we do not need to bind the beans with their providers for faceting, so no need for
+            // result.bindHits()
 
             // because suggestions reuse the spell check component, we can use the spell check response
             request.setAttribute("collated",result.getQueryResponse().getSpellCheckResponse().getCollatedResult());

@@ -245,7 +245,10 @@ public class SolrSearch extends AbstractSearchComponent {
                 }
             }
 
-            HippoQueryResult result = hippoQuery.execute(true);
+            HippoQueryResult result = hippoQuery.execute();
+
+            // we bind the results to their providers to make sure we have the jcr nodes attached again
+            result.bindHits();
 
             request.setAttribute("result", result);
 

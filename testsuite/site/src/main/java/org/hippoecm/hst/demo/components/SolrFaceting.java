@@ -49,7 +49,6 @@ public class SolrFaceting extends AbstractSearchComponent {
 
         params.setParamsOnRequestAttr();
         try {
-
             // set the free text query
             HippoQuery hippoQuery = solrManager.createQuery(params.getQuery());
 
@@ -90,7 +89,10 @@ public class SolrFaceting extends AbstractSearchComponent {
             // solrQuery.addDateRangeFacet("date", startDate , endDate, "+1YEAR, +1MONTH, +1DAY");
             // This way you can create multiple buckets for 1 date field
 
-            final HippoQueryResult result = hippoQuery.execute(true);
+            final HippoQueryResult result = hippoQuery.execute();
+
+            // we do not need to bind the beans with their providers for faceting, so no need for
+            // result.bindHits()
 
             request.setAttribute("queryResponse", result.getQueryResponse());
             request.setAttribute("query", params.getQuery());
