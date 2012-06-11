@@ -700,21 +700,6 @@
         <artifactId>hst-addon-unittestcontents</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst</groupId>
-        <artifactId>hst-behavioral-api</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst</groupId>
-        <artifactId>hst-behavioral-repository</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst</groupId>
-        <artifactId>hst-behavioral-engine</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
 
       <!-- Hippo forge plugins -->
 
