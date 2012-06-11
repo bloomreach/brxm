@@ -106,7 +106,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
     private static String GET_INITIALIZE_ITEMS =
         "SELECT * FROM hipposys:initializeitem " +
         "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND " +
-        HippoNodeType.HIPPO_PROCESS + " = 'true'" +
+        HippoNodeType.HIPPO_STATUS + " = 'pending'" +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     private static XmlPullParserFactory factory;
@@ -179,7 +179,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
             Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(
                     "SELECT * FROM hipposys:initializeitem " +
                     "WHERE jcr:path = '/initialize/%' AND " +
-                    HippoNodeType.HIPPO_PROCESS + " = 'true'" +
+                    HippoNodeType.HIPPO_STATUS + " = 'pending'" +
                     "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC", Query.SQL);
             refresh(session, getInitializeItems, true);
             session.refresh(false);
@@ -220,7 +220,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
 
             while (initializeItems.hasNext()) {
                 final Node node = initializeItems.nextNode();
-                if (!node.hasProperty(HippoNodeType.HIPPO_PROCESS) || !node.getProperty(HippoNodeType.HIPPO_PROCESS).getBoolean()) {
+                if (!node.hasProperty(HippoNodeType.HIPPO_STATUS) || !node.getProperty(HippoNodeType.HIPPO_STATUS).getString().equals("pending")) {
                     continue;
                 }
                 log.info("Initializing configuration from " + node.getName());
@@ -454,7 +454,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                         }
                         session.refresh(false);
                     } else {
-                        node.getProperty(HippoNodeType.HIPPO_PROCESS).remove();
+                        node.setProperty(HippoNodeType.HIPPO_STATUS, "done");
                         session.save();
                     }
 
@@ -530,8 +530,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
 
                     final String existingModuleVersion = getExistingModuleVersion(initializationFolder, n.getName());
 
-                    if (!initializationFolder.hasNode(n.getName()) ||
-                        (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && isNewerVersion(moduleVersion, existingModuleVersion))) {
+                    if (!initializationFolder.hasNode(n.getName()) || shouldReload(n, initializationFolder.getNode(n.getName()), moduleVersion, existingModuleVersion)) {
 
                         if(initializationFolder.hasNode(n.getName())) {
                             // this occurs when reload is on
@@ -572,10 +571,10 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                             while (downstreamItems.hasNext()) {
                                 final Node node = downstreamItems.nextNode();
                                 log.info("Marking downstream item " + node.getName() + " for reload");
-                                node.setProperty(HippoNodeType.HIPPO_PROCESS, true);
+                                node.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
                             }
                         }
-                        moved.setProperty(HippoNodeType.HIPPO_PROCESS, true);
+                        moved.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
                     } else {
                         log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                     }
@@ -617,6 +616,19 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                 throw new RepositoryException("Could not initialize repository with configuration content", ex);
             }
         }
+    }
+
+    private static boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion) throws RepositoryException {
+        if (!temp.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) || !temp.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean()) {
+            return false;
+        }
+        if (!isNewerVersion(moduleVersion, existingModuleVersion)) {
+            return false;
+        }
+        if (existing.hasProperty(HippoNodeType.HIPPO_STATUS) && existing.getProperty(HippoNodeType.HIPPO_STATUS).getString().equals("disabled")) {
+            return false;
+        }
+        return true;
     }
 
     private static boolean isNewerVersion(final String moduleVersion, final String existingModuleVersion) {

@@ -672,7 +672,7 @@ public interface HippoNodeType {
     public static final String HIPPO_CONTENTPROPSET = "hippo:contentpropset";
     public static final String HIPPO_CONTENTPROPADD = "hippo:contentpropadd";
 
-    public static final String HIPPO_PROCESS = "hippo:process";
+    public static final String HIPPO_STATUS = "hippo:status";
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
 }

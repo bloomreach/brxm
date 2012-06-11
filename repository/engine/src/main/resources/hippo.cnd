@@ -128,7 +128,7 @@
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)
-- hippo:process (boolean)
+- hippo:status (string) < 'pending', 'done', 'disabled'
 - hippo:contextnodename (string)
 
 [hippo:initializefolder] > nt:base orderable
