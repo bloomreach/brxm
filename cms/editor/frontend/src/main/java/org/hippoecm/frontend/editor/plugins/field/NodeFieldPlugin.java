@@ -216,6 +216,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
+                    target.focusComponent(this);
                     NodeFieldPlugin.this.onAddItem(target);
                 }
             };

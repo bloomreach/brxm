@@ -236,6 +236,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
+                    target.focusComponent(this);
                     PropertyFieldPlugin.this.onAddItem(target);
                 }
             };
