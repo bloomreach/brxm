@@ -15,72 +15,40 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.InternalWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Random;
+
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * {@link WorkflowEventLoggerWorkflow} implementation that logs events in a random hierarchy of folders.
- * Each cluster has its own dedicated folder to avoid collisions (would be very rare) and to allow listeners
- * for events on specific clusters only. The event log can contain 5 million log entries easily per cluster node.
- * This means that for very active CMSes in large organisations with 2000 actions per day per cluster node you
- * should start thinking about purging your logs after about 7 years. {@link EventLogCleanupModule} can do
- * that for you.
+ * {@link WorkflowEventLoggerWorkflow} implementation that posts workflow events to the {@link HippoEventBus}.
  */
 public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkflow, InternalWorkflow {
 
     private static final Logger log = LoggerFactory.getLogger(WorkflowEventLoggerWorkflowImpl.class);
-    private static final Random random = new Random();
-    
-    private static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
-    private static final String DEFAULT_CLUSTER_NODE_ID = "default";
-    private static final int HIERARCHY_DEPTH = 4;
 
-    private final Session session;
-    private final Node logFolder;
-
-    public WorkflowEventLoggerWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RepositoryException, WorkflowException {
-        session = rootSession;
-        Node rootLogFolder = null;
-        if (subject != null) {
-            rootLogFolder = session.getNodeByIdentifier(subject.getIdentifier());
-        } else if (session.nodeExists("/hippo:log")) {
-            rootLogFolder = session.getNode("/hippo:log");
-        } else {
-            throw new WorkflowException("No log to write to");
-        }
-        if (!rootLogFolder.isNodeType("hippolog:folder")) {
-            throw new WorkflowException("Root log folder is not of the expected type");
-        }
-        String clusterId = getClusterNodeId();
-        if (rootLogFolder.hasNode(clusterId)) {
-            logFolder = rootLogFolder.getNode(clusterId);
-        } else {
-            logFolder = rootLogFolder.addNode(clusterId, "hippolog:folder");
-            session.save();
-        }
-    }
+    private Session session;
 
     public WorkflowEventLoggerWorkflowImpl(Session session) throws RepositoryException, WorkflowException {
-        this(session, session, getDefaultLogFolder(session));
+        this.session = session;
     }
 
-    private static Node getDefaultLogFolder(Session rootSession) throws RepositoryException {
-        if (rootSession.getRootNode().hasNode("hippo:log")) {
-            return rootSession.getRootNode().getNode("hippo:log");
-        }
-        return null;
+    public WorkflowEventLoggerWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RepositoryException, WorkflowException {
+        this(rootSession);
     }
 
     @Override
@@ -101,54 +69,25 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
             }
             return;
         }
-        try {
-            char[] randomChars = generateRandomCharArray(HIERARCHY_DEPTH);
-            Node folder = getOrCreateFolder(charArrayToRelPath(randomChars, HIERARCHY_DEPTH-1));
 
-            long timestamp = System.currentTimeMillis();
-            Node logNode = folder.addNode(String.valueOf(randomChars[HIERARCHY_DEPTH-1]), "hippolog:item");
-            logNode.setProperty("hippolog:timestamp", timestamp);
-            logNode.setProperty("hippolog:eventUser", userName == null ? "null" : userName);
-            logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
-            logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
-            // conditional properties
-            if (documentPath != null) {
-                logNode.setProperty("hippolog:eventDocument", documentPath);
-            }
-            String returnType = getReturnType(returnObject);
-            if (returnType != null) {
-                logNode.setProperty("hippolog:eventReturnType", returnType);
-            }
-            String returnValue = getReturnValue(returnObject);
-            if (returnValue != null) {
-                logNode.setProperty("hippolog:eventReturnValue", returnValue);
-            }
-            String[] arguments = replaceObjectsWithStrings(args);
-            if (arguments != null) {
-                logNode.setProperty("hippolog:eventArguments", arguments);
-            }
-            session.save();
-        } catch (RepositoryException e) {
-            String event = "userName: " + userName + "; eventMethod: " + methodName + "; eventClass: " + className;
-            log.warn("Logging of event "  + event + " failed: " + e.getMessage(), e);
-            try {
-                session.refresh(false);
-            } catch (RepositoryException ex) {
-                log.error("Event logging failed in failure", ex);
-            }
-        }
-
+        String returnType = getReturnType(returnObject);
+        String returnValue = getReturnValue(returnObject);
+        String[] arguments = replaceObjectsWithStrings(args);
+        postEvent(userName, className, methodName, documentPath, returnType, returnValue, arguments);
     }
 
-    private Node getOrCreateFolder(String itemRelPath) throws RepositoryException {
-        if (!logFolder.hasNode(itemRelPath)) {
-            if (itemRelPath.length() > 1) {
-                getOrCreateFolder(itemRelPath.substring(0, itemRelPath.lastIndexOf('/')));
+    private void postEvent(String who, String className, String methodName, String documentPath, String returnType, String returnValue, String[] arguments) {
+        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            HippoEvent event = new HippoEvent("repository");
+            event.user(who).category("workflow").action(className + "." + methodName).result(returnValue);
+            event.set("className", className).set("methodName", methodName);
+            event.set("returnType", returnType).set("returnValue", returnValue).set("documentPath", documentPath);
+            if (arguments != null) {
+                event.set("arguments", Arrays.asList(arguments));
             }
-            return logFolder.addNode(itemRelPath, "hippolog:folder");
+            eventBus.post(event);
         }
-        return logFolder.getNode(itemRelPath);
-
     }
 
     private String getReturnValue(Object returnObject) {
@@ -199,31 +138,6 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
             }
         }
         return arguments;
-    }
-
-    private static String charArrayToRelPath(char[] chars, int len) {
-        StringBuilder sb = new StringBuilder((2*len)-1);
-        for (int i = 0; i < len - 1; i++) {
-            sb.append(chars[i]).append('/');
-        }
-        sb.append(chars[len-1]);
-        return sb.toString();
-    }
-
-    private static char[] generateRandomCharArray(int len) {
-        char[] result = new char[len];
-        for (int i = 0; i < len; i++) {
-            result[i] = ALPHABET.charAt(random.nextInt(ALPHABET.length()));
-        }
-        return result;
-    }
-
-    private String getClusterNodeId() {
-        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
-        if (clusteNodeId == null) {
-            clusteNodeId = DEFAULT_CLUSTER_NODE_ID;
-        }
-        return clusteNodeId;
     }
 
 }

@@ -38,6 +38,11 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-eventbus</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -51,7 +56,18 @@
       <artifactId>hippo-repository-utilities</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -84,7 +100,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.quartz.SchedulerModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.logging.RepositoryLogger org.hippoecm.repository.logging.EventLogCleanupModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

@@ -90,7 +90,7 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.hippoecm.repository.standardworkflow.EventLogCleanupModule">
+  <category additivity="false" name="org.hippoecm.repository.logging.EventLogCleanupModule">
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>

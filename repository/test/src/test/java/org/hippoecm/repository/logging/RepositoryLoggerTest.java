@@ -13,22 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.standardworkflow;
+package org.hippoecm.repository.logging;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.api.WorkflowException;
+import org.junit.After;
+import org.junit.Test;
+import org.onehippo.cms7.event.HippoEvent;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class WorkflowEventLoggerWorkflowImpTest extends TestCase {
-    
+public class RepositoryLoggerTest extends TestCase {
+
     @After
     public void tearDown() throws Exception {
         NodeIterator nodes = session.getNode("/hippo:log").getNodes();
@@ -41,14 +44,21 @@ public class WorkflowEventLoggerWorkflowImpTest extends TestCase {
 
     @Test
     public void testCreateWorkflowEventLoggerImpl() throws Exception {
-        new WorkflowEventLoggerWorkflowImpl(null, session, null);
+        final RepositoryLogger repositoryLogger = new RepositoryLogger();
+        repositoryLogger.initialize(session);
         assertTrue(session.itemExists("/hippo:log/default"));
     }
 
     @Test
-    public void testLogEvent() throws Exception {
-        WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
-        eventLogger.logEvent("userName", "className", "methodName");
+    public void testCreateLogNode() throws RemoteException, RepositoryException, WorkflowException {
+        final RepositoryLogger repositoryLogger = new RepositoryLogger();
+        repositoryLogger.initialize(session);
+
+        HippoEvent event = new HippoEvent("repository");
+        event.user("userName").category("workflow").result("resultValue");
+        event.set("className", "className").set("methodName", "methodName");
+        repositoryLogger.logHippoEvent(event);
+
         Node logFolder = session.getNode("/hippo:log/default");
         Node currentNode = logFolder;
         for (int i = 0; i < 4; i++) {

@@ -13,19 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.standardworkflow;
-
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.HippoNodeIterator;
-import org.junit.Before;
-import org.junit.Test;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobListener;
+package org.hippoecm.repository.logging;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+
+import org.hippoecm.repository.TestCase;
+import org.hippoecm.repository.api.HippoNodeIterator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.cms7.event.HippoEvent;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.JobListener;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -33,6 +35,8 @@ public class EventLogCleanupModuleTest extends TestCase {
 
     private boolean jobExecuted;
     private final Object monitor = new Object();
+
+    private RepositoryLogger eventLogger;
 
     @Before
     public void setUp() throws Exception {
@@ -45,14 +49,32 @@ public class EventLogCleanupModuleTest extends TestCase {
             nodes.nextNode().remove();
         }
         session.save();
+
+        eventLogger = new RepositoryLogger();
+        eventLogger.initialize(session);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (eventLogger != null) {
+            eventLogger.shutdown();
+            eventLogger = null;
+        }
+        super.tearDown();
+    }
+
+    protected void logEvent(String userName, String className, String methodName) {
+        HippoEvent event = new HippoEvent("repository");
+        event.user("userName").category("workflow").result("resultValue");
+        event.set("className", "className").set("methodName", "methodName");
+        eventLogger.logHippoEvent(event);
     }
 
     @Test
     public void testEventLogCleanupMaxItems() throws Exception {
-        WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
-        eventLogger.logEvent("userName", "className", "methodName");
-        eventLogger.logEvent("userName", "className", "methodName");
-        eventLogger.logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
 
         // run cleanup module with maximum items of 1 and no item timeout
         EventLogCleanupModule module = new EventLogCleanupModule("0/2 * * * * ?", 1l, -1l, new TestJobListener(), session);
@@ -71,10 +93,9 @@ public class EventLogCleanupModuleTest extends TestCase {
 
     @Test
     public void testEventLogCleanupTimeout() throws Exception {
-        WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
-        eventLogger.logEvent("userName", "className", "methodName");
-        eventLogger.logEvent("userName", "className", "methodName");
-        eventLogger.logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
+        logEvent("userName", "className", "methodName");
 
         // run cleanup module with no maximum to the number of items and all items timed out
         EventLogCleanupModule module = new EventLogCleanupModule("0/2 * * * * ?", -1l, 0l, new TestJobListener(), session);

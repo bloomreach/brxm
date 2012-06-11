@@ -143,7 +143,6 @@ engine/src/main/java/org/hippoecm/repository/security/role/RepositoryRole.java s
 engine/src/main/java/org/hippoecm/repository/security/role/Role.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
-engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLogCleanupModule.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
@@ -236,6 +235,8 @@ modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNo
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNodeViews.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetSubNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetsAvailableNavigationProvider.java svneol=native#text/plain
+modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java -text
+modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
 modules/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 modules/src/main/resources/hipposched.cnd -text
 modules/src/site/apt/index.apt -text
@@ -296,8 +297,9 @@ test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationGuid
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationRangesTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSimpleTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/facetnavigation/FacetedNavigationSortingTest.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/repository/standardworkflow/EventLogCleanupModuleTest.java -text
-test/src/test/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpTest.java -text
+test/src/test/java/org/hippoecm/repository/logging/EventLogCleanupModuleTest.java -text
+test/src/test/java/org/hippoecm/repository/logging/RepositoryLoggerTest.java -text
+test/src/test/java/org/hippoecm/repository/logging/WorkflowEventLoggerWorkflowImpTest.java -text
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
