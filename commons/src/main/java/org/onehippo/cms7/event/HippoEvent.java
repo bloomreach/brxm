@@ -37,6 +37,7 @@ public class HippoEvent<E extends HippoEvent<E>> {
     private static final String CATEGORY = "category";
     private static final String MESSAGE = "message";
     private static final String RESULT = "result";
+    private static final String TIMESTAMP = "timestamp";
     private static final String USER = "user";
 
     private final Map<String, Object> attributes = new HashMap<String, Object>();
@@ -44,6 +45,7 @@ public class HippoEvent<E extends HippoEvent<E>> {
 
     public HippoEvent(String application) {
         put(APPLICATION, application);
+        put(TIMESTAMP, System.currentTimeMillis());
     }
 
     public void sealEvent() {
@@ -84,6 +86,14 @@ public class HippoEvent<E extends HippoEvent<E>> {
 
     public String category() {
         return get(CATEGORY);
+    }
+
+    public E timestamp(long timestamp) {
+        return put(TIMESTAMP, Long.valueOf(timestamp));
+    }
+
+    public long timestamp() {
+        return (Long) get(TIMESTAMP);
     }
 
     public E result(String result) {
