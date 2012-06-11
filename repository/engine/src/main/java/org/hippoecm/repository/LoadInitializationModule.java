@@ -85,6 +85,7 @@ import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
+import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -530,7 +531,7 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                     final String existingModuleVersion = getExistingModuleVersion(initializationFolder, n.getName());
 
                     if (!initializationFolder.hasNode(n.getName()) ||
-                        (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && (moduleVersion == null || !moduleVersion.equals(existingModuleVersion)))) {
+                        (n.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && n.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && isNewerVersion(moduleVersion, existingModuleVersion))) {
 
                         if(initializationFolder.hasNode(n.getName())) {
                             // this occurs when reload is on
@@ -616,6 +617,22 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                 throw new RepositoryException("Could not initialize repository with configuration content", ex);
             }
         }
+    }
+
+    private static boolean isNewerVersion(final String moduleVersion, final String existingModuleVersion) {
+        if (moduleVersion == null) {
+            return false;
+        }
+        if (existingModuleVersion == null) {
+            return true;
+        }
+        try {
+            return new MavenComparableVersion(moduleVersion).compareTo(new MavenComparableVersion(existingModuleVersion)) > 0;
+        } catch (RuntimeException e) {
+            // version could not be parsed
+            log.error("Invalid module version: " + moduleVersion + " or existing: " + existingModuleVersion);
+        }
+        return false;
     }
 
     private static String getModuleVersion(URL configurationURL) {
