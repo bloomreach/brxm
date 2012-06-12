@@ -53,6 +53,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
+import org.hippoecm.hst.util.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +86,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
-    protected volatile Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected String embeddingContextPath;
     protected ResolvedMount resolvedEmbeddingMount;  
@@ -96,7 +97,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private List<HstComponentWindowFilter> filters;
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
-    
+
+    protected Map<String, Object> attributes;
+    private ObjectFactory<Map<String, Object>, Object> attributesFactory = new LazyInitSingletonObjectFactory<Map<String, Object>, Object>() {
+        @Override
+        protected Map<String, Object> createInstance(Object... args) {
+            return Collections.synchronizedMap(new HashMap<String, Object>());
+        }
+    };
+
     private Map<String, Object> unmodifiableAttributes;
     
     public HstRequestContextImpl(Repository repository) {
@@ -301,11 +310,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         
         if (this.attributes == null) {
-            synchronized (this) {
-                if (this.attributes == null) {
-                    this.attributes = Collections.synchronizedMap(new HashMap<String, Object>());
-                }
-            }
+            this.attributes = attributesFactory.getInstance();
         }
         
         this.attributes.put(name, object);

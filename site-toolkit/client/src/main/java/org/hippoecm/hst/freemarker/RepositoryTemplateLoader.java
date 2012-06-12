@@ -37,6 +37,8 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.jcr.EventListenerItemImpl;
 import org.hippoecm.hst.core.jcr.EventListenersContainerImpl;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
+import org.hippoecm.hst.util.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,15 +48,54 @@ public class RepositoryTemplateLoader implements TemplateLoader {
 
 
     private static Logger log = LoggerFactory.getLogger(RepositoryTemplateLoader.class);
-    
-    private Repository repository;
-    
-    private Credentials defaultCredentials;
-    
-    volatile boolean stopped = false;
-    
-    private EventListenersContainerImpl repoTemplateEventListenersContainer; 
-    
+
+    /**
+     * Repository And Event Listener Struct-like private class
+     */
+    private class RepositoryAndEventListener {
+        private Repository repository;
+        private Credentials defaultCredentials;
+        private EventListenersContainerImpl repoTemplateEventListenersContainer;
+    }
+
+    private RepositoryAndEventListener repoAndListener;
+
+    private ObjectFactory<RepositoryAndEventListener, Object> repoAndListenerFactory = new LazyInitSingletonObjectFactory<RepositoryAndEventListener, Object>() {
+        @Override
+        protected RepositoryAndEventListener createInstance(Object ... args) {
+            if (!HstServices.isAvailable()) {
+                return null;
+            }
+
+            RepositoryAndEventListener repoNListener = new RepositoryAndEventListener();
+            repoNListener.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+            repoNListener.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+
+            if (repoNListener.repository == null) {
+                log.error("RepositoryTemplateLoader cannot find the credentials repository component.");
+                return null;
+            }
+
+            repoNListener.repoTemplateEventListenersContainer = new EventListenersContainerImpl("RepoFTLLoader");
+            repoNListener.repoTemplateEventListenersContainer.setRepository(repoNListener.repository);
+            repoNListener.repoTemplateEventListenersContainer.setCredentials(repoNListener.defaultCredentials);
+            repoNListener.repoTemplateEventListenersContainer.setSessionLiveCheck(true); 
+            
+            EventListenerItemImpl listenerItem = new EventListenerItemImpl();
+            listenerItem.setAbsolutePath("/");
+            listenerItem.setDeep(true);
+            listenerItem.setEventTypes(Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED);
+            String[] nodeTypes = { HstNodeTypes.NODETYPE_HST_TEMPLATE };
+            listenerItem.setNodeTypeNames(nodeTypes);
+            listenerItem.setEventListener(new TemplateChangeListener()); 
+            
+            repoNListener.repoTemplateEventListenersContainer.addEventListenerItem(listenerItem);
+            repoNListener.repoTemplateEventListenersContainer.start(); 
+
+            return repoNListener;
+        }
+    };
+
     private Map<String, RepositorySource> cache =  Collections.synchronizedMap(new HashMap<String, RepositorySource>());
     
     public void closeTemplateSource(Object templateSource) throws IOException {
@@ -64,21 +105,19 @@ public class RepositoryTemplateLoader implements TemplateLoader {
     public Object findTemplateSource(String templateSource) throws IOException {
 
         if (templateSource != null && templateSource.startsWith("jcr:")) {
-            if (repository == null) {
-                synchronized (this) {
-                    doInit();
-                }
-                if (repository == null) {
+            if (repoAndListener == null) {
+                repoAndListener = repoAndListenerFactory.getInstance();
+                if (repoAndListener == null) {
                     return null;
                 }
             } else {
                 // HST Container Component Manager can be reloaded; so repository bean should be reset when reloaded.
                 Repository repoInCompMgr = HstServices.getComponentManager().getComponent(Repository.class.getName());
-                if (repoInCompMgr != null && repository != repoInCompMgr) {
-                    repository = repoInCompMgr;
-                    defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
-                    repoTemplateEventListenersContainer.setRepository(repository);
-                    repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
+                if (repoInCompMgr != null && repoAndListener.repository != repoInCompMgr) {
+                    repoAndListener.repository = repoInCompMgr;
+                    repoAndListener.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+                    repoAndListener.repoTemplateEventListenersContainer.setRepository(repoAndListener.repository);
+                    repoAndListener.repoTemplateEventListenersContainer.setCredentials(repoAndListener.defaultCredentials);
                     cache.clear();
                 }
             }
@@ -146,43 +185,14 @@ public class RepositoryTemplateLoader implements TemplateLoader {
         }
         return null;
     }
-    
-    private void doInit() {
-        if(repository != null) {
-            return;
-        }
-        
-        if (HstServices.isAvailable()) {
-            this.defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
-            this.repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-        }
-        
-        repoTemplateEventListenersContainer = new EventListenersContainerImpl("RepoFTLLoader");
-        repoTemplateEventListenersContainer.setRepository(repository);
-        repoTemplateEventListenersContainer.setCredentials(defaultCredentials);
-        repoTemplateEventListenersContainer.setSessionLiveCheck(true); 
-        
-        EventListenerItemImpl listenerItem = new EventListenerItemImpl();
-        listenerItem.setAbsolutePath("/");
-        listenerItem.setDeep(true);
-        listenerItem.setEventTypes(Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED);
-        String[] nodeTypes = { HstNodeTypes.NODETYPE_HST_TEMPLATE };
-        listenerItem.setNodeTypeNames(nodeTypes);
-        listenerItem.setEventListener(new TemplateChangeListener()); 
-        
-        repoTemplateEventListenersContainer.addEventListenerItem(listenerItem);
-        repoTemplateEventListenersContainer.start(); 
-     }
 
- 
-    
     private Session getSession() throws RepositoryException {
         Session session = null;
-        if (this.repository != null) {
-            if (this.defaultCredentials != null) {
-                session = this.repository.login(this.defaultCredentials);
+        if (repoAndListener != null) {
+            if (repoAndListener.defaultCredentials != null) {
+                session = repoAndListener.repository.login(repoAndListener.defaultCredentials);
             } else {
-                session = this.repository.login();
+                session = repoAndListener.repository.login();
             }
         }
         return session;
@@ -211,12 +221,14 @@ public class RepositoryTemplateLoader implements TemplateLoader {
     /**
      *  destory must be invoked by HstFreemarkerServlet#destroy 
      */ 
-    public void destroy() {
-        if(repoTemplateEventListenersContainer != null) {
-            repoTemplateEventListenersContainer.stop();  
+    public synchronized void destroy() {
+        if (repoAndListener != null) {
+            try {
+                repoAndListener.repoTemplateEventListenersContainer.stop();
+            } finally {
+                repoAndListener = null;
+            }
         }
     }
-    
-    
 
 }

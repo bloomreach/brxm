@@ -48,6 +48,9 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
+import org.hippoecm.hst.util.ObjectFactoryException;
+import org.hippoecm.hst.util.ResettableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +64,7 @@ public class HstManagerImpl implements HstManager {
     private Repository repository;
     private Credentials credentials;
 
-    private volatile VirtualHosts virtualHosts;
+    private VirtualHosts virtualHosts;
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
@@ -139,6 +142,21 @@ public class HstManagerImpl implements HstManager {
     private boolean clearAll = false;
     private Map<HstEvent.ConfigurationType, Set<HstEvent>> configChangeEventMap;
     private MutableChannelManager channelManager;
+
+    private ResettableObjectFactory<VirtualHosts, Object> virtualHostsFactory = new LazyInitSingletonObjectFactory<VirtualHosts, Object>() {
+        @Override
+        protected VirtualHosts createInstance(Object... args) {
+            try {
+                buildSites();
+                if (channelManager != null) {
+                    channelManager.load(virtualHosts);
+                }
+                return virtualHosts;
+            } catch (RepositoryNotAvailableException e) {
+                throw new ObjectFactoryException(e);
+            }
+        }
+    };
 
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
@@ -227,22 +245,10 @@ public class HstManagerImpl implements HstManager {
     }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
- 
-        VirtualHosts currentHosts = virtualHosts;
-        if (currentHosts == null) {
-            synchronized(this) {
-                if (virtualHosts == null) {
-                    buildSites(); 
-                    if(virtualHosts == null) {
-                        throw new IllegalStateException("The HST configuration model could not be loaded. Cannot process request");
-                    }
-                    this.channelManager.load(virtualHosts);
-                }
-                currentHosts = virtualHosts;
-            }
+        if (virtualHosts == null) {
+            virtualHosts = virtualHostsFactory.getInstance();
         }
-        
-        return currentHosts;
+        return virtualHosts;
     }
 
     protected void buildSites() throws RepositoryNotAvailableException {
@@ -290,6 +296,7 @@ public class HstManagerImpl implements HstManager {
                                         // the root has been removed / moved
                                         // we can do no better than set virtualHosts to 'null', remove 
                                         // the events for the HOST_NODE, and try again the next request
+                                        virtualHostsFactory.reset();
                                         virtualHosts = null;
                                         events.clear();
                                         virtualHostsNode = null;
@@ -801,6 +808,7 @@ public class HstManagerImpl implements HstManager {
 
     private final void invalidateVirtualHosts() {
         log.info("In memory hst configuration model is invalidated. It will be reloaded on the next request.");
+        virtualHostsFactory.reset();
         virtualHosts = null;
         if (channelManager != null) {
             channelManager.invalidate();

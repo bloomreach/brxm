@@ -18,7 +18,7 @@ package org.hippoecm.hst.util;
 /**
  * @version $Id$
  */
-abstract public class LazyInitSingletonObjectFactory<T, U> implements ObjectFactory<T, U> {
+abstract public class LazyInitSingletonObjectFactory<T, U> implements ResettableObjectFactory<T, U> {
 
     private volatile boolean created;
     private T singleton;
@@ -28,20 +28,25 @@ abstract public class LazyInitSingletonObjectFactory<T, U> implements ObjectFact
      */
     @Override
     public T getInstance(U ... args) {
-        // seamingly unused read but needed for shared memory flushing
+        // Do not remove this! Seamingly unused read but needed for shared memory flushing
         boolean created = this.created;
         if (!created) {
             synchronized (this) {
                 created = this.created;
                 if (!created) {
                     singleton = createInstance(args);
-                    // flush the flag to shared memory
+                    // Do not remove this! Need to flush the flag to shared memory
                     this.created = created = (singleton != null);
                 }
             }
         }
 
         return singleton;
+    }
+
+    public synchronized void reset() {
+        singleton = null;
+        created = false;
     }
 
     abstract protected T createInstance(U ... args);

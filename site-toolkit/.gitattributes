@@ -251,6 +251,8 @@ api/src/main/java/org/hippoecm/hst/statistics/Counter.java -text
 api/src/main/java/org/hippoecm/hst/util/ClasspathResourceScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/util/ObjectFactory.java -text
+api/src/main/java/org/hippoecm/hst/util/ObjectFactoryException.java -text
+api/src/main/java/org/hippoecm/hst/util/ResettableObjectFactory.java -text
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain
 api/src/site/site.xml -text
 client-modules/cms-rest/pom.xml -text

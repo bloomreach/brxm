@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.Credentials;
-import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,16 +38,17 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.content.beans.BindingException;
 import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 import org.hippoecm.hst.solr.content.beans.query.impl.HippoQueryImpl;
+import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.hst.util.ObjectFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.springframework.core.io.DefaultResourceLoader;
 
@@ -84,7 +84,15 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
     private List<Class<? extends HippoBean>> annotatedClasses;
-    private volatile List<ContentBeanBinder> defaultContentBeanBinders;
+    private List<ContentBeanBinder> defaultContentBeanBinders;
+    private ObjectFactory<List<ContentBeanBinder>, Object> defaultContentBeanBindersFactory = new LazyInitSingletonObjectFactory<List<ContentBeanBinder>, Object>() {
+        @Override
+        protected List<ContentBeanBinder> createInstance(Object... args) {
+            List<ContentBeanBinder> binders = new ArrayList<ContentBeanBinder>();
+            binders.add(new JcrContentBeanBinder());
+            return binders;
+        }
+    };
     
     protected Session session;
     protected boolean stopped = false;
@@ -167,11 +175,9 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
 
     @Override
     public List<ContentBeanBinder> getContentBeanBinders() {
-        if (defaultContentBeanBinders != null) {
-            return defaultContentBeanBinders;
+        if (defaultContentBeanBinders == null) {
+            defaultContentBeanBinders = defaultContentBeanBindersFactory.getInstance();
         }
-        defaultContentBeanBinders = new ArrayList<ContentBeanBinder>();
-        defaultContentBeanBinders.add(new JcrContentBeanBinder());
         return defaultContentBeanBinders;
     }
 

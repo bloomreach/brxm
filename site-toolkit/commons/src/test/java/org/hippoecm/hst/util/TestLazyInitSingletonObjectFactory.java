@@ -16,6 +16,7 @@
 package org.hippoecm.hst.util;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.util.Random;
@@ -30,7 +31,7 @@ public class TestLazyInitSingletonObjectFactory {
 
     @Test
     public void testNonArgFactory() {
-        ObjectFactory<Random, Object> factory = new LazyInitSingletonObjectFactory<Random, Object>() {
+        ResettableObjectFactory<Random, Object> factory = new LazyInitSingletonObjectFactory<Random, Object>() {
             @Override
             protected Random createInstance(Object... args) {
                 return new Random();
@@ -44,11 +45,17 @@ public class TestLazyInitSingletonObjectFactory {
         assertNotNull(random2);
 
         assertSame(random1, random2);
+
+        factory.reset();
+
+        Random random3 = factory.getInstance();
+        assertNotNull(random3);
+        assertNotSame(random1, random3);
     }
 
     @Test
     public void testArgsFactory() {
-        ObjectFactory<Random, Long> factory = new LazyInitSingletonObjectFactory<Random, Long>() {
+        ResettableObjectFactory<Random, Long> factory = new LazyInitSingletonObjectFactory<Random, Long>() {
             @Override
             protected Random createInstance(Long ... args) {
                 return new Random(args[0]);
@@ -64,5 +71,11 @@ public class TestLazyInitSingletonObjectFactory {
         assertNotNull(random2);
 
         assertSame(random1, random2);
+
+        factory.reset();
+
+        Random random3 = factory.getInstance(seed);
+        assertNotNull(random3);
+        assertNotSame(random1, random3);
     }
 }

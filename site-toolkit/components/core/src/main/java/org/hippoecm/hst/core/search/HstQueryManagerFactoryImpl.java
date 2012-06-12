@@ -18,9 +18,12 @@ package org.hippoecm.hst.core.search;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
+import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
+import org.hippoecm.hst.util.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,21 +31,22 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
 
     private static final Logger log = LoggerFactory.getLogger(HstQueryManagerFactoryImpl.class);
     
-    private volatile org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
-    
-    public org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
-        if(this.hstCtxWhereClauseComputer == null) {
-            // if hstCtxWhereClauseComputer not set through dependency injection, we use the default impl
-            synchronized(this){
-                if(this.hstCtxWhereClauseComputer == null) {
-                    this.hstCtxWhereClauseComputer = new HstCtxWhereClauseComputerImpl();
-                }
-            }
+    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
+    private ObjectFactory<HstCtxWhereClauseComputer, Object> hstCtxWhereClauseComputerFactory = new LazyInitSingletonObjectFactory<HstCtxWhereClauseComputer, Object>() {
+        @Override
+        protected HstCtxWhereClauseComputer createInstance(Object... args) {
+            return new HstCtxWhereClauseComputerImpl();
         }
-        return this.hstCtxWhereClauseComputer;
+    };
+    
+    public HstCtxWhereClauseComputer getHstCtxWhereClauseComputer() {
+        if (hstCtxWhereClauseComputer == null) {
+            hstCtxWhereClauseComputer = hstCtxWhereClauseComputerFactory.getInstance();
+        }
+        return hstCtxWhereClauseComputer;
     }
 
-    public void setHstCtxWhereClauseComputer(org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
+    public void setHstCtxWhereClauseComputer(HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
         this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
 
