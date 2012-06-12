@@ -18,7 +18,7 @@ package org.hippoecm.hst.solr.content.beans.query;
 import java.io.Serializable;
 import java.util.Iterator;
 
-public interface HitIterator<E> extends Iterator<Hit>, Serializable {
+public interface HitIterator extends Iterator<Hit>, Serializable {
 
     /**
      * Skip a number of elements in the iterator. Using skip is very efficient when you know you want to

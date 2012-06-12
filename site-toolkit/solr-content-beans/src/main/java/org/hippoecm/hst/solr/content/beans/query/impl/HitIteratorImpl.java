@@ -29,7 +29,7 @@ import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.Hit;
 import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 
-public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
+public class HitIteratorImpl implements HitIterator {
 
     private long position = 0;
     private final QueryResponse queryResponse;

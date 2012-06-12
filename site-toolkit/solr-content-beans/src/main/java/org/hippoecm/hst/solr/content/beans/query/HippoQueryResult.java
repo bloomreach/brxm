@@ -42,7 +42,7 @@ public interface HippoQueryResult extends Serializable {
     /**
      * This returns the hits
      */
-    HitIterator<IdentifiableContentBean> getHits();
+    HitIterator getHits();
 
     /**
      * <p>

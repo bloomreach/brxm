@@ -57,7 +57,7 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     }
 
     @Override
-    public HitIterator<IdentifiableContentBean> getHits() {
+    public HitIterator getHits() {
         return new HitIteratorImpl(queryResponse, binder, contentBeanBinders);
     }
 
