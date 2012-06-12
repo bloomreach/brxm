@@ -43,7 +43,7 @@ public class TestIgnoredSuperFieldsCompoundDocumentObjectBinder {
         /* the TestIgnoredSuperFieldsAddress implements IdentifiableContentBean, which contains:
         * @IgnoreForCompoundBean
         * @IndexField(name="id")
-        * String getPath();
+        * String getIdentifier();
         *
         * Hence, the compound TestIgnoredSuperFieldsAddress should get its supertype getPath IGNORED for indexing, thus
         * there should be no field for "id" when the TestIgnoredSuperFieldsAddress is indexed in TestContentBeanWithIgnoredFieldsForCompounds

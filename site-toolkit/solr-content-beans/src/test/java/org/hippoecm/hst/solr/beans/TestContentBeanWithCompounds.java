@@ -35,8 +35,8 @@ public class TestContentBeanWithCompounds extends TestContentBean {
     public TestContentBeanWithCompounds() {
     }
 
-    public TestContentBeanWithCompounds(String path, TestAddress mainAddress, List<TestAddress> allAddresses) {
-       super(path);
+    public TestContentBeanWithCompounds(String identifier, TestAddress mainAddress, List<TestAddress> allAddresses) {
+       super(identifier);
        this.mainAddress = mainAddress;
        this.allAddresses = allAddresses;
        this.copyAddresses = new ArrayList<TestAddress>(allAddresses);

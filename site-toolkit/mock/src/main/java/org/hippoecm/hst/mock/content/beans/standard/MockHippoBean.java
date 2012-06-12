@@ -99,11 +99,17 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supproted yet");
     }
 
-    public String getPath() {
+    @Override
+    public String getIdentifier() {
         throw new UnsupportedOperationException("Not supproted yet");
     }
 
-    public void setPath(String path) {
+    @Override
+    public void setIdentifier(final String identifier) {
+        throw new UnsupportedOperationException("Not supproted yet");
+    }
+
+    public String getPath() {
         throw new UnsupportedOperationException("Not supproted yet");
     }
 

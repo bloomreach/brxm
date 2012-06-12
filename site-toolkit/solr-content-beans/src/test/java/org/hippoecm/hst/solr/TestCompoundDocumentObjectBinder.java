@@ -244,7 +244,7 @@ public class TestCompoundDocumentObjectBinder {
         assertNull("Compounds should not get RE-populated, even when there is a setter",bindedBean.getMainAddress());
         assertNull("Compounds should not get RE-populated, even when there is a setter",bindedBean.getExplicitFieldsAddress());
 
-        assertTrue(bindedBean.getPath().equals("my/simple/path"));
+        assertTrue(bindedBean.getIdentifier().equals("my/simple/path"));
 
     }
 

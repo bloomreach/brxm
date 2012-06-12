@@ -20,32 +20,31 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
  * The base interface for all identifiable beans: This includes beans that can be completely
- * independent of jcr, for example a bean that represents some external src. The {@link #getPath()} must return
+ * independent of jcr, for example a bean that represents some external src. The {@link #getIdentifier()} must return
  * the unique identifier for this {@link IdentifiableContentBean} : This is typically the identifier used in indexes
  */
 public interface IdentifiableContentBean extends ContentBean {
 
     /**
      * <p>
-     *     This returns the path of the backing provider for this bean, for example
-     *     /documents/content/myprojec/news/article or http://www.example.com/foo/bar
+     *     This returns the identifier of the backing provider for this bean, for example some UUID or
+     *     /documents/content/myprojec/news/article or http://www.example.com/foo/bar, or a RDBMS id, etc
      *     It is not allowed for any implementation to return <code>null</code>
      * </p>
      * <p>
      *     Since the return value for this method is used as the index document identifier, it must
      *     be unique for every bean that must be indexed
      * </p>
-     * @return the path for this {@link IdentifiableContentBean}
+     * @return the identifier for this {@link IdentifiableContentBean}
      */
-    // the path is used as index id, not the canonical id as we can index
-    // one node in multiple locations
+    // the identifier is used as index id, hence add name="id"
     @IgnoreForCompoundBean
     @IndexField(name="id")
-    String getPath();
+    String getIdentifier();
 
     /**
-     * @param path sets the path for this {@link IdentifiableContentBean}
-     * @see #getPath()
+     * @param identifier sets the identifier for this {@link IdentifiableContentBean}
+     * @see #getIdentifier()
      */
-    void setPath(String path);
+    void setIdentifier(String identifier);
 }

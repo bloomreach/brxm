@@ -150,7 +150,7 @@ public class HstLinkTag extends ParamContainerTag {
                 hippoBean = (HippoBean) identifiableContentBean;
             } else {
                 // TOOD enable custom linkrewriters
-                writeOrSetVar(identifiableContentBean.getPath());
+                writeOrSetVar(identifiableContentBean.getIdentifier());
                 cleanup();
                 return EVAL_PAGE;
             }
@@ -498,7 +498,7 @@ public class HstLinkTag extends ParamContainerTag {
     
     public void setHippobean(IdentifiableContentBean identifiableContentBean) {
         if(linkForAttributeSet) {
-            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr identifiableContentBean '{}'", identifiableContentBean.getPath());
+            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr identifiableContentBean '{}'", identifiableContentBean.getIdentifier());
             return;    
          } 
          linkForAttributeSet = true;

@@ -31,8 +31,8 @@ public class TestContentBeanWithCompositeCompound extends TestContentBean {
     public TestContentBeanWithCompositeCompound() {
     }
 
-    public TestContentBeanWithCompositeCompound(String path, TestCompositeAddress rootAddress) {
-       super(path);
+    public TestContentBeanWithCompositeCompound(String identifier, TestCompositeAddress rootAddress) {
+       super(identifier);
        this.rootAddress = rootAddress;
     }
 

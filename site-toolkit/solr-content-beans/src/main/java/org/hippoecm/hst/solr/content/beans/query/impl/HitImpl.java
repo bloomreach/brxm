@@ -69,7 +69,7 @@ public class HitImpl implements Hit {
                 return identifiableContentBean;
             }
             for (ContentBeanBinder contentBeanBinder : contentBeanBinders) {
-                if (contentBeanBinder.getAnnotatedClasses().contains(identifiableContentBean.getClass())) {
+                if (contentBeanBinder.getBindableClasses().contains(identifiableContentBean.getClass())) {
 
                     try {
                         contentBeanBinder.callbackHandler(identifiableContentBean);

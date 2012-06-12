@@ -26,8 +26,8 @@ public class TestContentBeanWithIgnoredFieldsForCompounds extends TestContentBea
     public TestContentBeanWithIgnoredFieldsForCompounds() {
     }
 
-    public TestContentBeanWithIgnoredFieldsForCompounds(String path, TestIgnoredSuperFieldsAddress address) {
-       super(path);
+    public TestContentBeanWithIgnoredFieldsForCompounds(String identifier, TestIgnoredSuperFieldsAddress address) {
+       super(identifier);
        this.address = address;
     }
 

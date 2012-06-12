@@ -16,23 +16,17 @@
 package org.hippoecm.hst.solr.beans.compound;
 
 
-import java.util.Calendar;
-import java.util.Date;
-
-import com.sun.corba.se.spi.ior.Identifiable;
-
 import org.hippoecm.hst.content.beans.index.IndexField;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 public class TestIgnoredSuperFieldsAddress implements IdentifiableContentBean {
 
-    private String path;
+    private String identifier;
     private String street;
     private int number;
 
-    public TestIgnoredSuperFieldsAddress(String path, String street, int number) {
-        this.path = path;
+    public TestIgnoredSuperFieldsAddress(String identifier, String street, int number) {
+        this.identifier = identifier;
         this.street = street;
         this.number = number;
     }
@@ -59,12 +53,12 @@ public class TestIgnoredSuperFieldsAddress implements IdentifiableContentBean {
 
     @Override
     // note that the IdentifiableContentBean#getPath is marked with @IgnoreForCompoundBean
-    public String getPath() {
-        return path;
+    public String getIdentifier() {
+        return identifier;
     }
 
     @Override
-    public void setPath(final String path) {
-        this.path = path;
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
     }
 }

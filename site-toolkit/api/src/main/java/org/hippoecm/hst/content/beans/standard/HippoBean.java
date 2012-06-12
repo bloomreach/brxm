@@ -51,7 +51,16 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return the localized node name of the backing jcr node and <code>null</code> when some {@link RepositoryException} happens
      */
     String getLocalizedName();
-    
+
+    /**
+     * This returns the absolute path of the backing jcr node for this bean, for example /documents/content/myprojec/news/article
+     *
+     * When the jcr node is virtual, it returns the virtual path.
+     *
+     * @return the absolute jcr path of the backing jcr node.
+     */
+    String getPath();
+
     /**
      * Returns the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> when 
      * <p>

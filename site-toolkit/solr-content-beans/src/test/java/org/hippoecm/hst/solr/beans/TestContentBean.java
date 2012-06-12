@@ -47,11 +47,11 @@ public class TestContentBean extends TestBaseContentBean {
         super(path);
     }
 
-    public TestContentBean(String path, String title, String summary, String[] authors, 
+    public TestContentBean(String identifier, String title, String summary, String[] authors,
                            Calendar calendar, Date date,
                            Long mileage, Double price, Boolean sold,
                            long primitiveMileage, double primitivePrice, boolean primitiveSold) {
-        super(path);
+        super(identifier);
         this.title = title;
         this.titleAsWell = title;
         this.summary = summary;

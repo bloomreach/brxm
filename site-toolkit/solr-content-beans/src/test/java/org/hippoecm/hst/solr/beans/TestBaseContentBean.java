@@ -20,24 +20,24 @@ import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 public class TestBaseContentBean implements IdentifiableContentBean {
     
-    private String path;
+    private String identifier;
 
     public TestBaseContentBean() {
 
     }
 
-    public TestBaseContentBean(String path) {
-        this.path = path;
+    public TestBaseContentBean(String identifier) {
+        this.identifier = identifier;
     }
     
     @Override
-    public String getPath() {
-        return path;
+    public String getIdentifier() {
+        return identifier;
     }
 
     @Override
-    public void setPath(final String path) {
-        this.path = path;
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
     }
 
 }

@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.Credentials;
+import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -174,48 +176,33 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     }
 
     public class JcrContentBeanBinder implements ContentBeanBinder {
-        List<Class<? extends IdentifiableContentBean>> annotatedClasses;
+        List<Class<? extends IdentifiableContentBean>> bindableClasses;
 
 
         public JcrContentBeanBinder() {
-            this.annotatedClasses = new ArrayList<Class<? extends IdentifiableContentBean>>();
+            this.bindableClasses = new ArrayList<Class<? extends IdentifiableContentBean>>();
             for ( Class<? extends HippoBean> annotatedClass : HippoSolrManagerImpl.this.getAnnotatedClasses()) {
-                annotatedClasses.add(annotatedClass);
+                bindableClasses.add(annotatedClass);
             }
         }
         
         @Override
-        public List<Class<? extends IdentifiableContentBean>> getAnnotatedClasses() {
-            return annotatedClasses; 
+        public List<Class<? extends IdentifiableContentBean>> getBindableClasses() {
+            return bindableClasses; 
         }
 
         @Override
         // TODO THIS IS NOT ALLOWED TO BE THE CURRENT JCR SESSION!! MUST BE PLUGGED IN!
         public void callbackHandler(final IdentifiableContentBean identifiableContentBean) throws BindingException {
-            if (annotatedClasses.contains(identifiableContentBean.getClass())) {
+            if (bindableClasses.contains(identifiableContentBean.getClass())) {
                 if (identifiableContentBean instanceof HippoBean) {
                     HippoBean bean = (HippoBean) identifiableContentBean;
                     try {
-                        if (session.nodeExists(bean.getPath())) {
-                            Node node = session.getNode(bean.getPath());
-
-                            // check wether canonicalUUID is the same, to be sure we have the
-                            // node that was indexed!!
-                            if(node instanceof HippoNode) {
-                                Node canonical = ((HippoNode)node).getCanonicalNode();
-                                if(canonical != null) {
-                                    String identifier = canonical.getIdentifier();
-                                    if (bean.getCanonicalUUID() == null) {
-                                       log.warn("Cannot check bean against canonical uuid because cannot get canonical uuid for '{}'", identifiableContentBean.getPath());
-                                    } else if (!bean.getCanonicalUUID().equals(identifier)) {
-                                       throw new BindingException("At path '"+node.getPath()+"' there was indexed a different canonical jcr node then there is currently at '"+canonical.getPath()+"'");
-                                    }
-                                }
-                            }
-                            bean.setNode(node);
-
-                        }
-
+                        Node node = session.getNodeByIdentifier(bean.getIdentifier());
+                        // TODO virtualize the node !!!!!
+                        bean.setNode(node);
+                    } catch (ItemNotFoundException e) {
+                        log.warn("Cannot bind '{}' to its backing jcr node because the uuid '{}' does not exist (anymore). Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
                     } catch (RepositoryException e) {
                         throw new BindingException("RepositoryException during binding to jcr node", e);
                     }

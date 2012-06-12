@@ -43,6 +43,7 @@ import org.apache.solr.common.util.DateUtil;
 import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,8 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME = "hippo_content_bean_fqn_clazz_name";
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY = "hippo_content_bean_fqn_clazz_hierarchy";
+    public final static String HIPPO_CONTENT_BEAN_PATH = "hippo_path";
+    public final static String HIPPO_CONTENT_BEAN_VIRTUAL_LOCATIONS = "hippo_path_virtual_locations";
     public final static String HIPPO_CONTENT_BEAN_PATH_HIERARCHY = "hippo_path_hierarchy";
     public final static String HIPPO_CONTENT_BEAN_PATH_DEPTH = "hippo_path_depth";
 
@@ -138,13 +141,24 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         doc.setField(HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME, obj.getClass().getName());
         setClassHierarchyField(doc, obj.getClass());
 
-        // we index the path and depth of a IdentifiableContentBean extra :
+        // we index the path and depth of a IdentifiableContentBean extra : IF the bean
+        // is a HippoBean, we use the getPath, otherwise, we take the identifier (which might look like
+        // http://www.example.com/home for example)
         if (obj instanceof IdentifiableContentBean) {
-            String path = ((IdentifiableContentBean)obj).getPath();
+            String path;
+            if (obj instanceof HippoBean) {
+                path = ((HippoBean)obj).getPath();
+            } else {
+                path = ((IdentifiableContentBean)obj).getIdentifier();
+            }
             if (StringUtils.isBlank(path)) {
                 // the path is the identifier for the index. Cannot index this object because it has an illegal state
                 throw new IllegalStateException("IdentifiableContentBean is not allowed to have a #getPath to be null, empty or blank. Cannot index bean");
             }
+            doc.setField(HIPPO_CONTENT_BEAN_PATH, path);
+
+            // TODO index all the VIRTUAL PATHS WITH A CALLBACK HANDLER!!!!!!
+
             boolean startedWithSlash = false;
             if (path.startsWith("/")) {
                 path = path.substring(1);

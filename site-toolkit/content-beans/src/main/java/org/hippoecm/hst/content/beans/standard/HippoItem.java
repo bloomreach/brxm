@@ -85,6 +85,15 @@ public class HippoItem implements HippoBean {
         return this.valueProvider;
     }
 
+    @Override
+    public String getIdentifier() {
+        return getCanonicalUUID();
+    }
+    
+    public void setIdentifier(String identifier) {
+        this.canonicalUUID = identifier;
+    }
+    
     @IgnoreForCompoundBean
     @IndexField
     public String getName() {
@@ -163,8 +172,6 @@ public class HippoItem implements HippoBean {
     }
 
     @Override
-    @IgnoreForCompoundBean
-    @IndexField(name="canonicalUUID")
     public String getCanonicalUUID() {
         if (canonicalUUID != null) {
             return canonicalUUID;
@@ -174,10 +181,6 @@ public class HippoItem implements HippoBean {
             return null;
         }
         return getValueProvider().getIdentifier();
-    }
-
-    public void setCanonicalUUID(String canonicalUUID) {
-        this.canonicalUUID = canonicalUUID;
     }
 
     @Override

@@ -276,7 +276,7 @@ public class TestDocumentObjectBinder {
 
         // the path, title, titleAsWell and author should be repopulated, but 
         // NOT summary as there is not setter for summary
-        assertEquals(bindedBean.getPath(), "my/simple/path");
+        assertEquals(bindedBean.getIdentifier(), "my/simple/path");
         assertEquals(bindedBean.getTitle(), "titleValue");
         assertTrue(bindedBean.getAuthors().length == 2);
         assertTrue(bindedBean.getAuthors()[0].equals("foo") || bindedBean.getAuthors()[0].equals("bar"));

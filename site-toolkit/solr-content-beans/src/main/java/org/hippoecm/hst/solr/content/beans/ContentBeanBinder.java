@@ -28,7 +28,7 @@ public interface ContentBeanBinder {
      * @return the List of {@link IdentifiableContentBean}s that this @{@link ContentBeanBinder} can provide (the content for)
      *
      */
-     List<Class<? extends IdentifiableContentBean>> getAnnotatedClasses();
+     List<Class<? extends IdentifiableContentBean>> getBindableClasses();
 
     void callbackHandler(IdentifiableContentBean identifiableContentBean) throws BindingException;
 }
