@@ -61,7 +61,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME = "hippo_content_bean_fqn_clazz_name";
     public final static String HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY = "hippo_content_bean_fqn_clazz_hierarchy";
     public final static String HIPPO_CONTENT_BEAN_PATH = "hippo_path";
-    public final static String HIPPO_CONTENT_BEAN_VIRTUAL_LOCATIONS = "hippo_path_virtual_locations";
     public final static String HIPPO_CONTENT_BEAN_PATH_HIERARCHY = "hippo_path_hierarchy";
     public final static String HIPPO_CONTENT_BEAN_PATH_DEPTH = "hippo_path_depth";
 
@@ -173,8 +172,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 throw new IllegalStateException("IdentifiableContentBean is not allowed to have a #getPath to be null, empty or blank. Cannot index bean");
             }
             doc.setField(HIPPO_CONTENT_BEAN_PATH, path);
-
-            // TODO index all the VIRTUAL PATHS WITH A CALLBACK HANDLER!!!!!!
 
             boolean startedWithSlash = false;
             if (path.startsWith("/")) {

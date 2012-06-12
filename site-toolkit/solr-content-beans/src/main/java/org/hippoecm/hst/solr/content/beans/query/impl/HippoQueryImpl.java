@@ -103,7 +103,7 @@ public class HippoQueryImpl implements HippoQuery {
         if (solrQuery.getFields() != null && !solrQuery.getFields().startsWith("*")) {
             solrQuery.addField("id");
             solrQuery.addField(DocumentObjectBinder.HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME);
-            solrQuery.addField("canonicalUUID");
+            solrQuery.addField(DocumentObjectBinder.HIPPO_CONTENT_BEAN_PATH);
             solrQuery.addField("name");
             solrQuery.addField("comparePath");
         }
