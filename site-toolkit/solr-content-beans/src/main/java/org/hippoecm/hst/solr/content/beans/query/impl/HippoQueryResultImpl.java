@@ -29,17 +29,15 @@ import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 public class HippoQueryResultImpl implements HippoQueryResult {
 
     private final QueryResponse queryResponse;
-    private final SolrDocumentList docs;
     private final DocumentObjectBinder binder;
 
     // HippoSolrManager and ContentBeanBinder are not serializable hence transient
     private final transient HippoSolrManager manager;
     private transient List<ContentBeanBinder> contentBeanBinders;
 
-    public HippoQueryResultImpl(final QueryResponse queryResponse, final SolrDocumentList docs, final DocumentObjectBinder binder,
+    public HippoQueryResultImpl(final QueryResponse queryResponse, final DocumentObjectBinder binder,
                                 final HippoSolrManager manager) {
         this.queryResponse = queryResponse;
-        this.docs = docs;
         this.binder = binder;
         this.manager = manager;
     }
@@ -47,10 +45,10 @@ public class HippoQueryResultImpl implements HippoQueryResult {
 
     @Override
     public int getSize() {
-        if (docs.getNumFound() > Integer.MAX_VALUE) {
+        if (queryResponse.getResults().getNumFound() > Integer.MAX_VALUE) {
             throw new IllegalStateException(" Integer.MAX_VALUE hits is the maximum size");
         }
-        return (int)docs.getNumFound();
+        return (int)queryResponse.getResults().getNumFound();
     }
 
     @Override
@@ -59,13 +57,8 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     }
 
     @Override
-    public SolrDocumentList getDocs() {
-        return docs;
-    }
-
-    @Override
     public HitIterator<IdentifiableContentBean> getHits() {
-        return new HitIteratorImpl(queryResponse, docs, binder, contentBeanBinders);
+        return new HitIteratorImpl(queryResponse, binder, contentBeanBinders);
     }
 
     @Override

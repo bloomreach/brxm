@@ -33,21 +33,18 @@ public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
 
     private long position = 0;
     private final QueryResponse queryResponse;
-    private SolrDocumentList docs;
     private DocumentObjectBinder binder;
     private volatile List<ContentBeanBinder> contentBeanBinders;
 
     /**
      *
      * @param queryResponse
-     * @param docs
      * @param binder
      * @param contentBeanBinders the providers to be used to bind the hits to the original sources. When <code>null</code> the Hits
      *                           will only have there fields available that can be populated from the search result
      */
-    public HitIteratorImpl(final QueryResponse queryResponse, SolrDocumentList docs, DocumentObjectBinder binder, final List<ContentBeanBinder> contentBeanBinders) {
+    public HitIteratorImpl(final QueryResponse queryResponse, DocumentObjectBinder binder, final List<ContentBeanBinder> contentBeanBinders) {
         this.queryResponse = queryResponse;
-        this.docs = docs;
         this.binder = binder;
         this.contentBeanBinders = contentBeanBinders;
     }
@@ -59,7 +56,7 @@ public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
 
     @Override
     public long getSize() {
-        return docs.size();
+        return queryResponse.getResults().size();
     }
 
     @Override
@@ -84,7 +81,7 @@ public class HitIteratorImpl implements HitIterator<IdentifiableContentBean> {
             throw new IllegalStateException("Can't iterate beyond Integer.MAX_VALUE hits");
         }
 
-        SolrDocument solrDoc = docs.get((int) position);
+        SolrDocument solrDoc = queryResponse.getResults().get((int) position);
         Map<String,List<String>> highlights = null;
         if (queryResponse.getHighlighting() != null) {
             highlights = queryResponse.getHighlighting().get(solrDoc.get("id"));

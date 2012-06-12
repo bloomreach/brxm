@@ -117,9 +117,7 @@ public class HippoQueryImpl implements HippoQuery {
             new SolrServerException(e);
         }
 
-        SolrDocumentList docs = rsp.getResults();
-
-        return new HippoQueryResultImpl(rsp, docs, new DocumentObjectBinder(), manager);
+        return new HippoQueryResultImpl(rsp, new DocumentObjectBinder(), manager);
     }
 
 

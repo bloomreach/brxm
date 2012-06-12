@@ -40,11 +40,6 @@ public interface HippoQueryResult extends Serializable {
     QueryResponse getQueryResponse();
 
     /**
-     * @return the result as {@link SolrDocumentList}
-     */
-    SolrDocumentList getDocs();
-
-    /**
      * This returns the hits
      */
     HitIterator<IdentifiableContentBean> getHits();
