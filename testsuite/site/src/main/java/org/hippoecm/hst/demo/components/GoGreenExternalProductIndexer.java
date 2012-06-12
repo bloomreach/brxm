@@ -126,7 +126,7 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
                                 QName name = new QName("href");
                                 Attribute attr = element.getAttributeByName(name);
                                 if (attr != null) {
-                                    gogreenBean.setPath(attr.getValue());
+                                    gogreenBean.setIdentifier(attr.getValue());
 
                                     // once we have set the mandatory path, add to beans
 

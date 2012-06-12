@@ -508,7 +508,8 @@
     <field name="id" type="string" indexed="true" stored="true" required="true" />
     <field name="name" type="string" indexed="true" stored="true" />
     <field name="localizedName" type="string" indexed="true" stored="true" />
-    <field name="canonicalUUID" type="string" indexed="true" stored="true" />
+    <field name="hippo_path" type="string" indexed="true" stored="true" />
+    <field name="hippo_path_virtual_locations" type="string" indexed="true" stored="true" />
     <field name="hippo_path_hierarchy" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="hippo_path_depth" type="int" indexed="true" stored="false"/>
     <field name="comparePath" type="string" indexed="true" stored="true" />

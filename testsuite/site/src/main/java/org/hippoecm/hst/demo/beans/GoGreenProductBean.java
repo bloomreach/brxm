@@ -9,7 +9,7 @@ import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 public class GoGreenProductBean implements IdentifiableContentBean {
 
-    private String path;
+    private String identifier;
     private String title;
     private String summary;
     private String description;
@@ -17,12 +17,12 @@ public class GoGreenProductBean implements IdentifiableContentBean {
     private Double price;
     private String[] categories;
 
-    public String getPath() {
-        return path;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setPath(final String path) {
-        this.path = path;
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
     }
 
     @IndexField
