@@ -509,7 +509,6 @@
     <field name="name" type="string" indexed="true" stored="true" />
     <field name="localizedName" type="string" indexed="true" stored="true" />
     <field name="hippo_path" type="string" indexed="true" stored="true" />
-    <field name="hippo_path_virtual_locations" type="string" indexed="true" stored="true" />
     <field name="hippo_path_hierarchy" type="string" indexed="true" stored="false" multiValued="true"/>
     <field name="hippo_path_depth" type="int" indexed="true" stored="false"/>
     <field name="comparePath" type="string" indexed="true" stored="true" />
@@ -568,6 +567,14 @@ both match, the first appearing in the schema will be used.  -->
     <!-- ****************** END EXPLICIT FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING **************  -->
 
     <!-- ****************** DYNAMIC FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING ******************  -->
+    <dynamicField name="*_multiple_compound_mi"  type="int"    indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_ms"  type="string"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_ml"  type="long"   indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_mt"  type="text_general" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_mb"  type="boolean" indexed="true"  stored="false"  multiValued="true"/>
+    <dynamicField name="*_multiple_compound_mf"  type="float"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_md"  type="double" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_mdt"  type="tdate" indexed="true"  stored="false" multiValued="true"/>
     <dynamicField name="*_multiple_compound_i"  type="int"    indexed="true"  stored="false" multiValued="true"/>
     <dynamicField name="*_multiple_compound_s"  type="string"  indexed="true"  stored="false" multiValued="true"/>
     <dynamicField name="*_multiple_compound_l"  type="long"   indexed="true"  stored="false" multiValued="true"/>
@@ -575,7 +582,16 @@ both match, the first appearing in the schema will be used.  -->
     <dynamicField name="*_multiple_compound_b"  type="boolean" indexed="true"  stored="false"  multiValued="true"/>
     <dynamicField name="*_multiple_compound_f"  type="float"  indexed="true"  stored="false" multiValued="true"/>
     <dynamicField name="*_multiple_compound_d"  type="double" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_multiple_compound_dt"  type="tdate" indexed="true"  stored="false" multiValued="true"/>
 
+    <dynamicField name="*_compound_mi"  type="int"    indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_ms"  type="string"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_ml"  type="long"   indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_mt"  type="text_general" indexed="true" stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_mb"  type="boolean" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_mf"  type="float"  indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_md"  type="double" indexed="true"  stored="false" multiValued="true"/>
+    <dynamicField name="*_compound_mdt"  type="tdate" indexed="true"  stored="false" multiValued="true"/>
     <dynamicField name="*_compound_i"  type="int"    indexed="true"  stored="false"/>
     <dynamicField name="*_compound_s"  type="string"  indexed="true"  stored="false"/>
     <dynamicField name="*_compound_l"  type="long"   indexed="true"  stored="false"/>
@@ -583,6 +599,8 @@ both match, the first appearing in the schema will be used.  -->
     <dynamicField name="*_compound_b"  type="boolean" indexed="true"  stored="false"/>
     <dynamicField name="*_compound_f"  type="float"  indexed="true"  stored="false"/>
     <dynamicField name="*_compound_d"  type="double" indexed="true"  stored="false"/>
+    <dynamicField name="*_compound_dt"  type="tdate" indexed="true"  stored="false"/>
+
 
     <!-- ***************** END DYNAMIC FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING ******************  -->
 
@@ -659,9 +677,13 @@ unknown fields indexed and/or stored by default -->
   <copyField source="hippostdContent_multiple_compound_t" dest="text" maxChars="3000"/>
   <copyField source="hippostdContent_compound_t" dest="text" maxChars="3000"/>
 
+  <copyField source="*_multiple_compound_ms" dest="text" maxChars="500"/>
   <copyField source="*_multiple_compound_s" dest="text" maxChars="500"/>
+  <copyField source="*_multiple_compound_mt" dest="text" maxChars="3000"/>
   <copyField source="*_multiple_compound_t" dest="text" maxChars="3000"/>
+  <copyField source="*_compound_ms" dest="text" maxChars="500"/>
   <copyField source="*_compound_s" dest="text" maxChars="500"/>
+  <copyField source="*_compound_mt" dest="text" maxChars="3000"/>
   <copyField source="*_compound_t" dest="text" maxChars="3000"/>
 
   <!-- END HIPPO SPECIFIC : DYNAMIC TEXT COMPOUND FIELDS WE BY DEFAULT ADD to 'text' FIELD -->
