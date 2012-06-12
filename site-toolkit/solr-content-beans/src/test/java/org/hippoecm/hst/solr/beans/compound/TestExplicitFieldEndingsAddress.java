@@ -41,27 +41,14 @@ public class TestExplicitFieldEndingsAddress implements ContentBean {
         return street;
     }
 
-    public void setStreet(final String street) {
-        this.street = street;
-    }
-
-
     @IndexField(name="number_int")
     public int getNumber() {
         return number;
     }
 
-    public void setNumber(final int number) {
-        this.number = number;
-    }
-
     @IndexField(name="calendar_cal")
     public Calendar getCalendar() {
         return calendar;
-    }
-
-    public void setCalendar(final Calendar calendar) {
-        this.calendar = calendar;
     }
 
 }

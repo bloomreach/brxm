@@ -40,26 +40,14 @@ public class TestCompositeAddress implements ContentBean {
         return street;
     }
 
-    public void setStreet(final String street) {
-        this.street = street;
-    }
-
     @IndexField
     public int getNumber() {
         return number;
     }
 
-    public void setNumber(final int number) {
-        this.number = number;
-    }
-
     @IndexField(name = "numberAsWell_i")
     public int getNumberWithEndMapping() {
         return numberWithEndMapping;
-    }
-
-    public void setNumberWithEndMapping(final int numberWithEndMapping) {
-        this.numberWithEndMapping = numberWithEndMapping;
     }
 
     @IndexField

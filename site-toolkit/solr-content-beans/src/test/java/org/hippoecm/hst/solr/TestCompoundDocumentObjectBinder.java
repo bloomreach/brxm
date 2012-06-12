@@ -52,14 +52,17 @@ public class TestCompoundDocumentObjectBinder {
         long primitiveMileage = 50;
         double primitivePrice = 50.50;
         boolean primitiveSold = true;
-
+        Integer[] longlat = new Integer[2];
+        longlat[0] = 12354;
+        longlat[1] = 324;
+        
         TestAddress mainAddres = new TestAddress("oosteinde", 11, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold);
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat);
         List<TestAddress> addressList = new ArrayList<TestAddress>();
         addressList.add(new TestAddress("oosteinde", 12, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat));
         addressList.add(new TestAddress("eastend", 13, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat));
 
 
         TestContentBeanWithCompounds testBean = new TestContentBeanWithCompounds("my/simple/path", mainAddres, addressList);
@@ -102,6 +105,9 @@ public class TestCompoundDocumentObjectBinder {
         assertTrue(doc.getFieldValue("mainAddress_primitivePrice_compound_d").equals(primitivePrice));
         assertTrue(doc.getFieldValue("mainAddress_primitiveSold_compound_b").equals(primitiveSold));
 
+        assertTrue(doc.getFieldValues("mainAddress_longlat_compound_mi").size() == 2);
+        assertTrue(doc.getFieldValues("mainAddress_longlat_compound_mi").contains(12354));
+        assertTrue(doc.getFieldValues("mainAddress_longlat_compound_mi").contains(324));
 
         // below should give same results for 'allAddresses' and 'theNameOfCopyAddresses' 
         String[] duplicateFields = {"allAddresses", "theNameOfCopyAddresses"};
@@ -169,6 +175,12 @@ public class TestCompoundDocumentObjectBinder {
             assertTrue(calendars.size() == 2);
             assertTrue(((ArrayList) calendars).get(0) instanceof String);
             assertTrue(calendars.contains(dateAsString));
+
+            // since we have two compounds both with longlat 12354 and 324 we have size 4 in total
+            assertTrue(doc.getFieldValues(fieldName + "_longlat_multiple_compound_mi").size() == 4);
+            assertTrue(doc.getFieldValues(fieldName + "_longlat_multiple_compound_mi").contains(12354));
+            assertTrue(doc.getFieldValues(fieldName + "_longlat_multiple_compound_mi").contains(324));
+
         }
         
         
@@ -212,13 +224,17 @@ public class TestCompoundDocumentObjectBinder {
         double primitivePrice = 50.50;
         boolean primitiveSold = true;
 
+        Integer[] longlat = new Integer[2];
+        longlat[0] = 12354;
+        longlat[1] = 324;
+
         TestAddress mainAddres = new TestAddress("oosteinde", 11, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold);
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat);
         List<TestAddress> addressList = new ArrayList<TestAddress>();
         addressList.add(new TestAddress("oosteinde", 12, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat));
         addressList.add(new TestAddress("oosteinde", 13, cal, date,
-                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold));
+                mileage, price, sold, primitiveMileage, primitivePrice, primitiveSold, longlat));
 
 
         TestContentBeanWithCompounds testBean = new TestContentBeanWithCompounds("my/simple/path", mainAddres, addressList);

@@ -37,18 +37,9 @@ public class TestIgnoredSuperFieldsAddress implements IdentifiableContentBean {
         return street;
     }
 
-    public void setStreet(final String street) {
-        this.street = street;
-    }
-
-
     @IndexField
     public int getNumber() {
         return number;
-    }
-
-    public void setNumber(final int number) {
-        this.number = number;
     }
 
     @Override

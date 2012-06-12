@@ -34,11 +34,12 @@ public class TestAddress implements ContentBean {
     private long primitiveMileage;
     private double primitivePrice;
     private boolean primitiveSold;
+    private Integer[] longlat;
 
 
     public TestAddress(String street, int number, Calendar calendar, Date date,
                        Long mileage, Double price, Boolean sold,
-                       long primitiveMileage, double primitivePrice, boolean primitiveSold) {
+                       long primitiveMileage, double primitivePrice, boolean primitiveSold, Integer[] longlat) {
         this.street = street;
         this.number = number;
         this.calendar = calendar;
@@ -49,6 +50,7 @@ public class TestAddress implements ContentBean {
         this.primitiveMileage = primitiveMileage;
         this.primitivePrice = primitivePrice;
         this.primitiveSold = primitiveSold;
+        this.longlat = longlat;
     }
 
 
@@ -57,18 +59,9 @@ public class TestAddress implements ContentBean {
         return street;
     }
 
-    public void setStreet(final String street) {
-        this.street = street;
-    }
-
-
     @IndexField
     public int getNumber() {
         return number;
-    }
-
-    public void setNumber(final int number) {
-        this.number = number;
     }
 
     @IndexField
@@ -76,17 +69,9 @@ public class TestAddress implements ContentBean {
         return calendar;
     }
 
-    public void setCalendar(final Calendar calendar) {
-        this.calendar = calendar;
-    }
-
     @IndexField
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(final Date date) {
-        this.date = date;
     }
 
     @IndexField
@@ -94,17 +79,9 @@ public class TestAddress implements ContentBean {
         return mileage;
     }
 
-    public void setMileage(final Long mileage) {
-        this.mileage = mileage;
-    }
-
     @IndexField
     public Double getPrice() {
         return price;
-    }
-
-    public void setPrice(final Double price) {
-        this.price = price;
     }
 
     @IndexField
@@ -112,17 +89,9 @@ public class TestAddress implements ContentBean {
         return sold;
     }
 
-    public void setSold(final Boolean sold) {
-        this.sold = sold;
-    }
-
     @IndexField
     public long getPrimitiveMileage() {
         return primitiveMileage;
-    }
-
-    public void setPrimitiveMileage(final long primitiveMileage) {
-        this.primitiveMileage = primitiveMileage;
     }
 
     @IndexField
@@ -130,16 +99,14 @@ public class TestAddress implements ContentBean {
         return primitivePrice;
     }
 
-    public void setPrimitivePrice(final double primitivePrice) {
-        this.primitivePrice = primitivePrice;
-    }
-
     @IndexField
     public boolean isPrimitiveSold() {
         return primitiveSold;
     }
 
-    public void setPrimitiveSold(final boolean primitiveSold) {
-        this.primitiveSold = primitiveSold;
+    @IndexField
+    public Integer[] getLonglat() {
+        return longlat;
     }
+
 }

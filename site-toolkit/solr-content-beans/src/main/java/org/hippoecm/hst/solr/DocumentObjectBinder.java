@@ -83,6 +83,23 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         supportedTypePatterns.put(float.class, "_compound_f");
     }
 
+    private final static Map<Class<?>, String> supportedMultipleTypePatterns = new HashMap<Class<?>, String>();
+    static {
+        supportedMultipleTypePatterns.put(String.class, "_compound_mt");
+        supportedMultipleTypePatterns.put(Date.class, "_compound_mdt");
+        supportedMultipleTypePatterns.put(Calendar.class, "_compound_mdt");
+        supportedMultipleTypePatterns.put(Boolean.class, "_compound_mb");
+        supportedMultipleTypePatterns.put(boolean.class, "_compound_mb");
+        supportedMultipleTypePatterns.put(Integer.class, "_compound_mi");
+        supportedMultipleTypePatterns.put(int.class, "_compound_mi");
+        supportedMultipleTypePatterns.put(Long.class, "_compound_ml");
+        supportedMultipleTypePatterns.put(long.class, "_compound_ml");
+        supportedMultipleTypePatterns.put(Double.class, "_compound_md");
+        supportedMultipleTypePatterns.put(double.class, "_compound_md");
+        supportedMultipleTypePatterns.put(Float.class, "_compound_mf");
+        supportedMultipleTypePatterns.put(float.class, "_compound_mf");
+    }
+
     public DocumentObjectBinder() {
     }
 
@@ -297,9 +314,14 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     if (docField == null) {
                         throw new IllegalStateException("docField for '"+clazz.getName()+"' was not expected to be null");
                     }
-                    if (supportedTypePatterns.containsKey(docField.type)) {
-                         compoundFieldName = compoundFieldName + supportedTypePatterns.get(docField.type);
-
+                    Map<Class<?>, String> typePatterns;
+                    if (docField.isArray || docField.isList || docField.isContainedInMap) {
+                        typePatterns = supportedMultipleTypePatterns;
+                    } else {
+                        typePatterns = supportedTypePatterns;
+                    }
+                    if (typePatterns.containsKey(docField.type)) {
+                        compoundFieldName = compoundFieldName + typePatterns.get(docField.type);
                         for (Object o : values) {
                             doc.addField(compoundFieldName, format(o));
                         }
