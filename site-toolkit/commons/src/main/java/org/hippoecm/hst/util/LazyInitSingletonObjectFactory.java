@@ -20,7 +20,7 @@ package org.hippoecm.hst.util;
  */
 abstract public class LazyInitSingletonObjectFactory<T, U> implements ResettableObjectFactory<T, U> {
 
-    private volatile boolean created;
+    private volatile boolean hasBeenCreated;
     private T singleton;
 
     /* (non-Javadoc)
@@ -28,15 +28,15 @@ abstract public class LazyInitSingletonObjectFactory<T, U> implements Resettable
      */
     @Override
     public T getInstance(U ... args) {
-        // Do not remove this! Seamingly unused read but needed for shared memory flushing
-        boolean created = this.created;
+        // Do not use hasBeenCreated member directly here. Needed to use memory barrier trick.
+        boolean created = this.hasBeenCreated;
         if (!created) {
             synchronized (this) {
-                created = this.created;
+                // Do not use hasBeenCreated member directly here. Needed to use memory barrier trick.
+                created = this.hasBeenCreated;
                 if (!created) {
                     singleton = createInstance(args);
-                    // Do not remove this! Need to flush the flag to shared memory
-                    this.created = created = (singleton != null);
+                    this.hasBeenCreated = (singleton != null);
                 }
             }
         }
@@ -46,7 +46,7 @@ abstract public class LazyInitSingletonObjectFactory<T, U> implements Resettable
 
     public synchronized void reset() {
         singleton = null;
-        created = false;
+        hasBeenCreated = false;
     }
 
     abstract protected T createInstance(U ... args);
