@@ -230,7 +230,7 @@ public abstract class TestCase
             if (!Boolean.getBoolean("org.onehippo.repository.test.keepserver")) {
                 server.close();
                 if (server instanceof LocalHippoRepository) {
-                    if (!((LocalHippoRepository)server).check(false)) {
+                    if (Boolean.getBoolean("org.onehippo.repository.test.check") && !((LocalHippoRepository)server).check(false)) {
                         server = null;
                         clear();
                         throw new Exception("Repository inconsistent");
