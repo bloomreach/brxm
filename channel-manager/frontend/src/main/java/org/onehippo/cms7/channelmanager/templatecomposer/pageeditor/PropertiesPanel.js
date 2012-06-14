@@ -27,6 +27,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     componentId : null,
     silent : true,
     allVariantsStore: null,
+    allVariantsStoreFuture : null,
 
     constructor : function (config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -35,12 +36,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.resources = config.resources;
         this.locale = config.locale;
 
-        if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
-            this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
-                composerRestMountUrl: this.composerRestMountUrl,
-                variantsUuid: this.variantsUuid
-            });
-        }
+        this.allVariantsStore = config.allVariantsStore;
+        this.allVariantsStoreFuture = config.allVariantsStoreFuture;
 
         config = Ext.apply(config, { activeTab : 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
@@ -91,7 +88,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             loadVariantTabs();
         } else {
             this._showTabs();
-            this._loadAllVariantsStore().when(function() {
+            this.allVariantsStoreFuture.when(function() {
                 this._loadVariantStore().when(function () {
                     this._showTabs();
                     loadVariantTabs();
@@ -104,14 +101,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                 this.silent = false;
             }.createDelegate(this));
         }
-    },
-
-    _loadAllVariantsStore: function() {
-        return new Hippo.Future(function (success, fail) {
-            this.allVariantsStore.on('load', success, {single : true});
-            this.allVariantsStore.on('exception', fail, {single : true});
-            this.allVariantsStore.load();
-        }.createDelegate(this));
     },
 
     _loadVariantStore : function () {
@@ -324,55 +313,6 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
             this.variantsStore.load();
         }.createDelegate(this));
     }
-});
-
-Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
-
-    constructor : function(config) {
-        var self = this;
-
-        this.skipIds = config.skipIds || [];
-
-        var proxy = new Ext.data.HttpProxy({
-            api: {
-                read: config.composerRestMountUrl + '/' + config.variantsUuid + './variants/?FORCE_CLIENT_HOST=true',
-                create: '#',
-                update: '#',
-                destroy: '#'
-            },
-            listeners: {
-                beforewrite: function(proxy, action, records) {
-                    return this.api[action].url !== '#';
-                }
-            }
-        });
-
-        Ext.apply(config, {
-            id: 'VariantsStore',
-            proxy: proxy,
-            prototypeRecord :  [
-                {name: 'id' },
-                {name: 'name' },
-                {name: 'description' }
-            ],
-            sortInfo: {
-                field: 'name',
-                direction: 'ASC'
-            },
-            listeners: {
-                load: function(store, records, options) {
-                    for (var i = 0; i < records.length; i++) {
-                        if (self.skipIds.indexOf(records[i].get('id')) >= 0) {
-                            store.remove(records[i]);
-                        }
-                    }
-                }
-            }
-        });
-
-        Hippo.ChannelManager.TemplateComposer.VariantsStore.superclass.constructor.call(this, config);
-    }
-
 });
 
 Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
@@ -620,6 +560,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
                     } else if (xtype == 'linkpicker') {
                         propertyFieldConfig.pickerConfig = {
+                            renderStripValue : /^\/?(?:[^\/]+\/)*/g,
                             configuration: property.get('pickerConfiguration'),
                             remembersLastVisited: property.get('pickerRemembersLastVisited'),
                             initialPath: property.get('pickerInitialPath'),

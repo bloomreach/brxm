@@ -21,7 +21,7 @@ Hippo.ChannelManager.TemplateComposer.RestStore = Ext.extend(Ext.data.Store, {
 
         var reader = new Ext.data.JsonReader({
             successProperty: 'success',
-            root: 'data',
+            root: config.root || 'data',
             messageProperty: 'message',
             idProperty: 'id'
         }, config.prototypeRecord);

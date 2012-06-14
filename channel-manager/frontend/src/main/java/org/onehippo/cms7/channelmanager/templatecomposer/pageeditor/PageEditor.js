@@ -16,6 +16,51 @@
 "use strict";
 Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
+
+    constructor : function(config) {
+        var self = this;
+
+        this.skipIds = config.skipIds || [];
+
+        var proxy = new Ext.data.HttpProxy({
+            api: {
+                read: config.composerRestMountUrl + '/' + config.variantsUuid + './variants/?FORCE_CLIENT_HOST=true',
+                create: '#',
+                update: '#',
+                destroy: '#'
+            },
+            listeners: {
+                beforewrite: function(proxy, action, records) {
+                    return this.api[action].url !== '#';
+                }
+            }
+        });
+
+        Ext.apply(config, {
+            id: 'VariantsStore',
+            proxy: proxy,
+            prototypeRecord :  [
+                {name: 'id' },
+                {name: 'name' },
+                {name: 'description' }
+            ],
+            listeners: {
+                load: function(store, records, options) {
+                    for (var i = 0; i < records.length; i++) {
+                        if (self.skipIds.indexOf(records[i].get('id')) >= 0) {
+                            store.remove(records[i]);
+                        }
+                    }
+                }
+            }
+        });
+
+        Hippo.ChannelManager.TemplateComposer.VariantsStore.superclass.constructor.call(this, config);
+    }
+
+});
+
 Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     // height of the toolbar (in pixels)
@@ -35,6 +80,37 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.variantsUuid = config.variantsUuid;
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
         this.locale = config.locale;
+
+        this.allVariantsStore = null;
+        this.allVariantsStoreFuture = null;
+        if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
+            this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+                composerRestMountUrl: this.composerRestMountUrl,
+                variantsUuid: this.variantsUuid
+            });
+            this.allVariantsStoreFuture = new Hippo.Future(function (success, fail) {
+                this.allVariantsStore.on('load', function() {
+                    success(this.allVariantsStore);
+                }, {single : true});
+                this.allVariantsStore.on('exception', fail, {single : true});
+                this.allVariantsStore.load();
+            }.createDelegate(this));
+        } else {
+            this.allVariantsStore = new Ext.data.ArrayStore({
+                fields : [
+                    'id', 'name', 'avatar'
+                ]
+            });
+            this.allVariantsStoreFuture = new Hippo.Future(function (success, fail) {
+                this.allVariantsStore.on('load', function() {
+                    success(this.allVariantsStore);
+                }, {single : true});
+                this.allVariantsStore.on('exception', fail, {single : true});
+                this.allVariantsStore.loadData([['default', 'Default', 'default']]);
+            }.createDelegate(this));
+        }
+
+
 
         this.initUI(config);
 
@@ -87,6 +163,56 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         });
     },
 
+    getVariantsComboBox : function(pageContext) {
+        var self = this;
+
+        var variantsComboBox = new Ext.form.ComboBox({
+            store: this.allVariantsStore,
+            displayField: 'name',
+            typeAhead: true,
+            mode: 'local',
+            triggerAction: 'all',
+            emptyText:'Select a persona',
+            editable: false,
+            selectOnFocus:true,
+            width:135,
+            autoSelect: true,
+            disabled: !this.pageContainer.previewMode,
+            hidden: (this.allVariantsStore instanceof Ext.data.ArrayStore), // hide when only default is available
+            listeners: {
+                scope: this,
+                select : function(combo, record, index) {
+                    Ext.Ajax.request({
+                        url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/',
+                        method: 'POST',
+                        params: {
+                            'variant': record.get('id')
+                        },
+                        success : function() {
+                            self.refreshIframe.call(self);
+                        },
+                        failure : function() {
+                            console.log('failure set variant');
+                            combo.clearValue();
+                        }
+                    });
+                }
+            }
+        });
+
+        variantsComboBox.on('afterRender', function() {
+            this.variantsComboBox.setValue(pageContext.renderedVariant);
+            this.allVariantsStoreFuture.when(function() {
+                var variantRecord = this.allVariantsStore.getById(pageContext.renderedVariant);
+                if (variantRecord) {
+                    this.variantsComboBox.setValue(variantRecord.get('name'));
+                }
+            }.createDelegate(this));
+        }, this);
+
+        return variantsComboBox;
+    },
+
     enableUI: function(pageContext) {
         Hippo.Msg.hide();
 
@@ -102,6 +228,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             return;
         }
 
+        this.variantsComboBox = this.getVariantsComboBox(pageContext);
         if (!this.pageContainer.previewMode) {
             if (this.propertiesWindow) {
                 this.propertiesWindow.destroy();
@@ -126,6 +253,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             },
+            this.variantsComboBox,
             '->',
             {
                 id: 'channel-properties-window-button',
@@ -233,7 +361,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             scope: this.pageContainer
                         }
                     }
-                });
+                },
+                this.variantsComboBox);
             }
 
             if (this.propertiesWindow) {
@@ -304,6 +433,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.channelName = channelRecord.get('name');
             }.createDelegate(this));
         }, this);
+
     },
 
     createPropertiesWindow : function(mountId) {
@@ -336,6 +466,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
                     variantsUuid: this.variantsUuid,
+                    allVariantsStore : this.allVariantsStore,
+                    allVariantsStoreFuture : this.allVariantsStoreFuture,
                     mountId: mountId,
                     listeners: {
                         cancel: function() {

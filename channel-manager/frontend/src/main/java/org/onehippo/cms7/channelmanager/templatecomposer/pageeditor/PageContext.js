@@ -167,7 +167,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 success : function(responseObject) {
                     var pageId = responseObject.getResponseHeader('HST-Page-Id');
                     var mountId = responseObject.getResponseHeader('HST-Mount-Id');
-
+                    self.renderedVariant = responseObject.getResponseHeader('HST-Render-Variant');
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;

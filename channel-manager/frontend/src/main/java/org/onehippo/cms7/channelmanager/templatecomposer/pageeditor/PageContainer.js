@@ -230,16 +230,43 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             this._complete();
         } else {
             if (hasPreviewHstConfig) {
-                var iFrame = Ext.getCmp('Iframe');
-                iFrame.getFrame().sendMessage({}, 'showoverlay');
-                this._complete();
+                var self = this;
+                var doneCallback = function() {
+                    var iFrame = Ext.getCmp('Iframe');
+                    iFrame.getFrame().sendMessage({}, 'showoverlay');
+                    this._complete();
+                }.createDelegate(this);
+
+                if (this.pageContext.renderedVariant !== 'default') {
+                    Ext.Ajax.request({
+                        url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/',
+                        method: 'POST',
+                        headers: {
+                            'FORCE_CLIENT_HOST': 'true'
+                        },
+                        params: {
+                            'variant': 'default'
+                        },
+                        success : function() {
+                            self.pageContext = null;
+                            self.refreshIframe.call(self, null);
+                        },
+                        failure : function() {
+                            console.error('Error setting the rendered page variant back to default');
+                            doneCallback();
+                        }
+                    });
+                } else {
+                    doneCallback();
+                }
             } else {
                 // create new preview hst configuration
                 var self = this;
+
                 Ext.Ajax.request({
                     method: 'POST',
                     headers: {
-                    'FORCE_CLIENT_HOST': 'true'
+                        'FORCE_CLIENT_HOST': 'true'
                     },
                     url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
                     success: function () {
