@@ -40,6 +40,7 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
     constructor : function(config) {
         this.pickerConfig = config.pickerConfig;
         this.defaultValue = config.defaultValue;
+        this.renderStripValue = config.renderStripValue;
         this.setValue(this.defaultValue);
 
         Hippo.ChannelManager.ExtLinkPicker.superclass.constructor.call(this, config);
@@ -95,6 +96,34 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
         } else {
             clearTrigger.show();
         }
+    },
+
+    setValue: function(value) {
+        Hippo.ChannelManager.ExtLinkPicker.superclass.setValue.apply(this, arguments);
+        if (this.rendered) {
+            var value = this.value;
+            if (this.renderStripValue) {
+                value = value.replace(this.renderStripValue, '');
+            }
+            this.renderTextField.value = value;
+        }
+    },
+
+    onRender: function() {
+        Hippo.ChannelManager.ExtLinkPicker.superclass.onRender.apply(this, arguments);
+        this.el.dom.style.display = "none";
+        var value = this.value;
+        if (this.renderStripValue) {
+            value = value.replace(this.renderStripValue, '');
+        }
+
+        this.renderTextField = document.createElement('input');
+        this.renderTextField.setAttribute('type', 'text');
+        this.renderTextField.setAttribute('readonly', 'readonly');
+        this.renderTextField.setAttribute('class', 'customExtLinkPickerRenderValue');
+        this.renderTextField.value = value;
+
+        this.el.parent().dom.insertBefore(this.renderTextField, this.el.dom);
     }
 
 });

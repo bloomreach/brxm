@@ -559,8 +559,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     if (xtype === 'checkbox') {
                         propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
                     } else if (xtype == 'linkpicker') {
+                        propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
                         propertyFieldConfig.pickerConfig = {
-                            renderStripValue : /^\/?(?:[^\/]+\/)*/g,
                             configuration: property.get('pickerConfiguration'),
                             remembersLastVisited: property.get('pickerRemembersLastVisited'),
                             initialPath: property.get('pickerInitialPath'),
