@@ -60,6 +60,21 @@ public abstract class TestCase
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    /**
+     * System property indicating whether to use the same repository server across all
+     * test invocations. If this property is false or not present a new repository will be created
+     * for every test. Sometimes this is unavoidable because you need a clean repository. If you don't
+     * then your test performance will benefit greatly by setting this property.
+     */
+    private static final String KEEPSERVER_PROP = "org.onehippo.repository.test.keepserver";
+
+    /**
+     * System property indicating whether to perform a consistency check during test case teardown.
+     * This property only has effect when the KEEPSERVER_PROP system property is set to false.
+     */
+    private static final String CONSISTENCYCHECK_PROP = "org.onehippo.repository.test.check";
+
+
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
@@ -193,7 +208,7 @@ public abstract class TestCase
                     fixture();
                 }
             }
-            if(Boolean.getBoolean("org.onehippo.repository.test.keepserver")) {
+            if(Boolean.getBoolean(KEEPSERVER_PROP)) {
                 if(background != null) {
                     server = background;
                 } else {
@@ -227,10 +242,10 @@ public abstract class TestCase
             session = null;
         }
         if (external == null && server != null) {
-            if (!Boolean.getBoolean("org.onehippo.repository.test.keepserver")) {
+            if (!Boolean.getBoolean(KEEPSERVER_PROP)) {
                 server.close();
                 if (server instanceof LocalHippoRepository) {
-                    if (Boolean.getBoolean("org.onehippo.repository.test.check") && !((LocalHippoRepository)server).check(false)) {
+                    if (Boolean.getBoolean(CONSISTENCYCHECK_PROP) && !((LocalHippoRepository)server).check(false)) {
                         server = null;
                         clear();
                         throw new Exception("Repository inconsistent");
