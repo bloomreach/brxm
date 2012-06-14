@@ -116,6 +116,8 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         final Mount editingMount = getEditingHstMount(requestContext);
 
+        servletRequest.getSession().removeAttribute("RENDER_VARIANT");
+
         if(editingMount.getType().equals(Mount.PREVIEW_NAME)) {
             return error("The mount is configured as PREVIEW. Template composer works against live mounts decorated to preview.");
         }

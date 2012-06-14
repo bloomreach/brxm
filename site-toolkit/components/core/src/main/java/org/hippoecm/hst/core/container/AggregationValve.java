@@ -351,6 +351,11 @@ public class AggregationValve extends AbstractValve {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
+                        Object variant = session.getAttribute("RENDER_VARIANT");
+                        if (variant == null) {
+                            variant = "default";
+                        }
+                        rootWindow.getResponseState().addHeader("HST-Render-Variant", variant.toString());
                         boolean isPreviewConfig = false;
                         if(mount.getHstSite().getConfigurationPath().endsWith("-"+Mount.PREVIEW_NAME)) {
                             isPreviewConfig = true;

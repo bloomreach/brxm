@@ -20,10 +20,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -82,6 +79,22 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
         return ok("Preview-Mode successful", null);
+    }
+
+    @POST
+    @Path("/setvariant/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setVariant(@Context HttpServletRequest servletRequest, @FormParam("variant") String variant) {
+        servletRequest.getSession().setAttribute("RENDER_VARIANT", variant);
+        return ok("Variant set");
+    }
+
+    @POST
+    @Path("/clearvariant/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response clearVariant(@Context HttpServletRequest servletRequest, String variant) {
+        servletRequest.getSession().removeAttribute("RENDER_VARIANT");
+        return ok("Variant cleared");
     }
 
 }

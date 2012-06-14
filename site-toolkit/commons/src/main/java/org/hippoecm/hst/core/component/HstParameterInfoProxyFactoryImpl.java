@@ -20,12 +20,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
+
+import javax.servlet.http.HttpSession;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
     
@@ -150,11 +153,22 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          * This method can be overridden by subclasses of the {@link ParameterInfoInvocationHandler} to return 
          * a prefixed value
          * @param parameterName the <code>parameterName</code> that can be prefixed
-         * @param conf the <code>ComponentConfiguration</code>
+         * @param config the <code>ComponentConfiguration</code>
          * @param req the <code>HstRequest</code> 
          * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
          */
-        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration conf, final HstRequest req) {
+        protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
+            final HttpSession session = req.getSession(false);
+            if (session != null && session.getAttribute("RENDER_VARIANT") != null) {
+                final String prefix = session.getAttribute("RENDER_VARIANT").toString();
+                if ("default".equals(prefix)) {
+                    return parameterName;
+                }
+                final String prefixedParameterName = prefix + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER + parameterName;
+                if (config.getParameterNames().contains(prefixedParameterName)) {
+                    return prefixedParameterName;
+                }
+            }
             return parameterName;
         }
     }
