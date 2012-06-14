@@ -30,5 +30,17 @@ public interface ContentBeanBinder {
      */
      List<Class<? extends IdentifiableContentBean>> getBindableClasses();
 
+    /**
+     * This method will be invoked during {@link org.hippoecm.hst.solr.content.beans.query.Hit#getBean()} when the 
+     * {@link org.hippoecm.hst.solr.content.beans.query.HippoQueryResult} had its {@link org.hippoecm.hst.solr.content.beans.query.HippoQueryResult#bindHits()} or
+     * {@link org.hippoecm.hst.solr.content.beans.query.HippoQueryResult#bindHits(java.util.List)} invoked *AND* when the <code>identifiableContentBean</code>
+     * class is contained in {@link #getBindableClasses()}
+     *  
+     * Implementation of this {@link ContentBeanBinder} can in the {@link #callbackHandler(org.hippoecm.hst.content.beans.standard.IdentifiableContentBean)}
+     * implement the logic to bind the {@link IdentifiableContentBean} back to its original provider
+     * 
+     * @param identifiableContentBean the {@link IdentifiableContentBean} instance
+     * @throws BindingException when the <code>identifiableContentBean</code> cannot be bound 
+     */
     void callbackHandler(IdentifiableContentBean identifiableContentBean) throws BindingException;
 }

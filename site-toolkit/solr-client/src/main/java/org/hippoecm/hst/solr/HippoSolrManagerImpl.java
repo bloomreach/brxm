@@ -198,7 +198,7 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
         }
 
         @Override
-        // TODO THIS IS NOT ALLOWED TO BE THE CURRENT JCR SESSION!! MUST BE PLUGGED IN!
+        // TODO THIS IS NOT ALLOWED TO BE THE CURRENT JCR SESSION!! MUST BE PLUGGED IN THROUGH CONTEXT
         public void callbackHandler(final IdentifiableContentBean identifiableContentBean) throws BindingException {
             if (bindableClasses.contains(identifiableContentBean.getClass())) {
                 if (identifiableContentBean instanceof HippoBean) {
