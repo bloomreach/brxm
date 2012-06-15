@@ -248,7 +248,10 @@ public class MockHstRequestBase implements HttpServletRequest {
     }
 
     public HttpSession getSession(boolean arg0) {
-        throw new UnsupportedOperationException("Not supported yet");
+        if (arg0) {
+            throw new UnsupportedOperationException("Not supported yet");
+        }
+        return (HttpSession) props.get("session");
     }
 
     public Principal getUserPrincipal() {
