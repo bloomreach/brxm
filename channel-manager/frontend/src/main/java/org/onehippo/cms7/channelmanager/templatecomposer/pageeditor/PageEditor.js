@@ -183,8 +183,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 scope: this,
                 select : function(combo, record, index) {
                     Ext.Ajax.request({
-                        url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/',
+                        url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant?FORCE_CLIENT_HOST=true',
                         method: 'POST',
+                        headers: {
+                            'FORCE_CLIENT_HOST': 'true'
+                        },
                         params: {
                             'variant': record.get('id')
                         },
