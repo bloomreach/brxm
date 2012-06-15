@@ -53,8 +53,7 @@
 
     <forge.dashboard-document-wizard.version>1.03.09</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.01</forge.gallerypicker.version>
-    <forge.easy-forms-cms.version>2.10.02</forge.easy-forms-cms.version>
-    <forge.easy-forms-hst.version>2.10.03-SNAPSHOT</forge.easy-forms-hst.version>
+    <forge.easy-forms.version>2.11.00-SNAPSHOT</forge.easy-forms.version>
     <forge.poll.version>1.05.03</forge.poll.version>
     <forge.relateddocs.version>2.08.06</forge.relateddocs.version>
     <forge.selection.version>2.05.05</forge.selection.version>
@@ -710,13 +709,18 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.forge</groupId>
-        <artifactId>easy-forms-plugin</artifactId>
-        <version>${forge.easy-forms-cms.version}</version>
+        <artifactId>easy-forms-cms</artifactId>
+        <version>${forge.easy-forms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.forge</groupId>
         <artifactId>easy-forms-hst</artifactId>
-        <version>${forge.easy-forms-hst.version}</version>
+        <version>${forge.easy-forms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.forge</groupId>
+        <artifactId>easy-forms-repository</artifactId>
+        <version>${forge.easy-forms.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
