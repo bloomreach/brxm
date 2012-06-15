@@ -43,6 +43,11 @@
 - frontend:references (string) multiple
 - frontend:properties (string) multiple
 - * (string)
+- * (string) multiple
+- * (boolean)
+- * (long)
+- * (date)
+- * (double)
 + * (frontend:plugin) = frontend:plugin
 
 [frontend:clusterfolder] > nt:base orderable
