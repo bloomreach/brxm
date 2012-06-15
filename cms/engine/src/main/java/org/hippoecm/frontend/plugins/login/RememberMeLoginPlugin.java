@@ -124,7 +124,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     }
 
     protected void tryToAutoLoginWithRememberMe() {
-        SignInForm signInForm = (SignInForm) createSignInForm("rememberMeAutoLoginSignInForm");
+        SignInForm signInForm = (SignInForm) get("signInForm");
 
         Cookie remembermeCookie = WebApplicationHelper.retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
         String passphrase = remembermeCookie.getValue();
