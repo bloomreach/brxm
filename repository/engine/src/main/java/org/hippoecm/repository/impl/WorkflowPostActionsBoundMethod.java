@@ -17,6 +17,7 @@ package org.hippoecm.repository.impl;
 
 import java.rmi.RemoteException;
 import java.util.Set;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -63,6 +64,16 @@ class WorkflowPostActionsBoundMethod implements WorkflowPostActions {
 
     public void execute(Object returnObject) {
         try {
+            try {
+                wfSubject.getPath();
+            } catch (InvalidItemStateException ex) {
+                /*
+                 * Workflow was invoked on deleted subject, the simple query post action cannot be invoked on these kind of actions,
+                 * and although configuring this can of action is useless, we will silently ignore any of such actions.
+                 */
+                log.debug("silently ignoring the workflow event on deleted item");
+                return;
+            }
             if (wfNode.hasProperty("hipposys:eventconditioncategory")) {
                 if (!wfNode.getProperty("hipposys:eventconditioncategory").getString().equals(workflowCategory)) {
                     return;

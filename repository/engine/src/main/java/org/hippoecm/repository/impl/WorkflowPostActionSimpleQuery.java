@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.jcr.InvalidItemStateException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -123,6 +124,16 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
             }
         }
         try {
+            try {
+                wfSubject.getPath();
+            } catch (InvalidItemStateException ex) {
+                /*
+                 * Workflow was invoked on deleted subject, the simple query post action cannot be invoked on these kind of actions,
+                 * and although configuring this can of action is useless, we will silently ignore any of such actions.
+                 */
+                log.debug("silently ignoring the workflow event on deleted item");
+                return;
+            }
             Query postQuery = (wfNode.hasNode("hipposys:eventpostcondition") ? workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:eventpostcondition")) : null);
             Set<String> postconditionSet = null;
             if (postQuery != null) {
