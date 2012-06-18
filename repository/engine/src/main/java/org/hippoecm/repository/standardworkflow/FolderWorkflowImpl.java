@@ -226,7 +226,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     } else {
                         hr = ManagerServiceFactory.getManagerService(rootSession).getHierarchyResolver();
                     }
-                    Property parentProperty = hr.getProperty(target, relpath);
+                    Property parentProperty = hr.getProperty(target, propPath);
                     if (parentProperty == null) {
                         continue;
                     } else {
