@@ -48,7 +48,7 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
 
     initComponent : function() {
         Hippo.ChannelManager.ExtLinkPicker.superclass.initComponent.call(this);
-
+        this.on('resize', this.resizeRenderTextField);
         this.on('afterrender', this.updateClearButton);
     },
 
@@ -109,6 +109,12 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
         }
     },
 
+    resizeRenderTextField: function(width, height, options) {
+        if (this.renderTextField) {
+            this.renderTextField.style.width = this.el.dom.style.width;
+        }
+    },
+
     onRender: function() {
         Hippo.ChannelManager.ExtLinkPicker.superclass.onRender.apply(this, arguments);
         this.el.dom.style.display = "none";
@@ -122,6 +128,7 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
         this.renderTextField.setAttribute('readonly', 'readonly');
         this.renderTextField.setAttribute('class', 'customExtLinkPickerRenderValue');
         this.renderTextField.value = value;
+        this.renderTextField.style.width = this.el.dom.style.width;
 
         this.el.parent().dom.insertBefore(this.renderTextField, this.el.dom);
     }
